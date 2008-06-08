@@ -2,7 +2,7 @@ TARGETS=libroar.so
 OBJS=libroar.o basic.o stream.o simple.o auth.o socket.o ctl.o buffer.o convert.o
 
 #DEFINES        = -DDEBUG
-INCLUDE = -I../include -I./include
+INCLUDE = -I../include -I../include/libroar
 CFLAGS  = -g -Wall -O2 $(DEFINES) $(INCLUDE)
 LDFLAGS = -g -shared
 
