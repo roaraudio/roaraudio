@@ -1,0 +1,80 @@
+#!/bin/sh
+
+INSTALL_DIR=/usr/lib/ao/plugins-2/
+
+while [ "$1" != '' ]
+do
+ case "$1" in
+  --inst-dir)
+   INSTALL_DIR="$2"
+   shift;
+  ;;
+  --help|-h)
+    cat << EOF
+Usage: ./configure [OPTIONS]...
+
+Options:
+  --help         - Show this help
+  --inst-dir DIR - Install dir
+EOF
+   ;;
+  *)
+    echo 'Unknown option. Try ./configure --help'
+    exit 2
+ esac
+ shift;
+done
+
+echo -n 'testing for C compiler... '
+CC=$(which gcc cc 2> /dev/null | head -n 1)
+if [ -x "$CC" ]
+then
+ echo $CC
+else
+ echo no.
+ exit 1;
+fi
+
+echo -n 'testing for libao... '
+cat > tests.c << EOF
+#include <ao/ao.h>
+#include <ao/plugin.h>
+int main (void) { return 0; }
+EOF
+
+$CC -lao -o tests tests.c 2> /dev/null
+./tests 2> /dev/null
+
+if [ "$?" = '0' ]
+then
+ echo yes
+else
+ echo no.
+ exit 1
+fi
+rm -f tests tests.c
+
+echo -n 'testing for libroar... '
+cat > tests.c << EOF
+#include <roaraudio.h>
+int main (void) { return 0; }
+EOF
+
+$CC -lroar -o tests tests.c 2> /dev/null
+./tests 2> /dev/null
+
+if [ "$?" = '0' ]
+then
+ echo yes
+else
+ echo no.
+ exit 1
+fi
+rm -f tests tests.c
+
+echo creating Makefile...
+echo "CC=$CC" > Makefile
+echo "INSTALL_DIR=$INSTALL_DIR" >> Makefile
+cat Makefile.pre >> Makefile
+
+#ll

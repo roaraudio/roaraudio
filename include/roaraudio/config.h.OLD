@@ -1,0 +1,12 @@
+//config.h:
+
+#ifndef _ROARAUDIO_CONFIG_H_
+#define _ROARAUDIO_CONFIG_H_
+
+#define ROAR_HAVE_ESD
+#define ROAR_HAVE_LIBAO
+#define ROAR_HAVE_SAFE_OVERFLOW
+
+#endif
+
+//ll

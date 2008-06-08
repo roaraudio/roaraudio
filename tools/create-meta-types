@@ -1,0 +1,13 @@
+#!/usr/bin/perl
+
+use strict;
+
+my $offset = int(shift(@ARGV));
+
+foreach (@ARGV) {
+ printf("#define ROAR_META_TYPE_%-12s  %i\n", uc($_), $offset);
+ $offset++;
+}
+
+
+#ll
