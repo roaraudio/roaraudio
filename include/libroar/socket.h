@@ -15,14 +15,19 @@
 #define ROAR_SOCKET_BLOCK     1
 #define ROAR_SOCKET_NONBLOCK  2
 
+#define ROAR_SOCKET_MAX_HOSTNAMELEN 64
+
 int roar_socket_listen  (int type, char * host, int port);
 int roar_socket_connect (char * host, int port);
 
 int roar_socket_new_tcp (void);
 int roar_socket_new_unix (void);
 int roar_socket_open (int mode, int type, char * host, int port);
+int roar_socket_open_proxy (int mode, int type, char * host, int port, char * proxy_type);
 
 int roar_socket_nonblock(int fh, int state);
+
+int roar_socket_open_socks4a(int mode, int fh, char * host, int port);
 
 #endif
 
