@@ -1,0 +1,6 @@
+v. 0.1:
+ * done basic stuff
+ * started 'libroaresd' to support ESD clients
+ * done a libao plugin
+ * done a lot basic networking stuff, still need som more proxy code
+ * got roard work file even with small buffers (<1ms)
