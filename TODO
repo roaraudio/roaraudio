@@ -1,0 +1,7 @@
+ * Consider if we should take conf_* from GIFT.
+ * add Mixing support
+ * add _working_ resampling code
+ * add support for srcs
+ * add support for config file
+ * add support for sync streams
+ * add a lot other things
