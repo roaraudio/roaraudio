@@ -112,16 +112,17 @@ int roar_identify   (struct roar_connection * con, char * name) {
  return roar_req(con, &mes, NULL);
 }
 
-#define _ROAR_MESS_BUF_LEN (1 /* cmd */ + 2 /* stream */ + 4 /* pos */ + 2 /* datalen */)
+#define _ROAR_MESS_BUF_LEN (1 /* version */ + 1 /* cmd */ + 2 /* stream */ + 4 /* pos */ + 2 /* datalen */)
 int roar_send_message (struct roar_connection * con, struct roar_message * mes, char * data) {
  char buf[_ROAR_MESS_BUF_LEN];
 
  ROAR_DBG("roar_send_message(*): try to send an request...");
 
- buf[0] = (unsigned char) mes->cmd;
- *(uint16_t*)(buf+1) = ROAR_HOST2NET16(mes->stream);
- *(uint32_t*)(buf+3) = ROAR_HOST2NET32(mes->pos);
- *(uint16_t*)(buf+7) = ROAR_HOST2NET16(mes->datalen);
+ buf[0] = _ROAR_MESSAGE_VERSION;
+ buf[1] = (unsigned char) mes->cmd;
+ *(uint16_t*)(buf+2) = ROAR_HOST2NET16(mes->stream);
+ *(uint32_t*)(buf+4) = ROAR_HOST2NET32(mes->pos);
+ *(uint16_t*)(buf+8) = ROAR_HOST2NET16(mes->datalen);
 
  if ( write(con->fh, buf, _ROAR_MESS_BUF_LEN) != _ROAR_MESS_BUF_LEN )
   return -1;
@@ -147,10 +148,13 @@ int roar_recv_message (struct roar_connection * con, struct roar_message * mes, 
 
  ROAR_DBG("roar_recv_message(*): Got a header");
 
- mes->cmd     = (unsigned char)buf[0];
- mes->stream  = ROAR_NET2HOST16(*(uint16_t*)(buf+1));
- mes->pos     = ROAR_NET2HOST32(*(uint32_t*)(buf+3));
- mes->datalen = ROAR_NET2HOST16(*(uint16_t*)(buf+7));
+ if ( buf[0] != _ROAR_MESSAGE_VERSION )
+  return -1;
+
+ mes->cmd     = (unsigned char)buf[1];
+ mes->stream  = ROAR_NET2HOST16(*(uint16_t*)(buf+2));
+ mes->pos     = ROAR_NET2HOST32(*(uint32_t*)(buf+4));
+ mes->datalen = ROAR_NET2HOST16(*(uint16_t*)(buf+8));
 
  ROAR_DBG("roar_recv_message(*): command=%i(%s)", mes->cmd,
            mes->cmd == ROAR_CMD_OK ? "OK" : (mes->cmd == ROAR_CMD_ERROR ? "ERROR" : "UNKNOWN"));

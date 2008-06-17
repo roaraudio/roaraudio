@@ -7,6 +7,7 @@
 
 #define LIBROAR_BUFFER_SMALL   80
 #define LIBROAR_BUFFER_MSGDATA LIBROAR_BUFFER_SMALL
+#define _ROAR_MESSAGE_VERSION 0
 
 struct roar_message {
  int cmd;
