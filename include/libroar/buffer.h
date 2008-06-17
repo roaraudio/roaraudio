@@ -14,6 +14,12 @@ struct roar_buffer {
  struct roar_buffer * next;
 };
 
+struct roar_buffer_stats {
+ int parts;
+ int bytes;
+ int memory_usage;
+};
+
 #define roar_buffer_next(a) roar_buffer_delete(*(a), (a));
 
 int roar_buffer_new      (struct roar_buffer ** buf, size_t len);
@@ -32,6 +38,8 @@ int roar_buffer_get_meta (struct roar_buffer *  buf, void   ** meta);
 
 int roar_buffer_set_len  (struct roar_buffer *  buf, size_t    len);
 int roar_buffer_get_len  (struct roar_buffer *  buf, size_t *  len);
+
+int roar_buffer_ring_stats (struct roar_buffer *  buf, struct roar_buffer_stats * stats);
 
 #endif
 

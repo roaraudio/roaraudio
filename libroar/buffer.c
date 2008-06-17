@@ -148,4 +148,22 @@ int roar_buffer_get_len  (struct roar_buffer *  buf, size_t *  len) {
  return 0;
 }
 
+int roar_buffer_ring_stats (struct roar_buffer *  buf, struct roar_buffer_stats * stats) {
+ if ( buf == NULL )
+  return -1;
+
+ stats->parts        = 0;
+ stats->bytes        = 0;
+ stats->memory_usage = 0;
+
+ while (buf) {
+  stats->parts++;
+  stats->bytes        += buf->user_len;
+  stats->memory_usage += buf->len + sizeof(struct roar_buffer);
+  buf = buf->next;
+ }
+
+ return 0;
+}
+
 //ll
