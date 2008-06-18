@@ -19,11 +19,13 @@
 #endif
 
 #include "driver_roar.h"
+#include "driver_raw.h"
 
 #ifdef ROAR_HAVE_LIBAO
 #include <ao/ao.h>
 #include "driver_ao.h"
 #endif
+
 
 struct roar_driver {
  char * name;
