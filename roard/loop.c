@@ -5,11 +5,22 @@
 int main_loop (int driver, DRIVER_USERDATA_T driver_inst, struct roar_audio_info * sa) {
  void ** streams_input = NULL;
  uint32_t pos = 0;
+#ifdef MONITOR_LATENCY
+ struct timeval         try, ans;
+ long int ans_1last = 0, ans_2last = 0, ans_3last = 0;
+
+ printf("\n\e[s");
+ fflush(stdout);
+#endif
 
  ROAR_DBG("main_loop(*) = ?");
  alive = 1;
 
  while (alive) {
+#ifdef MONITOR_LATENCY
+ gettimeofday(&try, NULL);
+#endif
+
   ROAR_DBG("main_loop(*): looping...");
 
   ROAR_DBG("main_loop(*): check for new clients...");
@@ -44,6 +55,25 @@ int main_loop (int driver, DRIVER_USERDATA_T driver_inst, struct roar_audio_info
 
   pos = ROAR_MATH_OVERFLOW_ADD(pos, ROAR_OUTPUT_BUFFER_SAMPLES);
   ROAR_DBG("main_loop(*): current pos: %u", pos);
+#ifdef MONITOR_LATENCY
+ gettimeofday(&ans, NULL);
+
+ while (ans.tv_sec > try.tv_sec) {
+  ans.tv_sec--;
+  ans.tv_usec += 1000000;
+ }
+ ans.tv_usec -= try.tv_usec;
+
+ if ( pos % 3 ) {
+  printf("\e[ucurrent latency: %.3fms  average: %.3fms   ",  ans.tv_usec                               / (double)1000,
+                                                            (ans.tv_usec+ans_3last+ans_2last+ans_1last)/ (double)4000);
+  fflush(stdout);
+ }
+
+ ans_3last = ans_2last;
+ ans_2last = ans_1last;
+ ans_1last = ans.tv_usec;
+#endif
  }
 
  return -1;
