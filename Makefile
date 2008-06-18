@@ -1,4 +1,4 @@
-SUBDIRS=libroar libroaresd roard roarclients
+SUBDIRS=libroar libroaresd roard roarclients roarfish
 
 all:
 	for i in ${SUBDIRS}; do make -C $$i all; done;
