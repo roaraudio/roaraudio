@@ -25,7 +25,7 @@ int streams_free (void) {
 
 
 int streams_new    (void) {
- int i;
+ int i, j;
  struct roar_stream * n = NULL;
 
  for (i = 0; i < ROAR_STREAMS_MAX; i++) {
@@ -45,10 +45,13 @@ int streams_new    (void) {
    n->datalen    = 0;
    n->offset     = 0;
 
-   ((struct roar_stream_server*)n)->client     = -1;
-   ((struct roar_stream_server*)n)->buffer     = NULL;
-   ((struct roar_stream_server*)n)->need_extra = 0;
-   ((struct roar_stream_server*)n)->output     = NULL;
+   ((struct roar_stream_server*)n)->client      = -1;
+   ((struct roar_stream_server*)n)->buffer      = NULL;
+   ((struct roar_stream_server*)n)->need_extra  = 0;
+   ((struct roar_stream_server*)n)->output      = NULL;
+   ((struct roar_stream_server*)n)->mixer.scale = 65535;
+   for (j = 0; j < ROAR_MAX_CHANNELS; j++)
+    ((struct roar_stream_server*)n)->mixer.mixer[j] = 65535;
 
    g_streams[i] = (struct roar_stream_server*)n;
    ROAR_DBG("streams_new(void) = %i", i);

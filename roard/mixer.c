@@ -102,4 +102,63 @@ int mix_clients_32bit (void * output, void ** input, int samples) {
  return 1;
 }
 
+int change_vol (void * output, int bits, void * input, int samples, int channels, struct roar_mixer_settings * set) {
+ if ( bits == 8 ) {
+  return  change_vol_8bit(output, input, samples, channels, set);
+ } else if ( bits == 16 ) {
+  return  change_vol_16bit(output, input, samples, channels, set);
+ } else if ( bits == 24 ) {
+  return  change_vol_24bit(output, input, samples, channels, set);
+ } else if ( bits == 32 ) {
+  return  change_vol_32bit(output, input, samples, channels, set);
+ } else {
+  return -1;
+ }
+}
+
+int change_vol_8bit (void * output, void * input, int samples, int channels, struct roar_mixer_settings * set) {
+ char * in = input, out = output;
+ int    i;
+ int    s;
+
+ if ( !(in && out) )
+  return -1;
+
+ for (i = 0; i < samples; i++) {
+  s  = in[i];
+  s *= set->mixer[i % channels];
+  s /= set->scale;
+  out[i] = s;
+ }
+
+ return 0;
+}
+
+int change_vol_16bit (void * output, void * input, int samples, int channels, struct roar_mixer_settings * set) {
+ int16_t * in = input, out = output;
+ int       i;
+ int       s;
+
+ if ( !(in && out) )
+  return -1;
+
+ for (i = 0; i < samples; i++) {
+  s  = in[i];
+  s *= set->mixer[i % channels];
+  s /= set->scale;
+  out[i] = s;
+ }
+
+ return 0;
+}
+
+int change_vol_24bit (void * output, void * input, int samples, int channels, struct roar_mixer_settings * set) {
+ return -1;
+}
+
+int change_vol_32bit (void * output, void * input, int samples, int channels, struct roar_mixer_settings * set) {
+ return -1;
+}
+
+
 //ll
