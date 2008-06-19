@@ -117,7 +117,7 @@ int change_vol (void * output, int bits, void * input, int samples, int channels
 }
 
 int change_vol_8bit (void * output, void * input, int samples, int channels, struct roar_mixer_settings * set) {
- char * in = input, out = output;
+ char * in = input, * out = output;
  int    i;
  int    s;
 
@@ -135,7 +135,7 @@ int change_vol_8bit (void * output, void * input, int samples, int channels, str
 }
 
 int change_vol_16bit (void * output, void * input, int samples, int channels, struct roar_mixer_settings * set) {
- int16_t * in = input, out = output;
+ int16_t * in = input, * out = output;
  int       i;
  int       s;
 

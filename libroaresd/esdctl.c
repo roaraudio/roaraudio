@@ -276,7 +276,18 @@ void esd_free_all_info( esd_info_t *info ) {
 /* reset the volume panning for a stream */
 int esd_set_stream_pan( int esd, int stream_id,
                         int left_scale, int right_scale ) {
- return -1;
+ struct roar_connection con;
+ struct roar_mixer_settings mixer;
+
+ con.fh = esd;
+
+ mixer.mixer[0] = left_scale;
+ mixer.mixer[1] = right_scale;
+
+ ROAR_DBG("esd_set_stream_pan(esd=%i, stream_id=%i, left_scale=%i, right_scale=%i) = ?", 
+                esd, stream_id, left_scale, right_scale);
+
+ return roar_set_vol(&con, stream_id, &mixer, 2);
 }
 
 /* reset the default volume panning for a sample */

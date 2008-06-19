@@ -116,12 +116,35 @@ int roar_get_stream   (struct roar_connection * con, struct roar_stream * stream
 
 int roar_kick         (struct roar_connection * con, int type, int id) {
  struct roar_message m;
- uint16_t * info = m.data;
+ uint16_t * info = (uint16_t *) m.data;
 
  m.cmd     = ROAR_CMD_KICK;
  m.datalen = 4;
  info[0] = type;
  info[1] = id;
+
+ if ( roar_req(con, &m, NULL) == -1 )
+  return -1;
+
+ if ( m.cmd != ROAR_CMD_OK )
+  return -1;
+
+ return 0;
+}
+
+int roar_set_vol      (struct roar_connection * con, int id, struct roar_mixer_settings * mixer, int channels) {
+ struct roar_message m;
+ uint16_t * info = (uint16_t *) m.data;
+ int i;
+
+ m.cmd     = ROAR_CMD_SET_VOL;
+ m.datalen = (3 + channels) * 2;
+ info[0] = 0;
+ info[1] = id;
+ info[2] = ROAR_SET_VOL_ALL;
+
+ for (i = 0; i < channels; i++)
+  info[i+3] = mixer->mixer[i];
 
  if ( roar_req(con, &m, NULL) == -1 )
   return -1;
@@ -260,7 +283,7 @@ int roar_ctl_m2c      (struct roar_message * m, struct roar_client * c) {
  cur = 3 + m->data[2];
 
  strncpy(c->name, (m->data)+cur+1, m->data[cur]);
- c->name[m->data[cur]] = 0;
+ c->name[(int)m->data[cur]] = 0;
 
  return 0;
 }

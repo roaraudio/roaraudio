@@ -5,3 +5,5 @@
  * add support for sync streams
  * add a lot other things
  * add code to handle streams with more than ROAR_MAX_CHANNELS channels
+ * fix byte-order bug in *_set_vol() and *_kick()
+ * get the volume changing code working

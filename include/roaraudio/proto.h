@@ -32,6 +32,7 @@
 
 #define ROAR_CMD_KICK          18
 
+#define ROAR_CMD_SET_VOL       19
 
 #define ROAR_CMD_OK           254
 #define ROAR_CMD_ERROR        255

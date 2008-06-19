@@ -311,6 +311,9 @@ int streams_fill_mixbuffer (int id, struct roar_audio_info * info) {
    return -1;
   }
 
+  if ( change_vol(rest, info->bits, rest, 8*outlen / info->bits, info->channels, &(((struct roar_stream_server*)g_streams[id])->mixer)) == -1 )
+   return -1;
+
   // we habe outlen bytes more...
   todo    -= outlen;
   rest    += outlen;

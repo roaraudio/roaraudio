@@ -56,6 +56,9 @@
 
 #define ROAR_MAX_CHANNELS         64
 
+#define ROAR_SET_VOL_ALL           1
+#define ROAR_SET_VOL_ONE           2
+
 struct roar_audio_info {
  unsigned int rate;
  unsigned int bits;
@@ -64,7 +67,7 @@ struct roar_audio_info {
 };
 
 struct roar_mixer_settings {
- unsigned      channels;
+ //unsigned      channels;
  roar_intm16   scale;
  roar_intm16   mixer[ROAR_MAX_CHANNELS];
 };
