@@ -9,6 +9,10 @@
 #define LIBROAR_BUFFER_MSGDATA LIBROAR_BUFFER_SMALL
 #define _ROAR_MESSAGE_VERSION 0
 
+#if ROAR_MAX_CHANNELS > (LIBROAR_BUFFER_SMALL - 10)
+#error ROAR_MAX_CHANNELS too large change ROAR_MAX_CHANNELS or LIBROAR_BUFFER_SMALL
+#endif
+
 struct roar_message {
  int cmd;
  unsigned int stream;

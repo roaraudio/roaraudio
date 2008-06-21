@@ -29,7 +29,8 @@ int roar_get_stream   (struct roar_connection * con, struct roar_stream * stream
 
 int roar_kick         (struct roar_connection * con, int type, int id);
 
-int roar_set_vol      (struct roar_connection * con, int id, struct roar_mixer_settings * mixer, int channels);
+int roar_set_vol      (struct roar_connection * con, int id, struct roar_mixer_settings * mixer, int   channels);
+int roar_get_vol      (struct roar_connection * con, int id, struct roar_mixer_settings * mixer, int * channels);
 
 // filter...
 int roar_ctl_f2m      (struct roar_message * m, unsigned char   filter, unsigned char   cmp, uint32_t   id);
