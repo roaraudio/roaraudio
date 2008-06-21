@@ -23,19 +23,20 @@
 
 //#define ROAR_CMD_
 
-#define ROAR_CMD_EXIT          13
-#define ROAR_CMD_LIST_STREAMS  14
-#define ROAR_CMD_LIST_CLIENTS  15
+#define ROAR_CMD_EXIT          13 /* make the server quit */
+#define ROAR_CMD_LIST_STREAMS  14 /* list all streams (not only playback streams like esd does) */
+#define ROAR_CMD_LIST_CLIENTS  15 /* list all clients */
 
-#define ROAR_CMD_GET_CLIENT    16
-#define ROAR_CMD_GET_STREAM    17
+#define ROAR_CMD_GET_CLIENT    16 /* get infos about a client */
+#define ROAR_CMD_GET_STREAM    17 /* get infos about a stream */
 
-#define ROAR_CMD_KICK          18
+#define ROAR_CMD_KICK          18 /* kick a client, stream, sample or source */
 
-#define ROAR_CMD_SET_VOL       19
+#define ROAR_CMD_SET_VOL       19 /* change volume */
+#define ROAR_CMD_GET_VOL       20 /* get volume */
 
-#define ROAR_CMD_OK           254
-#define ROAR_CMD_ERROR        255
+#define ROAR_CMD_OK           254 /* return value OK */
+#define ROAR_CMD_ERROR        255 /* return value ERROR */
 
 
 #define ROAR_STANDBY_ACTIVE     1
