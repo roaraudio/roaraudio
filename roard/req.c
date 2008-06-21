@@ -280,6 +280,8 @@ int req_on_set_vol (int client, struct roar_message * mes, char * data) {
   if ( chans >= ROAR_MAX_CHANNELS )
    return -1;
 
+  ROAR_DBG("req_on_set_vol(*): mixer at %p", s->mixer.mixer);
+
   for (i = 0; i < chans; i++) {
    s->mixer.mixer[i] = info[i+3];
    ROAR_DBG("req_on_set_vol(*): channel %i: %i", i, info[i+3]);

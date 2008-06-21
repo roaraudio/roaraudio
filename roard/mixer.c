@@ -103,6 +103,9 @@ int mix_clients_32bit (void * output, void ** input, int samples) {
 }
 
 int change_vol (void * output, int bits, void * input, int samples, int channels, struct roar_mixer_settings * set) {
+
+ ROAR_DBG("change_vol(*): mixer at %p", set->mixer);
+
  if ( bits == 8 ) {
   return  change_vol_8bit(output, input, samples, channels, set);
  } else if ( bits == 16 ) {
