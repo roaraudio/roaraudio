@@ -69,6 +69,7 @@ void esd_print_player_info( esd_player_info_t *player_info ) {
  printf("player %i left    = %i\n",        player_info->source_id, player_info->left_vol_scale );
  printf("player %i right   = %i\n",        player_info->source_id, player_info->right_vol_scale );
 }
+
 void esd_print_sample_info( esd_sample_info_t *sample_info ) {
 }
 
@@ -159,6 +160,8 @@ esd_info_t *esd_get_all_info( int esd ) {
  struct roar_client c;
  struct roar_stream s;
  struct roar_connection con[1];
+ struct roar_mixer_settings mixer;
+ int channels;
  esd_player_info_t * new_player, * cur = NULL; // = NULL to avoid gcc warning
 
  con->fh = esd;
@@ -204,7 +207,22 @@ esd_info_t *esd_get_all_info( int esd ) {
    strncpy(new_player->name, c.name, ESD_NAME_MAX < ROAR_BUFFER_NAME ? ESD_NAME_MAX : ESD_NAME_MAX);
 
    new_player->server         = r->server;
-   new_player->left_vol_scale = new_player->right_vol_scale = 256; // TODO: add data from the mixer
+
+   if ( roar_get_vol(con, c.execed, &mixer, &channels) == -1 ) {
+    ROAR_ERR("esd_get_all_info(*): can not get stream mixer info");
+    new_player->left_vol_scale = new_player->right_vol_scale = 256;
+   } else {
+    if ( channels == 1 ) {
+     new_player->left_vol_scale = new_player->right_vol_scale = mixer.mixer[0] == 65536 ? 256 : mixer.mixer[0] / 256;
+    } else {
+     if ( channels != 2 ) {
+      ROAR_ERR("esd_get_all_info(*): server seems to run in > 2 channel mode. ignoring any but the first two channels!");
+     }
+     new_player->left_vol_scale  = mixer.mixer[0] == 65536 ? 256 : mixer.mixer[0] / 256;
+     new_player->right_vol_scale = mixer.mixer[1] == 65536 ? 256 : mixer.mixer[1] / 256;
+    }
+   }
+
 
    if ( r->player_list == NULL ) {
      r->player_list = cur = new_player;
