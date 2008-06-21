@@ -305,6 +305,53 @@ int req_on_set_vol (int client, struct roar_message * mes, char * data) {
  return 0;
 }
 
+int req_on_get_vol (int client, struct roar_message * mes, char * data) {
+ uint16_t * info = (uint16_t *) mes->data;
+ int stream;
+ struct roar_stream_server * s;
+ int i;
+ int chans;
+
+ ROAR_DBG("req_on_get_vol(*) = ?");
+ ROAR_DBG("req_on_get_vol(*): mes->datalen=%i", mes->datalen);
+
+ if ( mes->datalen < (2*2) )
+  return -1;
+
+ if ( info[0] != 0 ) // version
+  return -1;
+
+ stream = info[1];
+ ROAR_DBG("req_on_get_vol(*): stream=%i", stream);
+
+ // TODO: change this code.
+ //       we should not directly change the stream object but use some stream_*()-func
+ //       for that job.
+
+ if ( stream < 0 || stream >= ROAR_STREAMS_MAX )
+  return -1;
+
+ s = g_streams[stream];
+
+ if ( s == NULL )
+  return -1;
+
+ ROAR_DBG("req_on_get_vol(*): s=%p", s);
+
+ // ok, we have everything
+
+ info[0] = 0;
+ info[1] = chans = ROAR_STREAM(s)->info.channels;
+
+ for (i = 0; i < chans; i++)
+  info[2+i] = s->mixer.mixer[i];
+
+ mes->datalen = (2 + chans)*2;
+ mes->cmd = ROAR_CMD_OK;
+
+ return 0;
+}
+
 int req_on_add_data (int client, struct roar_message * mes, char * data) {
  struct roar_buffer * b;
  char               * buf;
