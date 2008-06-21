@@ -2,6 +2,8 @@
 
 #include <roaraudio.h>
 
+int display_mixer (struct roar_connection * con, int stream);
+
 void usage (void) {
  printf("roarcat [OPTIONS]... COMMAND [OPTS] [COMMAND [OPTS] [COMMAND [OPTS] [...]]]\n");
 
@@ -104,10 +106,26 @@ void list_streams (struct roar_connection * con) {
   printf("Input channels        : %i\n", s.info.channels);
   printf("Input codec           : %i (%s%s)\n", s.info.codec, roar_codec2str(s.info.codec),
                                       s.info.codec == ROAR_CODEC_DEFAULT ? " native" : "");
+  display_mixer(con, id[i]);
  }
 
 }
 
+int display_mixer (struct roar_connection * con, int stream) {
+ int channels;
+ struct roar_mixer_settings mixer;
+ int i;
+
+ if ( roar_get_vol(con, stream, &mixer, &channels) == -1 ) {
+  fprintf(stderr, "Error: can not get stream mixer info\n");
+  return -1;
+ }
+
+ for (i = 0; i < channels; i++)
+  printf("Mixer volume chan %2i  : %i (%.2f%%)\n", i, mixer.mixer[i], (float)mixer.mixer[i]/655.35);
+
+ return 0;
+}
 
 int main (int argc, char * argv[]) {
  struct roar_connection con;
