@@ -281,8 +281,8 @@ int esd_set_stream_pan( int esd, int stream_id,
 
  con.fh = esd;
 
- mixer.mixer[0] = left_scale;
- mixer.mixer[1] = right_scale;
+ mixer.mixer[0] = left_scale  == 256 ? 65535 : left_scale  * 256;
+ mixer.mixer[1] = right_scale == 256 ? 65535 : right_scale * 256;
 
  ROAR_DBG("esd_set_stream_pan(esd=%i, stream_id=%i, left_scale=%i, right_scale=%i) = ?", 
                 esd, stream_id, left_scale, right_scale);
