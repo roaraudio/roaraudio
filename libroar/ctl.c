@@ -155,6 +155,36 @@ int roar_set_vol      (struct roar_connection * con, int id, struct roar_mixer_s
  return 0;
 }
 
+int roar_get_vol      (struct roar_connection * con, int id, struct roar_mixer_settings * mixer, int * channels) {
+ struct roar_message m;
+ uint16_t * info = (uint16_t *) m.data;
+ int i;
+
+ m.cmd     = ROAR_CMD_GET_VOL;
+ m.datalen = 2*2;
+ info[0] = 0;
+ info[1] = id;
+
+ if ( roar_req(con, &m, NULL) == -1 )
+  return -1;
+
+ if ( m.cmd != ROAR_CMD_OK )
+  return -1;
+
+ if ( info[0] != 0 )
+  return -1;
+
+ if ( channels != NULL )
+  *channels = info[1];
+
+ if ( info[1] > ROAR_MAX_CHANNELS )
+  return -1;
+
+ for (i = 0; i < info[1]; i++)
+  mixer->mixer[i] = info[i+2];
+
+ return 0;
+}
 
 // converts: *_m2*, *_*2m
 
