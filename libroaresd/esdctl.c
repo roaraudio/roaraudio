@@ -39,7 +39,7 @@ void esd_print_server_info( esd_server_info_t *server_info ) {
  else
   strcat(buf, "16 bit ");
 
- if ( server_info->format & ESD_MONO )
+ if ( server_info->format & ESD_STEREO )
   strcat(buf, "stereo ");
  else
   strcat(buf, "mono ");
