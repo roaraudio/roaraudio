@@ -11,6 +11,7 @@
 #define ROAR_STREAMS_MAX  64
 */
 
+//#define ROAR_STREAM(x)        ((struct roar_stream*)(x))
 #define ROAR_STREAM_SERVER(x) ((struct roar_stream_server*)(x))
 
 struct roar_stream_server {
