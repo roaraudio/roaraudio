@@ -8,6 +8,7 @@ int main_loop (int driver, DRIVER_USERDATA_T driver_inst, struct roar_audio_info
 #ifdef MONITOR_LATENCY
  struct timeval         try, ans;
  long int ans_1last = 0, ans_2last = 0, ans_3last = 0;
+ long int loopc = 0;
 
  printf("\n\e[s");
  fflush(stdout);
@@ -46,6 +47,7 @@ int main_loop (int driver, DRIVER_USERDATA_T driver_inst, struct roar_audio_info
 
   if ( g_standby ) {
    usleep((1000000 * ROAR_OUTPUT_BUFFER_SAMPLES) / sa->rate);
+   printf("usleep(%li) = ?\n", (1000000 * ROAR_OUTPUT_BUFFER_SAMPLES) / sa->rate);
   } else {
    clients_send_filter(sa, pos);
    output_buffer_flush(driver_inst, driver);
@@ -64,7 +66,7 @@ int main_loop (int driver, DRIVER_USERDATA_T driver_inst, struct roar_audio_info
  }
  ans.tv_usec -= try.tv_usec;
 
- if ( pos % 3 ) {
+ if ( loopc % 128 ) {
   printf("\e[ucurrent latency: %.3fms  average: %.3fms   ",  ans.tv_usec                               / (double)1000,
                                                             (ans.tv_usec+ans_3last+ans_2last+ans_1last)/ (double)4000);
   fflush(stdout);
@@ -73,6 +75,7 @@ int main_loop (int driver, DRIVER_USERDATA_T driver_inst, struct roar_audio_info
  ans_3last = ans_2last;
  ans_2last = ans_1last;
  ans_1last = ans.tv_usec;
+ loopc++;
 #endif
  }
 
