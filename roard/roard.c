@@ -143,9 +143,15 @@ int main (int argc, char * argv[]) {
  }
 
  if ( streams_init() == -1 ) {
-  ROAR_ERR("Can not nit streams!");
+  ROAR_ERR("Can not init streams!");
   return 1;
  }
+
+ if ( samples_init() == -1 ) {
+  ROAR_ERR("Can not init samples!");
+  return 1;
+ }
+
 
  signal(SIGINT,  on_sig_int);
  signal(SIGPIPE, SIG_IGN);  // ignore broken pipes

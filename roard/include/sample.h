@@ -9,7 +9,7 @@
 
 struct roar_sample * g_samples[ROAR_SAMPLES_MAX];
 
-int samples_init (void);
+int samples_init      (void);
 int samples_free      (void);
 int samples_new       (void);
 int samples_delete    (int id);
