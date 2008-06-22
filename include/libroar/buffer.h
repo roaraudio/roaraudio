@@ -39,6 +39,8 @@ int roar_buffer_get_meta (struct roar_buffer *  buf, void   ** meta);
 int roar_buffer_set_len  (struct roar_buffer *  buf, size_t    len);
 int roar_buffer_get_len  (struct roar_buffer *  buf, size_t *  len);
 
+int roar_buffer_duplicate (struct roar_buffer *  buf, struct roar_buffer ** copy);
+
 int roar_buffer_ring_stats (struct roar_buffer *  buf, struct roar_buffer_stats * stats);
 
 #endif

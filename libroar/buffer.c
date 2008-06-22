@@ -148,6 +148,28 @@ int roar_buffer_get_len  (struct roar_buffer *  buf, size_t *  len) {
  return 0;
 }
 
+int roar_buffer_duplicate (struct roar_buffer *  buf, struct roar_buffer ** copy) {
+ struct roar_buffer *  cur = buf;
+ struct roar_buffer *  new;
+
+ *copy = NULL;
+
+ while (cur) {
+  if ( roar_buffer_new(&new, cur->user_len) == -1 ) {
+   roar_buffer_free(*copy);
+   return -1;
+  }
+
+  if ( *copy == NULL )
+   *copy = new;
+
+  roar_buffer_add(*copy, new);
+
+  cur = cur->next;
+ }
+ return 0;
+}
+
 int roar_buffer_ring_stats (struct roar_buffer *  buf, struct roar_buffer_stats * stats) {
  if ( buf == NULL )
   return -1;
