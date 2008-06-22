@@ -1,6 +1,6 @@
 TARGETS=roard
 
-OBJ=roard.o driver.o mixer.o output.o signals.o loop.o clients.o streams.o network.o commands.o req.o sources.o
+OBJ=roard.o driver.o mixer.o output.o signals.o loop.o clients.o streams.o network.o commands.o req.o sources.o sample.o
 DRV=driver_esd.o driver_ao.o driver_roar.o driver_raw.o
 
 #DEFINES        = -DDEBUG
