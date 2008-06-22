@@ -151,6 +151,7 @@ int roar_buffer_get_len  (struct roar_buffer *  buf, size_t *  len) {
 int roar_buffer_duplicate (struct roar_buffer *  buf, struct roar_buffer ** copy) {
  struct roar_buffer *  cur = buf;
  struct roar_buffer *  new;
+ void * od, * nd;
 
  *copy = NULL;
 
@@ -162,6 +163,10 @@ int roar_buffer_duplicate (struct roar_buffer *  buf, struct roar_buffer ** copy
 
   if ( *copy == NULL )
    *copy = new;
+
+  roar_buffer_get_data(cur, &od);
+  roar_buffer_get_data(new, &nd);
+  memcpy(nd, od, cur->user_len);
 
   roar_buffer_add(*copy, new);
 
