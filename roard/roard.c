@@ -51,6 +51,7 @@ int main (int argc, char * argv[]) {
  char * s_opt  = NULL;
  int    s_prim = 0;
  DRIVER_USERDATA_T drvinst;
+ struct roar_client * self = NULL;
 
  g_listen_socket = -1;
  g_standby       =  0;
@@ -155,7 +156,15 @@ int main (int argc, char * argv[]) {
   return 1;
  }
 
+ clients_set_pid(g_self_client, getpid());
+ clients_get(g_self_client, &self);
 
+ if ( self == NULL ) {
+  ROAR_ERR("Can not get self client!");
+  return 1;
+ }
+
+ strcpy(self->name, "RoarAudio demon internal");
  // start main loop...
  main_loop(drvid, drvinst, &sa);
 
