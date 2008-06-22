@@ -96,53 +96,6 @@ int roar_conv_rate_8  (void * out, void * in, int samples, int from, int to, int
 }
 
 int roar_conv_rate_16 (void * out, void * in, int samples, int from, int to, int channels) {
- int16_t * ip = in, * op = out;
- int16_t avg;
- int i, j, c;
- float scale = to/from;
- int step;
-
-
- if ( scale > 1 ) {
-  if ( scale - (int)scale != (float)0 )
-   return -1;
-
-  step = scale;
-/*
-  for (i = 0; i < samples/step; i++)
-   for (j = 0; j < step; j++)
-    for (c = 0; c < channels; c++)
-     op[i + j*channels + c] = ip[i + c];
-*/
-  if ( step == 2 ) {
-   for (i = 0; i < samples/step; i += channels) {
-    for (j = 0; j < step; j++) {
-     for (c = 0; c < channels; c++) {
-      op[i*step + j*channels + c] = ip[i+c];
-     }
-    }
-   }
-   return 0;
-  }
-  return -1;
- } else {
-  scale = 1/scale;
-
-  if ( scale - (int)scale != (float)0 )
-   return -1;
-
-  step = scale;
-
-  for (i = 0; i < samples/step; i++) {
-   avg = 0;
-   for (j = 0; j < step; j++)
-    avg += ip[i*step + j];
-
-   op[i] = avg/step;
-  }
-  return 0;
- } 
-
  return -1;
 }
 
