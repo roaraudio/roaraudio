@@ -17,6 +17,7 @@
 #include "commands.h"
 #include "req.h"
 #include "sources.h"
+#include "sample.h"
 
 int alive;
 
