@@ -30,6 +30,8 @@ void on_sig_int (int signum);
 
 int g_listen_socket;
 
+int g_self_client;
+
 struct roar_audio_info * g_sa;
 
 #endif

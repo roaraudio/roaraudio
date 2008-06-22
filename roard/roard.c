@@ -150,6 +150,12 @@ int main (int argc, char * argv[]) {
  signal(SIGPIPE, SIG_IGN);  // ignore broken pipes
 
 
+ if ( (g_self_client = clients_new()) == -1 ) {
+  ROAR_ERR("Can not create self client!");
+  return 1;
+ }
+
+
  // start main loop...
  main_loop(drvid, drvinst, &sa);
 
