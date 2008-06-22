@@ -73,4 +73,23 @@ int samples_set_name  (int id, char * name) {
  return 0;
 }
 
+int samples_add_data  (int id, void * data, size_t len) {
+ struct roar_buffer * new;
+ struct roar_sample * c = g_samples[id];
+
+ if ( c == NULL )
+  return -1;
+
+ if ( roar_buffer_new(&new, len) == -1 )
+  return -1;
+
+ if ( c->data == NULL ) {
+  c->data = new;
+ } else {
+  roar_buffer_add(c->data, new);
+ }
+
+ return 0;
+}
+
 //ll
