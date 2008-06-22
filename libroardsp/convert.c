@@ -94,6 +94,7 @@ int roar_conv_rate (void * out, void * in, int samples, int from, int to, int bi
 int roar_conv_rate_8  (void * out, void * in, int samples, int from, int to, int channels) {
  return -1;
 }
+
 int roar_conv_rate_16 (void * out, void * in, int samples, int from, int to, int channels) {
  int16_t * ip = in, * op = out;
  int16_t avg;
