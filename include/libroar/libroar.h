@@ -16,6 +16,7 @@
 #include "ctl.h"
 #include "buffer.h"
 #include "convert.h"
+#include "math.h"
 
 #endif
 
