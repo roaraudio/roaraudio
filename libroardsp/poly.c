@@ -67,6 +67,8 @@ int roar_math_mkpoly_4x4 (float * poly, float * data) {
  return 0;
 }
 
-int roar_math_mkpoly_5x5 (float * poly, float * data);
+int roar_math_mkpoly_5x5 (float * poly, float * data) {
+ return -1;
+}
 
 //ll
