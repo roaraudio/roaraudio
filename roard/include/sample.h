@@ -14,6 +14,7 @@ int samples_free      (void);
 int samples_new       (void);
 int samples_delete    (int id);
 int samples_set_name  (int id, char * name);
+int samples_add_data  (int id, void * data, size_t len);
 
 #endif
 

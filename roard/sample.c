@@ -12,9 +12,65 @@ int samples_init      (void) {
 }
 
 
-int samples_free      (void);
-int samples_new       (void);
-int samples_delete    (int id);
-int samples_set_name  (int id, char * name);
+int samples_free      (void) {
+ int i;
+
+ for (i = 0; i < ROAR_SAMPLES_MAX; i++)
+  if ( g_samples[i] != NULL )
+   samples_delete(i);
+
+ return 0;
+}
+
+int samples_new       (void) {
+ struct roar_sample * c = malloc(sizeof(struct roar_sample));
+ int i;
+
+ if ( c == NULL )
+  return -1;
+
+ c->name[0] = 0;
+ c->data    = NULL;
+
+ for (i = 0; i < ROAR_SAMPLES_MAX; i++) {
+  if ( g_samples[i] == NULL ) {
+   g_samples[i] = c;
+   return i;
+  }
+ }
+
+ free(c);
+
+ return -1;
+}
+
+int samples_delete    (int id) {
+ struct roar_sample * c = g_samples[id];
+
+ if ( c == NULL )
+  return -1;
+
+ if (c->data != NULL )
+  roar_buffer_free(c->data);
+
+ free(c);
+
+ g_samples[id] = NULL;
+
+ return 0;
+}
+
+int samples_set_name  (int id, char * name) {
+ struct roar_sample * c = g_samples[id];
+
+ if ( c == NULL )
+  return -1;
+
+ strncpy(c->name, name, ROAR_BUFFER_NAME-1);
+
+ c->name[ROAR_BUFFER_NAME-1] = 0;
+
+ return 0;
+}
 
 //ll
