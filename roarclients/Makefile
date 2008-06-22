@@ -1,4 +1,4 @@
-TARGETS=roarcat roarcatad roarctl roarmon roarsockconnect
+TARGETS=roarcat roarcatad roarctl roarmon roarsockconnect roartypes
 
 DEFINES        = -DDEBUG
 INCLUDE = -I../include -I./include
@@ -16,3 +16,4 @@ roarcatad: roarcatad.o
 roarctl: roarctl.o
 roarmon: roarmon.o
 roarsockconnect: roarsockconnect.o
+roartypes: roartypes.o
