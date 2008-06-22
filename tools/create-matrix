@@ -1,0 +1,31 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+my $i;
+my $j;
+my $line;
+my $row = 'A';
+my $size = int($ARGV[0]);
+
+die unless $size > 0;
+
+$line = '';
+$j = 'a';
+for ($i = 0; $i < $size; $i++) {
+ $line .= sprintf('%4s ', $j++);
+}
+print $line, "\n";
+
+for ($i = 0; $i < $size; $i++) {
+ $line = '';
+
+ for ($j = ($size - 1); $j >= 0; $j--) {
+  $line .= sprintf('%4i ', $i**$j);
+ }
+
+ print $line, ' ', $row++, "\n";
+}
+
+#ll
