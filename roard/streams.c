@@ -100,12 +100,26 @@ int streams_set_client (int id, int client) {
 }
 
 int streams_set_fh     (int id, int fh) {
+ int shut = -1;
+ int dir;
+
  if ( g_streams[id] == NULL )
   return -1;
 
  ((struct roar_stream *)g_streams[id])->fh = fh;
 
- if ( ((struct roar_stream *)g_streams[id])->dir == ROAR_DIR_FILTER ) {
+ dir = ((struct roar_stream *)g_streams[id])->dir;
+
+ if ( dir == ROAR_DIR_PLAY ) {
+  shut = SHUT_WR;
+ } else if ( dir == ROAR_DIR_MONITOR || dir == ROAR_DIR_RECORD ) {
+  shut = SHUT_RD;
+ }
+
+ if ( shut != -1 )
+  shutdown(fh, shut);
+
+ if ( dir == ROAR_DIR_FILTER ) {
   return 0;
  } else {
   return roar_socket_nonblock(fh, ROAR_SOCKET_NONBLOCK);
