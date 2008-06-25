@@ -47,7 +47,7 @@ int main_loop (int driver, DRIVER_USERDATA_T driver_inst, struct roar_audio_info
 
   if ( g_standby ) {
    usleep((1000000 * ROAR_OUTPUT_BUFFER_SAMPLES) / sa->rate);
-   printf("usleep(%li) = ?\n", (1000000 * ROAR_OUTPUT_BUFFER_SAMPLES) / sa->rate);
+   printf("usleep(%u) = ?\n", (1000000 * ROAR_OUTPUT_BUFFER_SAMPLES) / sa->rate);
   } else {
    clients_send_filter(sa, pos);
    output_buffer_flush(driver_inst, driver);
