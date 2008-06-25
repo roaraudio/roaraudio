@@ -48,6 +48,12 @@ int roar_simple_stream(int rate, int channels, int bits, int codec, char * serve
   return -1;
  }
 
+ if ( dir == ROAR_DIR_PLAY ) {
+  shutdown(con.fh, SHUT_RD);
+ } else if ( dir == ROAR_DIR_MONITOR || dir == ROAR_DIR_RECORD ) {
+  shutdown(con.fh, SHUT_WR);
+ }
+
  return con.fh;
 }
 
