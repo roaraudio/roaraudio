@@ -100,7 +100,6 @@ int streams_set_client (int id, int client) {
 }
 
 int streams_set_fh     (int id, int fh) {
- int shut = -1;
  int dir;
 
  if ( g_streams[id] == NULL )
@@ -110,14 +109,9 @@ int streams_set_fh     (int id, int fh) {
 
  dir = ((struct roar_stream *)g_streams[id])->dir;
 
- if ( dir == ROAR_DIR_PLAY ) {
-  shut = SHUT_WR;
- } else if ( dir == ROAR_DIR_MONITOR || dir == ROAR_DIR_RECORD ) {
-  shut = SHUT_RD;
+ if ( dir == ROAR_DIR_MONITOR || dir == ROAR_DIR_RECORD ) {
+  shutdown(fh, SHUT_RD);
  }
-
- if ( shut != -1 )
-  shutdown(fh, shut);
 
  if ( dir == ROAR_DIR_FILTER ) {
   return 0;
