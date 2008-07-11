@@ -75,6 +75,9 @@
 #define ROAR_MATH_OVERFLOW_ADD(a, b) ((4294967295U - (a)) + 1 + (b))
 #endif
 
+#ifdef ROAR_HAVE_MLOCK
+#define ROAR_MLOCK(p,s) mlook((p) - (p) % sysconf(_SC_PAGESIZE), (s))
+#endif
 
 
 #if BYTE_ORDER == BIG_ENDIAN
