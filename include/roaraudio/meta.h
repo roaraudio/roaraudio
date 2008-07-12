@@ -23,6 +23,8 @@
 #define ROAR_META_TYPE_LENGTH        16
 #define ROAR_META_TYPE_COMMENT       17
 #define ROAR_META_TYPE_OTHER         18
+#define ROAR_META_TYPE_FILENAME      19
+#define ROAR_META_TYPE_FILEURL       20
 
 
 #define ROAR_META_MAX_NAMELEN 32
