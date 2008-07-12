@@ -10,6 +10,7 @@
 #include <errno.h>
 #include <sys/types.h>
 #include <limits.h>
+#include <sys/mman.h>
 
 #include <arpa/inet.h>
 
@@ -76,7 +77,7 @@
 #endif
 
 #ifdef ROAR_HAVE_MLOCK
-#define ROAR_MLOCK(p,s) mlook((p) - (p) % sysconf(_SC_PAGESIZE), (s))
+#define ROAR_MLOCK(p,s) mlock((p), (s))
 #endif
 
 

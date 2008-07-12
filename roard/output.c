@@ -28,6 +28,10 @@ int output_buffer_init   (struct roar_audio_info * info) {
 
  ROAR_DBG("output_buffer_init(*): output buffer is at %p", buf);
 
+#ifdef ROAR_HAVE_MLOCK
+ ROAR_MLOCK(buf, size);
+#endif
+
  output_buffer_reinit();
 
  return 0;
