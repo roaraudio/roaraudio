@@ -7,6 +7,14 @@ int sources_init (void) {
  return 0;
 }
 
+int sources_set_client (int client) {
+ if ( client >= 0 ) {
+  g_source_client = client;
+  return 0;
+ } else {
+  return -1;
+ }
+}
 
 int sources_free (void) {
  return 0;

@@ -86,8 +86,18 @@ int main (int argc, char * argv[]) {
   return 1;
  }
 
+ if ( (g_self_client = clients_new()) == -1 ) {
+  ROAR_ERR("Can not create self client!");
+  return 1;
+ }
+
  if ( sources_init() == -1 ) {
   ROAR_ERR("Can not init sources!");
+  return 1;
+ }
+
+ if ( (sources_set_client(g_self_client)) == -1 ) {
+  ROAR_ERR("Can not init set source client!");
   return 1;
  }
 
@@ -185,11 +195,6 @@ int main (int argc, char * argv[]) {
  signal(SIGINT,  on_sig_int);
  signal(SIGPIPE, SIG_IGN);  // ignore broken pipes
 
-
- if ( (g_self_client = clients_new()) == -1 ) {
-  ROAR_ERR("Can not create self client!");
-  return 1;
- }
 
  clients_set_pid(g_self_client, getpid());
  clients_get(g_self_client, &self);
