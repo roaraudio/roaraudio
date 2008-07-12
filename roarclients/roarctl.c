@@ -138,7 +138,7 @@ int main (int argc, char * argv[]) {
   k = argv[i];
 
   if ( strcmp(k, "--server") == 0 ) {
-   server = k;
+   server = argv[++i];
   } else if ( strcmp(k, "--help") == 0 ) {
    usage();
    return 0;

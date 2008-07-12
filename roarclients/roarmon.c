@@ -33,7 +33,7 @@ int main (int argc, char * argv[]) {
   k = argv[i];
 
   if ( strcmp(k, "--server") == 0 ) {
-   server = k;
+   server = argv[++i];
   } else if ( strcmp(k, "--rate") == 0 ) {
    rate = atoi(argv[++i]);
   } else if ( strcmp(k, "--bits") == 0 ) {
