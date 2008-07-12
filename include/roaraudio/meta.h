@@ -27,6 +27,11 @@
 #define ROAR_META_TYPE_FILEURL       20
 
 
+#define ROAR_META_MODE_SET           0
+#define ROAR_META_MODE_ADD           1
+#define ROAR_META_MODE_DELETE        2
+#define ROAR_META_MODE_CLEAR         3
+
 #define ROAR_META_MAX_NAMELEN 32
 
 #define ROAR_META_MAX_PER_STREAM 16
