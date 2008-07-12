@@ -99,7 +99,7 @@ int req_on_con_stream  (int client, struct roar_message * mes, char * data) {
   return -1;
 
  type = (unsigned)mes->data[1];
- port = ((uint16_t*)mes->data)[1];
+ port = ROAR_NET2HOST16(((uint16_t*)mes->data)[1]);
 
  len = mes->datalen > 83 ? 79 : mes->datalen - 4;
 
