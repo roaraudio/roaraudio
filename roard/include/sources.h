@@ -14,7 +14,8 @@ int sources_set_client (int client);
 
 int sources_add (char * driver, char * device, char * container, char * options, int primary);
 
-int sources_add_raw (char * driver, char * device, char * container, char * options, int primary);
+int sources_add_raw  (char * driver, char * device, char * container, char * options, int primary);
+int sources_add_wav  (char * driver, char * device, char * container, char * options, int primary);
 
 #endif
 
