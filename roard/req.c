@@ -85,6 +85,42 @@ int req_on_exec_stream (int client, struct roar_message * mes, char * data) {
  return 0;
 }
 
+int req_on_con_stream  (int client, struct roar_message * mes, char * data) {
+ char   host[80] = {0};
+ int    port = 0;
+ int    type;
+ int    fh;
+ int    len;
+
+ if ( mes->datalen < 4 )
+  return -1;
+
+ if ( *(mes->data) != 0 )
+  return -1;
+
+ type = (unsigned)mes->data[1];
+ port = ((uint16_t*)mes->data)[1];
+
+ len = mes->datalen > 83 ? 79 : mes->datalen - 4;
+
+ strncmp(host, &(mes->data[4]), len);
+ host[len] = 0;
+
+ if ( type > ROAR_SOCKET_TYPE_MAX )
+  return -1;
+
+ if ( type == ROAR_SOCKET_TYPE_FILE ) // disabled because of security resons
+  return -1;
+
+ if ( type == ROAR_SOCKET_TYPE_FORK ) // why should we connect to ourself?
+  return -1;
+
+ if ( (fh = roar_socket_open(ROAR_SOCKET_MODE_CONNECT, type, host, port)) == -1 )
+  return -1;
+
+ close(fh);
+}
+
 
 int req_on_set_meta    (int client, struct roar_message * mes, char * data) {
  return -1;
