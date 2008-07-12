@@ -47,6 +47,8 @@ int stream_meta_add   (int id, int type, char * name, char * val) {
    strcpy(c, val);
    s->meta[i].value = c;
 
+   ROAR_DBG("stream_meta_add(id=%i, type=%i, name='%s', val='%s') = 0", id, type, name, val);
+
    return 0;
   }
  }
