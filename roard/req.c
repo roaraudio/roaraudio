@@ -134,6 +134,64 @@ int req_on_con_stream  (int client, struct roar_message * mes, char * data) {
 
 
 int req_on_set_meta    (int client, struct roar_message * mes, char * data) {
+ int type;
+ int mode;
+ int namelen, vallen;
+ char   val[1024+1];
+ char   name[ROAR_META_MAX_NAMELEN+1];
+
+ if ( mes->datalen < 3 )
+  return -1;
+
+ if ( mes->data[0] != 0 ) // version
+  return -1;
+
+ mode = (unsigned) mes->data[1];
+ type = (unsigned) mes->data[2];
+
+ if ( mode == ROAR_META_MODE_CLEAR ) {
+  stream_meta_clear(mes->stream);
+  mes->datalen = 0;
+  mes->cmd     = ROAR_CMD_OK;
+  return 0;
+ } else if ( mode == ROAR_META_MODE_DELETE ) { // unsuppoerted at the moment
+ } else if ( mode == ROAR_META_MODE_SET || mode == ROAR_META_MODE_ADD ) {
+  if ( mes->datalen < 5 )
+   return -1;
+
+  namelen = (unsigned) mes->data[3];
+  vallen  = (unsigned) mes->data[4];
+
+  if ( mes->datalen < (5 + namelen + vallen) )
+   return -1;
+
+  if ( namelen > ROAR_META_MAX_NAMELEN )
+   return -1;
+
+  strncpy(name, &(mes->data[5]), namelen);
+  name[namelen] = 0;
+
+  if ( vallen > 1024 )
+   return -1;
+
+  strncpy(val, &(mes->data[5+namelen]), vallen);
+  val[vallen] = 0;
+
+  if ( mode == ROAR_META_MODE_SET ) {
+   if ( stream_meta_set(mes->stream, type, name, val) == -1 )
+    return -1;
+  } else {
+   if ( stream_meta_add(mes->stream, type, name, val) == -1 )
+    return -1;
+  }
+
+  mes->datalen = 0;
+  mes->cmd     = ROAR_CMD_OK;
+  return 0;
+ } else { // unknown mode!
+  return -1;
+ }
+
  return -1;
 }
 
