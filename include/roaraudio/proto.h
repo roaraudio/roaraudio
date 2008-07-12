@@ -35,6 +35,8 @@
 #define ROAR_CMD_SET_VOL       19 /* change volume */
 #define ROAR_CMD_GET_VOL       20 /* get volume */
 
+#define ROAR_CMD_CON_STREAM    21 /* let the server connect to something to get data for a new stream */
+
 #define ROAR_CMD_OK           254 /* return value OK */
 #define ROAR_CMD_ERROR        255 /* return value ERROR */
 
