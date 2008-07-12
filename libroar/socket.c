@@ -160,6 +160,10 @@ int roar_socket_open_fork  (int mode, char * host, int port) {
  } else if ( r == 0 ) { // we are the child
   close(socks[0]);
 
+  close(ROAR_STDIN ); // we do not want roard to have any standard input
+  close(ROAR_STDOUT); // STDOUT is also not needed, so we close it,
+                      // but STDERR we keep open for error messages.
+
   snprintf(fhstr, 7, "%i", socks[1]);
 
   execlp("roard", "roard", "--no-listen", "--client-fh", fhstr, NULL);
