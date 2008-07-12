@@ -76,6 +76,16 @@ int main (int argc, char * argv[]) {
   server = user_sock;
  }
 
+ if ( clients_init() == -1 ) {
+  ROAR_ERR("Can not init clients!");
+  return 1;
+ }
+
+ if ( streams_init() == -1 ) {
+  ROAR_ERR("Can not init streams!");
+  return 1;
+ }
+
  if ( sources_init() == -1 ) {
   ROAR_ERR("Can not init sources!");
   return 1;
@@ -163,16 +173,6 @@ int main (int argc, char * argv[]) {
 
  if ( driver_open(&drvinst, &drvid, driver, device, &sa) == -1 ) {
   ROAR_ERR("Can not open output driver!");
-  return 1;
- }
-
- if ( clients_init() == -1 ) {
-  ROAR_ERR("Can not init clients!");
-  return 1;
- }
-
- if ( streams_init() == -1 ) {
-  ROAR_ERR("Can not init streams!");
   return 1;
  }
 
