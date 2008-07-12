@@ -9,26 +9,35 @@ void usage (void) {
 
  printf("\nOptions:\n\n");
 
- printf("  --server SERVER    - Set server hostname\n"
-        "  --help             - Show this help\n"
+ printf("  --server SERVER         - Set server hostname\n"
+        "  --help                  - Show this help\n"
        );
 
  printf("\nCommands:\n\n");
  printf(
-        "  help               - Show this help\n"
+        "  help                    - Show this help\n"
         "\n"
-        "  standby, off       - Go into standby mode\n"
-        "  resume, on         - Go into active mode\n"
-        "  standbymode        - Show current standby mode\n"
-        "  exit               - Quits the roard (must be used as last command)\n"
+        "  standby, off            - Go into standby mode\n"
+        "  resume, on              - Go into active mode\n"
+        "  standbymode             - Show current standby mode\n"
+        "  exit                    - Quits the roard (must be used as last command)\n"
         "\n"
-        "  kick TYPE ID       - Kicks object of TYPE with id ID\n"
-        "                       Types: client stream sample source\n"
+        "  volume ID CHAN V0 V1... - Sets volume for stream ID\n"
+        "                            CHAN is the number of channels or 'mono' or 'stereo'\n"
+        "                            if mono or stereo is chosen roarctl trys to set\n"
+        "                            sensfull values for all channels even if the output\n"
+        "                            is has more channels.\n"
+        "                            all other args are the volumes of the channels\n"
+        "                            you may use integer or percent values.\n"
+        "                            percent values can flooding points.\n"
         "\n"
-        "  serveroinfo        - Gets Informations about server output\n"
-        "  listclients        - Gets Informations about clients\n"
-        "  liststreams        - Gets Informations about streams\n"
-        "  allinfo            - Get all infos\n"
+        "  kick TYPE ID            - Kicks object of TYPE with id ID\n"
+        "                            Types: client stream sample source\n"
+        "\n"
+        "  serveroinfo             - Gets Informations about server output\n"
+        "  listclients             - Gets Informations about clients\n"
+        "  liststreams             - Gets Informations about streams\n"
+        "  allinfo                 - Get all infos\n"
        );
 }
 
