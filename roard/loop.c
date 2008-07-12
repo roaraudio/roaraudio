@@ -24,8 +24,10 @@ int main_loop (int driver, DRIVER_USERDATA_T driver_inst, struct roar_audio_info
 
   ROAR_DBG("main_loop(*): looping...");
 
-  ROAR_DBG("main_loop(*): check for new clients...");
-  net_check_listen();
+  if ( g_listen_socket != -1 ) {
+   ROAR_DBG("main_loop(*): check for new clients...");
+   net_check_listen();
+  }
 
   ROAR_DBG("main_loop(*): check for new data...");
   clients_check_all();

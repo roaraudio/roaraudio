@@ -7,7 +7,12 @@ char * server = ROAR_DEFAULT_SOCK_GLOBAL; // global server address
 void usage (void) {
  printf("Usage: roard [OPTIONS]...\n\n");
 
- printf("Audio Options:\n\n");
+ printf("Misc Options:\n\n");
+ printf(
+        " --demon               - bring the server into background after init\n"
+       );
+
+ printf("\nAudio Options:\n\n");
  printf(
         " -R  --rate   RATE     - Set server rate\n"
         " -B  --bits   BITS     - Set server bits\n"
@@ -35,6 +40,9 @@ void usage (void) {
         " -s  --sock            - Filename for UNIX Domain Socket\n"
         " -G  GROUP             - Sets the group for the UNIX Domain Socket, (default: audio)\n"
         "                         You need the permittions to change the GID\n"
+        " --no-listen           - Do not listen for new clients (only usefull for relaing)\n"
+        " --client-fh           - Communite with a client over this handle\n"
+        "                         (only usefull for relaing)\n"
        );
 // printf("\n Options:\n\n");
  printf("\n");
@@ -45,6 +53,7 @@ int main (int argc, char * argv[]) {
  char * k;
  char user_sock[80] = {0};
  struct roar_audio_info sa;
+ int    demon = 0;
  char * driver = NULL;
  char * device = NULL;
  char * opts   = NULL;
@@ -108,6 +117,9 @@ int main (int argc, char * argv[]) {
    usage();
    return 0;
 
+  } else if ( strcmp(k, "--demon") == 0 ) {
+   demon = 1;
+
   } else if ( strcmp(k, "-R") == 0 || strcmp(k, "--rate") == 0 ) {
    sa.rate = atoi(argv[++i]);
   } else if ( strcmp(k, "-B") == 0 || strcmp(k, "--bits") == 0 ) {
@@ -143,7 +155,7 @@ int main (int argc, char * argv[]) {
 
   } else if ( strcmp(k, "-p") == 0 || strcmp(k, "--port") == 0 ) {
    port = atoi(argv[++i]);
-  } else if ( strcmp(k, "-b") == 0 || strcmp(k, "--bind") == 0 ) {
+  } else if ( strcmp(k, "-b") == 0 || strcmp(k, "--bind") == 0 || strcmp(k, "-s") == 0 || strcmp(k, "--sock") == 0 ) {
    server = argv[++i];
   } else if ( strcmp(k, "-t") == 0 ) {
    server = ROAR_DEFAULT_HOST;
@@ -151,6 +163,14 @@ int main (int argc, char * argv[]) {
    // ignore this case as it is the default behavor.
   } else if ( strcmp(k, "-G") == 0 ) {
    sock_grp = argv[++i];
+
+  } else if ( strcmp(k, "--no-listen") == 0 ) {
+   *server = 0;
+  } else if ( strcmp(k, "--client-fh") == 0 ) {
+   if ( clients_set_fh(clients_new(), atoi(argv[++i])) == -1 ) {
+    ROAR_ERR("main(*): Can not set client's fh");
+    return 1;
+   }
 
   } else {
    usage();
@@ -161,18 +181,20 @@ int main (int argc, char * argv[]) {
 
  ROAR_DBG("Server config: rate=%i, bits=%i, chans=%i", sa.rate, sa.bits, sa.channels);
 
- if ( (g_listen_socket = roar_socket_listen(ROAR_SOCKET_TYPE_UNKNOWN, server, port)) == -1 ) {
-  ROAR_ERR("Can not open listen socket!");
-  return 1;
- }
+ if ( *server != 0 ) {
+  if ( (g_listen_socket = roar_socket_listen(ROAR_SOCKET_TYPE_UNKNOWN, server, port)) == -1 ) {
+   ROAR_ERR("Can not open listen socket!");
+   return 1;
+  }
 
- if ( *server == '/' ) {
-  if ( (grp = getgrnam(sock_grp)) == NULL ) {
-   ROAR_ERR("Can not get GID for group %s: %s", sock_grp, strerror(errno));
-  } else {
-   chown(server, -1, grp->gr_gid);
-   if ( getuid() == 0 )
-    chmod(server, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP);
+  if ( *server == '/' ) {
+   if ( (grp = getgrnam(sock_grp)) == NULL ) {
+    ROAR_ERR("Can not get GID for group %s: %s", sock_grp, strerror(errno));
+   } else {
+    chown(server, -1, grp->gr_gid);
+    if ( getuid() == 0 )
+     chmod(server, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP);
+   }
   }
  }
 
@@ -205,6 +227,15 @@ int main (int argc, char * argv[]) {
  }
 
  strcpy(self->name, "RoarAudio demon internal");
+
+ if ( demon ) {
+  close(ROAR_STDIN );
+  close(ROAR_STDOUT);
+  close(ROAR_STDERR);
+  if ( fork() )
+   _exit(0);
+ }
+
  // start main loop...
  main_loop(drvid, drvinst, &sa);
 
