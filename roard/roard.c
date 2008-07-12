@@ -125,6 +125,10 @@ int main (int argc, char * argv[]) {
    port = atoi(argv[++i]);
   } else if ( strcmp(k, "-b") == 0 || strcmp(k, "--bind") == 0 ) {
    server = argv[++i];
+  } else if ( strcmp(k, "-t") == 0 ) {
+   server = ROAR_DEFAULT_HOST;
+  } else if ( strcmp(k, "-u") == 0 ) {
+   // ignore this case as it is the default behavor.
   } else if ( strcmp(k, "-G") == 0 ) {
    sock_grp = argv[++i];
 
