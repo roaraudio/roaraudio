@@ -33,6 +33,7 @@ int streams_delete (int id);
 int streams_set_client (int id, int client);
 
 int streams_set_fh     (int id, int fh);
+int streams_get_fh     (int id);
 int streams_get        (int id, struct roar_stream_server ** stream);
 
 int stream_add_buffer     (int id, struct roar_buffer *  buf);

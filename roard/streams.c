@@ -120,6 +120,12 @@ int streams_set_fh     (int id, int fh) {
  }
 }
 
+int streams_get_fh     (int id) {
+ if ( g_streams[id] == NULL )
+  return -1;
+
+ return ((struct roar_stream *)g_streams[id])->fh;
+}
 
 int streams_get    (int id, struct roar_stream_server ** stream) {
  if ( g_streams[id] == NULL )

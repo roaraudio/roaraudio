@@ -110,7 +110,7 @@ int clients_set_pid   (int id, int    pid) {
 int clients_check_all (void) {
  struct timeval tv;
  fd_set r, e;
- int i;
+ int i, j;
  int ret;
  int fh;
  int max_fh = -1;
@@ -125,14 +125,24 @@ int clients_check_all (void) {
   if ( g_clients[i] == NULL )
    continue;
 
-  if ( (fh = g_clients[i]->fh) == -1 )
-   continue;
+  if ( (fh = g_clients[i]->fh) != -1 ) {
+   FD_SET(fh, &r);
+   FD_SET(fh, &e);
 
-  FD_SET(fh, &r);
-  FD_SET(fh, &e);
+   if ( fh > max_fh )
+    max_fh = fh;
+  } else {
 
-  if ( fh > max_fh )
-   max_fh = fh;
+   for (j = 0; j < ROAR_CLIENTS_MAX_STREAMS_PER_CLIENT; j++) {
+    if ( (fh = streams_get_fh(g_clients[i]->streams[j])) != -1 ) {
+     FD_SET(fh, &r);
+
+     if ( fh > max_fh )
+      max_fh = fh;
+    }
+   }
+  }
+
  }
 
  if ( (ret = select(max_fh + 1, &r, NULL, &e, &tv)) < 1 ) {
@@ -143,19 +153,27 @@ int clients_check_all (void) {
   if ( g_clients[i] == NULL )
    continue;
 
-  if ( (fh = g_clients[i]->fh) == -1 )
-   continue;
+  if ( (fh = g_clients[i]->fh) != -1 ) {
 
-  if ( FD_ISSET(fh, &r) ) {
-   if ( g_clients[i]->execed == -1 ) {
-    clients_check(i);
-   } else {
-    streams_check(g_clients[i]->execed);
+   if ( FD_ISSET(fh, &r) ) {
+    if ( g_clients[i]->execed == -1 ) {
+     clients_check(i);
+    } else {
+     streams_check(g_clients[i]->execed);
+    }
+   }
+
+   if ( FD_ISSET(fh, &e) )
+    clients_delete(i);
+  } else {
+   for (j = 0; j < ROAR_CLIENTS_MAX_STREAMS_PER_CLIENT; j++) {
+    if ( (fh = streams_get_fh(g_clients[i]->streams[j])) != -1 ) {
+     if ( FD_ISSET(fh, &r) ) {
+      streams_check(g_clients[i]->streams[j]);
+     }
+    }
    }
   }
-
-  if ( FD_ISSET(fh, &e) )
-   clients_delete(i);
  }
 
  return 0;
