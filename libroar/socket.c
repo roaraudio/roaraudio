@@ -74,8 +74,11 @@ int roar_socket_open (int mode, int type, char * host, int port) {
 
  if ( type == ROAR_SOCKET_TYPE_UNKNOWN ) {
   type = ROAR_SOCKET_TYPE_INET;
-  if ( *host == '/' )
+  if ( *host == '/' ) {
    type = ROAR_SOCKET_TYPE_UNIX;
+  } else if ( strcmp(host, "+fork") == 0 ) {
+   type = ROAR_SOCKET_TYPE_FORK;
+  }
  }
 
 
@@ -109,7 +112,7 @@ int roar_socket_open (int mode, int type, char * host, int port) {
    return -1;
   }
   // hey! we have a socket...
- } else {
+ } else if ( type == ROAR_SOCKET_TYPE_UNIX ) {
   socket_addr_un.sun_family = AF_UNIX;
   strncpy(socket_addr_un.sun_path, host, sizeof(socket_addr_un.sun_path) - 1);
 
@@ -120,6 +123,10 @@ int roar_socket_open (int mode, int type, char * host, int port) {
    close(fh);
    return -1;
   }
+ } else if ( type == ROAR_SOCKET_TYPE_FORK ) {
+  return roar_socket_open_fork(mode, host, port);
+ } else {
+  return -1;
  }
 
  if ( mode == MODE_LISTEN )
@@ -129,6 +136,43 @@ int roar_socket_open (int mode, int type, char * host, int port) {
   }
 
  return fh;
+}
+
+int roar_socket_open_fork  (int mode, char * host, int port) {
+ int socks[2];
+ int r;
+ char fhstr[8];
+
+ if ( mode == MODE_LISTEN )
+  return -1;
+
+ if ( socketpair(AF_UNIX, SOCK_STREAM, 0, socks) == -1 ) {
+  return -1;
+ }
+
+ r = fork();
+
+ if ( r == -1 ) { // error!
+  ROAR_ERR("roar_socket_open_fork(*): Can not fork: %s", strerror(errno));
+  close(socks[0]);
+  close(socks[1]);
+  return -1;
+ } else if ( r == 0 ) { // we are the child
+  close(socks[0]);
+
+  snprintf(fhstr, 7, "%i", socks[1]);
+
+  execlp("roard", "roard", "--no-listen", "--client-fh", fhstr, NULL);
+
+  // we are still alive?
+  ROAR_ERR("roar_socket_open_fork(*): alive after exec(), that's bad!");
+  _exit(1);
+ } else { // we are the parent
+  close(socks[1]);
+  return socks[0];
+ }
+
+ return -1;
 }
 
 // --- [ PROXY CODE ] ---
