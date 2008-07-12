@@ -55,8 +55,8 @@ int main (int argc, char * argv[]) {
  char user_sock[80] = {0};
  struct roar_audio_info sa;
  int    demon = 0;
- char * driver = NULL;
- char * device = NULL;
+ char * driver = getenv("ROAR_DRIVER");
+ char * device = getenv("ROAR_DEVICE");
  char * opts   = NULL;
 // char * server = ROAR_DEFAULT_SOCK_GLOBAL;
  int      port = ROAR_DEFAULT_PORT;
