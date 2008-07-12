@@ -12,6 +12,7 @@ int main (void) {
   { "roar_client",        sizeof(struct roar_client)        },
   { "roar_connection",    sizeof(struct roar_connection)    },
   { "roar_audio_info",    sizeof(struct roar_audio_info)    },
+  { "roar_meta",          sizeof(struct roar_meta)          },
   { NULL, 0 }
  }, * c = types - 1;
 

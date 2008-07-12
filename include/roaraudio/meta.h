@@ -21,9 +21,13 @@
 #define ROAR_META_TYPE_HOMEPAGE      14
 #define ROAR_META_TYPE_THUMBNAIL     15
 #define ROAR_META_TYPE_LENGTH        16
+#define ROAR_META_TYPE_COMMENT       17
+#define ROAR_META_TYPE_OTHER         18
 
 
 #define ROAR_META_MAX_NAMELEN 32
+
+#define ROAR_META_MAX_PER_STREAM 16
 
 struct roar_meta {
  int    type;
