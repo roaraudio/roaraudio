@@ -125,6 +125,8 @@ int roar_socket_open (int mode, int type, char * host, int port) {
   }
  } else if ( type == ROAR_SOCKET_TYPE_FORK ) {
   return roar_socket_open_fork(mode, host, port);
+ } else if ( type == ROAR_SOCKET_TYPE_FILE ) {
+  return roar_socket_open_file(mode, host, port);
  } else {
   return -1;
  }
@@ -177,6 +179,19 @@ int roar_socket_open_fork  (int mode, char * host, int port) {
  }
 
  return -1;
+}
+
+int roar_socket_open_file  (int mode, char * host, int port) {
+ int fh;
+
+ if ( mode == MODE_LISTEN )
+  return -1;
+
+ if ( (fh = open(host, O_RDONLY, 0644)) == -1 ) {
+  ROAR_ERR("roar_socket_open_file(*): Can not open file %s: %s", host, strerror(errno));
+ }
+
+ return fh;
 }
 
 // --- [ PROXY CODE ] ---
