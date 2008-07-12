@@ -127,6 +127,88 @@ int display_mixer (struct roar_connection * con, int stream) {
  return 0;
 }
 
+int set_mixer (struct roar_connection * con, int * cur, int max, char * arg[]) {
+ int chans = 0;
+ int id;
+ int i;
+ int len;
+ int old_chans;
+ int vol_l, vol_r;
+ char * k;
+ struct roar_mixer_settings mixer;
+ struct roar_mixer_settings old_mixer;
+
+ if (*cur + 2 > max)
+  return -1;
+
+ id = atoi(arg[++(*cur)]);
+
+ k = arg[++(*cur)];
+
+ if ( roar_get_vol(con, id, &old_mixer, &old_chans) == -1 ) {
+  fprintf(stderr, "Error: can not get stream mixer info\n");
+  return -1;
+ }
+
+
+ if ( strcmp(k, "mono") == 0 && old_chans != 1 ) {
+  chans = 1;
+
+  if ( *cur + 1 > max )
+   return -1;
+
+  k   = arg[++(*cur)];
+  len = strlen(k);
+
+  if ( k[len - 1] == '%' ) {
+   k[len - 1] = 0;
+   vol_l = (atof(k)*65535)/100;
+  } else {
+   vol_l = atoi(k);
+  }
+
+  for (i = 0; i < old_chans; i++)
+   mixer.mixer[i] = vol_l;
+
+  chans = old_chans;
+
+ } else if ( strcmp(k, "stereo") == 0 && old_chans != 2 ) {
+  chans = 2;
+//  printf("mode: stereo; chans=%i, old_chans=%i\n", chans, old_chans);
+  ROAR_ERR("mode stereo not supported");
+  return -1;
+ } else {
+  if ( strcmp(k, "mono") == 0 ) {
+   chans = 1;
+  } else if ( strcmp(k, "stereo") == 0 ) {
+   chans = 2;
+  } else {
+   chans = atoi(k);
+  }
+
+//  printf("mode: int; chans=%i, old_chans=%i\n", chans, old_chans);
+
+  if ( *cur + chans > max )
+   return -1;
+
+  for (i = 0; i < chans; i++) {
+   k   = arg[++(*cur)];
+   len = strlen(k);
+
+   if ( k[len - 1] == '%' ) {
+    k[len - 1] = 0;
+    mixer.mixer[i] = (atof(k)*(int)65535)/100;
+   } else {
+    mixer.mixer[i] = atoi(k);
+   }
+  }
+ }
+
+ mixer.scale = 65535;
+
+ return roar_set_vol(con, id, &mixer, chans);
+}
+
 int main (int argc, char * argv[]) {
  struct roar_connection con;
  char * server   = NULL;
@@ -243,6 +325,13 @@ int main (int argc, char * argv[]) {
     fprintf(stderr, "Error: can not kick %s\n", k);
    } else {
     printf("%s kicked\n", k);
+   }
+
+  } else if ( !strcmp(k, "volume") ) {
+   if ( set_mixer(&con, &i, argc, argv) == -1 ) {
+    fprintf(stderr, "Error: can not set volume\n");
+   } else {
+    printf("volume changed\n");
    }
 
   } else {
