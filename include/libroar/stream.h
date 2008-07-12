@@ -17,6 +17,7 @@ int roar_stream_connect (struct roar_connection * con, struct roar_stream * s, i
 int roar_stream_new     (struct roar_stream * s, unsigned int rate, unsigned int channels, unsigned int bits, unsigned int codec);
 
 int roar_stream_exec    (struct roar_connection * con, struct roar_stream * s);
+int roar_stream_connect_to (struct roar_connection * con, struct roar_stream * s, int type, char * host, int port);
 
 int roar_stream_add_data (struct roar_connection * con, struct roar_stream * s, char * data, size_t len);
 

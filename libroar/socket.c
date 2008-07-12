@@ -2,8 +2,12 @@
 
 #include "libroar.h"
 
+/* old...
 #define MODE_LISTEN  1
 #define MODE_CONNECT 2
+*/
+#define MODE_LISTEN  ROAR_SOCKET_MODE_LISTEN
+#define MODE_CONNECT ROAR_SOCKET_MODE_CONNECT
 
 int roar_socket_new_tcp (void) {
  int fh;

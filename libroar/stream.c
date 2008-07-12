@@ -72,6 +72,37 @@ int roar_stream_exec    (struct roar_connection * con, struct roar_stream * s) {
  return -1;
 }
 
+int roar_stream_connect_to (struct roar_connection * con, struct roar_stream * s, int type, char * host, int port) {
+ struct roar_message m;
+ int len = 0;
+
+ if ( host == NULL )
+  return -1;
+
+ m.cmd     = ROAR_CMD_CON_STREAM;
+ m.stream  = s->id;
+ m.pos     = 0;
+
+ m.data[0] = 0;
+ m.data[1] = type;
+ ((uint16_t*)&(m.data))[1] = ROAR_HOST2NET16(port);
+
+ len = strlen(host);
+
+ if ( len > 76 )
+  return -1;
+
+ strncpy(&(m.data[4]), host, len);
+
+ m.datalen = len + 4;
+
+ if ( roar_req(con, &m, NULL) == -1 )
+  return -1;
+
+ if ( m.cmd == ROAR_CMD_OK )
+  return 0;
+ return -1;
+}
 
 int roar_stream_add_data (struct roar_connection * con, struct roar_stream * s, char * data, size_t len) {
  struct roar_message m;
