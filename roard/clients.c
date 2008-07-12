@@ -134,16 +134,16 @@ int clients_check_all (void) {
 
    if ( fh > max_fh )
     max_fh = fh;
-  } else {
+  }
 
-   for (j = 0; j < ROAR_CLIENTS_MAX_STREAMS_PER_CLIENT; j++) {
-    if ( (fh = streams_get_fh(g_clients[i]->streams[j])) != -1 ) {
-     FD_SET(fh, &r);
+  for (j = 0; j < ROAR_CLIENTS_MAX_STREAMS_PER_CLIENT; j++) {
+   if ( (fh = streams_get_fh(g_clients[i]->streams[j])) != -1 ) {
+    FD_SET(fh, &r);
 
-     if ( fh > max_fh )
-      max_fh = fh;
-    }
+    if ( fh > max_fh )
+     max_fh = fh;
    }
+   //printf("D: client=%i, stream=%i, fh=%i\n", i, j, fh);
   }
 
  }
@@ -165,14 +165,20 @@ int clients_check_all (void) {
     }
    }
 
-   if ( FD_ISSET(fh, &e) )
+   if ( FD_ISSET(fh, &e) ) {
     clients_delete(i);
-  } else {
-   for (j = 0; j < ROAR_CLIENTS_MAX_STREAMS_PER_CLIENT; j++) {
-    if ( (fh = streams_get_fh(g_clients[i]->streams[j])) != -1 ) {
-     if ( FD_ISSET(fh, &r) ) {
-      streams_check(g_clients[i]->streams[j]);
-     }
+    continue;
+   }
+  }
+
+  if ( g_clients[i] == NULL )
+   continue;
+
+  for (j = 0; j < ROAR_CLIENTS_MAX_STREAMS_PER_CLIENT; j++) {
+   //printf("D: client=%i, stream=%i, g_clients[i=%i] = %p\n", i, j, i, g_clients[i]);
+   if ( (fh = streams_get_fh(g_clients[i]->streams[j])) != -1 ) {
+    if ( FD_ISSET(fh, &r) ) {
+     streams_check(g_clients[i]->streams[j]);
     }
    }
   }

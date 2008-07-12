@@ -121,6 +121,9 @@ int streams_set_fh     (int id, int fh) {
 }
 
 int streams_get_fh     (int id) {
+ if ( id < 0 )
+  return -1;
+
  if ( g_streams[id] == NULL )
   return -1;
 
@@ -359,7 +362,7 @@ int streams_fill_mixbuffer (int id, struct roar_audio_info * info) {
 
 
 int streams_get_mixbuffers (void *** bufferlist, struct roar_audio_info * info, unsigned int pos) {
- static void * bufs[ROAR_STREAMS_MAX];
+ static void * bufs[ROAR_STREAMS_MAX+1];
  int i;
  int have = 0;
 

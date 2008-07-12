@@ -106,7 +106,7 @@ int req_on_con_stream  (int client, struct roar_message * mes, char * data) {
 
  len = mes->datalen - 4;
 
- strncmp(host, &(mes->data[4]), len);
+ strncpy(host, &(mes->data[4]), len);
  host[len] = 0;
 
  if ( type > ROAR_SOCKET_TYPE_MAX )
