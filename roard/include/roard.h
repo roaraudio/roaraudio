@@ -33,6 +33,8 @@ int g_listen_socket;
 
 int g_self_client;
 
+int g_terminate;
+
 struct roar_audio_info * g_sa;
 
 #endif

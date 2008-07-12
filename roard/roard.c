@@ -9,7 +9,8 @@ void usage (void) {
 
  printf("Misc Options:\n\n");
  printf(
-        " --demon               - bring the server into background after init\n"
+        " --demon               - Bring the server into background after init\n"
+        " --terminate           - Terminate after last client quited\n"
        );
 
  printf("\nAudio Options:\n\n");
@@ -119,6 +120,8 @@ int main (int argc, char * argv[]) {
 
   } else if ( strcmp(k, "--demon") == 0 ) {
    demon = 1;
+  } else if ( strcmp(k, "--terminate") == 0 ) {
+   g_terminate = 1;
 
   } else if ( strcmp(k, "-R") == 0 || strcmp(k, "--rate") == 0 ) {
    sa.rate = atoi(argv[++i]);

@@ -114,6 +114,7 @@ int clients_check_all (void) {
  int ret;
  int fh;
  int max_fh = -1;
+ int have = 0;
 
  FD_ZERO(&r);
  FD_ZERO(&e);
@@ -126,6 +127,8 @@ int clients_check_all (void) {
    continue;
 
   if ( (fh = g_clients[i]->fh) != -1 ) {
+   have++;
+
    FD_SET(fh, &r);
    FD_SET(fh, &e);
 
@@ -146,7 +149,7 @@ int clients_check_all (void) {
  }
 
  if ( (ret = select(max_fh + 1, &r, NULL, &e, &tv)) < 1 ) {
-  return ret;
+  return ret < 0 ? ret : have;
  }
 
  for (i = 0; i < ROAR_CLIENTS_MAX; i++) {
@@ -154,7 +157,6 @@ int clients_check_all (void) {
    continue;
 
   if ( (fh = g_clients[i]->fh) != -1 ) {
-
    if ( FD_ISSET(fh, &r) ) {
     if ( g_clients[i]->execed == -1 ) {
      clients_check(i);
@@ -176,7 +178,8 @@ int clients_check_all (void) {
   }
  }
 
- return 0;
+ ROAR_DBG("clients_check_all(void) = %i // have value", have);
+ return have;
 }
 
 int clients_check     (int id) {
