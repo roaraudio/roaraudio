@@ -18,6 +18,7 @@
 #include "req.h"
 #include "sources.h"
 #include "sample.h"
+#include "meta.h"
 
 int alive;
 
