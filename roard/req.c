@@ -118,7 +118,15 @@ int req_on_con_stream  (int client, struct roar_message * mes, char * data) {
  if ( (fh = roar_socket_open(ROAR_SOCKET_MODE_CONNECT, type, host, port)) == -1 )
   return -1;
 
- close(fh);
+ if ( client_stream_set_fh(client, mes->stream, fh) == -1 ) {
+  close(fh);
+  return 1;
+ }
+
+ return 0;
+
+ mes->datalen = 0;
+ mes->cmd     = ROAR_CMD_OK;
 }
 
 

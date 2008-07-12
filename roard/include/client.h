@@ -47,6 +47,7 @@ int clients_send_filter(struct roar_audio_info * sa, uint32_t pos);
 
 
 int client_stream_exec   (int client, int stream);
+int client_stream_set_fh (int client, int stream, int fh);
 int client_stream_add    (int client, int stream);
 int client_stream_delete (int client, int stream);
 
