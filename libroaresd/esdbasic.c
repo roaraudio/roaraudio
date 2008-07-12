@@ -9,7 +9,7 @@
 int esd_open_sound( const char *host ) {
  struct roar_connection con;
 
- if ( roar_simple_connect(&con, host, NULL) == -1 ) {
+ if ( roar_simple_connect(&con, (char*) host, NULL) == -1 ) {
   ROAR_DBG("esd_open_sound(*): roar_simple_connect() faild!");
   return -1;
  }
@@ -18,7 +18,9 @@ int esd_open_sound( const char *host ) {
 }
 
 /* send the authorization cookie, create one if needed */
-int esd_send_auth( int sock );
+int esd_send_auth( int sock ) {
+ return 0;
+}
 
 /* closes fd, previously obtained by esd_open */
 int esd_close( int esd ) {

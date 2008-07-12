@@ -6,9 +6,8 @@
 /* the *_fallback functions try to open /dev/dsp if there's no EsounD */
 int esd_play_stream( esd_format_t format, int rate,
                      const char *host, const char *name ) {
-
-int channels;
-int bits;
+ int channels;
+ int bits;
 
  if ( (format & ESD_BITS8) ) {
   bits = 8;
@@ -27,16 +26,21 @@ int bits;
 
 int esd_play_stream_fallback( esd_format_t format, int rate,
                               const char *host, const char *name ) {
- return esd_play_stream(format, rate, host, name); // for the moment this need to be ok...
+ int r;
+
+ if ( (r = esd_play_stream(format, rate, host, name)) != -1 ) {
+  return r;
+ }
+
+ return esd_play_stream(format, rate, "+fork", name);
 }
 
 
 
 int esd_monitor_stream( esd_format_t format, int rate,
                         const char *host, const char *name ) {
-
-int channels;
-int bits;
+ int channels;
+ int bits;
 
  if ( (format & ESD_BITS8) ) {
   bits = 8;
@@ -59,9 +63,8 @@ int esd_record_stream_fallback( esd_format_t format, int rate,
                                 const char *host, const char *name );
 int esd_filter_stream( esd_format_t format, int rate,
                        const char *host, const char *name ) {
-
-int channels;
-int bits;
+ int channels;
+ int bits;
 
  if ( (format & ESD_BITS8) ) {
   bits = 8;
