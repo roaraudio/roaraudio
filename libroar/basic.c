@@ -9,10 +9,10 @@ int roar_connect_raw (char * server) {
  int port = 0;
  int fh = -1;
 
- if ( (roar_server = getenv("ROAR_SERVER")) != NULL )
+ if ( server == NULL && (roar_server = getenv("ROAR_SERVER")) != NULL )
   server = roar_server;
 
- if ( server == NULL ) {
+ if ( server == NULL || *server == 0 ) {
   /* connect via defaults */
 
 
