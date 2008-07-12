@@ -17,6 +17,7 @@
 #include "buffer.h"
 #include "convert.h"
 #include "math.h"
+#include "meta.h"
 
 #endif
 
