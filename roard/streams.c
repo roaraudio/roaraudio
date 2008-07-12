@@ -52,8 +52,11 @@ int streams_new    (void) {
    ((struct roar_stream_server*)n)->mixer.scale = 65535;
    for (j = 0; j < ROAR_MAX_CHANNELS; j++)
     ((struct roar_stream_server*)n)->mixer.mixer[j] = 65535;
-   for (j = 0; j < ROAR_META_MAX_PER_STREAM; j++)
-    ((struct roar_stream_server*)n)->meta[j].type = ROAR_META_TYPE_NONE;
+   for (j = 0; j < ROAR_META_MAX_PER_STREAM; j++) {
+    ((struct roar_stream_server*)n)->meta[j].type   = ROAR_META_TYPE_NONE;
+    ((struct roar_stream_server*)n)->meta[j].key[0] = 0;
+    ((struct roar_stream_server*)n)->meta[j].value  = NULL;
+   }
 
    g_streams[i] = (struct roar_stream_server*)n;
    ROAR_DBG("streams_new(void) = %i", i);
