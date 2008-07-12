@@ -74,6 +74,20 @@ int roar_stream_exec    (struct roar_connection * con, struct roar_stream * s) {
 
 int roar_stream_connect_to (struct roar_connection * con, struct roar_stream * s, int type, char * host, int port) {
  struct roar_message m;
+
+ if ( roar_stream_connect_to_ask(con, s, type, host, port) == -1 )
+  return -1;
+
+ if ( roar_recv_message(con, &m, NULL) == -1 )
+  return -1;
+
+ if ( m.cmd == ROAR_CMD_OK )
+  return 0;
+ return -1;
+}
+
+int roar_stream_connect_to_ask (struct roar_connection * con, struct roar_stream * s, int type, char * host, int port) {
+ struct roar_message m;
  int len = 0;
 
  if ( host == NULL )
@@ -96,12 +110,10 @@ int roar_stream_connect_to (struct roar_connection * con, struct roar_stream * s
 
  m.datalen = len + 4;
 
- if ( roar_req(con, &m, NULL) == -1 )
+ if ( roar_send_message(con, &m, NULL) == -1 )
   return -1;
 
- if ( m.cmd == ROAR_CMD_OK )
-  return 0;
- return -1;
+ return 0;
 }
 
 int roar_stream_add_data (struct roar_connection * con, struct roar_stream * s, char * data, size_t len) {

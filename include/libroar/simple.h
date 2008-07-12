@@ -9,6 +9,8 @@ int roar_simple_connect (struct roar_connection * con, char * server, char * nam
 
 int roar_simple_stream  (int rate, int channels, int bits, int codec, char * server, int dir, char * name);
 
+int roar_simple_new_stream (struct roar_connection * con, int rate, int channels, int bits, int codec, int dir);
+
 int roar_simple_play    (int rate, int channels, int bits, int codec, char * server, char * name);
 int roar_simple_monitor (int rate, int channels, int bits, int codec, char * server, char * name);
 int roar_simple_record  (int rate, int channels, int bits, int codec, char * server, char * name);

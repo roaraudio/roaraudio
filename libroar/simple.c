@@ -57,6 +57,51 @@ int roar_simple_stream(int rate, int channels, int bits, int codec, char * serve
  return con.fh;
 }
 
+int roar_simple_new_stream (struct roar_connection * con, int rate, int channels, int bits, int codec, int dir) {
+ struct roar_stream     s;
+ struct roar_message    mes;
+ char file[80];
+ int fh = -1, listen;
+ static int count = 0;
+
+ sprintf(file, "/tmp/.libroar-simple-stream.%i-%i", getpid(), count++);
+
+ if ( (listen = roar_socket_listen(ROAR_SOCKET_TYPE_UNIX, file, 0)) == -1 ) {
+  return -1;
+ }
+
+ if ( roar_stream_new(&s, rate, channels, bits, codec) == -1 ) {
+  return -1;
+ }
+
+ if ( roar_stream_connect(con, &s, dir) == -1 ) {
+  return -1;
+ }
+
+ if ( roar_stream_connect_to_ask(con, &s, ROAR_SOCKET_TYPE_UNIX, file, 0) != -1 ) {
+
+  if ( (fh = accept(listen, NULL, NULL)) != -1 ) {
+   if ( dir == ROAR_DIR_PLAY ) {
+    shutdown(fh, SHUT_RD);
+   } else if ( dir == ROAR_DIR_MONITOR || dir == ROAR_DIR_RECORD ) {
+    shutdown(fh, SHUT_WR);
+   }
+  }
+   if ( roar_recv_message(con, &mes, NULL) == -1 ) {
+    close(fh);
+    fh = -1;
+   } else if ( mes.cmd != ROAR_CMD_OK ) {
+    close(fh);
+    fh = -1;
+   }
+ }
+
+ close(listen);
+ unlink(file);
+
+ return fh;
+}
+
 int roar_simple_play(int rate, int channels, int bits, int codec, char * server, char * name) {
  return roar_simple_stream(rate, channels, bits, codec, server, ROAR_DIR_PLAY, name);
 }
