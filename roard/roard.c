@@ -2,6 +2,8 @@
 
 #include "roard.h"
 
+char * server = ROAR_DEFAULT_SOCK_GLOBAL; // global server address
+
 void usage (void) {
  printf("Usage: roard [OPTIONS]...\n\n");
 
@@ -31,6 +33,8 @@ void usage (void) {
         " -p  --port            - TCP Port to bind to\n"
         " -b  --bind            - IP/Hostname to bind to\n"
         " -s  --sock            - Filename for UNIX Domain Socket\n"
+        " -G  GROUP             - Sets the group for the UNIX Domain Socket, (default: audio)\n"
+        "                         You need the permittions to change the GID\n"
        );
 // printf("\n Options:\n\n");
  printf("\n");
@@ -39,17 +43,20 @@ void usage (void) {
 int main (int argc, char * argv[]) {
  int i;
  char * k;
+ char user_sock[80] = {0};
  struct roar_audio_info sa;
  char * driver = NULL;
  char * device = NULL;
  char * opts   = NULL;
- char * server = ROAR_DEFAULT_HOST;
+// char * server = ROAR_DEFAULT_SOCK_GLOBAL;
  int      port = ROAR_DEFAULT_PORT;
  int               drvid;
  char * s_dev  = NULL;
  char * s_con  = NULL;
  char * s_opt  = NULL;
  int    s_prim = 0;
+ char * sock_grp = "audio";
+ struct group * grp;
  DRIVER_USERDATA_T drvinst;
  struct roar_client * self = NULL;
 
@@ -62,6 +69,12 @@ int main (int argc, char * argv[]) {
  sa.codec    = ROAR_CODEC_DEFAULT;
 
  g_sa = &sa;
+
+
+ if ( getuid() != 0 && getenv("HOME") ) {
+  snprintf(user_sock, 79, "%s/%s", getenv("HOME"), ROAR_DEFAULT_SOCK_USER);
+  server = user_sock;
+ }
 
  if ( sources_init() == -1 ) {
   ROAR_ERR("Can not init sources!");
@@ -112,6 +125,8 @@ int main (int argc, char * argv[]) {
    port = atoi(argv[++i]);
   } else if ( strcmp(k, "-b") == 0 || strcmp(k, "--bind") == 0 ) {
    server = argv[++i];
+  } else if ( strcmp(k, "-G") == 0 ) {
+   sock_grp = argv[++i];
 
   } else {
    usage();
@@ -125,6 +140,16 @@ int main (int argc, char * argv[]) {
  if ( (g_listen_socket = roar_socket_listen(ROAR_SOCKET_TYPE_UNKNOWN, server, port)) == -1 ) {
   ROAR_ERR("Can not open listen socket!");
   return 1;
+ }
+
+ if ( *server == '/' ) {
+  if ( (grp = getgrnam(sock_grp)) == NULL ) {
+   ROAR_ERR("Can not get GID for group %s: %s", sock_grp, strerror(errno));
+  } else {
+   chown(server, -1, grp->gr_gid);
+   if ( getuid() == 0 )
+    chmod(server, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP);
+  }
  }
 
  if ( output_buffer_init(&sa) == -1 ) {
@@ -184,6 +209,11 @@ int main (int argc, char * argv[]) {
 
 void clean_quit_prep (void) {
  close(g_listen_socket);
+
+ if ( *server == '/' )
+  unlink(server);
+
+
  sources_free();
  streams_free();
  clients_free();

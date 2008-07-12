@@ -12,6 +12,11 @@
 #include <limits.h>
 #include <sys/mman.h>
 
+// TODO: can we move the next block into roard specific includes?
+#include <grp.h>
+#include <pwd.h>
+#include <sys/stat.h>
+
 #include <arpa/inet.h>
 
 #include <sys/socket.h>
