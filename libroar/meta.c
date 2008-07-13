@@ -131,6 +131,37 @@ int roar_stream_meta_get (struct roar_connection * con, struct roar_stream * s, 
  return 0;
 }
 
+int roar_stream_meta_list (struct roar_connection * con, struct roar_stream * s, int * types, size_t len) {
+ int i;
+ struct roar_message m;
+
+ m.cmd     = ROAR_CMD_LIST_META;
+ m.stream  = s->id;
+
+ m.data[0] = 0;
+ m.datalen = 1;
+
+ if ( roar_req(con, &m, NULL) == -1 )
+  return -1;
+
+ if ( m.cmd != ROAR_CMD_OK )
+  return -1;
+
+ if ( m.datalen < 1 )
+  return -1;
+
+ if ( m.data[0] != 0 )
+  return -1;
+
+ if ( len < (m.datalen - 1 ) )
+  return -1;
+
+ for (i = 1; i < m.datalen; i++)
+  types[i-1] = (unsigned) m.data[i];
+
+ return m.datalen - 1;
+}
+
 int roar_meta_free (struct roar_meta * meta) {
  if ( meta->value )
   free(meta->value);
