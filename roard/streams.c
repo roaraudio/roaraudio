@@ -544,6 +544,16 @@ int streams_send_mon   (int id) {
  if ( write(fh, g_output_buffer, g_output_buffer_len) == g_output_buffer_len )
   return 0;
 
+ if ( errno == EAGAIN ) {
+  // ok, the client blocks for a moment, we try to sleep a bit an retry in the hope not to
+  // make any gapes in any output because of this
+
+  usleep(100); // 0.1ms
+
+  if ( write(fh, g_output_buffer, g_output_buffer_len) == g_output_buffer_len )
+   return 0;
+ }
+
  // ug... error... delete stream!
 
  streams_delete(id);
