@@ -231,9 +231,14 @@ int set_meta (struct roar_connection * con, int id, char * mode, char * type, ch
   mode_i = ROAR_META_MODE_ADD;
  }
 
- meta.type   = atoi(type);
+ meta.type   = roar_meta_inttype(type);
  meta.value  = val;
  meta.key[0] = 0;
+
+ if ( meta.type == -1 ) {
+  fprintf(stderr, "Error: unknown type: %s\n", type);
+  return -1;
+ }
 
 // printf("D: type=%i, mode=%i\n", meta.type, mode_i);
 
@@ -246,12 +251,17 @@ int show_meta_type (struct roar_connection * con, int id, char * type) {
 
  s.id = id;
 
- meta.type  = atoi(type);
+ meta.type  = roar_meta_inttype(type);
+
+ if ( meta.type == -1 ) {
+  fprintf(stderr, "Error: unknown type: %s\n", type);
+  return -1;
+ }
 
  if ( roar_stream_meta_get(con, &s, &meta) == -1 )
   return -1;
 
- printf("Meta %s: %s\n", type, meta.value);
+ printf("Meta %s: %s\n", roar_meta_strtype(meta.type), meta.value);
 
  roar_meta_free(&meta);
 
