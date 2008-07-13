@@ -3,6 +3,7 @@
 #include <roaraudio.h>
 
 int display_mixer (struct roar_connection * con, int stream);
+int show_meta_all (struct roar_connection * con, int id);
 
 void usage (void) {
  printf("roarcat [OPTIONS]... COMMAND [OPTS] [COMMAND [OPTS] [COMMAND [OPTS] [...]]]\n");
@@ -116,6 +117,7 @@ void list_streams (struct roar_connection * con) {
   printf("Input codec           : %i (%s%s)\n", s.info.codec, roar_codec2str(s.info.codec),
                                       s.info.codec == ROAR_CODEC_DEFAULT ? " native" : "");
   display_mixer(con, id[i]);
+  show_meta_all(con, id[i]);
  }
 
 }
@@ -261,9 +263,26 @@ int show_meta_type (struct roar_connection * con, int id, char * type) {
  if ( roar_stream_meta_get(con, &s, &meta) == -1 )
   return -1;
 
- printf("Meta %s: %s\n", roar_meta_strtype(meta.type), meta.value);
+ printf("Meta %-17s: %s\n", roar_meta_strtype(meta.type), meta.value);
 
  roar_meta_free(&meta);
+
+ return 0;
+}
+
+int show_meta_all (struct roar_connection * con, int id) {
+ struct roar_stream s;
+ int types[ROAR_META_MAX_PER_STREAM];
+ int i;
+ int len;
+
+ s.id = id;
+
+ if ( (len = roar_stream_meta_list(con, &s, types, ROAR_META_MAX_PER_STREAM)) == -1 )
+  return -1;
+
+ for (i = 0; i < len; i++)
+  show_meta_type(con, id, roar_meta_strtype(types[i]));
 
  return 0;
 }
