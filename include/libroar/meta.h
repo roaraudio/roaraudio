@@ -10,6 +10,9 @@ int roar_stream_meta_get (struct roar_connection * con, struct roar_stream * s, 
 
 int roar_meta_free (struct roar_meta * meta);
 
+char * roar_meta_strtype(int type);
+int    roar_meta_inttype(char * type);
+
 #endif
 
 //ll

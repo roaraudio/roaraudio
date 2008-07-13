@@ -2,6 +2,66 @@
 
 #include "libroar.h"
 
+/*
+
+grep ^'#define ROAR_META_TYPE_' meta.h | cut -d' ' -f2 | while read line; do printf ' {%-30s     "%-16s},\n' $line, $(echo $line | cut -d_ -f4)\"; done
+
+*/
+
+struct {
+ int    id;
+ char * name;
+} _libroar_meta_typelist[] = {
+ {ROAR_META_TYPE_NONE,               "NONE"           },
+ {ROAR_META_TYPE_TITLE,              "TITLE"          },
+ {ROAR_META_TYPE_ALBUM,              "ALBUM"          },
+ {ROAR_META_TYPE_AUTOR,              "AUTOR"          },
+ {ROAR_META_TYPE_ARTIST,             "ARTIST"         },
+ {ROAR_META_TYPE_VERSION,            "VERSION"        },
+ {ROAR_META_TYPE_DATE,               "DATE"           },
+ {ROAR_META_TYPE_LICENSE,            "LICENSE"        },
+ {ROAR_META_TYPE_TRACKNUMBER,        "TRACKNUMBER"    },
+ {ROAR_META_TYPE_ORGANIZATION,       "ORGANIZATION"   },
+ {ROAR_META_TYPE_DESCRIPTION,        "DESCRIPTION"    },
+ {ROAR_META_TYPE_GENRE,              "GENRE"          },
+ {ROAR_META_TYPE_LOCATION,           "LOCATION"       },
+ {ROAR_META_TYPE_CONTACT,            "CONTACT"        },
+ {ROAR_META_TYPE_STREAMURL,          "STREAMURL"      },
+ {ROAR_META_TYPE_HOMEPAGE,           "HOMEPAGE"       },
+ {ROAR_META_TYPE_THUMBNAIL,          "THUMBNAIL"      },
+ {ROAR_META_TYPE_LENGTH,             "LENGTH"         },
+ {ROAR_META_TYPE_COMMENT,            "COMMENT"        },
+ {ROAR_META_TYPE_OTHER,              "OTHER"          },
+ {ROAR_META_TYPE_FILENAME,           "FILENAME"       },
+ {ROAR_META_TYPE_FILEURL,            "FILEURL"        },
+ 
+ {-1, "EOL"}
+};
+
+char * roar_meta_strtype(int type) {
+ int i;
+ static char name[24];
+
+ for (i = 0; _libroar_meta_typelist[i].id != -1; i++)
+  if ( _libroar_meta_typelist[i].id == type ) {
+   strcpy(name, _libroar_meta_typelist[i].name);
+   return name;
+  }
+
+ return NULL;
+}
+
+int    roar_meta_inttype(char * type) {
+ int i;
+
+ for (i = 0; _libroar_meta_typelist[i].id != -1; i++)
+  if ( strcasecmp(_libroar_meta_typelist[i].name, type) == 0 ) {
+   return _libroar_meta_typelist[i].id;
+  }
+
+ return -1;
+}
+
 int roar_stream_meta_set (struct roar_connection * con, struct roar_stream * s, int mode, struct roar_meta * meta) {
  struct roar_message m;
  int len;
