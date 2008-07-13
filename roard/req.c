@@ -230,6 +230,30 @@ int req_on_get_meta    (int client, struct roar_message * mes, char * data) {
  return 0;
 }
 
+int req_on_list_meta   (int client, struct roar_message * mes, char * data) {
+ int i;
+ int len = 0;
+ int types[ROAR_META_MAX_PER_STREAM];
+
+ if ( mes->datalen != 1 )
+  return -1;
+
+ if ( mes->data[0] != 0 ) // version
+  return -1;
+
+ if ( (len = stream_meta_list(mes->stream, types, ROAR_META_MAX_PER_STREAM)) == -1 )
+  return -1;
+
+ mes->cmd     = ROAR_CMD_OK;
+ mes->datalen = 1 + len;
+ mes->data[0] = 0;
+
+ for (i = 0; i < len; i++)
+  mes->data[i+1] = types[i];
+
+ return 0;
+}
+
 int req_on_server_oinfo    (int client, struct roar_message * mes, char * data) {
  struct roar_stream s;
 //ROAR_DIR_OUTPUT

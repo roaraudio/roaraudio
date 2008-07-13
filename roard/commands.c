@@ -10,6 +10,7 @@ struct roar_command g_commands[COMMAND_MAX_COMMANDS] = {
 
   {ROAR_CMD_SET_META,     "SET_META",     req_on_set_meta},
   {ROAR_CMD_GET_META,     "GET_META",     req_on_get_meta},
+  {ROAR_CMD_LIST_META,    "LIST_META",    req_on_list_meta},
 
   {ROAR_CMD_EXEC_STREAM,  "EXEC_STREAM",  req_on_exec_stream},
   {ROAR_CMD_QUIT,         "QUIT",         clients_delete},

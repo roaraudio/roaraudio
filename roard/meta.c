@@ -69,6 +69,9 @@ int stream_meta_get   (int id, int type, char * name, char * val, size_t len) {
     if ( strncmp(s->meta[i].key, name, ROAR_META_MAX_NAMELEN) != 0 )
      continue;
 
+   if ( s->meta[i].value == NULL )
+    return -1;
+
    if ( (vallen = strlen(s->meta[i].value)) > (len - 1) ) {
     ROAR_DBG("stream_meta_get(*): val too small: need %i have %i", vallen, len);
     return -1;
@@ -82,6 +85,35 @@ int stream_meta_get   (int id, int type, char * name, char * val, size_t len) {
  }
 
  return -1;
+}
+
+int stream_meta_list  (int id, int * types, size_t len) {
+ int i, j;
+ int have = 0;
+ int found;
+ struct roar_stream_server * s = g_streams[id];
+
+ if ( s == NULL )
+  return -1;
+
+ if ( len < ROAR_META_MAX_PER_STREAM ) // TODO: find a way we do not need this
+  return -1;
+
+ types[0] = -1;
+
+ for (i = 0; i < ROAR_META_MAX_PER_STREAM; i++) {
+  found = 0;
+  for (j = 0; j < have; j++)
+   if ( types[j] == s->meta[i].type ) {
+    found = 1;
+    break;
+   }
+
+  if ( !found )
+   types[have++] = s->meta[i].type;
+ }
+
+ return have;
 }
 
 int stream_meta_clear (int id) {
