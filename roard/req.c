@@ -199,6 +199,9 @@ int req_on_set_meta    (int client, struct roar_message * mes, char * data) {
  return -1;
 }
 
+int req_on_get_meta    (int client, struct roar_message * mes, char * data) {
+ return -1;
+}
 
 int req_on_server_oinfo    (int client, struct roar_message * mes, char * data) {
  struct roar_stream s;

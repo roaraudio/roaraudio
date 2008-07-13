@@ -37,6 +37,9 @@
 
 #define ROAR_CMD_CON_STREAM    21 /* let the server connect to something to get data for a new stream */
 
+#define ROAR_CMD_GET_META      22 /* get meta data of streamed data */
+
+
 #define ROAR_CMD_OK           254 /* return value OK */
 #define ROAR_CMD_ERROR        255 /* return value ERROR */
 

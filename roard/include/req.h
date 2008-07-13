@@ -15,6 +15,7 @@ int req_on_exec_stream (int client, struct roar_message * mes, char * data);
 int req_on_con_stream  (int client, struct roar_message * mes, char * data);
 
 int req_on_set_meta    (int client, struct roar_message * mes, char * data);
+int req_on_get_meta    (int client, struct roar_message * mes, char * data);
 
 int req_on_get_standby (int client, struct roar_message * mes, char * data);
 int req_on_set_standby (int client, struct roar_message * mes, char * data);
