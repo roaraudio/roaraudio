@@ -27,9 +27,7 @@ void usage (void) {
 }
 
 int main (int argc, char * argv[]) {
- int    rate     = 44100;
  int    bits     = 16;
- int    channels = 2;
  int    codec    = ROAR_CODEC_DEFAULT;
  char * server   = NULL;
  char * file     = NULL;
@@ -66,16 +64,6 @@ int main (int argc, char * argv[]) {
   return -1;
  }
 
- if ( roar_stream_new(&s, rate, channels, bits, codec) == -1 ) {
-  roar_disconnect(&con);
-  return -1;
- }
-
- if ( roar_stream_connect(&con, &s, ROAR_DIR_PLAY) == -1 ) {
-  roar_disconnect(&con);
-  return -1;
- }
-
  if ( (in = fopen(file, "rb")) == NULL ) {
   roar_disconnect(&con);
   return -1;
@@ -98,6 +86,18 @@ int main (int argc, char * argv[]) {
   vorbis_info *vi=ov_info(&vf,-1);
   struct roar_meta   meta;
 
+  fprintf(stderr, "Audio: %i channel, %liHz\n\n", vi->channels, vi->rate);
+
+  if ( roar_stream_new(&s, vi->rate, vi->channels, bits, codec) == -1 ) {
+   roar_disconnect(&con);
+   return -1;
+  }
+
+  if ( roar_stream_connect(&con, &s, ROAR_DIR_PLAY) == -1 ) {
+   roar_disconnect(&con);
+   return -1;
+  }
+
   meta.value = value;
   meta.key[0] = 0;
 
@@ -105,9 +105,9 @@ int main (int argc, char * argv[]) {
   strncpy(value, file, 79);
   roar_stream_meta_set(&con, &s, ROAR_META_MODE_SET, &meta);
 
-  while(*ptr){
-    fprintf(stderr,"%s\n",*ptr);
 
+
+  while(*ptr){
     for (j = 0; (*ptr)[j] != 0 && (*ptr)[j] != '='; j++)
      key[j] = (*ptr)[j];
      key[j] = 0;
@@ -120,10 +120,10 @@ int main (int argc, char * argv[]) {
     if ( meta.type != -1 )
      roar_stream_meta_set(&con, &s, ROAR_META_MODE_SET, &meta);
 
+    fprintf(stderr, "Meta %-16s: %s\n", key, value);
     ++ptr;
   }
-  fprintf(stderr,"\nBitstream is %d channel, %ldHz\n",vi->channels,vi->rate);
-  fprintf(stderr,"Encoded by: %s\n\n",ov_comment(&vf,-1)->vendor);
+
  }
 
  if ( roar_stream_exec(&con, &s) == -1 ) {
@@ -131,8 +131,8 @@ int main (int argc, char * argv[]) {
   return -1;
  }
   
- while(!eof){
-  long ret=ov_read(&vf,pcmout,sizeof(pcmout),0,2,1,&current_section);
+ while (!eof) {
+  long ret = ov_read(&vf, pcmout, sizeof(pcmout), 0, 2, 1, &current_section);
   if (ret == 0) {
    /* EOF */
    eof=1;
