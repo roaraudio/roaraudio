@@ -159,6 +159,12 @@ int roar_recv_message (struct roar_connection * con, struct roar_message * mes, 
  ROAR_DBG("roar_recv_message(*): command=%i(%s)", mes->cmd,
            mes->cmd == ROAR_CMD_OK ? "OK" : (mes->cmd == ROAR_CMD_ERROR ? "ERROR" : "UNKNOWN"));
 
+ if ( mes->datalen == 0 ) {
+  ROAR_DBG("roar_recv_message(*): no data in this pkg");
+  ROAR_DBG("roar_recv_message(*) = 0");
+  return 0;
+ }
+
  if ( mes->datalen <= LIBROAR_BUFFER_MSGDATA ) {
   if ( read(con->fh, mes->data, mes->datalen) == mes->datalen ) {
    ROAR_DBG("roar_recv_message(*): Got data!");
@@ -172,12 +178,6 @@ int roar_recv_message (struct roar_connection * con, struct roar_message * mes, 
 
   if ( (*data = malloc(mes->datalen)) == NULL )
    return -1;
-
-  if ( mes->datalen == 0 ) {
-   ROAR_DBG("roar_recv_message(*): no data in this pkg");
-   ROAR_DBG("roar_recv_message(*) = 0");
-   return 0;
-  }
 
   if ( mes->datalen == 0 )
    return 0;
