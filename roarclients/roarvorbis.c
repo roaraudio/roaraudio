@@ -26,9 +26,58 @@ void usage (void) {
 
 }
 
-int main (int argc, char * argv[]) {
+int update_stream (struct roar_connection * con, struct roar_stream * s, int * out, OggVorbis_File * vf, char * file) {
+ vorbis_info *vi = ov_info(vf, -1);
  int    bits     = 16;
  int    codec    = ROAR_CODEC_DEFAULT;
+ char **ptr = ov_comment(vf, -1)->user_comments;
+ char key[80], value[80];
+ int j, h = 0;
+ struct roar_meta   meta;
+
+ fprintf(stderr, "\n");
+
+ if ( *out != -1 )
+  close(*out);
+
+ fprintf(stderr, "Audio: %i channel, %liHz\n\n", vi->channels, vi->rate);
+
+ if ( (*out = roar_simple_new_stream_obj(con, s, vi->rate, vi->channels, bits, codec, ROAR_DIR_PLAY)) == -1 ) {
+  roar_disconnect(con);
+  return -1;
+ }
+
+
+ meta.value = value;
+ meta.key[0] = 0;
+
+ roar_stream_meta_set(con, s, ROAR_META_MODE_CLEAR, &meta);
+
+ meta.type = ROAR_META_TYPE_FILENAME;
+ strncpy(value, file, 79);
+ roar_stream_meta_set(con, s, ROAR_META_MODE_SET, &meta);
+
+ while(*ptr){
+   for (j = 0; (*ptr)[j] != 0 && (*ptr)[j] != '='; j++)
+    key[j] = (*ptr)[j];
+    key[j] = 0;
+
+   for (j++, h = 0; (*ptr)[j] != 0 && (*ptr)[j] != '='; j++)
+    value[h++] = (*ptr)[j];
+    value[h]   = 0;
+
+   meta.type = roar_meta_inttype(key);
+   if ( meta.type != -1 )
+    roar_stream_meta_set(con, s, ROAR_META_MODE_SET, &meta);
+
+   fprintf(stderr, "Meta %-16s: %s\n", key, value);
+   ++ptr;
+ }
+
+ return 0;
+}
+
+int main (int argc, char * argv[]) {
  char * server   = NULL;
  char * file     = NULL;
  char * k;
@@ -81,55 +130,15 @@ int main (int argc, char * argv[]) {
   return -1;
  }
 
- {
-  vorbis_info *vi = ov_info(&vf, -1);
-
-  fprintf(stderr, "Audio: %i channel, %liHz\n\n", vi->channels, vi->rate);
-
-  if ( (out = roar_simple_new_stream_obj(&con, &s, vi->rate, vi->channels, bits, codec, ROAR_DIR_PLAY)) == -1 ) {
-   roar_disconnect(&con);
-   return -1;
-  }
- }
-
- {
-  char **ptr = ov_comment(&vf, -1)->user_comments;
-  char key[80], value[80];
-  int j, h = 0;
-  struct roar_meta   meta;
-
-  meta.value = value;
-  meta.key[0] = 0;
-
-  roar_stream_meta_set(&con, &s, ROAR_META_MODE_CLEAR, &meta);
-
-  meta.type = ROAR_META_TYPE_FILENAME;
-  strncpy(value, file, 79);
-  roar_stream_meta_set(&con, &s, ROAR_META_MODE_SET, &meta);
-
-
-
-  while(*ptr){
-    for (j = 0; (*ptr)[j] != 0 && (*ptr)[j] != '='; j++)
-     key[j] = (*ptr)[j];
-     key[j] = 0;
-
-    for (j++, h = 0; (*ptr)[j] != 0 && (*ptr)[j] != '='; j++)
-     value[h++] = (*ptr)[j];
-     value[h]   = 0;
-
-    meta.type = roar_meta_inttype(key);
-    if ( meta.type != -1 )
-     roar_stream_meta_set(&con, &s, ROAR_META_MODE_SET, &meta);
-
-    fprintf(stderr, "Meta %-16s: %s\n", key, value);
-    ++ptr;
-  }
-
- }
+// if ( update_stream(&con, &s, &out, &vf, file) == -1 )
+//  return -1;
 
  while (!eof) {
   long ret = ov_read(&vf, pcmout, sizeof(pcmout), 0, 2, 1, &current_section);
+
+  if ( last_section != current_section )
+   if ( update_stream(&con, &s, &out, &vf, file) == -1 )
+    return -1;
 
   last_section = current_section;
 
