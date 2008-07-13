@@ -34,6 +34,7 @@ int main (int argc, char * argv[]) {
  char * k;
  int    i;
  FILE * in;
+ int    out;
  struct roar_connection con;
  struct roar_stream     s;
  OggVorbis_File vf;
@@ -80,11 +81,7 @@ int main (int argc, char * argv[]) {
  }
 
  {
-  char **ptr=ov_comment(&vf,-1)->user_comments;
-  char key[80], value[80];
-  int j, h = 0;
-  vorbis_info *vi=ov_info(&vf,-1);
-  struct roar_meta   meta;
+  vorbis_info *vi = ov_info(&vf, -1);
 
   fprintf(stderr, "Audio: %i channel, %liHz\n\n", vi->channels, vi->rate);
 
@@ -97,6 +94,13 @@ int main (int argc, char * argv[]) {
    roar_disconnect(&con);
    return -1;
   }
+ }
+
+ {
+  char **ptr = ov_comment(&vf, -1)->user_comments;
+  char key[80], value[80];
+  int j, h = 0;
+  struct roar_meta   meta;
 
   meta.value = value;
   meta.key[0] = 0;
