@@ -47,6 +47,9 @@ int roar_stream_meta_get (struct roar_connection * con, struct roar_stream * s, 
  m.data[1] = meta->type;
  m.datalen = 2;
 
+ if ( roar_req(con, &m, NULL) == -1 )
+  return -1;
+
  if ( m.cmd != ROAR_CMD_OK )
   return -1;
 
