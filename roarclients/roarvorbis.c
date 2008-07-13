@@ -26,6 +26,15 @@ void usage (void) {
 
 }
 
+
+FILE * open_http (char * file) {
+ char cmd[1024];
+
+ snprintf(cmd, 1023, "wget -qO - '%s'", file);
+
+ return popen(cmd, "r");
+}
+
 int update_stream (struct roar_connection * con, struct roar_stream * s, int * out, OggVorbis_File * vf, char * file, struct roar_audio_info * info) {
  vorbis_info *vi = ov_info(vf, -1);
  int    bits     = 16;
@@ -65,7 +74,11 @@ int update_stream (struct roar_connection * con, struct roar_stream * s, int * o
 
  roar_stream_meta_set(con, s, ROAR_META_MODE_CLEAR, &meta);
 
- meta.type = ROAR_META_TYPE_FILENAME;
+ if ( strncmp(file, "http:", 5) == 0 )
+  meta.type = ROAR_META_TYPE_FILEURL;
+ else
+  meta.type = ROAR_META_TYPE_FILENAME;
+
  strncpy(value, file, 79);
  roar_stream_meta_set(con, s, ROAR_META_MODE_SET, &meta);
 
@@ -128,7 +141,13 @@ int main (int argc, char * argv[]) {
   return -1;
  }
 
- if ( (in = fopen(file, "rb")) == NULL ) {
+ if ( strncmp(file, "http:", 5) == 0 ) {
+  in = open_http(file);
+ } else {
+  in = fopen(file, "rb");
+ }
+
+ if ( in == NULL ) {
   roar_disconnect(&con);
   return -1;
  }
