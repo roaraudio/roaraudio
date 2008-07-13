@@ -225,18 +225,37 @@ int set_meta (struct roar_connection * con, int id, char * mode, char * type, ch
 
  s.id = id;
 
- printf("set_meta(*): mode='%s', type='%s', val='%s'\n", mode, type, val);
+// printf("set_meta(*): mode='%s', type='%s', val='%s'\n", mode, type, val);
 
  if ( strcmp(mode, "add") == 0 ) {
   mode_i = ROAR_META_MODE_ADD;
  }
 
- meta.type  = atoi(type);
- meta.value = val;
+ meta.type   = atoi(type);
+ meta.value  = val;
+ meta.key[0] = 0;
 
- printf("D: type=%i, mode=%i\n", meta.type, mode_i);
+// printf("D: type=%i, mode=%i\n", meta.type, mode_i);
 
  return roar_stream_meta_set(con, &s, mode_i, &meta);
+}
+
+int show_meta_type (struct roar_connection * con, int id, char * type) {
+ struct roar_meta   meta;
+ struct roar_stream s;
+
+ s.id = id;
+
+ meta.type  = atoi(type);
+
+ if ( roar_stream_meta_get(con, &s, &meta) == -1 )
+  return -1;
+
+ printf("Meta %s: %s\n", type, meta.value);
+
+ roar_meta_free(&meta);
+
+ return 0;
 }
 
 int main (int argc, char * argv[]) {
@@ -364,7 +383,7 @@ int main (int argc, char * argv[]) {
     printf("volume changed\n");
    }
 
-  } else if ( !strcmp(k, "meta") ) {
+  } else if ( !strcmp(k, "metaset") ) {
    i++;
    if ( set_meta(&con, atoi(argv[i]), argv[i+1], argv[i+2], argv[i+3]) == -1 ) {
     fprintf(stderr, "Error: can not set meta data\n");
@@ -372,6 +391,12 @@ int main (int argc, char * argv[]) {
     printf("meta data changed\n");
    }
    i += 3;
+  } else if ( !strcmp(k, "metaget") ) {
+   i++;
+   if ( show_meta_type(&con, atoi(argv[i]), argv[i+1]) == -1 ) {
+    fprintf(stderr, "Error: can not get meta data\n");
+   }
+   i++;
 
   } else {
    fprintf(stderr, "Error: invalid command: %s\n", k);
