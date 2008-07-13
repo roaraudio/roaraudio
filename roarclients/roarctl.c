@@ -218,6 +218,27 @@ int set_mixer (struct roar_connection * con, int * cur, int max, char * arg[]) {
  return roar_set_vol(con, id, &mixer, chans);
 }
 
+int set_meta (struct roar_connection * con, int id, char * mode, char * type, char * val) {
+ struct roar_meta   meta;
+ struct roar_stream s;
+ int mode_i = ROAR_META_MODE_SET;
+
+ s.id = id;
+
+ printf("set_meta(*): mode='%s', type='%s', val='%s'\n", mode, type, val);
+
+ if ( strcmp(mode, "add") == 0 ) {
+  mode_i = ROAR_META_MODE_ADD;
+ }
+
+ meta.type  = atoi(type);
+ meta.value = val;
+
+ printf("D: type=%i, mode=%i\n", meta.type, mode_i);
+
+ return roar_stream_meta_set(con, &s, mode_i, &meta);
+}
+
 int main (int argc, char * argv[]) {
  struct roar_connection con;
  char * server   = NULL;
@@ -342,6 +363,15 @@ int main (int argc, char * argv[]) {
    } else {
     printf("volume changed\n");
    }
+
+  } else if ( !strcmp(k, "meta") ) {
+   i++;
+   if ( set_meta(&con, atoi(argv[i]), argv[i+1], argv[i+2], argv[i+3]) == -1 ) {
+    fprintf(stderr, "Error: can not set meta data\n");
+   } else {
+    printf("meta data changed\n");
+   }
+   i += 3;
 
   } else {
    fprintf(stderr, "Error: invalid command: %s\n", k);

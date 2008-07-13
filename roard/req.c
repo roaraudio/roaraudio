@@ -137,7 +137,7 @@ int req_on_set_meta    (int client, struct roar_message * mes, char * data) {
  int type;
  int mode;
  int namelen, vallen;
- char   val[1024+1];
+ char   val[255+1];
  char   name[ROAR_META_MAX_NAMELEN+1];
 
  if ( mes->datalen < 3 )
@@ -148,6 +148,8 @@ int req_on_set_meta    (int client, struct roar_message * mes, char * data) {
 
  mode = (unsigned) mes->data[1];
  type = (unsigned) mes->data[2];
+
+ ROAR_DBG("req_on_set_meta(*): mode=%i, type=%i", mode, type);
 
  if ( mode == ROAR_META_MODE_CLEAR ) {
   stream_meta_clear(mes->stream);
@@ -162,6 +164,8 @@ int req_on_set_meta    (int client, struct roar_message * mes, char * data) {
   namelen = (unsigned) mes->data[3];
   vallen  = (unsigned) mes->data[4];
 
+  ROAR_DBG("req_on_set_meta(*): namelen=%i, vallen=%i", namelen, vallen);
+
   if ( mes->datalen < (5 + namelen + vallen) )
    return -1;
 
@@ -171,7 +175,7 @@ int req_on_set_meta    (int client, struct roar_message * mes, char * data) {
   strncpy(name, &(mes->data[5]), namelen);
   name[namelen] = 0;
 
-  if ( vallen > 1024 )
+  if ( vallen > 255 )
    return -1;
 
   strncpy(val, &(mes->data[5+namelen]), vallen);
