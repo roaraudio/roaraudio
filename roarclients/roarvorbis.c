@@ -61,7 +61,7 @@ int main (int argc, char * argv[]) {
   }
  }
 
- if ( roar_simple_connect(&con, server, "roarcatad") == -1 ) {
+ if ( roar_simple_connect(&con, server, "roarvorbis") == -1 ) {
   ROAR_DBG("roar_simple_play(*): roar_simple_connect() faild!");
   return -1;
  }
@@ -100,6 +100,10 @@ int main (int argc, char * argv[]) {
 
   meta.value = value;
   meta.key[0] = 0;
+
+  meta.type = ROAR_META_TYPE_FILENAME;
+  strncpy(value, file, 79);
+  roar_stream_meta_set(&con, &s, ROAR_META_MODE_SET, &meta);
 
   while(*ptr){
     fprintf(stderr,"%s\n",*ptr);
