@@ -1,6 +1,7 @@
 //roarfilt.c:
 
 #include <roaraudio.h>
+#include <math.h>
 
 #define BUFSIZE 1024
 
@@ -17,6 +18,9 @@ void usage (void) {
         "\n"
         "  --half             - half the volume\n"
         "  --double           - double the volume\n"
+        "  --amp VAL          - Set amplification\n"
+        "  --mul VAL          - Set mul\n"
+        "  --div VAL          - Set div\n"
        );
 
 }
@@ -35,10 +39,31 @@ void vol1 (void * data, int mul, int div, int len) {
  int8_t * samples = (int8_t *) data;
  int i;
 
- len /= 2;
-
  for (i = 0; i < len; i++)
   samples[i] = ((int) samples[i] * mul) / div;
+}
+
+void logs2 (void * data, int scale, int len) {
+ int16_t * samples = (int16_t *) data;
+ int i;
+ float div = logf(scale);
+ int scalemul = scale - 1;
+ int neg;
+
+ len /= 2;
+
+ printf("logs2(data=%p, scale=%i, len=%i): scalemul=%i, div=%f\n", data, scale, len, scalemul, div);
+
+ for (i = 0; i < len; i++) {
+  if ( (neg = (samples[i] < 0)) ) 
+   samples[i] = abs(samples[i]);
+
+
+  samples[i] = (neg ? 32768.0 : 32767.0)*logf(1 + ((float)scalemul*samples[i]/(neg ? 32768.0 : 32767.0))) / div;
+
+  if ( neg )
+   samples[i] *= -1;
+ }
 }
 
 int main (int argc, char * argv[]) {
@@ -51,6 +76,7 @@ int main (int argc, char * argv[]) {
  int    fh;
  int    i;
  int    mul = 1, div = 1;
+ int    logscale = 0;
  char buf[BUFSIZE];
 
  for (i = 1; i < argc; i++) {
@@ -68,6 +94,14 @@ int main (int argc, char * argv[]) {
    div *= 2;
   } else if ( strcmp(k, "--double") == 0 ) {
    mul *= 2;
+  } else if ( strcmp(k, "--amp") == 0 ) {
+   mul *= atoi(argv[++i]);
+  } else if ( strcmp(k, "--mul") == 0 ) {
+   mul  = atoi(argv[++i]);
+  } else if ( strcmp(k, "--div") == 0 ) {
+   div  = atoi(argv[++i]);
+  } else if ( strcmp(k, "--log") == 0 ) {
+   logscale = atoi(argv[++i]);
   } else if ( strcmp(k, "--help") == 0 ) {
    usage();
    return 0;
@@ -83,14 +117,17 @@ int main (int argc, char * argv[]) {
   return 1;
  }
 
- if ( mul == div ) {
+ if ( mul == div && logscale == 0 ) {
   fprintf(stderr, "Error: filter is useless!\n");
   return 0;
  }
 
  if ( bits == 16 ) {
   while((i = read(fh, buf, BUFSIZE))) {
-   vol2((void*)buf, mul, div, i);
+   if ( mul != div )
+    vol2((void*)buf, mul, div, i);
+   if ( logscale )
+    logs2((void*)buf, logscale, i);
    if (write(fh, buf, i) != i)
     break;
   }

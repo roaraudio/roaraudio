@@ -17,6 +17,7 @@ roarcat2sock: roarcat2sock.o
 roarctl: roarctl.o
 roarmon: roarmon.o
 roarfilt: roarfilt.o
+	${CC} ${LDFLAGS} -o roarfilt roarfilt.o -lm
 roarsockconnect: roarsockconnect.o
 roartypes: roartypes.o
 roarvorbis: roarvorbis.o
