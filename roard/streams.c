@@ -49,6 +49,7 @@ int streams_new    (void) {
    ((struct roar_stream_server*)n)->buffer      = NULL;
    ((struct roar_stream_server*)n)->need_extra  = 0;
    ((struct roar_stream_server*)n)->output      = NULL;
+   ((struct roar_stream_server*)n)->is_new      = 1;
    ((struct roar_stream_server*)n)->mixer.scale = 65535;
    for (j = 0; j < ROAR_MAX_CHANNELS; j++)
     ((struct roar_stream_server*)n)->mixer.mixer[j] = 65535;
@@ -359,7 +360,15 @@ int streams_fill_mixbuffer (int id, struct roar_audio_info * info) {
 
  if ( todo > 0 ) { // zeroize the rest of teh buffer
   memset(rest, 0, todo);
-  ROAR_ERR("streams_fill_mixbuffer(*): Underrun in stream: %i bytes missing, filling with zeros", todo);
+
+  if ( todo != ROAR_OUTPUT_CALC_OUTBUFSIZE(info) ) {
+   if ( !g_streams[id]->is_new )
+    ROAR_ERR("streams_fill_mixbuffer(*): Underrun in stream: %i bytes missing, filling with zeros", todo);
+
+   g_streams[id]->is_new = 0;
+  }
+ } else {
+  g_streams[id]->is_new = 0;
  }
 
  return 0;
