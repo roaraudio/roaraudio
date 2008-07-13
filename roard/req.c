@@ -200,7 +200,32 @@ int req_on_set_meta    (int client, struct roar_message * mes, char * data) {
 }
 
 int req_on_get_meta    (int client, struct roar_message * mes, char * data) {
- return -1;
+ int vallen;
+ int type;
+ char val[LIBROAR_BUFFER_MSGDATA-2];
+
+ if ( mes->datalen != 2 )
+  return -1;
+
+ if ( mes->data[0] != 0 ) // version
+  return -1;
+
+ type = (unsigned) mes->data[1];
+
+ if ( stream_meta_get(mes->stream, type, NULL, val, LIBROAR_BUFFER_MSGDATA-2) == -1 )
+  return -1;
+
+ vallen = strlen(val);
+
+ mes->cmd     = ROAR_CMD_OK;
+ mes->datalen = 2 + vallen;
+
+ mes->data[0] = 0;
+ mes->data[1] = (unsigned char) vallen;
+
+ strncpy(&(mes->data[2]), val, vallen);
+
+ return 0;
 }
 
 int req_on_server_oinfo    (int client, struct roar_message * mes, char * data) {
