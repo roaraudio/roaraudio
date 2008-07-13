@@ -202,7 +202,7 @@ int req_on_set_meta    (int client, struct roar_message * mes, char * data) {
 int req_on_get_meta    (int client, struct roar_message * mes, char * data) {
  int vallen;
  int type;
- char val[LIBROAR_BUFFER_MSGDATA-2];
+ char val[LIBROAR_BUFFER_MSGDATA-1];
 
  if ( mes->datalen != 2 )
   return -1;
@@ -223,7 +223,9 @@ int req_on_get_meta    (int client, struct roar_message * mes, char * data) {
  mes->data[0] = 0;
  mes->data[1] = (unsigned char) vallen;
 
- strncpy(&(mes->data[2]), val, vallen);
+ val[vallen] = 0;
+
+ strncpy(&(mes->data[2]), val, vallen+1);
 
  return 0;
 }

@@ -38,7 +38,7 @@ int stream_meta_add   (int id, int type, char * name, char * val) {
     strncpy(s->meta[i].key, name, ROAR_META_MAX_NAMELEN);
    }
 
-   if ( (c = malloc(strlen(val))) == NULL ) {
+   if ( (c = malloc(strlen(val)+1)) == NULL ) {
     s->meta[i].type = ROAR_META_TYPE_NONE;
     s->meta[i].key[0] = 0;
     return -1;
@@ -57,7 +57,7 @@ int stream_meta_add   (int id, int type, char * name, char * val) {
 }
 
 int stream_meta_get   (int id, int type, char * name, char * val, size_t len) {
- int i;
+ int i, vallen;
  struct roar_stream_server * s = g_streams[id];
 
  if ( s == NULL )
@@ -69,10 +69,13 @@ int stream_meta_get   (int id, int type, char * name, char * val, size_t len) {
     if ( strncmp(s->meta[i].key, name, ROAR_META_MAX_NAMELEN) != 0 )
      continue;
 
-   if ( strlen(s->meta[i].value) > (len - 1) )
+   if ( (vallen = strlen(s->meta[i].value)) > (len - 1) ) {
+    ROAR_DBG("stream_meta_get(*): val too small: need %i have %i", vallen, len);
     return -1;
+   }
 
-   strcpy(val, s->meta[i].value);
+   strncpy(val, s->meta[i].value, vallen);
+   val[vallen] = 0;
 
    return 0;
   }
