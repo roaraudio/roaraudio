@@ -59,6 +59,10 @@ int roar_simple_stream(int rate, int channels, int bits, int codec, char * serve
 
 int roar_simple_new_stream (struct roar_connection * con, int rate, int channels, int bits, int codec, int dir) {
  struct roar_stream     s;
+ return roar_simple_new_stream_obj(con, &s, rate, channels, bits, codec, dir);
+}
+
+int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream * s, int rate, int channels, int bits, int codec, int dir) {
  struct roar_message    mes;
  char file[80];
  int fh = -1, listen;
@@ -70,15 +74,15 @@ int roar_simple_new_stream (struct roar_connection * con, int rate, int channels
   return -1;
  }
 
- if ( roar_stream_new(&s, rate, channels, bits, codec) == -1 ) {
+ if ( roar_stream_new(s, rate, channels, bits, codec) == -1 ) {
   return -1;
  }
 
- if ( roar_stream_connect(con, &s, dir) == -1 ) {
+ if ( roar_stream_connect(con, s, dir) == -1 ) {
   return -1;
  }
 
- if ( roar_stream_connect_to_ask(con, &s, ROAR_SOCKET_TYPE_UNIX, file, 0) != -1 ) {
+ if ( roar_stream_connect_to_ask(con, s, ROAR_SOCKET_TYPE_UNIX, file, 0) != -1 ) {
 
   if ( (fh = accept(listen, NULL, NULL)) != -1 ) {
    if ( dir == ROAR_DIR_PLAY ) {
