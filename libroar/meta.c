@@ -39,7 +39,7 @@ int roar_stream_meta_get (struct roar_connection * con, struct roar_stream * s, 
  struct roar_message m;
  char * c;
 
- m.cmd     = ROAR_CMD_SET_META;
+ m.cmd     = ROAR_CMD_GET_META;
  m.stream  = s->id;
 // m.datalen = len;
 
