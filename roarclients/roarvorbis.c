@@ -26,7 +26,7 @@ void usage (void) {
 
 }
 
-int update_stream (struct roar_connection * con, struct roar_stream * s, int * out, OggVorbis_File * vf, char * file) {
+int update_stream (struct roar_connection * con, struct roar_stream * s, int * out, OggVorbis_File * vf, char * file, struct roar_audio_info * info) {
  vorbis_info *vi = ov_info(vf, -1);
  int    bits     = 16;
  int    codec    = ROAR_CODEC_DEFAULT;
@@ -34,17 +34,29 @@ int update_stream (struct roar_connection * con, struct roar_stream * s, int * o
  char key[80], value[80];
  int j, h = 0;
  struct roar_meta   meta;
+ int need_new_stream = 0;
 
  fprintf(stderr, "\n");
 
- if ( *out != -1 )
+ if ( *out == -1 ) {
+  need_new_stream = 1;
+ } else if ( info->rate != vi->rate || info->channels != vi->channels ) {
+  need_new_stream = 1;
+ }
+
+ if ( need_new_stream ) {
+  if ( *out != -1 )
   close(*out);
 
- fprintf(stderr, "Audio: %i channel, %liHz\n\n", vi->channels, vi->rate);
+  fprintf(stderr, "Audio: %i channel, %liHz\n\n", vi->channels, vi->rate);
 
- if ( (*out = roar_simple_new_stream_obj(con, s, vi->rate, vi->channels, bits, codec, ROAR_DIR_PLAY)) == -1 ) {
-  roar_disconnect(con);
-  return -1;
+  info->rate     = vi->rate;
+  info->channels = vi->channels;
+
+  if ( (*out = roar_simple_new_stream_obj(con, s, vi->rate, vi->channels, bits, codec, ROAR_DIR_PLAY)) == -1 ) {
+   roar_disconnect(con);
+   return -1;
+  }
  }
 
 
@@ -90,6 +102,7 @@ int main (int argc, char * argv[]) {
  int eof=0;
  int current_section;
  int last_section = -1;
+ struct roar_audio_info info;
  char pcmout[4096];
 
 
@@ -137,7 +150,7 @@ int main (int argc, char * argv[]) {
   long ret = ov_read(&vf, pcmout, sizeof(pcmout), 0, 2, 1, &current_section);
 
   if ( last_section != current_section )
-   if ( update_stream(&con, &s, &out, &vf, file) == -1 )
+   if ( update_stream(&con, &s, &out, &vf, file, &info) == -1 )
     return -1;
 
   last_section = current_section;
