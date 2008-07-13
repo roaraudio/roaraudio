@@ -553,6 +553,8 @@ int streams_send_mon   (int id) {
 
 int streams_send_filter(int id) {
  int fh;
+ int have = 0;
+ int len;
  struct roar_stream        *   s;
  struct roar_stream_server *  ss;
 
@@ -572,12 +574,14 @@ int streams_send_filter(int id) {
  ROAR_DBG("streams_send_filter(id=%i): fh = %i", id, fh);
 
  if ( write(fh, g_output_buffer, g_output_buffer_len) == g_output_buffer_len ) {
-  if ( read(fh, g_output_buffer, g_output_buffer_len) == g_output_buffer_len ) {
-   return 0;
-  } else {
-   streams_delete(id);
-   return -1;
+  while ( have < g_output_buffer_len ) {
+   if ( (len = read(fh, g_output_buffer+have, g_output_buffer_len-have)) < 1 ) {
+    streams_delete(id);
+    return -1;
+   }
+   have += len;
   }
+  return 0;
  }
 
  // ug... error... delete stream!
