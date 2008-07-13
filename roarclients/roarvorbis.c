@@ -34,12 +34,13 @@ int main (int argc, char * argv[]) {
  char * k;
  int    i;
  FILE * in;
- int    out;
+ int    out = -1;
  struct roar_connection con;
  struct roar_stream     s;
  OggVorbis_File vf;
  int eof=0;
  int current_section;
+ int last_section = -1;
  char pcmout[4096];
 
 
@@ -85,12 +86,7 @@ int main (int argc, char * argv[]) {
 
   fprintf(stderr, "Audio: %i channel, %liHz\n\n", vi->channels, vi->rate);
 
-  if ( roar_stream_new(&s, vi->rate, vi->channels, bits, codec) == -1 ) {
-   roar_disconnect(&con);
-   return -1;
-  }
-
-  if ( roar_stream_connect(&con, &s, ROAR_DIR_PLAY) == -1 ) {
+  if ( (out = roar_simple_new_stream_obj(&con, &s, vi->rate, vi->channels, bits, codec, ROAR_DIR_PLAY)) == -1 ) {
    roar_disconnect(&con);
    return -1;
   }
@@ -104,6 +100,8 @@ int main (int argc, char * argv[]) {
 
   meta.value = value;
   meta.key[0] = 0;
+
+  roar_stream_meta_set(&con, &s, ROAR_META_MODE_CLEAR, &meta);
 
   meta.type = ROAR_META_TYPE_FILENAME;
   strncpy(value, file, 79);
@@ -130,13 +128,11 @@ int main (int argc, char * argv[]) {
 
  }
 
- if ( roar_stream_exec(&con, &s) == -1 ) {
-  roar_disconnect(&con);
-  return -1;
- }
-  
  while (!eof) {
   long ret = ov_read(&vf, pcmout, sizeof(pcmout), 0, 2, 1, &current_section);
+
+  last_section = current_section;
+
   if (ret == 0) {
    /* EOF */
    eof=1;
@@ -146,14 +142,15 @@ int main (int argc, char * argv[]) {
   } else {
      /* we don't bother dealing with sample rate changes, etc, but
         you'll have to */
-    write(con.fh, pcmout, ret);
+    write(out, pcmout, ret);
   }
  }
 
   ov_clear(&vf);
 
 // fclose(in);
- close(con.fh);
+ close(out);
+ roar_disconnect(&con);
 
  return 0;
 }
