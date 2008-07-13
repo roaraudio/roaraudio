@@ -34,6 +34,7 @@ struct {
  {ROAR_META_TYPE_OTHER,              "OTHER"          },
  {ROAR_META_TYPE_FILENAME,           "FILENAME"       },
  {ROAR_META_TYPE_FILEURL,            "FILEURL"        },
+ {ROAR_META_TYPE_SERVER,             "SERVER"         },
  
  {-1, "EOL"}
 };
