@@ -121,6 +121,7 @@ int roar_stream_add_data (struct roar_connection * con, struct roar_stream * s, 
 
  m.cmd     = ROAR_CMD_ADD_DATA;
  m.stream  = s->id;
+ m.pos     = 0;
  m.datalen = len;
 
 // if ( roar_req(con, &m, (void**)&data) == -1 )
