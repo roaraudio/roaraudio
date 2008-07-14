@@ -176,6 +176,8 @@ int clients_check_all (void) {
 
   for (j = 0; j < ROAR_CLIENTS_MAX_STREAMS_PER_CLIENT; j++) {
    //printf("D: client=%i, stream=%i, g_clients[i=%i] = %p\n", i, j, i, g_clients[i]);
+   if ( g_clients[i] == NULL ) // streams_check() bellow can delete our client (why?)
+    break;
    if ( (fh = streams_get_fh(g_clients[i]->streams[j])) != -1 ) {
     if ( FD_ISSET(fh, &r) ) {
      streams_check(g_clients[i]->streams[j]);
