@@ -38,6 +38,7 @@ struct {
  {ROAR_META_TYPE_DURATION,           "DURATION"       },
  {ROAR_META_TYPE_WWW,                "WWW"            },
  {ROAR_META_TYPE_WOAF,               "WOAF"           },
+ {ROAR_META_TYPE_ENCODER,            "ENCODER"        },
  
  {-1, "EOL"}
 };
