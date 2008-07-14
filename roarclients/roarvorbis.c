@@ -40,7 +40,7 @@ int update_stream (struct roar_connection * con, struct roar_stream * s, int * o
  int    bits     = 16;
  int    codec    = ROAR_CODEC_DEFAULT;
  char **ptr = ov_comment(vf, -1)->user_comments;
- char key[80], value[80];
+ char key[80], value[80] = {0};
  int j, h = 0;
  struct roar_meta   meta;
  int need_new_stream = 0;
@@ -71,6 +71,7 @@ int update_stream (struct roar_connection * con, struct roar_stream * s, int * o
 
  meta.value = value;
  meta.key[0] = 0;
+ meta.type = ROAR_META_TYPE_NONE;
 
  roar_stream_meta_set(con, s, ROAR_META_MODE_CLEAR, &meta);
 
@@ -113,7 +114,7 @@ int main (int argc, char * argv[]) {
  struct roar_stream     s;
  OggVorbis_File vf;
  int eof=0;
- int current_section;
+ int current_section = -1;
  int last_section = -1;
  struct roar_audio_info info;
  char pcmout[4096];
