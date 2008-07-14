@@ -35,6 +35,9 @@ struct {
  {ROAR_META_TYPE_FILENAME,           "FILENAME"       },
  {ROAR_META_TYPE_FILEURL,            "FILEURL"        },
  {ROAR_META_TYPE_SERVER,             "SERVER"         },
+ {ROAR_META_TYPE_DURATION,           "DURATION"       },
+ {ROAR_META_TYPE_WWW,                "WWW"            },
+ {ROAR_META_TYPE_WOAF,               "WOAF"           },
  
  {-1, "EOL"}
 };
