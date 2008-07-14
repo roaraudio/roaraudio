@@ -5,6 +5,8 @@
 int roar_server_oinfo   (struct roar_connection * con, struct roar_stream * sa) {
  struct roar_message mes;
 
+ memset(&mes, 0, sizeof(struct roar_message)); // make valgrind happy!
+
  mes.cmd     = ROAR_CMD_SERVER_OINFO;
  mes.datalen = 0;
 
@@ -23,6 +25,8 @@ int roar_server_oinfo   (struct roar_connection * con, struct roar_stream * sa) 
 int roar_get_standby   (struct roar_connection * con) {
  struct roar_message mes;
 
+ memset(&mes, 0, sizeof(struct roar_message)); // make valgrind happy!
+
  mes.cmd = ROAR_CMD_GET_STANDBY;
  mes.datalen = 0;
 
@@ -37,6 +41,8 @@ int roar_get_standby   (struct roar_connection * con) {
 
 int roar_set_standby   (struct roar_connection * con, int state) {
  struct roar_message mes;
+
+ memset(&mes, 0, sizeof(struct roar_message)); // make valgrind happy!
 
  mes.cmd = ROAR_CMD_SET_STANDBY;
  mes.datalen = 2;
@@ -55,6 +61,8 @@ int roar_set_standby   (struct roar_connection * con, int state) {
 int roar_exit   (struct roar_connection * con) {
  struct roar_message mes;
 
+ memset(&mes, 0, sizeof(struct roar_message)); // make valgrind happy!
+
  mes.cmd = ROAR_CMD_EXIT;
  mes.datalen = 0;
  if ( roar_req(con, &mes, NULL) == -1 )
@@ -69,6 +77,8 @@ int roar_exit   (struct roar_connection * con) {
 int roar_list         (struct roar_connection * con, int * items,   int max, int cmd) {
  struct roar_message m;
 
+ memset(&m, 0, sizeof(struct roar_message)); // make valgrind happy!
+
  roar_ctl_f2m_any(&m);
  m.cmd = cmd;
 
@@ -80,6 +90,8 @@ int roar_list         (struct roar_connection * con, int * items,   int max, int
 
 int roar_get_client   (struct roar_connection * con, struct roar_client * client, int id) {
  struct roar_message m;
+
+ memset(&m, 0, sizeof(struct roar_message)); // make valgrind happy!
 
  m.cmd     = ROAR_CMD_GET_CLIENT;
  m.datalen = 1;
@@ -101,6 +113,8 @@ int roar_get_client   (struct roar_connection * con, struct roar_client * client
 int roar_get_stream   (struct roar_connection * con, struct roar_stream * stream, int id) {
  struct roar_message m;
 
+ memset(&m, 0, sizeof(struct roar_message)); // make valgrind happy!
+
  m.cmd     = ROAR_CMD_GET_STREAM;
  m.datalen = 1;
  m.data[0] = id;
@@ -117,6 +131,8 @@ int roar_get_stream   (struct roar_connection * con, struct roar_stream * stream
 int roar_kick         (struct roar_connection * con, int type, int id) {
  struct roar_message m;
  uint16_t * info = (uint16_t *) m.data;
+
+ memset(&m, 0, sizeof(struct roar_message)); // make valgrind happy!
 
  m.cmd     = ROAR_CMD_KICK;
  m.datalen = 4;
@@ -136,6 +152,8 @@ int roar_set_vol      (struct roar_connection * con, int id, struct roar_mixer_s
  struct roar_message m;
  uint16_t * info = (uint16_t *) m.data;
  int i;
+
+ memset(&m, 0, sizeof(struct roar_message)); // make valgrind happy!
 
  m.cmd     = ROAR_CMD_SET_VOL;
  m.datalen = (3 + channels) * 2;
@@ -159,6 +177,8 @@ int roar_get_vol      (struct roar_connection * con, int id, struct roar_mixer_s
  struct roar_message m;
  uint16_t * info = (uint16_t *) m.data;
  int i;
+
+ memset(&m, 0, sizeof(struct roar_message)); // make valgrind happy!
 
  m.cmd     = ROAR_CMD_GET_VOL;
  m.datalen = 2*2;

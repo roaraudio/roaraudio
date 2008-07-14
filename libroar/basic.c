@@ -65,6 +65,7 @@ int roar_disconnect (struct roar_connection * con) {
 
  m.datalen = 0;
  m.stream  = 0;
+ m.pos     = 0;
  m.cmd     = ROAR_CMD_QUIT;
 
  roar_req(con, &m, NULL);
