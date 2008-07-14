@@ -43,23 +43,23 @@ void vol1 (void * data, int mul, int div, int len) {
   samples[i] = ((int) samples[i] * mul) / div;
 }
 
-void logs2 (void * data, int scale, int len) {
+void logs2 (void * data, float scale, int len) {
  int16_t * samples = (int16_t *) data;
  int i;
  float div = logf(scale);
- int scalemul = scale - 1;
+ float scalemul = scale - 1;
  int neg;
 
  len /= 2;
 
- printf("logs2(data=%p, scale=%i, len=%i): scalemul=%i, div=%f\n", data, scale, len, scalemul, div);
+ //printf("logs2(data=%p, scale=%f, len=%i): scalemul=%f, div=%f\n", data, scale, len, scalemul, div);
 
  for (i = 0; i < len; i++) {
   if ( (neg = (samples[i] < 0)) ) 
    samples[i] = abs(samples[i]);
 
 
-  samples[i] = (neg ? 32768.0 : 32767.0)*logf(1 + ((float)scalemul*samples[i]/(neg ? 32768.0 : 32767.0))) / div;
+  samples[i] = (neg ? 32768.0 : 32767.0)*logf(1 + (scalemul*(float)samples[i]/(neg ? 32768.0 : 32767.0))) / div;
 
   if ( neg )
    samples[i] *= -1;
@@ -76,7 +76,7 @@ int main (int argc, char * argv[]) {
  int    fh;
  int    i;
  int    mul = 1, div = 1;
- int    logscale = 0;
+ float  logscale = 0;
  char buf[BUFSIZE];
 
  for (i = 1; i < argc; i++) {
@@ -101,7 +101,7 @@ int main (int argc, char * argv[]) {
   } else if ( strcmp(k, "--div") == 0 ) {
    div  = atoi(argv[++i]);
   } else if ( strcmp(k, "--log") == 0 ) {
-   logscale = atoi(argv[++i]);
+   logscale = atof(argv[++i]);
   } else if ( strcmp(k, "--help") == 0 ) {
    usage();
    return 0;
