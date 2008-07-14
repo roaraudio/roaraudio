@@ -67,6 +67,8 @@ int roar_stream_meta_set (struct roar_connection * con, struct roar_stream * s, 
  struct roar_message m;
  int len;
 
+ memset(&m, 0, sizeof(struct roar_message)); // make valgrind happy!
+
  m.cmd     = ROAR_CMD_SET_META;
  m.stream  = s->id;
 // m.datalen = len;
