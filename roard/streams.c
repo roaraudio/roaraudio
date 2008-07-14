@@ -395,6 +395,8 @@ int streams_get_mixbuffers (void *** bufferlist, struct roar_audio_info * info, 
     continue;
    }
 
+//   printf("D: bufs[have=%i] = %p\n", have, bufs[have]);
+
    ROAR_DBG("streams_get_mixbuffers(*):  bufs[have] = %p", bufs[have]);
    ROAR_DBG("streams_get_mixbuffers(*): *bufs[have] = 0x%08x...", *(uint32_t*)bufs[have]);
 
@@ -403,6 +405,7 @@ int streams_get_mixbuffers (void *** bufferlist, struct roar_audio_info * info, 
  }
 
  bufs[have] = NULL;
+ //printf("D: bufs[have=%i] = %p\n", have, bufs[have]);
 
  ROAR_DBG("streams_get_mixbuffers(*): have = %i", have);
 

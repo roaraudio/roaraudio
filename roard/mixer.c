@@ -61,8 +61,10 @@ int mix_clients_16bit (void * output, void ** input, int samples) {
 
  for (s = 0; s < samples; s++) {
   c = 0;
-  for (i = 0; input[i] != NULL; i++)
+  for (i = 0; input[i] != NULL; i++) {
+//   printf("D: input[i=%i] = %p\n", i, input[i]);
    c += in[i][s];
+  }
 
   if ( c > 32767 )
    c = 32767;
