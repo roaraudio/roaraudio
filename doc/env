@@ -1,0 +1,11 @@
+Server:
+ROAR_DRIVER
+ROAR_DEVICE
+
+Client:
+ROAR_SERVER
+ROAR_PROXY
+socks_proxy
+
+Both:
+HOME
