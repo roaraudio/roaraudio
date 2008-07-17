@@ -1,0 +1,66 @@
+.\" roar_simple_play.3:
+
+.TH "roar_simple_play" "3" "July 2008" "RoarAudio" "System Manager's Manual: RoarAuido"
+
+.SH NAME
+roar_simple_play, roar_simple_monitor, roar_simple_record, roar_simple_filter \- Simple playback, monetoring, recording or filtering via RoarAudio
+
+.SH SYNOPSIS
+
+#include <roaraudio.h>
+
+int roar_simple_play(int rate, int channels, int bits, int codec, char * server, char * name);
+
+int roar_simple_monitor(int rate, int channels, int bits, int codec, char * server, char * name);
+
+int roar_simple_record(int rate, int channels, int bits, int codec, char * server, char * name);
+
+int roar_simple_filter(int rate, int channels, int bits, int codec, char * server, char * name);
+
+.SH "DESCRIPTION"
+Open a connection to the \fBroard\fR(1) and creates a new stream for playback, monetoring, recording or filtering.
+
+.SH "PARAMETERS"
+.TP
+\fBrate\fR
+The sample rate of the stream.
+
+.TP
+\fBchannels\fR
+The nummber of channels in the stream.
+
+.TP
+\fBbits\fR
+The number of bits per sample of the stream.
+Commen values are 8 and 16.
+
+.TP
+\fBcodec\fR
+The Codec of the data you stream to the server.
+This has nothing to do with codec of the file you are playing back or encoding.
+Default (\fBROAR_CODEC_DEFAULT\fR) is \fBROAR_CODEC_PCM_S_BE\fR for signed PCM in big endian.
+
+.TP
+\fBserver\fR
+The name of the server. A value of \fBNULL\fR (common case) is used to try default locations.
+
+.TP
+\fBname\fR
+The name of the process opening this stream to be listend in the servers meta data.
+Should normaly be the name of the player without any path or filename being played.
+If \fBNULL\fR an internal default is used.
+
+.SH "RETURN VALUE"
+On success these calls return a filehandle for the stream.  On error, -1 is returned.
+
+.SH "EXAMPLES"
+Examples of these calls are the tools \fBroarcat\fR(1), \fBroarmon\fR(1), \fBroarrec\fR(1) and \fBroarfilt\fR(1).
+Just look at there code. They aren't that complex.
+
+
+.SH "SEE ALSO"
+\fBroarcat\fR(1), \fBroarmon\fR(1), \fBroarrec\fR(1), \fBroarfilt\fR(1),
+\fBlibroar\fR(7),
+\fBRoarAudio\fR(7).
+
+.\" ll
