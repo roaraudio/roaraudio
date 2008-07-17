@@ -12,6 +12,7 @@ int main (int argc, char * argv[]) {
 
  for (i = 1; i < argc; i++) {
   if ( !strcmp(argv[i], "--version") ) {
+   printf("unknown\n");
   } else if ( !strcmp(argv[i], "--libs") ) {
    printf("%s\n", ROAR_LIBS);
   } else if ( !strcmp(argv[i], "--cflags") ) {
