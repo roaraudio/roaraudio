@@ -1,0 +1,120 @@
+.\" roard.1:
+
+.TH "ROARD" "1" "July 2008" "RoarAudio" "System Manager's Manual: roard"
+
+.SH NAME
+
+roard \- RoarAudio sound server
+
+.SH SYNOPSIS
+
+\fBroard\fR [OPTIONS]...
+
+.SH "DESCRIPTION"
+
+\fBroard\fR is the RoarAudio central demon. It mixes up diffrent audio streams from it's clients to send them
+as a single stream to the soundcard.
+
+.SH "GENERAL OPTIONS"
+\fBNOTE: This list is incomplete!\fR
+
+.TP
+\fB--help\fR
+Print some help text.
+
+.TP
+\fB--demon\fR
+Go into background after startup.
+
+.TP
+\fB--realtime\fR
+Ask for higher priority.
+
+.SH "AUDIO OPTIONS"
+.TP
+\fB--rate RATE\fR, \fB-R RATE\fR
+Set server sample rate.
+
+.TP
+\fB--bits BITS\fR, \fB-B BITS\fR
+Set server bits.
+
+.TP
+\fB--chans CHANNELS\fR, \fB-C CHANNELS\fR
+Set server channels.
+
+.SH "DRIVER OPTIONS"
+
+.TP
+\fB--driver\fR, \fB-d\fR
+Set the output driver. To get a list of all drivers use \fB-d list\fR.
+
+.TP
+\fB--device\fR, \fB-D\fR
+Set the device for the output driver. Possible devices depends on the driver.
+They may be a path to a device node or a hostname.
+Use \fB-d list\fR to get a hint.
+
+.SH "NETWORK OPTIONS"
+.TP
+\fB--tcp\fR, \fB-t\fR
+Sets defaults for TCP/IP Socket.
+
+.TP
+\fB--unix\fR, \fB-u\fR
+Sets defaults for UNIX Domain Socket.
+
+.TP
+\fB--port\fR, \fB-p\fR
+Sets the port the server should listen on.
+
+.TP
+\fB--bind\fR, \fB-b\fR, \fB--sock\fR
+Sets the hostname or path the server should listen on.
+
+.TP
+\fB-G GROUP\fR
+Sets the group the UNIX Domain Socket should be \fBchgrp\fR(1)ed if UNIX Domain Socket is used.
+Default group is "audio".
+
+
+.SH "ENVIRONMENT VARIABLES"
+.TP
+\fBHOME\fR
+The users home directory.
+
+.TP
+\fBROAR_SERVER\fR
+The address of the listening server. This may be in form of host:port for TCP/IP connections
+and /path/to/sock for UNIX Domain Sockets.
+
+.TP
+\fBROAR_DRIVER\fR
+The driver to select. Same as \fB-d\fR.
+
+.TP
+\fBROAR_DEVICE\fR
+The device to select. Same as \fB-D\fR.
+
+.SH "BUGS"
+There are a lot of bugs...
+
+.SH "SEE ALSO"
+\fBroar-config\fR(1),
+\fBroarcat\fR(1),
+\fBroarcat2sock\fR(1),
+\fBroarcatad\fR(1),
+\fBroarctl\fR(1),
+\fBroarfilt\fR(1),
+\fBroarfish\fR(1),
+\fBroarmon\fR(1),
+\fBroarsockconnect\fR(1),
+\fBroartypes\fR(1),
+\fBroarvorbis\fR(1),
+\fBRoarAudio\fR(7).
+
+.SH "HISTORY"
+
+For history information see \fBRoarAudio\fR(7).
+
+.\" ll
