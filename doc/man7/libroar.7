@@ -1,0 +1,34 @@
+.\" RoarAudio
+.TH "libroar" "7" "July 2008" "RoarAudio" "System Manager's Manual: RoarAuido"
+
+.SH NAME
+libroar \- RoarAudio sound library
+
+.SH SYNOPSIS
+
+ #include <roaraudio.h>
+
+.SH "DESCRIPTION"
+\fBlibroar\fR is the central library used to comunicate with the roard.
+It suppots all commands from simple commands to play some audio up to complex commands
+to controll the server and do nice things over the network.
+
+
+.SH "EXAMPLES"
+The basic tools shiped with RoarAudio are designed to also work as examples for the lib.
+You may start by looking at \fBroarcat\fR(1)s source code as an example on how to simply play back
+some audio. A more complex example is \fBroarvorbis\fR(1) which also includes meta data updates.
+
+.SH "BUGS"
+A lot...
+
+.SH "SEE ALSO"
+\fBroar-config\fR(1),
+\fBroartypes\fR(1),
+\fBroard\fR(1),
+\fBRoarAudio\fR(7).
+
+.SH "HISTORY"
+Project started in mid of 2008.
+
+.\"ll
