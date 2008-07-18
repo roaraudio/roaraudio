@@ -41,7 +41,6 @@ roar_simple_close
 roar_simple_get_standby
 
 roar_socket_listen
-roar_socket_connect
 roar_socket_nonblock
 
 roar_stream_connect
