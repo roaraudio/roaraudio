@@ -3,9 +3,9 @@
 #include "roard.h"
 
 struct roar_codecfilter g_codecfilter[] = {
- {"null", "null codec filter", NULL,                      NULL, NULL, NULL, NULL, NULL, NULL},
- {"cmd",  "ogg123",            "ogg123 -q -d raw -f - -", NULL, NULL, NULL, NULL, NULL, NULL},
- {NULL,   NULL,                NULL,                      NULL, NULL, NULL, NULL, NULL, NULL} // end of list
+ {-1, "null", "null codec filter", NULL,                      NULL, NULL, NULL, NULL, NULL, NULL},
+ {-1, "cmd",  "ogg123",            "ogg123 -q -d raw -f - -", NULL, NULL, NULL, NULL, NULL, NULL},
+ {-1, NULL,   NULL,                NULL,                      NULL, NULL, NULL, NULL, NULL, NULL} // end of list
 };
 
 void print_codecfilterlist (void) {

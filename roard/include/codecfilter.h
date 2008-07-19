@@ -9,6 +9,7 @@
 
 
 struct roar_codecfilter {
+ int    codec;
  char * name;
  char * desc;
  char * options;
