@@ -23,8 +23,6 @@ roar_get_standby
 roar_set_standby
 roar_exit
 roar_server_oinfo
-roar_set_vol
-roar_get_vol
 
 roar_meta_strtype
 roar_meta_inttype
