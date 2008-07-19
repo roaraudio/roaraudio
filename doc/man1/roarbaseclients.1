@@ -15,6 +15,22 @@ roarmon [OPTIONS]...
 roarfilt [OPTIONS]...
 
 .SH "DESCRIPTION"
+This are some basic clients for RoarAuido. Some more complex are listen in the \fbSEE ALSO\fR block.
+For controlling \fBroard\fR take a look at \fBroarctl\fR(1). For a simple Ogg Vorbis player
+take a look at \fBroarvorbis\fR(1) (ogg123 supportes RoarAudio via libao plugin).
+
+.TP
+\fBroarcat\fR
+Sends raw PCM audio data from a file or stdin (pipe) to the sound server.
+
+.TP
+\fBroarmon\fR
+Gets a copy of the audio data the server sends to the soundcard. This is usefull for streaming
+to a server like \fBicecast2\fR(1).
+
+.TP
+\fBroarfilt\fR
+This filters the audio data before they are send to the soundcard.
 
 .SH "GENERAL OPTIONS"
 \fBNOTE: This list is incomplete!\fR
@@ -40,6 +56,31 @@ Set server channels.
 .TP
 \fB--server SERVER\fR
 The server to connect to
+
+.SH "ROARFILT SPECIFIC OPTIONS"
+.TP
+\fB--half\fR
+Half the volume.
+
+.TP
+\fB--double\fR
+Double the volume.
+
+.TP
+\fB--amp n\fR
+Amplify volume by n.
+
+.TP
+\fB--mul n\fR
+
+.TP
+\fB--div n\fR
+
+.TP
+\fB--log n\fR
+Does a simple 'gamma correction'.
+This is done by:
+ sample = 2^(bits-1) * log(1 + (n - 1)*sample/2^(bits-1)) / log(n).
 
 .SH "ENVIRONMENT VARIABLES"
 Bellow only the basic environment varibales are listend.
