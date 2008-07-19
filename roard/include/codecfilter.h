@@ -12,7 +12,10 @@ struct roar_codecfilter {
  char * name;
  char * desc;
  char * devices;
- int (*open )(CODECFILTER_USERDATA_T * inst, char * device, struct roar_stream_server * info);
+ char * options;
+ int (*open )(CODECFILTER_USERDATA_T * inst, char * device,
+                                             struct roar_stream_server * info,
+                                             struct roar_codecfilter   * filter);
  int (*close)(CODECFILTER_USERDATA_T   inst);
  int (*pause)(CODECFILTER_USERDATA_T   inst, int newstate);
  int (*write)(CODECFILTER_USERDATA_T   inst, char * buf, int len);
