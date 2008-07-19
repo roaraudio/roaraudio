@@ -1,0 +1,42 @@
+#!/bin/sh
+
+GLOBAL=false
+HAVE_LIBAO=false
+PLAYERS='libao mplayer xmms gxine wine'
+BASEDIR=.
+
+player_libao () {
+:
+}
+
+player_mplayer () {
+:
+}
+
+player_xmms () {
+:
+}
+
+player_gxine () {
+:
+}
+
+player_wine () {
+ if regedit wine.reg
+ then
+  echo -n 'OK'
+ else
+  echo -n 'Error'
+ fi
+}
+
+cd $BASEDIR || exit 1
+
+for player in $PLAYERS
+do
+ echo -n "configuring $player... "
+ player_$player 2> /dev/null
+ echo
+done
+
+#ll

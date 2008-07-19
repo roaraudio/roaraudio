@@ -1,0 +1,7 @@
+REGEDIT4
+
+[HKEY_CURRENT_USER\Software\Wine\Drivers]
+"Audio"="esd"
+
+[HKEY_USERS\S-1-5-4\Software\Wine\Drivers]
+"Audio"="esd"
