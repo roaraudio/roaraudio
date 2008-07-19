@@ -1,0 +1,75 @@
+.\" roard.1:
+
+.TH "roartestclients" "1" "July 2008" "RoarAudio" "System Manager's Manual: roard"
+
+.SH NAME
+
+roarcat2sock, roarcatad, roarsin, roarsockconnect \- RoarAudio sound server test clients
+
+.SH SYNOPSIS
+
+roarcat2sock [OPTIONS]...
+
+roarcatad [OPTIONS]...
+
+roarsin
+
+roarsockconnect HOST PORT
+
+.SH "DESCRIPTION"
+
+.SH "GENERAL OPTIONS"
+\fBNOTE: This list is incomplete!\fR
+
+.TP
+\fB--help\fR
+Print some help text.
+
+.SH "AUDIO OPTIONS"
+.TP
+\fB--rate RATE\fR, \fB-R RATE\fR
+Set server sample rate.
+
+.TP
+\fB--bits BITS\fR, \fB-B BITS\fR
+Set server bits.
+
+.TP
+\fB--chans CHANNELS\fR, \fB-C CHANNELS\fR
+Set server channels.
+
+.SH "NETWORK OPTIONS"
+.TP
+\fB--server SERVER\fR
+The server to connect to
+
+.SH "ENVIRONMENT VARIABLES"
+Bellow only the basic environment varibales are listend.
+For a complete list see \fBlibroar\fR(7).
+
+.TP
+\fBHOME\fR
+The users home directory.
+
+.TP
+\fBROAR_SERVER\fR
+The address of the listening server. This may be in form of host:port for TCP/IP connections
+and /path/to/sock for UNIX Domain Sockets.
+This is the same as the \fB--server\fR option.
+
+.SH "BUGS"
+There are a lot of bugs...
+
+.SH "SEE ALSO"
+\fBroarctl\fR(1),
+\fBroarvorbis\fR(1),
+\fBroarfish\fR(1),
+\fBroarbaseclients\fR(1),
+\fBlibroar\fR(7),
+\fBRoarAudio\fR(7).
+
+.SH "HISTORY"
+
+For history information see \fBRoarAudio\fR(7).
+
+.\" ll
