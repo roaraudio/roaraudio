@@ -12,7 +12,8 @@ void print_codecfilterlist (void) {
  int i;
 
  for (i = 0; g_codecfilter[i].name != NULL; i++) {
-  printf("  %-8s - %s (options: %s)\n", g_codecfilter[i].name, g_codecfilter[i].desc, g_codecfilter[i].options);
+  printf("  %.2x %-8s - %s (options: %s)\n",
+             g_codecfilter[i].codec, g_codecfilter[i].name, g_codecfilter[i].desc, g_codecfilter[i].options);
  }
 }
 
