@@ -23,6 +23,10 @@ struct roar_codecfilter {
  int (*flush)(CODECFILTER_USERDATA_T   inst);
 };
 
+
+#include "codecfilter_cmd.h"
+
+
 void print_codecfilterlist (void);
 
 int codecfilter_open (CODECFILTER_USERDATA_T * inst,
