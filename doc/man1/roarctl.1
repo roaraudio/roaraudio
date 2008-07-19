@@ -1,0 +1,89 @@
+.\" roard.1:
+
+.TH "roarctl" "1" "July 2008" "RoarAudio" "System Manager's Manual: roard"
+
+.SH NAME
+
+roarctl \- RoarAudio sound server controll tool
+
+.SH SYNOPSIS
+
+roarcat [OPTIONS]... COMMAND [OPTS] [COMMAND [OPTS] [COMMAND [OPTS] [...]]]
+
+.SH "DESCRIPTION"
+This tool controlls the RoarAudio's sound server.
+This is done by sending commands to the server. See \fBCOMMANDS\fR for a list.
+
+.SH "GENERAL OPTIONS"
+.TP
+\fB--help\fR
+Print some help text.
+
+.SH "NETWORK OPTIONS"
+.TP
+\fB--server SERVER\fR
+The server to connect to
+
+.SH "COMMANDS"
+.TP
+\fBhelp\fR
+Same as \fB--help\fR.
+
+.TP
+\fBstandby\fR, \fBoff\fR, \fBresume\fR, \fBon\fR
+
+.TP
+\fBstandbymode\fR
+
+.TP
+\fBexit\fR
+
+.TP
+\fBvolume\fR
+
+.TP
+\fBkick\fR
+
+.TP
+\fBserveroinfo\fR
+
+.TP
+\fBlistclients\fR
+
+.TP
+\fBliststreams\fR
+
+.TP
+\fBallinfo\fR
+Same as "\fBserveroinfo\fR \fBlistclients\fR \fBliststreams\fR".
+
+.SH "ENVIRONMENT VARIABLES"
+Bellow only the basic environment varibales are listend.
+For a complete list see \fBlibroar\fR(7).
+
+.TP
+\fBHOME\fR
+The users home directory.
+
+.TP
+\fBROAR_SERVER\fR
+The address of the listening server. This may be in form of host:port for TCP/IP connections
+and /path/to/sock for UNIX Domain Sockets.
+This is the same as the \fB--server\fR option.
+
+.SH "BUGS"
+There are a lot of bugs...
+
+.SH "SEE ALSO"
+\fBroarvorbis\fR(1),
+\fBroarfish\fR(1),
+\fBroarbaseclients\fR(1),
+\fBroartestclients\fR(1),
+\fBlibroar\fR(7),
+\fBRoarAudio\fR(7).
+
+.SH "HISTORY"
+
+For history information see \fBRoarAudio\fR(7).
+
+.\" ll
