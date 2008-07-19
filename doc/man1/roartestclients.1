@@ -17,6 +17,29 @@ roarsin
 roarsockconnect HOST PORT
 
 .SH "DESCRIPTION"
+This clients are primary for test perpose but may be usefull for someone
+or can be used as examples.
+
+.TP
+\fBroarcat2sock\fR
+This is the same as \fBroarcat\fR(1) but uses \fBroar_simple_new_stream\fR(3)
+to open the audio stream.
+
+.TP
+\fBroarcatad\fR
+This is also the same as \fBroarcat\fR(1) but uses \fBroar_stream_add_data\fR(3)
+to fill the server's input buffer.
+
+.TP
+\fBroarsin\fR
+This is the complete version of the sinus generator from \fBroartut\fR(7).
+It plays a 5 secund middle C (523.2Hz) sine.
+
+.TP
+\fBroarsockconnect\fB
+This is just a test tool connecting somewhere via \fBroar_socket_connect\fR(3).
+First the data of stdin is copied to the socket than the data from the socket to
+stdout. It's a very simlple semi-bi-directional version of \fBnetcat\fR(1).
 
 .SH "GENERAL OPTIONS"
 \fBNOTE: This list is incomplete!\fR
