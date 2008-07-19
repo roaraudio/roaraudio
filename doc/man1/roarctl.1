@@ -31,27 +31,54 @@ Same as \fB--help\fR.
 
 .TP
 \fBstandby\fR, \fBoff\fR, \fBresume\fR, \fBon\fR
+Brings the server into standby mode or back into achtive (operating mode).
 
 .TP
 \fBstandbymode\fR
+Tells if the server is in standby mode or not.
 
 .TP
 \fBexit\fR
+Quits the server.
 
 .TP
-\fBvolume\fR
+\fBvolume STREAMID CHANNELS VOL0 VOL1 VOL2...\fR
+Sets the mixing level for a stream with id \fISTREAMID\fR.
+
+\fICHANNELS\fR is the nummber of channels to set volume.
+This should be the number of channels of the stream or a symbolic name.
+Currently the symbolic names \fBmono\fR and \fBstereo\fR are allowed.
+If you use \fBmono\fR all channels will get the level you give as
+\fIVOL0\fR. If you use \fBstereo\fR it will try to set the mixing levels
+as you are used from stereo setups even if the setup is not in stereo.
+
+The parameters \fIVOL0\fR ... \fIVOLn\fR and the number of them depends
+on what you gave as \fICHANNELS\fR. You have to give exactly \fICHANNELS\fR
+parameters.
+
+If you give a numerical (not symbolic) value for \fICHANNELS\fR and
+the stream does have a diffrent number of channels the behavor is undefined.
+In the current implementation only the first \fICHANNELS\fR channels will be updated.
+This behavor may change in the future.
 
 .TP
-\fBkick\fR
+\fBkick TYPE ID\fR
+Kicks an object of \fITYPE\fR with id \fIID\fR.
+Possible types are: \fBclient stream sample source\fR
+
+You can get the \fIID\fR via \fBlist*\fR (see bellow).
 
 .TP
 \fBserveroinfo\fR
+Gets Informations about server output.
 
 .TP
 \fBlistclients\fR
+Gets Informations about clients.
 
 .TP
 \fBliststreams\fR
+Gets Informations about streams.
 
 .TP
 \fBallinfo\fR
