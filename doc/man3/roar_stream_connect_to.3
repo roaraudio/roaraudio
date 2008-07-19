@@ -1,0 +1,54 @@
+.\" roar_simple_play.3:
+
+.TH "roar_stream_connect_to" "3" "July 2008" "RoarAudio" "System Manager's Manual: RoarAuido"
+
+.SH NAME
+roar_stream_connect_to \- Connects a stream to some listening socket
+
+.SH SYNOPSIS
+
+#include <roaraudio.h>
+
+int roar_stream_connect_to(struct roar_connection * con, struct roar_stream * s, int type, char * host, int port);
+
+.SH "DESCRIPTION"
+This let the sound server connect to some remote end to get it's data for a stream.
+This is used internaly to open additional streams for \fBroar_simple_new_stream\fR(3).
+
+\fBNOTE:\fR
+This is not an alternative version of \fBroar_stream_connect\fR(3). You still need to connect the stream to the server via
+\fBroar_stream_connect\fR(3) before you can use this call.
+
+.SH "PARAMETERS"
+.TP
+\fBcon\fR
+The connection to the server.
+
+.TP
+\fBs\fR
+The stream to connect.
+
+.TP
+\fBtype\fR, \fBhost\fR, \fBport\fR
+Where the stream should be connected to.
+For a description of all these parameters see \fBroar_socket_listen\fR(3).
+
+.SH "NOTES"
+This call will block untill the server process to connect to has accepted the connection.
+This makes this call unusable to connect back to us if we are not threaded. For a nonblocking call
+see \fBroar_stream_connect_to_ask\fR(3).
+
+.SH "RETURN VALUE"
+On success these calls return 0.  On error, -1 is returned.
+
+.SH "EXAMPLES"
+FIXME
+
+.SH "SEE ALSO"
+\fBroar_simple_new_stream\fR(3),
+\fBroar_stream_connect\fR(3),
+\fBroar_socket_listen\fR(3),
+\fBlibroar\fR(7),
+\fBRoarAudio\fR(7).
+
+.\" ll

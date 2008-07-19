@@ -1,0 +1,53 @@
+.\" roar_simple_play.3:
+
+.TH "roar_simple_new_stream" "3" "July 2008" "RoarAudio" "System Manager's Manual: RoarAuido"
+
+.SH NAME
+roar_simple_new_stream, roar_simple_new_stream_obj \- Create a new stream via RoarAudio
+
+.SH SYNOPSIS
+
+#include <roaraudio.h>
+
+int roar_simple_new_stream(struct roar_connection * con, int rate, int channels, int bits, int codec, int dir);
+
+int roar_simple_new_stream_obj(struct roar_connection * con, struct roar_stream * s, int rate, int channels, int bits, int
+codec, int dir);
+
+.SH "DESCRIPTION"
+Opens a new stream to the sound server as a independet file handle (not an execed one). This is usefull if you still want
+some meta data or the volume to be updated after the stream is open.
+
+
+.SH "PARAMETERS"
+.TP
+\fBcon\fR
+The "parent" connection. This is a valid open controll connection as opend via \fBroar_simple_connect\fR(3).
+
+.TP
+\fBs\fR
+The stream object to be updated to corresponde to the new stream. This is usefull if use want to update some meta data
+after the stream has be opened as you can use all controll commands on this object.
+
+.TP
+\fBrate, channels, bits, codec\fR
+For an explanation on these parameters see \fBroar_simple_play\fR(3).
+
+.TP
+\fBdir\fR
+For an explanation on this parameter see \fBroar_simple_stream\fR(3).
+
+.SH "RETURN VALUE"
+On success these calls return a new filehandle.  On error, -1 is returned.
+
+.SH "EXAMPLES"
+An example of the use of \fBroar_simple_new_stream_obj()\fR can be found on \fBroarvorbis\fR(1) code.
+
+.SH "SEE ALSO"
+\fBroar_simple_connect\fR(3),
+\fBroar_simple_play\fR(3),
+\fBroar_simple_close\fR(3),
+\fBlibroar\fR(7),
+\fBRoarAudio\fR(7).
+
+.\" ll

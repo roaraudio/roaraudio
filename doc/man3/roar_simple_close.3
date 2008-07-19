@@ -1,0 +1,38 @@
+.\" roar_simple_play.3:
+
+.TH "roar_simple_close" "3" "July 2008" "RoarAudio" "System Manager's Manual: RoarAuido"
+
+.SH NAME
+roar_simple_close \- close a simple RoarAudio connection
+
+.SH SYNOPSIS
+
+#include <roaraudio.h>
+
+int roar_simple_close(int fh);
+
+.SH "DESCRIPTION"
+Closes a filehandle opened via \fBroar_simple_play\fR(3), \fBroar_simple_monitor\fR(3), \fBroar_simple_record\fR(3), \fBroar_simple_filter\fR(3) or \fBroar_simple_new_stream\fR(3).
+
+.SH "PARAMETERS"
+.TP
+\fBfh\fR
+The filehandle to be closed.
+
+.SH "RETURN VALUE"
+On success these calls return 0.  On error, -1 is returned.
+
+.SH "EXAMPLES"
+Examples of these calls are the tools \fBroarcat\fR(1), \fBroarmon\fR(1), \fBroarrec\fR(1) and \fBroarfilt\fR(1).
+Just look at there code. They aren't that complex.
+
+.SH "SEE ALSO"
+\fBroar_simple_play\fR(3),
+\fBroar_simple_monitor\fR(3),
+\fBroar_simple_record\fR(3),
+\fBroar_simple_filter\fR(3),
+\fBroar_simple_new_stream\fR(3),
+\fBlibroar\fR(7),
+\fBRoarAudio\fR(7).
+
+.\" ll

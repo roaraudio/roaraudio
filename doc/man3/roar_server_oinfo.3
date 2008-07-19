@@ -1,0 +1,39 @@
+.\" roar_simple_play.3:
+
+.TH "roar_server_oinfo" "3" "July 2008" "RoarAudio" "System Manager's Manual: RoarAuido"
+
+.SH NAME
+roar_server_oinfo \- Gets information on the output stream of RoarAudio's sound server
+
+.SH SYNOPSIS
+
+#include <roaraudio.h>
+
+int roar_server_oinfo(struct roar_connection * con, struct roar_stream * s);
+
+.SH "DESCRIPTION"
+Gets information on the output stream of the sound server. The output stream is the stream it sends
+to the soundcard. This can be used to get optimal parameters for all operations so the server don't need to resample.
+
+.SH "PARAMETERS"
+.TP
+\fBcon\fR
+The connection to the server.
+
+.TP
+\fBs\fR
+A stream object to be filled with information on the output stream.
+
+.SH "RETURN VALUE"
+On success these calls return 0.  On error, -1 is returned.
+
+.SH "EXAMPLES"
+FIXME
+
+.SH "SEE ALSO"
+\fBroar_simple_filter\fR(3),
+\fBroar_simple_monitor\fR(3),
+\fBlibroar\fR(7),
+\fBRoarAudio\fR(7).
+
+.\" ll

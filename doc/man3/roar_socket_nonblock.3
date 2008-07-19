@@ -1,0 +1,38 @@
+.\" roar_simple_play.3:
+
+.TH "roar_socket_nonblock" "3" "July 2008" "RoarAudio" "System Manager's Manual: RoarAuido"
+
+.SH NAME
+roar_socket_nonblock \- Sets blocking state of a socket
+
+.SH SYNOPSIS
+
+#include <roaraudio.h>
+
+int roar_socket_nonblock(int fh, int state);
+
+.SH "DESCRIPTION"
+Sets the blocking mode of a given filehandle. For information on nonblocking IO see \fBopen\fR(2) an look for \fBO_NONBLOCK\fR.
+
+.SH "PARAMETERS"
+.TP
+\fBfh\fR
+The filehandle to set the new state on.
+
+.TP
+\fBstate\fR
+The new state. This may be \fBROAR_SOCKET_BLOCK\fR to sett blocking or \fBROAR_SOCKET_NONBLOCK\fR to set nonblocking mode.
+\fBROAR_SOCKET_NONBLOCK\fR is the same as setting \fBO_NONBLOCK\fR within \fBopen\fR(2).
+
+.SH "RETURN VALUE"
+On success these calls return 0.  On error, -1 is returned.
+
+.SH "EXAMPLES"
+FIXME
+
+.SH "SEE ALSO"
+\fBopen\fR(2),
+\fBlibroar\fR(7),
+\fBRoarAudio\fR(7).
+
+.\" ll

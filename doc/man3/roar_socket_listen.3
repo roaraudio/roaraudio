@@ -1,0 +1,79 @@
+.\" roar_simple_play.3:
+
+.TH "roar_socket_listen" "3" "July 2008" "RoarAudio" "System Manager's Manual: RoarAuido"
+
+.SH NAME
+roar_socket_listen \- Opens a new listen socket
+
+.SH SYNOPSIS
+
+#include <roaraudio.h>
+
+int roar_socket_listen(int type, char * host, int port);
+
+.SH "DESCRIPTION"
+Opens a new listening socket for network clients to connect to.
+You may accept new connections via \fBaccept\fR(2).
+
+.SH "PARAMETERS"
+.TP
+\fBtype\fR
+The type of the Socket. See the list below.
+
+.TP
+\fBhost\fR
+The host or path name to listen on.
+This depends on the type argument.
+For TCP/IP to listen on any interface use a value of "0.0.0.0".
+
+.TP
+\fBport\fR
+The port number to listen on.
+This may be ignored by types not supporting port numbers.
+
+.SH "SOCKET TYPES"
+.TP
+\fBROAR_SOCKET_TYPE_UNKNOWN\fR
+The type will be auto detected. Don't use this if you know the type. Only use this
+to support user given addresses and enable auto detection.
+
+.TP
+\fBROAR_SOCKET_TYPE_TCP\fR
+Use a TCP/IP connection. This is standard mode for networking.
+\fBhost\fR is the hostname or IP to listen on and \fBport\fR is the port number to use.
+
+.TP
+\fBROAR_SOCKET_TYPE_INET\fR
+Same as above but deprecated. Use \fBROAR_SOCKET_TYPE_TCP\fR.
+
+.TP
+\fBROAR_SOCKET_TYPE_UNIX\fR
+UNIX Domain Socket. This should be default for local connections.
+\fBhost\fR is the filename of the socket.
+
+.TP
+\fBROAR_SOCKET_TYPE_FORK\fR
+This is to fork a roard to communicate with. Can't be use to listen on, just to connect to.
+\fBhost\fR and \fBport\fR is ignored at the moment.
+
+.TP
+\fBROAR_SOCKET_TYPE_FILE\fR
+This is used to open a plain file. Can't be use to listen on, just to connect to.
+\fBhost\fR is the filename to connect to.
+
+
+.SH "RETURN VALUE"
+On success these calls return filehandle.  On error, -1 is returned.
+
+.SH "BUGS"
+Listening on UDP sockets is not supported at the moment.
+
+.SH "EXAMPLES"
+FIXME
+
+.SH "SEE ALSO"
+\fBaccept\fR(2),
+\fBlibroar\fR(7),
+\fBRoarAudio\fR(7).
+
+.\" ll

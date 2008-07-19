@@ -1,0 +1,37 @@
+.\" roar_simple_play.3:
+
+.TH "roar_exit" "3" "July 2008" "RoarAudio" "System Manager's Manual: RoarAuido"
+
+.SH NAME
+roar_exit \- let RoarAudio's sound server quit
+
+.SH SYNOPSIS
+
+#include <roaraudio.h>
+
+int roar_exit(struct roar_connection * con);
+
+.SH "DESCRIPTION"
+Ask the sound server to quit.
+
+
+.SH "PARAMETERS"
+.TP
+\fBcon\fR
+An open controll connection to the server.
+
+.SH "RETURN VALUE"
+On success these calls return 0.  On error, -1 is returned.
+
+.SH "NOTES"
+Even when the call was successfull you have to use \fBroar_disconnect\fR(3) to disconnect from the server.
+
+.SH "EXAMPLES"
+FIXME
+
+.SH "SEE ALSO"
+\fBroar_disconnect\fR(3),
+\fBlibroar\fR(7),
+\fBRoarAudio\fR(7).
+
+.\" ll

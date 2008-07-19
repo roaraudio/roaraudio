@@ -1,0 +1,33 @@
+.\" roar_simple_play.3:
+
+.TH "roar_stream_new" "3" "July 2008" "RoarAudio" "System Manager's Manual: RoarAuido"
+
+.SH NAME
+roar_stream_new \- creates a new stream object
+
+.SH SYNOPSIS
+
+#include <roaraudio.h>
+
+int roar_stream_new(struct roar_stream * s, unsigned int rate, unsigned int channels, unsigned int bits, unsigned int codec);
+
+.SH "DESCRIPTION"
+This call create a new stream object.
+
+.SH "PARAMETERS"
+The parameter \fBs\fR is a pointer to the new stream object.
+
+For a description of the other parameters see \fBroar_simple_play\fR(3).
+
+.SH "RETURN VALUE"
+On success these calls return 0.  On error, -1 is returned.
+
+.SH "EXAMPLES"
+FIXME
+
+.SH "SEE ALSO"
+\fBroar_simple_play\fR(3),
+\fBlibroar\fR(7),
+\fBRoarAudio\fR(7).
+
+.\" ll

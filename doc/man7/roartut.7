@@ -1,0 +1,125 @@
+.\" RoarAudio
+.TH "roartut" "7" "July 2008" "RoarAudio" "System Manager's Manual: RoarAuido"
+
+.SH NAME
+roartut \- RoarAudio sound library developer tutorial
+
+.\".SH SYNOPSIS
+
+.\" #include <roaraudio.h>
+
+.SH "DESCRIPTION"
+This tutorial descipes some basics with working with libroar. We will create a simple application
+that can play some sines. A lot of other examples can be found in RoarAudio's sources in the roarclients
+directory.
+
+.SH "PLAYING A SINE"
+First of all we need the correct header files to be included:
+ #include <math.h>       /* sin() */
+ #include <stdio.h>      /* *printf*() */
+ #include <roaraudio.h>  /* libroar */
+
+After that we need some basic varibales with data about the audio we want to play back:
+ int rate     = ROAR_RATE_DEFAULT;
+ int bits     = 8;
+ int channels = 1; /* mono */
+
+Next we need to set the 'codec'. The codec is how the data is encoded.
+We want PCM as signed ints in the native byte order of our machine.
+ int codec    = ROAR_CODEC_DEFAULT;
+
+Now we need to store the frequency of our sine:
+ float freq = 523.2;            /* middle C */
+ float step = M_PI*2*freq/rate; /* how much time per sample we have to encode ... */
+
+In addition we need some variables to store the current time and the length of time sine:
+ float t      = 0; /* current time */
+ float length = 5; /* 5 sec */
+
+The final thing we need is a socket to send data to the demon, a buffer to store the audio data and
+a varibale to go thru the array:
+ int fh;
+ int i;
+ char out[1024];
+
+To open the connection we use the call \fBroar_simple_play\fR(3):
+ if ( (fh = roar_simple_play(rate, channels, bits, codec, NULL, "sine gen")) == -1 ) {
+  fprintf(stderr, "Error: can not open playback!\n");
+  exit(1);
+ }
+
+Now we want to loop for \fBlength\fR secunds:
+ while (t < 2*M_PI*freq*length) {
+ }
+
+In this loop we need to calculate our samples:
+  for (i = 0; i < 1024; i++) {
+   out[i] = 127*sin(t);
+   t += step;
+  }
+
+The sine is multiplyed by 127 as our amplitude range for 8 bit signed int is from -128 to +127.
+
+After we have our current data in \fBout\fR we want to write them to the server:
+  write(fh, out, 1024);
+
+\fBNOTE:\fR In a real application you may want to check the return value but in our simple application
+we should get \fBSIGPIPE\fR on error and simply die.
+
+After we are finished with our main loop we have to close the socket to the server.
+This is done by \fBroar_simple_close\fR(3):
+ roar_simple_close(fh);
+
+After adding some standard main() construct we should have something like this:
+ #include <math.h>       /* sin() */
+ #include <stdio.h>      /* *printf*() */
+ #include <roaraudio.h>  /* libroar */
+
+ int main (void) {
+  int rate     = ROAR_RATE_DEFAULT;
+  int bits     = 8;
+  int channels = 1; /* mono */
+  int codec    = ROAR_CODEC_DEFAULT;
+  float freq   = 523.2;            /* middle C */
+  float step   = M_PI*2*freq/rate; /* how much time per sample we have to encode ... */
+  float t      = 0; /* current time */
+  float length = 5; /* 5 sec */
+  int fh;
+  int i;
+  char out[1024];
+
+  if ( (fh = roar_simple_play(rate, channels, bits, codec, NULL, "sine gen")) == -1 ) {
+   fprintf(stderr, "Error: can not open playback!\n");
+   exit(1);
+  }
+
+  while (t < 2*M_PI*freq*length) {
+   for (i = 0; i < 1024; i++) {
+    out[i] = 127*sin(t);
+    t += step;
+   }
+   write(fh, out, 1024);
+  }
+
+  roar_simple_close(fh);
+
+  return 0;
+ }
+
+To compile and link we can use a command like this one:
+ cc -o roarsin roarsin.c -lm `roar-config --libs --cflags`
+
+We need to use \fB-lm\fR to link the math library for \fBsin()\fR.
+The tool \fBroar-config\fR(1) will keep care for us about all flags needed for libraor.
+
+Now we should have a working binary \fBroarsin\fR playing a sin() for 5 sec.
+
+Happy hacking!
+
+.SH "SEE ALSO"
+\fBroar-config\fR(1),
+\fBroarcat\fR(1),
+\fBlibroar\fR(7).
+\fBRoarAudio\fR(7).
+
+.\"ll

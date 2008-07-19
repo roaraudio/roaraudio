@@ -1,0 +1,63 @@
+.\" roar_simple_play.3:
+
+.TH "roar_simple_stream" "3" "July 2008" "RoarAudio" "System Manager's Manual: RoarAuido"
+
+.SH NAME
+roar_simple_stream \- Opens a stream to RoarAudio's sound server
+
+.SH SYNOPSIS
+
+#include <roaraudio.h>
+
+int roar_simple_stream(int rate, int channels, int bits, int codec, char * server, int dir, char * name);
+
+.SH "DESCRIPTION"
+This creates a new stream to RoarAudio. Normaly you want to use one of \fBroar_simple_play\fR(3), \fBroar_simple_monitor\fR(3), \fBroar_simple_record\fR(3) or \fBroar_simple_filter\fR(3).
+
+.SH "PARAMETERS"
+.TP
+\fBrate, channels, bits, codec, server, name\fR
+For an explanation on these parameters see \fBroar_simple_play\fR(3).
+
+.TP
+\fBdir\fR
+The direction of the new stream. See below for a list of valid directions.
+
+.SH "STREAM DIRECTIONS"
+
+.TP
+\fBROAR_DIR_PLAY\fR
+This stream directions meens that a player streams data to the server in order to play it back.
+
+.TP
+\fBROAR_DIR_RECORD\fR
+This direction is to record audio from the soundcard. This is used if for example you want to
+get data from your microphon or line in.
+
+.TP
+\fBROAR_DIR_MONITOR\fR
+This direction is used to get a copy of what the server sends to the soundcard. This can for example be used
+to stream the fully mixed data to Icecast (see \fBicecast2\fR(1)).
+
+.TP
+\fBROAR_DIR_FILTER\fR
+This is used to crate a filter stream: A filter stream is a stream used to filter the output of the sound server by some tool. This can for example be used for an software equalizer. The filter stream is the only bi-directional stream. You have to read some data and write back data of exactly the same size.
+
+.TP
+\fBROAR_DIR_OUTPUT\fR
+This is the type of the stream the server sends to the soundcard. You can not create such a stream. It's only listend for completeness.
+
+
+.SH "RETURN VALUE"
+On success these calls return a filehandle.  On error, -1 is returned.
+
+.SH "EXAMPLES"
+FIXME
+
+.SH "SEE ALSO"
+\fBroar_simple_play\fR(3),
+\fBroar_simple_close\fR(3),
+\fBlibroar\fR(7),
+\fBRoarAudio\fR(7).
+
+.\" ll

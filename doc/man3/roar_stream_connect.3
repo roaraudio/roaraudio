@@ -1,0 +1,44 @@
+.\" roar_simple_play.3:
+
+.TH "roar_stream_connect" "3" "July 2008" "RoarAudio" "System Manager's Manual: RoarAuido"
+
+.SH NAME
+roar_stream_connect \- Connect a stream to RoarAudio's sound server
+
+.SH SYNOPSIS
+
+#include <roaraudio.h>
+
+int roar_stream_connect(struct roar_connection * con, struct roar_stream * s, int dir);
+
+.SH "DESCRIPTION"
+This connects a new stream as created by \fBroar_stream_new\fR(3) to the server.
+
+
+.SH "PARAMETERS"
+.TP
+\fBcon\fR
+The connection to the sound server
+
+.TP
+\fBs\fR
+The stream object to connect.
+
+.TP
+\fBdir\fR
+The direction of the new stream.
+See \fBroar_simple_stream\fR(3) for details.
+
+.SH "RETURN VALUE"
+On success these calls return 0.  On error, -1 is returned.
+
+.SH "EXAMPLES"
+FIXME
+
+.SH "SEE ALSO"
+\fBroar_stream_new\fR(3),
+\fBroar_simple_stream\fR(3),
+\fBlibroar\fR(7),
+\fBRoarAudio\fR(7).
+
+.\" ll

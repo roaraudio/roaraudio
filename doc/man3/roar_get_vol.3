@@ -1,0 +1,50 @@
+.\" roar_simple_play.3:
+
+.TH "roar_get_vol" "3" "July 2008" "RoarAudio" "System Manager's Manual: RoarAuido"
+
+.SH NAME
+roar_get_vol, roar_set_vol \- Set mixer levels or RoarAudio streams
+
+.SH SYNOPSIS
+
+#include <roaraudio.h>
+
+int roar_set_vol(struct roar_connection * con, int id, struct roar_mixer_settings * mixer, int   channels);
+
+int roar_get_vol(struct roar_connection * con, int id, struct roar_mixer_settings * mixer, int * channels);
+
+.SH "DESCRIPTION"
+This call gets or sets the mixing levels for a stream.
+
+\fBNOTE: This call is not marked as forzen, it's interface may change in newer versions!\fR
+
+.SH "PARAMETERS"
+.TP
+\fBcon\fR
+The connection to the roar audio server.
+
+.TP
+\fBid\fR
+The ID of the stream to change.
+
+\fBNOTE:\fR the type of this argument may change in newer versions of the lib!
+
+.TP
+\fBmixer\fR
+FIXME
+
+.TP
+\fBchannels\fR
+FIXME
+
+.SH "RETURN VALUE"
+On success these calls return 0.  On error, -1 is returned.
+
+.SH "EXAMPLES"
+FIXME
+
+.SH "SEE ALSO"
+\fBlibroar\fR(7),
+\fBRoarAudio\fR(7).
+
+.\" ll

@@ -1,0 +1,40 @@
+.\" roar_simple_play.3:
+
+.TH "roar_get_standby" "3" "July 2008" "RoarAudio" "System Manager's Manual: RoarAuido"
+
+.SH NAME
+roar_get_standby, roar_set_standby \- Get and set RoarAudio's sound servers standby state
+
+.SH SYNOPSIS
+
+#include <roaraudio.h>
+
+int roar_get_standby(struct roar_connection * con);
+
+int roar_set_standby(struct roar_connection * con, int state);
+
+.SH "DESCRIPTION"
+Get or set the standby state of the server. If the server is in standby no audio is played. The audio device may be released depending on configuration.
+
+.SH "PARAMETERS"
+.TP
+\fBcon\fR
+The connection to the server.
+
+.TP
+\fBstate\fR
+The new state. This may be \fBROAR_STANDBY_ACTIVE\fR for standby to be set active or \fBROAR_STANDBY_INACTIVE\fR for normal operating mode.
+
+.SH "RETURN VALUE"
+\fBroar_get_standby\fR returns \fBROAR_STANDBY_ACTIVE\fR, \fBROAR_STANDBY_INACTIVE\fR or -1 on error.
+\fBroar_set_standby\fR returns on success 0.  On error, -1 is returned.
+
+.SH "EXAMPLES"
+FIXME
+
+.SH "SEE ALSO"
+\fBroar_simple_get_standby\fR(3),
+\fBlibroar\fR(7),
+\fBRoarAudio\fR(7).
+
+.\" ll

@@ -1,0 +1,32 @@
+.\" roar_simple_play.3:
+
+.TH "roar_simple_get_standby" "3" "July 2008" "RoarAudio" "System Manager's Manual: RoarAuido"
+
+.SH NAME
+roar_simple_get_standby \- Get RoarAudio's standby state
+
+.SH SYNOPSIS
+
+#include <roaraudio.h>
+
+int roar_simple_get_standby(int fh);
+
+.SH "DESCRIPTION"
+Asks the server for it's standby state.
+
+.SH "PARAMETERS"
+.TP
+\fBfh\fR
+FIXME
+
+.SH "RETURN VALUE"
+On success this call return \fBROAR_STANDBY_ACTIVE\fR or \fBROAR_STANDBY_INACTIVE\fR.  On error, -1 is returned.
+
+.SH "EXAMPLES"
+FIXME
+
+.SH "SEE ALSO"
+\fBlibroar\fR(7),
+\fBRoarAudio\fR(7).
+
+.\" ll

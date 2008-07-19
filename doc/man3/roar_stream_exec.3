@@ -1,0 +1,42 @@
+.\" roar_simple_play.3:
+
+.TH "roar_stream_exec" "3" "July 2008" "RoarAudio" "System Manager's Manual: RoarAuido"
+
+.SH NAME
+roar_stream_exec \- Set a stream as master stream of a client
+
+.SH SYNOPSIS
+
+#include <roaraudio.h>
+
+int roar_stream_exec(struct roar_connection * con, struct roar_stream * s);
+
+.SH "DESCRIPTION"
+This sets a stream to be the master stream of a client.
+A master stream is a stream send via the client's controll channel.
+If a master stream is closed the client and all it's streams are closed.
+Setting a master stream can not be undone nor can any controll commands be send
+anymore. This is used mainly for opening a connection for just playback without
+need to change things later like \fBroar_simple_play\fR(3) does it.
+
+.SH "PARAMETERS"
+.TP
+\fBcon\fR
+The connection to the server.
+
+.TP
+\fBs\fR
+The stream to be set as master stream.
+
+.SH "RETURN VALUE"
+On success these calls return 0.  On error, -1 is returned.
+
+.SH "EXAMPLES"
+FIXME
+
+.SH "SEE ALSO"
+\fBroar_simple_play\fR(3),
+\fBlibroar\fR(7),
+\fBRoarAudio\fR(7).
+
+.\" ll
