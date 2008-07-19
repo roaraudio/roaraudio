@@ -11,7 +11,6 @@
 struct roar_codecfilter {
  char * name;
  char * desc;
- char * devices;
  char * options;
  int (*open )(CODECFILTER_USERDATA_T * inst, char * device,
                                              struct roar_stream_server * info,
