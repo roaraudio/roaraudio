@@ -19,12 +19,42 @@ The basic tools shiped with RoarAudio are designed to also work as examples for 
 You may start by looking at \fBroarcat\fR(1)s source code as an example on how to simply play back
 some audio. A more complex example is \fBroarvorbis\fR(1) which also includes meta data updates.
 
+.SH "TUTORIALS"
+Tutorials can be found in \fBroartut\fR(7).
+
+.SH "ENVIRONMENT VARIABLES"
+The following variables are used in libroar itself so they are common to all clients
+using libroar.
+
+.TP
+\fBHOME\fR
+The users home directory.
+
+.TP
+\fBROAR_SERVER\fR
+The address of the listening server. This may be in form of host:port for TCP/IP connections
+and /path/to/sock for UNIX Domain Sockets. If a value of '+fork' is given a roard is forked and used.
+This roard will not listen on any sockets so it is used exclusiv by this client. See \fBroard\fR(1) for
+more information.
+
+.TP
+\fBROAR_PROXY\fR
+Set the type of the proxy being used to connect to the server.
+The only valid value at the moment is 'socks4a'. Note that this is incompatible
+with SOCKS4 like OpenSSH supports it.
+
+.TP
+\fBsocks_proxy\fR
+The SOCKS4/4a/5 proxy to use in form host:port.
+
+
 .SH "BUGS"
 A lot...
 
 .SH "SEE ALSO"
 \fBroar-config\fR(1),
 \fBroartypes\fR(1),
+\fBroartut\fR(7),
 \fBroard\fR(1),
 \fBRoarAudio\fR(7).
 
