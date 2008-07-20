@@ -22,7 +22,7 @@ int midi_free (void);
 
 // cb = console beep
 int midi_cb_play(float t, float freq, int override);
-int midi_cb_update (uint32_t pos);
+int midi_cb_update (void);
 int midi_cb_start(float freq);
 int midi_cb_stop (void);
 

@@ -41,8 +41,8 @@ int midi_cb_play(float t, float freq, int override) {
  return -1;
 }
 
-int midi_cb_update (uint32_t pos) {
- if ( g_midi_cb_stoptime <= pos )
+int midi_cb_update (void) {
+ if ( g_midi_cb_stoptime <= g_pos )
   midi_cb_stop();
 
  return 0;
