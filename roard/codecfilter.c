@@ -4,7 +4,20 @@
 
 struct roar_codecfilter g_codecfilter[] = {
  {-1,                     "null", "null codec filter", NULL,                      NULL, NULL, NULL, NULL, NULL, NULL},
- {ROAR_CODEC_OGG_GENERAL, "cmd",  "ogg123",            "ogg123 -q -d raw -f - -", cf_cmd_open, NULL, NULL, NULL, NULL, NULL},
+
+ {ROAR_CODEC_OGG_GENERAL, "cmd",  "ogg123",
+  "ogg123 -q -d raw -f - -",
+  cf_cmd_open, NULL, NULL, NULL, NULL, NULL},
+
+ {ROAR_CODEC_FLAC, "cmd",  "ogg123",
+#if BYTE_ORDER == BIG_ENDIAN
+  "flac --silent --force-raw-format --sign=signed --endian=big -d - -o -",
+#elif BYTE_ORDER == LITTLE_ENDIAN
+  "flac --silent --force-raw-format --sign=signed --endian=little -d - -o -",
+#else
+  "false",
+#endif
+  cf_cmd_open, NULL, NULL, NULL, NULL, NULL},
 
  {-1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL} // end of list
 };
