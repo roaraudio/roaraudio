@@ -31,6 +31,8 @@ int lib_run_bg(char * cmd, int infh, int outfh, int errfh) {
 
  clients_free(); // delete all clients!, this allso delets all streams
 
+ midi_free(); // close midi devices
+
  // TODO: what aout the output driver?
 
  // next we need to remap our stdio:
