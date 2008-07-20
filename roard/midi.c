@@ -2,4 +2,48 @@
 
 #include "roard.h"
 
+int midi_init (void) {
+ int i;
+ char * files[] = {
+                   "/dev/console",
+#ifdef __linux__
+                   "/dev/tty0",
+                   "/dev/vc/0",
+#endif
+                   NULL
+                  };
+
+ g_console = -1;
+
+ for (i = 0; files[i] != NULL; i++) {
+  if ( (g_console = open(files[i], O_WRONLY|O_NOCTTY, 0)) != -1 )
+   break;
+ }
+
+ return 0;
+}
+
+int midi_free (void) {
+ if ( g_console != -1 )
+  close(g_console);
+ return 0;
+}
+
+int midi_cb_play(float t, float freq, int override) {
+ return -1;
+}
+
+int midi_cb_start(float freq) {
+// On linux this uses ioctl KIOCSOUND
+ return -1;
+}
+
+int midi_cb_stop (void) {
+#ifdef __linux__
+ return midi_cb_start(0);
+#else
+ return -1;
+#endif
+}
+
 //ll
