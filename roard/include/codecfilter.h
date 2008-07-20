@@ -7,6 +7,7 @@
 
 #define CODECFILTER_USERDATA_T void *
 
+struct roar_stream_server;
 
 struct roar_codecfilter {
  int    codec;
