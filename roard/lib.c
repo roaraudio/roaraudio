@@ -39,6 +39,7 @@ int lib_run_bg(char * cmd, int infh, int outfh, int errfh) {
  for (i = 0; i < 3; i++) {
   close(i);
   dup2(fh[i], i); // todo test if this is ok.
+  close(fh[i]);
  }
 
  // OK, now we should have set up all our fh properbly, exec our command:
