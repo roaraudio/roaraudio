@@ -4,7 +4,7 @@
 
 struct roar_codecfilter g_codecfilter[] = {
  {-1,                     "null", "null codec filter", NULL,                      NULL, NULL, NULL, NULL, NULL, NULL},
- {ROAR_CODEC_OGG_GENERAL, "cmd",  "ogg123",            "ogg123 -q -d raw -f - -", NULL, NULL, NULL, NULL, NULL, NULL},
+ {ROAR_CODEC_OGG_GENERAL, "cmd",  "ogg123",            "ogg123 -q -d raw -f - -", cf_cmd_open, NULL, NULL, NULL, NULL, NULL},
 
  {-1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL} // end of list
 };
@@ -39,7 +39,7 @@ int codecfilter_open (CODECFILTER_USERDATA_T * inst,
   }
  }
 
- info->filter = *codecfilter_id;
+ info->codecfilter = *codecfilter_id;
 
  if (*codecfilter_id != -1) {
   if ( filter->open )
