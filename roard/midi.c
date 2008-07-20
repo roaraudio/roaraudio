@@ -39,7 +39,17 @@ int midi_cb_play(float t, float freq, int override) {
 
 int midi_cb_start(float freq) {
 // On linux this uses ioctl KIOCSOUND
+#ifdef __linux__
+ if ( g_console == -1 )
+  return -1;
+
+ if ( ioctl(g_console, KIOCSOUND, (int)(1193180.0/freq)) == -1 )
+  return -1;
+
+ return 0;
+#else
  return -1;
+#endif
 }
 
 int midi_cb_stop (void) {

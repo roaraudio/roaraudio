@@ -5,6 +5,11 @@
 
 #include <roaraudio.h>
 
+#ifdef __linux__
+#include <sys/ioctl.h>
+#include <linux/kd.h>
+#endif
+
 int g_console;
 
 int midi_init (void);
