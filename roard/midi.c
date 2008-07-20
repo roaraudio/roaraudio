@@ -34,7 +34,18 @@ int midi_free (void) {
 }
 
 int midi_cb_play(float t, float freq, int override) {
+/*
+#define MIDI_CB_NOOVERRIDE 0
+#define MIDI_CB_OVERRIDE   1
+*/
  return -1;
+}
+
+int midi_cb_update (uint32_t pos) {
+ if ( g_midi_cb_stoptime <= pos )
+  midi_cb_stop();
+
+ return 0;
 }
 
 int midi_cb_start(float freq) {
