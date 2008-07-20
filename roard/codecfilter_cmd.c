@@ -6,6 +6,7 @@ int cf_cmd_open(CODECFILTER_USERDATA_T * inst, int codec,
                                              struct roar_stream_server * info,
                                              struct roar_codecfilter   * filter) {
  int socks[2];
+ int execed = -1;
 
  if ( socketpair(AF_UNIX, SOCK_STREAM, 0, socks) == -1 ) {
   return -1;
@@ -14,8 +15,22 @@ int cf_cmd_open(CODECFILTER_USERDATA_T * inst, int codec,
  if ( lib_run_bg(filter->options, ((struct roar_stream*)info)->fh, socks[1], ROAR_STDERR, socks, 2) == -1 )
   return -1;
 
-// we can't close the stream in case this is an execed stream of some client.
-// close(((struct roar_stream*)info)->fh);
+ if ( info->client != -1 ) {
+  execed = g_clients[info->client]->execed;
+
+  if ( execed != -1 ) {
+   if ( g_streams[execed] == info ) {
+    g_clients[info->client]->fh = socks[0];
+   } else {
+    close(((struct roar_stream*)info)->fh);
+   }
+  } else {
+   close(((struct roar_stream*)info)->fh);
+  }
+ } else {
+  close(((struct roar_stream*)info)->fh);
+ }
+
  ((struct roar_stream*)info)->fh = socks[0];
  ((struct roar_stream*)info)->info.codec = ROAR_CODEC_DEFAULT;
  close(socks[1]);
