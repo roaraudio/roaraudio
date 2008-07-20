@@ -23,7 +23,9 @@ int cf_vorbis_open(CODECFILTER_USERDATA_T * inst, int codec,
 
  *inst = (CODECFILTER_USERDATA_T) self;
 
- return -1;
+ ((struct roar_stream*)info)->info.codec = ROAR_CODEC_DEFAULT;
+
+ return 0;
 }
 
 int cf_vorbis_close(CODECFILTER_USERDATA_T   inst) {
@@ -35,30 +37,47 @@ int cf_vorbis_close(CODECFILTER_USERDATA_T   inst) {
  ov_clear(&(self->vf));
 
  free(inst);
- return -1;
+ return 0;
 }
 
 int cf_vorbis_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  struct codecfilter_vorbis_inst * self = (struct codecfilter_vorbis_inst *) inst;
  long r;
+ long todo = len;
+ long done = 0;
 
- if ( !self->opened == 2 ) {
+// printf("cf_vorbis_read(inst=%p, buf=%p, len=%i) = ?\n", inst, buf, len);
+
+ self->opened++;
+ if ( self->opened == 16 ) {
+  //printf("cf_vorbis_read(*): opening...\n");
   if ( ov_open(self->in, &(self->vf), NULL, 0) < 0 ) {
    free((void*)self);
-   return -1;
+   return 0;
   }
  }
- self->opened++;
 
- r = ov_read(&(self->vf), buf, len, 0, 2, 1, &(self->current_section));
-
- if ( r == 0 ) {
-  // do some EOF handling...
+ if ( self->opened < 16 ) {
   return -1;
- } else if ( r < 0 ) {
-  return -1; // error in stream
+ }
+
+ while (todo) {
+  r = ov_read(&(self->vf), buf+done, todo, 0, 2, 1, &(self->current_section));
+  if ( r < 1 ) {
+   break;
+  } else {
+   todo -= r;
+   done += r;
+  }
+ }
+
+ //printf("ov_read(*) = %i\n", done);
+
+ if ( done == 0 ) {
+  // do some EOF handling...
+  return 0;
  } else {
-  return r;
+  return len;
  }
 }
 
