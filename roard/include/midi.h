@@ -16,6 +16,8 @@
 int g_console;
 
 uint32_t g_midi_cb_stoptime;
+int g_midi_cb_playing;
+
 
 int midi_init (void);
 int midi_free (void);
