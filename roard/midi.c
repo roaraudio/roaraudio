@@ -14,6 +14,7 @@ int midi_init (void) {
                   };
 
  g_console = -1;
+ g_midi_cb_stoptime = 0;
 
  for (i = 0; files[i] != NULL; i++) {
   if ( (g_console = open(files[i], O_WRONLY|O_NOCTTY, 0)) != -1 )
@@ -34,11 +35,19 @@ int midi_free (void) {
 }
 
 int midi_cb_play(float t, float freq, int override) {
+ float samples_per_sec /* S/s */ = g_sa->rate * g_sa->channels;
+
 /*
 #define MIDI_CB_NOOVERRIDE 0
 #define MIDI_CB_OVERRIDE   1
 */
- return -1;
+ if ( g_midi_cb_stoptime && override != MIDI_CB_OVERRIDE )
+  return -1;
+
+ g_midi_cb_stoptime = ROAR_MATH_OVERFLOW_ADD(g_pos, samples_per_sec*t);
+ midi_cb_start(freq);
+
+ return 0;
 }
 
 int midi_cb_update (void) {
