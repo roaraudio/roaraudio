@@ -66,6 +66,11 @@ int cf_vorbis_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
   if ( r < 1 ) {
    break;
   } else {
+   if ( self->last_section != self->current_section )
+    if ( cf_vorbis_update_stream(self) == -1 )
+     return 0;
+
+   self->last_section = self->current_section;
    todo -= r;
    done += r;
   }
@@ -79,6 +84,41 @@ int cf_vorbis_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  } else {
   return len;
  }
+}
+
+int cf_vorbis_update_stream (struct codecfilter_vorbis_inst * self) {
+ vorbis_info *vi = ov_info(&(self->vf), -1);
+ char **ptr = ov_comment(&(self->vf), -1)->user_comments;
+ char key[80] = {0}, value[80] = {0};
+ struct roar_stream * s = (struct roar_stream *) self->stream;
+ int type;
+ int j, h = 0;
+
+ s->info.channels = vi->channels;
+ s->info.rate     = vi->rate;
+ s->info.bits     = 16;
+ s->info.codec    = ROAR_CODEC_DEFAULT;
+
+ stream_meta_clear(s->id);
+
+ while(*ptr){
+   for (j = 0; (*ptr)[j] != 0 && (*ptr)[j] != '='; j++)
+    key[j] = (*ptr)[j];
+    key[j] = 0;
+
+   for (j++, h = 0; (*ptr)[j] != 0 && (*ptr)[j] != '='; j++)
+    value[h++] = (*ptr)[j];
+    value[h]   = 0;
+
+   type = roar_meta_inttype(key);
+   if ( type != -1 )
+    stream_meta_set(s->id, type, "", value);
+
+   ROAR_DBG("cf_vorbis_update_stream(*): Meta %-16s: %s", key, value);
+   ++ptr;
+ }
+
+ return 0;
 }
 
 //ll
