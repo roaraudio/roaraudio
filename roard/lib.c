@@ -2,7 +2,7 @@
 
 #include "roard.h"
 
-int lib_run_bg(char * cmd, int infh, int outfh, int errfh) {
+int lib_run_bg(char * cmd, int infh, int outfh, int errfh, int * closefh, int lenclose) {
  pid_t child = fork();
  int fh[3] = {-1, -1, -1};
  int i;
@@ -32,6 +32,10 @@ int lib_run_bg(char * cmd, int infh, int outfh, int errfh) {
  clients_free(); // delete all clients!, this allso delets all streams
 
  midi_free(); // close midi devices
+
+ // close fh's we got ask to close:
+ for (i = 0; i < lenclose; i++)
+  close(closefh[i]);
 
  // TODO: what aout the output driver?
 

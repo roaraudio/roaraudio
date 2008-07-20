@@ -11,7 +11,7 @@ int cf_cmd_open(CODECFILTER_USERDATA_T * inst, int codec,
   return -1;
  }
 
- if ( lib_run_bg(filter->options, ((struct roar_stream*)info)->fh, socks[1], ROAR_STDERR) == -1 )
+ if ( lib_run_bg(filter->options, ((struct roar_stream*)info)->fh, socks[1], ROAR_STDERR, socks, 2) == -1 )
   return -1;
 
  close(((struct roar_stream*)info)->fh);
