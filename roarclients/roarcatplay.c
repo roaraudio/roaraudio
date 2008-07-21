@@ -39,8 +39,6 @@ int main (int argc, char * argv[]) {
   }
  }
 
-//roar_file_play
-//ssize_t roar_file_play (struct roar_connection * con, char * file, int exec) {
 
  if ( roar_simple_connect(&con, server, "roarcatplay") == -1 ) {
   ROAR_DBG("roar_simple_play(*): roar_simple_connect() faild!");
