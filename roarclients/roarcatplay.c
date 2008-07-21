@@ -40,16 +40,11 @@ int main (int argc, char * argv[]) {
  }
 
 
- if ( roar_simple_connect(&con, server, "roarcatplay") == -1 ) {
-  ROAR_DBG("roar_simple_play(*): roar_simple_connect() faild!");
-  return -1;
- }
-
-
  if ( file == NULL )
   file = "/dev/stdin";
 
- roar_file_play(&con, file, 1);
+ if ( roar_simple_play_file(file, server, "roarcatplay") == -1 )
+  return 1;
 
  return 0;
 }
