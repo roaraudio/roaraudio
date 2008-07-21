@@ -29,7 +29,6 @@ int main (int argc, char * argv[]) {
  int    fh;
  int    i;
  int    in = -1;
- char buf[BUFSIZE];
 
  for (i = 1; i < argc; i++) {
   k = argv[i];
