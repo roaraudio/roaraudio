@@ -10,48 +10,28 @@ void usage (void) {
  printf("\nOptions:\n\n");
 
  printf("  --server SERVER    - Set server hostname\n"
-        "  --rate   RATE      - Set sample rate\n"
-        "  --bits   BITS      - Set bits per sample\n"
-        "  --chans  CHANNELS  - Set number of channels\n"
-        "  --codec  CODEC     - Set the codec\n"
         "  --help             - Show this help\n"
        );
 
 }
 
 int main (int argc, char * argv[]) {
- int    rate     = 44100;
- int    bits     = 16;
- int    channels = 2;
- int    codec    = ROAR_CODEC_DEFAULT;
  char * server   = NULL;
  char * k;
- int    fh;
  int    i;
- int    in = -1;
- char buf[BUFSIZE];
+ char * file = NULL;
+ struct roar_connection con;
 
  for (i = 1; i < argc; i++) {
   k = argv[i];
 
   if ( strcmp(k, "--server") == 0 ) {
    server = argv[++i];
-  } else if ( strcmp(k, "--rate") == 0 ) {
-   rate = atoi(argv[++i]);
-  } else if ( strcmp(k, "--bits") == 0 ) {
-   bits = atoi(argv[++i]);
-  } else if ( strcmp(k, "--channels") == 0 || strcmp(k, "--chans") == 0 ) {
-   channels = atoi(argv[++i]);
-  } else if ( strcmp(k, "--codec") == 0 ) {
-   codec = atoi(argv[++i]);
   } else if ( strcmp(k, "--help") == 0 ) {
    usage();
    return 0;
-  } else if ( in == -1 ) {
-   if ( (in = open(k, O_RDONLY, 0644)) == -1 ) {
-    fprintf(stderr, "Error: can not open file: %s: %s\n", k, strerror(errno));
-    return 1;
-   }
+  } else if ( file == NULL ) {
+   file = argv[i];
   } else {
    fprintf(stderr, "Error: unknown argument: %s\n", k);
    usage();
@@ -59,21 +39,19 @@ int main (int argc, char * argv[]) {
   }
  }
 
- if ( (fh = roar_simple_play(rate, channels, bits, codec, server, "roarcat")) == -1 ) {
-  fprintf(stderr, "Error: can not start playback\n");
-  return 1;
+//roar_file_play
+//ssize_t roar_file_play (struct roar_connection * con, char * file, int exec) {
+
+ if ( roar_simple_connect(&con, server, "roarcatplay") == -1 ) {
+  ROAR_DBG("roar_simple_play(*): roar_simple_connect() faild!");
+  return -1;
  }
 
- if ( in == -1 )
-  in = ROAR_STDIN;
 
- while((i = read(in, buf, BUFSIZE)))
-  if (write(fh, buf, i) != i)
-   break;
+ if ( file == NULL )
+  file = "/dev/stdin";
 
- roar_simple_close(fh);
-
- close(in);
+ roar_file_play(&con, file, 1);
 
  return 0;
 }
