@@ -30,8 +30,11 @@ ssize_t roar_file_send_raw (int out, int in) {
  int cork_new = 1, cork_old;
  socklen_t cork_len = sizeof(int);
 
- getsockopt(out, IPPROTO_TCP, TCP_CORK, &cork_old, &cork_len);
- setsockopt(out, IPPROTO_TCP, TCP_CORK, &cork_new, sizeof(int));
+ if ( getsockopt(out, IPPROTO_TCP, TCP_CORK, &cork_old, &cork_len) == -1 ) {
+  cork_old = -1;
+ } else {
+  setsockopt(out, IPPROTO_TCP, TCP_CORK, &cork_new, sizeof(int));
+ }
 #endif
 
 #ifdef ROAR_HAVE_LINUX_SENDFILE
@@ -45,7 +48,8 @@ ssize_t roar_file_send_raw (int out, int in) {
   r += write(out, buf, len);
 
 #ifdef __linux__
- setsockopt(out, IPPROTO_TCP, TCP_CORK, &cork_old, cork_len);
+ if ( cork_old != -1 )
+  setsockopt(out, IPPROTO_TCP, TCP_CORK, &cork_old, cork_len);
 #endif
  return r;
 }
