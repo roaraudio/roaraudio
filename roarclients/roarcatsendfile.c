@@ -5,7 +5,7 @@
 #define BUFSIZE 1024
 
 void usage (void) {
- printf("roarcat [OPTIONS]... [FILE]\n");
+ printf("roarcatsendfile [OPTIONS]... [FILE]\n");
 
  printf("\nOptions:\n\n");
 
