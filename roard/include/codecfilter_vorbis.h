@@ -6,6 +6,7 @@
 #include <roaraudio.h>
 #include <vorbis/codec.h>
 #include <vorbis/vorbisfile.h>
+#include <math.h>
 
 struct codecfilter_vorbis_inst {
  int current_section;

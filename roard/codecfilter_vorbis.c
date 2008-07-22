@@ -93,6 +93,7 @@ int cf_vorbis_update_stream (struct codecfilter_vorbis_inst * self) {
  struct roar_stream * s = (struct roar_stream *) self->stream;
  int type;
  int j, h = 0;
+ float rpg_track = 0, rpg_album = 0;
 
  s->info.channels = vi->channels;
  s->info.rate     = vi->rate;
@@ -115,9 +116,33 @@ int cf_vorbis_update_stream (struct codecfilter_vorbis_inst * self) {
     stream_meta_set(s->id, type, "", value);
 
    ROAR_DBG("cf_vorbis_update_stream(*): Meta %-16s: %s", key, value);
+
+   if ( strcmp(key, "REPLAYGAIN_TRACK_PEAK") == 0 ) {
+    rpg_track = 1/atof(value);
+/*
+   } else if ( strcmp(key, "REPLAYGAIN_TRACK_GAIN") == 0 ) {
+    rpg_track = powf(10, atof(value)/20);
+*/
+   } else if ( strcmp(key, "REPLAYGAIN_ALBUM_PEAK") == 0 ) {
+    rpg_album = 1/atof(value);
+/* 
+   } else if ( strcmp(key, "REPLAYGAIN_ALBUM_GAIN") == 0 ) {
+    rpg_album = powf(10, atof(value)/20);
+*/
+   }
+
    ++ptr;
  }
 
+ if ( rpg_album ) {
+  self->stream->mixer.rpg_div = 2718;  // = int(exp(1)*1000)
+  self->stream->mixer.rpg_mul = (float)rpg_album*2718;
+ } else if ( rpg_track ) {
+  self->stream->mixer.rpg_div = 2718;
+  self->stream->mixer.rpg_mul = (float)rpg_track*2718;
+ }
+
+ printf("RPG: mul=%i, div=%i\n", self->stream->mixer.rpg_mul, self->stream->mixer.rpg_div);
  return 0;
 }
 
