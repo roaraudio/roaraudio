@@ -52,7 +52,7 @@ int cf_cmd_open(CODECFILTER_USERDATA_T * inst, int codec,
 
  cmd[i+1] = 0;
 
- printf("cmd='%s'\n", cmd);
+ //printf("cmd='%s'\n", cmd);
 
  if ( socketpair(AF_UNIX, SOCK_STREAM, 0, socks) == -1 ) {
   return -1;

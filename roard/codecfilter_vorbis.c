@@ -142,7 +142,7 @@ int cf_vorbis_update_stream (struct codecfilter_vorbis_inst * self) {
   self->stream->mixer.rpg_mul = (float)rpg_track*2718;
  }
 
- printf("RPG: mul=%i, div=%i\n", self->stream->mixer.rpg_mul, self->stream->mixer.rpg_div);
+ //printf("RPG: mul=%i, div=%i\n", self->stream->mixer.rpg_mul, self->stream->mixer.rpg_div);
  return 0;
 }
 
