@@ -39,7 +39,7 @@ int vumeter16bit2ch (int fh, int samples, int16_t * buf) {
   suml = sqrt(suml/samples_half)/327.68;
   sumr = sqrt(sumr/samples_half)/327.68;
 
-  printf("\e[uL: %3i%% R: %3i%%          ", (int)suml, (int)sumr);
+  printf("L: %3i%% R: %3i%%          \e[u", (int)suml, (int)sumr);
   fflush(stdout);
  }
  return 0;
