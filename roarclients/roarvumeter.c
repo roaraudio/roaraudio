@@ -105,6 +105,8 @@ int main (int argc, char * argv[]) {
 
  vumeter(fh, samples*channels, bits, channels);
 
+ printf("\n"); // if the reach this then roard has quited and we should print a newline
+
  roar_simple_close(fh);
 
  return 0;
