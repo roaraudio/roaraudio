@@ -12,6 +12,10 @@ struct roar_codecfilter g_codecfilter[] = {
  {ROAR_CODEC_OGG_VORBIS, "oggvorbis", "Ogg Vorbis decoder", NULL,
  cf_vorbis_open, cf_vorbis_close, NULL, NULL, cf_vorbis_read, NULL},
 
+ {ROAR_CODEC_MIDI_FILE, "MIDIFILE", "timidity MIDI synth",
+  "timidity -Or1sl -s %R -o - -",
+  cf_cmd_open, NULL, NULL, NULL, NULL, NULL},
+
  {ROAR_CODEC_FLAC, "cmd",  "ogg123",
 #if BYTE_ORDER == BIG_ENDIAN
   "flac --silent --force-raw-format --sign=signed --endian=big -d - -o -",
