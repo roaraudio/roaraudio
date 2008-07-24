@@ -10,9 +10,10 @@
 /*
  Bits:
  76543210
-      ||\---\ byte-
-      |\----/ order
-      \-----> unsigned?
+     |||\---\ byte-
+     ||\----/ order
+     |\-----> unsigned?
+     \------> PCM(0) or MIDI(1)?
 */
 
 #define ROAR_CODEC_IS_SIGNED(x)  (((x) & ROAR_CODEC_UNSIGNED) == 0 ? 1 : 0)
