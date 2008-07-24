@@ -30,6 +30,7 @@
 #include "meta.h"
 #include "codecfilter.h"
 #include "midi.h"
+#include "lib.h"
 
 
 int alive;
