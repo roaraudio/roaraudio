@@ -10,10 +10,24 @@
 /*
  Bits:
  76543210
-     |||\---\ byte-
-     ||\----/ order
-     |\-----> unsigned?
-     \------> PCM(0) or MIDI(1)?
+    ||||\---\ byte-
+    |||\----/ order
+    ||\-----> unsigned?
+    |\------> PCM(0) or MIDI(1)?
+    \-------> PCM/MIDI(0) or hi-level codecs(1)
+
+ MIDI 0x08:
+ 76543210
+      000 0x08 -> MIDI File
+
+ hi-level 0x10:
+ 76543210
+     0000 0x10 -> Ogg Vorbis
+     0001 0x11 -> Native FLAC
+     0010 0x12 -> Ogg Speex
+     0011 0x13 -> Reserved for CELT
+     0100 0x14 -> Ogg FLAC
+     0101 0x15 -> Ogg General
 */
 
 #define ROAR_CODEC_IS_SIGNED(x)  (((x) & ROAR_CODEC_UNSIGNED) == 0 ? 1 : 0)
@@ -28,6 +42,15 @@
 #define ROAR_CODEC_PCM_U_LE  (ROAR_CODEC_PCM_S_LE  | ROAR_CODEC_UNSIGNED)
 #define ROAR_CODEC_PCM_U_BE  (ROAR_CODEC_PCM_S_BE  | ROAR_CODEC_UNSIGNED)
 #define ROAR_CODEC_PCM_U_PDP (ROAR_CODEC_PCM_S_PDP | ROAR_CODEC_UNSIGNED)
+
+#define ROAR_CODEC_MIDI_FILE    0x08
+
+#define ROAR_CODEC_OGG_VORBIS   0x10
+#define ROAR_CODEC_FLAC         0x11 /* native FLAC without Ogg container */
+#define ROAR_CODEC_OGG_SPEEX    0x12
+/* #define ROAR_CODEC_CELT/OGG_CELT 0x13 Reserved for CELT */
+#define ROAR_CODEC_OGG_FLAC     0x14
+#define ROAR_CODEC_OGG_GENERAL  0x15
 
 #if BYTE_ORDER == BIG_ENDIAN
 
