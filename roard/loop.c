@@ -4,7 +4,6 @@
 
 int main_loop (int driver, DRIVER_USERDATA_T driver_inst, struct roar_audio_info * sa) {
  void ** streams_input = NULL;
- uint32_t pos = 0;
 #ifdef MONITOR_LATENCY
  struct timeval         try, ans;
  long int ans_1last = 0, ans_2last = 0, ans_3last = 0;
@@ -16,6 +15,7 @@ int main_loop (int driver, DRIVER_USERDATA_T driver_inst, struct roar_audio_info
 
  ROAR_DBG("main_loop(*) = ?");
  alive = 1;
+ g_pos = 0;
 
  while (alive) {
 #ifdef MONITOR_LATENCY
@@ -36,9 +36,9 @@ int main_loop (int driver, DRIVER_USERDATA_T driver_inst, struct roar_audio_info
   ROAR_DBG("main_loop(*): mixing clients...");
   if ( g_standby ) {
    // while in standby we still neet to get the buffers to free input buffer space.
-   streams_get_mixbuffers(&streams_input, sa, pos);
+   streams_get_mixbuffers(&streams_input, sa, g_pos);
   } else {
-   if ( streams_get_mixbuffers(&streams_input, sa, pos) == 0 ) {
+   if ( streams_get_mixbuffers(&streams_input, sa, g_pos) == 0 ) {
     mix_clients(g_output_buffer, sa->bits, streams_input, ROAR_OUTPUT_BUFFER_SAMPLES * sa->channels);
    }
   }
@@ -52,15 +52,15 @@ int main_loop (int driver, DRIVER_USERDATA_T driver_inst, struct roar_audio_info
    usleep((1000000 * ROAR_OUTPUT_BUFFER_SAMPLES) / sa->rate);
    printf("usleep(%u) = ?\n", (1000000 * ROAR_OUTPUT_BUFFER_SAMPLES) / sa->rate);
   } else {
-   clients_send_filter(sa, pos);
+   clients_send_filter(sa, g_pos);
    output_buffer_flush(driver_inst, driver);
-   clients_send_mon(sa, pos);
+   clients_send_mon(sa, g_pos);
   }
 
-  midi_cb_update(pos);
+  midi_cb_update();
 //  output_buffer_reinit();
 
-  pos = ROAR_MATH_OVERFLOW_ADD(pos, ROAR_OUTPUT_BUFFER_SAMPLES);
+  g_pos = ROAR_MATH_OVERFLOW_ADD(g_pos, ROAR_OUTPUT_BUFFER_SAMPLES);
   ROAR_DBG("main_loop(*): current pos: %u", pos);
 #ifdef MONITOR_LATENCY
  gettimeofday(&ans, NULL);
