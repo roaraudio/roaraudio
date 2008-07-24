@@ -47,10 +47,9 @@ int streams_new    (void) {
 
    ((struct roar_stream_server*)n)->client      = -1;
    ((struct roar_stream_server*)n)->buffer      = NULL;
-   ((struct roar_stream_server*)n)->need_extra  =  0;
+   ((struct roar_stream_server*)n)->need_extra  = 0;
    ((struct roar_stream_server*)n)->output      = NULL;
-   ((struct roar_stream_server*)n)->is_new      =  1;
-   ((struct roar_stream_server*)n)->codecfilter = -1;
+   ((struct roar_stream_server*)n)->is_new      = 1;
    ((struct roar_stream_server*)n)->mixer.scale = 65535;
    for (j = 0; j < ROAR_MAX_CHANNELS; j++)
     ((struct roar_stream_server*)n)->mixer.mixer[j] = 65535;
@@ -74,11 +73,6 @@ int streams_delete (int id) {
   return 0;
 
  ROAR_DBG("streams_delete(id=%i) = ?", id);
-
- if ( g_streams[id]->codecfilter != -1 ) {
-  codecfilter_close(g_streams[id]->codecfilter_inst, g_streams[id]->codecfilter);
-  g_streams[id]->codecfilter = -1;
- }
 
  if ( g_streams[id]->client != -1 ) {
   ROAR_DBG("streams_delete(id=%i): Stream is owned by client %i", id, g_streams[id]->client);
@@ -118,9 +112,6 @@ int streams_set_fh     (int id, int fh) {
   return -1;
 
  ((struct roar_stream *)g_streams[id])->fh = fh;
-
- codecfilter_open(&(g_streams[id]->codecfilter_inst), &(g_streams[id]->codecfilter), NULL,
-                  ((struct roar_stream *)g_streams[id])->info.codec, g_streams[id]);
 
  dir = ((struct roar_stream *)g_streams[id])->dir;
 
@@ -509,13 +500,7 @@ int streams_check  (int id) {
 
  ROAR_DBG("streams_check(id=%i): buffer is up and ready ;)", id);
 
- if ( ss->codecfilter == -1 ) {
-  req = read(fh, buf, req);
- } else {
-  req = codecfilter_read(ss->codecfilter_inst, ss->codecfilter, buf, req);
- }
-
- if ( req > 0 ) {
+ if ( (req = read(fh, buf, req)) > 0 ) {
   ROAR_DBG("streams_check(id=%i): got %i bytes", id, req);
 
   roar_buffer_set_len(b, req);
