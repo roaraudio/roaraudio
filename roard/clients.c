@@ -148,6 +148,9 @@ int clients_check_all (void) {
 
  }
 
+ if ( max_fh == -1 )
+  return 0;
+
  if ( (ret = select(max_fh + 1, &r, NULL, &e, &tv)) < 1 ) {
   return ret < 0 ? ret : have;
  }
