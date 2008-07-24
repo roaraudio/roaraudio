@@ -296,6 +296,7 @@ void clean_quit_prep (void) {
  sources_free();
  streams_free();
  clients_free();
+ midi_cb_stop(); // stop console beep
  midi_free();
 }
 
