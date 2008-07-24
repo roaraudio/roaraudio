@@ -13,6 +13,8 @@ void on_sig_chld (int signum) {
  ROAR_DBG("got SIGCHLD");
 
  wait(NULL);
+
+ signal(SIGCHLD, on_sig_chld);
 }
 
 
