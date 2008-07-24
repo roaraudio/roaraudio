@@ -73,7 +73,8 @@
  #define ROAR_DBG(format, args...)
 #endif
 
-#define ROAR_ERR(format, args...)   fprintf(ROAR_DEBUG_OUTFH, ROAR_DBG_FULLPREFIX "Error: " format "\n", __LINE__, ## args)
+#define ROAR_ERR(format, args...)  fprintf(ROAR_DEBUG_OUTFH, ROAR_DBG_FULLPREFIX "Error: "   format "\n", __LINE__, ## args)
+#define ROAR_WARN(format, args...) fprintf(ROAR_DEBUG_OUTFH, ROAR_DBG_FULLPREFIX "Warning: " format "\n", __LINE__, ## args)
 
 
 #ifdef ROAR_HAVE_SAFE_OVERFLOW
