@@ -11,9 +11,17 @@
 
 int roar_socket_new_tcp (void) {
  int fh;
+ int opt = IPTOS_LOWDELAY;
 // int extra_flags = TCP_NODELAY;
 
  fh = socket(PF_INET, SOCK_STREAM, 0);
+
+/*
+phi@ph7:libroar $ IP_TOS
+phi@ph7:libroar $ IPTOS_LOWDELAY
+*/
+
+ setsockopt(fh, IPPROTO_IP, IP_TOS, &opt, sizeof(int));
 
  return fh;
 }
