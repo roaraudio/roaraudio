@@ -16,12 +16,12 @@ int roar_connect_raw (char * server) {
   /* connect via defaults */
 
 
-  if ( (fh = roar_socket_connect(ROAR_DEFAULT_SOCK_GLOBAL, 0)) != -1 )
-   return fh;
-
   snprintf(user_sock, 79, "%s/%s", getenv("HOME"), ROAR_DEFAULT_SOCK_USER);
 
   if ( (fh = roar_socket_connect(user_sock, 0)) != -1 )
+   return fh;
+
+  if ( (fh = roar_socket_connect(ROAR_DEFAULT_SOCK_GLOBAL, 0)) != -1 )
    return fh;
 
   if ( (fh = roar_socket_connect(ROAR_DEFAULT_HOST, ROAR_DEFAULT_PORT)) != -1 )
