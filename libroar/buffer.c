@@ -75,6 +75,7 @@ int roar_buffer_add      (struct roar_buffer * buf, struct roar_buffer *  next) 
  ROAR_DBG("buffer_add(buf=%p, next=%p) = ?", buf, next);
 
  while ( buf->next != NULL ) {
+  ROAR_DBG("buffer_add(*): buf=%p, next=%p", buf, buf->next);
 //  ROAR_DBG("buffer_add(): buf=%p, buf->next=%p", buf, buf->next);
   buf = buf->next;
  }
