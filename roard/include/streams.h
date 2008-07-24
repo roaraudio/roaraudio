@@ -24,6 +24,8 @@ struct roar_stream_server {
  struct roar_mixer_settings mixer;
  struct roar_meta meta[ROAR_META_MAX_PER_STREAM];
  int is_new;
+ int filter;
+ int codec_orgi;
 } * g_streams[ROAR_STREAMS_MAX];
 
 int streams_init   (void);
