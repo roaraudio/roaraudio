@@ -6,7 +6,7 @@ int display_mixer (struct roar_connection * con, int stream);
 int show_meta_all (struct roar_connection * con, int id);
 
 void usage (void) {
- printf("roarcat [OPTIONS]... COMMAND [OPTS] [COMMAND [OPTS] [COMMAND [OPTS] [...]]]\n");
+ printf("roarctl [OPTIONS]... COMMAND [OPTS] [COMMAND [OPTS] [COMMAND [OPTS] [...]]]\n");
 
  printf("\nOptions:\n\n");
 
