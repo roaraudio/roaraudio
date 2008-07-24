@@ -129,11 +129,20 @@ int change_vol_8bit (void * output, void * input, int samples, int channels, str
  if ( !(in && out) )
   return -1;
 
- for (i = 0; i < samples; i++) {
-  s  = in[i];
-  s *= set->mixer[i % channels];
-  s /= set->scale;
-  out[i] = s;
+ if (set->rpg_mul == set->rpg_div) {
+  for (i = 0; i < samples; i++) {
+   s  = in[i];
+   s *= set->mixer[i % channels];
+   s /= set->scale;
+   out[i] = s;
+  }
+ } else {
+  for (i = 0; i < samples; i++) {
+   s  = in[i];
+   s *= set->mixer[i % channels] * set->rpg_mul;
+   s /= set->scale * set->rpg_div;
+   out[i] = s;
+  }
  }
 
  return 0;
@@ -147,11 +156,20 @@ int change_vol_16bit (void * output, void * input, int samples, int channels, st
  if ( !(in && out) )
   return -1;
 
- for (i = 0; i < samples; i++) {
-  s  = in[i];
-  s *= set->mixer[i % channels];
-  s /= set->scale;
-  out[i] = s;
+ if (set->rpg_mul == set->rpg_div) {
+  for (i = 0; i < samples; i++) {
+   s  = in[i];
+   s *= set->mixer[i % channels];
+   s /= set->scale;
+   out[i] = s;
+  }
+ } else {
+  for (i = 0; i < samples; i++) {
+   s  = in[i];
+   s *= set->mixer[i % channels] * set->rpg_mul;
+   s /= set->scale * set->rpg_div;
+   out[i] = s;
+  }
  }
 
  return 0;
