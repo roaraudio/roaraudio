@@ -39,6 +39,7 @@ struct {
  {ROAR_META_TYPE_WWW,                "WWW"            },
  {ROAR_META_TYPE_WOAF,               "WOAF"           },
  {ROAR_META_TYPE_ENCODER,            "ENCODER"        },
+ {ROAR_META_TYPE_ENCODEDBY,          "ENCODEDBY"      },
  
  {-1, "EOL"}
 };
