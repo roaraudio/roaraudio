@@ -389,6 +389,9 @@ int req_on_kick (int client, struct roar_message * mes, char * data) {
  if ( mes->datalen != 4 )
   return -1;
 
+ info[0] = ROAR_NET2HOST16(info[0]);
+ info[1] = ROAR_NET2HOST16(info[1]);
+
  if ( info[0] == ROAR_OT_CLIENT ) {
   clients_delete(info[1]);
  } else if ( info[0] == ROAR_OT_STREAM ) {
