@@ -12,7 +12,8 @@ void usage (void) {
         " --demon               - Bring the server into background after init\n"
         " --terminate           - Terminate after last client quited\n"
         " --restart             - Trys to stop an old instance and start a new with new settings\n"
-        " --realtime            - Trys to get realtime priority\n"
+        " --realtime            - Trys to get realtime priority,\n"
+        "                         give multible times for being more realtime\n"
        );
 
  printf("\nAudio Options:\n\n");
@@ -126,7 +127,7 @@ int main (int argc, char * argv[]) {
   } else if ( strcmp(k, "--terminate") == 0 ) {
    g_terminate = 1;
   } else if ( strcmp(k, "--realtime") == 0 ) {
-   realtime = 1;
+   realtime++;
 
   } else if ( strcmp(k, "-R") == 0 || strcmp(k, "--rate") == 0 ) {
    sa.rate = atoi(argv[++i]);
@@ -227,9 +228,14 @@ int main (int argc, char * argv[]) {
 
  if ( realtime ) {
   errno = 0;
-  nice(-5);
+  nice(-5*realtime); // -5 for each --realtime
   if ( errno )
    ROAR_WARN("Can not decrease nice value by 5: %s", strerror(errno));
+
+#ifdef __linux__
+ if ( ioprio_set(IOPRIO_WHO_PROCESS, getpid(), IOPRIO_PRIO_VALUE(IOPRIO_CLASS_BE, 0)) == -1 )
+  ROAR_WARN("Can not set io priority: %s", strerror(errno));
+#endif
  }
 
 
