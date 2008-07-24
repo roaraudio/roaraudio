@@ -19,6 +19,7 @@
 #include "math.h"
 #include "meta.h"
 #include "file.h"
+#include "midi.h"
 
 #endif
 
