@@ -84,7 +84,13 @@
 #endif
 
 #ifdef ROAR_HAVE_MLOCK
+#ifdef __linux__
 #define ROAR_MLOCK(p,s) mlock((p), (s))
+#else
+#undef ROAR_HAVE_MLOCK
+#define ROAR_MLOCK(p,s)
+#warning No working mlock() support for this platform
+#endif
 #endif
 
 
