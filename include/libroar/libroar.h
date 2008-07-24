@@ -18,6 +18,7 @@
 #include "convert.h"
 #include "math.h"
 #include "meta.h"
+#include "file.h"
 
 #endif
 
