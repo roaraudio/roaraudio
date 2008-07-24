@@ -1,5 +1,5 @@
 TARGETS=libroar.so
-OBJS=libroar.o basic.o stream.o simple.o auth.o socket.o ctl.o buffer.o convert.o math.o meta.o file.o
+OBJS=libroar.o basic.o stream.o simple.o auth.o socket.o ctl.o buffer.o convert.o math.o meta.o file.o midi.o
 
 #DEFINES        = -DDEBUG
 INCLUDE = -I../include -I../include/libroar
