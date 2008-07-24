@@ -275,6 +275,8 @@ int main (int argc, char * argv[]) {
    _exit(0);
  }
 
+ midi_cb_play(2, 750, MIDI_CB_NOOVERRIDE);
+
  // start main loop...
  main_loop(drvid, drvinst, &sa);
 
