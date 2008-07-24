@@ -205,8 +205,22 @@ int main (int argc, char * argv[]) {
 
  if ( *server != 0 ) {
   if ( (g_listen_socket = roar_socket_listen(ROAR_SOCKET_TYPE_UNKNOWN, server, port)) == -1 ) {
-   ROAR_ERR("Can not open listen socket!");
-   return 1;
+   if ( *server == '/' ) {
+    if ( (i = roar_socket_connect(server, port)) != -1 ) {
+     close(i);
+     ROAR_ERR("Can not open listen socket!");
+     return 1;
+    } else {
+     unlink(server);
+     if ( (g_listen_socket = roar_socket_listen(ROAR_SOCKET_TYPE_UNKNOWN, server, port)) == -1 ) {
+      ROAR_ERR("Can not open listen socket!");
+      return 1;
+     }
+    }
+   } else {
+    ROAR_ERR("Can not open listen socket!");
+    return 1;
+   }
   }
 
   if ( *server == '/' ) {
