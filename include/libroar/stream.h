@@ -9,8 +9,9 @@
                            (x) == ROAR_DIR_FILTER ? "filter" : (x) == ROAR_DIR_RECORD  ? "record"  : \
                            (x) == ROAR_DIR_OUTPUT ? "output" : "unknown")
 
-#define roar_codec2str(x) ((x) == ROAR_CODEC_PCM_S_LE  ? "pcm_s_le"  : (x) == ROAR_CODEC_PCM_S_BE ? "pcm_s_be" : \
-                           (x) == ROAR_CODEC_PCM_S_PDP ? "pcm_s_pdp" : "unknown" )
+#define roar_codec2str(x) ((x) == ROAR_CODEC_PCM_S_LE  ? "pcm_s_le"  : (x) == ROAR_CODEC_PCM_S_BE  ? "pcm_s_be"  : \
+                           (x) == ROAR_CODEC_PCM_S_PDP ? "pcm_s_pdp" : (x) == ROAR_CODEC_MIDI_FILE ? "midi_file" : \
+                           "unknown" )
 
 int roar_stream_connect (struct roar_connection * con, struct roar_stream * s, int dir);
 
