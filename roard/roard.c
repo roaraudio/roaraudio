@@ -12,6 +12,7 @@ void usage (void) {
         " --demon               - Bring the server into background after init\n"
         " --terminate           - Terminate after last client quited\n"
         " --restart             - Trys to stop an old instance and start a new with new settings\n"
+        " --realtime            - Trys to get realtime priority\n"
        );
 
  printf("\nAudio Options:\n\n");
@@ -55,7 +56,8 @@ int main (int argc, char * argv[]) {
  char * k;
  char user_sock[80] = {0};
  struct roar_audio_info sa;
- int    demon = 0;
+ int    demon    = 0;
+ int    realtime = 0;
  char * driver = getenv("ROAR_DRIVER");
  char * device = getenv("ROAR_DEVICE");
  char * opts   = NULL;
@@ -123,6 +125,8 @@ int main (int argc, char * argv[]) {
    demon = 1;
   } else if ( strcmp(k, "--terminate") == 0 ) {
    g_terminate = 1;
+  } else if ( strcmp(k, "--realtime") == 0 ) {
+   realtime = 1;
 
   } else if ( strcmp(k, "-R") == 0 || strcmp(k, "--rate") == 0 ) {
    sa.rate = atoi(argv[++i]);
@@ -220,6 +224,13 @@ int main (int argc, char * argv[]) {
 
  signal(SIGINT,  on_sig_int);
  signal(SIGPIPE, SIG_IGN);  // ignore broken pipes
+
+ if ( realtime ) {
+  errno = 0;
+  nice(-5);
+  if ( errno )
+   ROAR_WARN("Can not decrease nice value by 5: %s", strerror(errno));
+ }
 
 
  clients_set_pid(g_self_client, getpid());
