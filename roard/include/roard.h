@@ -7,9 +7,12 @@
 #include <sys/select.h>
 #include <roaraudio.h>
 
+/*
 #ifdef __linux__
+#include <linux/unistd.h>
 #include <linux/ioprio.h>
 #endif
+*/
 
 
 //#include "buffer.h"
