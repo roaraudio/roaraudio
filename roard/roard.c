@@ -90,6 +90,9 @@ int main (int argc, char * argv[]) {
   server = user_sock;
  }
 
+ if ( getenv("ROAR_SERVER") != NULL )
+  server = getenv("ROAR_SERVER");
+
  if ( clients_init() == -1 ) {
   ROAR_ERR("Can not init clients!");
   return 1;
