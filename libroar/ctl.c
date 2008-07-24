@@ -158,11 +158,11 @@ int roar_set_vol      (struct roar_connection * con, int id, struct roar_mixer_s
  m.cmd     = ROAR_CMD_SET_VOL;
  m.datalen = (3 + channels) * 2;
  info[0] = 0;
- info[1] = id;
- info[2] = ROAR_SET_VOL_ALL;
+ info[1] = ROAR_HOST2NET16(id);
+ info[2] = ROAR_HOST2NET16(ROAR_SET_VOL_ALL);
 
  for (i = 0; i < channels; i++)
-  info[i+3] = mixer->mixer[i];
+  info[i+3] = ROAR_HOST2NET16(mixer->mixer[i]);
 
  if ( roar_req(con, &m, NULL) == -1 )
   return -1;
@@ -183,7 +183,7 @@ int roar_get_vol      (struct roar_connection * con, int id, struct roar_mixer_s
  m.cmd     = ROAR_CMD_GET_VOL;
  m.datalen = 2*2;
  info[0] = 0;
- info[1] = id;
+ info[1] = ROAR_HOST2NET16(id);
 
  if ( roar_req(con, &m, NULL) == -1 )
   return -1;
@@ -194,6 +194,8 @@ int roar_get_vol      (struct roar_connection * con, int id, struct roar_mixer_s
  if ( info[0] != 0 )
   return -1;
 
+ info[1] = ROAR_NET2HOST16(info[1]);
+
  if ( channels != NULL )
   *channels = info[1];
 
@@ -201,7 +203,7 @@ int roar_get_vol      (struct roar_connection * con, int id, struct roar_mixer_s
   return -1;
 
  for (i = 0; i < info[1]; i++)
-  mixer->mixer[i] = info[i+2];
+  mixer->mixer[i] = ROAR_NET2HOST16(info[i+2]);
 
  return 0;
 }
