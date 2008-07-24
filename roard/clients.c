@@ -160,8 +160,10 @@ int clients_check_all (void) {
    if ( FD_ISSET(fh, &r) ) {
     if ( g_clients[i]->execed == -1 ) {
      clients_check(i);
+/*
     } else {
      streams_check(g_clients[i]->execed);
+*/
     }
    }
 
