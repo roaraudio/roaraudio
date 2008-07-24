@@ -56,6 +56,8 @@ int main_loop (int driver, DRIVER_USERDATA_T driver_inst, struct roar_audio_info
    output_buffer_flush(driver_inst, driver);
    clients_send_mon(sa, pos);
   }
+
+  midi_cb_update(pos);
 //  output_buffer_reinit();
 
   pos = ROAR_MATH_OVERFLOW_ADD(pos, ROAR_OUTPUT_BUFFER_SAMPLES);
