@@ -231,11 +231,12 @@ int main (int argc, char * argv[]) {
   nice(-5*realtime); // -5 for each --realtime
   if ( errno )
    ROAR_WARN("Can not decrease nice value by 5: %s", strerror(errno));
-
+/*
 #ifdef __linux__
- if ( ioprio_set(IOPRIO_WHO_PROCESS, getpid(), IOPRIO_PRIO_VALUE(IOPRIO_CLASS_BE, 0)) == -1 )
-  ROAR_WARN("Can not set io priority: %s", strerror(errno));
+  if ( ioprio_set(IOPRIO_WHO_PROCESS, getpid(), IOPRIO_PRIO_VALUE(IOPRIO_CLASS_BE, 0)) == -1 )
+   ROAR_WARN("Can not set io priority: %s", strerror(errno));
 #endif
+*/
  }
 
 
