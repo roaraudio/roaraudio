@@ -11,6 +11,7 @@ void usage (void) {
  printf(
         " --demon               - Bring the server into background after init\n"
         " --terminate           - Terminate after last client quited\n"
+        " --restart             - Trys to stop an old instance and start a new with new settings\n"
        );
 
  printf("\nAudio Options:\n\n");
@@ -42,7 +43,7 @@ void usage (void) {
         " -G  GROUP             - Sets the group for the UNIX Domain Socket, (default: audio)\n"
         "                         You need the permittions to change the GID\n"
         " --no-listen           - Do not listen for new clients (only usefull for relaing)\n"
-        " --client-fh           - Communite with a client over this handle\n"
+        " --client-fh           - Comunicate with a client over this handle\n"
         "                         (only usefull for relaing)\n"
        );
 // printf("\n Options:\n\n");
