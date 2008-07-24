@@ -200,6 +200,9 @@ int main (int argc, char * argv[]) {
 
  ROAR_DBG("Server config: rate=%i, bits=%i, chans=%i", sa.rate, sa.bits, sa.channels);
 
+ if ( midi_init() == -1 )
+  ROAR_ERR("Can not initialize MIDI subsystem");
+
  if ( *server != 0 ) {
   if ( (g_listen_socket = roar_socket_listen(ROAR_SOCKET_TYPE_UNKNOWN, server, port)) == -1 ) {
    ROAR_ERR("Can not open listen socket!");
@@ -293,6 +296,7 @@ void clean_quit_prep (void) {
  sources_free();
  streams_free();
  clients_free();
+ midi_free();
 }
 
 void clean_quit (void) {
