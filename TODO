@@ -1,4 +1,4 @@
-Thinks we need to do:
+Things we need to do:
  * add _working_ resampling code
  * add support for sync streams
  * fix byte-order bug in *_set_vol()
