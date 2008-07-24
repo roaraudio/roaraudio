@@ -353,12 +353,15 @@ int streams_fill_mixbuffer (int id, struct roar_audio_info * info) {
 
   roar_buffer_get_len(buf, &len);
   ROAR_DBG("streams_fill_mixbuffer(*): New length of buffer %p is %i", buf, len);
-  if ( len == 0 )
+  if ( len == 0 ) {
    roar_buffer_delete(buf, NULL);
+  } else {
+   stream_unshift_buffer(id, buf);
+  }
  }
 
- //len = 0;
- //buffer_get_len(buf, &len);
+//len = 0;
+//roar_buffer_get_len(buf, &len);
 
 /*
  if ( len > 0 ) // we still have some data in this buffer, re-inserting it to the input buffers...
@@ -466,6 +469,8 @@ int stream_unshift_buffer (int id, struct roar_buffer *  buf) {
   return 0;
  }
 
+ buf->next = NULL;
+
  roar_buffer_add(buf, g_streams[id]->buffer);
 
  g_streams[id]->buffer = buf;
@@ -475,7 +480,7 @@ int stream_unshift_buffer (int id, struct roar_buffer *  buf) {
 
 int streams_check  (int id) {
  int fh;
- size_t req;
+ ssize_t req;
  struct roar_stream        *   s;
  struct roar_stream_server *  ss;
  struct roar_buffer        *   b;
@@ -509,7 +514,13 @@ int streams_check  (int id) {
 
  ROAR_DBG("streams_check(id=%i): buffer is up and ready ;)", id);
 
- if ( (req = read(fh, buf, req)) > 0 ) {
+ if ( ss->codecfilter == -1 ) {
+  req = read(fh, buf, req);
+ } else {
+  req = codecfilter_read(ss->codecfilter_inst, ss->codecfilter, buf, req);
+ }
+
+ if ( req > 0 ) {
   ROAR_DBG("streams_check(id=%i): got %i bytes", id, req);
 
   roar_buffer_set_len(b, req);
@@ -520,10 +531,17 @@ int streams_check  (int id) {
   ROAR_ERR("streams_check(id=%i): something is wrong, could not add buffer to stream!", id);
   roar_buffer_free(b);
  } else {
-  ROAR_DBG("streams_check(id=%i): EOF!", id);
-  roar_buffer_free(b);
-  streams_delete(id);
-  ROAR_DBG("streams_check(id=%i) = 0", id);
+  ROAR_DBG("streams_check(id=%i): read() = %i // errno: %s", id, req, strerror(errno));
+#ifdef ROAR_HAVE_LIBVORBISFILE
+  if ( errno != EAGAIN && errno != ESPIPE ) { // libvorbis file trys to seek a bit ofen :)
+#else
+  if ( errno != EAGAIN ) {
+#endif
+   ROAR_DBG("streams_check(id=%i): EOF!", id);
+   roar_buffer_free(b);
+   streams_delete(id);
+   ROAR_DBG("streams_check(id=%i) = 0", id);
+  }
   return 0;
  }
 
