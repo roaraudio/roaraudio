@@ -35,6 +35,9 @@ void usage (void) {
         " -sP                   - Make souce as primary\n"
        );
 
+ printf("\nCodec Filter Options:\n\n");
+ printf(" --list-cf             - List all codec filter\n"
+       );
 
  printf("\nServer Options:\n\n");
  printf(" -t  --tcp             - Use TCP listen socket\n"
@@ -131,6 +134,10 @@ int main (int argc, char * argv[]) {
    g_terminate = 1;
   } else if ( strcmp(k, "--realtime") == 0 ) {
    realtime++;
+
+  } else if ( strcmp(k, "--list-cf") == 0 ) {
+   print_codecfilterlist();
+   return 0;
 
   } else if ( strcmp(k, "-R") == 0 || strcmp(k, "--rate") == 0 ) {
    sa.rate = atoi(argv[++i]);
