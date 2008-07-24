@@ -237,6 +237,7 @@ int main (int argc, char * argv[]) {
 
 
  signal(SIGINT,  on_sig_int);
+ signal(SIGCHLD, on_sig_chld);
  signal(SIGPIPE, SIG_IGN);  // ignore broken pipes
 
  if ( realtime ) {
