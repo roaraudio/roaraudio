@@ -422,7 +422,7 @@ int req_on_set_vol (int client, struct roar_message * mes, char * data) {
  if ( info[0] != 0 ) // version
   return -1;
 
- stream = info[1];
+ stream = ROAR_NET2HOST16(info[1]);
  ROAR_DBG("req_on_set_vol(*): stream=%i", stream);
 
  // TODO: change this code.
@@ -439,6 +439,8 @@ int req_on_set_vol (int client, struct roar_message * mes, char * data) {
 
  ROAR_DBG("req_on_set_vol(*): s=%p", s);
 
+ info[2] = ROAR_NET2HOST16(info[2]);
+
  if ( info[2] == ROAR_SET_VOL_ALL ) {
   chans = (mes->datalen/2) - 3;
   ROAR_DBG("req_on_set_vol(*): mode is ROAR_SET_VOL_ALL, channes=%i", chans);
@@ -449,18 +451,18 @@ int req_on_set_vol (int client, struct roar_message * mes, char * data) {
   ROAR_DBG("req_on_set_vol(*): mixer at %p", s->mixer.mixer);
 
   for (i = 0; i < chans; i++) {
-   s->mixer.mixer[i] = info[i+3];
-   ROAR_DBG("req_on_set_vol(*): channel %i: %i", i, info[i+3]);
+   s->mixer.mixer[i] = ROAR_NET2HOST16(info[i+3]);
+   ROAR_DBG("req_on_set_vol(*): channel %i: %i", i, ROAR_NET2HOST16(info[i+3]));
   }
 
   ROAR_DBG("req_on_set_vol(*): mixer changed!");
 
  } else if ( info[2] == ROAR_SET_VOL_ONE ) {
   ROAR_DBG("req_on_set_vol(*): mode is ROAR_SET_VOL_ONE");
-  if ( info[3] >= ROAR_MAX_CHANNELS )
+  if ( ROAR_NET2HOST16(info[3]) >= ROAR_MAX_CHANNELS )
    return -1;
 
-  s->mixer.mixer[info[3]] = info[4];
+  s->mixer.mixer[ROAR_NET2HOST16(info[3])] = ROAR_NET2HOST16(info[4]);
  } else {
   return -1;
  }
@@ -487,7 +489,7 @@ int req_on_get_vol (int client, struct roar_message * mes, char * data) {
  if ( info[0] != 0 ) // version
   return -1;
 
- stream = info[1];
+ stream = ROAR_NET2HOST16(info[1]);
  ROAR_DBG("req_on_get_vol(*): stream=%i", stream);
 
  // TODO: change this code.
@@ -507,10 +509,10 @@ int req_on_get_vol (int client, struct roar_message * mes, char * data) {
  // ok, we have everything
 
  info[0] = 0;
- info[1] = chans = ROAR_STREAM(s)->info.channels;
+ info[1] = ROAR_HOST2NET16(chans = ROAR_STREAM(s)->info.channels);
 
  for (i = 0; i < chans; i++)
-  info[2+i] = s->mixer.mixer[i];
+  info[2+i] = ROAR_HOST2NET16(s->mixer.mixer[i]);
 
  mes->datalen = (2 + chans)*2;
  mes->cmd = ROAR_CMD_OK;
