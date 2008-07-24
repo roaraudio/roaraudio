@@ -45,13 +45,15 @@ int streams_new    (void) {
    n->datalen    = 0;
    n->offset     = 0;
 
-   ((struct roar_stream_server*)n)->client      = -1;
-   ((struct roar_stream_server*)n)->buffer      = NULL;
-   ((struct roar_stream_server*)n)->need_extra  =  0;
-   ((struct roar_stream_server*)n)->output      = NULL;
-   ((struct roar_stream_server*)n)->is_new      =  1;
-   ((struct roar_stream_server*)n)->codecfilter = -1;
-   ((struct roar_stream_server*)n)->mixer.scale = 65535;
+   ((struct roar_stream_server*)n)->client        = -1;
+   ((struct roar_stream_server*)n)->buffer        = NULL;
+   ((struct roar_stream_server*)n)->need_extra    =  0;
+   ((struct roar_stream_server*)n)->output        = NULL;
+   ((struct roar_stream_server*)n)->is_new        =  1;
+   ((struct roar_stream_server*)n)->codecfilter   = -1;
+   ((struct roar_stream_server*)n)->mixer.scale   = 65535;
+   ((struct roar_stream_server*)n)->mixer.rpg_mul = 1;
+   ((struct roar_stream_server*)n)->mixer.rpg_div = 1;
    for (j = 0; j < ROAR_MAX_CHANNELS; j++)
     ((struct roar_stream_server*)n)->mixer.mixer[j] = 65535;
    for (j = 0; j < ROAR_META_MAX_PER_STREAM; j++) {
