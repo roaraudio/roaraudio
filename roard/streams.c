@@ -75,6 +75,11 @@ int streams_delete (int id) {
 
  ROAR_DBG("streams_delete(id=%i) = ?", id);
 
+ if ( g_streams[id]->codecfilter != -1 ) {
+  codecfilter_close(g_streams[id]->codecfilter_inst, g_streams[id]->codecfilter);
+  g_streams[id]->codecfilter = -1;
+ }
+
  if ( g_streams[id]->client != -1 ) {
   ROAR_DBG("streams_delete(id=%i): Stream is owned by client %i", id, g_streams[id]->client);
   client_stream_delete(g_streams[id]->client, id);
