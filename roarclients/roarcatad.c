@@ -2,7 +2,7 @@
 
 #include <roaraudio.h>
 
-#define BUFSIZE 1024
+#define BUFSIZE (1024*2)
 
 void usage (void) {
  printf("roarcatad [OPTIONS]...\n");
