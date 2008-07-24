@@ -353,15 +353,12 @@ int streams_fill_mixbuffer (int id, struct roar_audio_info * info) {
 
   roar_buffer_get_len(buf, &len);
   ROAR_DBG("streams_fill_mixbuffer(*): New length of buffer %p is %i", buf, len);
-  if ( len == 0 ) {
+  if ( len == 0 )
    roar_buffer_delete(buf, NULL);
-  } else {
-   stream_unshift_buffer(id, buf);
-  }
  }
 
-//len = 0;
-//roar_buffer_get_len(buf, &len);
+ //len = 0;
+ //buffer_get_len(buf, &len);
 
 /*
  if ( len > 0 ) // we still have some data in this buffer, re-inserting it to the input buffers...
@@ -468,8 +465,6 @@ int stream_unshift_buffer (int id, struct roar_buffer *  buf) {
   g_streams[id]->buffer = buf;
   return 0;
  }
-
- buf->next = NULL;
 
  roar_buffer_add(buf, g_streams[id]->buffer);
 

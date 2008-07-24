@@ -8,7 +8,7 @@ CF=codecfilter_cmd.o codecfilter_vorbis.o
 #DEFINES        = -DMONITOR_LATENCY
 INCLUDE = -I../include -I./include
 CFLAGS  = -g -Wall -O2 $(DEFINES) $(INCLUDE)
-LDFLAGS = -g -L../lib/ -lroar -lesd -lao
+LDFLAGS = -g -L../lib/ -lroar -lesd -lao -lvorbisfile
 
 all: ${TARGETS}
 	cp -v ${TARGETS} ../lib/
