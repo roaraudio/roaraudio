@@ -9,4 +9,11 @@ void on_sig_int (int signum) {
  clean_quit();
 }
 
+void on_sig_chld (int signum) {
+ ROAR_DBG("got SIGCHLD");
+
+ wait(NULL);
+}
+
+
 //ll

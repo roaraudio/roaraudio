@@ -5,6 +5,7 @@
 
 #include <signal.h>
 #include <sys/select.h>
+#include <sys/wait.h>
 #include <roaraudio.h>
 
 /*
@@ -16,6 +17,7 @@
 
 
 //#include "buffer.h"
+#include "codecfilter.h"
 #include "client.h"
 #include "driver.h"
 #include "output.h"
@@ -28,7 +30,6 @@
 #include "sources.h"
 #include "sample.h"
 #include "meta.h"
-#include "codecfilter.h"
 #include "midi.h"
 #include "lib.h"
 
@@ -44,6 +45,7 @@ void clean_quit (void);
 void clean_quit_prep (void);
 
 void on_sig_int (int signum);
+void on_sig_chld (int signum);
 
 int g_listen_socket;
 
