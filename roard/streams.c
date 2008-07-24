@@ -50,7 +50,7 @@ int streams_new    (void) {
    ((struct roar_stream_server*)n)->need_extra  =  0;
    ((struct roar_stream_server*)n)->output      = NULL;
    ((struct roar_stream_server*)n)->is_new      =  1;
-   ((struct roar_stream_server*)n)->filter      = -1;
+   ((struct roar_stream_server*)n)->codecfilter = -1;
    ((struct roar_stream_server*)n)->mixer.scale = 65535;
    for (j = 0; j < ROAR_MAX_CHANNELS; j++)
     ((struct roar_stream_server*)n)->mixer.mixer[j] = 65535;
@@ -113,6 +113,9 @@ int streams_set_fh     (int id, int fh) {
   return -1;
 
  ((struct roar_stream *)g_streams[id])->fh = fh;
+
+ codecfilter_open(&(g_streams[id]->codecfilter_inst), &(g_streams[id]->codecfilter), NULL,
+                  ((struct roar_stream *)g_streams[id])->info.codec, g_streams[id]);
 
  dir = ((struct roar_stream *)g_streams[id])->dir;
 
