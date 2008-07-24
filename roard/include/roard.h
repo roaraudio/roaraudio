@@ -28,6 +28,8 @@
 #include "sources.h"
 #include "sample.h"
 #include "meta.h"
+#include "codecfilter.h"
+#include "midi.h"
 
 
 int alive;
