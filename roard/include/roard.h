@@ -7,16 +7,12 @@
 #include <sys/select.h>
 #include <roaraudio.h>
 
-/*
 #ifdef __linux__
-#include <linux/unistd.h>
 #include <linux/ioprio.h>
 #endif
-*/
 
 
 //#include "buffer.h"
-#include "codecfilter.h"
 #include "client.h"
 #include "driver.h"
 #include "output.h"
@@ -29,13 +25,9 @@
 #include "sources.h"
 #include "sample.h"
 #include "meta.h"
-#include "midi.h"
-#include "lib.h"
 
 
 int alive;
-
-uint32_t g_pos; // current possition in output stream
 
 int g_standby;
 
