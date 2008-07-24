@@ -73,6 +73,8 @@ int main (int argc, char * argv[]) {
 
  roar_simple_close(fh);
 
+ close(in);
+
  return 0;
 }
 
