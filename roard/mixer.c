@@ -139,8 +139,8 @@ int change_vol_8bit (void * output, void * input, int samples, int channels, str
  } else {
   for (i = 0; i < samples; i++) {
    s  = in[i];
-   s *= set->mixer[i % channels] * set->rpg_mul;
-   s /= set->scale * set->rpg_div;
+   s *= (set->mixer[i % channels] * set->rpg_mul) / set->rpg_div;
+   s /= set->scale;
    out[i] = s;
   }
  }
@@ -166,8 +166,8 @@ int change_vol_16bit (void * output, void * input, int samples, int channels, st
  } else {
   for (i = 0; i < samples; i++) {
    s  = in[i];
-   s *= set->mixer[i % channels] * set->rpg_mul;
-   s /= set->scale * set->rpg_div;
+   s *= (set->mixer[i % channels] * set->rpg_mul) / set->rpg_div;
+   s /= set->scale;
    out[i] = s;
   }
  }
