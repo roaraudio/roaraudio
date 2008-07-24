@@ -27,6 +27,7 @@ int main (int argc, char * argv[]) {
  char * k;
  int    fh;
  int    i;
+ int    in = -1;
  char buf[BUFSIZE];
 
  for (i = 1; i < argc; i++) {
@@ -43,6 +44,11 @@ int main (int argc, char * argv[]) {
   } else if ( strcmp(k, "--help") == 0 ) {
    usage();
    return 0;
+  } else if ( in == -1 ) {
+   if ( (in = open(k, O_RDONLY, 0644)) == -1 ) {
+    fprintf(stderr, "Error: can not open file: %s: %s\n", k, strerror(errno));
+    return 1;
+   }
   } else {
    fprintf(stderr, "Error: unknown argument: %s\n", k);
    usage();
@@ -55,7 +61,10 @@ int main (int argc, char * argv[]) {
   return 1;
  }
 
- while((i = read(0, buf, BUFSIZE)))
+ if ( in == -1 )
+  in = ROAR_STDIN;
+
+ while((i = read(in, buf, BUFSIZE)))
   if (write(fh, buf, i) != i)
    break;
 
