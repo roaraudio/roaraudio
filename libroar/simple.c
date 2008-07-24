@@ -106,6 +106,17 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
  return fh;
 }
 
+
+int roar_simple_play_file(char * file, char * server, char * name) {
+ struct roar_connection con;
+
+ if ( roar_simple_connect(&con, server, name) == -1 ) {
+  return -1;
+ }
+
+ return roar_file_play(&con, file, 1); // con is closed by this as this stream will be an execed one.
+}
+
 int roar_simple_play(int rate, int channels, int bits, int codec, char * server, char * name) {
  return roar_simple_stream(rate, channels, bits, codec, server, ROAR_DIR_PLAY, name);
 }
