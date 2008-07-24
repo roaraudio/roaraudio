@@ -136,8 +136,8 @@ int roar_kick         (struct roar_connection * con, int type, int id) {
 
  m.cmd     = ROAR_CMD_KICK;
  m.datalen = 4;
- info[0] = type;
- info[1] = id;
+ info[0] = ROAR_HOST2NET16(type);
+ info[1] = ROAR_HOST2NET16(id);
 
  if ( roar_req(con, &m, NULL) == -1 )
   return -1;
