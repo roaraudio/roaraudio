@@ -13,7 +13,7 @@ struct roar_command g_commands[COMMAND_MAX_COMMANDS] = {
   {ROAR_CMD_LIST_META,    "LIST_META",    req_on_list_meta},
 
   {ROAR_CMD_EXEC_STREAM,  "EXEC_STREAM",  req_on_exec_stream},
-  {ROAR_CMD_QUIT,         "QUIT",         clients_delete},
+  {ROAR_CMD_QUIT,         "QUIT",         (int(*)(int client, struct roar_message * mes, char * data))clients_delete},
 
   {ROAR_CMD_CON_STREAM,   "CON_STREAM",   req_on_con_stream},
 
