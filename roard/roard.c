@@ -227,6 +227,10 @@ int main (int argc, char * argv[]) {
  signal(SIGPIPE, SIG_IGN);  // ignore broken pipes
 
  if ( realtime ) {
+#ifdef DEBUG
+  ROAR_WARN("compiled with -DDEBUG but realtime is enabled: for real realtime support compiel without -DDEBUG");
+#endif
+
   errno = 0;
   nice(-5*realtime); // -5 for each --realtime
   if ( errno )
