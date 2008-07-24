@@ -2,5 +2,10 @@ v. 0.1:
  * done basic stuff
  * started 'libroaresd' to support ESD clients
  * done a libao plugin
- * done a lot basic networking stuff, still need som more proxy code
+ * done a lot basic networking stuff, still need some more proxy code
  * got roard work file even with small buffers (<1ms)
+ * support diffrent codecs server side decoding
+ * support for meta data
+ * done some manpages
+ * added Ogg Vorbis support (server and client side)
+ * added basic clients and some clients for testing and as examples
