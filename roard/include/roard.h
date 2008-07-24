@@ -35,6 +35,8 @@
 
 int alive;
 
+uint32_t g_pos; // current possition in output stream
+
 int g_standby;
 
 int main_loop (int driver, DRIVER_USERDATA_T driver_inst, struct roar_audio_info * sa);
