@@ -1,13 +1,8 @@
-Things we need to do:
- * add _working_ resampling code
- * add support for sync streams
- * find out where the memory leaks are
-
-Things we should do:
- * add a lot other things
  * Consider if we should take conf_* from GIFT.
+ * add _working_ resampling code
  * add support for config file
-
-Things it whould be nice to have:
+ * add support for sync streams
+ * add a lot other things
  * add code to handle streams with more than ROAR_MAX_CHANNELS channels
- * add support for ReplayGain.
+ * fix byte-order bug in *_set_vol() and *_kick()
+ * find out where the memory leaks are
