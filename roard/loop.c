@@ -61,7 +61,7 @@ int main_loop (int driver, DRIVER_USERDATA_T driver_inst, struct roar_audio_info
 //  output_buffer_reinit();
 
   g_pos = ROAR_MATH_OVERFLOW_ADD(g_pos, ROAR_OUTPUT_BUFFER_SAMPLES);
-  ROAR_DBG("main_loop(*): current pos: %u", pos);
+  ROAR_DBG("main_loop(*): current pos: %u", g_pos);
 #ifdef MONITOR_LATENCY
  gettimeofday(&ans, NULL);
 
