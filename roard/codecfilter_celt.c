@@ -120,6 +120,12 @@ int cf_celt_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
 
 // printf("buf=%p, len=%i\n", buf, len);
 
+ if ( self->fi_rest ) {
+  memcpy(buf, self->i_rest, self->fi_rest);
+  r += self->fi_rest;
+  self->fi_rest = 0;
+ }
+
  while ( r <= (len - self->s_buf) ) {
   if ( read(fh, &fs, 2) != 2 )
    break;
@@ -131,13 +137,36 @@ int cf_celt_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
 
   cbuf = buf + r;
 
-  printf("buf=%p, r=%i // cbuf=%p\n", buf, r, cbuf);
+//  printf("buf=%p, r=%i // cbuf=%p\n", buf, r, cbuf);
   if ( celt_decode(self->decoder, (unsigned char *) self->ibuf, fs, (celt_int16_t *) cbuf) < 0 )
    break;
 
   r += self->s_buf;
  }
 
+ if ( r < len ) {
+//  printf("r < len!\n");
+  if ( read(fh, &fs, 2) == 2 ) {
+   fs = ROAR_NET2HOST16(fs);
+//   printf("next: fs=%i\n", fs);
+   if ( read(fh, self->ibuf, fs) == fs ) {
+//    printf("got data!\n");
+    if ( celt_decode(self->decoder, (unsigned char *) self->ibuf, fs, (celt_int16_t *) self->obuf) >= 0 ) {
+//     printf("{ // decode rest\n");
+//     printf(" r=%i // need %i Bytes\n", r, len - r);
+//     printf(" memcpy(buf+%i, self->obuf, %i) = ?\n", r, len - r);
+     memcpy(buf+r, self->obuf, len - r);
+     self->fi_rest = self->s_buf + r - len;
+     memcpy(self->i_rest, self->obuf + len - r, self->fi_rest);
+//     printf(" len=%i, r=%i, fi_rest=%i, s_buf=%i\n", len, r, self->fi_rest, self->s_buf);
+     r = len;
+//     printf("}\n");
+    }
+   }
+  }
+ }
+
+ printf("cf_celt_read(inst=%p, buf=%p, len=%i) = %i\n", inst, buf, len, r);
  return r;
 }
 
