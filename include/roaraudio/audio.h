@@ -28,6 +28,10 @@
      0011 0x13 -> Reserved for CELT
      0100 0x14 -> Ogg FLAC
      0101 0x15 -> Ogg General
+     0110 0x16 -> Ogg CELT
+     [...]
+     **** 0x1a -> ROAR CELT
+     **** 0x1b -> ROAR SPEEX
 */
 
 #define ROAR_CODEC_IS_SIGNED(x)  (((x) & ROAR_CODEC_UNSIGNED) == 0 ? 1 : 0)
@@ -51,6 +55,9 @@
 /* #define ROAR_CODEC_CELT/OGG_CELT 0x13 Reserved for CELT */
 #define ROAR_CODEC_OGG_FLAC     0x14
 #define ROAR_CODEC_OGG_GENERAL  0x15
+
+#define ROAR_CODEC_ROAR_CELT    0x1a
+#define ROAR_CODEC_ROAR_SPEEX   0x1b
 
 #if BYTE_ORDER == BIG_ENDIAN
 
