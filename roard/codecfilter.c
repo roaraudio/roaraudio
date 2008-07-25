@@ -16,6 +16,9 @@ struct roar_codecfilter g_codecfilter[] = {
   "timidity -Or1sl -s %R -o - -",
   cf_cmd_open, NULL, NULL, NULL, NULL, NULL},
 
+ {ROAR_CODEC_ROAR_CELT, "RoarCELT", "RoarAudio CELT", NULL,
+  cf_celt_open, cf_celt_close, NULL, NULL, cf_celt_read, NULL},
+
  {ROAR_CODEC_FLAC, "cmd",  "ogg123",
 #if BYTE_ORDER == BIG_ENDIAN
   "flac --silent --force-raw-format --sign=signed --endian=big -d - -o -",
