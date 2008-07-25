@@ -540,10 +540,10 @@ int streams_check  (int id) {
   if ( errno != EAGAIN ) {
 #endif
    ROAR_DBG("streams_check(id=%i): EOF!", id);
-   roar_buffer_free(b);
    streams_delete(id);
    ROAR_DBG("streams_check(id=%i) = 0", id);
   }
+  roar_buffer_free(b);
   return 0;
  }
 
