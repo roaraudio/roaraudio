@@ -30,6 +30,9 @@ struct roar_codecfilter {
 #include "codecfilter_vorbis.h"
 #endif
 
+#ifdef ROAR_HAVE_LIBCELT
+#include "codecfilter_celt.h"
+#endif
 
 void print_codecfilterlist (void);
 
