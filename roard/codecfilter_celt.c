@@ -166,7 +166,7 @@ int cf_celt_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
   }
  }
 
- printf("cf_celt_read(inst=%p, buf=%p, len=%i) = %i\n", inst, buf, len, r);
+ ROAR_DBG("cf_celt_read(inst=%p, buf=%p, len=%i) = %i", inst, buf, len, r);
  return r;
 }
 
