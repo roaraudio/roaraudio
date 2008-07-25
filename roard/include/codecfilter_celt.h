@@ -17,9 +17,11 @@ struct codecfilter_celt_inst {
  int out_size;
  char * ibuf;
  char * obuf;
- char * rest;
+ char * i_rest;
+ char * o_rest;
  int s_buf;
- int f_rest; /* how much is in rest? */
+ int fi_rest; /* how much is in rest? */
+ int fo_rest; /* how much is in rest? */
 };
 
 int cf_celt_open(CODECFILTER_USERDATA_T * inst, int codec,
