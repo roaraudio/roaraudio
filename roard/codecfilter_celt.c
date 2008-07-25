@@ -90,6 +90,15 @@ int cf_celt_close(CODECFILTER_USERDATA_T   inst) {
  if ( self->mode )
   celt_mode_destroy(self->mode);
 
+ if ( self->ibuf )
+  free(self->ibuf);
+
+ if ( self->obuf )
+  free(self->obuf);
+
+ if ( self->rest )
+  free(self->rest);
+
  free(inst);
  return 0;
 }
