@@ -28,9 +28,29 @@ int cf_celt_open(CODECFILTER_USERDATA_T * inst, int codec,
  self->stream               = info;
  self->frame_size           = 256;
  self->lookahead            = self->frame_size;
- self->mode                 = celt_mode_create(s->info.rate, s->info.channels, self->frame_size, self->lookahead, NULL);
  self->encoder              = NULL;
  self->decoder              = NULL;
+ self->s_buf                = s->info.channels * self->frame_size;
+ self->ibuf                 = malloc(self->s_buf);
+ self->obuf                 = malloc(self->s_buf);
+ self->rest                 = malloc(self->s_buf);
+ self->f_rest               = 0;
+
+ if ( !(self->ibuf && self->obuf && self->rest) ) {
+  if ( self->ibuf )
+   free(self->ibuf);
+
+  if ( self->obuf )
+   free(self->obuf);
+
+  if ( self->rest )
+   free(self->rest);
+
+  free(self);
+  return -1;
+ }
+ 
+ self->mode                 = celt_mode_create(s->info.rate, s->info.channels, self->frame_size, self->lookahead, NULL);
 
  if ( !self->mode ) {
   free(self);
@@ -49,7 +69,8 @@ int cf_celt_open(CODECFILTER_USERDATA_T * inst, int codec,
 
  *inst = (CODECFILTER_USERDATA_T) self;
 
- ((struct roar_stream*)info)->info.codec = ROAR_CODEC_DEFAULT;
+ s->info.codec = ROAR_CODEC_DEFAULT;
+ s->info.bits  = 16; // CELT hardcoded
 
  return 0;
 }
