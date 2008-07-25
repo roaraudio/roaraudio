@@ -105,8 +105,26 @@ int cf_celt_close(CODECFILTER_USERDATA_T   inst) {
 
 int cf_celt_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  struct codecfilter_celt_inst * self = (struct codecfilter_celt_inst *) inst;
+ int fh = ((struct roar_stream *)self->stream)->fh;
+ int r = 0;
+ uint16_t fs;
 
- return 0;
+ while ( r <= (len - self->s_buf) ) {
+  if ( read(fh, &fs, 2) != 2 )
+   break;
+
+  fs = ROAR_NET2HOST16(fs);
+
+  if ( read(fh, self->ibuf, fs) != fs )
+   break;
+
+  if ( celt_decode(self->decoder, (unsigned char *) self->ibuf, fs, (celt_int16_t *) ((char *) buf+r)) < 0 )
+   break;
+
+  r += self->s_buf;
+ }
+
+ return r;
 }
 
 int cf_celt_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
