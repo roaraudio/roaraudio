@@ -1,4 +1,4 @@
-//libroaryiff.c:
+//connection.c:
 
 #include <libroaryiff.h>
 

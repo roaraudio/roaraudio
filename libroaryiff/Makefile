@@ -1,5 +1,5 @@
 TARGETS=libroaryiff.so
-OBJS=libroaryiff.o
+OBJS=libroaryiff.o connection.o
 
 #DEFINES        = -DDEBUG
 INCLUDE = -I../include -I../include/libroaryiff
