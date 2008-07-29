@@ -16,6 +16,7 @@ struct roar_client {
  char host[ROAR_BUFFER_NAME];
  int execed;
  int streams[ROAR_CLIENTS_MAX_STREAMS_PER_CLIENT];
+ struct roar_acl_target * acl;
 };
 
 #endif
