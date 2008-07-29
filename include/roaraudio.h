@@ -43,6 +43,7 @@
 #include <roaraudio/client.h>
 #include <roaraudio/sample.h>
 #include <roaraudio/meta.h>
+#include <roaraudio/acl.h>
 
 #include <libroar/libroar.h>
 
