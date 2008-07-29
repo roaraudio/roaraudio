@@ -36,6 +36,8 @@ int clients_new (void) {
     *n->name = 0;
     *n->host = 0;
 
+    n->acl   = NULL;
+
     n->execed = -1;
     for (s = 0; s < ROAR_CLIENTS_MAX_STREAMS_PER_CLIENT; s++)
      n->streams[s] = -1;
