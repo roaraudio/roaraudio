@@ -1,5 +1,5 @@
 TARGETS=libroaryiff.so
-OBJS=libroaryiff.o connection.o
+OBJS=libroaryiff.o connection.o playback.o audiocd.o ctl.o
 
 #DEFINES        = -DDEBUG
 INCLUDE = -I../include -I../include/libroaryiff
