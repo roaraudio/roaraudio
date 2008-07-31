@@ -55,7 +55,7 @@ int cf_celt_open(CODECFILTER_USERDATA_T * inst, int codec,
   return -1;
  }
  
- self->mode                 = celt_mode_create(s->info.rate, s->info.channels, self->frame_size, self->lookahead, NULL);
+ self->mode                 = celt_mode_create(s->info.rate, s->info.channels, self->frame_size, NULL);
 
  if ( !self->mode ) {
   free(self);
