@@ -62,15 +62,16 @@ EOF
  echo
 } >&3
 
-test_lib EsounD        esd        -- esd.h                          && echo '#define ROAR_HAVE_ESD' >&3
-test_lib libao         ao         -- ao/ao.h ao/plugin.h            && echo '#define ROAR_HAVE_LIBAO' >&3
-test_lib libvorbis     vorbis     -- vorbis/codec.h                 && echo '#define ROAR_HAVE_LIBVORBIS' >&3
-test_lib libvorbisfile vorbisfile -- vorbis/vorbisfile.h            && echo '#define ROAR_HAVE_LIBVORBISFILE' >&3
-test_lib libspeex      speex      -- speex/speex.h                  && echo '#define ROAR_HAVE_LIBSPEEX' >&3
-test_lib libcelt       celt       -- celt/celt.h celt/celt_header.h && echo '#define ROAR_HAVE_LIBVORBISFILE' >&3
-test_lib liboggz       oggz       -- oggz/oggz.h                    && echo '#define ROAR_HAVE_LIBOGGZ' >&3
-test_lib libfishsound  fishsound  -- fishsound/fishsound.h          && echo '#define ROAR_HAVE_LIBFISHSOUND' >&3
-test_lib libsndfile    sndfile    -- sndfile.h                      && echo '#define ROAR_HAVE_LIBSNDFILE' >&3
+test_lib 'Math Library' m          -- math.h                         && echo '#define ROAR_HAVE_LIBM' >&3
+test_lib EsounD         esd        -- esd.h                          && echo '#define ROAR_HAVE_ESD' >&3
+test_lib libao          ao         -- ao/ao.h ao/plugin.h            && echo '#define ROAR_HAVE_LIBAO' >&3
+test_lib libvorbis      vorbis     -- vorbis/codec.h                 && echo '#define ROAR_HAVE_LIBVORBIS' >&3
+test_lib libvorbisfile  vorbisfile -- vorbis/vorbisfile.h            && echo '#define ROAR_HAVE_LIBVORBISFILE' >&3
+test_lib libspeex       speex      -- speex/speex.h                  && echo '#define ROAR_HAVE_LIBSPEEX' >&3
+test_lib libcelt        celt       -- celt/celt.h celt/celt_header.h && echo '#define ROAR_HAVE_LIBCELT' >&3
+test_lib liboggz        oggz       -- oggz/oggz.h                    && echo '#define ROAR_HAVE_LIBOGGZ' >&3
+test_lib libfishsound   fishsound  -- fishsound/fishsound.h          && echo '#define ROAR_HAVE_LIBFISHSOUND' >&3
+test_lib libsndfile     sndfile    -- sndfile.h                      && echo '#define ROAR_HAVE_LIBSNDFILE' >&3
 
 # add a better test here
 test_lib 'linux sendfile()'       -- sys/sendfile.h && echo '#define ROAR_HAVE_LINUX_SENDFILE' >&3
