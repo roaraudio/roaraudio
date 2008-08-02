@@ -20,7 +20,6 @@ int main (int argc, char * argv[]) {
  char * k;
  int    i;
  char * file = NULL;
- struct roar_connection con;
 
  for (i = 1; i < argc; i++) {
   k = argv[i];
