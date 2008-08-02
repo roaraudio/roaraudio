@@ -1,0 +1,97 @@
+#!/bin/sh
+
+#set -x
+
+TF_C=testit.c
+TF_E=testit
+CC=cc
+
+CCTF="$CC -o $TF_E $TF_C"
+
+test_lib () {
+ echo > $TF_C
+
+ echo -n "checking for $1... "
+ shift;
+
+ LIBS=''
+
+ while [ "$1" != '--' ]
+ do
+  LIBS="$LIBS -l$1"
+  shift;
+ done
+
+ shift;
+
+ while [ "$1" != '' ]
+ do
+  echo "#include <$1>" >> $TF_C
+  shift;
+ done
+
+ echo 'int main (void) { return 0; }' >> $TF_C
+
+ $CCTF $LIBS 2> /dev/null;
+
+ R=$?
+
+ if [ "$R" = '0' ]
+ then
+  echo 'yes'
+ else
+  echo 'no'
+ fi
+
+ return $R
+}
+
+exec 3> config.h
+
+cat >&3 << EOF
+//config.h:
+
+#ifndef _ROARAUDIO_CONFIG_H_
+#define _ROARAUDIO_CONFIG_H_
+
+EOF
+
+{
+ echo '/* uname: ' $(uname -a) '*/'
+ echo '/* Date : ' $(date)  '*/'
+ echo
+} >&3
+
+test_lib EsounD        esd        -- esd.h                          && echo '#define ROAR_HAVE_ESD' >&3
+test_lib libao         ao         -- ao/ao.h ao/plugin.h            && echo '#define ROAR_HAVE_LIBAO' >&3
+test_lib libvorbis     vorbis     -- vorbis/codec.h                 && echo '#define ROAR_HAVE_LIBVORBIS' >&3
+test_lib libvorbisfile vorbisfile -- vorbis/vorbisfile.h            && echo '#define ROAR_HAVE_LIBVORBISFILE' >&3
+test_lib libcelt       celt       -- celt/celt.h celt/celt_header.h && echo '#define ROAR_HAVE_LIBVORBISFILE' >&3
+
+# add a better test here
+test_lib 'linux sendfile()'       -- sys/sendfile.h && echo '#define ROAR_HAVE_LINUX_SENDFILE' >&3
+
+
+echo -n 'checking for mlock()... '
+
+echo '#include <sys/mman.h>' > $TF_C
+echo 'int main (void) { mlock((void*)0, 0); return 0; }' >> $TF_C
+
+if $CCTF 2> /dev/null;
+then
+ echo '#define ROAR_HAVE_MLOCK' >&3
+ echo yes
+else
+ echo no
+fi
+
+cat >&3 << EOF
+
+#endif
+
+//ll
+EOF
+
+#rm -f $TF_C $TF_E
+
+#ll
