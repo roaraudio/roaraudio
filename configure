@@ -66,6 +66,7 @@ test_lib EsounD        esd        -- esd.h                          && echo '#de
 test_lib libao         ao         -- ao/ao.h ao/plugin.h            && echo '#define ROAR_HAVE_LIBAO' >&3
 test_lib libvorbis     vorbis     -- vorbis/codec.h                 && echo '#define ROAR_HAVE_LIBVORBIS' >&3
 test_lib libvorbisfile vorbisfile -- vorbis/vorbisfile.h            && echo '#define ROAR_HAVE_LIBVORBISFILE' >&3
+test_lib libspeex      speex      -- speex/speex.h                 && echo '#define ROAR_HAVE_LIBSPEEX' >&3
 test_lib libcelt       celt       -- celt/celt.h celt/celt_header.h && echo '#define ROAR_HAVE_LIBVORBISFILE' >&3
 
 # add a better test here
