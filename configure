@@ -3,7 +3,7 @@
 #set -x
 
 TF_C=testit.c
-TF_E=testit
+TF_E=./testit
 CC=cc
 
 CCTF="$CC -o $TF_E $TF_C"
@@ -85,6 +85,41 @@ else
  echo no
 fi
 
+echo -n 'checking for save 32 bit integer overflow... '
+
+cat > $TF_C << EOF
+#include <stdio.h>
+#include <stdint.h>
+#define TYPE uint32_t
+#define MAX  ((TYPE)4294967295U)
+
+int main (void) {
+ TYPE a = MAX;
+
+ a += 2;
+
+ if ( a == 1 ) {
+  printf("#define ROAR_HAVE_SAFE_OVERFLOW\n");
+  return 0;
+ }
+
+ return 1;
+}
+EOF
+
+if $CCTF 2> /dev/null;
+then
+ $TF_E >&3
+ if [ "$?" = '0' ]
+ then
+  echo yes
+ else
+  echo no
+ fi
+else
+ echo 'no (can not compile!, no stdint.h?)'
+fi
+
 cat >&3 << EOF
 
 #endif
@@ -92,6 +127,6 @@ cat >&3 << EOF
 //ll
 EOF
 
-#rm -f $TF_C $TF_E
+rm -f $TF_C $TF_E
 
 #ll
