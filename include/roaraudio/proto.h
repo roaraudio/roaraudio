@@ -42,6 +42,11 @@
 
 #define ROAR_CMD_BEEP          24 /* send an beep */
 
+#define ROAR_GET_ACL           25 /* get ACL, may have subtypes */
+#define ROAR_SET_ACL           26 /* set ACL, may have subtypes */
+
+
+
 #define ROAR_CMD_OK           254 /* return value OK */
 #define ROAR_CMD_ERROR        255 /* return value ERROR */
 
