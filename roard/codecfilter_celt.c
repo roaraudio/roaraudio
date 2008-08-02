@@ -1,6 +1,7 @@
 //codecfilter_celt.c:
 
 #include "roard.h"
+#ifdef ROAR_HAVE_LIBCELT
 
 int cf_celt_open(CODECFILTER_USERDATA_T * inst, int codec,
                                             struct roar_stream_server * info,
@@ -176,4 +177,5 @@ int cf_celt_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  return 0;
 }
 
+#endif
 //ll

@@ -4,6 +4,9 @@
 #define _CODECFILTER_CELT_H_
 
 #include <roaraudio.h>
+
+#ifdef ROAR_HAVE_LIBCELT
+
 #include <celt/celt.h>
 #include <celt/celt_header.h>
 
@@ -32,6 +35,8 @@ int cf_celt_close(CODECFILTER_USERDATA_T   inst);
 
 int cf_celt_read(CODECFILTER_USERDATA_T   inst, char * buf, int len);
 int cf_celt_write(CODECFILTER_USERDATA_T   inst, char * buf, int len);
+
+#endif
 
 #endif
 
