@@ -9,8 +9,10 @@ struct roar_codecfilter g_codecfilter[] = {
   "ogg123 -q -d raw -f - -",
   cf_cmd_open, NULL, NULL, NULL, NULL, NULL},
 
+#ifdef ROAR_HAVE_LIBVORBISFILE
  {ROAR_CODEC_OGG_VORBIS, "oggvorbis", "Ogg Vorbis decoder", NULL,
  cf_vorbis_open, cf_vorbis_close, NULL, NULL, cf_vorbis_read, NULL},
+#endif
 
  {ROAR_CODEC_MIDI_FILE, "MIDIFILE", "timidity MIDI synth",
   "timidity -Or1sl -s %R -o - -",

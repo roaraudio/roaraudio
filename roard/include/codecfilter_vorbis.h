@@ -4,6 +4,9 @@
 #define _CODECFILTER_VORBIS_H_
 
 #include <roaraudio.h>
+
+#ifdef ROAR_HAVE_LIBVORBISFILE
+
 #include <vorbis/codec.h>
 #include <vorbis/vorbisfile.h>
 #include <math.h>
@@ -26,6 +29,8 @@ int cf_vorbis_close(CODECFILTER_USERDATA_T   inst);
 int cf_vorbis_read(CODECFILTER_USERDATA_T   inst, char * buf, int len);
 
 int cf_vorbis_update_stream (struct codecfilter_vorbis_inst * self);
+
+#endif
 
 #endif
 

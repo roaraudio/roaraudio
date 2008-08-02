@@ -2,6 +2,8 @@
 
 #include "roard.h"
 
+#ifdef ROAR_HAVE_LIBVORBISFILE
+
 int cf_vorbis_open(CODECFILTER_USERDATA_T * inst, int codec,
                                             struct roar_stream_server * info,
                                             struct roar_codecfilter   * filter) {
@@ -145,5 +147,7 @@ int cf_vorbis_update_stream (struct codecfilter_vorbis_inst * self) {
  //printf("RPG: mul=%i, div=%i\n", self->stream->mixer.rpg_mul, self->stream->mixer.rpg_div);
  return 0;
 }
+
+#endif
 
 //ll
