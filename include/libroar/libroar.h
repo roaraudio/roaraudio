@@ -19,7 +19,7 @@
 #include "ctl.h"
 #include "buffer.h"
 #include "convert.h"
-#include "math.h"
+#include "poly.h"
 #include "meta.h"
 #include "file.h"
 #include "midi.h"
