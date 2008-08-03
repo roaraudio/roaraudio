@@ -88,6 +88,7 @@ int roar_midi_gen_tone (struct roar_note_octave * note, int16_t * samples, float
  float ct;
  float step = M_PI*2*note->freq/rate;
  int16_t s;
+ float (*op)(float x) = NULL;
 
 /*
  rate: 1/s
@@ -96,8 +97,17 @@ int roar_midi_gen_tone (struct roar_note_octave * note, int16_t * samples, float
  rew : 1s
 */
 
+ if ( type == ROAR_MIDI_TYPE_SINE ) {
+  op = sinf;
+ } else {
+  return -1;
+ }
+
+ if ( op == NULL )
+  return -1;
+
  for (ct = 0, i = 0; ct <= t; ct += step, i += channels) {
-  s = 32767*sin(ct);
+  s = 32767*op(ct);
 
   for (c = 0; c < channels; c++)
    samples[i+c] = s;
