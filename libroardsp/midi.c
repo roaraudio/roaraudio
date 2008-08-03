@@ -116,4 +116,57 @@ int roar_midi_gen_tone (struct roar_note_octave * note, int16_t * samples, float
  return 0;
 }
 
+
+int roar_midi_play_note  (struct roar_stream * stream, struct roar_note_octave * note, float len) {
+ return -1;
+}
+
+int roar_midi_basic_init (struct roar_midi_basic_state * state) {
+ if (!state)
+  return -1;
+
+ state->len.mul = 1;
+ state->len.div = 60;
+
+ state->note.note   = ROAR_MIDI_NOTE_NONE;
+ state->note.octave = 0;
+
+ return 0;
+}
+
+int roar_midi_basic_play (struct roar_stream * stream, struct roar_midi_basic_state * state, char * notes) {
+ struct roar_midi_basic_state is;
+ char   cn[ROAR_MIDI_MAX_NOTENAME_LEN+1] = {0};
+ int i;
+ int have = 0;
+ struct roar_note_octave * n;
+
+ if ( !notes )
+  return -1;
+
+ if ( state == NULL ) {
+  state = &is;
+  roar_midi_basic_init(state);
+ }
+
+ n = &(state->note);
+
+ for (; *notes != 0; notes++) {
+  if ( *notes == '>' ) {
+   n->octave++;
+  } else if ( *notes == '<' ) {
+   n->octave--;
+  } else if ( *notes != ' ' ) {
+   have++;
+  }
+
+  if (have) {
+   roar_midi_play_note(stream, n, 60 * state->len.mul / state->len.div);
+   have = 0;
+  }
+ }
+
+ return 0;
+}
+
 //ll
