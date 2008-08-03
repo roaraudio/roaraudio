@@ -63,6 +63,16 @@ EOF
 } >&3
 
 test_lib 'Math Library' m          -- math.h                         && echo '#define ROAR_HAVE_LIBM' >&3
+if test_lib 'realtime Library' rt -- sys/mman.h mqueue.h semaphore.h
+then
+ {
+  echo '#define ROAR_HAVE_LIBRT'
+  echo '#define ROAR_NEED_LIBRT'
+ } >&3
+fi
+
+echo >&3
+
 test_lib EsounD         esd        -- esd.h                          && echo '#define ROAR_HAVE_ESD' >&3
 test_lib libao          ao         -- ao/ao.h ao/plugin.h            && echo '#define ROAR_HAVE_LIBAO' >&3
 test_lib libvorbis      vorbis     -- vorbis/codec.h                 && echo '#define ROAR_HAVE_LIBVORBIS' >&3
