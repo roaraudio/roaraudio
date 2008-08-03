@@ -4,7 +4,7 @@ OBJS=libroar.o basic.o stream.o simple.o auth.o socket.o ctl.o buffer.o convert.
 #DEFINES        = -DDEBUG
 INCLUDE = -I../include -I../include/libroar
 CFLAGS  = -g -Wall -O2 $(DEFINES) $(INCLUDE)
-LDFLAGS = -g -shared
+LDFLAGS = -g -shared -lm
 
 all: ${TARGETS}
 	cp -v ${TARGETS} ../lib/
