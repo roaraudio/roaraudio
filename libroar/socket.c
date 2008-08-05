@@ -70,7 +70,43 @@ int roar_socket_nonblock(int fh, int state) {
 }
 
 int roar_socket_dup_udp_local_end (int fh) {
- return -1;
+ int                  n              = -1;
+ int                  flags          = -1;
+ struct sockaddr_in   socket_addr;
+ socklen_t            len            = sizeof(struct sockaddr_in);
+
+ if ( (flags = fcntl(fh, F_GETFL, 0)) == -1 ) {
+  ROAR_WARN("roar_socket_dup_udp_local_end(fh=%i): Can not read flags: %s", fh, strerror(errno));
+ }
+
+ if ( getsockname(fh, (struct sockaddr *)&socket_addr, &len) == -1 ) {
+  return -1;
+ }
+
+ if ( socket_addr.sin_family != AF_INET ) {
+  return -1;
+ }
+
+ n = roar_socket_new_udp();
+
+ if ( n == -1 )
+  return -1;
+
+//  if ( mode_func(fh, (struct sockaddr *)&socket_addr, sizeof(struct sockaddr_in)) == -1 ) {
+ if ( bind(n, (struct sockaddr *)&socket_addr, len) == -1 ) {
+  close(n);
+  return -1;
+ }
+
+ if ( flags != -1 ) {
+  if ( fcntl(fh, F_SETFL, flags) == -1 ) {
+   ROAR_WARN("roar_socket_dup_udp_local_end(fh=%i): Can not set flags: %s", fh, strerror(errno));
+   return -1;
+  }
+ }
+
+
+ return n;
 }
 
 int roar_socket_listen  (int type, char * host, int port) {
