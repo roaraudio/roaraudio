@@ -44,6 +44,7 @@ int streams_new    (void) {
    n->dataoff    = NULL;
    n->datalen    = 0;
    n->offset     = 0;
+   n->pos        = 0;
 
    ((struct roar_stream_server*)n)->client        = -1;
    ((struct roar_stream_server*)n)->socktype      = ROAR_SOCKET_TYPE_UNKNOWN;
@@ -198,6 +199,7 @@ int streams_fill_mixbuffer (int id, struct roar_audio_info * info) {
  //               un-writeable and even worse: un-readable
  //               function in the whole project?
  size_t todo = ROAR_OUTPUT_CALC_OUTBUFSIZE(info);
+ size_t needed = todo;
  size_t todo_in;
  size_t len, outlen;
  size_t mul = 1, div = 1;
@@ -387,6 +389,11 @@ int streams_fill_mixbuffer (int id, struct roar_audio_info * info) {
  else
   buffer_delete(buf, NULL);
 */
+
+ ((struct roar_stream*)g_streams[id])->pos =
+      ROAR_MATH_OVERFLOW_ADD(((struct roar_stream*)g_streams[id])->pos,
+          ROAR_OUTPUT_CALC_OUTBUFSAMP(info, needed-todo));
+ //ROAR_WARN("stream=%i, pos=%u", id, ((struct roar_stream*)g_streams[id])->pos);
 
  if ( todo > 0 ) { // zeroize the rest of teh buffer
   memset(rest, 0, todo);
