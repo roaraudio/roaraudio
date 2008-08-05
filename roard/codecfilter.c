@@ -23,6 +23,11 @@ struct roar_codecfilter g_codecfilter[] = {
   cf_celt_open, cf_celt_close, NULL, NULL, cf_celt_read, NULL},
 #endif
 
+#ifdef ROAR_HAVE_LIBSPEEX
+ {ROAR_CODEC_ROAR_SPEEX, "RoarSPPEX", "RoarAudio SPEEX", NULL,
+  cf_speex_open, cf_speex_close, NULL, NULL, cf_speex_read, NULL},
+#endif
+
  {ROAR_CODEC_FLAC, "cmd",  "ogg123",
 #if BYTE_ORDER == BIG_ENDIAN
   "flac --silent --force-raw-format --sign=signed --endian=big -d - -o -",

@@ -4,8 +4,13 @@
 #define _CODECFILTER_SPEEX_H_
 
 #include <roaraudio.h>
+#include <speex/speex.h>
 
 struct codecfilter_speex_inst {
+ void * encoder;
+ void * decoder;
+ SpeexBits bits;
+
 /*
  struct roar_stream_server * stream;
  CELTMode * mode;
