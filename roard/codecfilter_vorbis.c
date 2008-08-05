@@ -14,7 +14,8 @@ int cf_vorbis_open(CODECFILTER_USERDATA_T * inst, int codec,
 
  self->current_section      = -1;
  self->last_section         = -1;
- self->opened               = 0;
+ self->opened               =  0;
+ self->got_it_running       =  0;
  self->stream               = info;
 // self->outlen               = ROAR_OUTPUT_BUFFER_SAMPLES * s->info.channels * s->info.bits / 8; // optimal size
 
@@ -36,7 +37,8 @@ int cf_vorbis_close(CODECFILTER_USERDATA_T   inst) {
  if ( !inst )
   return -1;
 
- ov_clear(&(self->vf));
+ if ( self->got_it_running )
+  ov_clear(&(self->vf));
 
  free(inst);
  return 0;
@@ -54,7 +56,7 @@ int cf_vorbis_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  if ( self->opened == 16 ) {
   //printf("cf_vorbis_read(*): opening...\n");
   if ( ov_open(self->in, &(self->vf), NULL, 0) < 0 ) {
-   free((void*)self);
+//   free((void*)self);
    return 0;
   }
  }
@@ -62,6 +64,9 @@ int cf_vorbis_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  if ( self->opened < 16 ) {
   return -1;
  }
+
+
+ self->got_it_running = 1;
 
  while (todo) {
   r = ov_read(&(self->vf), buf+done, todo, 0, 2, 1, &(self->current_section));

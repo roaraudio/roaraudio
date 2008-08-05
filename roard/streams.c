@@ -81,6 +81,7 @@ int streams_delete (int id) {
 
  if ( g_streams[id]->codecfilter != -1 ) {
   codecfilter_close(g_streams[id]->codecfilter_inst, g_streams[id]->codecfilter);
+  g_streams[id]->codecfilter_inst = NULL;
   g_streams[id]->codecfilter = -1;
  }
 
