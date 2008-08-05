@@ -34,6 +34,10 @@ struct roar_codecfilter {
 #include "codecfilter_celt.h"
 #endif
 
+#ifdef ROAR_HAVE_LIBSPEEX
+#include "codecfilter_speex.h"
+#endif
+
 void print_codecfilterlist (void);
 
 int codecfilter_open (CODECFILTER_USERDATA_T * inst,
