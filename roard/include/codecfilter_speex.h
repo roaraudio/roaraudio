@@ -5,6 +5,34 @@
 
 #include <roaraudio.h>
 
+struct codecfilter_speex_inst {
+/*
+ struct roar_stream_server * stream;
+ CELTMode * mode;
+ CELTEncoder * encoder;
+ CELTDecoder * decoder;
+ int frame_size;
+ int lookahead;
+ int out_size;
+ char * ibuf;
+ char * obuf;
+ char * i_rest;
+ char * o_rest;
+ int s_buf;
+ int fi_rest; /-* how much is in rest? *-/
+ int fo_rest; /-* how much is in rest? *-/
+*/
+};
+
+int cf_speex_open(CODECFILTER_USERDATA_T * inst, int codec,
+                                            struct roar_stream_server * info,
+                                            struct roar_codecfilter   * filter);
+
+int cf_speex_close(CODECFILTER_USERDATA_T   inst);
+
+int cf_speex_read(CODECFILTER_USERDATA_T   inst, char * buf, int len);
+int cf_speex_write(CODECFILTER_USERDATA_T   inst, char * buf, int len);
+
 #endif
 
 //ll
