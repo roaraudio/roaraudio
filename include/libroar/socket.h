@@ -16,6 +16,7 @@
 #define ROAR_SOCKET_TYPE_FORK 3
 #define ROAR_SOCKET_TYPE_PIPE ROAR_SOCKET_TYPE_FORK
 #define ROAR_SOCKET_TYPE_FILE 4
+#define ROAR_SOCKET_TYPE_UDP  5
 
 #define ROAR_SOCKET_TYPE_MAX  4
 
@@ -29,8 +30,9 @@
 int roar_socket_listen  (int type, char * host, int port);
 int roar_socket_connect (char * host, int port);
 
-int roar_socket_new_tcp (void);
-int roar_socket_new_unix (void);
+int roar_socket_new_tcp    (void);
+int roar_socket_new_udp    (void);
+int roar_socket_new_unix   (void);
 int roar_socket_open       (int mode, int type, char * host, int port);
 int roar_socket_open_fork  (int mode, char * host, int port);
 int roar_socket_open_file  (int mode, char * host, int port);

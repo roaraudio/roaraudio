@@ -26,6 +26,17 @@ phi@ph7:libroar $ IPTOS_LOWDELAY
  return fh;
 }
 
+int roar_socket_new_udp (void) {
+ int fh;
+ int opt = IPTOS_LOWDELAY;
+
+ fh = socket(PF_INET, SOCK_DGRAM, 0);
+
+ setsockopt(fh, IPPROTO_IP, IP_TOS, &opt, sizeof(int));
+
+ return fh;
+}
+
 int roar_socket_new_unix (void) {
  int fh;
 
