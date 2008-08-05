@@ -46,6 +46,7 @@ int streams_new    (void) {
    n->offset     = 0;
 
    ((struct roar_stream_server*)n)->client        = -1;
+   ((struct roar_stream_server*)n)->socktype      = ROAR_SOCKET_TYPE_UNKNOWN;
    ((struct roar_stream_server*)n)->buffer        = NULL;
    ((struct roar_stream_server*)n)->need_extra    =  0;
    ((struct roar_stream_server*)n)->output        = NULL;
@@ -156,6 +157,21 @@ int streams_get    (int id, struct roar_stream_server ** stream) {
  return 0;
 }
 
+int streams_set_socktype (int id, int socktype) {
+ if ( g_streams[id] == NULL )
+  return -1;
+
+ g_streams[id]->socktype = socktype;
+
+ return 0;
+}
+
+int streams_get_socktype (int id) {
+ if ( g_streams[id] == NULL )
+  return -1;
+
+ return g_streams[id]->socktype;
+}
 
 int streams_get_outputbuffer  (int id, void ** buffer, size_t size) {
  if ( g_streams[id] == NULL )

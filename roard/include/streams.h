@@ -27,6 +27,7 @@ struct roar_stream_server {
  int codecfilter;
  int codec_orgi;
  CODECFILTER_USERDATA_T codecfilter_inst;
+ int socktype;
 } * g_streams[ROAR_STREAMS_MAX];
 
 int streams_init   (void);
@@ -40,6 +41,9 @@ int streams_set_client (int id, int client);
 int streams_set_fh     (int id, int fh);
 int streams_get_fh     (int id);
 int streams_get        (int id, struct roar_stream_server ** stream);
+
+int streams_set_socktype (int id, int socktype);
+int streams_get_socktype (int id);
 
 int stream_add_buffer     (int id, struct roar_buffer *  buf);
 //int stream_get_buffer     (int id, struct roar_buffer ** buf);
