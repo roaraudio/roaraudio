@@ -300,6 +300,7 @@ int client_stream_exec   (int client, int stream) {
   if ( g_clients[client]->streams[i] == stream ) {
    g_clients[client]->execed = stream;
    streams_set_fh(stream, g_clients[client]->fh);
+   streams_set_socktype(stream, ROAR_SOCKET_TYPE_GENSTR);
    return 0;
   }
  }
