@@ -25,9 +25,11 @@ int decoded_float (FishSound * fsound, float ** pcm, long frames, void * user_da
    inst->begun = 1;
  }
 
- if ( (data = malloc(frames*2)) == NULL ) {
+ if ( (data = malloc(frames*2*inst->fsinfo.channels)) == NULL ) {
   return -1;
  }
+
+ frames *= inst->fsinfo.channels;
 
  for (i = 0; i < frames; i++) {
   s  = ((float*)pcm)[i];
