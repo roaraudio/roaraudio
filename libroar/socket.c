@@ -69,6 +69,10 @@ int roar_socket_nonblock(int fh, int state) {
  return 0;
 }
 
+int roar_socket_dup_udp_local_end (int fh) {
+ return -1;
+}
+
 int roar_socket_listen  (int type, char * host, int port) {
  return roar_socket_open(MODE_LISTEN, type, host, port);
 }

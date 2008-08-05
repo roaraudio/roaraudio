@@ -40,6 +40,8 @@ int roar_socket_open_proxy (int mode, int type, char * host, int port, char * pr
 
 int roar_socket_nonblock(int fh, int state);
 
+int roar_socket_dup_udp_local_end (int fh);
+
 int roar_socket_open_socks4a(int mode, int fh, char * host, int port);
 
 #endif
