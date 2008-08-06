@@ -226,7 +226,8 @@ int streams_fill_mixbuffer (int id, struct roar_audio_info * info) {
  stream_info = &(((struct roar_stream*)g_streams[id])->info);
 
  // calc todo_in
- todo_in = ROAR_OUTPUT_CALC_OUTBUFSIZE(stream_info);
+ todo_in = (todo*stream_info->rate)/info->rate;
+// todo_in = ROAR_OUTPUT_CALC_OUTBUFSIZE(stream_info);
 
  // calc mul and div:
  mul = todo    / todo_in;
@@ -314,7 +315,8 @@ int streams_fill_mixbuffer (int id, struct roar_audio_info * info) {
   // we now have 'len' bytes in 'in'
 
   // calc how much outlen this has...
-  outlen = (len * mul) / div;
+//  outlen = (len * mul) / div;
+  outlen = (len * info->rate)/stream_info->rate;
 
   ROAR_DBG("streams_fill_mixbuffer(*): outlen = %i, buf = %p, len = %i", outlen, in, len);
 
@@ -360,24 +362,28 @@ int streams_fill_mixbuffer (int id, struct roar_audio_info * info) {
 */
   // hey! we have roar_conv() :)
 
-  if ( roar_conv(rest, in, 8*len / stream_info->bits, stream_info, info) == -1 )
-   return -1;
-  }
+   if ( roar_conv(rest, in, 8*len / stream_info->bits, stream_info, info) == -1 ) {
+    ROAR_WARN("streams_fill_mixbuffer(*): can not convert input!");
+    return -1;
+   }
 
-  if ( change_vol(rest, info->bits, rest, 8*outlen / info->bits, info->channels, &(((struct roar_stream_server*)g_streams[id])->mixer)) == -1 )
-   return -1;
+   if ( change_vol(rest, info->bits, rest, 8*outlen / info->bits, info->channels, &(((struct roar_stream_server*)g_streams[id])->mixer)) == -1 ) {
+    ROAR_WARN("streams_fill_mixbuffer(*): can not change volume");
+    return -1;
+   }
 
   // we habe outlen bytes more...
-  todo    -= outlen;
-  rest    += outlen;
-  todo_in -= len;
+   todo    -= outlen;
+   rest    += outlen;
+   todo_in -= len;
 
-  roar_buffer_get_len(buf, &len);
-  ROAR_DBG("streams_fill_mixbuffer(*): New length of buffer %p is %i", buf, len);
-  if ( len == 0 ) {
-   roar_buffer_delete(buf, NULL);
-  } else {
-   stream_unshift_buffer(id, buf);
+   roar_buffer_get_len(buf, &len);
+   ROAR_DBG("streams_fill_mixbuffer(*): New length of buffer %p is %i", buf, len);
+   if ( len == 0 ) {
+    roar_buffer_delete(buf, NULL);
+   } else {
+    stream_unshift_buffer(id, buf);
+   }
   }
  }
 
@@ -411,7 +417,6 @@ int streams_fill_mixbuffer (int id, struct roar_audio_info * info) {
 
  return 0;
 }
-
 
 int streams_get_mixbuffers (void *** bufferlist, struct roar_audio_info * info, unsigned int pos) {
  static void * bufs[ROAR_STREAMS_MAX+1];
