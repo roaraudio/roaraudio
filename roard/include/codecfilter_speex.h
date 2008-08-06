@@ -13,11 +13,15 @@ struct codecfilter_speex_inst {
  SpeexBits bits;
  struct roar_stream_server * stream;
  int frame_size;
+ int16_t  * cd; /* current data */
+ char       cc[ROAR_SPEEX_MAX_CC]; /* buffer for read() and write() */
+ int16_t  * i_rest; /* rest... */
+ int fi_rest;
 
 /*
- int out_size;
  char * ibuf;
  char * obuf;
+ int out_size;
  char * i_rest;
  char * o_rest;
  int s_buf;

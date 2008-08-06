@@ -91,6 +91,7 @@
 #define ROAR_SET_VOL_ONE           2
 
 
+#define ROAR_SPEEX_MAX_CC          256
 #define ROAR_SPEEX_MODE_NB         1
 #define ROAR_SPEEX_MODE_WB         2
 #define ROAR_SPEEX_MODE_UWB        3
