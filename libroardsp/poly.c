@@ -71,4 +71,20 @@ int roar_math_mkpoly_5x5 (float * poly, float * data) {
  return -1;
 }
 
+
+float roar_math_cvpoly_4x4 (float * poly, float t) {
+ float ret = poly[0];
+ float ct  = t;
+
+ ret += poly[1] * ct;
+ ct  *= t;
+ ret += poly[2] * ct;
+ ct  *= t;
+ ret += poly[3] * ct;
+
+// printf("ret=%f\n", ret);
+
+ return ret;
+}
+
 //ll

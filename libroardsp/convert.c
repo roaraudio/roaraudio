@@ -221,4 +221,58 @@ int roar_conv       (void * out, void * in, int samples, struct roar_audio_info 
  return 0;
 }
 
+
+
+int roar_conv_poly4_16 (int16_t * out, int16_t * in, size_t olen, size_t ilen) {
+ float poly[4];
+ float data[4];
+ float t    = 0;
+ float step = (float)ilen/olen;
+ int16_t * ci = in;
+ int io, ii = 0;
+ int i;
+
+ // we can not make a poly4 with less than 4 points ;)
+ if ( ilen < 4 )
+  return -1;
+
+ for (i = 0; i < 4; i++)
+  data[i] = ci[i];
+ roar_math_mkpoly_4x4(poly, data);
+/*
+ printf("new poly: data[4] = {%f, %f, %f, %f}, poly[4] = {%f, %f, %f, %f}\n",
+         data[0], data[1], data[2], data[3],
+         poly[0], poly[1], poly[2], poly[3]
+       );
+*/
+
+ //0 1 2 3
+
+ for (io = 0; io < olen; io++) {
+//  printf("t=%f\n", t);
+  out[io] = roar_math_cvpoly_4x4(poly, t);
+  t += step;
+  if ( t > 2 ) { // we need a new ploynome
+ //  printf("t > 2, need new data\n");
+   if ( (ii + 4) < ilen ) { // else: end of block.
+    t -= 1;
+//    printf("new data: ii=%i\n", ii);
+    ii++;
+    ci++;
+    for (i = 0; i < 4; i++)
+     data[i] = ci[i];
+    roar_math_mkpoly_4x4(poly, data);
+/* 
+   printf("new poly: data[4] = {%f, %f, %f, %f}, poly[4] = {%f, %f, %f, %f}\n",
+           data[0], data[1], data[2], data[3],
+           poly[0], poly[1], poly[2], poly[3]
+          );
+*/
+   }
+  }
+ }
+
+ return 0;
+}
+
 //ll

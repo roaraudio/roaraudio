@@ -12,6 +12,7 @@ int roar_math_mkpoly_3x3 (float * poly, float * data);
 int roar_math_mkpoly_4x4 (float * poly, float * data);
 int roar_math_mkpoly_5x5 (float * poly, float * data);
 
+float roar_math_cvpoly_4x4 (float * poly, float t);
 
 #endif
 

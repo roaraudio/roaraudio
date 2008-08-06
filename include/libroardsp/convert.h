@@ -25,6 +25,9 @@ int roar_conv_codec_s2u8 (void * out, void * in, int samples);
 
 int roar_conv       (void * out, void * in, int samples, struct roar_audio_info * from, struct roar_audio_info * to);
 
+
+int roar_conv_poly4_16 (int16_t * out, int16_t * in, size_t olen, size_t ilen);
+
 #endif
 
 //ll
