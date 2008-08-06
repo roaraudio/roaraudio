@@ -96,60 +96,6 @@ int roar_conv_rate_8  (void * out, void * in, int samples, int from, int to, int
 }
 
 int roar_conv_rate_16 (void * out, void * in, int samples, int from, int to, int channels) {
- int16_t * ip = (int16_t*) in, * op = (int16_t*) out;
- int i, j;
- int max;
- int teiler = -1;
-
-
- if ( from > to ) {
-  return -1;
- } else {
-  for (i = 8; i > 0; i--) {
-   if ( from * i == to ) {
-    teiler = i;
-    break;
-   }
-  }
-
-  if ( teiler == -1 )
-   return -1;
-
-  if ( channels == 2 ) {
-   max = (samples-1)/(2*teiler);
-
-   for (i = 0; i < max; i++) {
-    for (j = 0; j < teiler; j++) {
-     op[teiler*i*2     + j] = ip[i];
-     op[teiler*i*2 + 2 + j] = ip[i+1];
-    }
-   }
-
-  } else if ( channels == 1 ) {
-   max = (samples-1)/teiler;
-
-   for (i = 0; i < max; i++) {
-    for (j = 0; j < teiler; j++) {
-     op[teiler*i + j] = ip[i];
-    }
-   }
-
-  } else {
-   return -1;
-   max = (samples-1)/teiler;
-
-   for (i = 0; i < max; i++) {
-    for (j = 0; j < teiler; j++) {
-//      printf("op[teiler*i + j = %i] = ip[i=%i]; // samples=%i, teiler=%i, channels=%i\n",
-//                teiler*i + j, i + ((i+j) % channels), samples, teiler, channels);
-      op[teiler*i + j] = ip[i + ((i+j) % channels)];
-    }
-   }
-  }
-
-  return 0;
- }
-
  return -1;
 }
 
