@@ -1,4 +1,4 @@
-TARGETS=roarcat roarcatad roarcat2sock roarcatsendfile roarcatplay roarctl roarmon roarsockconnect roartypes roarvorbis roarvumeter roarfilt roarsin roar-config
+TARGETS=roarcat roarcatad roarcat2sock roarcatsendfile roarcatplay roarctl roarmon roarsockconnect roartypes roarvorbis roarvumeter roarfilt roarsin roar-config polytest
 
 CELT_PREFIX=/home/phi/superhome/xiph/celt-test/
 DEFINES        = -DDEBUG
@@ -30,3 +30,4 @@ roartypes: roartypes.o
 roar-config: roar-config.o
 roarvorbis: roarvorbis.o
 	${CC} ${LDFLAGS} -o roarvorbis roarvorbis.o -lvorbisfile
+polytest: polytest.o
