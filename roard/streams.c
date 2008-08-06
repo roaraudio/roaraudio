@@ -203,7 +203,6 @@ int streams_fill_mixbuffer (int id, struct roar_audio_info * info) {
  size_t needed = todo;
  size_t todo_in;
  size_t len, outlen;
- size_t mul = 1, div = 1;
  void * rest = NULL;
  void * in   = NULL;
  struct roar_buffer     * buf;
@@ -228,18 +227,6 @@ int streams_fill_mixbuffer (int id, struct roar_audio_info * info) {
  // calc todo_in
  todo_in = (todo*stream_info->rate)/info->rate;
 // todo_in = ROAR_OUTPUT_CALC_OUTBUFSIZE(stream_info);
-
- // calc mul and div:
- mul = todo    / todo_in;
- div = todo_in / todo;
-
- if ( mul == 0 ) {
-  mul = 1;
- } else {
-  div = 1;
- }
-
- ROAR_DBG("streams_fill_mixbuffer(*): mul=%i, div=%i", mul, div);
 
  ROAR_DBG("streams_fill_mixbuffer(*): rest=%p, todo=%i->%i (in->out)", rest, todo_in, todo);
  // are both (input and output) of same format?
@@ -315,7 +302,6 @@ int streams_fill_mixbuffer (int id, struct roar_audio_info * info) {
   // we now have 'len' bytes in 'in'
 
   // calc how much outlen this has...
-//  outlen = (len * mul) / div;
   outlen = (len * info->rate)/stream_info->rate;
 
   ROAR_DBG("streams_fill_mixbuffer(*): outlen = %i, buf = %p, len = %i", outlen, in, len);
