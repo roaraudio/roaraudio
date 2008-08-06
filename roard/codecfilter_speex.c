@@ -13,6 +13,11 @@ int cf_speex_open(CODECFILTER_USERDATA_T * inst, int codec,
  if (!self)
   return -1;
 
+ self->encoder = NULL;
+ self->decoder = NULL;
+
+ speex_bits_init(&(self->bits));
+
  *inst = (void*) self;
 
  return 0;
@@ -23,6 +28,18 @@ int cf_speex_close(CODECFILTER_USERDATA_T   inst) {
 
  if (!self)
   return -1;
+
+ if ( self->encoder )
+  speex_encoder_destroy(self->decoder);
+
+ self->encoder = NULL;
+
+ if ( self->decoder )
+  speex_decoder_destroy(self->decoder);
+
+ self->decoder = NULL;
+
+ speex_bits_destroy(&(self->bits));
 
  free((void*)self);
 
