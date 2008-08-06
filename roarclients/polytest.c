@@ -8,7 +8,7 @@ int main (void) {
  int16_t  in[MAX];
  int16_t out[MAX];
  size_t il = 10;
- size_t ol = 5;
+ size_t ol = 20;
  int i;
 
  for (i = 0; i < il; i++)
