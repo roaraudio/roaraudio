@@ -73,6 +73,8 @@ int cf_speex_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  int still_todo = len / 2 /* 16 bit */;
  int ret = 0;
 
+ ROAR_WARN("cf_speex_read(inst=%p, buf=%p, len=%i) = ?", inst, buf, len);
+
  if ( ! self->decoder ) {
   ROAR_DBG("cf_speex_read(*): no decoder, starting one!");
   if ( read(s->fh, &ui, 2) != 2 )
@@ -112,10 +114,10 @@ int cf_speex_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
   }
  }
 
- ROAR_WARN("cf_speex_read(*): Have a working decoder!");
+ ROAR_DBG("cf_speex_read(*): Have a working decoder!");
 
- ROAR_WARN("cf_speex_read(*): frame_size=%i (%i bytes)", self->frame_size, self->frame_size*2);
- ROAR_WARN("cf_speex_read(*): i_rest is %i bytes after cd", self->i_rest - self->cd);
+ ROAR_DBG("cf_speex_read(*): frame_size=%i (%i bytes)", self->frame_size, self->frame_size*2);
+ ROAR_DBG("cf_speex_read(*): i_rest is %i bytes after cd", ((void*)self->i_rest - (void*)self->cd));
 
 
  if ( self->fi_rest ) {
@@ -126,6 +128,8 @@ int cf_speex_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
    ROAR_WARN("cf_speex_read(*): using data from input rest buffer: len=%i", self->fi_rest);
    memcpy(buf, self->i_rest, self->fi_rest);
    buf += self->fi_rest;
+   still_todo -= self->fi_rest/2;
+   ret += self->fi_rest;
    self->fi_rest = 0;
   }
  }
@@ -161,6 +165,12 @@ int cf_speex_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
    still_todo -= self->frame_size;
   }
  }
+
+ if ( still_todo ) {
+  ROAR_WARN("cf_speex_read(*): could not read all reqquested data, returning %i byte less", still_todo*2);
+ }
+
+ ROAR_WARN("cf_speex_read(*) = %i", ret);
 
  return ret;
 }
