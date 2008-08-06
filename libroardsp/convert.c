@@ -96,6 +96,12 @@ int roar_conv_rate_8  (void * out, void * in, int samples, int from, int to, int
 }
 
 int roar_conv_rate_16 (void * out, void * in, int samples, int from, int to, int channels) {
+ if ( channels == 1 ) {
+  printf("roar_conv_rate_16(): samples=%i -> %i, rate=%i -> %i\n", samples*from/to, samples, from, to);
+  return roar_conv_poly4_16s((int16_t*) out, (int16_t*) in, samples, samples*from/to, (float)from/to);
+//  return roar_conv_poly4_16((int16_t*) out, (int16_t*) in, samples*to/from, samples);
+ }
+
  return -1;
 }
 
@@ -147,15 +153,15 @@ int roar_conv       (void * out, void * in, int samples, struct roar_audio_info 
    ip = out;
  }
 
- if ( from->channels != to->channels ) {
-  if ( roar_conv_chans(out, ip, samples, from->channels, to->channels, to->bits) == -1 )
+ if ( from->rate != to->rate ) {
+  if ( roar_conv_rate(out, ip, samples, from->rate, to->rate, to->bits, from->channels) == -1 )
    return -1;
   else
    ip = out;
  }
 
- if ( from->rate != to->rate ) {
-  if ( roar_conv_rate(out, ip, samples, from->rate, to->rate, to->bits, to->channels) == -1 )
+ if ( from->channels != to->channels ) {
+  if ( roar_conv_chans(out, ip, samples, from->channels, to->channels, to->bits) == -1 )
    return -1;
   else
    ip = out;
@@ -170,13 +176,18 @@ int roar_conv       (void * out, void * in, int samples, struct roar_audio_info 
 
 
 int roar_conv_poly4_16 (int16_t * out, int16_t * in, size_t olen, size_t ilen) {
+ return roar_conv_poly4_16s(out, in, olen, ilen, (float)ilen/olen);
+}
+
+int roar_conv_poly4_16s (int16_t * out, int16_t * in, size_t olen, size_t ilen, float step) {
  float poly[4];
  float data[4];
  float t    = 0;
- float step = (float)ilen/olen;
  int16_t * ci = in;
  int io, ii = 0;
  int i;
+
+ printf("step=%f\n", step);
 
  // we can not make a poly4 with less than 4 points ;)
  if ( ilen < 4 )
@@ -217,6 +228,8 @@ int roar_conv_poly4_16 (int16_t * out, int16_t * in, size_t olen, size_t ilen) {
    }
   }
  }
+
+ printf("io=%i\n", io);
 
  return 0;
 }
