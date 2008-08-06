@@ -5,19 +5,16 @@
 
 #include <roaraudio.h>
 #include <speex/speex.h>
+#include <speex/speex_stereo.h>
 
 struct codecfilter_speex_inst {
  void * encoder;
  void * decoder;
  SpeexBits bits;
+ struct roar_stream_server * stream;
+ int frame_size;
 
 /*
- struct roar_stream_server * stream;
- CELTMode * mode;
- CELTEncoder * encoder;
- CELTDecoder * decoder;
- int frame_size;
- int lookahead;
  int out_size;
  char * ibuf;
  char * obuf;
