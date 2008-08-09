@@ -23,6 +23,8 @@ void pa_simple_free(pa_simple *s) {
  if ( !s )
   return;
 
+ close(ss->data_fh);
+
  free(s);
 }
 
@@ -32,14 +34,16 @@ int pa_simple_write(pa_simple *s, const void*data, size_t length, int *error) {
  if ( !s )
   return -1;
 
- return read(ss->data_fh, data, length);
+ return read(ss->data_fh, (char*) data, length);
 }
 
 /** Wait until all data already written is played by the daemon */
 int pa_simple_drain(pa_simple *s, int *error) {
- struct roarpulse_simple * ss = (struct roarpulse_simple*) s;
+// struct roarpulse_simple * ss = (struct roarpulse_simple*) s;
  if ( !s )
   return -1;
+
+ pa_simple_flush(s, NULL);
 
  return -1;
 }
@@ -50,7 +54,7 @@ int pa_simple_read(pa_simple *s, void*data, size_t length, int *error) {
  if ( !s )
   return -1;
 
- return read(ss->data_fh, data, legth);
+ return read(ss->data_fh, data, length);
 }
 
 /** Return the playback latency. \since 0.5 */
