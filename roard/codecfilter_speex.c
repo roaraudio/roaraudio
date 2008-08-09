@@ -121,7 +121,7 @@ int cf_speex_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
 
 
  if ( self->fi_rest ) {
-  if ( self->fi_rest > still_todo ) {
+  if ( self->fi_rest > (still_todo*2) ) {
    ROAR_WARN("cf_speex_read(*): discarding input rest data: buffer too long!");
    self->fi_rest = 0;
   } else {
