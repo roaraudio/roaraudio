@@ -4,7 +4,7 @@
 
 int main (void) {
  struct { char * name; int len; } types[] = {
-  { "pa_simple",      sizeof(pa_simple)      },
+//  { "pa_simple",      sizeof(pa_simple)      },
   { "pa_sample_spec", sizeof(pa_sample_spec) },
   { NULL, 0 }
  }, * c = types - 1;
