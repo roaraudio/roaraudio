@@ -5,6 +5,10 @@
 
 #include <libroarpulse/libroarpulse.h>
 
+struct roarpulse_simple {
+ int data_fh;
+};
+
 #endif
 
 //ll
