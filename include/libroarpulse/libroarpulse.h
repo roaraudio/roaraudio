@@ -12,6 +12,8 @@
 // POSIX does not clearly specify what happens on NULL
 #define ROAR_STRDUP(x) ((x) == NULL ? NULL : strdup((x)))
 
+int roar_codec_pulse2roar (int codec);
+
 #endif
 
 //ll
