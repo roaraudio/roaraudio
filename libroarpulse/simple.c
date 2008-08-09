@@ -30,6 +30,8 @@ pa_simple* pa_simple_new(
   return NULL;
  }
 
+ codec = roar_codec_pulse2roar(ss->format);
+
  s->data_fh = roarfunc(ss->rate, ss->channels, 16 /* does PulseAudio support something diffrent? */,
                        codec, (char*)server, (char*)name);
 
