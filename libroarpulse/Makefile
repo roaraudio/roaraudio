@@ -1,10 +1,10 @@
-TARGETS=libroarpulse.so
+TARGETS=libroarpulse.so libroarpulseinfo
 OBJS=libroarpulse.o simple.o
 
 DEFINES        = -DDEBUG
 INCLUDE = -I../include -I../include/libroarpulse
 CFLAGS  = -g -Wall -O2 $(DEFINES) $(INCLUDE)
-LDFLAGS = -g -shared -lroar -L../lib/
+LDFLAGS = -g -lroar -L../lib/
 
 all: ${TARGETS}
 	cp -v ${TARGETS} ../lib/
@@ -13,4 +13,6 @@ clean:
 new: clean all
 
 libroarpulse.so: ${OBJS}
-	${CC} ${LDFLAGS} -o libroarpulse.so ${OBJS}
+	${CC} ${LDFLAGS} -shared -o libroarpulse.so ${OBJS}
+
+libroarpulseinfo: libroarpulseinfo.o
