@@ -14,7 +14,26 @@ pa_simple* pa_simple_new(
     const pa_buffer_attr *attr,         /**< Buffering attributes, or NULL for default */
     int *error                          /**< A pointer where the error code is stored when the routine returns NULL. It is OK to pass NULL here. */
     ) {
- return NULL;
+ struct roarpulse_simple * s = malloc(sizeof(struct roarpulse_simple));
+ int (*roarfunc)(int rate, int channels, int bits, int codec, char * server, char * name) = roar_simple_play;
+ int codec = -1;
+
+ if ( !s )
+  return NULL;
+
+ if ( dir == PA_STREAM_PLAYBACK ) {
+  roarfunc = roar_simple_play;
+ } else if ( dir == PA_STREAM_RECORD ) {
+  roarfunc = roar_simple_record;
+ } else {
+  free(s);
+  return NULL;
+ }
+
+ s->data_fh = roarfunc(ss->rate, ss->channels, 16 /* does PulseAudio support something diffrent? */,
+                       codec, (char*)server, (char*)name);
+
+ return (pa_simple*) s;
 }
 
 /** Close and free the connection to the server. The connection objects becomes invalid when this is called. */
