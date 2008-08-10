@@ -33,6 +33,9 @@ pa_simple* pa_simple_new(
 
  codec = roar_codec_pulse2roar(ss->format);
 
+ if ( !server )
+  server = getenv("PULSE_SERVER");
+
  if ( roar_simple_connect(&(s->con), (char*)server, (char*)name) == -1 ) {
   free(s);
   return NULL;
@@ -47,11 +50,13 @@ pa_simple* pa_simple_new(
   return NULL;
  }
 
- meta.value  = (char*)stream_name;
- meta.key[0] = 0;
- meta.type   = ROAR_META_TYPE_DESCRIPTION;
+ if ( stream_name && stream_name[0] != 0 ) {
+  meta.value  = (char*)stream_name;
+  meta.key[0] = 0;
+  meta.type   = ROAR_META_TYPE_DESCRIPTION;
 
- roar_stream_meta_set(&(s->con), &(s->stream), ROAR_META_MODE_SET, &meta);
+  roar_stream_meta_set(&(s->con), &(s->stream), ROAR_META_MODE_SET, &meta);
+ }
 
  return (pa_simple*) s;
 }
