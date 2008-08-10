@@ -82,6 +82,7 @@ test_lib libcelt        celt       -- celt/celt.h celt/celt_header.h     && echo
 test_lib liboggz        oggz       -- oggz/oggz.h                        && echo '#define ROAR_HAVE_LIBOGGZ' >&3
 test_lib libfishsound   fishsound  -- fishsound/fishsound.h              && echo '#define ROAR_HAVE_LIBFISHSOUND' >&3
 test_lib libsndfile     sndfile    -- sndfile.h                          && echo '#define ROAR_HAVE_LIBSNDFILE' >&3
+test_lib libpulse       pulse0     -- pulse/pulseaudio.h pulse/simple.h  && echo '#define ROAR_HAVE_LIBPULSE' >&3
 
 # add a better test here
 test_lib 'linux sendfile()'       -- sys/sendfile.h && echo '#define ROAR_HAVE_LINUX_SENDFILE' >&3
