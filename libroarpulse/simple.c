@@ -55,7 +55,7 @@ int pa_simple_write(pa_simple *s, const void*data, size_t length, int *error) {
  if ( !s )
   return -1;
 
- return read(ss->data_fh, (char*) data, length);
+ return write(ss->data_fh, (char*) data, length);
 }
 
 /** Wait until all data already written is played by the daemon */
