@@ -6,6 +6,8 @@
 #include <libroarpulse/libroarpulse.h>
 
 struct roarpulse_simple {
+ struct roar_connection con;
+ struct roar_stream     stream;
  int data_fh;
 };
 
