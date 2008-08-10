@@ -15,16 +15,17 @@ pa_simple* pa_simple_new(
     int *error                          /**< A pointer where the error code is stored when the routine returns NULL. It is OK to pass NULL here. */
     ) {
  struct roarpulse_simple * s = malloc(sizeof(struct roarpulse_simple));
- int (*roarfunc)(int rate, int channels, int bits, int codec, char * server, char * name) = roar_simple_play;
+ int roar_dir;
  int codec = -1;
+ struct roar_meta meta;
 
  if ( !s )
   return NULL;
 
  if ( dir == PA_STREAM_PLAYBACK ) {
-  roarfunc = roar_simple_play;
+  roar_dir = ROAR_DIR_PLAY;
  } else if ( dir == PA_STREAM_RECORD ) {
-  roarfunc = roar_simple_record;
+  roar_dir = ROAR_DIR_RECORD;
  } else {
   free(s);
   return NULL;
@@ -32,8 +33,25 @@ pa_simple* pa_simple_new(
 
  codec = roar_codec_pulse2roar(ss->format);
 
- s->data_fh = roarfunc(ss->rate, ss->channels, 16 /* does PulseAudio support something diffrent? */,
-                       codec, (char*)server, (char*)name);
+ if ( roar_simple_connect(&(s->con), (char*)server, (char*)name) == -1 ) {
+  free(s);
+  return NULL;
+ }
+
+ s->data_fh = roar_simple_new_stream_obj(&(s->con), &(s->stream), ss->rate, ss->channels,
+                  16 /* does PulseAudio support something diffrent? */, codec, roar_dir);
+
+ if ( s->data_fh == -1 ) {
+  roar_disconnect(&(s->con));
+  free(s);
+  return NULL;
+ }
+
+ meta.value  = (char*)stream_name;
+ meta.key[0] = 0;
+ meta.type   = ROAR_META_TYPE_DESCRIPTION;
+
+ roar_stream_meta_set(&(s->con), &(s->stream), ROAR_META_MODE_SET, &meta);
 
  return (pa_simple*) s;
 }
@@ -45,6 +63,7 @@ void pa_simple_free(pa_simple *s) {
   return;
 
  close(ss->data_fh);
+ roar_disconnect(&(ss->con));
 
  free(s);
 }
