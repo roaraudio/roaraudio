@@ -44,7 +44,7 @@ a varibale to go thru the array:
 
 To open the connection we use the call \fBroar_simple_play\fR(3):
  if ( (fh = roar_simple_play(rate, channels, bits, codec, NULL, "sine gen")) == -1 ) {
-  fprintf(stderr, "Error: can not open playback!\n");
+  fprintf(stderr, "Error: can not open playback!\\n");
   exit(1);
  }
 
@@ -89,7 +89,7 @@ After adding some standard main() construct we should have something like this:
   char out[1024];
 
   if ( (fh = roar_simple_play(rate, channels, bits, codec, NULL, "sine gen")) == -1 ) {
-   fprintf(stderr, "Error: can not open playback!\n");
+   fprintf(stderr, "Error: can not open playback!\\n");
    exit(1);
   }
 
