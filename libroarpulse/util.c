@@ -11,7 +11,14 @@ char *pa_get_binary_name(char *s, size_t l) {
 /** Return a pointer to the filename inside a path (which is the last
  * component). */
 const char *pa_path_get_filename(const char *p) {
- return NULL;
+ char * r;
+
+ if ( (r = strrchr(p, '/')) ) {
+  return (const char *) r+1;
+ } else {
+  return p;
+ }
+
 }
 
 //ll
