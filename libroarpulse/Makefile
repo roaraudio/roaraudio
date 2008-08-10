@@ -1,5 +1,5 @@
 TARGETS=libroarpulse.so libroarpulseinfo
-OBJS=libroarpulse.o simple.o
+OBJS=libroarpulse.o simple.o util.o
 
 DEFINES        = -DDEBUG
 INCLUDE = -I../include -I../include/libroarpulse
