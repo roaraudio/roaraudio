@@ -101,7 +101,7 @@ else
  echo no
 fi
 
-echo -n 'checking for save 32 bit integer overflow... '
+echo -n 'checking for safe 32 bit integer overflow... '
 
 cat > $TF_C << EOF
 #include <stdio.h>
