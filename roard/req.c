@@ -24,16 +24,21 @@ int req_on_identify    (int client, struct roar_message * mes, char * data) {
  if ( mes->data[0] == 1 ) {
 #ifdef SO_PEERCRED
   if (getsockopt(c->fh, SOL_SOCKET, SO_PEERCRED, &cred, &cred_len) != -1) {
-   c->pid = cred.pid;
-   c->uid = cred.uid;
-   c->gid = cred.gid;
+   if ( cred.pid != 0 ) {
+    c->pid = cred.pid;
+    c->uid = cred.uid;
+    c->gid = cred.gid;
+   }
   } else {
    ROAR_DBG("req_on_identify(): Can't get creds via SO_PEERCRED: %s", strerror(errno));
   }
 #endif
   if ( c->pid == -1 ) {
    c->pid       = ROAR_NET2HOST32(*(uint32_t*)((mes->data)+1));
+   ROAR_DBG("req_on_identify(): new PID: c->pid = %i", c->pid);
   }
+
+  ROAR_DBG("req_on_identify(): final PID: c->pid = %i", c->pid);
 
   max_len = (mes->datalen - 5) < (ROAR_BUFFER_NAME-1) ? (mes->datalen - 5) : (ROAR_BUFFER_NAME-1);
 
