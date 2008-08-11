@@ -79,6 +79,8 @@ void list_clients (struct roar_connection * con) {
   }
   printf("Player name           : %s\n", c.name);
   printf("Player PID            : %i\n", c.pid);
+  if ( c.uid != -1 )
+   printf("Player UID/GID        : %i/%i\n", c.uid, c.gid);
   if ( c.execed != -1 )
    printf("Execed stream         : %i\n", c.execed);
 
