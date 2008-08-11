@@ -51,15 +51,18 @@ test_lib_defmake () {
  subdir="$2"
  shift
  shift
+ lib="$2"
 
  if test_lib $@
  then
   echo "#define $def"            >&3
   [ "$subdir" != '' ] && \
    echo "subdir_$subdir=$subdir" >&4
+  echo "lib_$lib=-l$lib" >&4
  else
   [ "$subdir" != '' ] && \
    echo "subdir_$subdir=" >&4
+  echo "lib_$lib=" >&4
  fi
 }
 
