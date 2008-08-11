@@ -14,6 +14,9 @@ void usage (void) {
         " --restart             - Trys to stop an old instance and start a new with new settings\n"
         " --realtime            - Trys to get realtime priority,\n"
         "                         give multible times for being more realtime\n"
+        " --chroot DIR          - chroots to the given dir\n"
+        " --setgid              - GroupID to the audio group as specified via -G\n"
+        " --setuid              - UserID to the audio user as specified via -U\n"
        );
 
  printf("\nAudio Options:\n\n");
@@ -47,6 +50,8 @@ void usage (void) {
         " -s  --sock            - Filename for UNIX Domain Socket\n"
         " -G  GROUP             - Sets the group for the UNIX Domain Socket, (default: audio)\n"
         "                         You need the permittions to change the GID\n"
+        " -U  USER              - Sets the user for the UNIX Domain Socket, (default: do not set)\n"
+        "                         You need the permittions to change the UID (normaly only root has)\n"
         " --no-listen           - Do not listen for new clients (only usefull for relaing)\n"
         " --client-fh           - Comunicate with a client over this handle\n"
         "                         (only usefull for relaing)\n"
@@ -54,6 +59,9 @@ void usage (void) {
 // printf("\n Options:\n\n");
  printf("\n");
 }
+
+#define R_SETUID 1
+#define R_SETGID 2
 
 int main (int argc, char * argv[]) {
  int i;
@@ -68,12 +76,16 @@ int main (int argc, char * argv[]) {
 // char * server = ROAR_DEFAULT_SOCK_GLOBAL;
  int      port = ROAR_DEFAULT_PORT;
  int               drvid;
- char * s_dev  = NULL;
- char * s_con  = NULL;
- char * s_opt  = NULL;
- int    s_prim = 0;
- char * sock_grp = "audio";
- struct group * grp;
+ char * s_dev     = NULL;
+ char * s_con     = NULL;
+ char * s_opt     = NULL;
+ int    s_prim    = 0;
+ char * sock_grp  = "audio";
+ char * sock_user = NULL;
+ char * chrootdir = NULL;
+ int    setids    = 0;
+ struct group  * grp = NULL;
+ struct passwd * pwd = NULL;
  DRIVER_USERDATA_T drvinst;
  struct roar_client * self = NULL;
 
@@ -134,6 +146,12 @@ int main (int argc, char * argv[]) {
    g_terminate = 1;
   } else if ( strcmp(k, "--realtime") == 0 ) {
    realtime++;
+  } else if ( strcmp(k, "--chroot") == 0 ) {
+   chrootdir = argv[++i];
+  } else if ( strcmp(k, "--setgid") == 0 ) {
+   setids |= R_SETGID;
+  } else if ( strcmp(k, "--setuid") == 0 ) {
+   setids |= R_SETUID;
 
   } else if ( strcmp(k, "--list-cf") == 0 ) {
    print_codecfilterlist();
@@ -181,7 +199,9 @@ int main (int argc, char * argv[]) {
   } else if ( strcmp(k, "-u") == 0 ) {
    // ignore this case as it is the default behavor.
   } else if ( strcmp(k, "-G") == 0 ) {
-   sock_grp = argv[++i];
+   sock_grp  = argv[++i];
+  } else if ( strcmp(k, "-U") == 0 ) {
+   sock_user = argv[++i];
 
   } else if ( strcmp(k, "--no-listen") == 0 ) {
    *server = 0;
@@ -224,10 +244,19 @@ int main (int argc, char * argv[]) {
   }
 
   if ( *server == '/' ) {
+   if ( sock_user ) {
+    if ( (pwd = getpwnam(sock_user)) == NULL ) {
+     ROAR_ERR("Can not get UID for user %s: %s", sock_user, strerror(errno));
+    }
+   }
    if ( (grp = getgrnam(sock_grp)) == NULL ) {
     ROAR_ERR("Can not get GID for group %s: %s", sock_grp, strerror(errno));
    } else {
-    chown(server, -1, grp->gr_gid);
+    if ( pwd ) {
+     chown(server, pwd->pw_uid, grp->gr_gid);
+    } else {
+     chown(server, -1, grp->gr_gid);
+    }
     if ( getuid() == 0 )
      chmod(server, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP);
    }
@@ -271,6 +300,15 @@ int main (int argc, char * argv[]) {
 */
  }
 
+ if ( setids & R_SETGID ) {
+  if ( setgroups(0, (const gid_t *) NULL) == -1 ) {
+   ROAR_ERR("Can not clear supplementary group IDs: %s", strerror(errno));
+  }
+  if ( setgid(grp->gr_gid) == -1 ) {
+   ROAR_ERR("Can not set GroupID: %s", strerror(errno));
+  }
+ }
+
 
  clients_set_pid(g_self_client, getpid());
  clients_set_uid(g_self_client, getuid());
@@ -291,6 +329,25 @@ int main (int argc, char * argv[]) {
   setsid();
   if ( fork() )
    _exit(0);
+ }
+
+ if (chrootdir) {
+  if ( chroot(chrootdir) == -1 ) {
+   ROAR_ERR("Can not chroot to %s: %s", chrootdir, strerror(errno));
+   return 2;
+  }
+  if ( chdir("/") == -1 ) {
+   ROAR_ERR("Can not chdir to /: %s", strerror(errno));
+   return 2;
+  }
+ }
+
+ if ( setids & R_SETUID ) {
+  if ( !pwd || setuid(pwd->pw_uid) == -1 ) {
+   ROAR_ERR("Can not set UserID: %s", strerror(errno));
+   return 3;
+  }
+  clients_set_uid(g_self_client, getuid());
  }
 
  // start main loop...

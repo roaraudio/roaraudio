@@ -7,6 +7,7 @@
 #include <sys/select.h>
 #include <sys/wait.h>
 #include <roaraudio.h>
+#include <pwd.h>
 
 /*
 #ifdef __linux__
