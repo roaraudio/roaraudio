@@ -13,6 +13,7 @@ int req_on_identify    (int client, struct roar_message * mes, char * data) {
  int max_len;
 #ifdef SO_PEERCRED
  struct ucred cred;
+ socklen_t cred_len = sizeof(cred);
 #endif
 
  if ( mes->datalen < 1 )
@@ -22,10 +23,12 @@ int req_on_identify    (int client, struct roar_message * mes, char * data) {
 
  if ( mes->data[0] == 1 ) {
 #ifdef SO_PEERCRED
-  if (getsockopt(c->fh, SOL_SOCKET, SO_PEERCRED, &cred, (socklen_t) sizeof(struct ucred)) != -1) {
+  if (getsockopt(c->fh, SOL_SOCKET, SO_PEERCRED, &cred, &cred_len) != -1) {
    c->pid = cred.pid;
    c->uid = cred.uid;
    c->gid = cred.gid;
+  } else {
+   ROAR_DBG("req_on_identify(): Can't get creds via SO_PEERCRED: %s", strerror(errno));
   }
 #endif
   if ( c->pid == -1 ) {
