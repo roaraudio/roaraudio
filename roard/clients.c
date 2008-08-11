@@ -111,6 +111,24 @@ int clients_set_pid   (int id, int    pid) {
  return 0;
 }
 
+int clients_set_uid   (int id, int    uid) {
+ if ( g_clients[id] == NULL )
+  return -1;
+
+ g_clients[id]->uid = uid;
+
+ return 0;
+}
+
+int clients_set_gid   (int id, int    gid) {
+ if ( g_clients[id] == NULL )
+  return -1;
+
+ g_clients[id]->gid = gid;
+
+ return 0;
+}
+
 int clients_check_all (void) {
  struct timeval tv;
  fd_set r, e;
