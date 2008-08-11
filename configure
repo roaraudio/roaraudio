@@ -53,6 +53,8 @@ test_lib_defmake () {
  shift
  lib="$2"
 
+ [ "$subdir" = '%' ] && subdir=''
+
  if test_lib $@
  then
   echo "#define $def"            >&3
