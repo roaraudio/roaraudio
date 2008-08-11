@@ -24,7 +24,7 @@ struct roar_codecfilter g_codecfilter[] = {
 #endif
 
 #ifdef ROAR_HAVE_LIBSPEEX
- {ROAR_CODEC_ROAR_SPEEX, "RoarSPPEX", "RoarAudio SPEEX", NULL,
+ {ROAR_CODEC_ROAR_SPEEX, "RoarSPEEX", "RoarAudio SPEEX", NULL,
   cf_speex_open, cf_speex_close, NULL, NULL, cf_speex_read, NULL},
 #endif
 
