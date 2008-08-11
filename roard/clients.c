@@ -31,6 +31,8 @@ int clients_new (void) {
    n = malloc(sizeof(struct roar_client));
    if ( n != NULL ) {
     n->pid    = -1;
+    n->uid    = -1;
+    n->gid    = -1;
     n->fh     = -1;
 
     *n->name = 0;

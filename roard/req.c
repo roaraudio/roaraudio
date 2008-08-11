@@ -24,6 +24,8 @@ int req_on_identify    (int client, struct roar_message * mes, char * data) {
 #ifdef SO_PEERCRED
   if (getsockopt(c->fh, SOL_SOCKET, SO_PEERCRED, &cred, (socklen_t) sizeof(struct ucred)) != -1) {
    c->pid = cred.pid;
+   c->uid = cred.uid;
+   c->gid = cred.gid;
   }
 #endif
   if ( c->pid == -1 ) {

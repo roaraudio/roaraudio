@@ -13,6 +13,8 @@ struct roar_client {
 // int last_stream; /* id of the last stream created */
  char name[ROAR_BUFFER_NAME];
  int pid;
+ int uid;
+ int gid;
  char host[ROAR_BUFFER_NAME];
  int execed;
  int streams[ROAR_CLIENTS_MAX_STREAMS_PER_CLIENT];
