@@ -46,7 +46,24 @@ test_lib () {
  return $R
 }
 
-exec 3> config.h
+test_lib_defmake () {
+ def="$1"
+ subdir="$2"
+ shift
+ shift
+
+ if test_lib $@
+ then
+  echo "#define $def"            >&3
+  [ "$subdir" != '' ] && \
+   echo "subdir_$subdir=$subdir" >&4
+ else
+  [ "$subdir" != '' ] && \
+   echo "subdir_$subdir=" >&4
+ fi
+}
+
+exec 3> config.h 4> Makefile.conf
 
 cat >&3 << EOF
 //config.h:
@@ -73,16 +90,17 @@ fi
 
 echo >&3
 
-test_lib EsounD         esd        -- esd.h                              && echo '#define ROAR_HAVE_ESD' >&3
+test_lib_defmake ROAR_HAVE_ESD          libroaresd   EsounD         esd        -- esd.h
 test_lib libao          ao         -- ao/ao.h ao/plugin.h                && echo '#define ROAR_HAVE_LIBAO' >&3
 test_lib libvorbis      vorbis     -- vorbis/codec.h                     && echo '#define ROAR_HAVE_LIBVORBIS' >&3
 test_lib libvorbisfile  vorbisfile -- vorbis/vorbisfile.h                && echo '#define ROAR_HAVE_LIBVORBISFILE' >&3
 test_lib libspeex       speex      -- speex/speex.h speex/speex_stereo.h && echo '#define ROAR_HAVE_LIBSPEEX' >&3
 test_lib libcelt        celt       -- celt/celt.h celt/celt_header.h     && echo '#define ROAR_HAVE_LIBCELT' >&3
 test_lib liboggz        oggz       -- oggz/oggz.h                        && echo '#define ROAR_HAVE_LIBOGGZ' >&3
-test_lib libfishsound   fishsound  -- fishsound/fishsound.h              && echo '#define ROAR_HAVE_LIBFISHSOUND' >&3
 test_lib libsndfile     sndfile    -- sndfile.h                          && echo '#define ROAR_HAVE_LIBSNDFILE' >&3
-test_lib libpulse       pulse      -- pulse/pulseaudio.h pulse/simple.h  && echo '#define ROAR_HAVE_LIBPULSE' >&3
+test_lib_defmake ROAR_HAVE_LIBFISHSOUND roarfish     libfishsound   fishsound  -- fishsound/fishsound.h
+test_lib_defmake ROAR_HAVE_LIBPULSE     libroarpulse libpulse       pulse      -- pulse/pulseaudio.h pulse/simple.h
+test_lib_defmake ROAR_HAVE_LIBY2        libroaryiff  libyiff        Y2         -- Y2/Y.h Y2/Ylib.h
 
 # add a better test here
 test_lib 'linux sendfile()'       -- sys/sendfile.h && echo '#define ROAR_HAVE_LINUX_SENDFILE' >&3

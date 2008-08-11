@@ -1,4 +1,6 @@
-SUBDIRS=libroar libroaresd roard roarclients roarfish libroaryiff
+include Makefile.conf
+
+SUBDIRS=libroar $(subdir_libroaresd) roard roarclients $(subdir_roarfish) $(subdir_libroaryiff) $(subdir_libroarpulse)
 
 all:
 	for i in ${SUBDIRS}; do make -C $$i all; done;
