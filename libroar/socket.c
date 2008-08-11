@@ -39,8 +39,15 @@ int roar_socket_new_udp (void) {
 
 int roar_socket_new_unix (void) {
  int fh;
+#ifdef SO_PEERCRED
+ int opt = 1;
+#endif
 
  fh = socket(AF_UNIX, SOCK_STREAM, 0);
+
+#ifdef SO_PEERCRED
+ setsockopt(fh, SOL_SOCKET, SO_PASSCRED, &opt, sizeof(int));
+#endif
 
  return fh;
 }
