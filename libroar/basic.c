@@ -12,6 +12,11 @@ int roar_connect_raw (char * server) {
  if ( server == NULL && (roar_server = getenv("ROAR_SERVER")) != NULL )
   server = roar_server;
 
+ if ( server == NULL && (i = readlink("/etc/roarserver", user_sock, 79)) != -1 ) {
+   user_sock[i] = 0;
+   server = user_sock;
+ }
+
  if ( server == NULL || *server == 0 ) {
   /* connect via defaults */
 
