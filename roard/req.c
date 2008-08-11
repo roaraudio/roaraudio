@@ -11,6 +11,9 @@ int req_on_noop        (int client, struct roar_message * mes, char * data) {
 int req_on_identify    (int client, struct roar_message * mes, char * data) {
  struct roar_client * c;
  int max_len;
+#ifdef SO_PEERCRED
+ struct ucred cred;
+#endif
 
  if ( mes->datalen < 1 )
   return -1;
@@ -18,7 +21,14 @@ int req_on_identify    (int client, struct roar_message * mes, char * data) {
  clients_get(client, &c);
 
  if ( mes->data[0] == 1 ) {
-  c->pid       = ROAR_NET2HOST32(*(uint32_t*)((mes->data)+1));
+#ifdef SO_PEERCRED
+  if (getsockopt(c->fh, SOL_SOCKET, SO_PEERCRED, &cred, (socklen_t) sizeof(struct ucred)) != -1) {
+   c->pid = cred.pid;
+  }
+#endif
+  if ( c->pid == -1 ) {
+   c->pid       = ROAR_NET2HOST32(*(uint32_t*)((mes->data)+1));
+  }
 
   max_len = (mes->datalen - 5) < (ROAR_BUFFER_NAME-1) ? (mes->datalen - 5) : (ROAR_BUFFER_NAME-1);
 
