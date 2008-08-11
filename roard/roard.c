@@ -84,8 +84,9 @@ int main (int argc, char * argv[]) {
  char * sock_user = NULL;
  char * chrootdir = NULL;
  int    setids    = 0;
- struct group  * grp = NULL;
- struct passwd * pwd = NULL;
+ struct group   * grp  = NULL;
+ struct passwd  * pwd  = NULL;
+ struct servent * serv = NULL;
  DRIVER_USERDATA_T drvinst;
  struct roar_client * self = NULL;
 
@@ -191,7 +192,17 @@ int main (int argc, char * argv[]) {
    s_prim = 1;
 
   } else if ( strcmp(k, "-p") == 0 || strcmp(k, "--port") == 0 ) {
-   port = atoi(argv[++i]);
+   errno = 0;
+   if ( (port = atoi(argv[++i])) < 1 ) {
+    if ( (serv = getservbyname(argv[i], "tcp")) == NULL ) {
+     ROAR_ERR("Unknown service: %s: %s", argv[i], strerror(errno));
+     return 1;
+    }
+    // NOTE: we need to use ROAR_NET2HOST16() here even if s_port is of type int!
+    ROAR_DBG("main(*): serv = {s_name='%s', s_aliases={...}, s_port=%i, s_proto='%s'}",
+            serv->s_name, ROAR_NET2HOST16(serv->s_port), serv->s_proto);
+    port = ROAR_NET2HOST16(serv->s_port);
+   }
   } else if ( strcmp(k, "-b") == 0 || strcmp(k, "--bind") == 0 || strcmp(k, "-s") == 0 || strcmp(k, "--sock") == 0 ) {
    server = argv[++i];
   } else if ( strcmp(k, "-t") == 0 ) {
