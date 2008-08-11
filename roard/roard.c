@@ -273,6 +273,8 @@ int main (int argc, char * argv[]) {
 
 
  clients_set_pid(g_self_client, getpid());
+ clients_set_uid(g_self_client, getuid());
+ clients_set_gid(g_self_client, getgid());
  clients_get(g_self_client, &self);
 
  if ( self == NULL ) {
