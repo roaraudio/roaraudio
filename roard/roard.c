@@ -286,6 +286,7 @@ int main (int argc, char * argv[]) {
   close(ROAR_STDIN );
   close(ROAR_STDOUT);
   close(ROAR_STDERR);
+  setsid();
   if ( fork() )
    _exit(0);
  }
