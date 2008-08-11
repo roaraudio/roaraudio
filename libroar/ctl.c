@@ -269,6 +269,7 @@ int roar_ctl_c2m      (struct roar_message * m, struct roar_client * c) {
  int h;
  int i;
  int max_len;
+ uint32_t pid;
 
  if ( c == NULL )
   return -1;
@@ -297,6 +298,11 @@ int roar_ctl_c2m      (struct roar_message * m, struct roar_client * c) {
 
  cur += max_len;
 
+ pid = ROAR_HOST2NET32(c->pid);
+
+ memcpy(&(m->data[cur]), &pid, 4);
+ cur += 4;
+
  m->datalen = cur;
 
  return 0;
@@ -305,6 +311,7 @@ int roar_ctl_c2m      (struct roar_message * m, struct roar_client * c) {
 int roar_ctl_m2c      (struct roar_message * m, struct roar_client * c) {
  int i;
  int cur;
+ uint32_t pid;
 
  if ( m == NULL || c == NULL )
   return -1;
@@ -336,6 +343,12 @@ int roar_ctl_m2c      (struct roar_message * m, struct roar_client * c) {
 
  strncpy(c->name, (m->data)+cur+1, m->data[cur]);
  c->name[(int)m->data[cur]] = 0;
+
+ cur += m->data[cur] + 1;
+
+ memcpy(&pid, &(m->data[cur]), 4);
+ c->pid = ROAR_NET2HOST32(pid);
+ cur += 4;
 
  return 0;
 }
