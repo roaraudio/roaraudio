@@ -1,6 +1,9 @@
 //roarctl.c:
 
 #include <roaraudio.h>
+#include <pwd.h>
+#include <grp.h>
+
 
 int display_mixer (struct roar_connection * con, int stream);
 int show_meta_all (struct roar_connection * con, int id);
@@ -65,6 +68,8 @@ void list_clients (struct roar_connection * con) {
  int h;
  int id[ROAR_CLIENTS_MAX];
  struct roar_client c;
+ struct group  * grp = NULL;
+ struct passwd * pwd = NULL;
 
  if ( (num = roar_list_clients(con, id, ROAR_CLIENTS_MAX)) == -1 ) {
   fprintf(stderr, "Error: can not get client list\n");
@@ -79,8 +84,11 @@ void list_clients (struct roar_connection * con) {
   }
   printf("Player name           : %s\n", c.name);
   printf("Player PID            : %i\n", c.pid);
-  if ( c.uid != -1 )
-   printf("Player UID/GID        : %i/%i\n", c.uid, c.gid);
+  if ( c.uid != -1 ) {
+   pwd = getpwuid(c.uid);
+   grp = getgrgid(c.gid);
+   printf("Player UID/GID        : %i(%s)/%i(%s)\n", c.uid, pwd ? pwd->pw_name : "?", c.gid, grp ? grp->gr_name : "?");
+  }
   if ( c.execed != -1 )
    printf("Execed stream         : %i\n", c.execed);
 
