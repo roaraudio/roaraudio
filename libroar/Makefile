@@ -3,7 +3,7 @@ OBJS=libroar.o basic.o stream.o simple.o auth.o socket.o ctl.o buffer.o convert.
 
 #DEFINES        = -DDEBUG
 INCLUDE = -I../include -I../include/libroar
-CFLAGS  = -g -Wall -O2 $(DEFINES) $(INCLUDE)
+CFLAGS  = -g -Wall -O2 $(DEFINES) $(INCLUDE) -fPIC
 LDFLAGS = -g -shared -lm
 
 all: ${TARGETS}
