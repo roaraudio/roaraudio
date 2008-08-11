@@ -1,6 +1,7 @@
 //driver_esd.c:
 
 #include "roard.h"
+#ifdef ROAR_HAVE_LIBAO
 
 int driver_ao_open(DRIVER_USERDATA_T * inst, char * device, struct roar_audio_info * info) {
  ao_device        * aodevice;
@@ -60,4 +61,5 @@ int driver_ao_flush(DRIVER_USERDATA_T   inst) {
  return 0;
 }
 
+#endif
 //ll
