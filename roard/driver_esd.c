@@ -1,6 +1,7 @@
 //driver_esd.c:
 
 #include "roard.h"
+#ifdef ROAR_HAVE_ESD
 
 /*
  We could use inst as our fh directly. But esd works with unsigned at 8 bits and
@@ -63,4 +64,6 @@ int driver_esd_flush(DRIVER_USERDATA_T   inst) {
  return 0;
 }
 
+
+#endif
 //ll
