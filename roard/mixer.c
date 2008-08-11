@@ -18,7 +18,7 @@ int mix_clients (void * output, int bits, void ** input, int samples) {
 
 int mix_clients_8bit (void * output, void ** input, int samples) {
  int i, s;
- int c;
+ register int c;
 
  for (s = 0; s < samples; s++) {
   c = 0;
@@ -38,7 +38,7 @@ int mix_clients_8bit (void * output, void ** input, int samples) {
 
 int mix_clients_16bit (void * output, void ** input, int samples) {
  int i, s;
- int c;
+ register int c;
  int16_t ** in  = (int16_t**) input;
  int16_t *  out = output;
 
@@ -124,7 +124,7 @@ int change_vol (void * output, int bits, void * input, int samples, int channels
 int change_vol_8bit (void * output, void * input, int samples, int channels, struct roar_mixer_settings * set) {
  char * in = input, * out = output;
  int    i;
- int    s;
+ register int s;
 
  if ( !(in && out) )
   return -1;
@@ -151,7 +151,7 @@ int change_vol_8bit (void * output, void * input, int samples, int channels, str
 int change_vol_16bit (void * output, void * input, int samples, int channels, struct roar_mixer_settings * set) {
  int16_t * in = input, * out = output;
  int       i;
- int       s;
+ register int s;
 
  if ( !(in && out) )
   return -1;
