@@ -62,6 +62,31 @@ void server_oinfo (struct roar_connection * con) {
 // printf("Server Output rate: %i", s.info.rate);
 }
 
+const char * proc_name (pid_t pid) {
+ static char ret[80] = "?";
+#ifdef __linux__
+ char file[80], buf[80], *r;
+ int  i;
+
+ snprintf(file, 79, "/proc/%i/exe", pid);
+ file[79] = 0;
+
+ ret[0] = '?';
+ ret[1] = 0;
+
+ if ( (i = readlink(file, buf, 79)) != -1 ) {
+  buf[i] = 0;
+  if ( (r = strrchr(buf, '/')) != NULL ) {
+   r++;
+   if ( *r != 0 )
+    strcpy(ret, r);
+  }
+ }
+#endif
+
+ return ret;
+}
+
 void list_clients (struct roar_connection * con) {
  int i;
  int num;
@@ -83,7 +108,7 @@ void list_clients (struct roar_connection * con) {
    continue;
   }
   printf("Player name           : %s\n", c.name);
-  printf("Player PID            : %i\n", c.pid);
+  printf("Player PID            : %i(%s)\n", c.pid, proc_name(c.pid));
   if ( c.uid != -1 ) {
    pwd = getpwuid(c.uid);
    grp = getgrgid(c.gid);
