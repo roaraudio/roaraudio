@@ -51,7 +51,7 @@ OutputPlugin roar_op = {
         roar_open,
         roar_write,
         roar_close,
-        NULL, //roar_flush,
+        roar_flush,
         roar_pause,
         roar_free,
         roar_playing,
@@ -181,7 +181,19 @@ void roar_pause(short p) {
 }
 
 int roar_free(void) {
- return 1000000; // ???
+ if ( g_inst.pause )
+  return 0;
+ else
+  return 1000000; // ???
+}
+
+void roar_flush(int time) {
+ gint64 r = time;
+
+ r *= g_inst.bps;
+ r /= 1000;
+
+ g_inst.written = r;
 }
 
 int roar_get_output_time(void) {
