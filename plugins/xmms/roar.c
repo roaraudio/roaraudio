@@ -13,6 +13,10 @@
 #include "xmms/configfile.h"
 #include "xmms/util.h"
 
+#define _(x) (x)
+
+gint ctrlsocket_get_session_id(void);
+
 void roar_init(void);
 void roar_about(void);
 void roar_configure(void);
@@ -32,15 +36,16 @@ void roar_pause(short p);
 int roar_open(AFormat fmt, int rate, int nch);
 int roar_get_output_time(void);
 int roar_get_written_time(void);
-void roar_set_audio_params(void);
 
+int roar_update_metadata(void);
+int roar_chk_metadata(void);
 
 OutputPlugin roar_op = {
         NULL,
         NULL,
         "RoarAudio XMMS Plugin", /* Description */
         roar_init,
-        NULL, //roar_about,
+        roar_about,
         NULL, //roar_configure,
         NULL, //roar_get_volume,
         NULL, //roar_set_volume,
@@ -64,8 +69,10 @@ struct xmms_roar_out {
  struct roar_connection con;
  struct roar_stream     stream;
  int data_fh;
- long int written;
- int bps;
+ long unsigned int written;
+ long unsigned int bps;
+ int session;
+ int next_test;
 } g_inst;
 
 OutputPlugin *get_oplugin_info(void) {
@@ -75,7 +82,8 @@ OutputPlugin *get_oplugin_info(void) {
 void roar_init(void) {
  g_inst.state = 0;
  g_inst.server = NULL;
- ROAR_WARN("roar_init(*) = (void)");
+ g_inst.session = ctrlsocket_get_session_id();
+ ROAR_DBG("roar_init(*) = (void)");
 }
 
 int roar_playing(void) {
@@ -84,8 +92,23 @@ int roar_playing(void) {
 
 void roar_write(void *ptr, int length) {
  int r;
- if ( (r = write(g_inst.data_fh, ptr, length)) != -1 )
-  g_inst.written += r;
+
+ while (length) {
+  if ( (r = write(g_inst.data_fh, ptr, length >= 1764 ? 1764 : length)) != -1 ) {
+   g_inst.written   += r;
+   ptr              += r;
+   length           -= r;
+   g_inst.next_test -= r;
+  } else {
+   return;
+  }
+ }
+
+
+ if ( g_inst.next_test < 1 ) {
+  roar_chk_metadata();
+  g_inst.next_test = g_inst.bps;
+ }
 }
 
 int roar_open(AFormat fmt, int rate, int nch) {
@@ -135,7 +158,8 @@ int roar_open(AFormat fmt, int rate, int nch) {
     break;
  }
 
- g_inst.bps = nch * rate * bits / 8;
+ g_inst.bps       = nch * rate * bits / 8;
+ g_inst.next_test = g_inst.bps;
 
  if ( (g_inst.data_fh = roar_simple_new_stream_obj(&(g_inst.con), &(g_inst.stream),
                               rate, nch, bits, codec, ROAR_DIR_PLAY)) == -1) {
@@ -144,6 +168,8 @@ int roar_open(AFormat fmt, int rate, int nch) {
  g_inst.state |= STATE_PLAYING;
 
  g_inst.written = 0;
+
+ roar_update_metadata();
 
  return TRUE;
 }
@@ -164,8 +190,116 @@ int roar_free(void) {
 int roar_get_output_time(void) {
  return roar_get_written_time();
 }
+
 int roar_get_written_time(void) {
- return (g_inst.written * 1000) / g_inst.bps;
+ gint64 r;
+
+ if ( !g_inst.bps ) {
+  ROAR_DBG("roar_get_written_time(void) = 0");
+  return 0;
+ }
+
+ r  = g_inst.written;
+ r *= 1000; // sec -> msec
+ r /= g_inst.bps;
+ ROAR_DBG("roar_get_written_time(void) = %lu", r);
+
+ return r;
+}
+
+
+// ABOUT:
+
+void roar_about(void) {
+ static GtkWidget *dialog;
+
+ if (dialog != NULL)
+  return;
+
+ dialog = xmms_show_message(
+                _("About RoarAudio Plugin"),
+                _("RoarAudio XMMS Plugin..."
+                 ), _("OK"), FALSE, NULL, NULL);
+ gtk_signal_connect(GTK_OBJECT(dialog), "destroy",
+                    GTK_SIGNAL_FUNC(gtk_widget_destroyed),
+                    &dialog);
+}
+
+// CONFIG:
+
+// META DATA:
+
+int roar_update_metadata(void) {
+ struct roar_meta   meta;
+ char empty = 0;
+ char * info;
+ int pos;
+
+ pos     = xmms_remote_get_playlist_pos(g_inst.session);
+
+ meta.value = &empty;
+ meta.key[0] = 0;
+ meta.type = ROAR_META_TYPE_NONE;
+
+ roar_stream_meta_set(&(g_inst.con), &(g_inst.stream), ROAR_META_MODE_CLEAR, &meta);
+
+ info = xmms_remote_get_playlist_file(g_inst.session, pos);
+
+ if ( info ) {
+  if ( strncmp(info, "http:", 5) == 0 )
+   meta.type = ROAR_META_TYPE_FILEURL;
+  else
+   meta.type = ROAR_META_TYPE_FILENAME;
+
+  meta.value = info;
+  roar_stream_meta_set(&(g_inst.con), &(g_inst.stream), ROAR_META_MODE_SET, &meta);
+
+  free(info);
+ }
+
+ info = xmms_remote_get_playlist_title(g_inst.session, pos);
+
+ if ( info ) {
+  meta.type = ROAR_META_TYPE_TITLE;
+
+  meta.value = info;
+  roar_stream_meta_set(&(g_inst.con), &(g_inst.stream), ROAR_META_MODE_SET, &meta);
+
+  free(info);
+ }
+
+ return 0;
+}
+
+int roar_chk_metadata(void) {
+ static int    old_pos = -1;
+ static char * old_title = "NEW TITLE";
+ int pos;
+ char * title;
+ int need_update = 0;
+
+ pos     = xmms_remote_get_playlist_pos(g_inst.session);
+
+ if ( pos != old_pos ) {
+  old_pos = pos;
+  need_update = 1;
+ } else {
+  title = xmms_remote_get_playlist_title(g_inst.session, pos);
+
+  if ( strcmp(title, old_title) ) {
+   free(old_title);
+   old_title = title;
+   need_update = 1;
+  } else {
+   free(title);
+  }
+ }
+
+ if ( need_update ) {
+  roar_update_metadata();
+ }
+
+ return 0;
 }
 
 //ll
