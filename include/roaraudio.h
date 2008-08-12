@@ -72,6 +72,12 @@
 
 #define ROAR_DBG_FULLPREFIX "(" ROAR_DBG_PREFIX ": " __FILE__ ":%i): "
 
+#if __GNUC__ < 3
+ #define ROAR_DBG(format, args...)
+ #define ROAR_ERR(format, args...)
+ #define ROAR_WARN(format, args...)
+#else
+
 #ifdef DEBUG
  #define ROAR_DBG(format, args...)  fprintf(ROAR_DEBUG_OUTFH, ROAR_DBG_FULLPREFIX "DEBUG: " format "\n", __LINE__, ## args)
 #else
@@ -81,6 +87,7 @@
 #define ROAR_ERR(format, args...)  fprintf(ROAR_DEBUG_OUTFH, ROAR_DBG_FULLPREFIX "Error: "   format "\n", __LINE__, ## args)
 #define ROAR_WARN(format, args...) fprintf(ROAR_DEBUG_OUTFH, ROAR_DBG_FULLPREFIX "Warning: " format "\n", __LINE__, ## args)
 
+#endif
 
 #ifdef ROAR_HAVE_SAFE_OVERFLOW
 #define ROAR_MATH_OVERFLOW_ADD(a, b) ((a)+(b))
