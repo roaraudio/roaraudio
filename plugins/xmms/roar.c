@@ -22,7 +22,6 @@ void roar_about(void);
 void roar_configure(void);
 
 void roar_get_volume(int *l, int *r);
-void roar_fetch_volume(int *l, int *r);
 void roar_set_volume(int l, int r);
 void roar_mixer_init(void);
 void roar_mixer_init_vol(int l, int r);
@@ -47,8 +46,8 @@ OutputPlugin roar_op = {
         roar_init,
         roar_about,
         NULL, //roar_configure,
-        NULL, //roar_get_volume,
-        NULL, //roar_set_volume,
+        roar_get_volume,
+        roar_set_volume,
         roar_open,
         roar_write,
         roar_close,
@@ -298,6 +297,40 @@ int roar_chk_metadata(void) {
  }
 
  return 0;
+}
+
+// MIXER:
+
+void roar_get_volume(int *l, int *r) {
+ int channels;
+ struct roar_mixer_settings mixer;
+
+ if ( !(g_inst.state & STATE_CONNECTED) )
+  return;
+
+ if ( roar_get_vol(&(g_inst.con), g_inst.stream.id, &mixer, &channels) == -1 ) {
+  *l = *r = 100;
+  return;
+ }
+
+ if ( channels == 1 ) {
+  *l = *r = mixer.mixer[0]/655.35;
+ } else {
+  *l = mixer.mixer[0]/655.35;
+  *r = mixer.mixer[1]/655.35;
+ }
+}
+
+void roar_set_volume(int l, int r) {
+ struct roar_mixer_settings mixer;
+
+ if ( !(g_inst.state & STATE_CONNECTED) )
+  return;
+
+ mixer.mixer[0] = l * 655.35;
+ mixer.mixer[1] = r * 655.35;
+
+ roar_set_vol(&(g_inst.con), g_inst.stream.id, &mixer, 2);
 }
 
 //ll
