@@ -86,7 +86,7 @@ void roar_init(void) {
 }
 
 int roar_playing(void) {
- return g_inst.state & STATE_PLAYING ? TRUE : FALSE;
+ return FALSE;
 }
 
 void roar_write(void *ptr, int length) {
@@ -94,6 +94,8 @@ void roar_write(void *ptr, int length) {
 
  if ( g_inst.pause )
   return;
+
+ ROAR_DBG("roar_write(ptr=%p, length=%i) = (void)", ptr, length);
 
  while (length) {
   if ( (r = write(g_inst.data_fh, ptr, length >= 17640 ? 17640 : length)) != -1 ) {
@@ -171,9 +173,11 @@ int roar_open(AFormat fmt, int rate, int nch) {
 
 void roar_close(void) {
  close(g_inst.data_fh);
+ g_inst.data_fh = -1;
  g_inst.state |= STATE_PLAYING;
  g_inst.state -= STATE_PLAYING;
  g_inst.written = 0;
+ ROAR_DBG("roar_close(void) = (void)");
 }
 
 void roar_pause(short p) {
