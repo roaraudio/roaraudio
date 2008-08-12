@@ -1,5 +1,7 @@
 TARGETS=roarcat roarcatad roarcat2sock roarcatsendfile roarcatplay roarctl roarmon roarsockconnect roartypes roarvorbis roarvumeter roarfilt roarsin roar-config polytest
 
+include ../Makefile.conf
+
 CELT_PREFIX=/home/phi/superhome/xiph/celt-test/
 DEFINES        = -DDEBUG
 INCLUDE = -I../include -I./include
@@ -29,5 +31,5 @@ roarsockconnect: roarsockconnect.o
 roartypes: roartypes.o
 roar-config: roar-config.o
 roarvorbis: roarvorbis.o
-	${CC} ${LDFLAGS} -o roarvorbis roarvorbis.o -lvorbisfile
+	${CC} ${LDFLAGS} -o roarvorbis roarvorbis.o $(lib_vorbisfile)
 polytest: polytest.o
