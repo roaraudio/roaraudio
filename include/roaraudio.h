@@ -53,6 +53,8 @@
 #define ROAR_DEFAULT_SOCK_GLOBAL "/tmp/roar"
 #define ROAR_DEFAULT_SOCK_USER   ".roar"
 
+#define ROAR_DEFAULT_SOCKGRP     "audio"
+
 #define ROAR_LIBS                "-lroar"
 #define ROAR_CFLAGS              ""
 

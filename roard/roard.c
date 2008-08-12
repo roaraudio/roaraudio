@@ -48,13 +48,14 @@ void usage (void) {
         " -p  --port            - TCP Port to bind to\n"
         " -b  --bind            - IP/Hostname to bind to\n"
         " -s  --sock            - Filename for UNIX Domain Socket\n"
-        " -G  GROUP             - Sets the group for the UNIX Domain Socket, (default: audio)\n"
+        " -G  GROUP             - Sets the group for the UNIX Domain Socket, (default: %s)\n"
         "                         You need the permittions to change the GID\n"
         " -U  USER              - Sets the user for the UNIX Domain Socket, (default: do not set)\n"
         "                         You need the permittions to change the UID (normaly only root has)\n"
         " --no-listen           - Do not listen for new clients (only usefull for relaing)\n"
         " --client-fh           - Comunicate with a client over this handle\n"
-        "                         (only usefull for relaing)\n"
+        "                         (only usefull for relaing)\n",
+        ROAR_DEFAULT_SOCKGRP
        );
 // printf("\n Options:\n\n");
  printf("\n");
@@ -80,7 +81,7 @@ int main (int argc, char * argv[]) {
  char * s_con     = NULL;
  char * s_opt     = NULL;
  int    s_prim    = 0;
- char * sock_grp  = "audio";
+ char * sock_grp  = ROAR_DEFAULT_SOCKGRP;
  char * sock_user = NULL;
  char * chrootdir = NULL;
  int    setids    = 0;
