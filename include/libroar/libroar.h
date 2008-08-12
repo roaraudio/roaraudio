@@ -5,12 +5,13 @@
 
 #define ROAR_DBG_PREFIX  "libroar"
 
+#include <roaraudio.h>
+
 #include <fcntl.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netinet/ip.h>
 
-#include <roaraudio.h>
 #include "basic.h"
 #include "stream.h"
 #include "simple.h"
