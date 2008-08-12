@@ -1,8 +1,8 @@
 Things we need to do:
  * add _working_ resampling code
  * add support for sync streams
- * fix byte-order bug in *_set_vol()
  * find out where the memory leaks are
+ * remove all hardcoded paths from Makefiles and add install target
 
 Things we should do:
  * add a lot other things
@@ -11,4 +11,4 @@ Things we should do:
 
 Things it whould be nice to have:
  * add code to handle streams with more than ROAR_MAX_CHANNELS channels
- * add support for ReplayGain.
+ * add better support for ReplayGain.
