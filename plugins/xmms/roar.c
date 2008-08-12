@@ -51,8 +51,8 @@ OutputPlugin roar_op = {
         NULL, //roar_pause,
         roar_free,
         roar_playing,
-        NULL, //roar_get_output_time,
-        NULL, //roar_get_written_time,
+        roar_get_output_time,
+        roar_get_written_time,
 };
 
 #define STATE_CONNECTED 1
@@ -64,6 +64,8 @@ struct xmms_roar_out {
  struct roar_connection con;
  struct roar_stream     stream;
  int data_fh;
+ long int written;
+ int bps;
 } g_inst;
 
 OutputPlugin *get_oplugin_info(void) {
@@ -81,7 +83,9 @@ int roar_playing(void) {
 }
 
 void roar_write(void *ptr, int length) {
- write(g_inst.data_fh, ptr, length);
+ int r;
+ if ( (r = write(g_inst.data_fh, ptr, length)) != -1 )
+  g_inst.written += r;
 }
 
 int roar_open(AFormat fmt, int rate, int nch) {
@@ -131,11 +135,15 @@ int roar_open(AFormat fmt, int rate, int nch) {
     break;
  }
 
+ g_inst.bps = nch * rate * bits / 8;
+
  if ( (g_inst.data_fh = roar_simple_new_stream_obj(&(g_inst.con), &(g_inst.stream),
                               rate, nch, bits, codec, ROAR_DIR_PLAY)) == -1) {
   return FALSE;
  }
  g_inst.state |= STATE_PLAYING;
+
+ g_inst.written = 0;
 
  return TRUE;
 }
@@ -144,14 +152,20 @@ void roar_close(void) {
  close(g_inst.data_fh);
  g_inst.state |= STATE_PLAYING;
  g_inst.state -= STATE_PLAYING;
+ g_inst.written = 0;
 }
 
 void roar_pause(short p);
-int roar_get_output_time(void);
-int roar_get_written_time(void);
 
 int roar_free(void) {
  return 1000000; // ???
+}
+
+int roar_get_output_time(void) {
+ return roar_get_written_time();
+}
+int roar_get_written_time(void) {
+ return (g_inst.written * 1000) / g_inst.bps;
 }
 
 //ll
