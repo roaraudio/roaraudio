@@ -16,7 +16,7 @@
 #include <xine/audio_out.h>
 #include <xine/metronom.h>
 
-#define AO_OUT_ROAR_IFACE_VERSION 1
+#define AO_OUT_ROAR_IFACE_VERSION 8
 
 #define GAP_TOLERANCE         5000
 
@@ -58,8 +58,11 @@ static int ao_roar_bytes_per_frame(ao_driver_t *this_gen) {
   roar_driver_t *this = (roar_driver_t *) this_gen;
   return (this->stream.info.bits * this->stream.info.channels)/8;
 }
+
 static int ao_roar_delay(ao_driver_t *this_gen) {
+ return 0;
 }
+
 static int ao_roar_write(ao_driver_t *this_gen,
                         int16_t* frame_buffer, uint32_t num_frames) {
  roar_driver_t *this = (roar_driver_t *) this_gen;
@@ -81,8 +84,10 @@ static void ao_roar_exit(ao_driver_t *this_gen) {
 }
 
 static int ao_roar_get_property (ao_driver_t *this_gen, int property) {
+ return 0;
 }
 static int ao_roar_set_property (ao_driver_t *this_gen, int property, int value) {
+ return ~value;
 }
 
 static int ao_roar_ctrl(ao_driver_t *this_gen, int cmd, ...) {
@@ -106,6 +111,8 @@ static ao_driver_t *open_plugin (audio_driver_class_t *class_gen,
    free(this);
    return NULL;
   }
+
+  this->fh = -1;
 
   this->capabilities       = AO_CAP_MODE_MONO | AO_CAP_MODE_STEREO | AO_CAP_MIXER_VOL | AO_CAP_MUTE_VOL;
 
