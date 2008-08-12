@@ -110,7 +110,7 @@ int update_stream (struct roar_connection * con, struct roar_stream * s, int * o
 
 int main (int argc, char * argv[]) {
 #ifndef ROAR_HAVE_LIBVORBISFILE
- printf(stderr, "Error: no Vorbis support!\n");
+ fprintf(stderr, "Error: no Vorbis support!\n");
  return 1;
 #else
  char * server   = NULL;
