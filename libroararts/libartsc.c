@@ -9,6 +9,8 @@ struct _libroarartsc_stream {
  struct roar_stream stream;
  int fh;
  int blocking;
+ int block_size;
+ int dir;
 };
 
 int arts_init(void) {
@@ -60,6 +62,7 @@ const char *arts_error_text(int errorcode) {
 arts_stream_t arts_play_stream(int rate, int bits, int channels, const char *name) {
  struct _libroarartsc_stream * s = malloc(sizeof(struct _libroarartsc_stream));
  struct roar_meta meta;
+ struct roar_stream_info info;
 
  if ( !s )
   return NULL;
@@ -70,7 +73,17 @@ arts_stream_t arts_play_stream(int rate, int bits, int channels, const char *nam
   return NULL;
  }
 
+ s->dir = ROAR_DIR_PLAY;
+
  s->blocking = 1;
+
+ if ( roar_stream_get_info(_libroarartsc_connection, &(s->stream), &info) != -1 ) {
+  s->block_size = info.block_size;
+ } else {
+  close(s->fh);
+  free(s);
+  return NULL;
+ }
 
  if ( name && *name ) {
   meta.value  = (char*)name;
@@ -97,6 +110,7 @@ arts_stream_t arts_play_stream(int rate, int bits, int channels, const char *nam
 arts_stream_t arts_record_stream(int rate, int bits, int channels, const char *name) {
  struct _libroarartsc_stream * s = malloc(sizeof(struct _libroarartsc_stream));
  struct roar_meta meta;
+ struct roar_stream_info info;
 
  if ( !s )
   return NULL;
@@ -107,7 +121,17 @@ arts_stream_t arts_record_stream(int rate, int bits, int channels, const char *n
   return NULL;
  }
 
+ s->dir = ROAR_DIR_RECORD;
+
  s->blocking = 1;
+
+ if ( roar_stream_get_info(_libroarartsc_connection, &(s->stream), &info) != -1 ) {
+  s->block_size = info.block_size;
+ } else {
+  close(s->fh);
+  free(s);
+  return NULL;
+ }
 
  if ( name && *name ) {
   meta.value  = (char*)name;
@@ -188,7 +212,7 @@ int arts_stream_set(arts_stream_t stream, arts_parameter_t param, int value) {
   return arts_stream_get(stream, param);
  }
 
- return -1;
+ return arts_stream_get(stream, param);
 }
 
 /**
@@ -201,16 +225,32 @@ int arts_stream_set(arts_stream_t stream, arts_parameter_t param, int value) {
  */
 int arts_stream_get(arts_stream_t stream, arts_parameter_t param) {
  struct _libroarartsc_stream * s = (struct _libroarartsc_stream *) stream;
- struct roar_stream_info info;
+ fd_set sl;
+ struct timeval tv;
 
  if ( !stream )
   return -1;
 
  if ( param == ARTS_P_PACKET_SIZE ) {
-  if ( roar_stream_get_info(_libroarartsc_connection, &(s->stream), &info) != -1 ) {
-   return info.block_size;
+   return s->block_size;
+ } else if ( param == ARTS_P_BUFFER_SPACE ) {
+  FD_ZERO(&sl);
+  FD_SET(s->fh, &sl);
+
+  tv.tv_sec  = 0;
+  tv.tv_usec = 1;
+
+  if ( s->dir == ROAR_DIR_PLAY ) {
+   if (select(s->fh + 1, NULL, &sl, NULL, &tv) > 0)
+    return s->block_size;
+  } else {
+   if (select(s->fh + 1, &sl, NULL, NULL, &tv) > 0)
+    return s->block_size;
   }
-  return -1;
+
+  return 0;
+ } else if ( param == ARTS_P_BUFFER_SIZE ) {
+   return s->block_size*2;
  } else if ( param == ARTS_P_PACKET_COUNT ) {
   return 1;
  } else if ( param == ARTS_P_BLOCKING ) {
