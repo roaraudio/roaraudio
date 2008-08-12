@@ -24,6 +24,10 @@
 #include <netinet/tcp.h>
 #include <sys/un.h>
 
+#ifdef __NetBSD__
+#include <netinet/in_systm.h>
+#endif
+
 #include <netdb.h>
 
 #include <roaraudio/config.h>
