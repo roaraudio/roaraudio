@@ -19,6 +19,6 @@
 OS		ARCH		COMPILER	STATUS	COMMENT
 Debian Etch	ix86		gcc 4.1.2	OK
 Debian Etch	x86_64		gcc 4.1.2	OK
-NetBSD 1.6.1	Alpha		gcc 2.95.3	BAD	gcc too old,
-							does not support all of your macros
+NetBSD 1.6.1	Alpha		gcc 2.95.3	OK	gcc too old,
+							does not support debug macros
 Darwin 9.4.0	i386		gcc 4.0.1	BAD	???
