@@ -6,6 +6,7 @@
 #include <gtk/gtk.h>
 #include <stdio.h>
 #include <string.h>
+#include <pthread.h>
 
 #include "xmms/plugin.h"
 #include "xmms/xmmsctrl.h"
@@ -53,7 +54,7 @@ OutputPlugin roar_op = {
         roar_write,
         roar_close,
         NULL, //roar_flush,
-        NULL, //roar_pause,
+        roar_pause,
         roar_free,
         roar_playing,
         roar_get_output_time,
@@ -73,6 +74,8 @@ struct xmms_roar_out {
  long unsigned int bps;
  int session;
  int next_test;
+ int pause;
+ int updateing;
 } g_inst;
 
 OutputPlugin *get_oplugin_info(void) {
@@ -82,6 +85,7 @@ OutputPlugin *get_oplugin_info(void) {
 void roar_init(void) {
  g_inst.state = 0;
  g_inst.server = NULL;
+ g_inst.updateing = 0;
  g_inst.session = ctrlsocket_get_session_id();
  ROAR_DBG("roar_init(*) = (void)");
 }
@@ -92,22 +96,38 @@ int roar_playing(void) {
 
 void roar_write(void *ptr, int length) {
  int r;
+ int need_update = 0;
+ pthread_t thread;
+
+ if ( g_inst.next_test < 1 ) {
+  need_update = 1;
+  g_inst.next_test = g_inst.bps;
+  pthread_create(&thread, NULL, (void (*)(void*))roar_chk_metadata, NULL);
+  //roar_socket_nonblock(g_inst.data_fh, ROAR_SOCKET_NONBLOCK);
+ }
+
+ if ( g_inst.pause )
+  return;
 
  while (length) {
-  if ( (r = write(g_inst.data_fh, ptr, length >= 1764 ? 1764 : length)) != -1 ) {
+  if ( (r = write(g_inst.data_fh, ptr, length >= 17640 ? 17640 : length)) != -1 ) {
    g_inst.written   += r;
    ptr              += r;
    length           -= r;
    g_inst.next_test -= r;
   } else {
-   return;
+   if ( errno == EAGAIN ) {
+    roar_socket_nonblock(g_inst.data_fh, ROAR_SOCKET_BLOCK);
+   } else {
+    return;
+   }
   }
  }
 
 
- if ( g_inst.next_test < 1 ) {
-  roar_chk_metadata();
-  g_inst.next_test = g_inst.bps;
+ if ( need_update ) {
+  //roar_socket_nonblock(g_inst.data_fh, ROAR_SOCKET_BLOCK);
+  pthread_join(thread, NULL);
  }
 }
 
@@ -168,6 +188,7 @@ int roar_open(AFormat fmt, int rate, int nch) {
  g_inst.state |= STATE_PLAYING;
 
  g_inst.written = 0;
+ g_inst.pause   = 0;
 
  roar_update_metadata();
 
@@ -181,7 +202,9 @@ void roar_close(void) {
  g_inst.written = 0;
 }
 
-void roar_pause(short p);
+void roar_pause(short p) {
+ g_inst.pause = p;
+}
 
 int roar_free(void) {
  return 1000000; // ???
@@ -235,6 +258,13 @@ int roar_update_metadata(void) {
  char * info;
  int pos;
 
+ g_inst.updateing++;
+
+ if ( g_inst.updateing > 1 ) {
+  g_inst.updateing--;
+  return -1;
+ }
+
  pos     = xmms_remote_get_playlist_pos(g_inst.session);
 
  meta.value = &empty;
@@ -268,6 +298,7 @@ int roar_update_metadata(void) {
   free(info);
  }
 
+ g_inst.updateing--;
  return 0;
 }
 
