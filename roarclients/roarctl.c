@@ -129,6 +129,7 @@ void list_streams (struct roar_connection * con) {
  int num;
  int id[ROAR_STREAMS_MAX];
  struct roar_stream s;
+ struct roar_stream_info info;
 
 
  if ( (num = roar_list_streams(con, id, ROAR_STREAMS_MAX)) == -1 ) {
@@ -152,6 +153,9 @@ void list_streams (struct roar_connection * con) {
   printf("Input channels        : %i\n", s.info.channels);
   printf("Input codec           : %i (%s%s)\n", s.info.codec, roar_codec2str(s.info.codec),
                                       s.info.codec == ROAR_CODEC_DEFAULT ? " native" : "");
+  if ( roar_stream_get_info(con, &s, &info) != -1 ) {
+   printf("Input block size      : %i Byte\n", info.block_size);
+  }
   display_mixer(con, id[i]);
   show_meta_all(con, id[i]);
  }

@@ -45,6 +45,8 @@
 #define ROAR_GET_ACL           25 /* get ACL, may have subtypes */
 #define ROAR_SET_ACL           26 /* set ACL, may have subtypes */
 
+#define ROAR_CMD_GET_STREAM_PARA   27 /* Get addition stream parameters like blocksizes */
+#define ROAR_CMD_SET_STREAM_PARA   28 /* set specal stream parameter */
 
 
 #define ROAR_CMD_OK           254 /* return value OK */

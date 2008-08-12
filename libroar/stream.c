@@ -137,6 +137,43 @@ int roar_stream_add_data (struct roar_connection * con, struct roar_stream * s, 
  return -1;
 }
 
+int roar_stream_get_info (struct roar_connection * con, struct roar_stream * s, struct roar_stream_info * info) {
+ struct roar_message m;
+ uint16_t * data = (uint16_t *) m.data;
+ int i;
+
+ m.cmd     = ROAR_CMD_GET_STREAM_PARA;
+ m.stream  = s->id;
+ m.datalen = 4;
+ m.pos     = 0;
+
+ data[0] = 0; // Version and reserved
+ data[1] = 1; // stream
+
+ for (i = 0; i < m.datalen/2; i++) {
+  data[i] = ROAR_HOST2NET16(data[i]);
+ }
+
+ if ( roar_req(con, &m, NULL) == -1 )
+  return -1;
+
+ if ( m.cmd != ROAR_CMD_OK )
+  return -1;
+
+ for (i = 0; i < m.datalen/2; i++) {
+  data[i] = ROAR_NET2HOST16(data[i]);
+ }
+
+ if ( m.datalen < 3*2 )
+  return -1;
+
+ if ( data[0] != 0 || data[1] != 1 )
+  return -1;
+
+ info->block_size = data[2];
+
+ return 0;
+}
 
 #define _ROAR_STREAM_MESSAGE_LEN ((5+1)*4)
 
@@ -180,6 +217,7 @@ int roar_stream_m2s     (struct roar_stream * s, struct roar_message * m) {
  for (i = 0; i < _ROAR_STREAM_MESSAGE_LEN/4; i++)
   data[i] = ROAR_NET2HOST32(data[i]);
 
+ s->id            = m->stream;
  s->dir           = data[0];
  s->pos_rel_id    = data[1];
  s->info.rate     = data[2];

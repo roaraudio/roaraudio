@@ -201,11 +201,16 @@ int arts_stream_set(arts_stream_t stream, arts_parameter_t param, int value) {
  */
 int arts_stream_get(arts_stream_t stream, arts_parameter_t param) {
  struct _libroarartsc_stream * s = (struct _libroarartsc_stream *) stream;
+ struct roar_stream_info info;
+
  if ( !stream )
   return -1;
 
  if ( param == ARTS_P_PACKET_SIZE ) {
-  return 2048;
+  if ( roar_stream_get_info(_libroarartsc_connection, &(s->stream), &info) != -1 ) {
+   return info.block_size;
+  }
+  return -1;
  } else if ( param == ARTS_P_PACKET_COUNT ) {
   return 1;
  } else if ( param == ARTS_P_BLOCKING ) {
