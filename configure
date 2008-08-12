@@ -160,6 +160,17 @@ else
  echo 'no (can not compile!, no stdint.h?)'
 fi
 
+echo -n 'checking if cp supports -v... '
+if cp -v --help > /dev/null 2> /dev/null
+then
+ echo "cp_v=-v" >&4
+ echo yes
+else
+ echo "cp_v=" >&4
+ echo no
+fi
+
+
 cat >&3 << EOF
 
 #endif

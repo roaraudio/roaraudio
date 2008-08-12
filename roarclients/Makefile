@@ -1,5 +1,7 @@
 TARGETS=roarcat roarcatad roarcat2sock roarcatsendfile roarcatplay roarctl roarmon roarsockconnect roartypes roarvorbis roarvumeter roarfilt roarsin roar-config polytest
 
+include ../Makefile.conf
+
 CELT_PREFIX=/home/phi/superhome/xiph/celt-test/
 DEFINES        = -DDEBUG
 INCLUDE = -I../include -I./include
@@ -7,7 +9,7 @@ CFLAGS  = -g -Wall -O2 $(DEFINES) $(INCLUDE) -I$(CELT_PREFIX)/include
 LDFLAGS = -g -L../lib/ -lroar -L$(CELT_PREFIX)/lib
 
 all: ${TARGETS}
-	cp -v ${TARGETS} ../lib/
+	cp $(cp_v) ${TARGETS} ../lib/
 clean:
 	rm -f ${TARGETS} *.o
 new: clean all

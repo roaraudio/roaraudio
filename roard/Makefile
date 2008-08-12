@@ -14,7 +14,7 @@ CFLAGS  = -g -Wall -O2 $(DEFINES) $(INCLUDE) -I$(CELT_PREFIX)/include
 LDFLAGS = -g -L../lib/ -lroar $(lib_esd) $(lib_ao) $(lib_vorbisfile) -lm -L$(CELT_PREFIX)/lib $(lib_celt) $(lib_speex)
 
 all: ${TARGETS}
-	cp -v ${TARGETS} ../lib/
+	cp $(cp_v) ${TARGETS} ../lib/
 clean:
 	rm -f ${TARGETS} *.o
 new: clean all
