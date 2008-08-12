@@ -67,12 +67,20 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
  char file[80];
  int fh = -1, listen;
  static int count = 0;
+ struct group   * grp  = NULL;
 
  sprintf(file, "/tmp/.libroar-simple-stream.%i-%i", getpid(), count++);
 
  if ( (listen = roar_socket_listen(ROAR_SOCKET_TYPE_UNIX, file, 0)) == -1 ) {
   return -1;
  }
+
+ chmod(file, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP);
+
+ grp = getgrnam(ROAR_DEFAULT_SOCKGRP);
+
+ if ( grp )
+  chown(file, -1, grp->gr_gid);
 
  if ( roar_stream_new(s, rate, channels, bits, codec) == -1 ) {
   return -1;
