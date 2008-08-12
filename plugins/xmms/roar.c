@@ -127,7 +127,7 @@ int roar_open(AFormat fmt, int rate, int nch) {
     break;
    case FMT_U8:
      bits = 8;
-     codec = ROAR_CODEC_PCM_S_LE; // _LE, _BE, _PDP,... all the same for 8 bit output
+     codec = ROAR_CODEC_PCM_U_LE; // _LE, _BE, _PDP,... all the same for 8 bit output
     break;
    case FMT_U16_LE:
      codec = ROAR_CODEC_PCM_U_LE;
