@@ -5,8 +5,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#ifdef ROAR_HAVE_LIBVORBISFILE
 #include <vorbis/codec.h>
 #include <vorbis/vorbisfile.h>
+#endif
 
 #ifdef _WIN32
 #include <io.h>
@@ -27,6 +29,7 @@ void usage (void) {
 }
 
 
+#ifdef ROAR_HAVE_LIBVORBISFILE
 FILE * open_http (char * file) {
  char cmd[1024];
 
@@ -103,7 +106,13 @@ int update_stream (struct roar_connection * con, struct roar_stream * s, int * o
  return 0;
 }
 
+#endif
+
 int main (int argc, char * argv[]) {
+#ifndef ROAR_HAVE_LIBVORBISFILE
+ printf(stderr, "Error: no Vorbis support!\n");
+ return 1;
+#else
  char * server   = NULL;
  char * file     = NULL;
  char * k;
@@ -195,6 +204,7 @@ int main (int argc, char * argv[]) {
  roar_disconnect(&con);
 
  return 0;
+#endif
 }
 
 //ll
