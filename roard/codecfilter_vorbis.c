@@ -19,6 +19,8 @@ int cf_vorbis_open(CODECFILTER_USERDATA_T * inst, int codec,
  self->stream               = info;
 // self->outlen               = ROAR_OUTPUT_BUFFER_SAMPLES * s->info.channels * s->info.bits / 8; // optimal size
 
+ ROAR_DBG("cf_vorbis_open(*): info->id=%i", ROAR_STREAM(info)->id);
+
  if ( (self->in = fdopen(((struct roar_stream*)info)->fh, "r")) == NULL ) {
   free((void*)self);
   return -1;

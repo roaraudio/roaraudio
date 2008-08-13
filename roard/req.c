@@ -1,4 +1,4 @@
-//req.c:
+
 
 #include "roard.h"
 
@@ -85,6 +85,8 @@ int req_on_new_stream  (int client, struct roar_message * mes, char * data) {
   streams_delete(stream);
   return -1;
  }
+
+ ROAR_STREAM(s)->id = stream; // roar_stream_m2s() resets this
 
  mes->cmd     = ROAR_CMD_OK;
  mes->stream  = stream;

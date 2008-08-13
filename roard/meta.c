@@ -118,7 +118,14 @@ int stream_meta_list  (int id, int * types, size_t len) {
 
 int stream_meta_clear (int id) {
  int i;
- struct roar_stream_server * s = g_streams[id];
+ struct roar_stream_server * s = NULL;
+
+ if ( id < 0 || id > ROAR_STREAMS_MAX ) {
+  ROAR_ERR("stream_meta_clear(id=%i): Can not clear meta data on stream: invalid stream ID", id);
+  return -1;
+ }
+
+ s = g_streams[id];
 
  if ( s == NULL )
   return -1;
