@@ -11,7 +11,7 @@ CELT_PREFIX=/home/phi/superhome/xiph/celt-test/
 #DEFINES        = -DMONITOR_LATENCY
 INCLUDE = -I../include -I./include
 CFLAGS  = -g -Wall -O2 $(DEFINES) $(INCLUDE) -I$(CELT_PREFIX)/include
-LDFLAGS = -g -L../lib/ -lroar $(lib_esd) $(lib_ao) $(lib_vorbisfile) -lm -L$(CELT_PREFIX)/lib $(lib_celt) $(lib_speex)
+LDFLAGS = -g -L../lib/ $(LDPATH) -lroar $(lib_esd) $(lib_ao) $(lib_vorbisfile) -lm -L$(CELT_PREFIX)/lib $(lib_celt) $(lib_speex)
 
 all: ${TARGETS}
 	cp $(cp_v) ${TARGETS} ../lib/

@@ -4,7 +4,7 @@ OBJS=libartsc.o
 DEFINES        = -DDEBUG
 INCLUDE = -I../include -I../include/libroarpulse
 CFLAGS  = -g -Wall -O2 $(DEFINES) $(INCLUDE)
-LDFLAGS = -g -lroar -L../lib/
+LDFLAGS = -g -lroar $(LDPATH) -L../lib/
 
 all: ${TARGETS}
 	cp $(cp_v) ${TARGETS} ../lib/

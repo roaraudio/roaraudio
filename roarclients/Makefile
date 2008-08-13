@@ -6,7 +6,7 @@ CELT_PREFIX=/home/phi/superhome/xiph/celt-test/
 DEFINES        = -DDEBUG
 INCLUDE = -I../include -I./include
 CFLAGS  = -g -Wall -O2 $(DEFINES) $(INCLUDE) -I$(CELT_PREFIX)/include
-LDFLAGS = -g -L../lib/ -lroar -L$(CELT_PREFIX)/lib
+LDFLAGS = -g -L../lib/ $(LDPATH) -lroar -L$(CELT_PREFIX)/lib
 
 all: ${TARGETS}
 	cp $(cp_v) ${TARGETS} ../lib/
