@@ -4,9 +4,39 @@
 
 TF_C=testit.c
 TF_E=./testit
-CC=cc
+LDPATH=''
 
-CCTF="$CC -o $TF_E $TF_C"
+echo -n "checking for C compiler... "
+CC=$(which gcc cc 2> /dev/null | head -n 1)
+if [ "$CC" = '' ]
+then
+ echo 'none'
+ exit 1;
+fi
+echo $CC
+
+#Makefile.conf not yet open, write it later
+
+
+while [ "$1" != '' ]
+do
+ case "$1" in
+  '--help')
+   echo '--help'
+   echo '--ldpath DIR'
+   exit 0;
+  ;;
+  '--ldpath')
+   LDPATH="$LDPATH -L$2"
+   shift;
+  ;;
+ esac;
+
+ shift;
+done
+
+
+CCTF="$CC $LDPATH -o $TF_E $TF_C"
 
 test_lib () {
  echo > $TF_C
@@ -69,6 +99,10 @@ test_lib_defmake () {
 }
 
 exec 3> config.h 4> Makefile.conf
+
+# now write the cc name to Makefile.conf
+echo "CC=$CC" >&4
+echo "LDPATH=$LDPATH" >&4
 
 cat >&3 << EOF
 //config.h:
