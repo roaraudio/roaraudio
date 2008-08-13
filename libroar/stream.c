@@ -93,6 +93,8 @@ int roar_stream_connect_to_ask (struct roar_connection * con, struct roar_stream
  if ( host == NULL )
   return -1;
 
+ ROAR_DBG("roar_stream_connect_to_ask(*): Ask the server to connect to: %s:%i", host, port);
+
  m.cmd     = ROAR_CMD_CON_STREAM;
  m.stream  = s->id;
  m.pos     = 0;

@@ -68,19 +68,46 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
  int fh = -1, listen;
  static int count = 0;
  struct group   * grp  = NULL;
+ int    type = ROAR_SOCKET_TYPE_UNIX;
+ int    port = 0;
+ struct sockaddr_in   socket_addr;
+ socklen_t            len            = sizeof(struct sockaddr_in);
 
- sprintf(file, "/tmp/.libroar-simple-stream.%i-%i", getpid(), count++);
-
- if ( (listen = roar_socket_listen(ROAR_SOCKET_TYPE_UNIX, file, 0)) == -1 ) {
+ if ( getsockname(con->fh, (struct sockaddr *)&socket_addr, &len) == -1 ) {
   return -1;
  }
 
- chmod(file, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP);
+ if ( socket_addr.sin_family == AF_INET ) {
+  type = ROAR_SOCKET_TYPE_INET;
+ }
 
- grp = getgrnam(ROAR_DEFAULT_SOCKGRP);
+ if ( type == ROAR_SOCKET_TYPE_UNIX ) {
+  sprintf(file, "/tmp/.libroar-simple-stream.%i-%i", getpid(), count++);
+ } else {
+  strcpy(file, inet_ntoa(socket_addr.sin_addr));
+ }
 
- if ( grp )
-  chown(file, -1, grp->gr_gid);
+ if ( (listen = roar_socket_listen(type, file, port)) == -1 ) {
+  return -1;
+ }
+
+ if ( type == ROAR_SOCKET_TYPE_INET ) {
+  len = sizeof(struct sockaddr_in);
+  if ( getsockname(listen, (struct sockaddr *)&socket_addr, &len) == -1 ) {
+   return -1;
+  }
+  port = ROAR_NET2HOST16(socket_addr.sin_port);
+  ROAR_DBG("roar_simple_new_stream_obj(*): port=%i", port);
+ }
+
+ if ( type == ROAR_SOCKET_TYPE_UNIX ) {
+  chmod(file, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP);
+
+  grp = getgrnam(ROAR_DEFAULT_SOCKGRP);
+
+  if ( grp )
+   chown(file, -1, grp->gr_gid);
+ }
 
  if ( roar_stream_new(s, rate, channels, bits, codec) == -1 ) {
   return -1;
@@ -90,7 +117,7 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
   return -1;
  }
 
- if ( roar_stream_connect_to_ask(con, s, ROAR_SOCKET_TYPE_UNIX, file, 0) != -1 ) {
+ if ( roar_stream_connect_to_ask(con, s, type, file, port) != -1 ) {
 
   if ( (fh = accept(listen, NULL, NULL)) != -1 ) {
    if ( dir == ROAR_DIR_PLAY ) {
@@ -109,7 +136,10 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
  }
 
  close(listen);
- unlink(file);
+
+ if ( type == ROAR_SOCKET_TYPE_UNIX ) {
+  unlink(file);
+ }
 
  return fh;
 }
