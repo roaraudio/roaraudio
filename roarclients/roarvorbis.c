@@ -193,7 +193,8 @@ int main (int argc, char * argv[]) {
   } else {
      /* we don't bother dealing with sample rate changes, etc, but
         you'll have to */
-    write(out, pcmout, ret);
+//    write(out, pcmout, ret);
+   roar_stream_send_data(&con, &s, pcmout, ret);
   }
  }
 
