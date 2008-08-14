@@ -29,6 +29,7 @@ int main (int argc, char * argv[]) {
  char buf[BUFSIZE];
  struct roar_connection con;
  struct roar_stream     s;
+ struct roar_stream_info info;
 
 
  for (i = 1; i < argc; i++) {
@@ -67,7 +68,14 @@ int main (int argc, char * argv[]) {
   return -1;
  }
 
- while((i = read(0, buf, BUFSIZE)))
+ info.block_size = BUFSIZE;
+
+ roar_stream_get_info(&con, &s, &info);
+
+ if ( info.block_size > BUFSIZE )
+  info.block_size = BUFSIZE;
+
+ while((i = read(0, buf, info.block_size)))
   if (roar_stream_add_data(&con, &s, buf, i) == -1)
    break;
 
