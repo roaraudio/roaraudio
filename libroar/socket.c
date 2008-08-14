@@ -382,35 +382,4 @@ int roar_socket_open_socks4a(int mode, int fh, char * host, int port) {
  return 0;
 }
 
-#if 0
-#ifdef ROAR_HAVE_LIBDNET
-int roar_accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen) {
- struct sockaddr_dn sockaddr_d, * sockaddr_p = &sockaddr_d;
- socklen_t len = *addrlen;
- int r;
-
- if ( len < sizeof(struct sockaddr_dn) ) {
-  len = sizeof(struct sockaddr_dn);
-  r = accept(sockfd, (struct sockaddr *) sockaddr_p, &len);
-
-  memcpy((void*)addr, (void*) sockaddr_p, len > *addrlen ? *addrlen : len);
-
-  if ( len < *addrlen )
-   *addrlen = len;
-
- } else {
-  r = accept(sockfd, addr, addrlen);
-  sockaddr_p = (struct sockaddr_dn *) addr;
-  len = *addrlen;
- }
-
- if ( r != -1 ) {
-  // do dnet_accept(), but it does nothing at the moment.
- }
-
- return r;
-}
-#endif
-#endif
-
 //ll

@@ -152,35 +152,14 @@ int roar_send_message (struct roar_connection * con, struct roar_message * mes, 
 
 int roar_recv_message (struct roar_connection * con, struct roar_message * mes, char ** data) {
  char buf[_ROAR_MESS_BUF_LEN];
-/*
-#ifdef ROAR_HAVE_LIBDNET
- int len;
-#endif
-*/
 
  ROAR_DBG("roar_recv_message(*): try to get a response form the server...");
 
  if ( data )
   *data = NULL;
 
-/*
-#ifdef ROAR_HAVE_LIBDNET
- if ( (len = read(con->fh, buf, _ROAR_MESS_BUF_LEN)) != _ROAR_MESS_BUF_LEN ) {
-  if ( len != 0 )
-   return -1;
-
-  usleep(2000);
-
-  if ( read(con->fh, buf, _ROAR_MESS_BUF_LEN) != _ROAR_MESS_BUF_LEN )
-   return -1;
-  }
-#else
-*/
  if ( read(con->fh, buf, _ROAR_MESS_BUF_LEN) != _ROAR_MESS_BUF_LEN )
   return -1;
-/*
-#endif
-*/
 
  ROAR_DBG("roar_recv_message(*): Got a header");
 
