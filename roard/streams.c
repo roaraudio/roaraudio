@@ -218,6 +218,7 @@ int streams_fill_mixbuffer (int id, struct roar_audio_info * info) {
  void * in   = NULL;
  struct roar_buffer     * buf;
  struct roar_audio_info * stream_info;
+ struct roar_stream_server * stream = g_streams[id];
  int is_the_same = 0;
 
  if ( g_streams[id] == NULL )
@@ -233,7 +234,7 @@ int streams_fill_mixbuffer (int id, struct roar_audio_info * info) {
 
  // set up stream_info
 
- stream_info = &(((struct roar_stream*)g_streams[id])->info);
+ stream_info = &(ROAR_STREAM(stream)->info);
 
  // calc todo_in
  todo_in = ROAR_OUTPUT_CALC_OUTBUFSIZE(stream_info);
@@ -374,7 +375,7 @@ int streams_fill_mixbuffer (int id, struct roar_audio_info * info) {
    return -1;
   }
 
-  if ( change_vol(rest, info->bits, rest, 8*outlen / info->bits, info->channels, &(((struct roar_stream_server*)g_streams[id])->mixer)) == -1 )
+  if ( change_vol(rest, info->bits, rest, 8*outlen / info->bits, info->channels, &(stream->mixer)) == -1 )
    return -1;
 
   // we habe outlen bytes more...
@@ -406,17 +407,21 @@ int streams_fill_mixbuffer (int id, struct roar_audio_info * info) {
           ROAR_OUTPUT_CALC_OUTBUFSAMP(info, needed-todo));
  //ROAR_WARN("stream=%i, pos=%u", id, ((struct roar_stream*)g_streams[id])->pos);
 
- if ( todo > 0 ) { // zeroize the rest of teh buffer
+ if ( todo > 0 ) { // zeroize the rest of the buffer
   memset(rest, 0, todo);
 
   if ( todo != ROAR_OUTPUT_CALC_OUTBUFSIZE(info) ) {
-   if ( !g_streams[id]->is_new )
+   if ( g_streams[id]->is_new ) {
+    stream->pre_underruns++;
+   } else {
     ROAR_WARN("streams_fill_mixbuffer(*): Underrun in stream: %i bytes missing, filling with zeros", todo);
+    stream->post_underruns++;
+   }
 
-   g_streams[id]->is_new = 0;
+   stream->is_new = 0;
   }
  } else {
-  g_streams[id]->is_new = 0;
+  stream->is_new = 0;
  }
 
  return 0;
