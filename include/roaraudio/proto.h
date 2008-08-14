@@ -49,6 +49,7 @@
 #define ROAR_CMD_SET_STREAM_PARA   28 /* set specal stream parameter */
 
 
+#define ROAR_CMD_OK_STOP      253
 #define ROAR_CMD_OK           254 /* return value OK */
 #define ROAR_CMD_ERROR        255 /* return value ERROR */
 

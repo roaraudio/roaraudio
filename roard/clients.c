@@ -129,6 +129,8 @@ int clients_set_gid   (int id, int    gid) {
  return 0;
 }
 
+#define MAX_STREAMLESS 8
+
 int clients_check_all (void) {
  struct timeval tv;
  fd_set r, e;
@@ -137,6 +139,12 @@ int clients_check_all (void) {
  int fh;
  int max_fh = -1;
  int have = 0;
+ struct {
+  int id;
+  int fh;
+ } streamless[MAX_STREAMLESS];
+ int have_streamless = 0;
+ int have_stream;
 
  FD_ZERO(&r);
  FD_ZERO(&e);
@@ -158,16 +166,25 @@ int clients_check_all (void) {
     max_fh = fh;
   }
 
+  have_stream = 0;
+
   for (j = 0; j < ROAR_CLIENTS_MAX_STREAMS_PER_CLIENT; j++) {
    if ( (fh = streams_get_fh(g_clients[i]->streams[j])) != -1 ) {
     FD_SET(fh, &r);
 
     if ( fh > max_fh )
      max_fh = fh;
+
+    have_stream = 1;
    }
    //printf("D: client=%i, stream=%i, fh=%i\n", i, j, fh);
   }
 
+  if ( !have_stream && have_streamless < MAX_STREAMLESS ) {
+   streamless[have_streamless  ].id = i;
+   if ( (streamless[have_streamless++].fh = g_clients[i]->fh) == -1 )
+    have_streamless--;
+  }
  }
 
  if ( max_fh == -1 )
@@ -213,6 +230,35 @@ int clients_check_all (void) {
   }
  }
 
+ if ( have_streamless ) {
+   FD_ZERO(&r);
+
+   tv.tv_sec  = 0;
+   tv.tv_usec = 1;
+
+   max_fh = -1;
+
+   for (i = 0; i < have_streamless; i++) {
+    fh = streamless[i].fh;
+
+    ROAR_DBG("clients_check_all(void): fh=%i", fh);
+    FD_SET(fh, &r);
+
+    if ( fh > max_fh )
+     max_fh = fh;
+   }
+
+   if ( (ret = select(max_fh + 1, &r, NULL, NULL, &tv)) < 0 ) {
+    return ret;
+   }
+
+   for (i = 0; i < have_streamless; i++) {
+    if ( FD_ISSET(streamless[i].fh, &r) ) {
+     clients_check(streamless[i].id);
+    }
+   }
+ }
+
  ROAR_DBG("clients_check_all(void) = %i // have value", have);
  return have;
 }
@@ -223,6 +269,7 @@ int clients_check     (int id) {
  char * data = NULL;
  int oldcmd;
  int r;
+ int rv = 0;
 
  if ( g_clients[id] == NULL )
   return -1;
@@ -250,6 +297,9 @@ int clients_check     (int id) {
   if ( m.cmd == oldcmd ) {
    m.cmd     = ROAR_CMD_OK;
    m.datalen = 0;
+  } else if ( m.cmd == ROAR_CMD_OK_STOP ) {
+   m.cmd     = ROAR_CMD_OK;
+   rv        = 1;
   }
  }
 
@@ -259,7 +309,7 @@ int clients_check     (int id) {
   free(data);
 
  ROAR_DBG("clients_check(id=%i) = 0", id);
- return 0;
+ return rv;
 }
 
 int clients_send_mon  (struct roar_audio_info * sa, uint32_t pos) {

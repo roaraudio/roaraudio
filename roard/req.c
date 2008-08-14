@@ -590,7 +590,7 @@ int req_on_add_data (int client, struct roar_message * mes, char * data) {
   return -1;
  }
 
- mes->cmd     = ROAR_CMD_OK;
+ mes->cmd     = ROAR_CMD_OK_STOP;
  mes->datalen = 0;
 
  return 0;
