@@ -26,6 +26,23 @@ struct roar_acl_target {
 
 #define ROAR_ACL_CHK(r,w,o) (( ((r)->w) == ROAR_ACL_ALLOW || (((r)->w) == ROAR_ACL_ALLOW_OWN && (o)) ) ? 1 : 0)
 
+#define ROAR_ACL_CMP_NOT     0x10
+#define ROAR_ACL_CMP_EQ      0x01
+
+#define ROAR_ACL_TYPE_ID     1
+#define ROAR_ACL_TYPE_INT    1
+#define ROAR_ACL_TYPE_VOID   1
+
+struct roar_acl_cmp {
+ int op;
+ int type;
+ union {
+  id_t   id;
+  int    i;
+  void * p;
+ } data;
+ int datalen;
+};
 
 // A rule.
 // All entrys may be NULL to indicate not to compare them.
