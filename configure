@@ -141,6 +141,7 @@ test_lib_defmake ROAR_HAVE_LIBFISHSOUND  roarfish     libfishsound   fishsound  
 test_lib_defmake ROAR_HAVE_LIBPULSE      libroarpulse libpulse       pulse      -- pulse/pulseaudio.h pulse/simple.h
 test_lib_defmake ROAR_HAVE_LIBY2         libroaryiff  libyiff        Y2         -- Y2/Y.h Y2/Ylib.h
 test_lib_defmake ROAR_HAVE_LIBARTSC      libroararts  libartsc       artsc      -- kde/artsc/artsc.h
+test_lib_defmake ROAR_HAVE_LIBDNET       %            libdnet        dnet       -- sys/socket.h netdnet/dn.h netdnet/dnetdb.h
 
 # add a better test here
 test_lib 'linux sendfile()'       -- sys/sendfile.h && echo '#define ROAR_HAVE_LINUX_SENDFILE' >&3
