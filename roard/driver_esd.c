@@ -26,6 +26,8 @@ int driver_esd_open(DRIVER_USERDATA_T * inst, char * device, struct roar_audio_i
 
  di[0] = esd_play_stream_fallback(format, info->rate, device, name);
 
+ shutdown(di[0], SHUT_RD);
+
  if ( di[0] == -1 ) {
   free(di);
   *inst = NULL;
