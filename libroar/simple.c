@@ -70,6 +70,7 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
  struct group   * grp  = NULL;
  int    type = ROAR_SOCKET_TYPE_UNIX;
  int    port = 0;
+ int    opt  = 1;
  struct sockaddr_in   socket_addr;
  socklen_t            len            = sizeof(struct sockaddr_in);
 
@@ -93,6 +94,8 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
 
  if ( type == ROAR_SOCKET_TYPE_INET ) {
   len = sizeof(struct sockaddr_in);
+  setsockopt(listen, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(int));
+
   if ( getsockname(listen, (struct sockaddr *)&socket_addr, &len) == -1 ) {
    return -1;
   }
