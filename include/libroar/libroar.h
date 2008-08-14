@@ -11,6 +11,10 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netinet/ip.h>
+#ifdef ROAR_HAVE_LIBDNET
+#include <netdnet/dn.h>
+#include <netdnet/dnetdb.h>
+#endif
 
 #include "basic.h"
 #include "stream.h"

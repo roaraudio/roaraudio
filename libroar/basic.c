@@ -8,6 +8,7 @@ int roar_connect_raw (char * server) {
  int i;
  int port = 0;
  int fh = -1;
+ int is_decnet = 0;
 
  if ( server == NULL && (roar_server = getenv("ROAR_SERVER")) != NULL )
   server = roar_server;
@@ -34,15 +35,23 @@ int roar_connect_raw (char * server) {
 
  } else {
   /* connect via (char*)server */
-  for (i = 0; server[i] != 0; i++) {
-   if ( server[i] == ':' ) {
-    port = atoi(server+i+1);
-    server[i] = 0;
-    break;
+  // find a port:
+  if ( *server != '/' ) { // don't test AF_UNIX sockets for ports
+   for (i = 0; server[i] != 0; i++) {
+    if ( server[i] == ':' ) {
+     if ( server[i+1] == ':' ) { // DECnet, leave unchanged
+      is_decnet = 1;
+      break;
+     }
+
+     port = atoi(server+i+1);
+     server[i] = 0;
+     break;
+    }
    }
   }
 
-  if ( port ) {
+  if ( port || is_decnet ) {
    fh = roar_socket_connect(server, port);
    // restore the original string
    server[i] = ':';
@@ -143,14 +152,35 @@ int roar_send_message (struct roar_connection * con, struct roar_message * mes, 
 
 int roar_recv_message (struct roar_connection * con, struct roar_message * mes, char ** data) {
  char buf[_ROAR_MESS_BUF_LEN];
+/*
+#ifdef ROAR_HAVE_LIBDNET
+ int len;
+#endif
+*/
 
  ROAR_DBG("roar_recv_message(*): try to get a response form the server...");
 
  if ( data )
   *data = NULL;
 
+/*
+#ifdef ROAR_HAVE_LIBDNET
+ if ( (len = read(con->fh, buf, _ROAR_MESS_BUF_LEN)) != _ROAR_MESS_BUF_LEN ) {
+  if ( len != 0 )
+   return -1;
+
+  usleep(2000);
+
+  if ( read(con->fh, buf, _ROAR_MESS_BUF_LEN) != _ROAR_MESS_BUF_LEN )
+   return -1;
+  }
+#else
+*/
  if ( read(con->fh, buf, _ROAR_MESS_BUF_LEN) != _ROAR_MESS_BUF_LEN )
   return -1;
+/*
+#endif
+*/
 
  ROAR_DBG("roar_recv_message(*): Got a header");
 

@@ -18,6 +18,7 @@
 #define ROAR_SOCKET_TYPE_FILE 4
 #define ROAR_SOCKET_TYPE_UDP  5
 #define ROAR_SOCKET_TYPE_GENSTR 6 /* generic stream: TCP or UNIX */
+#define ROAR_SOCKET_TYPE_DECNET 7 /* DECnet */
 
 #define ROAR_SOCKET_TYPE_MAX  4
 
@@ -44,6 +45,15 @@ int roar_socket_nonblock(int fh, int state);
 int roar_socket_dup_udp_local_end (int fh);
 
 int roar_socket_open_socks4a(int mode, int fh, char * host, int port);
+
+#if 0
+#ifdef ROAR_HAVE_LIBDNET
+int roar_accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
+#else
+#define roar_accept accept
+#endif
+#endif
+#define roar_accept accept
 
 #endif
 

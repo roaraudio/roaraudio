@@ -138,6 +138,10 @@ int roar_socket_open (int mode, int type, char * host, int port) {
  struct hostent     * he;
  //unsigned int host_div = 0;
  int (*mode_func)(int sockfd, const struct sockaddr *serv_addr, socklen_t addrlen) = connect; // default is to connect
+#ifdef ROAR_HAVE_LIBDNET
+ char obj[80];
+ char * del;
+#endif
 
  if ( mode == MODE_LISTEN )
   mode_func = bind;
@@ -148,12 +152,43 @@ int roar_socket_open (int mode, int type, char * host, int port) {
    type = ROAR_SOCKET_TYPE_UNIX;
   } else if ( strcmp(host, "+fork") == 0 ) {
    type = ROAR_SOCKET_TYPE_FORK;
+  } else if ( strstr(host, "::") != NULL ) {
+   type = ROAR_SOCKET_TYPE_DECNET;
   }
  }
 
 
  ROAR_DBG("roar_socket_open(*): type=%s, host='%s', port=%i",
              type == ROAR_SOCKET_TYPE_UNIX ? "UNIX" : "INET", host, port);
+
+ if ( type == ROAR_SOCKET_TYPE_DECNET ) {
+  if ( mode == MODE_LISTEN ) {
+   return -1; // listen sockets on DECnet are not supportet at the moment
+  } else {
+#ifdef ROAR_HAVE_LIBDNET
+   // There is nothing wrong in this case to use dnet_conn() so we do.
+   del = strstr(host, "::");
+   *del = 0;
+
+   if ( *(del+2) == '#' ) { // assume we have node::#num
+    port = atoi(del+2);
+   }
+
+   if ( port ) {
+    sprintf(obj, "%i", port); // no need for snprintf() as dec(port) is smaller than obj[]
+   } else {
+    *obj = 0;
+    strncat(obj, del+2, 79);
+   }
+
+   fh = dnet_conn(host, obj, SOCK_STREAM, 0 ,0 ,0 , 0);
+   *del = ':';
+   return fh;
+#else
+   return -1; // no decnet support
+#endif
+  }
+ }
 
  memset(&socket_addr   , 0, sizeof(socket_addr));
  memset(&socket_addr_un, 0, sizeof(socket_addr_un));
@@ -346,5 +381,36 @@ int roar_socket_open_socks4a(int mode, int fh, char * host, int port) {
 
  return 0;
 }
+
+#if 0
+#ifdef ROAR_HAVE_LIBDNET
+int roar_accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen) {
+ struct sockaddr_dn sockaddr_d, * sockaddr_p = &sockaddr_d;
+ socklen_t len = *addrlen;
+ int r;
+
+ if ( len < sizeof(struct sockaddr_dn) ) {
+  len = sizeof(struct sockaddr_dn);
+  r = accept(sockfd, (struct sockaddr *) sockaddr_p, &len);
+
+  memcpy((void*)addr, (void*) sockaddr_p, len > *addrlen ? *addrlen : len);
+
+  if ( len < *addrlen )
+   *addrlen = len;
+
+ } else {
+  r = accept(sockfd, addr, addrlen);
+  sockaddr_p = (struct sockaddr_dn *) addr;
+  len = *addrlen;
+ }
+
+ if ( r != -1 ) {
+  // do dnet_accept(), but it does nothing at the moment.
+ }
+
+ return r;
+}
+#endif
+#endif
 
 //ll

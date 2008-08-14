@@ -54,7 +54,8 @@ void usage (void) {
         "                         You need the permittions to change the UID (normaly only root has)\n"
         " --no-listen           - Do not listen for new clients (only usefull for relaing)\n"
         " --client-fh           - Comunicate with a client over this handle\n"
-        "                         (only usefull for relaing)\n",
+        "                         (only usefull for relaing)\n"
+        " --close-fh            - Closes the given fh\n",
         ROAR_DEFAULT_SOCKGRP
        );
 // printf("\n Options:\n\n");
@@ -227,6 +228,8 @@ int main (int argc, char * argv[]) {
     ROAR_ERR("main(*): Can not set client's fh");
     return 1;
    }
+  } else if ( strcmp(k, "--close-fh") == 0 ) {
+   close(atoi(argv[++i]));
 
   } else {
    usage();

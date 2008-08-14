@@ -94,10 +94,22 @@ int clients_get       (int id, struct roar_client ** client) {
 }
 
 int clients_set_fh    (int id, int    fh) {
+#ifdef ROAR_HAVE_LIBDNET
+ struct sockaddr_dn sockaddr_d;
+ socklen_t len = sizeof(struct sockaddr_dn);
+#endif
+
  if ( g_clients[id] == NULL )
   return -1;
 
  g_clients[id]->fh = fh;
+
+#ifdef ROAR_HAVE_LIBDNET
+ if ( getsockname(fh, (struct sockaddr *)&sockaddr_d, &len) != -1 ) {
+  if ( sockaddr_d.sdn_family == AF_DECnet )
+   roar_socket_nonblock(fh, ROAR_SOCKET_BLOCK);
+ }
+#endif
 
  return 0;
 }
