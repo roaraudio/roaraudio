@@ -416,9 +416,11 @@ int req_on_get_stream_para (int client, struct roar_message * mes, char * data) 
   return -1;
  }
 
- mes->datalen = 2*3;
+ mes->datalen = 2*5;
 
  d[2] = ROAR_OUTPUT_CALC_OUTBUFSIZE(audio_info);
+ d[3] = ROAR_STREAM_SERVER(s)->pre_underruns;
+ d[4] = ROAR_STREAM_SERVER(s)->post_underruns;
 
  for (i = 0; i < mes->datalen/2; i++) {
   d[i] = ROAR_HOST2NET16(d[i]);

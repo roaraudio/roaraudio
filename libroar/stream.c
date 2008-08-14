@@ -172,7 +172,9 @@ int roar_stream_get_info (struct roar_connection * con, struct roar_stream * s, 
  if ( data[0] != 0 || data[1] != 1 )
   return -1;
 
- info->block_size = data[2];
+ info->block_size     = data[2];
+ info->pre_underruns  = data[3];
+ info->post_underruns = data[4];
 
  return 0;
 }
