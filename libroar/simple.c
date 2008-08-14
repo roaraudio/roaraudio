@@ -80,6 +80,10 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
 
  if ( socket_addr.sin_family == AF_INET ) {
   type = ROAR_SOCKET_TYPE_INET;
+ } else if ( socket_addr.sin_family == AF_UNIX ) {
+  type = ROAR_SOCKET_TYPE_UNIX;
+ } else {
+  return -1;
  }
 
  if ( type == ROAR_SOCKET_TYPE_UNIX ) {
@@ -143,6 +147,8 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
  if ( type == ROAR_SOCKET_TYPE_UNIX ) {
   unlink(file);
  }
+
+ s->fh = fh;
 
  return fh;
 }
