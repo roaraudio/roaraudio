@@ -15,6 +15,8 @@
 
 struct roar_stream_info {
  int block_size;
+ int pre_underruns;
+ int post_underruns;
 };
 
 int roar_stream_connect (struct roar_connection * con, struct roar_stream * s, int dir);
