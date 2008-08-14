@@ -26,11 +26,12 @@ int streams_free (void) {
 
 int streams_new    (void) {
  int i, j;
- struct roar_stream * n = NULL;
+ struct roar_stream        * n = NULL;
+ struct roar_stream_server * s = NULL;
 
  for (i = 0; i < ROAR_STREAMS_MAX; i++) {
   if ( g_streams[i] == NULL ) {
-   n = malloc(sizeof(struct roar_stream_server));
+   s = ROAR_STREAM_SERVER(n = ROAR_STREAM(malloc(sizeof(struct roar_stream_server))));
    if ( n == NULL ) {
     ROAR_ERR("streams_new(void): can not allocate memory for new stream: %s", strerror(errno));
     ROAR_DBG("streams_new(void) = -1");
@@ -46,25 +47,29 @@ int streams_new    (void) {
    n->offset     = 0;
    n->pos        = 0;
 
-   ((struct roar_stream_server*)n)->client        = -1;
-   ((struct roar_stream_server*)n)->socktype      = ROAR_SOCKET_TYPE_UNKNOWN;
-   ((struct roar_stream_server*)n)->buffer        = NULL;
-   ((struct roar_stream_server*)n)->need_extra    =  0;
-   ((struct roar_stream_server*)n)->output        = NULL;
-   ((struct roar_stream_server*)n)->is_new        =  1;
-   ((struct roar_stream_server*)n)->codecfilter   = -1;
-   ((struct roar_stream_server*)n)->mixer.scale   = 65535;
-   ((struct roar_stream_server*)n)->mixer.rpg_mul = 1;
-   ((struct roar_stream_server*)n)->mixer.rpg_div = 1;
+   s->client          = -1;
+   s->socktype        = ROAR_SOCKET_TYPE_UNKNOWN;
+   s->buffer          = NULL;
+   s->need_extra      =  0;
+   s->output          = NULL;
+   s->is_new          =  1;
+   s->codecfilter     = -1;
+   s->pre_underruns   = 0;
+   s->post_underruns  = 0;
+
+   s->mixer.scale     = 65535;
+   s->mixer.rpg_mul   = 1;
+   s->mixer.rpg_div   = 1;
    for (j = 0; j < ROAR_MAX_CHANNELS; j++)
-    ((struct roar_stream_server*)n)->mixer.mixer[j] = 65535;
+    s->mixer.mixer[j] = 65535;
+
    for (j = 0; j < ROAR_META_MAX_PER_STREAM; j++) {
-    ((struct roar_stream_server*)n)->meta[j].type   = ROAR_META_TYPE_NONE;
-    ((struct roar_stream_server*)n)->meta[j].key[0] = 0;
-    ((struct roar_stream_server*)n)->meta[j].value  = NULL;
+    s->meta[j].type   = ROAR_META_TYPE_NONE;
+    s->meta[j].key[0] = 0;
+    s->meta[j].value  = NULL;
    }
 
-   g_streams[i] = (struct roar_stream_server*)n;
+   g_streams[i] = s;
    ROAR_DBG("streams_new(void): n->id=%i", n->id);
    ROAR_DBG("streams_new(void) = %i", i);
    return i;

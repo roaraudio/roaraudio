@@ -28,6 +28,8 @@ struct roar_stream_server {
  int codec_orgi;
  CODECFILTER_USERDATA_T codecfilter_inst;
  int socktype;
+ int pre_underruns;
+ int post_underruns;
 } * g_streams[ROAR_STREAMS_MAX];
 
 int streams_init   (void);
