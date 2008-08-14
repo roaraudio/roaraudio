@@ -29,6 +29,8 @@ int roar_stream_connect_to_ask (struct roar_connection * con, struct roar_stream
 
 int roar_stream_add_data (struct roar_connection * con, struct roar_stream * s, char * data, size_t len);
 
+int roar_stream_send_data (struct roar_connection * con, struct roar_stream * s, char * data, size_t len);
+
 int roar_stream_get_info (struct roar_connection * con, struct roar_stream * s, struct roar_stream_info * info);
 
 int roar_stream_s2m     (struct roar_stream * s, struct roar_message * m);

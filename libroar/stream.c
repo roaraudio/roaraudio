@@ -139,6 +139,23 @@ int roar_stream_add_data (struct roar_connection * con, struct roar_stream * s, 
  return -1;
 }
 
+int roar_stream_send_data (struct roar_connection * con, struct roar_stream * s, char * data, size_t len) {
+ if ( ! s )
+  return -1;
+
+ if ( s->fh == -1 ) {
+  if ( !con )
+   return -1;
+
+  if ( roar_stream_add_data(con, s, data, len) == -1 )
+   return -1;
+
+  return len;
+ }
+
+ return write(s->fh, data, len);
+}
+
 int roar_stream_get_info (struct roar_connection * con, struct roar_stream * s, struct roar_stream_info * info) {
  struct roar_message m;
  uint16_t * data = (uint16_t *) m.data;
