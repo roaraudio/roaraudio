@@ -51,11 +51,18 @@
 
 #include <libroar/libroar.h>
 
+// IP
 #define ROAR_DEFAULT_PORT        16002
 #define ROAR_DEFAULT_HOST        "localhost"
 
+// UNIX Domain Sockets
 #define ROAR_DEFAULT_SOCK_GLOBAL "/tmp/roar"
 #define ROAR_DEFAULT_SOCK_USER   ".roar"
+
+// DECnet
+#define ROAR_DEFAULT_OBJECT      "roar"
+#define ROAR_DEFAULT_NUM         0
+#define ROAR_DEFAULT_LISTEN_OBJECT "LISTEN::" ROAR_DEFAULT_OBJECT
 
 #define ROAR_DEFAULT_SOCKGRP     "audio"
 
@@ -117,6 +124,14 @@
 #define ROAR_NET2HOST16(x) (x)
 #define ROAR_HOST2NET16(x) (x)
 
+#ifdef ROAR_HAVE_LIBDNET
+#define ROAR_dn_ntohs(x) ((((x)&0x0ff)<<8) | (((x)&0xff00)>>8))
+#define ROAR_dn_ntohl(x) ( ((dn_ntohs((x)&0xffff))<<16) |\
+                           ((dn_ntohs(((x)>>16)))) )
+#define ROAR_dn_htonl(x) ROAR_dn_ntohl(x)
+#define ROAR_dn_htons(x) ROAR_dn_ntohs(x)
+#endif
+
 //#elif BYTE_ORDER == LITTLE_ENDIAN
 #else
 
@@ -124,6 +139,18 @@
 #define ROAR_HOST2NET32(x) htonl((x))
 #define ROAR_NET2HOST16(x) ntohs((x))
 #define ROAR_HOST2NET16(x) htons((x))
+
+#ifdef ROAR_HAVE_LIBDNET
+#if BYTE_ORDER == LITTLE_ENDIAN
+#define ROAR_dn_ntohs(x) (x)
+#define ROAR_dn_htons(x) (x)
+
+#define ROAR_dn_ntohl(x) (x)
+#define ROAR_dn_htonl(x) (x)
+#else
+#error can not build on this architecture with DECnet support enabled
+#endif
+#endif
 
 #endif
 

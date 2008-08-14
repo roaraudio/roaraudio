@@ -45,6 +45,9 @@ void usage (void) {
  printf("\nServer Options:\n\n");
  printf(" -t  --tcp             - Use TCP listen socket\n"
         " -u  --unix            - Use UNIX Domain listen socket (default)\n"
+#ifdef ROAR_HAVE_LIBDNET
+        " -n  --decnet          - use DECnet listen socket\n"
+#endif
         " -p  --port            - TCP Port to bind to\n"
         " -b  --bind            - IP/Hostname to bind to\n"
         " -s  --sock            - Filename for UNIX Domain Socket\n"
@@ -91,6 +94,9 @@ int main (int argc, char * argv[]) {
  struct servent * serv = NULL;
  DRIVER_USERDATA_T drvinst;
  struct roar_client * self = NULL;
+#ifdef ROAR_HAVE_LIBDNET
+ char decnethost[80];
+#endif
 
  g_listen_socket = -1;
  g_standby       =  0;
@@ -216,6 +222,15 @@ int main (int argc, char * argv[]) {
     server = ROAR_DEFAULT_HOST;
   } else if ( strcmp(k, "-u") == 0 ) {
    // ignore this case as it is the default behavor.
+  } else if ( strcmp(k, "-n") == 0 ) {
+#ifdef ROAR_HAVE_LIBDNET
+    port   = ROAR_DEFAULT_NUM;
+    strcpy(decnethost, ROAR_DEFAULT_LISTEN_OBJECT);
+    server = decnethost;
+#else
+    ROAR_ERR("No DECnet support compiled in!");
+    return 1;
+#endif
   } else if ( strcmp(k, "-G") == 0 ) {
    sock_grp  = argv[++i];
   } else if ( strcmp(k, "-U") == 0 ) {

@@ -521,7 +521,7 @@ int stream_unshift_buffer (int id, struct roar_buffer *  buf) {
 
 int streams_check  (int id) {
  int fh;
- ssize_t req;
+ ssize_t req, realreq, done;
  struct roar_stream        *   s;
  struct roar_stream_server *  ss;
  struct roar_buffer        *   b;
@@ -556,7 +556,20 @@ int streams_check  (int id) {
  ROAR_DBG("streams_check(id=%i): buffer is up and ready ;)", id);
 
  if ( ss->codecfilter == -1 ) {
+  realreq = req;
+/*
   req = read(fh, buf, req);
+  if ( req < realreq ) { // we can do this as the stream is in nonblocking mode!
+   if ( (realreq = read(fh, buf+req, realreq-req)) > 0 )
+    req += realreq;
+  }
+*/
+  done = 0;
+  while (req > 0 && done != realreq) {
+   if ( (req = read(fh, buf+done, realreq-done)) > 0 )
+    done += req;
+  }
+  req = done;
  } else {
   req = codecfilter_read(ss->codecfilter_inst, ss->codecfilter, buf, req);
  }

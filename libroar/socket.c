@@ -42,6 +42,32 @@ int roar_socket_new_unix (void) {
  return fh;
 }
 
+int roar_socket_new_decnet_seqpacket (void) {
+#ifdef ROAR_HAVE_LIBDNET
+ int fh;
+
+ fh = socket(AF_DECnet, SOCK_SEQPACKET, DNPROTO_NSP);
+
+ return fh;
+#else
+ return -1;
+#endif
+}
+
+
+int roar_socket_new_decnet_stream (void) {
+#ifdef ROAR_HAVE_LIBDNET
+ int fh;
+
+ fh = socket(AF_DECnet, SOCK_STREAM, DNPROTO_NSP);
+
+ return fh;
+#else
+ return -1;
+#endif
+}
+
+
 int roar_socket_nonblock(int fh, int state) {
  int flags;
 
@@ -120,6 +146,53 @@ int roar_socket_connect (char * host, int port) {
  }
 }
 
+
+int roar_socket_listen_decnet (char * object, int num) {
+#ifdef ROAR_HAVE_LIBDNET
+ int fh = roar_socket_new_decnet_stream();
+ struct sockaddr_dn bind_sockaddr;
+
+ if ( fh == -1 )
+  return -1;
+
+ if ( !*object )
+  object = NULL;
+
+ if ( (object && num) || (!*object && !num) ) {
+  ROAR_WARN("roar_socket_listen_decnet(object='%s', num=%i): illegal address!", object, num);
+  close(fh);
+  return -1;
+ }
+
+ memset((void*)&bind_sockaddr, 0, sizeof(struct sockaddr_dn));
+
+ bind_sockaddr.sdn_family    = AF_DECnet;
+ bind_sockaddr.sdn_flags     = 0;
+ bind_sockaddr.sdn_objnum    = num;
+
+ if ( num ) {
+  bind_sockaddr.sdn_objnamel = 0;
+ } else {
+  bind_sockaddr.sdn_objnamel  = ROAR_dn_htons(strlen(object));
+  strcpy((char*)bind_sockaddr.sdn_objname, object); // FIXME: shouldn't we use strncpy()?
+ }
+
+ if ( bind(fh, (struct sockaddr *) &bind_sockaddr, sizeof(bind_sockaddr)) == -1 ) {
+  close(fh);
+  return -1;
+ }
+
+ if ( listen(fh, 8) == -1 ) {
+  close(fh);
+  return -1;
+ }
+
+ return fh;
+#else
+ return -1;
+#endif
+}
+
 int roar_socket_open (int mode, int type, char * host, int port) {
 // int type = ROAR_SOCKET_TYPE_INET;
  int fh;
@@ -152,12 +225,16 @@ int roar_socket_open (int mode, int type, char * host, int port) {
              type == ROAR_SOCKET_TYPE_UNIX ? "UNIX" : "INET", host, port);
 
  if ( type == ROAR_SOCKET_TYPE_DECNET ) {
-  if ( mode == MODE_LISTEN ) {
-   return -1; // listen sockets on DECnet are not supportet at the moment
-  } else {
 #ifdef ROAR_HAVE_LIBDNET
-   // There is nothing wrong in this case to use dnet_conn() so we do.
+   ROAR_DBG("roar_socket_open(*): hostname for DECnet: host(%p)=%s", host, host);
    del = strstr(host, "::");
+   ROAR_DBG("roar_socket_open(*): hostname for DECnet: del(%p)=%s", del, del);
+
+   if ( del == NULL ) {
+    ROAR_WARN("roar_socket_open(*): invalid hostname for DECnet: %s", host);
+    return -1;
+   }
+
    *del = 0;
 
    if ( *(del+2) == '#' ) { // assume we have node::#num
@@ -171,6 +248,13 @@ int roar_socket_open (int mode, int type, char * host, int port) {
     strncat(obj, del+2, 79);
    }
 
+  if ( mode == MODE_LISTEN ) {
+   fh = roar_socket_listen_decnet(obj, port);
+   *del = ':';
+   return fh;
+//   return -1; // listen sockets on DECnet are not supportet at the moment
+  } else {
+   // There is nothing wrong in this case to use dnet_conn() so we do.
    fh = dnet_conn(host, obj, SOCK_STREAM, 0 ,0 ,0 , 0);
    *del = ':';
    return fh;

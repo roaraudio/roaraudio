@@ -35,10 +35,15 @@ int roar_socket_connect (char * host, int port);
 int roar_socket_new_tcp    (void);
 int roar_socket_new_udp    (void);
 int roar_socket_new_unix   (void);
+int roar_socket_new_decnet_seqpacket (void);
+int roar_socket_new_decnet_stream (void);
+
 int roar_socket_open       (int mode, int type, char * host, int port);
 int roar_socket_open_fork  (int mode, char * host, int port);
 int roar_socket_open_file  (int mode, char * host, int port);
 int roar_socket_open_proxy (int mode, int type, char * host, int port, char * proxy_type);
+
+int roar_socket_listen_decnet (char * object, int num);
 
 int roar_socket_nonblock(int fh, int state);
 
