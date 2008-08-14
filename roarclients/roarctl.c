@@ -155,6 +155,7 @@ void list_streams (struct roar_connection * con) {
                                       s.info.codec == ROAR_CODEC_DEFAULT ? " native" : "");
   if ( roar_stream_get_info(con, &s, &info) != -1 ) {
    printf("Input block size      : %i Byte\n", info.block_size);
+   printf("Underruns pre/post    : %i/%i\n",   info.pre_underruns, info.post_underruns);
   }
   display_mixer(con, id[i]);
   show_meta_all(con, id[i]);
