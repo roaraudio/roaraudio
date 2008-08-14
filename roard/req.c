@@ -11,10 +11,6 @@ int req_on_noop        (int client, struct roar_message * mes, char * data) {
 int req_on_identify    (int client, struct roar_message * mes, char * data) {
  struct roar_client * c;
  int max_len;
-#ifdef SO_PEERCRED
- struct ucred cred;
- socklen_t cred_len = sizeof(cred);
-#endif
 
  if ( mes->datalen < 1 )
   return -1;
@@ -22,17 +18,6 @@ int req_on_identify    (int client, struct roar_message * mes, char * data) {
  clients_get(client, &c);
 
  if ( mes->data[0] == 1 ) {
-#ifdef SO_PEERCRED
-  if (getsockopt(c->fh, SOL_SOCKET, SO_PEERCRED, &cred, &cred_len) != -1) {
-   if ( cred.pid != 0 ) {
-    c->pid = cred.pid;
-    c->uid = cred.uid;
-    c->gid = cred.gid;
-   }
-  } else {
-   ROAR_DBG("req_on_identify(): Can't get creds via SO_PEERCRED: %s", strerror(errno));
-  }
-#endif
   if ( c->pid == -1 ) {
    c->pid       = ROAR_NET2HOST32(*(uint32_t*)((mes->data)+1));
    ROAR_DBG("req_on_identify(): new PID: c->pid = %i", c->pid);
@@ -419,7 +404,7 @@ int req_on_get_stream_para (int client, struct roar_message * mes, char * data) 
   d[i] = ROAR_NET2HOST16(d[i]);
  }
 
- if ( streams_get(mes->stream, ROAR_STREAM_SERVER(&s)) == -1 ) {
+ if ( streams_get(mes->stream, (struct roar_stream_server **)&s) == -1 ) {
   ROAR_WARN("req_on_get_stream_para(*): request on non existing (or other error?) stream %i", mes->stream);
   return -1;
  }
