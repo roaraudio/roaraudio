@@ -34,6 +34,11 @@ int roar_connect_raw (char * server) {
   if ( (fh = roar_socket_connect(ROAR_DEFAULT_HOST, ROAR_DEFAULT_PORT)) != -1 )
    return fh;
 
+  if ( roar_socket_get_local_nodename() ) {
+   snprintf(user_sock, 79, "%s::%s", roar_socket_get_local_nodename(), ROAR_DEFAULT_OBJECT);
+   return roar_socket_connect(user_sock, ROAR_DEFAULT_NUM);
+  }
+
  } else {
   /* connect via (char*)server */
   // find a port:
