@@ -27,6 +27,36 @@ int roar_socket_new_udp (void) {
  return fh;
 }
 
+int roar_socket_new_tcp6 (void) {
+#ifdef PF_INET6
+ int fh;
+ int opt = IPTOS_LOWDELAY;
+
+ fh = socket(PF_INET6, SOCK_STREAM, 0);
+
+ setsockopt(fh, IPPROTO_IP, IP_TOS, &opt, sizeof(int));
+
+ return fh;
+#else
+ return -1;
+#endif
+}
+
+int roar_socket_new_udp6 (void) {
+#ifdef PF_INET6
+ int fh;
+ int opt = IPTOS_LOWDELAY;
+
+ fh = socket(PF_INET6, SOCK_DGRAM, 0);
+
+ setsockopt(fh, IPPROTO_IP, IP_TOS, &opt, sizeof(int));
+
+ return fh;
+#else
+ return -1;
+#endif
+}
+
 int roar_socket_new_unix (void) {
  int fh;
 #ifdef SO_PEERCRED

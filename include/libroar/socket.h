@@ -34,6 +34,8 @@ int roar_socket_connect (char * host, int port);
 
 int roar_socket_new_tcp    (void);
 int roar_socket_new_udp    (void);
+int roar_socket_new_tcp6   (void);
+int roar_socket_new_udp6   (void);
 int roar_socket_new_unix   (void);
 int roar_socket_new_decnet_seqpacket (void);
 int roar_socket_new_decnet_stream (void);
