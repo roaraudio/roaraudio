@@ -87,6 +87,7 @@ int main (int argc, char * argv[]) {
  int    s_prim    = 0;
  char * sock_grp  = ROAR_DEFAULT_SOCKGRP;
  char * sock_user = NULL;
+ int    sock_type = ROAR_SOCKET_TYPE_UNKNOWN;
  char * chrootdir = NULL;
  int    setids    = 0;
  struct group   * grp  = NULL;
@@ -218,15 +219,18 @@ int main (int argc, char * argv[]) {
   } else if ( strcmp(k, "-b") == 0 || strcmp(k, "--bind") == 0 || strcmp(k, "-s") == 0 || strcmp(k, "--sock") == 0 ) {
    server = argv[++i];
   } else if ( strcmp(k, "-t") == 0 ) {
+   sock_type = ROAR_SOCKET_TYPE_TCP;
    if ( *server == '/' )
     server = ROAR_DEFAULT_HOST;
   } else if ( strcmp(k, "-u") == 0 ) {
    // ignore this case as it is the default behavor.
+   sock_type = ROAR_SOCKET_TYPE_UNIX;
   } else if ( strcmp(k, "-n") == 0 ) {
 #ifdef ROAR_HAVE_LIBDNET
     port   = ROAR_DEFAULT_NUM;
     strcpy(decnethost, ROAR_DEFAULT_LISTEN_OBJECT);
     server = decnethost;
+    sock_type = ROAR_SOCKET_TYPE_DECNET;
 #else
     ROAR_ERR("No DECnet support compiled in!");
     return 1;
@@ -259,7 +263,7 @@ int main (int argc, char * argv[]) {
   ROAR_ERR("Can not initialize MIDI subsystem");
 
  if ( *server != 0 ) {
-  if ( (g_listen_socket = roar_socket_listen(ROAR_SOCKET_TYPE_UNKNOWN, server, port)) == -1 ) {
+  if ( (g_listen_socket = roar_socket_listen(sock_type, server, port)) == -1 ) {
    if ( *server == '/' ) {
     if ( (i = roar_socket_connect(server, port)) != -1 ) {
      close(i);
@@ -267,7 +271,7 @@ int main (int argc, char * argv[]) {
      return 1;
     } else {
      unlink(server);
-     if ( (g_listen_socket = roar_socket_listen(ROAR_SOCKET_TYPE_UNKNOWN, server, port)) == -1 ) {
+     if ( (g_listen_socket = roar_socket_listen(sock_type, server, port)) == -1 ) {
       ROAR_ERR("Can not open listen socket!");
       return 1;
      }
