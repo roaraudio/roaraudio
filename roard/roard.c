@@ -310,15 +310,17 @@ int main (int argc, char * argv[]) {
    }
   }
 
-  if ( *server == '/' ) {
-   if ( sock_user ) {
-    if ( (pwd = getpwnam(sock_user)) == NULL ) {
-     ROAR_ERR("Can not get UID for user %s: %s", sock_user, strerror(errno));
-    }
+  if ( (grp = getgrnam(sock_grp)) == NULL ) {
+   ROAR_ERR("Can not get GID for group %s: %s", sock_grp, strerror(errno));
+  }
+  if ( sock_user || (setids & R_SETUID) ) {
+   if ( (pwd = getpwnam(sock_user)) == NULL ) {
+    ROAR_ERR("Can not get UID for user %s: %s", sock_user, strerror(errno));
    }
-   if ( (grp = getgrnam(sock_grp)) == NULL ) {
-    ROAR_ERR("Can not get GID for group %s: %s", sock_grp, strerror(errno));
-   } else {
+  }
+
+  if ( *server == '/' ) {
+   if ( grp ) {
     if ( pwd ) {
      chown(server, pwd->pw_uid, grp->gr_gid);
     } else {
@@ -371,7 +373,7 @@ int main (int argc, char * argv[]) {
   if ( setgroups(0, (const gid_t *) NULL) == -1 ) {
    ROAR_ERR("Can not clear supplementary group IDs: %s", strerror(errno));
   }
-  if ( setgid(grp->gr_gid) == -1 ) {
+  if ( !grp || setgid(grp->gr_gid) == -1 ) {
    ROAR_ERR("Can not set GroupID: %s", strerror(errno));
   }
  }
