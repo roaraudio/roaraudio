@@ -226,8 +226,10 @@ int roar_socket_listen_decnet (char * object, int num) {
 int roar_socket_open (int mode, int type, char * host, int port) {
 // int type = ROAR_SOCKET_TYPE_INET;
  int fh;
- struct sockaddr_in   socket_addr;
- struct sockaddr_un   socket_addr_un;
+ union {
+  struct sockaddr_in  in;
+  struct sockaddr_un  un;
+ } socket_addr;
  struct hostent     * he;
  //unsigned int host_div = 0;
  int (*mode_func)(int sockfd, const struct sockaddr *serv_addr, socklen_t addrlen) = connect; // default is to connect
@@ -294,8 +296,7 @@ int roar_socket_open (int mode, int type, char * host, int port) {
   }
  }
 
- memset(&socket_addr   , 0, sizeof(socket_addr));
- memset(&socket_addr_un, 0, sizeof(socket_addr_un));
+ memset(&socket_addr,    0, sizeof(socket_addr));
  memset(&he,             0, sizeof(he));               // FIXME: we have a valid pointer in here????
 
 
@@ -307,27 +308,27 @@ int roar_socket_open (int mode, int type, char * host, int port) {
    return -1;
   }
 
-  memcpy((struct in_addr *)&socket_addr.sin_addr, he->h_addr, sizeof(struct in_addr));
+  memcpy((struct in_addr *)&socket_addr.in.sin_addr, he->h_addr, sizeof(struct in_addr));
 
   /* set the connect information */
-  socket_addr.sin_family = AF_INET;
-  socket_addr.sin_port = htons( port );
+  socket_addr.in.sin_family = AF_INET;
+  socket_addr.in.sin_port = htons( port );
 
   fh = roar_socket_new_tcp();
 
-  if ( mode_func(fh, (struct sockaddr *)&socket_addr, sizeof(struct sockaddr_in)) == -1 ) {
+  if ( mode_func(fh, (struct sockaddr *)&socket_addr.in, sizeof(struct sockaddr_in)) == -1 ) {
    ROAR_DBG("roar_socket_open(*): Can not connect/bind: %s", strerror(errno));
    close(fh);
    return -1;
   }
   // hey! we have a socket...
  } else if ( type == ROAR_SOCKET_TYPE_UNIX ) {
-  socket_addr_un.sun_family = AF_UNIX;
-  strncpy(socket_addr_un.sun_path, host, sizeof(socket_addr_un.sun_path) - 1);
+  socket_addr.un.sun_family = AF_UNIX;
+  strncpy(socket_addr.un.sun_path, host, sizeof(socket_addr.un.sun_path) - 1);
 
   fh = roar_socket_new_unix();
 
-  if ( mode_func(fh, (struct sockaddr *)&socket_addr_un, sizeof(struct sockaddr_un)) == -1 ) {
+  if ( mode_func(fh, (struct sockaddr *)&socket_addr.un, sizeof(struct sockaddr_un)) == -1 ) {
    ROAR_DBG("roar_socket_open(*): Can not connect/bind: %s", strerror(errno));
    close(fh);
    return -1;
