@@ -229,6 +229,7 @@ int roar_socket_open (int mode, int type, char * host, int port) {
  union {
   struct sockaddr_in  in;
   struct sockaddr_un  un;
+  struct sockaddr_in6 in6;
  } socket_addr;
  struct hostent     * he;
  //unsigned int host_div = 0;
@@ -333,6 +334,8 @@ int roar_socket_open (int mode, int type, char * host, int port) {
    close(fh);
    return -1;
   }
+ } else if ( type == ROAR_SOCKET_TYPE_INET6 ) {
+  return -1;
  } else if ( type == ROAR_SOCKET_TYPE_FORK ) {
   return roar_socket_open_fork(mode, host, port);
  } else if ( type == ROAR_SOCKET_TYPE_FILE ) {
