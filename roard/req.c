@@ -125,6 +125,8 @@ int req_on_con_stream  (int client, struct roar_message * mes, char * data) {
  if ( type == ROAR_SOCKET_TYPE_FORK ) // why should we connect to ourself?
   return -1;
 
+ ROAR_DBG("req_on_con_stream(*): CONNECT(type=%i, host='%s', port=%i)", type, host, port);
+
  if ( (fh = roar_socket_open(ROAR_SOCKET_MODE_CONNECT, type, host, port)) == -1 )
   return -1;
 
