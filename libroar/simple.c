@@ -82,12 +82,20 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
   type = ROAR_SOCKET_TYPE_INET;
  } else if ( socket_addr.sin_family == AF_UNIX ) {
   type = ROAR_SOCKET_TYPE_UNIX;
+ } else if ( socket_addr.sin_family == AF_DECnet ) {
+  type = ROAR_SOCKET_TYPE_DECNET;
  } else {
   return -1;
  }
 
  if ( type == ROAR_SOCKET_TYPE_UNIX ) {
   sprintf(file, "/tmp/.libroar-simple-stream.%i-%i", getpid(), count++);
+ } else if ( type == ROAR_SOCKET_TYPE_DECNET ) {
+  if ( roar_socket_get_local_nodename() ) {
+   sprintf(file, "%s::roar$TMP%04x%02x", roar_socket_get_local_nodename(), getpid(), count++);
+  } else {
+   return -1;
+  }
  } else {
   strcpy(file, inet_ntoa(socket_addr.sin_addr));
  }
