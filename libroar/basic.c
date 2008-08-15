@@ -9,6 +9,7 @@ int roar_connect_raw (char * server) {
  int port = 0;
  int fh = -1;
  int is_decnet = 0;
+ char * obj = NULL;
 
  if ( server == NULL && (roar_server = getenv("ROAR_SERVER")) != NULL )
   server = roar_server;
@@ -41,6 +42,7 @@ int roar_connect_raw (char * server) {
     if ( server[i] == ':' ) {
      if ( server[i+1] == ':' ) { // DECnet, leave unchanged
       is_decnet = 1;
+      obj = &server[i+2];
       break;
      }
 
@@ -49,6 +51,12 @@ int roar_connect_raw (char * server) {
      break;
     }
    }
+  }
+
+  if ( is_decnet && *obj == 0 ) {
+   strcpy(user_sock, server);
+   strcat(user_sock, ROAR_DEFAULT_OBJECT);
+   server = user_sock;
   }
 
   if ( port || is_decnet ) {
