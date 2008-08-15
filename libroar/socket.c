@@ -301,7 +301,7 @@ int roar_socket_open (int mode, int type, char * host, int port) {
  memset(&he,             0, sizeof(he));               // FIXME: we have a valid pointer in here????
 
 
- if ( type == ROAR_SOCKET_TYPE_INET ) {
+ if ( type == ROAR_SOCKET_TYPE_INET || type == ROAR_SOCKET_TYPE_INET6 ) {
 
   if ( (he = gethostbyname(host)) == NULL ) {
    ROAR_ERR("roar_socket_open(*): Can\'t resolve host name '%s'",
@@ -309,17 +309,41 @@ int roar_socket_open (int mode, int type, char * host, int port) {
    return -1;
   }
 
-  memcpy((struct in_addr *)&socket_addr.in.sin_addr, he->h_addr, sizeof(struct in_addr));
+  if ( he->h_addrtype == AF_INET ) {
+   if ( type != ROAR_SOCKET_TYPE_INET )
+    return -1;
 
-  /* set the connect information */
-  socket_addr.in.sin_family = AF_INET;
-  socket_addr.in.sin_port = htons( port );
+   memcpy((struct in_addr *)&socket_addr.in.sin_addr, he->h_addr, sizeof(struct in_addr));
 
-  fh = roar_socket_new_tcp();
+   /* set the connect information */
+   socket_addr.in.sin_family = AF_INET;
+   socket_addr.in.sin_port   = ROAR_HOST2NET16(port);
 
-  if ( mode_func(fh, (struct sockaddr *)&socket_addr.in, sizeof(struct sockaddr_in)) == -1 ) {
-   ROAR_DBG("roar_socket_open(*): Can not connect/bind: %s", strerror(errno));
-   close(fh);
+   fh = roar_socket_new_tcp();
+
+   if ( mode_func(fh, (struct sockaddr *)&socket_addr.in, sizeof(struct sockaddr_in)) == -1 ) {
+    ROAR_DBG("roar_socket_open(*): Can not connect/bind: %s", strerror(errno));
+    close(fh);
+    return -1;
+   }
+  } if ( he->h_addrtype == AF_INET6 ) {
+   if ( type != ROAR_SOCKET_TYPE_INET6 )
+    return -1;
+
+   memcpy((struct in6_addr *)&socket_addr.in6.sin6_addr, he->h_addr, sizeof(struct in6_addr));
+
+   /* set the connect information */
+   socket_addr.in6.sin6_family = AF_INET6;
+   socket_addr.in6.sin6_port   = ROAR_HOST2NET16(port);
+
+   fh = roar_socket_new_tcp6();
+
+   if ( mode_func(fh, (struct sockaddr *)&socket_addr.in6, sizeof(struct sockaddr_in6)) == -1 ) {
+    ROAR_DBG("roar_socket_open(*): Can not connect/bind: %s", strerror(errno));
+    close(fh);
+    return -1;
+   }
+  } else {
    return -1;
   }
   // hey! we have a socket...
@@ -334,8 +358,6 @@ int roar_socket_open (int mode, int type, char * host, int port) {
    close(fh);
    return -1;
   }
- } else if ( type == ROAR_SOCKET_TYPE_INET6 ) {
-  return -1;
  } else if ( type == ROAR_SOCKET_TYPE_FORK ) {
   return roar_socket_open_fork(mode, host, port);
  } else if ( type == ROAR_SOCKET_TYPE_FILE ) {
