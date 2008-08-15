@@ -48,6 +48,14 @@ void usage (void) {
 #ifdef ROAR_HAVE_LIBDNET
         " -n  --decnet          - use DECnet listen socket\n"
 #endif
+        " -4                    - Use IPv4 connections (implies -t)\n"
+#ifdef PF_INET6
+        " -6                    - Use IPv6 connections (implies -t)\n"
+#endif
+#ifdef IPV6_ADDRFORM
+        " -64                   - Try to downgrade sockets from IPv6 into IPv4,\n"
+        "                         this is normaly not usefull.\n"
+#endif
         " -p  --port            - TCP Port to bind to\n"
         " -b  --bind            - IP/Hostname to bind to\n"
         " -s  --sock            - Filename for UNIX Domain Socket\n"
@@ -218,13 +226,27 @@ int main (int argc, char * argv[]) {
    }
   } else if ( strcmp(k, "-b") == 0 || strcmp(k, "--bind") == 0 || strcmp(k, "-s") == 0 || strcmp(k, "--sock") == 0 ) {
    server = argv[++i];
+
   } else if ( strcmp(k, "-t") == 0 ) {
+   if ( sock_type != ROAR_SOCKET_TYPE_TCP && sock_type != ROAR_SOCKET_TYPE_TCP6 )
+    sock_type = ROAR_SOCKET_TYPE_TCP;
+
+   if ( *server == '/' )
+    server = ROAR_DEFAULT_HOST;
+
+  } else if ( strcmp(k, "-4") == 0 ) {
    sock_type = ROAR_SOCKET_TYPE_TCP;
    if ( *server == '/' )
     server = ROAR_DEFAULT_HOST;
+  } else if ( strcmp(k, "-6") == 0 ) {
+   sock_type = ROAR_SOCKET_TYPE_TCP6;
+   if ( *server == '/' )
+    server = ROAR_DEFAULT_HOST;
+
   } else if ( strcmp(k, "-u") == 0 ) {
    // ignore this case as it is the default behavor.
    sock_type = ROAR_SOCKET_TYPE_UNIX;
+
   } else if ( strcmp(k, "-n") == 0 ) {
 #ifdef ROAR_HAVE_LIBDNET
     port   = ROAR_DEFAULT_NUM;
@@ -235,6 +257,7 @@ int main (int argc, char * argv[]) {
     ROAR_ERR("No DECnet support compiled in!");
     return 1;
 #endif
+
   } else if ( strcmp(k, "-G") == 0 ) {
    sock_grp  = argv[++i];
   } else if ( strcmp(k, "-U") == 0 ) {
