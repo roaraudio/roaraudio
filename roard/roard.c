@@ -239,9 +239,14 @@ int main (int argc, char * argv[]) {
    if ( *server == '/' )
     server = ROAR_DEFAULT_HOST;
   } else if ( strcmp(k, "-6") == 0 ) {
+#ifdef PF_INET6
    sock_type = ROAR_SOCKET_TYPE_TCP6;
    if ( *server == '/' )
     server = ROAR_DEFAULT_HOST;
+#else
+    ROAR_ERR("No IPv6 support compiled in!");
+    return 1;
+#endif
 
   } else if ( strcmp(k, "-u") == 0 ) {
    // ignore this case as it is the default behavor.
