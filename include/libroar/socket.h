@@ -50,6 +50,8 @@ int roar_socket_open_proxy (int mode, int type, char * host, int port, char * pr
 
 int roar_socket_listen_decnet (char * object, int num);
 
+char * roar_socket_get_local_nodename(void);
+
 int roar_socket_nonblock(int fh, int state);
 
 int roar_socket_dup_udp_local_end (int fh);

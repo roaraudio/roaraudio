@@ -223,6 +223,29 @@ int roar_socket_listen_decnet (char * object, int num) {
 #endif
 }
 
+char * roar_socket_get_local_nodename(void) {
+#ifdef ROAR_HAVE_LIBDNET
+ static char node[16] = {0};
+ struct dn_naddr      *binaddr;
+ struct nodeent       *dp;
+
+ if ( !node[0] ) {
+  if ( (binaddr=getnodeadd()) == NULL)
+   return NULL;
+
+  if ( (dp=getnodebyaddr((char*)binaddr->a_addr, binaddr->a_len, PF_DECnet)) == NULL )
+   return NULL;
+
+  strncpy(node, dp->n_name, 15);
+  node[15] = 0;
+ }
+
+ return node;
+#else
+ return NULL;
+#endif
+}
+
 int roar_socket_open (int mode, int type, char * host, int port) {
 // int type = ROAR_SOCKET_TYPE_INET;
  int fh;

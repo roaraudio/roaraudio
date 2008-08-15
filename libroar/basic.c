@@ -53,10 +53,18 @@ int roar_connect_raw (char * server) {
    }
   }
 
-  if ( is_decnet && *obj == 0 ) {
-   strcpy(user_sock, server);
-   strcat(user_sock, ROAR_DEFAULT_OBJECT);
+  if ( is_decnet ) {
+    *user_sock = 0;
+   if ( *server == ':' ) {
+    if ( roar_socket_get_local_nodename() )
+     strcat(user_sock, roar_socket_get_local_nodename());
+   }
+
+   strcat(user_sock, server);
    server = user_sock;
+   if ( *obj == 0 ) {
+    strcat(user_sock, ROAR_DEFAULT_OBJECT);
+   }
   }
 
   if ( port || is_decnet ) {
