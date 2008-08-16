@@ -97,6 +97,9 @@ int roar_socket_new_decnet_stream (void) {
 #endif
 }
 
+int roar_socket_new_ipxspx (void) {
+ return -1;
+}
 
 int roar_socket_nonblock(int fh, int state) {
  int flags;
