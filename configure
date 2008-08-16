@@ -143,7 +143,7 @@ test_lib_defmake ROAR_HAVE_LIBPULSE      libroarpulse libpulse      pulse      -
 test_lib_defmake ROAR_HAVE_LIBY2         libroaryiff  libyiff       Y2         -- Y2/Y.h Y2/Ylib.h
 test_lib_defmake ROAR_HAVE_LIBARTSC      libroararts  libartsc      artsc      -- kde/artsc/artsc.h
 test_lib_defmake ROAR_HAVE_LIBDNET       %            libdnet       dnet       -- sys/socket.h netdnet/dn.h netdnet/dnetdb.h
-test_lib_defmake ROAR_HAVE_IPXSPX        %            IPX                      -- netipx/ipx.h
+test_lib_defmake ROAR_HAVE_IPX           %            IPX                      -- netipx/ipx.h
 
 # add a better test here
 test_lib 'linux sendfile()'       -- sys/sendfile.h && echo '#define ROAR_HAVE_LINUX_SENDFILE' >&3

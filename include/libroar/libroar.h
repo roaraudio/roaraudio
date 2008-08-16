@@ -15,7 +15,7 @@
 #include <netdnet/dn.h>
 #include <netdnet/dnetdb.h>
 #endif
-#ifdef ROAR_HAVE_IPXSPX
+#ifdef ROAR_HAVE_IPX
 #include <netipx/ipx.h>
 #endif
 
