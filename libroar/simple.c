@@ -113,15 +113,16 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
   }
   port = ROAR_NET2HOST16(socket_addr.sin_port);
   ROAR_DBG("roar_simple_new_stream_obj(*): port=%i", port);
- }
-
- if ( type == ROAR_SOCKET_TYPE_UNIX ) {
+ } else if ( type == ROAR_SOCKET_TYPE_UNIX ) {
   chmod(file, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP);
 
   grp = getgrnam(ROAR_DEFAULT_SOCKGRP);
 
   if ( grp )
    chown(file, -1, grp->gr_gid);
+ } else if ( type == ROAR_SOCKET_TYPE_DECNET ) {
+  len = sizeof(struct sockaddr_in);
+  setsockopt(listen, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(int));
  }
 
  if ( roar_stream_new(s, rate, channels, bits, codec) == -1 ) {
