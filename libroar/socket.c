@@ -407,6 +407,7 @@ int roar_socket_open (int mode, int type, char * host, int port) {
    return -1;
   }
  } else if ( type == ROAR_SOCKET_TYPE_IPX ) {
+#ifdef ROAR_HAVE_IPX
   socket_addr.ipx.sipx_family = AF_IPX;
 
   obj[0] = 0;
@@ -428,6 +429,9 @@ int roar_socket_open (int mode, int type, char * host, int port) {
 
   close(fh);
   return -1;
+#else
+  return -1;
+#endif
  } else if ( type == ROAR_SOCKET_TYPE_FORK ) {
   return roar_socket_open_fork(mode, host, port);
  } else if ( type == ROAR_SOCKET_TYPE_FILE ) {
