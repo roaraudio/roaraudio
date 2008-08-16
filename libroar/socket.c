@@ -261,15 +261,26 @@ char * roar_socket_get_local_nodename(void) {
 int roar_socket_open (int mode, int type, char * host, int port) {
 // int type = ROAR_SOCKET_TYPE_INET;
  int fh;
+#ifdef ROAR_HAVE_IPX
+#define _NEED_OBJ
+ int i;
+ int ret;
+#endif
  union {
   struct sockaddr_in  in;
   struct sockaddr_un  un;
   struct sockaddr_in6 in6;
+#ifdef ROAR_HAVE_IPX
+  struct sockaddr_ipx ipx;
+#endif
  } socket_addr;
  struct hostent     * he;
  //unsigned int host_div = 0;
  int (*mode_func)(int sockfd, const struct sockaddr *serv_addr, socklen_t addrlen) = connect; // default is to connect
 #ifdef ROAR_HAVE_LIBDNET
+#define _NEED_OBJ
+#endif
+#ifdef _NEED_OBJ
  char obj[80];
  char * del;
 #endif
@@ -285,6 +296,8 @@ int roar_socket_open (int mode, int type, char * host, int port) {
    type = ROAR_SOCKET_TYPE_FORK;
   } else if ( strstr(host, "::") != NULL ) {
    type = ROAR_SOCKET_TYPE_DECNET;
+  } else if ( host[strlen(host)-1] == ')' ) {
+   type = ROAR_SOCKET_TYPE_IPX;
   }
  }
 
@@ -393,6 +406,28 @@ int roar_socket_open (int mode, int type, char * host, int port) {
    close(fh);
    return -1;
   }
+ } else if ( type == ROAR_SOCKET_TYPE_IPX ) {
+  socket_addr.ipx.sipx_family = AF_IPX;
+
+  obj[0] = 0;
+
+  if ( (ret = sscanf(host, "%8x.%12s(%x)", &socket_addr.ipx.sipx_network, obj,
+                               (unsigned int *)&socket_addr.ipx.sipx_port)) < 2 ) {
+   return -1;
+  } else if ( ret == 2 ) {
+   socket_addr.ipx.sipx_port = port; // Network Byte Order?
+  }
+
+  memset(socket_addr.ipx.sipx_node, 0, IPX_NODE_LEN);
+  ret = strlen(obj);
+
+  if ( ret % 2 )  // needs to be even at the moment
+   return -1;
+
+  fh = roar_socket_new_ipx();
+
+  close(fh);
+  return -1;
  } else if ( type == ROAR_SOCKET_TYPE_FORK ) {
   return roar_socket_open_fork(mode, host, port);
  } else if ( type == ROAR_SOCKET_TYPE_FILE ) {
