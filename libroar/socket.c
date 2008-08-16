@@ -339,10 +339,10 @@ int roar_socket_open (int mode, int type, char * host, int port) {
    fh = dnet_conn(host, obj, SOCK_STREAM, 0 ,0 ,0 , 0);
    *del = ':';
    return fh;
-#else
-   return -1; // no decnet support
-#endif
   }
+#else
+  return -1; // no decnet support
+#endif
  }
 
  memset(&socket_addr,    0, sizeof(socket_addr));
