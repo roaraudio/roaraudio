@@ -357,12 +357,6 @@ int roar_socket_open (int mode, int type, char * host, int port) {
    return -1;
   }
 
-/*
-  if ( he->h_addrtype == AF_INET ) {
-   if ( type != ROAR_SOCKET_TYPE_INET )
-    return -1;
-*/
-
    memcpy((struct in_addr *)&socket_addr.in.sin_addr, he->h_addr, sizeof(struct in_addr));
 
    /* set the connect information */
@@ -376,28 +370,6 @@ int roar_socket_open (int mode, int type, char * host, int port) {
     close(fh);
     return -1;
    }
-/*
-  } if ( he->h_addrtype == AF_INET6 ) {
-   if ( type != ROAR_SOCKET_TYPE_INET6 )
-    return -1;
-
-   memcpy((struct in6_addr *)&socket_addr.in6.sin6_addr, he->h_addr, sizeof(struct in6_addr));
-
-   /x* set the connect information *x/
-   socket_addr.in6.sin6_family = AF_INET6;
-   socket_addr.in6.sin6_port   = ROAR_HOST2NET16(port);
-
-   fh = roar_socket_new_tcp6();
-
-   if ( mode_func(fh, (struct sockaddr *)&socket_addr.in6, sizeof(struct sockaddr_in6)) == -1 ) {
-    ROAR_DBG("roar_socket_open(*): Can not connect/bind: %s", strerror(errno));
-    close(fh);
-    return -1;
-   }
-  } else {
-   return -1;
-  }
-*/
   // hey! we have a socket...
  } else if ( type == ROAR_SOCKET_TYPE_UNIX ) {
   socket_addr.un.sun_family = AF_UNIX;
