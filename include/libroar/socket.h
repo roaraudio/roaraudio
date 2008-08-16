@@ -23,8 +23,9 @@
 #define ROAR_SOCKET_TYPE_UDP6    9
 #define ROAR_SOCKET_TYPE_INET6   ROAR_SOCKET_TYPE_TCP6
 #define ROAR_SOCKET_TYPE_IPXSPX  10
+#define ROAR_SOCKET_TYPE_IPX     11
 
-#define ROAR_SOCKET_TYPE_MAX  10
+#define ROAR_SOCKET_TYPE_MAX  11
 
 #define ROAR_SOCKET_QUEUE_LEN 8
 
@@ -44,6 +45,7 @@ int roar_socket_new_unix   (void);
 int roar_socket_new_decnet_seqpacket (void);
 int roar_socket_new_decnet_stream (void);
 int roar_socket_new_ipxspx (void);
+int roar_socket_new_ipx    (void);
 
 int roar_socket_open       (int mode, int type, char * host, int port);
 int roar_socket_open_fork  (int mode, char * host, int port);

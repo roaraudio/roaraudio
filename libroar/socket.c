@@ -101,6 +101,15 @@ int roar_socket_new_ipxspx (void) {
  return -1;
 }
 
+int roar_socket_new_ipx    (void) {
+#ifdef ROAR_HAVE_IPX
+ return socket(AF_IPX, SOCK_DGRAM, AF_IPX);
+#else
+ return -1;
+#endif
+}
+
+
 int roar_socket_nonblock(int fh, int state) {
  int flags;
 

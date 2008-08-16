@@ -15,6 +15,7 @@ int main (void) {
   {"UNIX"            , roar_socket_new_unix},
   {"DECnet seqpacket", roar_socket_new_decnet_seqpacket},
   {"DECnet stream"   , roar_socket_new_decnet_stream},
+  {"IPX"             , roar_socket_new_ipx},
   {"IPX/SPX"         , roar_socket_new_ipxspx},
   {NULL, NULL}
  };
