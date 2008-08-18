@@ -90,7 +90,7 @@ int main (int argc, char * argv[]) {
 // char * server = ROAR_DEFAULT_SOCK_GLOBAL;
  int      port = ROAR_DEFAULT_PORT;
  int               drvid;
- char * s_dev     = NULL;
+ char * s_drv     = "cf";
  char * s_con     = NULL;
  char * s_opt     = NULL;
  int    s_prim    = 0;
@@ -194,14 +194,14 @@ int main (int argc, char * argv[]) {
    opts = argv[++i];
 
   } else if ( strcmp(k, "-s") == 0 || strcmp(k, "--source") == 0 ) {
-   k = argv[++i];
-   if ( sources_add(k, s_dev, s_con, s_opt, s_prim) == -1 ) {
-    ROAR_ERR("main(*): adding source '%s' via '%s' failed!", s_dev, k);
-   }
-   s_opt = s_dev = s_con = NULL;
-   s_prim = 0;
+   s_drv = argv[++i];
   } else if ( strcmp(k, "-S") == 0 ) {
-   s_dev = argv[++i];
+   k = argv[++i];
+   if ( sources_add(s_drv, k, s_con, s_opt, s_prim) == -1 ) {
+    ROAR_ERR("main(*): adding source '%s' via '%s' failed!", k, s_drv);
+   }
+   s_opt = s_con = NULL;
+   s_prim = 0;
   } else if ( strcmp(k, "-sO") == 0 ) {
    s_opt = argv[++i];
   } else if ( strcmp(k, "-sC") == 0 ) {
