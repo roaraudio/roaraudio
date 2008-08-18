@@ -15,6 +15,8 @@ int roar_file_codecdetect(char * buf, int len) {
     if ( strncmp(buf+28, "\001vorbis", 7) == 0 )
      codec = ROAR_CODEC_OGG_VORBIS;
    }
+  } else if ( strncmp(buf, "MThd", 4) == 0 ) {
+   codec = ROAR_CODEC_MIDI_FILE;
   }
  }
 
