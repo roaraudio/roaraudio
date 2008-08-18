@@ -8,6 +8,10 @@ int cf_vorbis_open(CODECFILTER_USERDATA_T * inst, int codec,
                                             struct roar_stream_server * info,
                                             struct roar_codecfilter   * filter) {
  struct codecfilter_vorbis_inst * self = malloc(sizeof(struct codecfilter_vorbis_inst));
+ struct roar_stream * s = ROAR_STREAM(info);
+ ogg_packet header;
+ ogg_packet header_comm;
+ ogg_packet header_code;
 
  if ( !self )
   return -1;
@@ -18,17 +22,73 @@ int cf_vorbis_open(CODECFILTER_USERDATA_T * inst, int codec,
  self->got_it_running       =  0;
  self->stream               = info;
 // self->outlen               = ROAR_OUTPUT_BUFFER_SAMPLES * s->info.channels * s->info.bits / 8; // optimal size
+#ifdef ROAR_HAVE_LIBVORBISENC
+ self->encoding             = 0;
+#endif
 
  ROAR_DBG("cf_vorbis_open(*): info->id=%i", ROAR_STREAM(info)->id);
 
- if ( (self->in = fdopen(((struct roar_stream*)info)->fh, "r")) == NULL ) {
+ if ( (self->in = fdopen(s->fh, "r")) == NULL ) {
   free((void*)self);
   return -1;
  }
 
  *inst = (CODECFILTER_USERDATA_T) self;
 
- ((struct roar_stream*)info)->info.codec = ROAR_CODEC_DEFAULT;
+ s->info.codec = ROAR_CODEC_DEFAULT;
+ s->info.bits  = 16;
+
+ if ( s->dir == ROAR_DIR_PLAY ) {
+  return 0;
+ } else if ( s->dir == ROAR_DIR_MONITOR ) {
+#ifdef ROAR_HAVE_LIBVORBISENC
+  // set up the encoder here
+
+  memset(&(self->encoder), 0, sizeof(self->encoder));
+
+  self->encoding = 1;
+
+  vorbis_info_init(&(self->encoder.vi));
+  vorbis_comment_init(&(self->encoder.vc));
+  vorbis_comment_add_tag(&(self->encoder.vc), "SERVER", "RoarAudio");
+  vorbis_comment_add_tag(&(self->encoder.vc), "ENCODER", "RoarAudio Vorbis codecfilter");
+
+  if( vorbis_encode_init_vbr(&(self->encoder.vi), (long) s->info.channels, (long) s->info.rate,
+                                                  self->encoder.v_base_quality) != 0 ) {
+   ROAR_ERR("cf_vorbis_open(*): Can not vorbis_encode_init_vbr(*)!");
+   vorbis_info_clear(&(self->encoder.vi)); // TODO: do we need to free vc also?
+   free(self);
+   return -1;
+  }
+
+  vorbis_analysis_init(&(self->encoder.vd), &(self->encoder.vi));
+  vorbis_block_init(&(self->encoder.vd), &(self->encoder.vb));
+
+                                     //  "RA"<<16 + PID<<8 + Stream ID
+  ogg_stream_init(&(self->encoder.os), 0x52410000 + ((getpid() & 0xff)<<8) + s->id);
+
+  vorbis_analysis_headerout(&(self->encoder.vd), &(self->encoder.vc), &header, &header_comm, &header_code);
+
+  ogg_stream_packetin(&(self->encoder.os), &header);
+  ogg_stream_packetin(&(self->encoder.os), &header_comm);
+  ogg_stream_packetin(&(self->encoder.os), &header_code);
+
+  while (ogg_stream_flush(&(self->encoder.os), &(self->encoder.og))) {
+   if ( write(s->fh, self->encoder.og.header, self->encoder.og.header_len) != self->encoder.og.header_len ||
+        write(s->fh, self->encoder.og.body,   self->encoder.og.body_len  ) != self->encoder.og.body_len     ) {
+    free(self); // TODO: do we need adtional cleanup?
+    return -1;
+   }
+  }
+
+#else
+ free(self);
+ return -1;
+#endif
+ } else {
+  free(self);
+  return -1;
+ }
 
  return 0;
 }
@@ -41,6 +101,15 @@ int cf_vorbis_close(CODECFILTER_USERDATA_T   inst) {
 
  if ( self->got_it_running )
   ov_clear(&(self->vf));
+
+#ifdef ROAR_HAVE_LIBVORBISENC
+ if ( self->encoding ) {
+  ogg_stream_clear(&(self->encoder.os));
+  vorbis_block_clear(&(self->encoder.vb));
+  vorbis_dsp_clear(&(self->encoder.vd));
+  vorbis_info_clear(&(self->encoder.vi));
+ }
+#endif
 
  free(inst);
  return 0;
