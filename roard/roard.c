@@ -63,7 +63,8 @@ void usage (void) {
         "                         You need the permittions to change the GID\n"
         " -U  USER              - Sets the user for the UNIX Domain Socket, (default: do not set)\n"
         "                         You need the permittions to change the UID (normaly only root has)\n"
-        " --no-listen           - Do not listen for new clients (only usefull for relaing)\n"
+        " --no-listen           - Do not listen for new clients\n"
+        "                         (only usefull for relaing, impleys --terminate)\n"
         " --client-fh           - Comunicate with a client over this handle\n"
         "                         (only usefull for relaing)\n"
         " --close-fh            - Closes the given fh\n",
@@ -269,7 +270,8 @@ int main (int argc, char * argv[]) {
    sock_user = argv[++i];
 
   } else if ( strcmp(k, "--no-listen") == 0 ) {
-   *server = 0;
+   *server     = 0;
+   g_terminate = 1;
   } else if ( strcmp(k, "--client-fh") == 0 ) {
    if ( clients_set_fh(clients_new(), atoi(argv[++i])) == -1 ) {
     ROAR_ERR("main(*): Can not set client's fh");

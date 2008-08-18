@@ -453,7 +453,7 @@ int roar_socket_open_fork  (int mode, char * host, int port) {
 
   snprintf(fhstr, 7, "%i", socks[1]);
 
-  execlp("roard", "roard", "--terminate", "--no-listen", "--client-fh", fhstr, NULL);
+  execlp("roard", "roard", "--no-listen", "--client-fh", fhstr, NULL);
 
   // we are still alive?
   ROAR_ERR("roar_socket_open_fork(*): alive after exec(), that's bad!");
