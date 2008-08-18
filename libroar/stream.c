@@ -252,4 +252,71 @@ int roar_stream_m2s     (struct roar_stream * s, struct roar_message * m) {
  return 0;
 }
 
+
+// codec funcs:
+
+/*
+#define roar_codec2str(x) ((x) == ROAR_CODEC_PCM_S_LE  ? "pcm_s_le"  : (x) == ROAR_CODEC_PCM_S_BE  ? "pcm_s_be"  : \
+                           (x) == ROAR_CODEC_PCM_S_PDP ? "pcm_s_pdp" : (x) == ROAR_CODEC_MIDI_FILE ? "midi_file" : \
+                           "unknown" )
+*/
+
+struct {
+ int    codec;
+ char * name;
+} _libroar_codec[] = {
+ // PCM:
+ {ROAR_CODEC_PCM_S_LE,    "pcm_s_le"   },
+ {ROAR_CODEC_PCM_S_BE,    "pcm_s_be"   },
+ {ROAR_CODEC_PCM_S_PDP,   "pcm_s_pdp"  },
+ {ROAR_CODEC_PCM_U_LE,    "pcm_u_le"   },
+ {ROAR_CODEC_PCM_U_BE,    "pcm_u_be"   },
+ {ROAR_CODEC_PCM_U_PDP,   "pcm_u_pdp"  },
+ {ROAR_CODEC_DEFAULT,     "default"    }, // alias
+ {ROAR_CODEC_DEFAULT,     "pcm"        }, // alias
+
+ // MIDI:
+ {ROAR_CODEC_MIDI_FILE,   "midi_file"  },
+
+ // XIPH:
+ {ROAR_CODEC_OGG_VORBIS,  "ogg_vorbis" },
+ {ROAR_CODEC_OGG_VORBIS,  "vorbis"     }, // alias
+ {ROAR_CODEC_FLAC,        "flac"       },
+ {ROAR_CODEC_OGG_SPEEX,   "ogg_speex"  },
+ {ROAR_CODEC_OGG_SPEEX,   "speex"      }, // alias
+ {ROAR_CODEC_OGG_FLAC,    "ogg_flac"   },
+ {ROAR_CODEC_OGG_GENERAL, "ogg_general"},
+ {ROAR_CODEC_ROAR_CELT,   "roar_celt"  },
+ {ROAR_CODEC_ROAR_SPEEX,  "roar_speex" },
+ {-1, NULL}
+};
+
+int roar_str2codec(char * codec) {
+ int i;
+ int guess = atoi(codec);
+
+ if ( guess > 0 )
+  return guess;
+
+ if ( codec == NULL || *codec == 0 )
+  return ROAR_CODEC_DEFAULT;
+
+ for (i = 0; _libroar_codec[i].codec != -1; i++)
+  if ( strcasecmp(_libroar_codec[i].name, codec) == 0 )
+   return _libroar_codec[i].codec;
+
+ return -1;
+}
+
+
+char * roar_codec2str (int codec) {
+ int i;
+
+ for (i = 0; _libroar_codec[i].codec != -1; i++)
+  if ( _libroar_codec[i].codec == codec )
+   return _libroar_codec[i].name;
+
+ return "unknown";
+}
+
 //ll

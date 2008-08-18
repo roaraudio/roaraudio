@@ -43,7 +43,7 @@ int main (int argc, char * argv[]) {
   } else if ( strcmp(k, "--channels") == 0 || strcmp(k, "--chans") == 0 ) {
    channels = atoi(argv[++i]);
   } else if ( strcmp(k, "--codec") == 0 ) {
-   codec = atoi(argv[++i]);
+   codec = roar_str2codec(argv[++i]);
   } else if ( strcmp(k, "--help") == 0 ) {
    usage();
    return 0;
