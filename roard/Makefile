@@ -6,12 +6,11 @@ CF=codecfilter_cmd.o codecfilter_vorbis.o codecfilter_celt.o codecfilter_speex.o
 
 include ../Makefile.conf
 
-CELT_PREFIX=/home/phi/superhome/xiph/celt-test/
 #DEFINES        = -DDEBUG
 #DEFINES        = -DMONITOR_LATENCY
 INCLUDE = -I../include -I./include
-CFLAGS  = -g -Wall -O2 $(DEFINES) $(INCLUDE) -I$(CELT_PREFIX)/include
-LDFLAGS = -g -L../lib/ $(LDPATH) -lroar $(lib_esd) $(lib_ao) $(lib_vorbisfile) -lm -L$(CELT_PREFIX)/lib $(lib_celt) $(lib_speex)
+CFLAGS  = -g -Wall -O2 $(DEFINES) $(INCLUDE) $(INCPATH)
+LDFLAGS = -g -L../lib/ $(LDPATH) -lroar $(lib_esd) $(lib_ao) $(lib_vorbisfile) -lm $(lib_celt) $(lib_speex)
 
 all: ${TARGETS}
 	cp $(cp_v) ${TARGETS} ../lib/

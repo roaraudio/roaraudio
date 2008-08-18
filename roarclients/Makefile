@@ -2,11 +2,10 @@ TARGETS=roarcat roarcatad roarcat2sock roarcatsendfile roarcatplay roarctl roarm
 
 include ../Makefile.conf
 
-CELT_PREFIX=/home/phi/superhome/xiph/celt-test/
-DEFINES        = -DDEBUG
+#DEFINES        = -DDEBUG
 INCLUDE = -I../include -I./include
-CFLAGS  = -g -Wall -O2 $(DEFINES) $(INCLUDE) -I$(CELT_PREFIX)/include
-LDFLAGS = -g -L../lib/ $(LDPATH) -lroar -L$(CELT_PREFIX)/lib
+CFLAGS  = -g -Wall -O2 $(DEFINES) $(INCLUDE) $(INCPATH)
+LDFLAGS = -g -L../lib/ $(LDPATH) -lroar
 
 all: ${TARGETS}
 	cp $(cp_v) ${TARGETS} ../lib/
