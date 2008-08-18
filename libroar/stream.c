@@ -294,9 +294,12 @@ struct {
 
 int roar_str2codec(char * codec) {
  int i;
- int guess = atoi(codec);
+ int guess;
 
- if ( guess > 0 )
+ if ( codec == NULL || *codec == 0 )
+  return ROAR_CODEC_DEFAULT;
+
+ if ( (guess = atoi(codec)) > 0 )
   return guess;
 
  if ( codec == NULL || *codec == 0 )
