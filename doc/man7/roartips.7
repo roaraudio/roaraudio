@@ -6,8 +6,70 @@ roartips \- Tips for RoarAudio users
 
 .SH SYNOPSIS
 
+ roard [OPTIONS...] ...
+
+ roarclient [OPTIONS...] ...
 
 .SH "DESCRIPTION"
+This manpage lists some tips for intermedia to advanced users of RoarAudio.
+
+.SH "CONTROLLING ROARD"
+RoarAudio supports a lot of things you can change on the fly.
+This includes the volume for each stream as you may allready noticed:
+If you cange the volume within a player only this stream is changed, other streams
+keep there loudness. There a a lot other things that can be changed on the fly.
+To do this there is a tool called \fBroarctl(1)\fR. You may want to play around a bit
+with it. A good start are to try those two commands:
+ roarctl --help
+ roarctl allinfo
+
+The later one will show you all information current available of the server it self,
+the clients and the streams. This may include a lot of informations.
+
+.SH "SERVER ADDRESS"
+There a serverel types of server addresses based on the protocoll used to communicate.
+This lists the corrently implemented types in order of importance:
+
+.TP
+\fB/path/to/sock\fR
+Path to UNIX Domain Socket.
+Example:
+ /tmp/roar
+
+.TP
+\fBhost\fR, \fBhost:port\fR
+This is used for connections over TCP/IP.
+If port is omitted the default port is used.
+Examples:
+ audio.homeserver.local
+ localhost:7564
+
+.TP
+\fBnode::\fR, \fBnode::object\fR, \fB::object\fR, \fB::\fR
+This is the way to specify a DECnet connection to node \fBnode\fR's
+object \fBobject\fR. Both may be omitted to use defaults. Default
+node name is local hosts node name.
+Examples:
+ mynode::
+ ::roar
+ yournode::yourroard
+
+.TP
+\fB+fork\fR
+This starts a new roard for every \fBroar_connect(3)\fR.
+This is used internaly by the lib to emulate EsounD's
+fallback.
+
+.SH "ENVIRONMENT"
+.TP
+\fBROAR_SERVER\fR
+This varibale contains the default server address. If some client does not
+allow a user to set a server address or to set a default value this one
+come into play. Examples:
+ ROAR_SERVER=some.host
+ ROAR_SERVER=another.host:port
+ ROAR_SERVER=node::
+ ROAR_SERVER=/tmp/roar
 
 .SH "SEE ALSO"
 \fBroarcat\fR(1),
