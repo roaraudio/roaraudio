@@ -54,8 +54,9 @@ int streams_new    (void) {
    s->output          = NULL;
    s->is_new          =  1;
    s->codecfilter     = -1;
-   s->pre_underruns   = 0;
-   s->post_underruns  = 0;
+   s->pre_underruns   =  0;
+   s->post_underruns  =  0;
+   s->codec_orgi      = -1;
 
    s->mixer.scale     = 65535;
    s->mixer.rpg_mul   = 1;
