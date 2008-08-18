@@ -183,7 +183,7 @@ int roar_stream_get_info (struct roar_connection * con, struct roar_stream * s, 
   data[i] = ROAR_NET2HOST16(data[i]);
  }
 
- if ( m.datalen < 3*2 )
+ if ( m.datalen < 6*2 )
   return -1;
 
  if ( data[0] != 0 || data[1] != 1 )
@@ -192,6 +192,7 @@ int roar_stream_get_info (struct roar_connection * con, struct roar_stream * s, 
  info->block_size     = data[2];
  info->pre_underruns  = data[3];
  info->post_underruns = data[4];
+ info->codec          = data[5];
 
  return 0;
 }
