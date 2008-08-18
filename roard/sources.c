@@ -37,6 +37,8 @@ int sources_add_raw (char * driver, char * device, char * container, char * opti
  int fh;
  struct roar_stream * s;
 
+ ROAR_WARN("sources_add_raw(*): The raw source is obsolete, use source 'cf' (default)!");
+
  if ( (fh = open(device, O_RDONLY, 0644)) == -1 ) {
   return -1;
  }
@@ -65,6 +67,8 @@ int sources_add_wav (char * driver, char * device, char * container, char * opti
  int fh;
  char buf[44];
  struct roar_stream * s;
+
+ ROAR_WARN("sources_add_raw(*): The wav(e) source is obsolete, use source 'cf' (default)!");
 
  if ( (fh = open(device, O_RDONLY, 0644)) == -1 ) {
   return -1;
@@ -145,6 +149,8 @@ int sources_add_cf (char * driver, char * device, char * container, char * optio
  s->dir        = ROAR_DIR_PLAY;
  s->pos_rel_id = -1;
  s->info.codec = codec;
+
+ ROAR_STREAM_SERVER(s)->codec_orgi = codec;
 
  streams_set_fh(stream, fh);
 
