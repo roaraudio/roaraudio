@@ -10,11 +10,12 @@
 /*
  Bits:
  76543210
-    ||||\---\ byte-
-    |||\----/ order
-    ||\-----> unsigned?
-    |\------> PCM(0) or MIDI(1)?
-    \-------> PCM/MIDI(0) or hi-level codecs(1)
+   |||||\---\ byte-
+   ||||\----/ order
+   |||\-----> unsigned?
+   ||\------> PCM(0) or MIDI(1)?
+   |\-------> PCM/MIDI(0) or hi-level codecs(1)
+   \--------> MISC(0) or RIFF/WAVE like(1)
 
  MIDI 0x08:
  76543210
@@ -32,6 +33,10 @@
      [...]
      **** 0x1a -> ROAR CELT
      **** 0x1b -> ROAR SPEEX
+
+ RIFF/WAVE like 0x20:
+  76543210
+     00000 0x20 -> RIFF/WAVE
 */
 
 #define ROAR_CODEC_IS_SIGNED(x)  (((x) & ROAR_CODEC_UNSIGNED) == 0 ? 1 : 0)
@@ -58,6 +63,9 @@
 
 #define ROAR_CODEC_ROAR_CELT    0x1a
 #define ROAR_CODEC_ROAR_SPEEX   0x1b
+
+
+#define ROAR_CODEC_RIFF_WAVE    0x20
 
 #if BYTE_ORDER == BIG_ENDIAN
 

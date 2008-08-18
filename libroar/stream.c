@@ -290,6 +290,12 @@ struct {
  {ROAR_CODEC_OGG_GENERAL, "ogg_general"},
  {ROAR_CODEC_ROAR_CELT,   "roar_celt"  },
  {ROAR_CODEC_ROAR_SPEEX,  "roar_speex" },
+
+ // RIFF/WAVE like:
+ {ROAR_CODEC_RIFF_WAVE,   "riff_wave"  },
+ {ROAR_CODEC_RIFF_WAVE,   "wave"       }, // alias
+ {ROAR_CODEC_RIFF_WAVE,   "wav"        }, // alias
+
  {-1, NULL}
 };
 
