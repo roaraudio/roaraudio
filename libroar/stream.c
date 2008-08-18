@@ -275,6 +275,7 @@ struct {
  {ROAR_CODEC_PCM_U_PDP,   "pcm_u_pdp"  },
  {ROAR_CODEC_DEFAULT,     "default"    }, // alias
  {ROAR_CODEC_DEFAULT,     "pcm"        }, // alias
+ {ROAR_CODEC_DEFAULT,     "raw"        }, // alias
 
  // MIDI:
  {ROAR_CODEC_MIDI_FILE,   "midi_file"  },
