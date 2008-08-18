@@ -14,18 +14,6 @@ int cf_wave_open(CODECFILTER_USERDATA_T * inst, int codec,
  self->stream               = info;
  self->opened               = 0;
 
-/*
- if ( s->dir == ROAR_DIR_PLAY ) {
-   self->decoder = celt_decoder_create(self->mode);
- } else if ( s->dir == ROAR_DIR_MONITOR ) {
-   self->encoder = celt_encoder_create(self->mode);
- } else {
-  celt_mode_destroy(self->mode);
-  free(self);
-  return -1;
- }
-*/
-
  *inst = (CODECFILTER_USERDATA_T) self;
 
  memcpy(&(s->info), g_sa, sizeof(struct roar_audio_info));
@@ -56,6 +44,9 @@ int cf_wave_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
    close(fh);
    return -1;
   }
+
+  // TODO: write better code here!
+
   memcpy(&(s->info.rate    ), tbuf+24, 4);
   memcpy(&(s->info.channels), tbuf+22, 2);
   memcpy(&(s->info.bits    ), tbuf+34, 2);
