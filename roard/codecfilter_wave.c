@@ -2,11 +2,6 @@
 
 #include "roard.h"
 
-struct codecfilter_wave_inst {
- struct roar_stream_server * stream;
- int opened;
-};
-
 int cf_wave_open(CODECFILTER_USERDATA_T * inst, int codec,
                                             struct roar_stream_server * info,
                                             struct roar_codecfilter   * filter) {
@@ -38,7 +33,7 @@ int cf_wave_open(CODECFILTER_USERDATA_T * inst, int codec,
 }
 
 int cf_wave_close(CODECFILTER_USERDATA_T   inst) {
- struct codecfilter_wave_inst * self = (struct codecfilter_wave_inst *) inst;
+// struct codecfilter_wave_inst * self = (struct codecfilter_wave_inst *) inst;
 
  if ( !inst )
   return -1;
@@ -51,20 +46,20 @@ int cf_wave_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  struct codecfilter_wave_inst * self = (struct codecfilter_wave_inst *) inst;
  int fh = ((struct roar_stream *)self->stream)->fh;
  int r = -1;
- char buf[44];
+ char tbuf[44];
  struct roar_stream * s = ROAR_STREAM(self->stream);
 
  if ( self->opened ) {
   return read(fh, buf, len);
  } else {
-  if (read(fh, buf, 44) != 44) {
+  if (read(fh, tbuf, 44) != 44) {
    close(fh);
    return -1;
   }
 
-  memcpy(&(s->info.rate    ), buf+24, 4);
-  memcpy(&(s->info.channels), buf+22, 2);
-  memcpy(&(s->info.bits    ), buf+34, 2);
+  memcpy(&(s->info.rate    ), tbuf+24, 4);
+  memcpy(&(s->info.channels), tbuf+22, 2);
+  memcpy(&(s->info.bits    ), tbuf+34, 2);
 
   errno = EAGAIN;
   return -1;
