@@ -99,16 +99,37 @@ int sources_add_wav (char * driver, char * device, char * container, char * opti
 }
 
 int sources_add_cf (char * driver, char * device, char * container, char * options, int primary) {
- int stream;
- int fh;
- int codec;
+ int  stream;
+ int  fh;
+ int  codec;
+ int  len;
+ char buf[64];
  struct roar_stream * s;
-
- if ( (codec = roar_str2codec(options)) == -1 )
-  return -1;
 
  if ( (fh = open(device, O_RDONLY, 0644)) == -1 ) {
   return -1;
+ }
+
+ if ( !options ) {
+  if ( (len = read(fh, buf, 64)) < 1 ) {
+   close(fh);
+   return -1;
+  }
+
+  if ( lseek(fh, -len, SEEK_CUR) == (off_t)-1 ) {
+   close(fh);
+   return -1;
+  }
+
+  if ( (codec = roar_file_codecdetect(buf, len)) == -1 ) {
+   close(fh);
+   return -1;
+  }
+ } else {
+  if ( (codec = roar_str2codec(options)) == -1 ) {
+   close(fh);
+   return -1;
+  }
  }
 
  if ( (stream = streams_new()) == -1 ) {
