@@ -17,6 +17,11 @@ int roar_file_codecdetect(char * buf, int len) {
    }
   } else if ( strncmp(buf, "MThd", 4) == 0 ) {
    codec = ROAR_CODEC_MIDI_FILE;
+  } else if ( strncmp(buf, "RIFF", 4) == 0 ) {
+   if ( len > 15 ) {
+    if ( strncmp(buf+8, "WAVEfmt ", 8) == 0 )
+     codec = ROAR_CODEC_RIFF_WAVE;
+   }
   }
  }
 
