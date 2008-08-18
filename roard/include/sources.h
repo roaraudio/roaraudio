@@ -16,6 +16,7 @@ int sources_add (char * driver, char * device, char * container, char * options,
 
 int sources_add_raw  (char * driver, char * device, char * container, char * options, int primary);
 int sources_add_wav  (char * driver, char * device, char * container, char * options, int primary);
+int sources_add_cf   (char * driver, char * device, char * container, char * options, int primary);
 
 #endif
 
