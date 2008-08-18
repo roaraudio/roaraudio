@@ -5,6 +5,9 @@
 struct roar_codecfilter g_codecfilter[] = {
  {-1,                     "null", "null codec filter", NULL,                      NULL, NULL, NULL, NULL, NULL, NULL},
 
+ {ROAR_CODEC_RIFF_WAVE, "RIFF/WAVE", "RIFF/WAVE", NULL,
+  cf_wave_open, cf_wave_close, NULL, NULL, cf_wave_read, NULL},
+
  {ROAR_CODEC_OGG_GENERAL, "cmd",  "ogg123",
   "ogg123 -q -d raw -f - -",
   cf_cmd_open, NULL, NULL, NULL, NULL, NULL},

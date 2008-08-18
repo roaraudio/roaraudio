@@ -26,6 +26,9 @@ struct roar_codecfilter {
 
 
 #include "codecfilter_cmd.h"
+#include "codecfilter_wave.h"
+
+
 #ifdef ROAR_HAVE_LIBVORBISFILE
 #include "codecfilter_vorbis.h"
 #endif
