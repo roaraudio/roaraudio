@@ -4,6 +4,8 @@
 
 int main_loop (int driver, DRIVER_USERDATA_T driver_inst, struct roar_audio_info * sa) {
  void ** streams_input = NULL;
+ int     term = 0;
+ int     streams;
 #ifdef MONITOR_LATENCY
  struct timeval         try, ans;
  long int ans_1last = 0, ans_2last = 0, ans_3last = 0;
@@ -30,18 +32,22 @@ int main_loop (int driver, DRIVER_USERDATA_T driver_inst, struct roar_audio_info
   }
 
   ROAR_DBG("main_loop(*): check for new data...");
-  if ( clients_check_all() == 0 && g_terminate && g_listen_socket == -1 )
-   alive = 0;
+  if ( clients_check_all() == 0 && g_terminate && g_listen_socket == -1 ) {
+   term  = 1;
+  }
 
   ROAR_DBG("main_loop(*): mixing clients...");
   if ( g_standby ) {
    // while in standby we still neet to get the buffers to free input buffer space.
-   streams_get_mixbuffers(&streams_input, sa, g_pos);
+   streams = streams_get_mixbuffers(&streams_input, sa, g_pos);
   } else {
-   if ( streams_get_mixbuffers(&streams_input, sa, g_pos) == 0 ) {
+   if ( ( streams = streams_get_mixbuffers(&streams_input, sa, g_pos)) != -1 ) {
     mix_clients(g_output_buffer, sa->bits, streams_input, ROAR_OUTPUT_BUFFER_SAMPLES * sa->channels);
    }
   }
+
+  if ( term && streams < 1 )
+   alive = 0;
 
 /*
   // while in standby we still need to write out our buffer to not run in an endless loop without

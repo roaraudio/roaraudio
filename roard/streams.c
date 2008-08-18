@@ -464,7 +464,7 @@ int streams_get_mixbuffers (void *** bufferlist, struct roar_audio_info * info, 
  ROAR_DBG("streams_get_mixbuffers(*): have = %i", have);
 
  *bufferlist = bufs;
- return 0;
+ return have;
 }
 
 
