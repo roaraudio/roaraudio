@@ -56,10 +56,11 @@ int cf_wave_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
    close(fh);
    return -1;
   }
-
   memcpy(&(s->info.rate    ), tbuf+24, 4);
   memcpy(&(s->info.channels), tbuf+22, 2);
   memcpy(&(s->info.bits    ), tbuf+34, 2);
+
+  self->opened = 1;
 
   errno = EAGAIN;
   return -1;
