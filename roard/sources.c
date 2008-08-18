@@ -110,6 +110,7 @@ int sources_add_cf (char * driver, char * device, char * container, char * optio
   return -1;
  }
 
+ // TODO: finy out a better way of doing auto detetion without need for seek!
  if ( !options ) {
   if ( (len = read(fh, buf, 64)) < 1 ) {
    close(fh);

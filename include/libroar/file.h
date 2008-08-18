@@ -10,8 +10,8 @@
 #endif
 
 int     roar_file_codecdetect(char * buf, int len);
-ssize_t roar_file_send_raw (int out, int in);
-ssize_t roar_file_play     (struct roar_connection * con, char * file, int exec);
+ssize_t roar_file_send_raw   (int out, int in);
+ssize_t roar_file_play       (struct roar_connection * con, char * file, int exec);
 
 #endif
 
