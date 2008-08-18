@@ -64,6 +64,7 @@ int cf_vorbis_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  }
 
  if ( self->opened < 16 ) {
+  errno = EAGAIN;
   return -1;
  }
 

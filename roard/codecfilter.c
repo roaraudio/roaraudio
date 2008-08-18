@@ -120,6 +120,8 @@ int codecfilter_read (CODECFILTER_USERDATA_T   inst, int codecfilter, char * buf
  if ( codecfilter == -1 )
   return -1;
 
+ errno = 0;
+
  if ( g_codecfilter[codecfilter].read )
   return g_codecfilter[codecfilter].read(inst, buf, len);
 
