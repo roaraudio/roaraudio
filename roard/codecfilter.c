@@ -45,11 +45,11 @@ void print_codecfilterlist (void) {
  int i;
 
  for (i = 0; g_codecfilter[i].name != NULL; i++) {
-  printf("  %-12s %-12s - %s (options: %s)\n",
+  printf("  %-12s %-12s - %s\n",
              roar_codec2str(g_codecfilter[i].codec),
              g_codecfilter[i].name,
-             g_codecfilter[i].desc,
-             g_codecfilter[i].options);
+             g_codecfilter[i].desc
+             );
  }
 }
 
