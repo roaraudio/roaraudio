@@ -640,6 +640,7 @@ int streams_send_mon   (int id) {
             == g_output_buffer_len ) {
    return 0;
   } else { // we cann't retry on codec filetered streams
+   streams_delete(id);
    return -1;
   }
  }
