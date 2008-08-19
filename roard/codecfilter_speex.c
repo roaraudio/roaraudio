@@ -42,7 +42,7 @@ int cf_speex_close(CODECFILTER_USERDATA_T   inst) {
   return -1;
 
  if ( self->encoder )
-  speex_encoder_destroy(self->decoder);
+  speex_encoder_destroy(self->encoder);
 
  self->encoder = NULL;
 
