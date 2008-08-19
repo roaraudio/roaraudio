@@ -19,6 +19,7 @@
 #include <netipx/ipx.h>
 #endif
 
+#include "vio.h"
 #include "basic.h"
 #include "stream.h"
 #include "simple.h"
