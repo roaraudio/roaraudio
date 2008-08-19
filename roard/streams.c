@@ -135,7 +135,7 @@ int streams_set_fh     (int id, int fh) {
 
  ROAR_DBG("streams_set_fh(id=%i): g_streams[id]->id=%i", id, ROAR_STREAM(g_streams[id])->id);
 
- ((struct roar_stream *)g_streams[id])->fh = fh;
+ ROAR_STREAM(g_streams[id])->fh = fh;
 
  if ( codecfilter_open(&(g_streams[id]->codecfilter_inst), &(g_streams[id]->codecfilter), NULL,
                   ROAR_STREAM(g_streams[id])->info.codec, g_streams[id]) == -1 ) {
@@ -162,7 +162,7 @@ int streams_get_fh     (int id) {
  if ( g_streams[id] == NULL )
   return -1;
 
- return ((struct roar_stream *)g_streams[id])->fh;
+ return ROAR_STREAM(g_streams[id])->fh;
 }
 
 int streams_get    (int id, struct roar_stream_server ** stream) {
@@ -407,8 +407,8 @@ int streams_fill_mixbuffer (int id, struct roar_audio_info * info) {
   buffer_delete(buf, NULL);
 */
 
- ((struct roar_stream*)g_streams[id])->pos =
-      ROAR_MATH_OVERFLOW_ADD(((struct roar_stream*)g_streams[id])->pos,
+ ROAR_STREAM(g_streams[id])->pos =
+      ROAR_MATH_OVERFLOW_ADD(ROAR_STREAM(g_streams[id])->pos,
           ROAR_OUTPUT_CALC_OUTBUFSAMP(info, needed-todo));
  //ROAR_WARN("stream=%i, pos=%u", id, ((struct roar_stream*)g_streams[id])->pos);
 
@@ -440,7 +440,7 @@ int streams_get_mixbuffers (void *** bufferlist, struct roar_audio_info * info, 
 
  for (i = 0; i < ROAR_STREAMS_MAX; i++) {
   if ( g_streams[i] != NULL ) {
-   if ( ((struct roar_stream *)g_streams[i])->dir != ROAR_DIR_PLAY )
+   if ( ROAR_STREAM(g_streams[i])->dir != ROAR_DIR_PLAY )
     continue;
 
    if ( streams_get_outputbuffer(i, &bufs[have], ROAR_OUTPUT_CALC_OUTBUFSIZE(info)) == -1 ) {
@@ -537,7 +537,7 @@ int streams_check  (int id) {
 
  ROAR_DBG("streams_check(id=%i) = ?", id);
 
- s = (struct roar_stream *) (ss = g_streams[id]);
+ s = ROAR_STREAM(ss = g_streams[id]);
 
  if ( (fh = s->fh) == -1 )
   return 0;
@@ -674,7 +674,7 @@ int streams_send_filter(int id) {
 
  ROAR_DBG("streams_send_filter(id=%i) = ?", id);
 
- s = (struct roar_stream *) (ss = g_streams[id]);
+ s = ROAR_STREAM(ss = g_streams[id]);
 
  if ( (fh = s->fh) == -1 )
   return 0;

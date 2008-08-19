@@ -7,7 +7,7 @@ int cf_celt_open(CODECFILTER_USERDATA_T * inst, int codec,
                                             struct roar_stream_server * info,
                                             struct roar_codecfilter   * filter) {
  struct codecfilter_celt_inst * self = malloc(sizeof(struct codecfilter_celt_inst));
- struct roar_stream * s = (struct roar_stream *) info;
+ struct roar_stream * s = ROAR_STREAM(info);
 
  if ( !self )
   return -1;

@@ -7,7 +7,7 @@ int cf_speex_open(CODECFILTER_USERDATA_T * inst, int codec,
                                             struct roar_stream_server * info,
                                             struct roar_codecfilter   * filter) {
  struct codecfilter_speex_inst * self = malloc(sizeof(struct codecfilter_speex_inst));
- struct roar_stream * s = (struct roar_stream *) info;
+ struct roar_stream * s = ROAR_STREAM(info);
 
  *inst = NULL;
 

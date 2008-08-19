@@ -58,7 +58,7 @@ int cf_cmd_open(CODECFILTER_USERDATA_T * inst, int codec,
   return -1;
  }
 
- if ( lib_run_bg(cmd, ((struct roar_stream*)info)->fh, socks[1], ROAR_STDERR, socks, 2) == -1 )
+ if ( lib_run_bg(cmd, ROAR_STREAM(info)->fh, socks[1], ROAR_STDERR, socks, 2) == -1 )
   return -1;
 
  if ( info->client != -1 ) {
@@ -68,17 +68,17 @@ int cf_cmd_open(CODECFILTER_USERDATA_T * inst, int codec,
    if ( g_streams[execed] == info ) {
     g_clients[info->client]->fh = socks[0];
    } else {
-    close(((struct roar_stream*)info)->fh);
+    close(ROAR_STREAM(info)->fh);
    }
   } else {
-   close(((struct roar_stream*)info)->fh);
+   close(ROAR_STREAM(info)->fh);
   }
  } else {
-  close(((struct roar_stream*)info)->fh);
+  close(ROAR_STREAM(info)->fh);
  }
 
- ((struct roar_stream*)info)->fh = socks[0];
- ((struct roar_stream*)info)->info.codec = ROAR_CODEC_DEFAULT;
+ ROAR_STREAM(info)->fh = socks[0];
+ ROAR_STREAM(info)->info.codec = ROAR_CODEC_DEFAULT;
  close(socks[1]);
 
  info->codecfilter = -1;
