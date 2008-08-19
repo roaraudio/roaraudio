@@ -105,9 +105,13 @@ int cf_vorbis_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  ogg_packet header;
  ogg_packet header_comm;
  ogg_packet header_code;
+ float ** encbuf;
+ int i, c;
+ int chans;
+ int end;
+ int16_t * data = (int16_t *) buf;
 
  if ( ! self->opened ) {
- } else {
   vorbis_analysis_headerout(&(self->encoder.vd), &(self->encoder.vc), &header, &header_comm, &header_code);
 
   ogg_stream_packetin(&(self->encoder.os), &header);
@@ -122,6 +126,27 @@ int cf_vorbis_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
    }
   }
   self->opened = 1;
+ } else {
+  encbuf = vorbis_analysis_buffer(&(self->encoder.vd), len /* TODO: need to lookup the menaing of this */);
+  chans  = s->info.channels;
+  end    = len/(2*chans);
+
+  if ( chans == 1 ) { // use optimized code
+   for (i = 0; i < end; i++)
+    encbuf[0][i] = data[i]/32768.0;
+
+  } else if ( chans == 2 ) { // use optimized code
+   for (i = 0; i < end; i++) {
+    encbuf[0][i] = data[2*i  ]/32768.0;
+    encbuf[1][i] = data[2*i+1]/32768.0;
+   }
+  } else { // use generic multi channel code
+   for (i = 0; i < end; i++) {
+    for (c = 0; c < chans; c++) {
+     encbuf[c][i] = data[chans*i+c]/32768.0;
+    }
+   }
+  }
  }
 
   return len; // we assume every thing was written (at least into our dsp anaylises buffer
