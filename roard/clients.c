@@ -240,7 +240,10 @@ int clients_check_all (void) {
    max_fh = -1;
 
    for (i = 0; i < have_streamless; i++) {
-    if ( g_clients[streamless[i].id]->execed != -1 )
+    if ( ! g_clients[j = streamless[i].id] )
+     continue;
+
+    if ( g_clients[j]->execed != -1 )
      continue;
 
     fh = streamless[i].fh;
