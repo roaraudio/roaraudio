@@ -240,6 +240,9 @@ int clients_check_all (void) {
    max_fh = -1;
 
    for (i = 0; i < have_streamless; i++) {
+    if ( g_clients[streamless[i].id]->execed != -1 )
+     continue;
+
     fh = streamless[i].fh;
 
     ROAR_DBG("clients_check_all(void): fh=%i", fh);
