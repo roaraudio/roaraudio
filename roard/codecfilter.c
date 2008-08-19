@@ -79,12 +79,16 @@ int codecfilter_open (CODECFILTER_USERDATA_T * inst,
  info->codecfilter = *codecfilter_id;
 
  if (*codecfilter_id != -1) {
-  if ( filter->open )
-   return filter->open(inst, codec, info, filter);
+  if ( filter->open ) {
+   if ( (i = filter->open(inst, codec, info, filter)) == -1 ) {
+    info->codecfilter = *codecfilter_id = -1;
+   }
+   return i;
+  }
   return 0;
  }
 
- return -1;
+ return 0; // we found no filter -> ok
 }
 
 int codecfilter_close(CODECFILTER_USERDATA_T   inst, int codecfilter) {

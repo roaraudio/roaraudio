@@ -135,8 +135,10 @@ int streams_set_fh     (int id, int fh) {
 
  ((struct roar_stream *)g_streams[id])->fh = fh;
 
- codecfilter_open(&(g_streams[id]->codecfilter_inst), &(g_streams[id]->codecfilter), NULL,
-                  ROAR_STREAM(g_streams[id])->info.codec, g_streams[id]);
+ if ( codecfilter_open(&(g_streams[id]->codecfilter_inst), &(g_streams[id]->codecfilter), NULL,
+                  ROAR_STREAM(g_streams[id])->info.codec, g_streams[id]) == -1 ) {
+  return streams_delete(id);
+ }
 
  dir = ROAR_STREAM(g_streams[id])->dir;
 
