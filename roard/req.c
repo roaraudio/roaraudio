@@ -314,6 +314,8 @@ int req_on_exit      (int client, struct roar_message * mes, char * data) {
  mes->cmd     = ROAR_CMD_OK;
  mes->datalen = 0;
 
+ ROAR_DBG("req_on_exit(*): term=%i", term);
+
  if ( term ) {
   cleanup_listen_socket(1);
  } else {

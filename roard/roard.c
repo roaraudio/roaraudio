@@ -435,6 +435,8 @@ int main (int argc, char * argv[]) {
 void cleanup_listen_socket (int terminate) {
  close(g_listen_socket);
 
+ g_listen_socket = -1;
+
  if ( *server == '/' )
   unlink(server);
 
