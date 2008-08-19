@@ -9,9 +9,6 @@ int cf_vorbis_open(CODECFILTER_USERDATA_T * inst, int codec,
                                             struct roar_codecfilter   * filter) {
  struct codecfilter_vorbis_inst * self = malloc(sizeof(struct codecfilter_vorbis_inst));
  struct roar_stream * s = ROAR_STREAM(info);
- ogg_packet header;
- ogg_packet header_comm;
- ogg_packet header_code;
 
  if ( !self )
   return -1;
@@ -67,20 +64,6 @@ int cf_vorbis_open(CODECFILTER_USERDATA_T * inst, int codec,
                                      //  "RA"<<16 + PID<<8 + Stream ID
   ogg_stream_init(&(self->encoder.os), 0x52410000 + ((getpid() & 0xff)<<8) + s->id);
 
-  vorbis_analysis_headerout(&(self->encoder.vd), &(self->encoder.vc), &header, &header_comm, &header_code);
-
-  ogg_stream_packetin(&(self->encoder.os), &header);
-  ogg_stream_packetin(&(self->encoder.os), &header_comm);
-  ogg_stream_packetin(&(self->encoder.os), &header_code);
-
-  while (ogg_stream_flush(&(self->encoder.os), &(self->encoder.og))) {
-   if ( write(s->fh, self->encoder.og.header, self->encoder.og.header_len) != self->encoder.og.header_len ||
-        write(s->fh, self->encoder.og.body,   self->encoder.og.body_len  ) != self->encoder.og.body_len     ) {
-    free(self); // TODO: do we need addional cleanup?
-    return -1;
-   }
-  }
-
 #else
  free(self);
  return -1;
@@ -115,6 +98,34 @@ int cf_vorbis_close(CODECFILTER_USERDATA_T   inst) {
  return 0;
 }
 
+int cf_vorbis_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
+#ifdef ROAR_HAVE_LIBVORBISENC
+ struct codecfilter_vorbis_inst * self = (struct codecfilter_vorbis_inst *) inst;
+ struct roar_stream * s = ROAR_STREAM(self->stream);
+ ogg_packet header;
+ ogg_packet header_comm;
+ ogg_packet header_code;
+
+  vorbis_analysis_headerout(&(self->encoder.vd), &(self->encoder.vc), &header, &header_comm, &header_code);
+
+  ogg_stream_packetin(&(self->encoder.os), &header);
+  ogg_stream_packetin(&(self->encoder.os), &header_comm);
+  ogg_stream_packetin(&(self->encoder.os), &header_code);
+
+  while (ogg_stream_flush(&(self->encoder.os), &(self->encoder.og))) {
+   if ( write(s->fh, self->encoder.og.header, self->encoder.og.header_len) != self->encoder.og.header_len ||
+        write(s->fh, self->encoder.og.body,   self->encoder.og.body_len  ) != self->encoder.og.body_len     ) {
+    free(self); // TODO: do we need addional cleanup?
+    return -1;
+   }
+  }
+
+  return len; // we assume every thing was written (at least into our dsp anaylises buffer
+#else
+ errno = ENOSYS;
+ return -1;
+#endif
+}
 int cf_vorbis_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  struct codecfilter_vorbis_inst * self = (struct codecfilter_vorbis_inst *) inst;
  long r;

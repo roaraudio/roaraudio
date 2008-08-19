@@ -14,7 +14,7 @@ struct roar_codecfilter g_codecfilter[] = {
 
 #ifdef ROAR_HAVE_LIBVORBISFILE
  {ROAR_CODEC_OGG_VORBIS, "oggvorbis", "Ogg Vorbis decoder", NULL,
- cf_vorbis_open, cf_vorbis_close, NULL, NULL, cf_vorbis_read, NULL},
+ cf_vorbis_open, cf_vorbis_close, NULL, cf_vorbis_write, cf_vorbis_read, NULL},
 #endif
 
  {ROAR_CODEC_MIDI_FILE, "MIDIFILE", "timidity MIDI synth",
