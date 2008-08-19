@@ -66,7 +66,6 @@ int cf_speex_close(CODECFILTER_USERDATA_T   inst) {
 
 int cf_speex_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  struct codecfilter_speex_inst * self = (struct codecfilter_speex_inst *) inst;
- struct roar_stream * s = (struct roar_stream *) self->stream;
  int mode;
  uint16_t ui;
  int tmp;
@@ -77,7 +76,7 @@ int cf_speex_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
 
  if ( ! self->decoder ) {
   ROAR_DBG("cf_speex_read(*): no decoder, starting one!");
-  if ( read(s->fh, &ui, 2) != 2 )
+  if ( stream_vio_s_read(self->stream, &ui, 2) != 2 )
    return 0;
 
   mode = ntohs(ui);
@@ -136,7 +135,7 @@ int cf_speex_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
 
  while (still_todo) {
   ROAR_WARN("cf_speex_read(*): we sill need %i frames", still_todo);
-  if ( read(s->fh, &ui, 2) != 2 )
+  if ( stream_vio_s_read(self->stream, &ui, 2) != 2 )
    return -1;
 
   ui = ntohs(ui);
@@ -144,7 +143,7 @@ int cf_speex_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
   if ( ui > ROAR_SPEEX_MAX_CC )
    return 0;
 
-  if ( read(s->fh, self->cc, ui) != ui )
+  if ( stream_vio_s_read(self->stream, self->cc, ui) != ui )
    break;
 
   speex_bits_read_from(&(self->bits), self->cc, ui);

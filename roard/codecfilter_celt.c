@@ -114,7 +114,6 @@ int cf_celt_close(CODECFILTER_USERDATA_T   inst) {
 
 int cf_celt_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  struct codecfilter_celt_inst * self = (struct codecfilter_celt_inst *) inst;
- int fh = ((struct roar_stream *)self->stream)->fh;
  int r = 0;
  uint16_t fs;
  char * cbuf;
@@ -128,12 +127,12 @@ int cf_celt_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  }
 
  while ( r <= (len - self->s_buf) ) {
-  if ( read(fh, &fs, 2) != 2 )
+  if ( stream_vio_s_read(self->stream, &fs, 2) != 2 )
    break;
 
   fs = ROAR_NET2HOST16(fs);
 
-  if ( read(fh, self->ibuf, fs) != fs )
+  if ( stream_vio_s_read(self->stream, self->ibuf, fs) != fs )
    break;
 
   cbuf = buf + r;
@@ -147,10 +146,10 @@ int cf_celt_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
 
  if ( r < len ) {
 //  printf("r < len!\n");
-  if ( read(fh, &fs, 2) == 2 ) {
+  if ( stream_vio_s_read(self->stream, &fs, 2) == 2 ) {
    fs = ROAR_NET2HOST16(fs);
 //   printf("next: fs=%i\n", fs);
-   if ( read(fh, self->ibuf, fs) == fs ) {
+   if ( stream_vio_s_read(self->stream, self->ibuf, fs) == fs ) {
 //    printf("got data!\n");
     if ( celt_decode(self->decoder, (unsigned char *) self->ibuf, fs, (celt_int16_t *) self->obuf) >= 0 ) {
 //     printf("{ // decode rest\n");
