@@ -28,7 +28,7 @@ int cf_speex_open(CODECFILTER_USERDATA_T * inst, int codec,
 
  s->info.codec    = ROAR_CODEC_DEFAULT;
  s->info.bits     = 16; // speex hardcoded
- s->info.channels = 1; // only mono support at the moment
+ s->info.channels =  1; // only mono support at the moment
 
  *inst = (void*) self;
 
@@ -71,11 +71,20 @@ int cf_speex_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  int tmp;
  int still_todo = len / 2 /* 16 bit */;
  int ret = 0;
+ int fs2; // = self->frame_size * 2;
+ char magic[ROAR_SPEEX_MAGIC_LEN];
 
- ROAR_WARN("cf_speex_read(inst=%p, buf=%p, len=%i) = ?", inst, buf, len);
+ ROAR_DBG("cf_speex_read(inst=%p, buf=%p, len=%i) = ?", inst, buf, len);
 
  if ( ! self->decoder ) {
   ROAR_DBG("cf_speex_read(*): no decoder, starting one!");
+
+  if ( stream_vio_s_read(self->stream, magic, ROAR_SPEEX_MAGIC_LEN) != ROAR_SPEEX_MAGIC_LEN )
+   return 0;
+
+  if ( memcmp(magic, ROAR_SPEEX_MAGIC, ROAR_SPEEX_MAGIC_LEN) != 0 )
+   return -1;
+
   if ( stream_vio_s_read(self->stream, &ui, 2) != 2 )
    return 0;
 
@@ -96,35 +105,42 @@ int cf_speex_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
 
   speex_decoder_ctl(self->decoder, SPEEX_GET_FRAME_SIZE, &(self->frame_size));
 
+  fs2 = self->frame_size * 2;
 
-
-  ROAR_WARN("cf_speex_read(*): frame_size=%i (%i bytes)", self->frame_size, self->frame_size*2);
+  ROAR_DBG("cf_speex_read(*): frame_size=%i (%i bytes)", self->frame_size, fs2);
 
   if ( !self->cd ) {
-   self->cd = malloc((self->frame_size)*2);
+   self->cd = malloc(fs2);
    if ( !self->cd )
     return 0;
   }
 
   if ( !self->i_rest ) {
-   self->i_rest = malloc((self->frame_size)*2);
+   self->i_rest = malloc(fs2);
    if ( !self->i_rest )
     return 0;
   }
  }
+ fs2 = self->frame_size * 2;
 
  ROAR_DBG("cf_speex_read(*): Have a working decoder!");
 
- ROAR_DBG("cf_speex_read(*): frame_size=%i (%i bytes)", self->frame_size, self->frame_size*2);
+ ROAR_DBG("cf_speex_read(*): frame_size=%i (%i bytes)", self->frame_size, fs2);
  ROAR_DBG("cf_speex_read(*): i_rest is %i bytes after cd", ((void*)self->i_rest - (void*)self->cd));
 
 
  if ( self->fi_rest ) {
   if ( self->fi_rest > (still_todo*2) ) {
-   ROAR_WARN("cf_speex_read(*): discarding input rest data: buffer too long!");
-   self->fi_rest = 0;
+   ROAR_DBG("cf_speex_read(*): using data from input rest buffer: len=%i (no need to read new data)", self->fi_rest);
+   still_todo *= 2; // we will set this to zero one way or another,
+                    // so we don't need to care about soring a 'warong' value here.
+   memcpy(buf, self->i_rest, still_todo);
+   memmove(self->i_rest, self->i_rest + still_todo, self->fi_rest - still_todo);
+   self->fi_rest -= still_todo;
+   ret += still_todo;
+   still_todo = 0;
   } else {
-   ROAR_WARN("cf_speex_read(*): using data from input rest buffer: len=%i", self->fi_rest);
+   ROAR_DBG("cf_speex_read(*): using data from input rest buffer: len=%i", self->fi_rest);
    memcpy(buf, self->i_rest, self->fi_rest);
    buf += self->fi_rest;
    still_todo -= self->fi_rest/2;
@@ -134,7 +150,7 @@ int cf_speex_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  }
 
  while (still_todo) {
-  ROAR_WARN("cf_speex_read(*): we sill need %i frames", still_todo);
+  ROAR_DBG("cf_speex_read(*): we sill need %i frames", still_todo);
   if ( stream_vio_s_read(self->stream, &ui, 2) != 2 )
    return -1;
 
@@ -154,22 +170,22 @@ int cf_speex_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
    memcpy(buf, self->cd, still_todo*2);
    ret += still_todo*2;
    self->fi_rest = (self->frame_size - still_todo)*2;
-   ROAR_WARN("cf_speex_read(*): self->fi_rest=%i, off=%i", self->fi_rest, still_todo*2);
+   ROAR_DBG("cf_speex_read(*): self->fi_rest=%i, off=%i", self->fi_rest, still_todo*2);
    memcpy(self->i_rest, (self->cd)+(still_todo*2), self->fi_rest);
    still_todo = 0;
   } else {
-   memcpy(buf, self->cd, self->frame_size*2);
-   buf        += self->frame_size*2;
-   ret        += self->frame_size*2;
+   memcpy(buf, self->cd, fs2);
+   buf        += fs2;
+   ret        += fs2;
    still_todo -= self->frame_size;
   }
  }
 
  if ( still_todo ) {
-  ROAR_WARN("cf_speex_read(*): could not read all reqquested data, returning %i byte less", still_todo*2);
+  ROAR_DBG("cf_speex_read(*): could not read all reqquested data, returning %i byte less", still_todo*2);
  }
 
- ROAR_WARN("cf_speex_read(*) = %i", ret);
+ ROAR_DBG("cf_speex_read(*) = %i", ret);
 
  return ret;
 }
