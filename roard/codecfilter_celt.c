@@ -170,10 +170,53 @@ int cf_celt_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  return r;
 }
 
+#define BS (ROAR_STREAM(self->stream)->info.channels * 64)
 int cf_celt_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  struct codecfilter_celt_inst * self = (struct codecfilter_celt_inst *) inst;
+ int have = 0;
+ int org_len = len;
+ int diff;
+ int fs2 = self->frame_size * 2 * ROAR_STREAM(self->stream)->info.channels;
+ uint16_t pkglen_net, pkglen;
+ unsigned char cbits[BS+2];
 
- return 0;
+ if ( (self->fo_rest + len) > fs2 ) {
+  if ( self->fo_rest ) {
+   memcpy(self->obuf, self->o_rest, self->fo_rest);
+   have = self->fo_rest;
+   self->fo_rest = 0;
+  }
+
+  memcpy(self->obuf+have, buf, (diff=fs2-have));
+  buf += diff;
+  len -= diff;
+
+  pkglen     = celt_encode(self->encoder, (celt_int16_t *) self->obuf, cbits+2, BS);
+  pkglen_net = ROAR_HOST2NET16(pkglen);
+  *(uint16_t*)cbits = pkglen_net;
+
+  if ( stream_vio_s_write(self->stream, cbits, pkglen+2) == -1 )
+   return -1;
+
+  while (len >= fs2) {
+   pkglen     = celt_encode(self->encoder, (celt_int16_t *) buf, cbits+2, BS);
+   pkglen_net = ROAR_HOST2NET16(pkglen);
+   *(uint16_t*)cbits = pkglen_net;
+
+   if ( stream_vio_s_write(self->stream, cbits, pkglen+2) == -1 )
+    return -1;
+   len -= fs2;
+   buf += fs2;
+  }
+ }
+
+ if ( len ) {
+  memcpy(self->o_rest + self->fo_rest, buf, len);
+  self->fo_rest += len;
+  len            = 0;
+ } 
+
+ return org_len;
 }
 
 #endif

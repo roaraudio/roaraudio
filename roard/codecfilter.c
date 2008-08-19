@@ -23,7 +23,7 @@ struct roar_codecfilter g_codecfilter[] = {
 
 #ifdef ROAR_HAVE_LIBCELT
  {ROAR_CODEC_ROAR_CELT, "RoarCELT", "RoarAudio CELT", NULL,
-  cf_celt_open, cf_celt_close, NULL, NULL, cf_celt_read, NULL},
+  cf_celt_open, cf_celt_close, NULL, cf_celt_write, cf_celt_read, NULL},
 #endif
 
 #ifdef ROAR_HAVE_LIBSPEEX
