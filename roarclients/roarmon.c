@@ -13,6 +13,7 @@ void usage (void) {
         "  --rate   RATE      - Set sample rate\n"
         "  --bits   BITS      - Set bits per sample\n"
         "  --chans  CHANNELS  - Set number of channels\n"
+        "  --codec  CODEC     - Set the codec\n"
         "  --help             - Show this help\n"
        );
 
@@ -40,6 +41,8 @@ int main (int argc, char * argv[]) {
    bits = atoi(argv[++i]);
   } else if ( strcmp(k, "--channels") == 0 ) {
    channels = atoi(argv[++i]);
+  } else if ( strcmp(k, "--codec") == 0 ) {
+   codec = roar_str2codec(argv[++i]);
   } else if ( strcmp(k, "--help") == 0 ) {
    usage();
    return 0;
@@ -51,7 +54,7 @@ int main (int argc, char * argv[]) {
  }
 
  if ( (fh = roar_simple_monitor(rate, channels, bits, codec, server, "roarmon")) == -1 ) {
-  fprintf(stderr, "Error: can not start playback\n");
+  fprintf(stderr, "Error: can not start monetoring\n");
   return 1;
  }
 
