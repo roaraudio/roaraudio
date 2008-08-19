@@ -74,6 +74,19 @@ void usage (void) {
  printf("\n");
 }
 
+int restart_server (char * server) {
+ struct roar_connection con;
+ if ( roar_connect(&con, server) == -1 ) {
+  return -1;
+ }
+
+ if ( roar_terminate(&con, 1) == -1 ) {
+  return -1;
+ }
+
+ return roar_disconnect(&con);
+}
+
 #define R_SETUID 1
 #define R_SETGID 2
 
@@ -158,6 +171,11 @@ int main (int argc, char * argv[]) {
   if ( strcmp(k, "-h") == 0 || strcmp(k, "--help") == 0 ) {
    usage();
    return 0;
+
+  } else if ( strcmp(k, "--restart") == 0 ) {
+   if ( restart_server(server) == -1 ) {
+    ROAR_WARN("Can not terminate old server (not running at %s?), tring to continue anyway", server);
+   }
 
   } else if ( strcmp(k, "--demon") == 0 ) {
    demon = 1;
