@@ -228,7 +228,7 @@ int main (int argc, char * argv[]) {
   } else if ( strcmp(k, "-b") == 0 || strcmp(k, "--bind") == 0 || strcmp(k, "-s") == 0 || strcmp(k, "--sock") == 0 ) {
    server = argv[++i];
 
-  } else if ( strcmp(k, "-t") == 0 ) {
+  } else if ( strcmp(k, "-t") == 0 || strcmp(k, "--tcp") == 0 ) {
    if ( sock_type != ROAR_SOCKET_TYPE_TCP && sock_type != ROAR_SOCKET_TYPE_TCP6 )
     sock_type = ROAR_SOCKET_TYPE_TCP;
 
@@ -249,11 +249,11 @@ int main (int argc, char * argv[]) {
     return 1;
 #endif
 
-  } else if ( strcmp(k, "-u") == 0 ) {
+  } else if ( strcmp(k, "-u") == 0 || strcmp(k, "--unix") == 0 ) {
    // ignore this case as it is the default behavor.
    sock_type = ROAR_SOCKET_TYPE_UNIX;
 
-  } else if ( strcmp(k, "-n") == 0 ) {
+  } else if ( strcmp(k, "-n") == 0 || strcmp(k, "--decnet") == 0 ) {
 #ifdef ROAR_HAVE_LIBDNET
     port   = ROAR_DEFAULT_NUM;
     strcpy(decnethost, ROAR_DEFAULT_LISTEN_OBJECT);
