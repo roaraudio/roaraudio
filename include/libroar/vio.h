@@ -11,6 +11,8 @@ struct roar_vio_calls {
  off_t   (*lseek)(int fildes, off_t offset, int whence);
 };
 
+int roar_vio_init_calls (struct roar_vio_calls * calls);
+
 #endif
 
 //ll
