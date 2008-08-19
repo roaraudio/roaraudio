@@ -9,11 +9,16 @@
 
 struct roar_stream_server;
 
+#define ROAR_CODECFILTER_NONE  0
+#define ROAR_CODECFILTER_READ  1
+#define ROAR_CODECFILTER_WRITE 2
+
 struct roar_codecfilter {
  int    codec;
  char * name;
  char * desc;
  char * options;
+ int    flags;
  int (*open )(CODECFILTER_USERDATA_T * inst, int codec,
                                              struct roar_stream_server * info,
                                              struct roar_codecfilter   * filter);

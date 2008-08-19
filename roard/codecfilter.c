@@ -3,35 +3,40 @@
 #include "roard.h"
 
 struct roar_codecfilter g_codecfilter[] = {
- {-1,                     "null", "null codec filter", NULL,                      NULL, NULL, NULL, NULL, NULL, NULL},
+ {-1,                     "null", "null codec filter", NULL, ROAR_CODECFILTER_NONE, NULL, NULL, NULL, NULL, NULL, NULL},
 
- {ROAR_CODEC_RIFF_WAVE, "RIFF/WAVE", "RIFF/WAVE", NULL,
+ {ROAR_CODEC_RIFF_WAVE, "RIFF/WAVE", "RIFF/WAVE", NULL, ROAR_CODECFILTER_READ,
   cf_wave_open, cf_wave_close, NULL, NULL, cf_wave_read, NULL},
 
  {ROAR_CODEC_OGG_GENERAL, "cmd",  "ogg123",
-  "ogg123 -q -d raw -f - -",
+  "ogg123 -q -d raw -f - -", ROAR_CODECFILTER_READ,
   cf_cmd_open, NULL, NULL, NULL, NULL, NULL},
 
 #ifdef ROAR_HAVE_LIBVORBISFILE
  {ROAR_CODEC_OGG_VORBIS, "oggvorbis", "Ogg Vorbis decoder", NULL,
+#ifdef ROAR_HAVE_LIBVORBISENC
+ ROAR_CODECFILTER_READ|ROAR_CODECFILTER_WRITE,
+#else
+ ROAR_CODECFILTER_READ,
+#endif
  cf_vorbis_open, cf_vorbis_close, NULL, cf_vorbis_write, cf_vorbis_read, NULL},
 #endif
 
  {ROAR_CODEC_MIDI_FILE, "MIDIFILE", "timidity MIDI synth",
-  "timidity -Or1sl -s %R -o - -",
+  "timidity -Or1sl -s %R -o - -", ROAR_CODECFILTER_READ,
   cf_cmd_open, NULL, NULL, NULL, NULL, NULL},
 
 #ifdef ROAR_HAVE_LIBCELT
- {ROAR_CODEC_ROAR_CELT, "RoarCELT", "RoarAudio CELT", NULL,
+ {ROAR_CODEC_ROAR_CELT, "RoarCELT", "RoarAudio CELT", NULL, ROAR_CODECFILTER_READ|ROAR_CODECFILTER_WRITE,
   cf_celt_open, cf_celt_close, NULL, cf_celt_write, cf_celt_read, NULL},
 #endif
 
 #ifdef ROAR_HAVE_LIBSPEEX
- {ROAR_CODEC_ROAR_SPEEX, "RoarSPEEX", "RoarAudio SPEEX", NULL,
+ {ROAR_CODEC_ROAR_SPEEX, "RoarSPEEX", "RoarAudio SPEEX", NULL, ROAR_CODECFILTER_READ,
   cf_speex_open, cf_speex_close, NULL, NULL, cf_speex_read, NULL},
 #endif
 
- {ROAR_CODEC_FLAC, "cmd",  "ogg123",
+ {ROAR_CODEC_FLAC, "cmd",  "flac",
 #if BYTE_ORDER == BIG_ENDIAN
   "flac --silent --force-raw-format --sign=signed --endian=big -d - -o -",
 #elif BYTE_ORDER == LITTLE_ENDIAN
@@ -39,9 +44,10 @@ struct roar_codecfilter g_codecfilter[] = {
 #else
   "false",
 #endif
+  ROAR_CODECFILTER_READ,
   cf_cmd_open, NULL, NULL, NULL, NULL, NULL},
 
- {-1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL} // end of list
+ {-1, NULL, NULL, NULL, ROAR_CODECFILTER_NONE, NULL, NULL, NULL, NULL, NULL, NULL} // end of list
 };
 
 void print_codecfilterlist (void) {
