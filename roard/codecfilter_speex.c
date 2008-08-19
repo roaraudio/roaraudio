@@ -192,6 +192,31 @@ int cf_speex_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
 
 int cf_speex_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  struct codecfilter_speex_inst * self = (struct codecfilter_speex_inst *) inst;
+ uint16_t mode = ROAR_SPEEX_MODE_UWB;
+ int tmp;
+
+ if ( ! self->encoder ) {
+  if ( stream_vio_s_write(self->stream, ROAR_SPEEX_MAGIC, ROAR_SPEEX_MAGIC_LEN) != ROAR_SPEEX_MAGIC_LEN )
+   return -1;
+
+  if ( mode == ROAR_SPEEX_MODE_NB ) {
+   self->encoder = speex_encoder_init(&speex_nb_mode);
+  } else if ( mode == ROAR_SPEEX_MODE_WB ) {
+   self->encoder = speex_encoder_init(&speex_wb_mode);
+  } else if ( mode == ROAR_SPEEX_MODE_UWB ) {
+   self->encoder = speex_encoder_init(&speex_uwb_mode);
+  }
+
+  mode = ROAR_HOST2NET16(mode);
+
+  if ( stream_vio_s_write(self->stream, &mode, 2) != 2 )
+   return -1;
+
+  tmp = 8;
+  speex_encoder_ctl(self->encoder, SPEEX_SET_QUALITY,    &tmp);
+  speex_encoder_ctl(self->encoder, SPEEX_GET_FRAME_SIZE, &(self->frame_size));
+
+ }
 
  return -1;
 }

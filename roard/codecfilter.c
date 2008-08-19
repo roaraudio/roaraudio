@@ -33,7 +33,7 @@ struct roar_codecfilter g_codecfilter[] = {
 
 #ifdef ROAR_HAVE_LIBSPEEX
  {ROAR_CODEC_ROAR_SPEEX, "RoarSPEEX", "RoarAudio SPEEX", NULL, ROAR_CODECFILTER_READ,
-  cf_speex_open, cf_speex_close, NULL, NULL, cf_speex_read, NULL},
+  cf_speex_open, cf_speex_close, NULL, cf_speex_write, cf_speex_read, NULL},
 #endif
 
  {ROAR_CODEC_FLAC, "cmd",  "flac",
