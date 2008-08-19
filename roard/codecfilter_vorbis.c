@@ -119,8 +119,10 @@ int cf_vorbis_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
   ogg_stream_packetin(&(self->encoder.os), &header_code);
 
   while (ogg_stream_flush(&(self->encoder.os), &(self->encoder.og))) {
-   if ( write(s->fh, self->encoder.og.header, self->encoder.og.header_len) != self->encoder.og.header_len ||
-        write(s->fh, self->encoder.og.body,   self->encoder.og.body_len  ) != self->encoder.og.body_len     ) {
+   if ( stream_vio_s_write(self->stream, self->encoder.og.header, self->encoder.og.header_len)
+                                                                 != self->encoder.og.header_len ||
+        stream_vio_s_write(self->stream, self->encoder.og.body,   self->encoder.og.body_len  )
+                                                                 != self->encoder.og.body_len     ) {
     free(self); // TODO: do we need addional cleanup?
     return -1;
    }
@@ -158,8 +160,8 @@ int cf_vorbis_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
     ogg_stream_packetin(&(self->encoder.os), &(self->encoder.op));
 
     while( ogg_stream_pageout(&(self->encoder.os), &(self->encoder.og)) ) {
-     write(s->fh, self->encoder.og.header, self->encoder.og.header_len);
-     write(s->fh, self->encoder.og.body,   self->encoder.og.body_len  );
+     stream_vio_s_write(self->stream, self->encoder.og.header, self->encoder.og.header_len);
+     stream_vio_s_write(self->stream, self->encoder.og.body,   self->encoder.og.body_len  );
     }
    }
   }
