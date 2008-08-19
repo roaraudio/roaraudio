@@ -306,10 +306,19 @@ int req_on_set_standby (int client, struct roar_message * mes, char * data) {
 }
 
 int req_on_exit      (int client, struct roar_message * mes, char * data) {
+ int term = 0;
+
+ if ( mes->datalen == 1 )
+  term = mes->data[0];
+
  mes->cmd     = ROAR_CMD_OK;
  mes->datalen = 0;
 
- alive = 0;
+ if ( term ) {
+  cleanup_listen_socket(1);
+ } else {
+  alive = 0;
+ }
 
  return 0;
 }
