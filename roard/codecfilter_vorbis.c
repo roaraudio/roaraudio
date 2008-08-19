@@ -76,7 +76,7 @@ int cf_vorbis_open(CODECFILTER_USERDATA_T * inst, int codec,
   while (ogg_stream_flush(&(self->encoder.os), &(self->encoder.og))) {
    if ( write(s->fh, self->encoder.og.header, self->encoder.og.header_len) != self->encoder.og.header_len ||
         write(s->fh, self->encoder.og.body,   self->encoder.og.body_len  ) != self->encoder.og.body_len     ) {
-    free(self); // TODO: do we need adtional cleanup?
+    free(self); // TODO: do we need addional cleanup?
     return -1;
    }
   }
