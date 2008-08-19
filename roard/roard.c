@@ -432,12 +432,18 @@ int main (int argc, char * argv[]) {
  return 0;
 }
 
-void clean_quit_prep (void) {
+void cleanup_listen_socket (int terminate) {
  close(g_listen_socket);
 
  if ( *server == '/' )
   unlink(server);
 
+ if ( terminate )
+  g_terminate = 1;
+}
+
+void clean_quit_prep (void) {
+ cleanup_listen_socket(0);
 
  sources_free();
  streams_free();
