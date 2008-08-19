@@ -30,6 +30,7 @@ struct roar_stream_server {
  int socktype;
  int pre_underruns;
  int post_underruns;
+ struct roar_vio_calls vio;
 } * g_streams[ROAR_STREAMS_MAX];
 
 int streams_init   (void);

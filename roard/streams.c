@@ -70,6 +70,8 @@ int streams_new    (void) {
     s->meta[j].value  = NULL;
    }
 
+   roar_vio_init_calls(&(s->vio));
+
    g_streams[i] = s;
    ROAR_DBG("streams_new(void): n->id=%i", n->id);
    ROAR_DBG("streams_new(void) = %i", i);
