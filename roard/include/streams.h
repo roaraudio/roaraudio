@@ -61,6 +61,10 @@ int streams_get_mixbuffers   (void *** bufferlist, struct roar_audio_info * info
 int streams_get_outputbuffer (int id, void ** buffer, size_t size);
 int streams_fill_mixbuffer   (int id, struct roar_audio_info * info);
 
+ssize_t stream_vio_read (int stream, void *buf, size_t count);
+ssize_t stream_vio_write(int stream, void *buf, size_t count);
+ssize_t stream_vio_s_read (struct roar_stream_server * stream, void *buf, size_t count);
+ssize_t stream_vio_s_write(struct roar_stream_server * stream, void *buf, size_t count);
 
 #endif
 

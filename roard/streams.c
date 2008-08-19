@@ -701,4 +701,50 @@ int streams_send_filter(int id) {
  return -1;
 }
 
+
+// VIO:
+
+ssize_t stream_vio_read (int stream, void *buf, size_t count) {
+ struct roar_stream_server * s = g_streams[stream];
+
+ if ( !s )
+  return -1;
+
+ return stream_vio_s_read(s, buf, count);
+}
+
+ssize_t stream_vio_write(int stream, void *buf, size_t count) {
+ struct roar_stream_server * s = g_streams[stream];
+
+ if ( !s )
+  return -1;
+
+ return stream_vio_s_write(s, buf, count);
+}
+
+
+ssize_t stream_vio_s_read (struct roar_stream_server * stream, void *buf, size_t count) {
+ errno = 0;
+
+ if ( !stream )
+  return -1;
+
+ if ( ! stream->vio.read )
+  return -1;
+
+ return stream->vio.read(ROAR_STREAM(stream)->fh, buf, count, stream->vio.inst);
+}
+
+ssize_t stream_vio_s_write(struct roar_stream_server * stream, void *buf, size_t count) {
+ errno = 0;
+
+ if ( !stream )
+  return -1;
+
+ if ( ! stream->vio.write )
+  return -1;
+
+ return stream->vio.write(ROAR_STREAM(stream)->fh, buf, count, stream->vio.inst);
+}
+
 //ll
