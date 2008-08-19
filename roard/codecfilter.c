@@ -52,11 +52,29 @@ struct roar_codecfilter g_codecfilter[] = {
 
 void print_codecfilterlist (void) {
  int i;
+ int flags;
+ char mode[5];
+
+ printf("  Codec        Filtername   Mode - Description\n");
+ printf("------------------------------------------------------\n");
 
  for (i = 0; g_codecfilter[i].name != NULL; i++) {
-  printf("  %-12s %-12s - %s\n",
+  flags = g_codecfilter[i].flags;
+
+  if ( flags == ROAR_CODECFILTER_NONE ) {
+   strcpy(mode, "none");
+  } else {
+   strcpy(mode, "    ");
+   if ( flags & ROAR_CODECFILTER_READ )
+    mode[0] = 'r';
+   if ( flags & ROAR_CODECFILTER_WRITE )
+    mode[1] = 'w';
+  }
+ 
+  printf("  %-12s %-12s %-4s - %s\n",
              roar_codec2str(g_codecfilter[i].codec),
              g_codecfilter[i].name,
+             mode,
              g_codecfilter[i].desc
              );
  }
