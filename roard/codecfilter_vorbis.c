@@ -147,6 +147,22 @@ int cf_vorbis_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
     }
    }
   }
+
+  vorbis_analysis_wrote(&(self->encoder.vd), i);
+
+  while ( vorbis_analysis_blockout(&(self->encoder.vd), &(self->encoder.vb)) == 1 ) {
+   vorbis_analysis(&(self->encoder.vb), &(self->encoder.op));
+   vorbis_bitrate_addblock(&(self->encoder.vb));
+
+   while ( vorbis_bitrate_flushpacket(&(self->encoder.vd), &(self->encoder.op)) ) {
+    ogg_stream_packetin(&(self->encoder.os), &(self->encoder.op));
+
+    while( ogg_stream_pageout(&(self->encoder.os), &(self->encoder.og)) ) {
+     write(s->fh, self->encoder.og.header, self->encoder.og.header_len);
+     write(s->fh, self->encoder.og.body,   self->encoder.og.body_len  );
+    }
+   }
+  }
  }
 
   return len; // we assume every thing was written (at least into our dsp anaylises buffer
