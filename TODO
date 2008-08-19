@@ -2,7 +2,7 @@ Things we need to do:
  * add _working_ resampling code
  * add support for sync streams
  * find out where the memory leaks are
- * remove all hardcoded paths from Makefiles and add install target
+ * add install target to Makefile
 
 Things we should do:
  * add a lot other things
