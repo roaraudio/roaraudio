@@ -1,4 +1,4 @@
-TARGETS=roarcat roarcatad roarcat2sock roarcatsendfile roarcatplay roarctl roarmon roarsockconnect roartypes roarvorbis roarvumeter roarfilt roarsin roar-config polytest roarsocktypes
+TARGETS=roarcat roarcatad roarcat2sock roarcatsendfile roarcatplay roarctl roarmon roarsockconnect roartypes roarvorbis roarvumeter roarfilt roarsin roar-config polytest roarsocktypes roarshout
 
 include ../Makefile.conf
 
@@ -32,4 +32,6 @@ roarsocktypes: roarsocktypes.o
 roar-config: roar-config.o
 roarvorbis: roarvorbis.o
 	${CC} ${LDFLAGS} -o roarvorbis roarvorbis.o $(lib_vorbisfile)
+roarshout: roarshout.o
+	${CC} ${LDFLAGS} -o roarshout roarshout.o $(lib_shout)
 polytest: polytest.o
