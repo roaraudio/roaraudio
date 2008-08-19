@@ -180,7 +180,7 @@ int cf_vorbis_update_stream (struct codecfilter_vorbis_inst * self) {
  vorbis_info *vi = ov_info(&(self->vf), -1);
  char **ptr = ov_comment(&(self->vf), -1)->user_comments;
  char key[80] = {0}, value[80] = {0};
- struct roar_stream * s = (struct roar_stream *) self->stream;
+ struct roar_stream * s = ROAR_STREAM(self->stream);
  int type;
  int j, h = 0;
  float rpg_track = 0, rpg_album = 0;
