@@ -160,6 +160,8 @@ int clients_check_all (void) {
   if ( (fh = g_clients[i]->fh) != -1 ) {
    have++;
 
+   ROAR_DBG("clients_check_all(*): fh=%i", fh);
+
    FD_SET(fh, &r);
    FD_SET(fh, &e);
 
