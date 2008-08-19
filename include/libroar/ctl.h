@@ -11,7 +11,8 @@
 int roar_get_standby   (struct roar_connection * con);
 int roar_set_standby   (struct roar_connection * con, int state);
 
-int roar_exit   (struct roar_connection * con);
+int roar_exit           (struct roar_connection * con);
+int roar_terminate      (struct roar_connection * con, int terminate);
 int roar_server_oinfo   (struct roar_connection * con, struct roar_stream * s);
 
 

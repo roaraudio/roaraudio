@@ -59,12 +59,18 @@ int roar_set_standby   (struct roar_connection * con, int state) {
 }
 
 int roar_exit   (struct roar_connection * con) {
+ return roar_terminate(con, 0);
+}
+
+int roar_terminate (struct roar_connection * con, int terminate) {
  struct roar_message mes;
 
  memset(&mes, 0, sizeof(struct roar_message)); // make valgrind happy!
 
- mes.cmd = ROAR_CMD_EXIT;
- mes.datalen = 0;
+ mes.cmd     = ROAR_CMD_EXIT;
+ mes.datalen = 1;
+ mes.data[0] = terminate;
+
  if ( roar_req(con, &mes, NULL) == -1 )
   return -1;
 
