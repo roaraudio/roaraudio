@@ -618,7 +618,7 @@ int streams_send_mon   (int id) {
 
  ROAR_DBG("streams_send_mon(id=%i) = ?", id);
 
- s = (struct roar_stream *) (ss = g_streams[id]);
+ s = ROAR_STREAM((ss = g_streams[id]));
 
  if ( (fh = s->fh) == -1 )
   return 0;
@@ -628,8 +628,19 @@ int streams_send_mon   (int id) {
 
  ROAR_DBG("streams_send_mon(id=%i): fh = %i", id, fh);
 
- if ( write(fh, g_output_buffer, g_output_buffer_len) == g_output_buffer_len )
-  return 0;
+ errno = 0;
+
+ if ( ss->codecfilter == -1 ) {
+  if ( write(fh, g_output_buffer, g_output_buffer_len) == g_output_buffer_len )
+   return 0;
+ } else {
+  if ( codecfilter_write(ss->codecfilter_inst, ss->codecfilter, g_output_buffer, g_output_buffer_len)
+            == g_output_buffer_len ) {
+   return 0;
+  } else { // we cann't retry on codec filetered streams
+   return -1;
+  }
+ }
 
  if ( errno == EAGAIN ) {
   // ok, the client blocks for a moment, we try to sleep a bit an retry in the hope not to
