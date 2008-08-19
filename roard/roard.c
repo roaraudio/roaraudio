@@ -451,12 +451,15 @@ int main (int argc, char * argv[]) {
 }
 
 void cleanup_listen_socket (int terminate) {
- close(g_listen_socket);
 
- g_listen_socket = -1;
+ if ( g_listen_socket != -1 ) {
+  close(g_listen_socket);
 
- if ( *server == '/' )
-  unlink(server);
+  g_listen_socket = -1;
+
+  if ( *server == '/' )
+   unlink(server);
+ }
 
  if ( terminate )
   g_terminate = 1;
