@@ -32,16 +32,14 @@ int cf_wave_close(CODECFILTER_USERDATA_T   inst) {
 
 int cf_wave_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  struct codecfilter_wave_inst * self = (struct codecfilter_wave_inst *) inst;
- int fh = ((struct roar_stream *)self->stream)->fh;
  int r = -1;
  char tbuf[44];
  struct roar_stream * s = ROAR_STREAM(self->stream);
 
  if ( self->opened ) {
-  return read(fh, buf, len);
+  return stream_vio_s_read(self->stream, buf, len);
  } else {
-  if (read(fh, tbuf, 44) != 44) {
-   close(fh);
+  if (stream_vio_s_read(self->stream, tbuf, 44) != 44) {
    return -1;
   }
 
