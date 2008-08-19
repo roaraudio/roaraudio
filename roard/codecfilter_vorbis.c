@@ -160,8 +160,11 @@ int cf_vorbis_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
     ogg_stream_packetin(&(self->encoder.os), &(self->encoder.op));
 
     while( ogg_stream_pageout(&(self->encoder.os), &(self->encoder.og)) ) {
-     stream_vio_s_write(self->stream, self->encoder.og.header, self->encoder.og.header_len);
-     stream_vio_s_write(self->stream, self->encoder.og.body,   self->encoder.og.body_len  );
+     if (
+          stream_vio_s_write(self->stream, self->encoder.og.header, self->encoder.og.header_len) == -1 ||
+          stream_vio_s_write(self->stream, self->encoder.og.body,   self->encoder.og.body_len  ) == -1   ) {
+      return -1;
+     }
     }
    }
   }
