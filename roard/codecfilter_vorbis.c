@@ -106,6 +106,8 @@ int cf_vorbis_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  ogg_packet header_comm;
  ogg_packet header_code;
 
+ if ( ! self->opened ) {
+ } else {
   vorbis_analysis_headerout(&(self->encoder.vd), &(self->encoder.vc), &header, &header_comm, &header_code);
 
   ogg_stream_packetin(&(self->encoder.os), &header);
@@ -119,6 +121,8 @@ int cf_vorbis_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
     return -1;
    }
   }
+  self->opened = 1;
+ }
 
   return len; // we assume every thing was written (at least into our dsp anaylises buffer
 #else
