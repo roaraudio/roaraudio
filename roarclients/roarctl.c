@@ -25,6 +25,9 @@ void usage (void) {
         "  resume, on              - Go into active mode\n"
         "  standbymode             - Show current standby mode\n"
         "  exit                    - Quits the roard (must be used as last command)\n"
+        "  terminate               - Like exit but let the server up to serve still connected clients,\n"
+        "                            new clients cann't connect and the server terminates after the last\n"
+        "                            client disconnected\n"
         "\n"
         "  volume ID CHAN V0 V1... - Sets volume for stream ID\n"
         "                            CHAN is the number of channels or 'mono' or 'stereo'\n"
@@ -399,6 +402,13 @@ int main (int argc, char * argv[]) {
     fprintf(stderr, "Error: can not quit server\n");
    } else {
     printf("Server quited\n");
+    break;
+   }
+  } else if ( !strcmp(k, "terminate") ) {
+   if ( roar_terminate(&con, 1) == -1 ) {
+    fprintf(stderr, "Error: can not terminate server\n");
+   } else {
+    printf("Server got asked to quited\n");
     break;
    }
 
