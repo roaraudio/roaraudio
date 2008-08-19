@@ -2,6 +2,8 @@
 
 #include <roaraudio.h>
 
+#ifdef ROAR_HAVE_LIBSHOUT
+
 #define BUFSIZE 1024
 
 void usage (void) {
@@ -71,4 +73,10 @@ int main (int argc, char * argv[]) {
  return 0;
 }
 
+#else
+int main (void) {
+ fprintf(stderr, "No libshout support compiled in!\n");
+ return 1;
+}
+#endif
 //ll
