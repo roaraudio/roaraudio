@@ -2,6 +2,14 @@
 
 #include "libroaresd.h"
 
+#if BYTE_ORDER == BIG_ENDIAN
+#define CODEC_DEF_8BIT ROAR_CODEC_PCM_U_BE
+#elif BYTE_ORDER == LITTLE_ENDIAN
+#define CODEC_DEF_8BIT ROAR_CODEC_PCM_U_LE
+#else
+#define CODEC_DEF_8BIT ROAR_CODEC_PCM_U_PDP
+#endif
+
 /* open a socket for playing, monitoring, or recording as a stream */
 /* the *_fallback functions try to open /dev/dsp if there's no EsounD */
 int esd_play_stream( esd_format_t format, int rate,
@@ -11,7 +19,8 @@ int esd_play_stream( esd_format_t format, int rate,
  int codec = ROAR_CODEC_DEFAULT;
 
  if ( (format & ESD_BITS8) ) {
-  bits = 8;
+  bits  = 8;
+  codec = CODEC_DEF_8BIT;
  } else {
   bits = 16;
  }
@@ -45,7 +54,8 @@ int esd_monitor_stream( esd_format_t format, int rate,
  int codec = ROAR_CODEC_DEFAULT;
 
  if ( (format & ESD_BITS8) ) {
-  bits = 8;
+  bits  = 8;
+  codec = CODEC_DEF_8BIT;
  } else {
   bits = 16;
  }
@@ -70,7 +80,8 @@ int esd_filter_stream( esd_format_t format, int rate,
  int codec = ROAR_CODEC_DEFAULT;
 
  if ( (format & ESD_BITS8) ) {
-  bits = 8;
+  bits  = 8;
+  codec = CODEC_DEF_8BIT;
  } else {
   bits = 16;
  }
