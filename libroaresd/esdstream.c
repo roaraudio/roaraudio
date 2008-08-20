@@ -18,11 +18,11 @@ int esd_play_stream( esd_format_t format, int rate,
  int bits;
  int codec = ROAR_CODEC_DEFAULT;
 
- if ( (format & ESD_BITS8) ) {
+ if ( (format & ESD_BITS16) ) {
+  bits  = 16;
+ } else {
   bits  = 8;
   codec = CODEC_DEF_8BIT;
- } else {
-  bits = 16;
  }
 
  if ( (format & ESD_MONO) ) {
@@ -53,11 +53,13 @@ int esd_monitor_stream( esd_format_t format, int rate,
  int bits;
  int codec = ROAR_CODEC_DEFAULT;
 
- if ( (format & ESD_BITS8) ) {
+ ROAR_DBG("esd_monitor_stream(format=%x, rate=%i, host='%s', name='%s') = ?", format, rate, host, name);
+
+ if ( (format & ESD_BITS16) ) {
+  bits  = 16;
+ } else {
   bits  = 8;
   codec = CODEC_DEF_8BIT;
- } else {
-  bits = 16;
  }
 
  if ( (format & ESD_MONO) ) {
@@ -79,11 +81,11 @@ int esd_filter_stream( esd_format_t format, int rate,
  int bits;
  int codec = ROAR_CODEC_DEFAULT;
 
- if ( (format & ESD_BITS8) ) {
+ if ( (format & ESD_BITS16) ) {
+  bits  = 16;
+ } else {
   bits  = 8;
   codec = CODEC_DEF_8BIT;
- } else {
-  bits = 16;
  }
 
  if ( (format & ESD_MONO) ) {

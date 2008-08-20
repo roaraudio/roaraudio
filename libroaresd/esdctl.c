@@ -34,10 +34,10 @@ int esd_resume( int esd ) {
 void esd_print_server_info( esd_server_info_t *server_info ) {
  char buf[80] = "";
 
- if ( server_info->format & ESD_BITS8 )
-  strcat(buf, "8 bit ");
- else
+ if ( server_info->format & ESD_BITS16 )
   strcat(buf, "16 bit ");
+ else
+  strcat(buf, "8 bit ");
 
  if ( server_info->format & ESD_STEREO )
   strcat(buf, "stereo ");
@@ -53,10 +53,10 @@ void esd_print_server_info( esd_server_info_t *server_info ) {
 void esd_print_player_info( esd_player_info_t *player_info ) {
  char buf[80] = "";
 
- if ( player_info->format & ESD_BITS8 )
-  strcat(buf, "8 bit ");
- else
+ if ( player_info->format & ESD_BITS16 )
   strcat(buf, "16 bit ");
+ else
+  strcat(buf, "8 bit ");
 
  if ( player_info->format & ESD_MONO )
   strcat(buf, "stereo ");
