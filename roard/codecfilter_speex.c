@@ -200,6 +200,8 @@ int cf_speex_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  int ret = 0;
  int need_extra;
 
+ ROAR_DBG("cf_speex_write(inst=%p, buf=%p, len=%i) = ?", inst, buf, len);
+
  if ( ! self->encoder ) {
   if ( stream_vio_s_write(self->stream, ROAR_SPEEX_MAGIC, ROAR_SPEEX_MAGIC_LEN) != ROAR_SPEEX_MAGIC_LEN )
    return -1;
@@ -267,7 +269,22 @@ int cf_speex_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
 
  // TODO: do we realy need such a loop?
  while (len > fs2) {
-  ROAR_WARN("cf_speex_write(*): Discarding a full block of data as non-o_rest encoding is not supported!");
+//  ROAR_WARN("cf_speex_write(*): Discarding a full block of data as non-o_rest encoding is not supported!");
+//  ROAR_WARN("cf_speex_write(*): Block info: len=%i, fs2=%i", len, fs2);
+
+  speex_bits_reset(&(self->bits));
+
+  speex_encode_int(self->encoder, (spx_int16_t *) buf, &(self->bits));
+
+  tmp = mode = speex_bits_write(&(self->bits), self->cd, fs2);
+
+  mode = ROAR_HOST2NET16(mode);
+
+  stream_vio_s_write(self->stream, &mode, 2);
+
+  if ( stream_vio_s_write(self->stream, self->cd, tmp) != tmp )
+   return -1;
+
   len -= fs2;
   buf += fs2;
   ret += fs2;
