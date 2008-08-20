@@ -614,6 +614,9 @@ int streams_send_mon   (int id) {
  int fh;
  struct roar_stream        *   s;
  struct roar_stream_server *  ss;
+ void * obuf;
+ int    olen;
+ int    need_to_free = 0;
 
  if ( g_streams[id] == NULL )
   return -1;
@@ -630,16 +633,40 @@ int streams_send_mon   (int id) {
 
  ROAR_DBG("streams_send_mon(id=%i): fh = %i", id, fh);
 
+ if ( s->info.channels != g_sa->channels || s->info.bits  != g_sa->bits ||
+      s->info.rate     != g_sa->rate     || s->info.codec != g_sa->codec  ) {
+  olen = ROAR_OUTPUT_CALC_OUTBUFSIZE(&(s->info)); // we hope g_output_buffer_len
+                                                  // is ROAR_OUTPUT_CALC_OUTBUFSIZE(g_sa) here
+  if ( (obuf = malloc(olen)) == NULL )
+   return -1;
+
+  need_to_free = 1;
+
+  ROAR_DBG("streams_send_mon(id=%i): obuf=%p, olen=%i", id, obuf, olen);
+
+  if ( roar_conv(obuf, g_output_buffer, ROAR_OUTPUT_BUFFER_SAMPLES*g_sa->channels, g_sa, &(s->info)) == -1 ) {
+   free(obuf);
+   return -1;
+  }
+ } else {
+  obuf = g_output_buffer;
+  olen = g_output_buffer_len;
+ }
+
  errno = 0;
 
  if ( ss->codecfilter == -1 ) {
-  if ( write(fh, g_output_buffer, g_output_buffer_len) == g_output_buffer_len )
+  if ( write(fh, obuf, olen) == olen ) {
+   if ( need_to_free ) free(obuf);
    return 0;
+  }
  } else {
-  if ( codecfilter_write(ss->codecfilter_inst, ss->codecfilter, g_output_buffer, g_output_buffer_len)
-            == g_output_buffer_len ) {
+  if ( codecfilter_write(ss->codecfilter_inst, ss->codecfilter, obuf, olen)
+            == olen ) {
+   if ( need_to_free ) free(obuf);
    return 0;
   } else { // we cann't retry on codec filetered streams
+   if ( need_to_free ) free(obuf);
    streams_delete(id);
    return -1;
   }
@@ -651,12 +678,15 @@ int streams_send_mon   (int id) {
 
   usleep(100); // 0.1ms
 
-  if ( write(fh, g_output_buffer, g_output_buffer_len) == g_output_buffer_len )
+  if ( write(fh, obuf, olen) == olen ) {
+   if ( need_to_free ) free(obuf);
    return 0;
+  }
  }
 
  // ug... error... delete stream!
 
+ if ( need_to_free ) free(obuf);
  streams_delete(id);
 
  return -1;
