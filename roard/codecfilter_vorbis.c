@@ -37,7 +37,7 @@ int cf_vorbis_open(CODECFILTER_USERDATA_T * inst, int codec,
 
  if ( s->dir == ROAR_DIR_PLAY ) {
   return 0;
- } else if ( s->dir == ROAR_DIR_MONITOR ) {
+ } else if ( s->dir == ROAR_DIR_MONITOR || s->dir == ROAR_DIR_OUTPUT ) {
 #ifdef ROAR_HAVE_LIBVORBISENC
   // set up the encoder here
 

@@ -65,7 +65,7 @@ int cf_celt_open(CODECFILTER_USERDATA_T * inst, int codec,
 
  if ( s->dir == ROAR_DIR_PLAY ) {
    self->decoder = celt_decoder_create(self->mode);
- } else if ( s->dir == ROAR_DIR_MONITOR ) {
+ } else if ( s->dir == ROAR_DIR_MONITOR || s->dir == ROAR_DIR_OUTPUT ) {
    self->encoder = celt_encoder_create(self->mode);
  } else {
   celt_mode_destroy(self->mode);

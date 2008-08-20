@@ -142,9 +142,13 @@ int streams_set_fh     (int id, int fh) {
   return streams_delete(id);
  }
 
+ if ( fh == -1 ) { // yes, this is valid, indecats full vio!
+  return 0;
+ }
+
  dir = ROAR_STREAM(g_streams[id])->dir;
 
- if ( dir == ROAR_DIR_MONITOR || dir == ROAR_DIR_RECORD ) {
+ if ( dir == ROAR_DIR_MONITOR || dir == ROAR_DIR_RECORD || dir == ROAR_DIR_OUTPUT ) {
   shutdown(fh, SHUT_RD);
  }
 
@@ -628,7 +632,7 @@ int streams_send_mon   (int id) {
  if ( (fh = s->fh) == -1 )
   return 0;
 
- if ( s->dir != ROAR_DIR_MONITOR )
+ if ( s->dir != ROAR_DIR_MONITOR && s->dir != ROAR_DIR_OUTPUT )
   return 0;
 
  ROAR_DBG("streams_send_mon(id=%i): fh = %i", id, fh);
