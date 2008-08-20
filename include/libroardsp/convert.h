@@ -14,6 +14,8 @@ int roar_conv_chans (void * out, void * in, int samples, int from, int to, int b
 
 int roar_conv_chans_1ton8  (void * out, void * in, int samples, int to);
 int roar_conv_chans_1ton16 (void * out, void * in, int samples, int to);
+int roar_conv_chans_nto18  (void * out, void * in, int samples, int from);
+int roar_conv_chans_nto116 (void * out, void * in, int samples, int from);
 
 int roar_conv_rate    (void * out, void * in, int samples, int from, int to, int bits, int channels);
 int roar_conv_rate_8  (void * out, void * in, int samples, int from, int to, int channels);
