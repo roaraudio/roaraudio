@@ -247,9 +247,9 @@ int cf_speex_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
 
    speex_encode_int(self->encoder, (spx_int16_t *) self->o_rest, &(self->bits));
 
-   mode = speex_bits_write(&(self->bits), self->cd, fs2);
+   tmp = mode = speex_bits_write(&(self->bits), self->cd, fs2);
 
-   tmp = mode = ROAR_HOST2NET16(mode);
+   mode = ROAR_HOST2NET16(mode);
    stream_vio_s_write(self->stream, &mode, 2);
    if ( stream_vio_s_write(self->stream, self->cd, tmp) != tmp )
     return -1;
