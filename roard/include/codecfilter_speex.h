@@ -17,16 +17,16 @@ struct codecfilter_speex_inst {
  char       cc[ROAR_SPEEX_MAX_CC]; /* buffer for read() and write() */
  void     * i_rest; /* rest... */
  int fi_rest;
+ char * o_rest;
+ int fo_rest; /* how much is in rest? */
 
 /*
  char * ibuf;
  char * obuf;
  int out_size;
  char * i_rest;
- char * o_rest;
  int s_buf;
  int fi_rest; /-* how much is in rest? *-/
- int fo_rest; /-* how much is in rest? *-/
 */
 };
 

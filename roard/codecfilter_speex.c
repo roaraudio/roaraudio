@@ -23,6 +23,8 @@ int cf_speex_open(CODECFILTER_USERDATA_T * inst, int codec,
 
  self->i_rest  = NULL;
  self->fi_rest = 0;
+ self->o_rest  = NULL;
+ self->fo_rest = 0;
 
  speex_bits_init(&(self->bits));
 
@@ -194,6 +196,9 @@ int cf_speex_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  struct codecfilter_speex_inst * self = (struct codecfilter_speex_inst *) inst;
  uint16_t mode = ROAR_SPEEX_MODE_UWB;
  int tmp;
+ int fs2;
+ int ret = 0;
+ int need_extra;
 
  if ( ! self->encoder ) {
   if ( stream_vio_s_write(self->stream, ROAR_SPEEX_MAGIC, ROAR_SPEEX_MAGIC_LEN) != ROAR_SPEEX_MAGIC_LEN )
@@ -216,9 +221,65 @@ int cf_speex_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
   speex_encoder_ctl(self->encoder, SPEEX_SET_QUALITY,    &tmp);
   speex_encoder_ctl(self->encoder, SPEEX_GET_FRAME_SIZE, &(self->frame_size));
 
+  fs2 = self->frame_size * 2;
+
+  if ( !self->cd ) {
+   self->cd = malloc(fs2);
+   if ( !self->cd )
+    return 0;
+  }
+
+  if ( !self->o_rest ) {
+   self->o_rest = malloc(fs2);
+   if ( !self->o_rest )
+    return 0;
+  }
  }
 
- return -1;
+ fs2 = self->frame_size * 2;
+
+ if ( self->fo_rest ) { // ignore the rest for the moment
+  if ( (self->fo_rest + len) > fs2 ) {
+   need_extra = fs2 - self->fo_rest;
+   memcpy(self->o_rest + self->fo_rest, buf, need_extra);
+
+   speex_bits_reset(&(self->bits));
+
+   speex_encode_int(self->encoder, (spx_int16_t *) self->o_rest, &(self->bits));
+
+   mode = speex_bits_write(&(self->bits), self->cd, fs2);
+
+   tmp = mode = ROAR_HOST2NET16(mode);
+   stream_vio_s_write(self->stream, &mode, 2);
+   if ( stream_vio_s_write(self->stream, self->cd, tmp) != tmp )
+    return -1;
+
+   buf += need_extra;
+   ret += need_extra;
+   len -= need_extra;
+   self->fo_rest = 0;
+  } else { // just add the data to o_rest
+   memcpy(self->o_rest + self->fo_rest, buf, len);
+   self->fo_rest += len;
+   return len;
+  }
+ }
+
+ // TODO: do we realy need such a loop?
+ while (len > fs2) {
+  ROAR_WARN("cf_speex_write(*): Discarding a full block of data as non-o_rest encoding is not supported!");
+  len -= fs2;
+  buf += fs2;
+  ret += fs2;
+ }
+
+ if ( len ) { // we still have some data, add this to o_rest
+  memcpy(self->o_rest, buf, len);
+  self->fo_rest = len;
+  ret += len;
+ }
+
+ return ret;
 }
 
 #endif
