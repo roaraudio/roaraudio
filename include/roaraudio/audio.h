@@ -100,6 +100,8 @@
 
 
 #define ROAR_SPEEX_MAX_CC          256
+#define ROAR_SPEEX_MAGIC           "RoarSpeex"
+#define ROAR_SPEEX_MAGIC_LEN       9
 #define ROAR_SPEEX_MODE_NB         1
 #define ROAR_SPEEX_MODE_WB         2
 #define ROAR_SPEEX_MODE_UWB        3
