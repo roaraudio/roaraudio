@@ -219,8 +219,12 @@ int roar_conv       (void * out, void * in, int samples, struct roar_audio_info 
    ip = out;
  }
 
- if ( from->codec != to->codec )
-  return -1;
+ if ( from->codec != to->codec ) {
+  if ( raor_conv_codec (out, ip, samples, from->codec, to->codec, to->bits) == -1 )
+   return -1;
+  else
+   ip = out;
+ }
 
  return 0;
 }
