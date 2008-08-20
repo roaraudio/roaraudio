@@ -22,6 +22,11 @@ int roar_file_codecdetect(char * buf, int len) {
     if ( strncmp(buf+8, "WAVEfmt ", 8) == 0 )
      codec = ROAR_CODEC_RIFF_WAVE;
    }
+  } else if ( strncmp(buf, "Roar", 4) == 0 ) {
+   if ( len > ROAR_SPEEX_MAGIC_LEN ) {
+    if ( strncmp(buf, ROAR_SPEEX_MAGIC, ROAR_SPEEX_MAGIC_LEN) == 0 )
+     codec = ROAR_CODEC_ROAR_SPEEX;
+   }
   }
  }
 
