@@ -8,6 +8,7 @@ int esd_play_stream( esd_format_t format, int rate,
                      const char *host, const char *name ) {
  int channels;
  int bits;
+ int codec = ROAR_CODEC_DEFAULT;
 
  if ( (format & ESD_BITS8) ) {
   bits = 8;
@@ -21,7 +22,7 @@ int esd_play_stream( esd_format_t format, int rate,
   channels = 2;
  }
 
- return roar_simple_play(rate, channels, bits, ROAR_CODEC_DEFAULT, (char*)host, (char*) name);
+ return roar_simple_play(rate, channels, bits, codec, (char*)host, (char*) name);
 }
 
 int esd_play_stream_fallback( esd_format_t format, int rate,
@@ -41,6 +42,7 @@ int esd_monitor_stream( esd_format_t format, int rate,
                         const char *host, const char *name ) {
  int channels;
  int bits;
+ int codec = ROAR_CODEC_DEFAULT;
 
  if ( (format & ESD_BITS8) ) {
   bits = 8;
@@ -54,7 +56,7 @@ int esd_monitor_stream( esd_format_t format, int rate,
   channels = 2;
  }
 
- return roar_simple_monitor(rate, channels, bits, ROAR_CODEC_DEFAULT, (char*)host, (char*)name);
+ return roar_simple_monitor(rate, channels, bits, codec, (char*)host, (char*)name);
 }
 /* int esd_monitor_stream_fallback( esd_format_t format, int rate ); */
 int esd_record_stream( esd_format_t format, int rate,
@@ -65,6 +67,7 @@ int esd_filter_stream( esd_format_t format, int rate,
                        const char *host, const char *name ) {
  int channels;
  int bits;
+ int codec = ROAR_CODEC_DEFAULT;
 
  if ( (format & ESD_BITS8) ) {
   bits = 8;
@@ -78,7 +81,7 @@ int esd_filter_stream( esd_format_t format, int rate,
   channels = 2;
  }
 
- return roar_simple_filter(rate, channels, bits, ROAR_CODEC_DEFAULT, (char*)host, (char*)name);
+ return roar_simple_filter(rate, channels, bits, codec, (char*)host, (char*)name);
 }
 
 
