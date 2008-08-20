@@ -36,6 +36,8 @@ int roar_conv_bits_16to8 (void * out, void * in, int samples) {
  char    * op = (char   *)out;
  int i;
 
+ ROAR_DBG("roar_conv_bits_16to8(out=%p, in=%p, samples=%i) = ?", out, in, samples);
+
  for (i = 0; i < samples; i++)
   op[i] = ip[i] >> 8;
 
@@ -49,6 +51,14 @@ int roar_conv_chans (void * out, void * in, int samples, int from, int to, int b
    return roar_conv_chans_1ton8(out, in, samples, to);
   } else if ( bits == 16 ) {
    return roar_conv_chans_1ton16(out, in, samples, to);
+  } else {
+   return -1;
+  }
+ } else if ( to == 1 ) {
+  if ( bits == 8 ) {
+   return -1;
+  } else if ( bits == 16 ) {
+   return roar_conv_chans_nto116(out, in, samples, from);
   } else {
    return -1;
   }
@@ -77,6 +87,27 @@ int roar_conv_chans_1ton16 (void * out, void * in, int samples, int to) {
  for (i = samples - 1; i >= 0; i--)
   for (c = to - 1; c >= 0; c--)
    op[i*to + c] = ip[i];
+
+ return 0;
+}
+
+int roar_conv_chans_nto116 (void * out, void * in, int samples, int from) {
+ int16_t * ip = (int16_t*) in, * op = (int16_t*) out;
+ int i;
+ int c;
+ register int s;
+
+ samples /= from;
+
+ for (i = samples - 1; i >= 0; i--) {
+  s  = 0;
+
+  for (c = 0; c < from; c++)
+   s += ip[i*from + c];
+
+  s /= from;
+  op[i] = s;
+ }
 
  return 0;
 }
