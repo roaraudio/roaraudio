@@ -3,6 +3,18 @@
 #include "roard.h"
 #ifdef ROAR_HAVE_LIBSPEEX
 
+/*
+ Format:
+ (all numbers are in network byte order)
+
+ MAGIC of site MAGIC_LEN
+ MODE NUMMBER of size 2 Byte
+ { // frames
+   FRAME LENGTH of size 2 Byte
+   FRAME DATA of size FRAME LENGTH Byte
+ }
+*/
+
 int cf_speex_open(CODECFILTER_USERDATA_T * inst, int codec,
                                             struct roar_stream_server * info,
                                             struct roar_codecfilter   * filter) {
@@ -199,6 +211,12 @@ int cf_speex_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  int fs2;
  int ret = 0;
  int need_extra;
+
+/*
+ TODO: Befor this realy works there must be a working way to set the number of channels and bits
+       for monetoring clients. Else this will produce some thing stange as a 'mono' file that realy
+       contains stereo.
+*/
 
  ROAR_DBG("cf_speex_write(inst=%p, buf=%p, len=%i) = ?", inst, buf, len);
 
