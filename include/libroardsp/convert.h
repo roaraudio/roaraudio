@@ -23,7 +23,8 @@ int roar_conv_rate_16 (void * out, void * in, int samples, int from, int to, int
 
 int raor_conv_codec (void * out, void * in, int samples, int from, int to, int bits);
 
-int roar_conv_codec_s2u8 (void * out, void * in, int samples);
+int roar_conv_codec_s2u8  (void * out, void * in, int samples);
+int roar_conv_codec_s2u16 (void * out, void * in, int samples);
 
 int roar_conv       (void * out, void * in, int samples, struct roar_audio_info * from, struct roar_audio_info * to);
 

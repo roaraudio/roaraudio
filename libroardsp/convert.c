@@ -168,6 +168,8 @@ int raor_conv_codec (void * out, void * in, int samples, int from, int to, int b
   if ( ins && !outs ) {
    if ( bits == 8 ) {
     roar_conv_codec_s2u8(out, in, samples);
+   } else if ( bits == 16 ) {
+    roar_conv_codec_s2u16(out, in, samples);
    } else {
     return -1;
    }
@@ -190,6 +192,16 @@ int roar_conv_codec_s2u8 (void * out, void * in, int samples) {
  return 0;
 }
 
+int roar_conv_codec_s2u16 (void * out, void * in, int samples) {
+ int16_t  * ip = in;
+ uint16_t * op = out;
+ int i;
+
+ for(i = 0; i < samples; i++)
+  op[i] = ip[i] + 32768;
+
+ return 0;
+}
 
 int roar_conv       (void * out, void * in, int samples, struct roar_audio_info * from, struct roar_audio_info * to) {
  void * ip = in;
