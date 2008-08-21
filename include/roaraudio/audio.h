@@ -106,6 +106,8 @@
 #define ROAR_SPEEX_MODE_WB         2
 #define ROAR_SPEEX_MODE_UWB        3
 
+#define ROAR_CELT_MAGIC            "RoarCELT0"
+#define ROAR_CELT_MAGIC_LEN        9
 
 struct roar_audio_info {
  unsigned int rate;

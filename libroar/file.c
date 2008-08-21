@@ -26,6 +26,12 @@ int roar_file_codecdetect(char * buf, int len) {
    if ( len > ROAR_SPEEX_MAGIC_LEN ) {
     if ( strncmp(buf, ROAR_SPEEX_MAGIC, ROAR_SPEEX_MAGIC_LEN) == 0 )
      codec = ROAR_CODEC_ROAR_SPEEX;
+#if ROAR_SPEEX_MAGIC_LEN < ROAR_CELT_MAGIC_LEN
+   }
+   if ( len > ROAR_CELT_MAGIC_LEN ) {
+#endif
+    if ( strncmp(buf, ROAR_CELT_MAGIC, ROAR_CELT_MAGIC_LEN) == 0 )
+     codec = ROAR_CODEC_ROAR_CELT;
    }
   }
  }
