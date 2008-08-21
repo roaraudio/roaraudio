@@ -145,6 +145,9 @@ int cf_celt_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
 
   fs = ROAR_NET2HOST16(fs);
 
+  if ( fs > self->s_buf )
+   break;
+
   if ( stream_vio_s_read(self->stream, self->ibuf, fs) != fs )
    break;
 
