@@ -25,6 +25,7 @@ struct codecfilter_celt_inst {
  int s_buf;
  int fi_rest; /* how much is in rest? */
  int fo_rest; /* how much is in rest? */
+ int opened;
 };
 
 int cf_celt_open(CODECFILTER_USERDATA_T * inst, int codec,

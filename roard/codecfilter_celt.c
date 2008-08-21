@@ -31,6 +31,7 @@ int cf_celt_open(CODECFILTER_USERDATA_T * inst, int codec,
  self->lookahead            = self->frame_size;
  self->encoder              = NULL;
  self->decoder              = NULL;
+ self->opened               = 0;
  self->s_buf                = s->info.channels * self->frame_size * 2;
  self->ibuf                 = malloc(self->s_buf);
  self->obuf                 = malloc(self->s_buf);
@@ -117,8 +118,20 @@ int cf_celt_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  int r = 0;
  uint16_t fs;
  char * cbuf;
+ char magic[ROAR_CELT_MAGIC_LEN];
 
 // printf("buf=%p, len=%i\n", buf, len);
+
+ if ( !self->opened ) {
+  errno = ENOSYS;
+  if ( stream_vio_s_read(self->stream, magic, ROAR_CELT_MAGIC_LEN) != ROAR_CELT_MAGIC_LEN )
+   return -1;
+  if ( memcmp(magic, ROAR_CELT_MAGIC, ROAR_CELT_MAGIC_LEN) != 0 )
+   return -1;
+
+  errno = 0;
+  self->opened = 1;
+ }
 
  if ( self->fi_rest ) {
   memcpy(buf, self->i_rest, self->fi_rest);
