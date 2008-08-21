@@ -198,6 +198,12 @@ int cf_celt_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  uint16_t pkglen_net, pkglen;
  unsigned char cbits[BS+2];
 
+ if ( !self->opened ) {
+  if ( stream_vio_s_write(self->stream, ROAR_CELT_MAGIC, ROAR_CELT_MAGIC_LEN) != ROAR_CELT_MAGIC_LEN )
+   return -1;
+  self->opened = 1;
+ }
+
  if ( (self->fo_rest + len) > fs2 ) {
   if ( self->fo_rest ) {
    memcpy(self->obuf, self->o_rest, self->fo_rest);
