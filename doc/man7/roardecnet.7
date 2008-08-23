@@ -1,0 +1,45 @@
+.\" RoarAudio
+.TH "roardecnet" "7" "August 2008" "RoarAudio" "System Manager's Manual: RoarAuido"
+
+.SH NAME
+roardecnet \- Tips for DECnet users or RoarAudio
+
+.SH SYNOPSIS
+
+ roard -n [OPTIONS...] ...
+
+ roarclient --server node:: [OPTIONS...] ...
+
+.SH "DESCRIPTION"
+This manpage lists some tips for use of RoarAudio over DECnet.
+
+.SH "BASICS"
+If DECnet support is compiled in there the option '\fB-n\fR' of \fBroard\fR(1).
+If you set it than the demon will listen via DECnet.
+You may use the option '\fB-b\fR' to set the object name.
+Nodenames given via '\fB-b\fR' are ignored.
+Example:
+ roard -n
+ roard -n -b ::myobject
+
+If you use the default object local clients should find there way to the server.
+For remote clients or if you use a non default object it is needed to give a
+server address in a form listent below.
+
+.SH "SERVER ADDRESS"
+The server address for DECnet is in one of the following forms:
+\fBnode::\fR, \fBnode::object\fR, \fB::object\fR, \fB::\fR
+This is the way to specify a DECnet connection to node \fBnode\fR's
+object \fBobject\fR. Both may be omitted to use defaults. Default
+node name is local hosts node name.
+Examples:
+ mynode::               connect to \fBmynode\fR
+ ::roar                 connect to local object \fBroar\fR
+ yournode::yourroard    connect to \fByournode\fR's object \fByourroard\fR
+
+.SH "SEE ALSO"
+\fBroard\fR(1),
+\fBroartips\fR(7),
+\fBlibroar\fR(7).
+
+.\"ll
