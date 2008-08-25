@@ -57,6 +57,7 @@ int streams_new    (void) {
    s->pre_underruns   =  0;
    s->post_underruns  =  0;
    s->codec_orgi      = -1;
+   s->primary         =  0;
 
    s->mixer.scale     = 65535;
    s->mixer.rpg_mul   = 1;
@@ -83,33 +84,39 @@ int streams_new    (void) {
 }
 
 int streams_delete (int id) {
- if ( g_streams[id] == NULL )
+ struct roar_stream_server * s;
+ if ( (s = g_streams[id]) == NULL )
   return 0;
 
  ROAR_DBG("streams_delete(id=%i) = ?", id);
- ROAR_DBG("streams_delete(id=%i): g_streams[id]->id=%i", id, ROAR_STREAM(g_streams[id])->id);
+ ROAR_DBG("streams_delete(id=%i): g_streams[id]->id=%i", id, ROAR_STREAM(s)->id);
 
- if ( g_streams[id]->codecfilter != -1 ) {
-  codecfilter_close(g_streams[id]->codecfilter_inst, g_streams[id]->codecfilter);
-  g_streams[id]->codecfilter_inst = NULL;
-  g_streams[id]->codecfilter = -1;
+ if ( s->codecfilter != -1 ) {
+  codecfilter_close(s->codecfilter_inst, s->codecfilter);
+  s->codecfilter_inst = NULL;
+  s->codecfilter = -1;
  }
 
- if ( g_streams[id]->client != -1 ) {
+ if ( s->client != -1 ) {
   ROAR_DBG("streams_delete(id=%i): Stream is owned by client %i", id, g_streams[id]->client);
-  client_stream_delete(g_streams[id]->client, id);
+  client_stream_delete(s->client, id);
  }
 
- if ( g_streams[id]->buffer != NULL )
-  roar_buffer_free(g_streams[id]->buffer);
+ if ( s->buffer != NULL )
+  roar_buffer_free(s->buffer);
 
- if ( g_streams[id]->output != NULL )
-  free(g_streams[id]->output);
+ if ( s->output != NULL )
+  free(s->output);
 
- if ( ROAR_STREAM(g_streams[id])->fh != -1 )
-  close(ROAR_STREAM(g_streams[id])->fh);
+ if ( ROAR_STREAM(s)->fh != -1 )
+  close(ROAR_STREAM(s)->fh);
 
- free(g_streams[id]);
+ if ( s->primary ) {
+  alive = 0;
+  clean_quit();
+ }
+
+ free(s);
 
  g_streams[id] = NULL;
 
@@ -194,6 +201,18 @@ int streams_get_socktype (int id) {
  return g_streams[id]->socktype;
 }
 
+int streams_set_primary (int id, int prim) {
+ if ( g_streams[id] == NULL )
+  return -1;
+
+ g_streams[id]->primary = prim;
+
+ return 0;
+}
+
+int streams_mark_primary (int id) {
+ return streams_set_primary(id, 1);
+}
 int streams_get_outputbuffer  (int id, void ** buffer, size_t size) {
  if ( g_streams[id] == NULL )
   return -1;

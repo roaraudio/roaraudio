@@ -31,6 +31,7 @@ struct roar_stream_server {
  int pre_underruns;
  int post_underruns;
  struct roar_vio_calls vio;
+ int primary;
 } * g_streams[ROAR_STREAMS_MAX];
 
 int streams_init   (void);
@@ -47,6 +48,9 @@ int streams_get        (int id, struct roar_stream_server ** stream);
 
 int streams_set_socktype (int id, int socktype);
 int streams_get_socktype (int id);
+
+int streams_set_primary  (int id, int prim);
+int streams_mark_primary (int id);
 
 int stream_add_buffer     (int id, struct roar_buffer *  buf);
 //int stream_get_buffer     (int id, struct roar_buffer ** buf);
