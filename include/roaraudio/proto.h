@@ -67,6 +67,13 @@
 #define ROAR_OT_SOURCE 3
 #define ROAR_OT_SAMPLE 4
 
+// auth types...
+#define ROAR_AUTH_NONE    0 /* do not auth */
+#define ROAR_AUTH_TRUST   1 /* trust: used for UNIX Domain sockets, same uid = trusted, diffrent uid = public */
+#define ROAR_AUTH_COOKIE  2 /* use cookie */
+#define ROAR_AUTH_SYSUSER 3 /* use local/NIS/PAM userdatabase */
+#define ROAR_AUTH_PASSWD  4 /* use password */
+
 #endif
 
 //ll
