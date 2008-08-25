@@ -48,8 +48,12 @@
 #define ROAR_CMD_GET_STREAM_PARA   27 /* Get addition stream parameters like blocksizes */
 #define ROAR_CMD_SET_STREAM_PARA   28 /* set specal stream parameter */
 
+#define ROAR_CMD_ATTACH        29 /* attach a OUTPUT or source */
+#define ROAR_CMD_DETACH        ROAR_CMD_KICK /* just to have an alias */
 
-#define ROAR_CMD_OK_STOP      253
+#define ROAR_CMD_EPERM        252 /* error: permition denided */
+#define ROAR_CMD_OK_STOP      253 /* used internaly in the serveer: */
+                                  // ROAR_CMD_OK but do not queue the client again within the block
 #define ROAR_CMD_OK           254 /* return value OK */
 #define ROAR_CMD_ERROR        255 /* return value ERROR */
 
