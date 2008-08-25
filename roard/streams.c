@@ -85,6 +85,8 @@ int streams_new    (void) {
 
 int streams_delete (int id) {
  struct roar_stream_server * s;
+ int prim;
+
  if ( (s = g_streams[id]) == NULL )
   return 0;
 
@@ -111,14 +113,16 @@ int streams_delete (int id) {
  if ( ROAR_STREAM(s)->fh != -1 )
   close(ROAR_STREAM(s)->fh);
 
- if ( s->primary ) {
-  alive = 0;
-  clean_quit();
- }
+ prim = s->primary;
 
  free(s);
 
  g_streams[id] = NULL;
+
+ if ( prim ) {
+  alive = 0;
+  clean_quit();
+ }
 
  ROAR_DBG("streams_delete(id=%i) = 0", id);
  return 0;
