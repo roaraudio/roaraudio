@@ -1,7 +1,7 @@
 include ../Makefile.conf
 
 TARGETS=libroardsp.so
-OBJS=libroardsp.o
+OBJS=libroardsp.o lowp.o highp.o
 
 #DEFINES        = -DDEBUG
 INCLUDE = -I../include -I../include/libroardsp
