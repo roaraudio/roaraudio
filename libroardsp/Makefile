@@ -1,7 +1,8 @@
 include ../Makefile.conf
 
 TARGETS=libroardsp.so
-OBJS=libroardsp.o lowp.o highp.o
+OBJS=libroardsp.o filter.o filterchain.o
+FILTER=lowp.o highp.o
 
 #DEFINES        = -DDEBUG
 INCLUDE = -I../include -I../include/libroardsp
@@ -14,5 +15,5 @@ clean:
 	rm -f ${TARGETS} *.o
 new: clean all
 
-libroardsp.so: ${OBJS}
-	${CC} ${LDFLAGS} -o libroardsp.so ${OBJS}
+libroardsp.so: ${OBJS} $(FILTER)
+	${CC} ${LDFLAGS} -o libroardsp.so ${OBJS} $(FILTER)
