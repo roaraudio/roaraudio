@@ -1,4 +1,4 @@
-//libroardsp.c:
+//lowp.c:
 
 #include "libroardsp.h"
 
