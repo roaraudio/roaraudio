@@ -8,6 +8,11 @@
 // defines
 #define ROARDSP_MAX_FILTERS_PER_CHAIN 8
 
+#define ROARDSP_FILTER_NONE           0
+#define ROARDSP_FILTER_AMP            1
+#define ROARDSP_FILTER_LOWP           2
+#define ROARDSP_FILTER_HIGHP          3
+
 // types:
 
 struct roardsp_filter {
