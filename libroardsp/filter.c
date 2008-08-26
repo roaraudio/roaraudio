@@ -27,10 +27,16 @@
 struct _roardsp_filterlist {
  int id;
  char * name;
- void (*  init      )(struct roardsp_filter * filter, struct roar_stream * stream, int id);
- void (*uninit      )(struct roardsp_filter * filter);
- void (*calc  [5][3])(struct roardsp_filter * filter, void * data, size_t samples);
+ int (*  init      )(struct roardsp_filter * filter, struct roar_stream * stream, int id);
+ int (*uninit      )(struct roardsp_filter * filter);
+ int (*calc  [5][3])(struct roardsp_filter * filter, void * data, size_t samples);
 } _roardsp_filterlist[] = {
+ {ROARDSP_FILTER_AMP, "AMP", NULL, NULL, {
+           {NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL}}},
+ {ROARDSP_FILTER_LOWP, "Lowpass", NULL, NULL, {
+           {NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL}}},
+ {ROARDSP_FILTER_HIGHP, "Highpass", NULL, NULL, {
+           {NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL}}},
  {-1, NULL, NULL, NULL, {{NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL}}}
 };
 
