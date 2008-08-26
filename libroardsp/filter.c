@@ -24,5 +24,42 @@
 
 #include "libroardsp.h"
 
+int roardsp_filter_init  (struct roardsp_filter * filter, struct roar_stream * stream, int id) {
+ if ( filter == NULL )
+  return -1;
+
+ memset(filter, 0, sizeof(struct roardsp_filter));
+
+ filter->channels = stream->info.channels;
+ filter->bits     = stream->info.bits;
+
+ return -1;
+}
+
+int roardsp_filter_uninit(struct roardsp_filter * filter) {
+ int ret = 0;
+
+ if ( filter == NULL )
+  return -1;
+
+ if ( filter->uninit )
+  ret = filter->uninit(filter);
+
+ memset(filter, 0, sizeof(struct roardsp_filter));
+
+ return ret;
+}
+
+int roardsp_filter_calc  (struct roardsp_filter * filter, void * data, size_t len) {
+ int ret = 0;
+
+ if ( filter == NULL )
+  return -1;
+
+ if ( filter->calc )
+  ret = filter->calc(filter, data, len);
+
+ return ret;
+}
 
 //ll

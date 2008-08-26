@@ -24,5 +24,57 @@
 
 #include "libroardsp.h"
 
+int roardsp_fchain_init  (struct roardsp_filterchain * chain) {
+ if ( chain == NULL )
+  return -1;
+
+ memset((void*)chain, 0, sizeof(struct roardsp_filterchain));
+ return 0;
+}
+
+int roardsp_fchain_uninit(struct roardsp_filterchain * chain) {
+ int i;
+ int ret = 0;
+
+ if ( chain == NULL )
+  return -1;
+
+ for (i = 0; i < chain->filters; i++) {
+  if ( roardsp_filter_uninit(chain->filter[i]) == -1 )
+   ret = -1;
+ }
+
+ if ( roardsp_fchain_init(chain) == -1 )
+  ret = -1;
+
+ return ret;
+}
+
+int roardsp_fchain_add   (struct roardsp_filterchain * chain, struct roardsp_filter * filter) {
+ if ( chain == NULL )
+  return -1;
+
+ if ( chain->filters < ROARDSP_MAX_FILTERS_PER_CHAIN ) {
+  chain->filter[chain->filters++] = filter;
+  return 0;
+ }
+
+ return -1;
+}
+
+int roardsp_fchain_calc  (struct roardsp_filterchain * chain, void * data, size_t len) {
+ int i;
+ int ret = 0;
+
+ if ( chain == NULL )
+  return -1;
+
+ for (i = 0; i < chain->filters; i++) {
+  if ( roardsp_filter_calc(chain->filter[i], data, len) == -1 )
+   ret = -1;
+ }
+
+ return ret;
+}
 
 //ll
