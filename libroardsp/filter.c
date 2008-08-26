@@ -24,6 +24,38 @@
 
 #include "libroardsp.h"
 
+struct _roardsp_filterlist {
+ int id;
+ char * name;
+ void (*  init      )(struct roardsp_filter * filter, struct roar_stream * stream, int id);
+ void (*uninit      )(struct roardsp_filter * filter);
+ void (*calc  [5][3])(struct roardsp_filter * filter, void * data, size_t samples);
+} _roardsp_filterlist[] = {
+ {-1, NULL, NULL, NULL, {{NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL}}}
+};
+
+int    roardsp_filter_str2id(char * str) {
+ struct _roardsp_filterlist * l = _roardsp_filterlist;
+
+ while ( l->id != -1 ) {
+  if ( strcasecmp(l->name, str) == 0 )
+   return l->id;
+ }
+
+ return -1;
+}
+
+char * roardsp_filter_id2str(int id) {
+ struct _roardsp_filterlist * l = _roardsp_filterlist;
+
+ while ( l->id != -1 ) {
+  if ( l->id == id )
+   return l->name;
+ }
+
+ return NULL;
+}
+
 int roardsp_filter_init  (struct roardsp_filter * filter, struct roar_stream * stream, int id) {
  if ( filter == NULL )
   return -1;
