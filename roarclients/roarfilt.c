@@ -5,7 +5,8 @@
 
 #define BUFSIZE 1024
 struct {
- uint16_t a, b, old[ROAR_MAX_CHANNELS];
+ uint16_t a, b;
+ int16_t  old[ROAR_MAX_CHANNELS];
 } g_lowpass;
 
 void usage (void) {
@@ -137,6 +138,7 @@ int main (int argc, char * argv[]) {
    lp = exp(-2 * M_PI * atof(argv[++i]) / rate) * 65536;
    g_lowpass.b = lp;
    g_lowpass.a = 65536 - lp;
+//   printf("lowpass: A=%i, B=%i\n", g_lowpass.a, g_lowpass.b);
   } else if ( strcmp(k, "--help") == 0 ) {
    usage();
    return 0;
