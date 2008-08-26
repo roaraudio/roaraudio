@@ -21,7 +21,7 @@ roarcatplay: roarcatplay.o
 roarctl: roarctl.o
 roarmon: roarmon.o
 roarfilt: roarfilt.o
-	${CC} ${LDFLAGS} -o roarfilt roarfilt.o -lm
+	${CC} ${LDFLAGS} -o roarfilt roarfilt.o -lm -lroardsp
 roarsin: roarsin.o
 	${CC} ${LDFLAGS} -o roarsin roarsin.o -lm
 roarvumeter: roarvumeter.o
