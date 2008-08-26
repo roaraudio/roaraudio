@@ -4,7 +4,7 @@ TARGETS=libroardsp.so
 OBJS=libroardsp.o
 
 #DEFINES        = -DDEBUG
-INCLUDE = -I../include -I../include/libroar
+INCLUDE = -I../include -I../include/libroardsp
 CFLAGS  = -g -Wall -O2 $(DEFINES) $(INCLUDE) $(INCPATH) -fPIC
 LDFLAGS = -g -shared -L../lib/ $(LDPATH) $(lib_dnet) -lm -lroar
 
