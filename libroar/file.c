@@ -72,6 +72,55 @@ ssize_t roar_file_send_raw (int out, int in) {
  return r;
 }
 
+ssize_t     roar_file_map        (char * filename, int flags, mode_t mode, size_t len, void ** mem) {
+ int fh;
+ int mmap_flags = 0;
+ struct stat stat;
+
+ if ( mem == NULL || filename == NULL )
+  return -1;
+
+ *mem = NULL;
+
+ if ( flags & O_RDWR ) {
+  mmap_flags = PROT_READ|PROT_WRITE;
+ } else if ( flags & O_WRONLY ) {
+  mmap_flags = PROT_WRITE;
+ } else {
+  mmap_flags = PROT_READ;
+ }
+
+ if ( (fh = open(filename, flags, mode)) == -1 ) {
+  return -1;
+ }
+
+ if ( fstat(fh, &stat) == -1 ) {
+  close(fh);
+  return -1;
+ }
+
+ if ( stat.st_size < len ) {
+  if ( ftruncate(fh, len) == -1 ) {
+   close(fh);
+   return -1;
+  }
+ }
+
+ if ( (*mem = mmap(NULL, len, mmap_flags, MAP_SHARED, fh, 0)) == NULL ) {
+  close(fh);
+  return -1;
+ }
+
+ close(fh);
+
+ return len;
+}
+
+int     roar_file_unmap      (size_t len, void * mem) {
+ return munmap(mem, len);
+}
+
+
 ssize_t roar_file_play (struct roar_connection * con, char * file, int exec) {
  int codec = -1;
  int in, out = -1;
