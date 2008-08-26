@@ -35,9 +35,11 @@ struct roardsp_lowp {
 };
 
 // funcs:
-int roardsp_filter_init  (struct roardsp_filter * filter, struct roar_stream * stream, int id);
-int roardsp_filter_uninit(struct roardsp_filter * filter);
-int roardsp_filter_calc  (struct roardsp_filter * filter, void * data, size_t len);
+int    roardsp_filter_str2id(char * str);
+char * roardsp_filter_id2str(int id);
+int    roardsp_filter_init  (struct roardsp_filter * filter, struct roar_stream * stream, int id);
+int    roardsp_filter_uninit(struct roardsp_filter * filter);
+int    roardsp_filter_calc  (struct roardsp_filter * filter, void * data, size_t len);
 
 int roardsp_fchain_init  (struct roardsp_filterchain * chain);
 int roardsp_fchain_uninit(struct roardsp_filterchain * chain);
