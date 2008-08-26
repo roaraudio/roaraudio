@@ -24,4 +24,8 @@
 
 #include "libroardsp.h"
 
+int roardsp_lowp_init  (struct roardsp_filter * filter, struct roar_stream * stream, int id);
+int roardsp_lowp_uninit(struct roardsp_filter * filter);
+int roardsp_lowp_calc  (struct roardsp_filter * filter, void * data, size_t samples);
+
 //ll
