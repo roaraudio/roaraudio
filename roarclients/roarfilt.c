@@ -4,6 +4,9 @@
 #include <math.h>
 
 #define BUFSIZE 1024
+struct {
+ uint16_t a, b, old[ROAR_MAX_CHANNELS];
+} g_lowpass;
 
 void usage (void) {
  printf("roarfilt [OPTIONS]...\n");
@@ -21,6 +24,7 @@ void usage (void) {
         "  --amp VAL          - Set amplification\n"
         "  --mul VAL          - Set mul\n"
         "  --div VAL          - Set div\n"
+        "  --lowpass freq     - lowpass filter\n"
        );
 
 }
@@ -66,6 +70,30 @@ void logs2 (void * data, float scale, int len) {
  }
 }
 
+void lowpass2 (void * data, int len, int channels) {
+ int16_t * samples = (int16_t *) data;
+ register int32_t s;
+ int i, c;
+
+ if ( channels > ROAR_MAX_CHANNELS )
+  return;
+
+ len /= 2 * channels;
+
+//  *      output[N] = input[N] * A + output[N-1] * B
+
+ for (i = 0; i < len; i++) {
+  for (c = 0; c < channels; c++) {
+   s = samples[i*channels + c] * g_lowpass.a + g_lowpass.old[c] * g_lowpass.b;
+
+   s /= 65536;
+
+   samples[i*channels + c] = s;
+   g_lowpass.old[       c] = s;
+  }
+ }
+}
+
 int main (int argc, char * argv[]) {
  int    rate     = 44100;
  int    bits     = 16;
@@ -77,7 +105,10 @@ int main (int argc, char * argv[]) {
  int    i;
  int    mul = 1, div = 1;
  float  logscale = 0;
+ float  lp       = 0;
  char buf[BUFSIZE];
+
+ memset(&g_lowpass, 0, sizeof(g_lowpass));
 
  for (i = 1; i < argc; i++) {
   k = argv[i];
@@ -102,6 +133,10 @@ int main (int argc, char * argv[]) {
    div  = atoi(argv[++i]);
   } else if ( strcmp(k, "--log") == 0 ) {
    logscale = atof(argv[++i]);
+  } else if ( strcmp(k, "--lowpass") == 0 ) {
+   lp = exp(-2 * M_PI * atof(argv[++i]) / rate) * 65536;
+   g_lowpass.b = lp;
+   g_lowpass.a = 65536 - lp;
   } else if ( strcmp(k, "--help") == 0 ) {
    usage();
    return 0;
@@ -117,7 +152,7 @@ int main (int argc, char * argv[]) {
   return 1;
  }
 
- if ( mul == div && logscale == 0 ) {
+ if ( mul == div && logscale == 0 && lp == 0 ) {
   fprintf(stderr, "Error: filter is useless!\n");
   return 0;
  }
@@ -128,6 +163,8 @@ int main (int argc, char * argv[]) {
     vol2((void*)buf, mul, div, i);
    if ( logscale )
     logs2((void*)buf, logscale, i);
+   if ( g_lowpass.a )
+    lowpass2((void*)buf, i, channels);
    if (write(fh, buf, i) != i)
     break;
   }
