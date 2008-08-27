@@ -34,11 +34,13 @@ struct _roardsp_filterlist {
 } _roardsp_filterlist[] = {
  {ROARDSP_FILTER_AMP, "AMP", NULL, NULL, NULL, {
            {NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL}}},
- {ROARDSP_FILTER_LOWP, "Lowpass", NULL, NULL, NULL, {
-           {NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL}}},
+ {ROARDSP_FILTER_LOWP, "Lowpass", roardsp_lowp_init, roardsp_lowp_uninit, roardsp_lowp_ctl, {
+           {NULL, NULL, NULL},{NULL, NULL, NULL},{roardsp_lowp_calc16, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL}}},
  {ROARDSP_FILTER_HIGHP, "Highpass", NULL, NULL, NULL, {
            {NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL}}},
  {-1, NULL, NULL, NULL, NULL, {
+      // ?                  8Bit               16Bit              24Bit              32Bit
+      // 0B:n     1     2   1B:n     1     2   2B:n     1     2   3B:n     1    2    4B:n     1     2
            {NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL}}}
 };
 
