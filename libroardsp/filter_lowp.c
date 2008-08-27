@@ -26,7 +26,7 @@
 
 int roardsp_lowp_init  (struct roardsp_filter * filter, struct roar_stream * stream, int id) {
  struct roardsp_lowp * self = malloc(sizeof(struct roardsp_lowp));
- float freq = 25;
+ float freq = filter->rate/2;
 
  if ( self == NULL )
   return -1;
@@ -58,6 +58,8 @@ int roardsp_lowp_calc16  (struct roardsp_filter * filter, void * data, size_t sa
 
  samples /= channels;
 
+ ROAR_DBG("roardsp_lowp_calc16(*): filtering %i frames of %i channels...", samples, channels);
+
 //  *      output[N] = input[N] * A + output[N-1] * B
 
  for (i = 0; i < samples; i++) {
@@ -78,19 +80,24 @@ int roardsp_lowp_ctl   (struct roardsp_filter * filter, int cmd, void * data) {
  struct roardsp_lowp * self = (struct roardsp_lowp *) filter->inst;
  float lp;
  float oldfreq;
+ float newfreq;
 
  if ( cmd != ROARDSP_FCTL_FREQ )
   return -1;
 
- lp = exp(-2 * M_PI * *(float*)data / filter->rate) * 65536;
+ newfreq = *(float*)data;
+
+ lp = exp(-2 * M_PI * newfreq / filter->rate) * 65536;
 
  self->b = lp;
  self->a = 65536 - lp;
 
  oldfreq = self->freq / 1000;
- self->freq = *(float*)data * 1000;
+ self->freq = newfreq * 1000;
 
  *(float*)data = oldfreq;
+
+ ROAR_DBG("roardsp_lowp_ctl(); oldfreq=%f, newfreq=%f", oldfreq, newfreq);
 
  return 0;
 }
