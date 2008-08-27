@@ -73,8 +73,12 @@ int roardsp_filter_init  (struct roardsp_filter * filter, struct roar_stream * s
  int bytes;
  int (*calc)(struct roardsp_filter * filter, void * data, size_t samples) = NULL;
 
- if ( filter == NULL )
+ if ( filter == NULL || stream == NULL ) {
+  ROAR_DBG("roardsp_filter_init(*) = -1 // filter or stream is NULL");
   return -1;
+ }
+
+ ROAR_DBG("roardsp_filter_init(filter=%p, stream=%p, id=%i) = ?", filter, stream, id);
 
  memset(filter, 0, sizeof(struct roardsp_filter));
 
@@ -99,12 +103,19 @@ int roardsp_filter_init  (struct roardsp_filter * filter, struct roar_stream * s
  if ( calc == NULL )
   calc = l->calc[bytes][0]; // for n channels
 
- if ( calc == NULL )
+ if ( calc == NULL ) {
+  ROAR_DBG("roardsp_filter_init(*) = -1 // no calc code");
   return -1;
+ }
 
- if ( l->init )
+ filter->calc = calc;
+
+ if ( l->init ) {
+  ROAR_DBG("roardsp_filter_init(*) = ? // execing init");
   return l->init(filter, stream, id);
+ }
 
+ ROAR_DBG("roardsp_filter_init(*) = 0 // no init");
  return 0;
 }
 
