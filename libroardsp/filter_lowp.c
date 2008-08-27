@@ -97,7 +97,7 @@ int roardsp_lowp_ctl   (struct roardsp_filter * filter, int cmd, void * data) {
 
  *(float*)data = oldfreq;
 
- ROAR_DBG("roardsp_lowp_ctl(); oldfreq=%f, newfreq=%f", oldfreq, newfreq);
+ ROAR_DBG("roardsp_lowp_ctl(*): oldfreq=%f, newfreq=%f", oldfreq, newfreq);
 
  return 0;
 }

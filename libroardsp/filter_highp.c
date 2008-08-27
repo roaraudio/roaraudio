@@ -101,7 +101,8 @@ int roardsp_highp_ctl   (struct roardsp_filter * filter, int cmd, void * data) {
 
  *(float*)data = oldfreq;
 
- ROAR_DBG("roardsp_highp_ctl(); oldfreq=%f, newfreq=%f", oldfreq, newfreq);
+ ROAR_DBG("roardsp_highp_ctl(*): oldfreq=%f, newfreq=%f", oldfreq, newfreq);
+ ROAR_DBG("roardsp_highp_ctl(*): a=%i, b=%i, c=%i", self->a, self->b, self->c);
 
  return 0;
 }
