@@ -25,6 +25,7 @@
 struct roardsp_filter {
  int    channels;
  int    bits;
+ int    rate;
  void * inst;
  int (*calc  )(struct roardsp_filter * filter, void * data, size_t samples);
  int (*uninit)(struct roardsp_filter * filter);

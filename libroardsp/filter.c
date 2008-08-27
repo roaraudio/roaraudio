@@ -76,6 +76,7 @@ int roardsp_filter_init  (struct roardsp_filter * filter, struct roar_stream * s
 
  filter->channels = stream->info.channels;
  filter->bits     = stream->info.bits;
+ filter->rate     = stream->info.rate;
 
  bytes            = stream->info.bits / 8;
 
