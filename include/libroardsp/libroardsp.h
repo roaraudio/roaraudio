@@ -43,6 +43,13 @@ struct roardsp_lowp {
  int32_t  old[ROAR_MAX_CHANNELS];
 };
 
+struct roardsp_highp {
+ uint32_t freq; // in mHz (0Hz..4MHz)
+ int32_t  a, b, c;
+ int32_t  oldout[ROAR_MAX_CHANNELS];
+ int32_t  oldin[ROAR_MAX_CHANNELS];
+};
+
 // funcs:
 int    roardsp_filter_str2id(char * str);
 char * roardsp_filter_id2str(int id);
@@ -64,6 +71,10 @@ int roardsp_lowp_uninit(struct roardsp_filter * filter);
 int roardsp_lowp_calc16(struct roardsp_filter * filter, void * data, size_t samples);
 int roardsp_lowp_ctl   (struct roardsp_filter * filter, int cmd, void * data);
 
+int roardsp_highp_init  (struct roardsp_filter * filter, struct roar_stream * stream, int id);
+int roardsp_highp_uninit(struct roardsp_filter * filter);
+int roardsp_highp_calc16(struct roardsp_filter * filter, void * data, size_t samples);
+int roardsp_highp_ctl   (struct roardsp_filter * filter, int cmd, void * data);
 
 #endif
 
