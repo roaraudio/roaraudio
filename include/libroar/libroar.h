@@ -31,7 +31,6 @@
 #include "poly.h"
 #include "meta.h"
 #include "file.h"
-#include "midi.h"
 #include "acl.h"
 
 #endif

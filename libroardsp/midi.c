@@ -1,6 +1,6 @@
 //midi.c:
 
-#include "libroar.h"
+#include "libroardsp.h"
 
 struct {
  uint16_t id;

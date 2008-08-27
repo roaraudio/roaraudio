@@ -5,6 +5,8 @@
 
 #include <roaraudio.h>
 
+#include "midi.h"
+
 // defines
 #define ROARDSP_MAX_FILTERS_PER_CHAIN 8
 

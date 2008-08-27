@@ -1,12 +1,12 @@
 include ../Makefile.conf
 
 TARGETS=libroar.so
-OBJS=libroar.o basic.o stream.o simple.o auth.o socket.o ctl.o buffer.o convert.o poly.o meta.o file.o midi.o acl.o vio.o
+OBJS=libroar.o basic.o stream.o simple.o auth.o socket.o ctl.o buffer.o convert.o poly.o meta.o file.o acl.o vio.o
 
 #DEFINES        = -DDEBUG
 INCLUDE = -I../include -I../include/libroar
 CFLAGS  = -g -Wall -O2 $(DEFINES) $(INCLUDE) $(INCPATH) -fPIC
-LDFLAGS = -g -shared $(LDPATH) $(lib_dnet) -lm
+LDFLAGS = -g -shared $(LDPATH) $(lib_dnet)
 
 all: ${TARGETS}
 	cp $(cp_v) ${TARGETS} ../lib/

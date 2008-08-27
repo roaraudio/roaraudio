@@ -3,7 +3,7 @@
 #ifndef _LIBROARMIDI_H_
 #define _LIBROARMIDI_H_
 
-#include "libroar.h"
+#include "libroardsp.h"
 #include <math.h>
 
 #define ROAR_MIDI_NOTE_NONE -1
