@@ -55,6 +55,7 @@ int roardsp_fchain_init  (struct roardsp_filterchain * chain);
 int roardsp_fchain_uninit(struct roardsp_filterchain * chain);
 int roardsp_fchain_add   (struct roardsp_filterchain * chain, struct roardsp_filter * filter);
 int roardsp_fchain_calc  (struct roardsp_filterchain * chain, void * data, size_t len);
+int roardsp_fchain_num   (struct roardsp_filterchain * chain);
 
 // filter:
 

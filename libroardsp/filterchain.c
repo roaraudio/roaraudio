@@ -77,4 +77,11 @@ int roardsp_fchain_calc  (struct roardsp_filterchain * chain, void * data, size_
  return ret;
 }
 
+int roardsp_fchain_num   (struct roardsp_filterchain * chain) {
+ if ( chain == NULL )
+  return -1;
+
+ return chain->filters;
+}
+
 //ll
