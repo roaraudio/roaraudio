@@ -24,4 +24,86 @@
 
 #include "libroardsp.h"
 
+int roardsp_highp_init  (struct roardsp_filter * filter, struct roar_stream * stream, int id) {
+ struct roardsp_highp * self = malloc(sizeof(struct roardsp_highp));
+ float freq = 25;
+
+ if ( self == NULL )
+  return -1;
+
+ memset(self, 0, sizeof(struct roardsp_highp));
+
+ filter->inst = (void*) self;
+
+ roardsp_highp_ctl(filter, ROARDSP_FCTL_FREQ, &freq);
+
+ return 0;
+}
+
+int roardsp_highp_uninit(struct roardsp_filter * filter) {
+
+ free(filter->inst);
+ return 0;
+}
+
+int roardsp_highp_calc16(struct roardsp_filter * filter, void * data, size_t samples) {
+ struct roardsp_highp * self = (struct roardsp_highp *) filter->inst;
+ int16_t * samp = (int16_t *) data;
+ register int32_t s;
+ int i, c;
+ int channels = filter->channels;
+
+ if ( channels > ROAR_MAX_CHANNELS )
+  return -1;
+
+ samples /= channels;
+
+ ROAR_DBG("roardsp_highp_calc16(*): filtering %i frames of %i channels...", samples, channels);
+
+// *      output[N] = A0 * input[N] + A1 * input[N-1] + B1 * output[N-1]
+
+
+ for (i = 0; i < samples; i++) {
+  for (c = 0; c < channels; c++) {
+   s = samp[i*channels + c] * self->a + self->oldin[c] * self->b + self->oldout[c] * self->c;
+
+   s /= 65536;
+
+   self->oldin[      c] = s;
+   samp[i*channels + c] = s;
+   self->oldout[     c] = s;
+  }
+ }
+
+ return 0;
+}
+
+int roardsp_highp_ctl   (struct roardsp_filter * filter, int cmd, void * data) {
+ struct roardsp_highp * self = (struct roardsp_highp *) filter->inst;
+ float lp;
+ float oldfreq;
+ float newfreq;
+
+ if ( cmd != ROARDSP_FCTL_FREQ )
+  return -1;
+
+ newfreq = *(float*)data;
+
+ lp = exp(-2 * M_PI * newfreq / filter->rate) * 65536;
+
+ self->a =  (65536 + lp)/2;
+ self->b = -(65536 + lp)/2;
+ self->c =           lp;
+
+
+ oldfreq = self->freq / 1000;
+ self->freq = newfreq * 1000;
+
+ *(float*)data = oldfreq;
+
+ ROAR_DBG("roardsp_highp_ctl(); oldfreq=%f, newfreq=%f", oldfreq, newfreq);
+
+ return 0;
+}
+
 //ll
