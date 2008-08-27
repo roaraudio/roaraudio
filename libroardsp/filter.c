@@ -50,6 +50,7 @@ int    roardsp_filter_str2id(char * str) {
  while ( l->id != -1 ) {
   if ( strcasecmp(l->name, str) == 0 )
    return l->id;
+  l++;
  }
 
  return -1;
@@ -61,6 +62,7 @@ char * roardsp_filter_id2str(int id) {
  while ( l->id != -1 ) {
   if ( l->id == id )
    return l->name;
+  l++;
  }
 
  return NULL;
@@ -82,9 +84,11 @@ int roardsp_filter_init  (struct roardsp_filter * filter, struct roar_stream * s
 
  bytes            = stream->info.bits / 8;
 
- while ( l->id != id )
+ while ( l->id != id ) {
   if ( l->id == -1 )
    return -1;
+  l++;
+ }
 
  filter->uninit = l->uninit;
  filter->ctl    = l->ctl;
