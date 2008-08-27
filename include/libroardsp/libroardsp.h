@@ -56,6 +56,14 @@ int roardsp_fchain_uninit(struct roardsp_filterchain * chain);
 int roardsp_fchain_add   (struct roardsp_filterchain * chain, struct roardsp_filter * filter);
 int roardsp_fchain_calc  (struct roardsp_filterchain * chain, void * data, size_t len);
 
+// filter:
+
+int roardsp_lowp_init  (struct roardsp_filter * filter, struct roar_stream * stream, int id);
+int roardsp_lowp_uninit(struct roardsp_filter * filter);
+int roardsp_lowp_calc16(struct roardsp_filter * filter, void * data, size_t samples);
+int roardsp_lowp_ctl   (struct roardsp_filter * filter, int cmd, void * data);
+
+
 #endif
 
 //ll
