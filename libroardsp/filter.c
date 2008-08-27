@@ -29,15 +29,17 @@ struct _roardsp_filterlist {
  char * name;
  int (*  init      )(struct roardsp_filter * filter, struct roar_stream * stream, int id);
  int (*uninit      )(struct roardsp_filter * filter);
+ int (*ctl         )(struct roardsp_filter * filter, int cmd, void * data);
  int (*calc  [5][3])(struct roardsp_filter * filter, void * data, size_t samples);
 } _roardsp_filterlist[] = {
- {ROARDSP_FILTER_AMP, "AMP", NULL, NULL, {
+ {ROARDSP_FILTER_AMP, "AMP", NULL, NULL, NULL, {
            {NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL}}},
- {ROARDSP_FILTER_LOWP, "Lowpass", NULL, NULL, {
+ {ROARDSP_FILTER_LOWP, "Lowpass", NULL, NULL, NULL, {
            {NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL}}},
- {ROARDSP_FILTER_HIGHP, "Highpass", NULL, NULL, {
+ {ROARDSP_FILTER_HIGHP, "Highpass", NULL, NULL, NULL, {
            {NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL}}},
- {-1, NULL, NULL, NULL, {{NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL}}}
+ {-1, NULL, NULL, NULL, NULL, {
+           {NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL}}}
 };
 
 int    roardsp_filter_str2id(char * str) {
@@ -63,6 +65,10 @@ char * roardsp_filter_id2str(int id) {
 }
 
 int roardsp_filter_init  (struct roardsp_filter * filter, struct roar_stream * stream, int id) {
+ struct _roardsp_filterlist * l = _roardsp_filterlist;
+ int bytes;
+ int (*calc)(struct roardsp_filter * filter, void * data, size_t samples) = NULL;
+
  if ( filter == NULL )
   return -1;
 
@@ -71,7 +77,28 @@ int roardsp_filter_init  (struct roardsp_filter * filter, struct roar_stream * s
  filter->channels = stream->info.channels;
  filter->bits     = stream->info.bits;
 
- return -1;
+ bytes            = stream->info.bits / 8;
+
+ while ( l->id != id )
+  if ( l->id == -1 )
+   return -1;
+
+ filter->uninit = l->uninit;
+ filter->ctl    = l->ctl;
+
+ if ( filter->channels < 3 )
+  calc = l->calc[bytes][filter->channels];
+
+ if ( calc == NULL )
+  calc = l->calc[bytes][0]; // for n channels
+
+ if ( calc == NULL )
+  return -1;
+
+ if ( l->init )
+  return l->init(filter, stream, id);
+
+ return 0;
 }
 
 int roardsp_filter_uninit(struct roardsp_filter * filter) {
@@ -98,6 +125,16 @@ int roardsp_filter_calc  (struct roardsp_filter * filter, void * data, size_t le
   ret = filter->calc(filter, data, len);
 
  return ret;
+}
+
+int    roardsp_filter_ctl   (struct roardsp_filter * filter, int cmd, void * data) {
+ if ( filter == NULL )
+  return -1;
+
+ if ( filter->ctl )
+  return filter->ctl(filter, cmd, data);
+
+ return -1;
 }
 
 //ll
