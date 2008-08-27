@@ -23,6 +23,7 @@
  */
 
 #include <roaraudio.h>
+#include <libroardsp/libroardsp.h>
 #include <math.h>
 
 #define BUFSIZE 1024
@@ -48,6 +49,8 @@ void usage (void) {
         "  --mul VAL          - Set mul\n"
         "  --div VAL          - Set div\n"
         "  --lowpass freq     - lowpass filter\n"
+        "  --filter  name     - add filter name\n"
+        "  --ffreq   freq     - set filter freq\n"
        );
 
 }
@@ -130,8 +133,13 @@ int main (int argc, char * argv[]) {
  float  logscale = 0;
  float  lp       = 0;
  char buf[BUFSIZE];
+ struct roardsp_filterchain fc;
+ struct roardsp_filter      filter;
+ struct roar_stream         stream;
 
  memset(&g_lowpass, 0, sizeof(g_lowpass));
+
+ roardsp_fchain_init(&fc);
 
  for (i = 1; i < argc; i++) {
   k = argv[i];
@@ -161,6 +169,15 @@ int main (int argc, char * argv[]) {
    g_lowpass.b = lp;
    g_lowpass.a = 65536 - lp;
 //   printf("lowpass: A=%i, B=%i\n", g_lowpass.a, g_lowpass.b);
+  } else if ( strcmp(k, "--filter") == 0 ) {
+   stream.info.channels = channels;
+   stream.info.bits     = bits;
+   stream.info.rate     = rate;
+   roardsp_filter_init(&filter, &stream, roardsp_filter_str2id(argv[++i]));
+   roardsp_fchain_add(&fc, &filter);
+  } else if ( strcmp(k, "--ffreq") == 0 ) {
+   lp = atof(argv[++i]);
+   roardsp_filter_ctl(&filter, ROARDSP_FCTL_FREQ, &lp);
   } else if ( strcmp(k, "--help") == 0 ) {
    usage();
    return 0;
@@ -176,7 +193,7 @@ int main (int argc, char * argv[]) {
   return 1;
  }
 
- if ( mul == div && logscale == 0 && lp == 0 ) {
+ if ( mul == div && logscale == 0 && g_lowpass.a == 0 && roardsp_fchain_num(&fc) == 0 ) {
   fprintf(stderr, "Error: filter is useless!\n");
   return 0;
  }
@@ -189,6 +206,7 @@ int main (int argc, char * argv[]) {
     logs2((void*)buf, logscale, i);
    if ( g_lowpass.a )
     lowpass2((void*)buf, i, channels);
+   roardsp_fchain_calc(&fc, (void*)buf, (8*i)/bits);
    if (write(fh, buf, i) != i)
     break;
   }
@@ -204,6 +222,8 @@ int main (int argc, char * argv[]) {
  }
 
  roar_simple_close(fh);
+
+ roardsp_fchain_uninit(&fc);
 
  return 0;
 }
