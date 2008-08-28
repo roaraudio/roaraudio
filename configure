@@ -1,5 +1,14 @@
 #!/bin/sh
 
+# check for bash...
+
+if [ "$(echo -n)" = '-n' ]
+then
+ SHELL=$(which bash sh 2> /dev/null | head -n 1)
+ exec $SHELL $0 "$@"
+fi
+
+
 #set -x
 
 TF_C=testit.c
