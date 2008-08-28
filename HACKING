@@ -11,5 +11,24 @@
 
 --- 2. Infos for developer
 
+At the moment all the libs are under GPLv3.
+As libesd, libarts*, libpulse* and maybe other are under
+LGPL the corresponding roar replacements should be under LGPL as well.
+Because they link libroar independent of what licenses they are under
+they are downgraded to GPL. This may change in future.
+
+Because of that I *require* that *everything* that is contributed by
+someone I get under LGPL so I can upgrade code to LGPL if needed
+in future without asking. Code I get under a diffrent licens
+will *NOT* get into trunk nor will be hosted by me.
+
+Also add full contact infos when sending code to me, this includes:
+1) Full name
+2) nickname
+3) E-Mail
+4) OpenPGP key
+
+Then sending code please sign it with OpenPGP.
+
 
 #ll
