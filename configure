@@ -217,6 +217,19 @@ else
  echo no
 fi
 
+echo -n 'checking for inline funcs... '
+
+echo 'inline int test (void) { return 0; }' > $TF_C
+echo 'int main (void) { return test(); }'  >> $TF_C
+
+if $CCTF 2> /dev/null;
+then
+ echo '#define ROAR_HAVE_INLINE' >&3
+ echo yes
+else
+ echo no
+fi
+
 echo -n 'checking for safe 32 bit integer overflow... '
 
 cat > $TF_C << EOF
