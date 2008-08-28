@@ -111,8 +111,22 @@
 #define ROAR_MLOCK(p,s) mlock((p), (s))
 #else
 #undef ROAR_HAVE_MLOCK
+#ifdef ROAR_HAVE_INLINE
+inline int ROAR_MLOCK(const void *addr, size_t len) {
+ long sz = sysconf(_SC_PAGESIZE);
+ unsigned long int pos = (unsigned long int) addr;
+
+ len += sz - (len % sz);
+
+ pos -= pos % sz;
+
+ return mlock((void*)pos, len);
+}
+#define ROAR_MLOCK ROAR_MLOCK
+#else
 #define ROAR_MLOCK(p,s)
 #warning No working mlock() support for this platform
+#endif
 #endif
 #endif
 
