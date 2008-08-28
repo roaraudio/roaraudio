@@ -73,7 +73,9 @@ int roar_file_codecdetect(char * buf, int len) {
 
 ssize_t roar_file_send_raw (int out, int in) {
  ssize_t r = 0;
+#ifdef ROAR_HAVE_LINUX_SENDFILE
  ssize_t ret;
+#endif
  int len;
  char buf[BUFSIZE];
 #ifdef __linux__

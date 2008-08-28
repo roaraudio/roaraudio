@@ -37,7 +37,7 @@
 int roar_connect_raw (char * server) {
  char user_sock[80];
  char * roar_server;
- int i;
+ int i = 0;
  int port = 0;
  int fh = -1;
  int is_decnet = 0;

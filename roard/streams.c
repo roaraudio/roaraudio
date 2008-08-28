@@ -468,7 +468,7 @@ int streams_fill_mixbuffer (int id, struct roar_audio_info * info) {
    if ( g_streams[id]->is_new ) {
     stream->pre_underruns++;
    } else {
-    ROAR_WARN("streams_fill_mixbuffer(*): Underrun in stream: %i bytes missing, filling with zeros", todo);
+    ROAR_WARN("streams_fill_mixbuffer(*): Underrun in stream: %u bytes missing, filling with zeros", (unsigned int)todo);
     stream->post_underruns++;
    }
 

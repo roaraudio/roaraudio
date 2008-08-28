@@ -110,6 +110,7 @@
 #ifdef __linux__
 #define ROAR_MLOCK(p,s) mlock((p), (s))
 #else
+int _ROAR_MLOCK(const void *addr, size_t len);
 #define ROAR_MLOCK _ROAR_MLOCK
 #endif
 #endif
