@@ -9,6 +9,31 @@
 
 --- 1. Infos for maintainers:
 
+If you want to maintain a packet for your favorit OS please let me know!
+I would love to be in contact with the maintainers to send them infos about
+updates and maybe get feadback or things like init scripts or the like
+(see 2. Infos for developer).
+
+If it would make your work simpler I can put things in trunk
+(info files for pkg build tools or the like). Just ask.
+
+Also if you need any help you may contact me.
+
+Here is my recommendation on how to split the RoarAudio in pkgs:
+
+libroar               includs libroar and libroardsp
+roaraudio-common      include roard and roarclients
+                      (at least the ones with no specal deps)
+roaraudio-tools       includes all other tools not in roaraudio-common
+                      because of specal deps (if any)
+roaraudio-compat      includes libroaresd, libroararts, libroarpulse
+                      and libroaryiff. It would be nice to ask the user
+                      if he wants symlinks from libesd, libarts*, libpulse*.
+roaraudio-dev         includes include/
+someplayer-roar       pkgs from plugins/
+
+manpages should be included in the corresponding packet.
+
 --- 2. Infos for developer
 
 At the moment all the libs are under GPLv3.
