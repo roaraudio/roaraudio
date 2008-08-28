@@ -1,9 +1,11 @@
 TARGETS=libroarpulse.so libroarpulseinfo
 OBJS=libroarpulse.o simple.o util.o
 
+include ../Makefile.conf
+
 DEFINES        = -DDEBUG
 INCLUDE = -I../include -I../include/libroarpulse
-CFLAGS  = -g -Wall -O2 $(DEFINES) $(INCLUDE)
+CFLAGS  = -g -Wall -O2 $(DEFINES) $(INCLUDE) $(INCPATH) -fPIC
 LDFLAGS = -g -lroar $(LDPATH) -L../lib/
 
 all: ${TARGETS}
@@ -13,6 +15,6 @@ clean:
 new: clean all
 
 libroarpulse.so: ${OBJS}
-	${CC} ${LDFLAGS} -shared -o libroarpulse.so ${OBJS}
+	${CC} ${LDFLAGS} $(SHARED) -o libroarpulse.so ${OBJS}
 
 libroarpulseinfo: libroarpulseinfo.o

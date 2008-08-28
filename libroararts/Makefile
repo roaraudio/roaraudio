@@ -1,9 +1,11 @@
 TARGETS=libartsc.so
 OBJS=libartsc.o
 
+include ../Makefile.conf
+
 DEFINES        = -DDEBUG
 INCLUDE = -I../include -I../include/libroarpulse
-CFLAGS  = -g -Wall -O2 $(DEFINES) $(INCLUDE)
+CFLAGS  = -g -Wall -O2 $(DEFINES) $(INCLUDE) $(INCPATH) -fPIC
 LDFLAGS = -g -lroar $(LDPATH) -L../lib/
 
 all: ${TARGETS}
@@ -13,4 +15,4 @@ clean:
 new: clean all
 
 libartsc.so: ${OBJS}
-	${CC} ${LDFLAGS} -shared -o libartsc.so ${OBJS}
+	${CC} ${LDFLAGS} $(SHARED) -o libartsc.so ${OBJS}
