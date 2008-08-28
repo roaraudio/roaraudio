@@ -7,6 +7,9 @@ TF_E=./testit
 LDPATH=''
 INCPATH=''
 
+SYSNAME='unknown'
+SHARED='-shared'
+
 echo -n "checking for C compiler... "
 CC=$(which gcc cc 2> /dev/null | head -n 1)
 if [ "$CC" = '' ]
@@ -18,6 +21,9 @@ echo $CC
 
 #Makefile.conf not yet open, write it later
 
+echo -n "checking for sysname... "
+SYSNAME=$(uname -s)
+echo "$SYSNAME"
 
 while [ "$1" != '' ]
 do
@@ -116,6 +122,15 @@ exec 3> config.h 4> Makefile.conf
 echo "CC=$CC" >&4
 echo "LDPATH=$LDPATH" >&4
 echo "INCPATH=$INCPATH" >&4
+
+if [ "$SYSNAME" = 'Darwin' ]
+then
+ echo "Adding $SYSNAME shared lib arguments..."
+ SHARED="$SHARED -fno-common -dynamiclib -compatibility_version 0.1 -current_version 0.1.0"
+ INCPATH="$INCPATH -fno-common"
+fi
+
+echo "SHARED=$SHARED" >&4
 
 cat >&3 << EOF
 //config.h:

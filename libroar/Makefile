@@ -6,7 +6,7 @@ OBJS=libroar.o basic.o stream.o simple.o auth.o socket.o ctl.o buffer.o convert.
 #DEFINES        = -DDEBUG
 INCLUDE = -I../include -I../include/libroar
 CFLAGS  = -g -Wall -O2 $(DEFINES) $(INCLUDE) $(INCPATH) -fPIC
-LDFLAGS = -g -shared $(LDPATH) $(lib_dnet)
+LDFLAGS = -g $(SHARED) $(LDPATH) $(lib_dnet)
 
 all: ${TARGETS}
 	cp $(cp_v) ${TARGETS} ../lib/

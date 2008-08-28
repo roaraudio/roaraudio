@@ -8,7 +8,7 @@ FILTER=lowp.o highp.o
 #DEFINES        = -DDEBUG
 INCLUDE = -I../include -I../include/libroardsp
 CFLAGS  = -g -Wall -O2 $(DEFINES) $(INCLUDE) $(INCPATH) -fPIC
-LDFLAGS = -g -shared -L../lib/ $(LDPATH) $(lib_dnet) -lm -lroar
+LDFLAGS = -g $(SHARED) -L../lib/ $(LDPATH) $(lib_dnet) -lm -lroar
 
 all: ${TARGETS}
 	cp $(cp_v) ${TARGETS} ../lib/
