@@ -42,6 +42,7 @@ do
    echo '--ldpath DIR'
    echo '--incpath DIR'
    echo '--addpath DIR'
+   echo '--no-LIB'
    exit 0;
   ;;
   '--ldpath')
@@ -56,6 +57,10 @@ do
    LDPATH="$LDPATH -L$2/lib/"
    INCPATH="$INCPATH -I$2/include/"
    shift;
+  ;;
+  '--no-'*)
+   lib=$(echo "$1" | sed 's/^--no-//')
+   eval no_lib_$lib=true
   ;;
  esac;
 
@@ -111,6 +116,17 @@ test_lib_defmake () {
  lib="$2"
 
  [ "$subdir" = '%' ] && subdir=''
+
+ eval _no="\$no_lib_$lib";
+
+ if [ "$_no" != '' ]
+ then
+   echo "checking for $1... disabled by user"
+  [ "$subdir" != '' ] && \
+   echo "subdir_$subdir=" >&4
+  echo "lib_$lib=" >&4
+  return;
+ fi
 
  if test_lib $@
  then
