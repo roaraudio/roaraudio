@@ -117,15 +117,18 @@ test_lib_defmake () {
 
  [ "$subdir" = '%' ] && subdir=''
 
- eval _no="\$no_lib_$lib";
-
- if [ "$_no" != '' ]
+ if [ "$lib" != '--' ]
  then
-   echo "checking for $1... disabled by user"
-  [ "$subdir" != '' ] && \
-   echo "subdir_$subdir=" >&4
-  echo "lib_$lib=" >&4
-  return;
+  eval _no="\$no_lib_$lib";
+
+  if [ "$_no" != '' ]
+  then
+    echo "checking for $1... disabled by user"
+   [ "$subdir" != '' ] && \
+    echo "subdir_$subdir=" >&4
+   echo "lib_$lib=" >&4
+   return;
+  fi
  fi
 
  if test_lib $@
