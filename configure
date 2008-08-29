@@ -68,7 +68,7 @@ do
 done
 
 
-CCTF="$CC $LDPATH $INCPATH -o $TF_E $TF_C"
+CCTF="false"
 
 test_lib () {
  echo > $TF_C
@@ -146,11 +146,6 @@ test_lib_defmake () {
 
 exec 3> config.h 4> Makefile.conf
 
-# now write the cc name to Makefile.conf
-echo "CC=$CC" >&4
-echo "LDPATH=$LDPATH" >&4
-echo "INCPATH=$INCPATH" >&4
-
 if [ "$SYSNAME" = 'Darwin' ]
 then
  echo "Adding $SYSNAME shared lib arguments..."
@@ -162,7 +157,13 @@ then
  LDPATH="$LDPATH -L/usr/local/lib/"
 fi
 
+# now write the cc name to Makefile.conf
 echo "SHARED=$SHARED" >&4
+echo "CC=$CC" >&4
+echo "LDPATH=$LDPATH" >&4
+echo "INCPATH=$INCPATH" >&4
+
+CCTF="$CC $LDPATH $INCPATH -o $TF_E $TF_C"
 
 cat >&3 << EOF
 //config.h:
