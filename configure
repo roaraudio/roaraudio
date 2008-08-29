@@ -156,6 +156,10 @@ then
  echo "Adding $SYSNAME shared lib arguments..."
  SHARED="$SHARED -fno-common -dynamiclib -compatibility_version 0.1 -current_version 0.1.0"
  INCPATH="$INCPATH -fno-common"
+elif [ "$SYSNAME" = 'NetBSD' ]
+then
+ echo "Adding $SYSNAME libpath arguments..."
+ LDPATH="$LDPATH -L/usr/local/lib/"
 fi
 
 echo "SHARED=$SHARED" >&4
