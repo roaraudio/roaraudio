@@ -65,7 +65,7 @@ int update_stream (struct roar_connection * con, struct roar_stream * s, int * o
  int    bits     = 16;
  int    codec    = ROAR_CODEC_DEFAULT;
  char **ptr = ov_comment(vf, -1)->user_comments;
- char key[ROAR_META_MAX_NAMELEN], value[ROAR_META_MAX_NAMELEN] = {0};
+ char key[ROAR_META_MAX_NAMELEN], value[LIBROAR_BUFFER_MSGDATA] = {0};
  int j, h = 0;
  struct roar_meta   meta;
  int need_new_stream = 0;
@@ -127,7 +127,7 @@ int update_stream (struct roar_connection * con, struct roar_stream * s, int * o
 
    if ( meta_ok ) {
     for (j++, h = 0; (*ptr)[j] != 0 && (*ptr)[j] != '='; j++) {
-     if ( h == ROAR_META_MAX_NAMELEN ) {
+     if ( h == LIBROAR_BUFFER_MSGDATA ) {
       ROAR_ERR("update_stream(*): invalid meta data: meta data value for key '%s' too long", key);
       meta_ok = 0;
       h = 0;
