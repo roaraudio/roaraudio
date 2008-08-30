@@ -65,10 +65,11 @@ int update_stream (struct roar_connection * con, struct roar_stream * s, int * o
  int    bits     = 16;
  int    codec    = ROAR_CODEC_DEFAULT;
  char **ptr = ov_comment(vf, -1)->user_comments;
- char key[80], value[80] = {0};
+ char key[ROAR_META_MAX_NAMELEN], value[ROAR_META_MAX_NAMELEN] = {0};
  int j, h = 0;
  struct roar_meta   meta;
  int need_new_stream = 0;
+ int meta_ok;
 
  fprintf(stderr, "\n");
 
@@ -105,24 +106,47 @@ int update_stream (struct roar_connection * con, struct roar_stream * s, int * o
  else
   meta.type = ROAR_META_TYPE_FILENAME;
 
- strncpy(value, file, 79);
+
+ strncpy(value, file, ROAR_META_MAX_NAMELEN-1);
+ value[ROAR_META_MAX_NAMELEN-1] = 0;
  roar_stream_meta_set(con, s, ROAR_META_MODE_SET, &meta);
 
  while(*ptr){
-   for (j = 0; (*ptr)[j] != 0 && (*ptr)[j] != '='; j++)
+  meta_ok = 1;
+
+   for (j = 0; (*ptr)[j] != 0 && (*ptr)[j] != '='; j++) {
+    if ( j == ROAR_META_MAX_NAMELEN ) {
+     ROAR_ERR("update_stream(*): invalid meta data: meta data key too long");
+     meta_ok = 0;
+     j = 0;
+     break;
+    }
     key[j] = (*ptr)[j];
-    key[j] = 0;
+   }
+   key[j] = 0;
 
-   for (j++, h = 0; (*ptr)[j] != 0 && (*ptr)[j] != '='; j++)
-    value[h++] = (*ptr)[j];
+   if ( meta_ok ) {
+    for (j++, h = 0; (*ptr)[j] != 0 && (*ptr)[j] != '='; j++) {
+     if ( h == ROAR_META_MAX_NAMELEN ) {
+      ROAR_ERR("update_stream(*): invalid meta data: meta data value for key '%s' too long", key);
+      meta_ok = 0;
+      h = 0;
+      break;
+     }
+     value[h++] = (*ptr)[j];
+    }
     value[h]   = 0;
+   }
 
-   meta.type = roar_meta_inttype(key);
-   if ( meta.type != -1 )
-    roar_stream_meta_set(con, s, ROAR_META_MODE_SET, &meta);
+   if ( meta_ok ) {
+    fprintf(stderr, "Meta %-16s: %s\n", key, value);
 
-   fprintf(stderr, "Meta %-16s: %s\n", key, value);
-   ++ptr;
+    meta.type = roar_meta_inttype(key);
+    if ( meta.type != -1 )
+     roar_stream_meta_set(con, s, ROAR_META_MODE_SET, &meta);
+   }
+
+   ptr++;
  }
 
  return 0;
@@ -202,7 +226,7 @@ int main (int argc, char * argv[]) {
 
   if ( last_section != current_section )
    if ( update_stream(&con, &s, &out, &vf, file, &info) == -1 )
-    return -1;
+    return 1;
 
   last_section = current_section;
 
