@@ -179,6 +179,8 @@ int roar_open(AFormat fmt, int rate, int nch) {
 
  g_inst.bps       = nch * rate * bits / 8;
 
+ roar_close();
+
  if ( (g_inst.data_fh = roar_simple_new_stream_obj(&(g_inst.con), &(g_inst.stream),
                               rate, nch, bits, codec, ROAR_DIR_PLAY)) == -1) {
   roar_disconnect(&(g_inst.con));
@@ -197,7 +199,8 @@ int roar_open(AFormat fmt, int rate, int nch) {
 }
 
 void roar_close(void) {
- close(g_inst.data_fh);
+ if ( g_inst.data_fh != -1 )
+  close(g_inst.data_fh);
  g_inst.data_fh = -1;
  g_inst.state |= STATE_PLAYING;
  g_inst.state -= STATE_PLAYING;
