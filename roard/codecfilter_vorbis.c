@@ -283,7 +283,7 @@ int cf_vorbis_update_stream (struct codecfilter_vorbis_inst * self) {
     for (j++, h = 0; (*ptr)[j] != 0 && (*ptr)[j] != '='; j++) {
      if ( h == LIBROAR_BUFFER_MSGDATA ) {
       ROAR_ERR("update_stream(*): invalid meta data on stream %i: meta data value for key '%s' too long", s->id, key);
-      meta_ok = 1;
+      meta_ok = 0;
       h = 0;
       break;
      }
