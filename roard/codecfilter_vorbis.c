@@ -251,11 +251,12 @@ int cf_vorbis_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
 int cf_vorbis_update_stream (struct codecfilter_vorbis_inst * self) {
  vorbis_info *vi = ov_info(&(self->vf), -1);
  char **ptr = ov_comment(&(self->vf), -1)->user_comments;
- char key[80] = {0}, value[80] = {0};
+ char key[ROAR_META_MAX_NAMELEN] = {0}, value[LIBROAR_BUFFER_MSGDATA] = {0};
  struct roar_stream * s = ROAR_STREAM(self->stream);
  int type;
  int j, h = 0;
  float rpg_track = 0, rpg_album = 0;
+ int meta_ok;
 
  s->info.channels = vi->channels;
  s->info.rate     = vi->rate;
@@ -265,35 +266,55 @@ int cf_vorbis_update_stream (struct codecfilter_vorbis_inst * self) {
  stream_meta_clear(s->id);
 
  while(*ptr){
-   for (j = 0; (*ptr)[j] != 0 && (*ptr)[j] != '='; j++)
+  meta_ok = 1;
+
+   for (j = 0; (*ptr)[j] != 0 && (*ptr)[j] != '='; j++) {
+    if ( j == ROAR_META_MAX_NAMELEN ) {
+     ROAR_ERR("cf_vorbis_update_stream(*): invalid meta data on stream %i: meta data key too long", s->id);
+     meta_ok = 0;
+     j = 0;
+     break;
+    }
     key[j] = (*ptr)[j];
-    key[j] = 0;
+   }
+   key[j] = 0;
 
-   for (j++, h = 0; (*ptr)[j] != 0 && (*ptr)[j] != '='; j++)
-    value[h++] = (*ptr)[j];
+   if ( meta_ok ) {
+    for (j++, h = 0; (*ptr)[j] != 0 && (*ptr)[j] != '='; j++) {
+     if ( h == LIBROAR_BUFFER_MSGDATA ) {
+      ROAR_ERR("update_stream(*): invalid meta data on stream %i: meta data value for key '%s' too long", s->id, key);
+      meta_ok = 1;
+      h = 0;
+      break;
+     }
+     value[h++] = (*ptr)[j];
+    }
     value[h]   = 0;
-
-   type = roar_meta_inttype(key);
-   if ( type != -1 )
-    stream_meta_set(s->id, type, "", value);
-
-   ROAR_DBG("cf_vorbis_update_stream(*): Meta %-16s: %s", key, value);
-
-   if ( strcmp(key, "REPLAYGAIN_TRACK_PEAK") == 0 ) {
-    rpg_track = 1/atof(value);
-/*
-   } else if ( strcmp(key, "REPLAYGAIN_TRACK_GAIN") == 0 ) {
-    rpg_track = powf(10, atof(value)/20);
-*/
-   } else if ( strcmp(key, "REPLAYGAIN_ALBUM_PEAK") == 0 ) {
-    rpg_album = 1/atof(value);
-/* 
-   } else if ( strcmp(key, "REPLAYGAIN_ALBUM_GAIN") == 0 ) {
-    rpg_album = powf(10, atof(value)/20);
-*/
    }
 
-   ++ptr;
+   if ( meta_ok ) {
+    type = roar_meta_inttype(key);
+    if ( type != -1 )
+     stream_meta_set(s->id, type, "", value);
+
+    ROAR_DBG("cf_vorbis_update_stream(*): Meta %-16s: %s", key, value);
+
+    if ( strcmp(key, "REPLAYGAIN_TRACK_PEAK") == 0 ) {
+     rpg_track = 1/atof(value);
+/*
+    } else if ( strcmp(key, "REPLAYGAIN_TRACK_GAIN") == 0 ) {
+     rpg_track = powf(10, atof(value)/20);
+*/
+    } else if ( strcmp(key, "REPLAYGAIN_ALBUM_PEAK") == 0 ) {
+     rpg_album = 1/atof(value);
+/* 
+    } else if ( strcmp(key, "REPLAYGAIN_ALBUM_GAIN") == 0 ) {
+     rpg_album = powf(10, atof(value)/20);
+*/
+    }
+   }
+
+   ptr++;
  }
 
  if ( rpg_album ) {
