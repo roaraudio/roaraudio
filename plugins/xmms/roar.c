@@ -181,6 +181,9 @@ int roar_open(AFormat fmt, int rate, int nch) {
 
  if ( (g_inst.data_fh = roar_simple_new_stream_obj(&(g_inst.con), &(g_inst.stream),
                               rate, nch, bits, codec, ROAR_DIR_PLAY)) == -1) {
+  roar_disconnect(&(g_inst.con));
+  g_inst.state |= STATE_CONNECTED;
+  g_inst.state -= STATE_CONNECTED;
   return FALSE;
  }
  g_inst.state |= STATE_PLAYING;
