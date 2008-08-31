@@ -1,10 +1,7 @@
 Things we need to do:
  * add _working_ resampling code
  * add support for sync streams
- * find out where the memory leaks are
  * add install target to Makefile
- * add a HACKING file
- * add all license statements
 
 Things we should do:
  * add a lot other things
