@@ -4,7 +4,24 @@
 
 --- What is RoarAudio?:
 
+RoarAudio is a cross-platform sound system for both, home and professional use.
+It can be used to mix audio for output on a single-stream soundcard or to play
+audio over the network.
+
 --- Build:
+
+-- Build requirements:
+
+A POSIX system.
+
+You should install libesd and libao and maybe some codecs.
+For Debian you may use this command:
+apt-get install build-essential libesd0-dev libao-dev libfishsound1-dev libvorbis-dev libspeex-dev libshout3-dev libsndfile1-dev liboggz1-dev
+
+You should not install libdnet unless you want DECnet support compiled in.
+(will give strange error messages on non DECnet systems)
+
+-- How to build:
 
  $ ./configure
  $ make
@@ -13,6 +30,19 @@
 
  $ cd plugins/
  $ make
+
+--- Writeing software for RoarAudio:
+
+See manpages: libroar(7) and roartut(7).
+You also sould read the examplecode in roarclients/*.c
+
+--- Writeing patches for this packet:
+
+See HACKING.
+
+--- Want to be a maintainer for your favorit OS?:
+
+See HACKING.
 
 --- Tested platforms:
 
