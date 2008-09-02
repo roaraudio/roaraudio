@@ -1,4 +1,4 @@
-all: symlinks man2html symlinks-html
+all: symlinks
 
 symlinks:
 	while read fn fc tn tc; do ln -s ../man$$tc/$$tn.$$tc man$$fc/$$fn.$$fc 2> /dev/null; done < symlinks.src; true
