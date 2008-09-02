@@ -18,6 +18,7 @@ INCPATH=''
 
 SYSNAME='unknown'
 SHARED='-shared'
+SHARED_CF=''
 PKG_CONFIG=false
 
 echo -n "checking for C compiler... "
@@ -170,7 +171,7 @@ if [ "$SYSNAME" = 'Darwin' ]
 then
  echo "Adding $SYSNAME shared lib arguments..."
  SHARED="$SHARED -fno-common -dynamiclib -compatibility_version 0.1 -current_version 0.1.0"
- INCPATH="$INCPATH -fno-common"
+ SHARED_CF="$SHARED_CF -fno-common"
 elif [ "$SYSNAME" = 'NetBSD' ]
 then
  echo "Adding $SYSNAME libpath arguments..."
@@ -179,6 +180,7 @@ fi
 
 # now write the cc name to Makefile.conf
 echo "SHARED=$SHARED" >&4
+echo "SHARED_CF=$SHARED_CF" >&4
 echo "CC=$CC" >&4
 echo "LDPATH=$LDPATH" >&4
 echo "INCPATH=$INCPATH" >&4
