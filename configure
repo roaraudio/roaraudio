@@ -18,6 +18,7 @@ INCPATH=''
 
 SYSNAME='unknown'
 SHARED='-shared'
+PKG_CONFIG=false
 
 echo -n "checking for C compiler... "
 CC=$(which gcc cc 2> /dev/null | head -n 1)
@@ -27,6 +28,15 @@ then
  exit 1;
 fi
 echo $CC
+
+echo -n "checking for pkg-config... "
+PKG_CONFIG=$(which pkg-config false 2> /dev/null | head -n 1)
+if $PKG_CONFIG --help > /dev/null 2> /dev/null
+then
+ echo $PKG_CONFIG
+else
+ echo no
+fi
 
 #Makefile.conf not yet open, write it later
 
@@ -86,6 +96,8 @@ test_lib () {
 
  shift;
 
+ LIBS=$(echo "$LIBS" | sed 's/-l-l/-l/g')
+
  while [ "$1" != '' ]
  do
   echo "#include <$1>" >> $TF_C
@@ -113,7 +125,9 @@ test_lib_defmake () {
  subdir="$2"
  shift
  shift
+ name="$1"
  lib="$2"
+ shift
 
  [ "$subdir" = '%' ] && subdir=''
 
@@ -131,12 +145,18 @@ test_lib_defmake () {
   fi
  fi
 
- if test_lib $@
+ LIBS=$($PKG_CONFIG --silence-errors --libs $lib)
+ if [ "$?" != '0' ]
+ then
+  LIBS="-l$lib"
+ fi
+
+ if test_lib "$name" $LIBS "$@"
  then
   echo "#define $def"            >&3
   [ "$subdir" != '' ] && \
    echo "subdir_$subdir=$subdir" >&4
-  echo "lib_$lib=-l$lib" >&4
+  echo "lib_$lib=$LIBS" >&4
  else
   [ "$subdir" != '' ] && \
    echo "subdir_$subdir=" >&4
@@ -206,7 +226,7 @@ test_lib_defmake ROAR_HAVE_LIBPULSE      libroarpulse libpulse      pulse      -
 test_lib_defmake ROAR_HAVE_LIBY2         libroaryiff  libyiff       Y2         -- Y2/Y.h Y2/Ylib.h
 test_lib_defmake ROAR_HAVE_LIBARTSC      libroararts  libartsc      artsc      -- kde/artsc/artsc.h
 test_lib_defmake ROAR_HAVE_LIBDNET       %            libdnet       dnet       -- sys/socket.h netdnet/dn.h netdnet/dnetdb.h
-test_lib_defmake ROAR_HAVE_IPX           %            IPX                      -- netipx/ipx.h
+test_lib_defmake ROAR_HAVE_IPX           %            IPX           c          -- netipx/ipx.h
 
 # add a better test here
 test_lib 'linux sendfile()'       -- sys/sendfile.h && echo '#define ROAR_HAVE_LINUX_SENDFILE' >&3
