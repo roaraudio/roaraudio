@@ -9,7 +9,7 @@ include ../Makefile.conf
 #DEFINES        = -DDEBUG
 #DEFINES        = -DMONITOR_LATENCY
 INCLUDE = -I../include -I./include
-CFLAGS  = -g -Wall -O2 $(DEFINES) $(INCLUDE) $(INCPATH)
+CFLAGS += -g -Wall -O2 $(DEFINES) $(INCLUDE) $(INCPATH)
 LDFLAGS = -g -L../lib/ $(LDPATH) -lroar -lroardsp $(lib_esd) $(lib_ao) $(lib_vorbisfile) $(lib_vorbisenc) -lm $(lib_celt) $(lib_speex) $(lib_vorbis)
 
 all: ${TARGETS}

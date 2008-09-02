@@ -5,7 +5,7 @@ include ../Makefile.conf
 
 DEFINES        = -DDEBUG
 INCLUDE = -I../include -I../include/libroarpulse
-CFLAGS  = -g -Wall -O2 $(DEFINES) $(INCLUDE) $(INCPATH) -fPIC
+CFLAGS += -g -Wall -O2 $(DEFINES) $(INCLUDE) $(INCPATH) -fPIC
 LDFLAGS = -g -lroar $(LDPATH) -L../lib/
 
 all: ${TARGETS}

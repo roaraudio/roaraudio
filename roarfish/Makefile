@@ -4,7 +4,7 @@ OBJ=roarfish.o play.o
 
 #DEFINES        = -DDEBUG
 INCLUDE = -I../include -I./include
-CFLAGS  = -g -Wall -O2 $(DEFINES) $(INCLUDE)
+CFLAGS += -g -Wall -O2 $(DEFINES) $(INCLUDE)
 LDFLAGS = -g -L../lib/ $(LDPATH) -lroar -lfishsound -loggz
 
 all: ${TARGETS}

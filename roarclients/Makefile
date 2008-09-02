@@ -4,7 +4,7 @@ include ../Makefile.conf
 
 #DEFINES        = -DDEBUG
 INCLUDE = -I../include -I./include
-CFLAGS  = -g -Wall -O2 $(DEFINES) $(INCLUDE) $(INCPATH)
+CFLAGS += -g -Wall -O2 $(DEFINES) $(INCLUDE) $(INCPATH)
 LDFLAGS = -g -L../lib/ $(LDPATH) -lroar
 
 all: ${TARGETS}
