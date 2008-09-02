@@ -47,6 +47,15 @@ with SOCKS4 like OpenSSH supports it.
 \fBsocks_proxy\fR
 The SOCKS4/4a/5 proxy to use in form host:port.
 
+.SH "FILES"
+.TP
+\fB/etc/roarserver\fR
+This is a symlink to the server socket.
+If all types of server addresses are supported.
+Example:
+ ln -s /tmp/roar /etc/roarserver
+ ln -s somehost /etc/roarserver
+ ln -s mynode:: /etc/roarserver
 
 .SH "BUGS"
 A lot...
