@@ -4,7 +4,7 @@
 
 if [ "$(echo -n)" = '-n' ]
 then
- SHELL=$(which bash sh 2> /dev/null | head -n 1)
+ SHELL=$(which bash sh 2> /dev/null | grep ^/ | head -n 1)
  exec $SHELL $0 "$@"
 fi
 
@@ -21,7 +21,7 @@ SHARED='-shared'
 PKG_CONFIG=false
 
 echo -n "checking for C compiler... "
-CC=$(which gcc cc 2> /dev/null | head -n 1)
+CC=$(which gcc cc 2> /dev/null | grep ^/ | head -n 1)
 if [ "$CC" = '' ]
 then
  echo 'none'
@@ -30,7 +30,7 @@ fi
 echo $CC
 
 echo -n "checking for pkg-config... "
-PKG_CONFIG=$(which pkg-config false 2> /dev/null | head -n 1)
+PKG_CONFIG=$(which pkg-config false 2> /dev/null | grep ^/ | head -n 1)
 if $PKG_CONFIG --help > /dev/null 2> /dev/null
 then
  echo $PKG_CONFIG
