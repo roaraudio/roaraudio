@@ -79,6 +79,15 @@ int codecfilter_write(CODECFILTER_USERDATA_T   inst, int codecfilter, char * buf
 int codecfilter_read (CODECFILTER_USERDATA_T   inst, int codecfilter, char * buf, int len);
 int codecfilter_flush(CODECFILTER_USERDATA_T   inst, int codecfilter);
 
+// codecfilter without a own .h:
+int cf_alaw_open(CODECFILTER_USERDATA_T * inst, int codec,
+                                            struct roar_stream_server * info,
+                                            struct roar_codecfilter   * filter);
+
+int cf_alaw_close(CODECFILTER_USERDATA_T   inst);
+
+int cf_alaw_read(CODECFILTER_USERDATA_T   inst, char * buf, int len);
+int cf_alaw_write(CODECFILTER_USERDATA_T   inst, char * buf, int len);
 
 #endif
 

@@ -30,6 +30,9 @@ struct roar_codecfilter g_codecfilter[] = {
  {ROAR_CODEC_RIFF_WAVE, "RIFF/WAVE", "RIFF/WAVE", NULL, ROAR_CODECFILTER_READ,
   cf_wave_open, cf_wave_close, NULL, NULL, cf_wave_read, NULL},
 
+ {ROAR_CODEC_ALAW, "alaw", "A-Law", NULL, ROAR_CODECFILTER_READ,
+  cf_alaw_open, cf_alaw_close, NULL, NULL, cf_alaw_read, NULL},
+
  {ROAR_CODEC_OGG_GENERAL, "cmd",  "ogg123",
   "ogg123 -q -d raw -f - -", ROAR_CODECFILTER_READ,
   cf_cmd_open, NULL, NULL, NULL, NULL, NULL},
