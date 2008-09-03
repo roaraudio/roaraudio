@@ -32,7 +32,7 @@ int cf_alaw_open(CODECFILTER_USERDATA_T * inst, int codec,
 
  *inst = (CODECFILTER_USERDATA_T) info;
 
- s->info.bits  = 2;
+ s->info.bits  = 16;
  s->info.codec = ROAR_CODEC_DEFAULT;
 
  return 0;
