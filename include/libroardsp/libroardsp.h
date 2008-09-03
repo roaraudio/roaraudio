@@ -100,6 +100,9 @@ int roardsp_highp_uninit(struct roardsp_filter * filter);
 int roardsp_highp_calc16(struct roardsp_filter * filter, void * data, size_t samples);
 int roardsp_highp_ctl   (struct roardsp_filter * filter, int cmd, void * data);
 
+// codecs:
+int roardsp_conv_alaw2pcm16 (int16_t * out, char * in, size_t len);
+
 #endif
 
 //ll
