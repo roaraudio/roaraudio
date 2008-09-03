@@ -66,9 +66,9 @@ int16_t _roardsp_alaw2pcm16[] = {
 
 int roardsp_conv_alaw2pcm16 (int16_t * out, char * in, size_t len) {
  unsigned char * inp = (unsigned char *) in;
- size_t i;
+ ssize_t i;
 
- for (i = 0; i < len; i++) {
+ for (i = len-1; i > -1; i--) {
   out[i] = _roardsp_alaw2pcm16[inp[i]];
  }
 
