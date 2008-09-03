@@ -328,6 +328,11 @@ struct {
  {ROAR_CODEC_RIFF_WAVE,   "wave"       }, // alias
  {ROAR_CODEC_RIFF_WAVE,   "wav"        }, // alias
 
+ //Log codecs:
+ {ROAR_CODEC_ALAW,        "alaw"       },
+ {ROAR_CODEC_MULAW,       "mulaw"      },
+ {ROAR_CODEC_MULAW,       "ulaw"       }, // alias
+
  {-1, NULL}
 };
 

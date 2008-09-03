@@ -42,6 +42,8 @@
    |\-------> PCM/MIDI(0) or hi-level codecs(1)
    \--------> MISC(0) or RIFF/WAVE like(1)
 
+ BB = Byte order / MSB/LSB
+
  MIDI 0x08:
  76543210
       000 0x08 -> MIDI File
@@ -61,17 +63,29 @@
 
  RIFF/WAVE like 0x20:
   76543210
-     00000 0x20 -> RIFF/WAVE
+      0000 0x20 -> RIFF/WAVE
+
+ LOG Codecs 0x30:
+  76543210
+      00BB 0x30 -> A-Law (base)
+      01BB 0x34 -> mu-Law (base)
 */
 
 #define ROAR_CODEC_IS_SIGNED(x)  (((x) & ROAR_CODEC_UNSIGNED) == 0 ? 1 : 0)
 #define ROAR_CODEC_BYTE_ORDER(x) ((x) & 0x03)
 
 #define ROAR_CODEC_UNSIGNED    (1 << 2)
+#define ROAR_CODEC_LE          0x01
+#define ROAR_CODEC_BE          0x02
+#define ROAR_CODEC_PDP         0x03
 
-#define ROAR_CODEC_PCM_S_LE  0x01
-#define ROAR_CODEC_PCM_S_BE  0x02
-#define ROAR_CODEC_PCM_S_PDP 0x03
+#define ROAR_CODEC_MSB         0x00
+#define ROAR_CODEC_LSB         0x01
+
+#define ROAR_CODEC_PCM       0x00
+#define ROAR_CODEC_PCM_S_LE  (ROAR_CODEC_PCM | ROAR_CODEC_LE )
+#define ROAR_CODEC_PCM_S_BE  (ROAR_CODEC_PCM | ROAR_CODEC_BE )
+#define ROAR_CODEC_PCM_S_PDP (ROAR_CODEC_PCM | ROAR_CODEC_PDP)
 
 #define ROAR_CODEC_PCM_U_LE  (ROAR_CODEC_PCM_S_LE  | ROAR_CODEC_UNSIGNED)
 #define ROAR_CODEC_PCM_U_BE  (ROAR_CODEC_PCM_S_BE  | ROAR_CODEC_UNSIGNED)
@@ -91,6 +105,10 @@
 
 
 #define ROAR_CODEC_RIFF_WAVE    0x20
+
+#define ROAR_CODEC_ALAW         0x30
+#define ROAR_CODEC_MULAW        0x34
+
 
 #if BYTE_ORDER == BIG_ENDIAN
 
