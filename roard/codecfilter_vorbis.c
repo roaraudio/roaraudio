@@ -43,13 +43,18 @@ size_t cf_vorbis_vfvio_read (void *ptr, size_t size, size_t nmemb, void *datasou
 
  ROAR_WARN("cf_vorbis_vfvio_read(ptr=%p, size=%lu, nmemb=%lu, datasource=%p): r=%i", ptr, size, nmemb, datasource, r);
 
+ errno = 0;
+
  if ( r == -1 )
   return 0;
 
  if ( r > 0 )
   errno = 0;
+
+ r /= size;
  
- return r/nmemb;
+ ROAR_WARN("cf_vorbis_vfvio_read(ptr=%p, size=%lu, nmemb=%lu, datasource=%p) = %i", ptr, size, nmemb, datasource, r);
+ return r;
 }
 
 int cf_vorbis_open(CODECFILTER_USERDATA_T * inst, int codec,
@@ -236,6 +241,7 @@ int cf_vorbis_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
 
  self->opened++;
  if ( self->opened == 16 ) {
+
   //printf("cf_vorbis_read(*): opening...\n");
 //int ov_open_callbacks(void *datasource, OggVorbis_File *vf, char *initial, long ibytes, ov_callbacks callbacks);
   if ( ov_open_callbacks((void*)self->stream, &(self->vf), NULL, 0, _g_cf_vorbis_vfvio) < 0 ) {
@@ -257,7 +263,9 @@ int cf_vorbis_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
 
  while (todo) {
   r = ov_read(&(self->vf), buf+done, todo, 0, 2, 1, &(self->current_section));
-  if ( r < 1 ) {
+  if ( r == OV_HOLE ) {
+   ROAR_WARN("cf_vorbis_read(*): Hole in stream");
+  } else if ( r < 1 ) {
    break;
   } else {
    if ( self->last_section != self->current_section )
@@ -270,7 +278,7 @@ int cf_vorbis_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
   }
  }
 
- //printf("ov_read(*) = %i\n", done);
+//printf("ov_read(*) = %i\n", done);
 
  if ( done == 0 ) {
   // do some EOF handling...
