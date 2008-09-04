@@ -165,6 +165,24 @@ test_lib_defmake () {
  fi
 }
 
+test_tool_defmake () {
+ DEF="$1"
+ NAME="$2"
+ shift;
+ shift;
+ echo -n "checking for $NAME... "
+
+ LIST=$(which "$@" 2> /dev/null | grep ^/ | head -n 1)
+
+ if [ "$LIST" = '' ]
+ then
+  echo 'no'
+ else
+  echo $LIST
+  echo "#define $DEF "\""$LIST"\" >&3
+ fi
+}
+
 exec 3> config.h 4> Makefile.conf
 
 if [ "$SYSNAME" = 'Darwin' ]
@@ -200,6 +218,13 @@ EOF
  echo '/* Date : ' $(date)  '*/'
  echo
 } >&3
+
+#                 #define                 name         cmds...
+test_tool_defmake ROAR_HAVE_BIN_OGG123    ogg123       ogg123
+test_tool_defmake ROAR_HAVE_BIN_FLAC      flac         flac
+test_tool_defmake ROAR_HAVE_BIN_TIMIDITY  TiMidity++   timidity
+
+echo >&3
 
 test_lib 'Math Library' m          -- math.h                         && echo '#define ROAR_HAVE_LIBM' >&3
 if test_lib 'realtime Library' rt -- sys/mman.h mqueue.h semaphore.h
