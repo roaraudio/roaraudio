@@ -20,6 +20,7 @@ SYSNAME='unknown'
 SHARED='-shared'
 SHARED_CF=''
 PKG_CONFIG=false
+RUNTIME_DETECT=false
 
 echo -n "checking for C compiler... "
 CC=$(which gcc cc 2> /dev/null | grep ^/ | head -n 1)
@@ -54,6 +55,7 @@ do
    echo '--incpath DIR'
    echo '--addpath DIR'
    echo '--no-LIB'
+   echo '--runtime-detect'
    exit 0;
   ;;
   '--ldpath')
@@ -72,6 +74,9 @@ do
   '--no-'*)
    lib=$(echo "$1" | sed 's/^--no-//')
    eval no_lib_$lib=true
+  ;;
+  '--runtime-detect')
+  RUNTIME_DETECT=true
   ;;
  esac;
 
@@ -172,14 +177,21 @@ test_tool_defmake () {
  shift;
  echo -n "checking for $NAME... "
 
- LIST=$(which "$@" 2> /dev/null | grep ^/ | head -n 1)
-
- if [ "$LIST" = '' ]
+ if $RUNTIME_DETECT
  then
-  echo 'no'
+  echo "$1 (runtime detect)"
+ echo "#define $DEF "\""$1"\" >&3
  else
-  echo $LIST
-  echo "#define $DEF "\""$LIST"\" >&3
+
+  LIST=$(which "$@" 2> /dev/null | grep ^/ | head -n 1)
+
+  if [ "$LIST" = '' ]
+  then
+   echo 'no'
+  else
+   echo $LIST
+   echo "#define $DEF "\""$LIST"\" >&3
+  fi
  fi
 }
 
