@@ -39,11 +39,10 @@ ov_callbacks _g_cf_vorbis_vfvio = {
 
 size_t cf_vorbis_vfvio_read (void *ptr, size_t size, size_t nmemb, void *datasource) {
  ssize_t r;
+
  r = stream_vio_s_read(ROAR_STREAM_SERVER(datasource), ptr, size*nmemb);
 
  ROAR_DBG("cf_vorbis_vfvio_read(ptr=%p, size=%lu, nmemb=%lu, datasource=%p): r=%i", ptr, size, nmemb, datasource, r);
-
- errno = 0;
 
  if ( r == -1 )
   return 0;
