@@ -41,7 +41,7 @@ size_t cf_vorbis_vfvio_read (void *ptr, size_t size, size_t nmemb, void *datasou
  ssize_t r;
  r = stream_vio_s_read(ROAR_STREAM_SERVER(datasource), ptr, size*nmemb);
 
- ROAR_WARN("cf_vorbis_vfvio_read(ptr=%p, size=%lu, nmemb=%lu, datasource=%p): r=%i", ptr, size, nmemb, datasource, r);
+ ROAR_DBG("cf_vorbis_vfvio_read(ptr=%p, size=%lu, nmemb=%lu, datasource=%p): r=%i", ptr, size, nmemb, datasource, r);
 
  errno = 0;
 
@@ -53,7 +53,7 @@ size_t cf_vorbis_vfvio_read (void *ptr, size_t size, size_t nmemb, void *datasou
 
  r /= size;
  
- ROAR_WARN("cf_vorbis_vfvio_read(ptr=%p, size=%lu, nmemb=%lu, datasource=%p) = %i", ptr, size, nmemb, datasource, r);
+ ROAR_DBG("cf_vorbis_vfvio_read(ptr=%p, size=%lu, nmemb=%lu, datasource=%p) = %i", ptr, size, nmemb, datasource, r);
  return r;
 }
 
@@ -264,7 +264,7 @@ int cf_vorbis_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  while (todo) {
   r = ov_read(&(self->vf), buf+done, todo, 0, 2, 1, &(self->current_section));
   if ( r == OV_HOLE ) {
-   ROAR_WARN("cf_vorbis_read(*): Hole in stream");
+   ROAR_DBG("cf_vorbis_read(*): Hole in stream");
   } else if ( r < 1 ) {
    break;
   } else {
