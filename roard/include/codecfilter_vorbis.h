@@ -41,7 +41,6 @@ struct codecfilter_vorbis_inst {
  int current_section;
  int last_section;
  int opened;
- FILE * in;
  struct roar_stream_server * stream;
  OggVorbis_File vf;
  int got_it_running;

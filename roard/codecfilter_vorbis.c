@@ -77,13 +77,6 @@ int cf_vorbis_open(CODECFILTER_USERDATA_T * inst, int codec,
 
  ROAR_DBG("cf_vorbis_open(*): info->id=%i", ROAR_STREAM(info)->id);
 
-/*
- if ( (self->in = fdopen(s->fh, "r")) == NULL ) {
-  free((void*)self);
-  return -1;
- }
-*/
-
  *inst = (CODECFILTER_USERDATA_T) self;
 
  s->info.codec = ROAR_CODEC_DEFAULT;
@@ -242,10 +235,7 @@ int cf_vorbis_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  if ( self->opened == 16 ) {
 
   //printf("cf_vorbis_read(*): opening...\n");
-//int ov_open_callbacks(void *datasource, OggVorbis_File *vf, char *initial, long ibytes, ov_callbacks callbacks);
   if ( ov_open_callbacks((void*)self->stream, &(self->vf), NULL, 0, _g_cf_vorbis_vfvio) < 0 ) {
-//  if ( ov_open(self->in, &(self->vf), NULL, 0) < 0 ) {
-//   free((void*)self);
    return 0;
   }
   errno = EAGAIN;
