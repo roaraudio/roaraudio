@@ -804,6 +804,9 @@ ssize_t stream_vio_write(int stream, void *buf, size_t count) {
 
 
 ssize_t stream_vio_s_read (struct roar_stream_server * stream, void *buf, size_t count) {
+ size_t len = 0;
+ size_t r;
+
  errno = 0;
 
  if ( !stream )
@@ -812,7 +815,15 @@ ssize_t stream_vio_s_read (struct roar_stream_server * stream, void *buf, size_t
  if ( ! stream->vio.read )
   return -1;
 
- return stream->vio.read(ROAR_STREAM(stream)->fh, buf, count, stream->vio.inst);
+ while ( (r = stream->vio.read(ROAR_STREAM(stream)->fh, buf, count, stream->vio.inst)) > 0 ) {
+  len   += r;
+  buf   += r;
+  count -= r;
+  if ( count == 0 )
+   break;
+ }
+
+ return len;
 }
 
 ssize_t stream_vio_s_write(struct roar_stream_server * stream, void *buf, size_t count) {
