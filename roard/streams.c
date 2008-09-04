@@ -804,8 +804,8 @@ ssize_t stream_vio_write(int stream, void *buf, size_t count) {
 
 
 ssize_t stream_vio_s_read (struct roar_stream_server * stream, void *buf, size_t count) {
- size_t len =  0;
- size_t r   = -1;
+  size_t len =  0;
+ ssize_t r   = -1;
 
  errno = 0;
 

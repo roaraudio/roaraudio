@@ -26,6 +26,32 @@
 
 #ifdef ROAR_HAVE_LIBVORBISFILE
 
+int _g_cf_vorbis_vfvio_return_err (void) {
+ return -1;
+}
+
+ov_callbacks _g_cf_vorbis_vfvio = {
+  .read_func  = cf_vorbis_vfvio_read,
+  .seek_func  = _g_cf_vorbis_vfvio_return_err,
+  .close_func = _g_cf_vorbis_vfvio_return_err,
+  .tell_func  = _g_cf_vorbis_vfvio_return_err
+};
+
+size_t cf_vorbis_vfvio_read (void *ptr, size_t size, size_t nmemb, void *datasource) {
+ ssize_t r;
+ r = stream_vio_s_read(ROAR_STREAM_SERVER(datasource), ptr, size*nmemb);
+
+ ROAR_WARN("cf_vorbis_vfvio_read(ptr=%p, size=%lu, nmemb=%lu, datasource=%p): r=%i", ptr, size, nmemb, datasource, r);
+
+ if ( r == -1 )
+  return 0;
+
+ if ( r > 0 )
+  errno = 0;
+ 
+ return r/nmemb;
+}
+
 int cf_vorbis_open(CODECFILTER_USERDATA_T * inst, int codec,
                                             struct roar_stream_server * info,
                                             struct roar_codecfilter   * filter) {
@@ -47,10 +73,12 @@ int cf_vorbis_open(CODECFILTER_USERDATA_T * inst, int codec,
 
  ROAR_DBG("cf_vorbis_open(*): info->id=%i", ROAR_STREAM(info)->id);
 
+/*
  if ( (self->in = fdopen(s->fh, "r")) == NULL ) {
   free((void*)self);
   return -1;
  }
+*/
 
  *inst = (CODECFILTER_USERDATA_T) self;
 
@@ -209,7 +237,9 @@ int cf_vorbis_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  self->opened++;
  if ( self->opened == 16 ) {
   //printf("cf_vorbis_read(*): opening...\n");
-  if ( ov_open(self->in, &(self->vf), NULL, 0) < 0 ) {
+//int ov_open_callbacks(void *datasource, OggVorbis_File *vf, char *initial, long ibytes, ov_callbacks callbacks);
+  if ( ov_open_callbacks((void*)self->stream, &(self->vf), NULL, 0, _g_cf_vorbis_vfvio) < 0 ) {
+//  if ( ov_open(self->in, &(self->vf), NULL, 0) < 0 ) {
 //   free((void*)self);
    return 0;
   }

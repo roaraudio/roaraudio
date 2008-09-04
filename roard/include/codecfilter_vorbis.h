@@ -61,6 +61,8 @@ struct codecfilter_vorbis_inst {
 #endif
 };
 
+size_t cf_vorbis_vfvio_read (void *ptr, size_t size, size_t nmemb, void *datasource);
+
 int cf_vorbis_open(CODECFILTER_USERDATA_T * inst, int codec,
                                             struct roar_stream_server * info,
                                             struct roar_codecfilter   * filter);
