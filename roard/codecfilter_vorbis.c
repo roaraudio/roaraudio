@@ -243,6 +243,8 @@ int cf_vorbis_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
 //   free((void*)self);
    return 0;
   }
+  errno = EAGAIN;
+  return -1;
  }
 
  if ( self->opened < 16 ) {
