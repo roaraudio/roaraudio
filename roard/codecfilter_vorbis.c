@@ -32,9 +32,9 @@ int _g_cf_vorbis_vfvio_return_err (void) {
 
 ov_callbacks _g_cf_vorbis_vfvio = {
   .read_func  = cf_vorbis_vfvio_read,
-  .seek_func  = _g_cf_vorbis_vfvio_return_err,
-  .close_func = _g_cf_vorbis_vfvio_return_err,
-  .tell_func  = _g_cf_vorbis_vfvio_return_err
+  .seek_func  = (int    (*)(void *, ogg_int64_t, int      )) _g_cf_vorbis_vfvio_return_err,
+  .close_func = (int    (*)(void *                        )) _g_cf_vorbis_vfvio_return_err,
+  .tell_func  = (long   (*)(void *                        )) _g_cf_vorbis_vfvio_return_err
 };
 
 size_t cf_vorbis_vfvio_read (void *ptr, size_t size, size_t nmemb, void *datasource) {
