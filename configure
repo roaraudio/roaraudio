@@ -102,7 +102,7 @@ test_lib () {
 
  shift;
 
- LIBS=$(echo "$LIBS" | sed 's/-l-l/-l/g')
+ LIBS=$(echo "$LIBS" | sed 's/-l-l/-l/g; s/-l-L/-L/g;')
 
  while [ "$1" != '' ]
  do
