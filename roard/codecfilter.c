@@ -33,9 +33,11 @@ struct roar_codecfilter g_codecfilter[] = {
  {ROAR_CODEC_ALAW, "alaw", "A-Law", NULL, ROAR_CODECFILTER_READ,
   cf_alaw_open, cf_alaw_close, NULL, NULL, cf_alaw_read, NULL},
 
+#ifdef ROAR_HAVE_BIN_OGG123
  {ROAR_CODEC_OGG_GENERAL, "cmd",  "ogg123",
-  "ogg123 -q -d raw -f - -", ROAR_CODECFILTER_READ,
+  ROAR_HAVE_BIN_OGG123 " -q -d raw -f - -", ROAR_CODECFILTER_READ,
   cf_cmd_open, NULL, NULL, NULL, NULL, NULL},
+#endif
 
 #ifdef ROAR_HAVE_LIBVORBISFILE
  {ROAR_CODEC_OGG_VORBIS, "oggvorbis", "Ogg Vorbis decoder", NULL,
@@ -47,9 +49,11 @@ struct roar_codecfilter g_codecfilter[] = {
  cf_vorbis_open, cf_vorbis_close, NULL, cf_vorbis_write, cf_vorbis_read, NULL},
 #endif
 
+#ifdef ROAR_HAVE_BIN_TIMIDITY
  {ROAR_CODEC_MIDI_FILE, "MIDIFILE", "timidity MIDI synth",
-  "timidity -Or1sl -s %R -o - -", ROAR_CODECFILTER_READ,
+  ROAR_HAVE_BIN_TIMIDITY " -Or1sl -s %R -o - -", ROAR_CODECFILTER_READ,
   cf_cmd_open, NULL, NULL, NULL, NULL, NULL},
+#endif
 
 #ifdef ROAR_HAVE_LIBCELT
  {ROAR_CODEC_ROAR_CELT, "RoarCELT", "RoarAudio CELT", NULL, ROAR_CODECFILTER_READ|ROAR_CODECFILTER_WRITE,
@@ -61,16 +65,18 @@ struct roar_codecfilter g_codecfilter[] = {
   cf_speex_open, cf_speex_close, NULL, cf_speex_write, cf_speex_read, NULL},
 #endif
 
+#ifdef ROAR_HAVE_BIN_FLAC
  {ROAR_CODEC_FLAC, "cmd",  "flac",
 #if BYTE_ORDER == BIG_ENDIAN
-  "flac --silent --force-raw-format --sign=signed --endian=big -d - -o -",
+  ROAR_HAVE_BIN_FLAC " --silent --force-raw-format --sign=signed --endian=big -d - -o -",
 #elif BYTE_ORDER == LITTLE_ENDIAN
-  "flac --silent --force-raw-format --sign=signed --endian=little -d - -o -",
+  ROAR_HAVE_BIN_FLAC " --silent --force-raw-format --sign=signed --endian=little -d - -o -",
 #else
   "false",
 #endif
   ROAR_CODECFILTER_READ,
   cf_cmd_open, NULL, NULL, NULL, NULL, NULL},
+#endif
 
  {-1, NULL, NULL, NULL, ROAR_CODECFILTER_NONE, NULL, NULL, NULL, NULL, NULL, NULL} // end of list
 };
