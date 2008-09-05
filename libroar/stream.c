@@ -156,15 +156,26 @@ int roar_stream_passfh  (struct roar_connection * con, struct roar_stream * s, i
  m.cmd     = ROAR_CMD_PASSFH;
  m.stream  = s->id;
  m.pos     = 0;
+ m.datalen = 0;
 
- if ( roar_send_message(con, &m, NULL) == -1 )
+ ROAR_DBG("roar_stream_passfh(con={.fh=%i,...}, s={.id=%i,...}, fh=%i) = ?", con->fh, s->id, fh);
+
+ if ( roar_send_message(con, &m, NULL) == -1 ) {
+  ROAR_DBG("roar_stream_passfh(con={.fh=%i,...}, s={.id=%i,...}, fh=%i) = -1 // can not send message", con->fh, s->id, fh);
   return -1;
+ }
+
+ ROAR_DBG("roar_stream_passfh(*): msg send");
 
  if ( roar_socket_send_fh(con->fh, fh, NULL, 0) == -1 )
   return -1;
 
+ ROAR_DBG("roar_stream_passfh(*): fh send");
+
  if ( roar_recv_message(con, &m, NULL) == -1 )
   return -1;
+
+ ROAR_DBG("roar_stream_passfh(*): mes recved");
 
  return 0;
 }

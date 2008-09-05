@@ -219,6 +219,8 @@ int roar_socket_send_fh (int sock, int fh, char * mes, size_t len) {
  struct cmsghdr * cmptr = (struct cmsghdr *) cmptr_buf;
  char             localmes[1] = {0};
 
+ ROAR_DBG("roar_socket_send_fh(sock=%i, fh=%i, mes=%p, len=%u) = ?", sock, fh, mes, len);
+
  if ( sock < 0 || fh < 0 )
   return -1;
 
