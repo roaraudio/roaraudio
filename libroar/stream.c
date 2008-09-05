@@ -150,6 +150,25 @@ int roar_stream_connect_to_ask (struct roar_connection * con, struct roar_stream
  return 0;
 }
 
+int roar_stream_passfh  (struct roar_connection * con, struct roar_stream * s, int fh) {
+ struct roar_message m;
+
+ m.cmd     = ROAR_CMD_PASSFH;
+ m.stream  = s->id;
+ m.pos     = 0;
+
+ if ( roar_send_message(con, &m, NULL) == -1 )
+  return -1;
+
+ if ( roar_socket_send_fh(con->fh, fh, NULL, 0) == -1 )
+  return -1;
+
+ if ( roar_recv_message(con, &m, NULL) == -1 )
+  return -1;
+
+ return 0;
+}
+
 int roar_stream_add_data (struct roar_connection * con, struct roar_stream * s, char * data, size_t len) {
  struct roar_message m;
 
