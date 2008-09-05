@@ -177,7 +177,10 @@ int roar_stream_passfh  (struct roar_connection * con, struct roar_stream * s, i
 
  ROAR_DBG("roar_stream_passfh(*): mes recved");
 
- return 0;
+ if ( m.cmd == ROAR_CMD_OK )
+  return 0;
+
+ return -1;
 }
 
 int roar_stream_add_data (struct roar_connection * con, struct roar_stream * s, char * data, size_t len) {
