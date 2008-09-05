@@ -125,6 +125,13 @@ int clients_set_fh    (int id, int    fh) {
  return 0;
 }
 
+int clients_get_fh    (int id) {
+ if ( g_clients[id] == NULL )
+  return -1;
+
+ return g_clients[id]->fh;
+}
+
 int clients_set_pid   (int id, int    pid) {
  if ( g_clients[id] == NULL )
   return -1;
