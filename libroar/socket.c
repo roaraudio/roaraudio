@@ -217,9 +217,17 @@ int roar_socket_send_fh (int sock, int fh, char * mes, size_t len) {
  struct msghdr    msg;
  char             cmptr_buf[_SCMR_CONTROLLEN];
  struct cmsghdr * cmptr = (struct cmsghdr *) cmptr_buf;
+ char             localmes[1] = {0};
 
- if ( sock < 0 || fh < 0 || len == 0 )
+ if ( sock < 0 || fh < 0 )
   return -1;
+
+ if ( len == 0 ) {
+  len = 1;
+  mes = localmes;
+ }
+
+ memset(cmptr, 0, _SCMR_CONTROLLEN);
 
  iov[0].iov_base = mes;
  iov[0].iov_len  = len;
@@ -243,9 +251,16 @@ int roar_socket_recv_fh (int sock,         char * mes, size_t * len) {
  struct msghdr    msg;
  char             cmptr_buf[_SCMR_CONTROLLEN];
  struct cmsghdr * cmptr = (struct cmsghdr *) cmptr_buf;
+ char             localmes[1];
+ size_t           locallen[1] = {1};
 
  if ( sock < 0 )
   return -1;
+
+ if ( len == NULL ) {
+  len = locallen;
+  mes = localmes;
+ }
 
  iov[0].iov_base = mes;
  iov[0].iov_len  = *len;
