@@ -76,6 +76,9 @@
 #define ROAR_CMD_ATTACH        29 /* attach a OUTPUT or source */
 #define ROAR_CMD_DETACH        ROAR_CMD_KICK /* just to have an alias */
 
+#define ROAR_CMD_PASSFH        30 /* send an fh via UNIX Domain Socket to the roard */
+
+
 #define ROAR_CMD_EPERM        252 /* error: permition denided */
 #define ROAR_CMD_OK_STOP      253 /* used internaly in the serveer: */
                                   // ROAR_CMD_OK but do not queue the client again within the block
