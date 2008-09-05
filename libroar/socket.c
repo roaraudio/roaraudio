@@ -210,6 +210,62 @@ int roar_socket_dup_udp_local_end (int fh) {
  return n;
 }
 
+
+#define _SCMR_CONTROLLEN (sizeof(struct cmsghdr) + sizeof(int))
+int roar_socket_send_fh (int sock, int fh, char * mes, size_t len) {
+ struct iovec     iov[1];
+ struct msghdr    msg;
+ char             cmptr_buf[_SCMR_CONTROLLEN];
+ struct cmsghdr * cmptr = (struct cmsghdr *) cmptr_buf;
+
+ if ( sock < 0 || fh < 0 || len == 0 )
+  return -1;
+
+ iov[0].iov_base = mes;
+ iov[0].iov_len  = len;
+ msg.msg_iov     = iov;
+ msg.msg_iovlen  = 1;
+ msg.msg_name    = NULL;
+ msg.msg_namelen = 0;
+
+ cmptr->cmsg_level        = SOL_SOCKET;
+ cmptr->cmsg_type         = SCM_RIGHTS;
+ cmptr->cmsg_len          = _SCMR_CONTROLLEN;
+ msg.msg_control          = (caddr_t) cmptr;
+ msg.msg_controllen       = _SCMR_CONTROLLEN;
+ *(int *)CMSG_DATA(cmptr) = fh;
+
+ return sendmsg(sock, &msg, 0);
+}
+
+int roar_socket_recv_fh (int sock,         char * mes, size_t * len) {
+ struct iovec     iov[1];
+ struct msghdr    msg;
+ char             cmptr_buf[_SCMR_CONTROLLEN];
+ struct cmsghdr * cmptr = (struct cmsghdr *) cmptr_buf;
+
+ if ( sock < 0 )
+  return -1;
+
+ iov[0].iov_base = mes;
+ iov[0].iov_len  = *len;
+ msg.msg_iov     = iov;
+ msg.msg_iovlen  = 1;
+ msg.msg_name    = NULL;
+ msg.msg_namelen = 0;
+
+ msg.msg_control    = (caddr_t) cmptr;
+ msg.msg_controllen = _SCMR_CONTROLLEN;
+
+ if ( (*len = recvmsg(sock, &msg, 0)) == -1 )
+  return -1;
+
+ if ( msg.msg_controllen != _SCMR_CONTROLLEN )
+  return -1;
+
+ return *(int *)CMSG_DATA(cmptr);
+}
+
 int roar_socket_listen  (int type, char * host, int port) {
  return roar_socket_open(MODE_LISTEN, type, host, port);
 }

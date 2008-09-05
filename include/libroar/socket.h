@@ -92,6 +92,9 @@ int roar_socket_nonblock(int fh, int state);
 
 int roar_socket_dup_udp_local_end (int fh);
 
+int roar_socket_send_fh (int sock, int fh, char * mes, size_t   len);
+int roar_socket_recv_fh (int sock,         char * mes, size_t * len);
+
 int roar_socket_open_socks4a(int mode, int fh, char * host, int port);
 
 #endif
