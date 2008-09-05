@@ -38,6 +38,7 @@ struct roar_command g_commands[COMMAND_MAX_COMMANDS] = {
   {ROAR_CMD_QUIT,         "QUIT",         (int(*)(int client, struct roar_message * mes, char * data))clients_delete},
 
   {ROAR_CMD_CON_STREAM,   "CON_STREAM",   req_on_con_stream},
+  {ROAR_CMD_PASSFH,       "PASSFH",       req_on_passfh},
 
   {ROAR_CMD_SERVER_OINFO, "SERVER_OINFO", req_on_server_oinfo},
   {ROAR_CMD_GET_STANDBY,  "GET_STANDBY",  req_on_get_standby},

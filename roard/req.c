@@ -158,12 +158,30 @@ int req_on_con_stream  (int client, struct roar_message * mes, char * data) {
   return 1;
  }
 
+ mes->datalen = 0;
+ mes->cmd     = ROAR_CMD_OK;
+
  return 0;
+}
+
+int req_on_passfh      (int client, struct roar_message * mes, char * data) {
+ int fh;
+ int sock = clients_get_fh(client);
+
+ if ( (fh = roar_socket_recv_fh(sock, NULL, NULL)) == -1 )
+  return -1;
+
+ if ( client_stream_set_fh(client, mes->stream, fh) == -1 ) {
+  close(fh);
+  return 1;
+ }
+
 
  mes->datalen = 0;
  mes->cmd     = ROAR_CMD_OK;
-}
 
+ return 0;
+}
 
 int req_on_set_meta    (int client, struct roar_message * mes, char * data) {
  int type;
