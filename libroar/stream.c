@@ -183,6 +183,33 @@ int roar_stream_passfh  (struct roar_connection * con, struct roar_stream * s, i
  return -1;
 }
 
+int roar_stream_attach_simple (struct roar_connection * con, struct roar_stream * s, int client) {
+ struct roar_message m;
+ uint16_t * info = (uint16_t *) m.data;
+ int i;
+
+ m.cmd     = ROAR_CMD_ATTACH;
+ m.stream  = s->id;
+ m.pos     = 0;
+ m.datalen = 6;
+
+ info[0] = 0;
+ info[1] = ROAR_ATTACH_SIMPLE;
+ info[2] = client;
+
+ for (i = 0; i < m.datalen/2; i++) {
+  info[i] = ROAR_HOST2NET16(info[i]);
+ }
+
+ if ( roar_req(con, &m, NULL) == -1 )
+  return -1;
+
+ if ( m.cmd != ROAR_CMD_OK )
+  return -1;
+
+ return 0;
+}
+
 int roar_stream_add_data (struct roar_connection * con, struct roar_stream * s, char * data, size_t len) {
  struct roar_message m;
 

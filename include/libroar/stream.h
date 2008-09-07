@@ -62,6 +62,8 @@ int roar_stream_connect_to (struct roar_connection * con, struct roar_stream * s
 int roar_stream_connect_to_ask (struct roar_connection * con, struct roar_stream * s, int type, char * host, int port);
 int roar_stream_passfh  (struct roar_connection * con, struct roar_stream * s, int fh);
 
+int roar_stream_attach_simple (struct roar_connection * con, struct roar_stream * s, int client);
+
 int roar_stream_add_data (struct roar_connection * con, struct roar_stream * s, char * data, size_t len);
 
 int roar_stream_send_data (struct roar_connection * con, struct roar_stream * s, char * data, size_t len);
