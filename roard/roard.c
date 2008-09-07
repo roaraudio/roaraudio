@@ -31,7 +31,7 @@ void usage (void) {
 
  printf("Misc Options:\n\n");
  printf(
-        " --demon               - Bring the server into background after init\n"
+        " --daemon              - Bring the server into background after init\n"
         " --terminate           - Terminate after last client quited\n"
         " --restart             - Trys to stop an old instance and start a new with new settings\n"
         " --realtime            - Trys to get realtime priority,\n"
@@ -117,7 +117,7 @@ int main (int argc, char * argv[]) {
  char * k;
  char user_sock[80] = {0};
  struct roar_audio_info sa;
- int    demon    = 0;
+ int    daemon   = 0;
  int    realtime = 0;
  char * driver = getenv("ROAR_DRIVER");
  char * device = getenv("ROAR_DEVICE");
@@ -199,8 +199,8 @@ int main (int argc, char * argv[]) {
     ROAR_WARN("Can not terminate old server (not running at %s?), tring to continue anyway", server);
    }
 
-  } else if ( strcmp(k, "--demon") == 0 ) {
-   demon = 1;
+  } else if ( strcmp(k, "--demon") == 0 || strcmp(k, "--daemon") == 0 ) {
+   daemon = 1;
   } else if ( strcmp(k, "--terminate") == 0 ) {
    g_terminate = 1;
   } else if ( strcmp(k, "--realtime") == 0 ) {
@@ -431,9 +431,9 @@ int main (int argc, char * argv[]) {
   return 1;
  }
 
- strcpy(self->name, "RoarAudio demon internal");
+ strcpy(self->name, "RoarAudio daemon internal");
 
- if ( demon ) {
+ if ( daemon ) {
   close(ROAR_STDIN );
   close(ROAR_STDOUT);
   close(ROAR_STDERR);
