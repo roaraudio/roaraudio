@@ -156,9 +156,7 @@ int     roar_file_unmap      (size_t len, void * mem) {
 
 
 ssize_t roar_file_play (struct roar_connection * con, char * file, int exec) {
- struct roar_stream s;
-
- return roar_file_play_full(con, file, exec, 0, &s);
+ return roar_file_play_full(con, file, exec, 0, NULL);
 }
 
 ssize_t roar_file_play_full  (struct roar_connection * con, char * file, int exec, int passfh, struct roar_stream * s) {
@@ -168,6 +166,10 @@ ssize_t roar_file_play_full  (struct roar_connection * con, char * file, int exe
  int len;
  char buf[BUFSIZE];
  int rate = ROAR_RATE_DEFAULT, channels = ROAR_CHANNELS_DEFAULT, bits = ROAR_BITS_DEFAULT;
+ struct roar_stream localstream[1];
+
+ if ( !s )
+  s = localstream;
 
  if ( !con )
   return -1;
