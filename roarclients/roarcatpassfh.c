@@ -50,7 +50,6 @@ int main (int argc, char * argv[]) {
  char * k;
  int    i;
  int    in = ROAR_STDIN;
- char buf[BUFSIZE];
  struct roar_connection con;
  struct roar_stream     s;
 
