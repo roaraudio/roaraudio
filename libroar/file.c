@@ -156,9 +156,14 @@ int     roar_file_unmap      (size_t len, void * mem) {
 
 
 ssize_t roar_file_play (struct roar_connection * con, char * file, int exec) {
+ struct roar_stream s;
+
+ return roar_file_play_full(con, file, exec, 0, &s);
+}
+
+ssize_t roar_file_play_full  (struct roar_connection * con, char * file, int exec, int passfh, struct roar_stream * s) {
  int codec = -1;
  int in, out = -1;
- struct roar_stream s;
  ssize_t r = 0;
  int len;
  char buf[BUFSIZE];
@@ -168,6 +173,9 @@ ssize_t roar_file_play (struct roar_connection * con, char * file, int exec) {
   return -1;
 
  if ( !file )
+  return -1;
+
+ if ( exec && passfh )
   return -1;
 
  if ( (in = open(file, O_RDONLY, 0644)) == -1 ) {
@@ -187,17 +195,17 @@ ssize_t roar_file_play (struct roar_connection * con, char * file, int exec) {
  }
 
  if ( exec ) {
-  if ( roar_stream_new(&s, rate, channels, bits, codec) == -1 ) {
+  if ( roar_stream_new(s, rate, channels, bits, codec) == -1 ) {
    close(in);
    return -1;
   }
 
-  if ( roar_stream_connect(con, &s, ROAR_DIR_PLAY) == -1 ) {
+  if ( roar_stream_connect(con, s, ROAR_DIR_PLAY) == -1 ) {
    close(in);
    return -1;
   }
 
-  if ( roar_stream_exec(con, &s) == -1 ) {
+  if ( roar_stream_exec(con, s) == -1 ) {
    close(in);
    return -1;
   }
@@ -214,15 +222,24 @@ ssize_t roar_file_play (struct roar_connection * con, char * file, int exec) {
 
  write(out, buf, len);
 
- r = roar_file_send_raw(out, in);
+ if ( !passfh ) {
+  r = roar_file_send_raw(out, in);
 
- close(out);
+  close(out);
 
- if ( exec ) {
-  con->fh = -1;
+  if ( exec ) {
+   con->fh = -1;
+  }
+
+  close(in);
+ } else {
+  if ( roar_stream_passfh(con, s, in) == -1 ) {
+   return -1;
+  }
+  close(out);
+  close(in);
+  return 0;
  }
-
- close(in);
 
  return r;
 }
