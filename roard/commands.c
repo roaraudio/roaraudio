@@ -50,6 +50,7 @@ struct roar_command g_commands[COMMAND_MAX_COMMANDS] = {
   {ROAR_CMD_GET_CLIENT,   "GET_CLIENT",   req_on_get_client},
   {ROAR_CMD_GET_STREAM,   "GET_STREAM",   req_on_get_stream},
   {ROAR_CMD_KICK,         "KICK",         req_on_kick},
+  {ROAR_CMD_ATTACH,       "ATTACH",       req_on_attach},
   {ROAR_CMD_SET_VOL,      "SET_VOL",      req_on_set_vol},
   {ROAR_CMD_GET_VOL,      "GET_VOL",      req_on_get_vol},
   {ROAR_CMD_GET_STREAM_PARA, "GET_STREAM_PARA", req_on_get_stream_para},

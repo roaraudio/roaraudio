@@ -508,6 +508,10 @@ int req_on_kick (int client, struct roar_message * mes, char * data) {
  return 0;
 }
 
+int req_on_attach      (int client, struct roar_message * mes, char * data) {
+ return -1;
+}
+
 int req_on_set_vol (int client, struct roar_message * mes, char * data) {
  uint16_t * info = (uint16_t *) mes->data;
  int stream;
