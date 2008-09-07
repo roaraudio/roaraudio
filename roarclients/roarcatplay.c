@@ -32,22 +32,33 @@ void usage (void) {
  printf("\nOptions:\n\n");
 
  printf("  --server SERVER    - Set server hostname\n"
+        "  --simple           - Use the simple interface (default)\n"
+        "  --passive          - Use passiv playback (experimental, works only localy)\n"
         "  --help             - Show this help\n"
        );
 
 }
+
+#define MODE_SIMPLE  1
+#define MODE_PASSIVE 2
 
 int main (int argc, char * argv[]) {
  char * server   = NULL;
  char * k;
  int    i;
  char * file = NULL;
+ int    mode = MODE_SIMPLE;
+ struct roar_connection con[1];
 
  for (i = 1; i < argc; i++) {
   k = argv[i];
 
   if ( strcmp(k, "--server") == 0 ) {
    server = argv[++i];
+  } else if ( strcmp(k, "--simple") == 0 ) {
+   mode = MODE_SIMPLE;
+  } else if ( strcmp(k, "--passive") == 0 ) {
+   mode = MODE_PASSIVE;
   } else if ( strcmp(k, "--help") == 0 ) {
    usage();
    return 0;
@@ -64,8 +75,27 @@ int main (int argc, char * argv[]) {
  if ( file == NULL )
   file = "/dev/stdin";
 
- if ( roar_simple_play_file(file, server, "roarcatplay") == -1 )
-  return 1;
+ if ( mode == MODE_PASSIVE ) {
+  if ( roar_simple_connect(con, server, "roarcatplay") == -1 ) {
+   ROAR_ERR("Can not connect to server");
+   return 0;
+  }
+
+  if ( roar_file_play_full(con, file, 0, 1, NULL) == -1 ) {
+   ROAR_ERR("Can not start playback");
+   return 1;
+  }
+
+  sleep(10);
+
+  roar_disconnect(con);
+
+ } else { // MODE_SIMPLE
+  if ( roar_simple_play_file(file, server, "roarcatplay") == -1 ) {
+   ROAR_ERR("Can not start playback");
+   return 1;
+  }
+ }
 
  return 0;
 }
