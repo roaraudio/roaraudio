@@ -75,6 +75,7 @@ int client_stream_exec   (int client, int stream);
 int client_stream_set_fh (int client, int stream, int fh);
 int client_stream_add    (int client, int stream);
 int client_stream_delete (int client, int stream);
+int client_stream_move   (int client, int stream);
 
 #endif
 

@@ -473,4 +473,14 @@ int client_stream_delete (int client, int stream) {
  return -1;
 }
 
+int client_stream_move   (int client, int stream) {
+ int old_client = streams_get_client(stream);
+
+ if ( old_client != -1 )
+  if ( client_stream_delete(old_client, stream) == -1 )
+   return -1;
+
+ return client_stream_add(client, stream); 
+}
+
 //ll
