@@ -476,6 +476,8 @@ int client_stream_delete (int client, int stream) {
 int client_stream_move   (int client, int stream) {
  int old_client = streams_get_client(stream);
 
+ ROAR_DBG("client_stream_move(client=%i, stream=%i): old_client = %i", client, stream, old_client);
+
  if ( old_client != -1 )
   if ( client_stream_delete(old_client, stream) == -1 )
    return -1;
