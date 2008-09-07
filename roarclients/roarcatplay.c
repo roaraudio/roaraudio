@@ -34,6 +34,7 @@ void usage (void) {
  printf("  --server SERVER    - Set server hostname\n"
         "  --simple           - Use the simple interface (default)\n"
         "  --passive          - Use passiv playback (experimental, works only localy)\n"
+        "  --background       - Use background playback, impleys passive mode\n"
         "  --help             - Show this help\n"
        );
 
@@ -48,7 +49,9 @@ int main (int argc, char * argv[]) {
  int    i;
  char * file = NULL;
  int    mode = MODE_SIMPLE;
+ int    bg   = 0;
  struct roar_connection con[1];
+ struct roar_stream     stream[1];
 
  for (i = 1; i < argc; i++) {
   k = argv[i];
@@ -59,6 +62,8 @@ int main (int argc, char * argv[]) {
    mode = MODE_SIMPLE;
   } else if ( strcmp(k, "--passive") == 0 ) {
    mode = MODE_PASSIVE;
+  } else if ( strcmp(k, "--background") == 0 ) {
+   bg = 1;
   } else if ( strcmp(k, "--help") == 0 ) {
    usage();
    return 0;
@@ -71,6 +76,8 @@ int main (int argc, char * argv[]) {
   }
  }
 
+ if ( bg )
+  mode = MODE_PASSIVE;
 
  if ( file == NULL )
   file = "/dev/stdin";
@@ -81,12 +88,18 @@ int main (int argc, char * argv[]) {
    return 0;
   }
 
-  if ( roar_file_play_full(con, file, 0, 1, NULL) == -1 ) {
+  if ( roar_file_play_full(con, file, 0, 1, stream) == -1 ) {
    ROAR_ERR("Can not start playback");
    return 1;
   }
 
-  sleep(10);
+  if ( bg ) {
+   if ( roar_stream_attach_simple(con, stream, 0) == -1 ) {
+    ROAR_ERR("Can not attach stream to server");
+   }
+  } else {
+   sleep(10);
+  }
 
   roar_disconnect(con);
 
