@@ -1,3 +1,21 @@
+v. 0.1beta1
+	* fixed a lot typos
+	* Added readonly support for A-Law
+	* now also build doc/
+	* fixed a bug with NetBSD's which
+	* look for pkg-config
+	* look for other tools, added --runtime-detect to configure
+	* Fixed some manpages
+	* added support for passive playback (passfh)
+	* added support for ROAR_ATTACH_SIMPLE
+	* cleaned codec ID #defines a bit up
+	* added CMD PASSFH
+	* get roard build again on MAC OS X
+	* added tool roarcatpassfh
+	* added --simple, --passive and --background to roarcatplay
+	* got cf vorbis work on vio
+	* got standard vio work better on DECnet
+
 v. 0.1 - Sun Aug 31 2008
 	* done basic stuff
 	* started 'libroaresd' to support ESD clients
