@@ -63,6 +63,7 @@ int streams_new    (void);
 int streams_delete (int id);
 
 int streams_set_client (int id, int client);
+int streams_get_client (int id);
 
 int streams_set_fh     (int id, int fh);
 int streams_get_fh     (int id);

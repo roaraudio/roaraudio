@@ -160,6 +160,14 @@ int streams_set_client (int id, int client) {
  return 0;
 }
 
+int streams_get_client (int id) {
+ if ( g_streams[id] == NULL )
+  return -1;
+
+ return g_streams[id]->client;
+}
+
+
 int streams_set_fh     (int id, int fh) {
  int dir;
 
