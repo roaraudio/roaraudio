@@ -102,6 +102,11 @@
 #define ROAR_AUTH_SYSUSER 3 /* use local/NIS/PAM userdatabase */
 #define ROAR_AUTH_PASSWD  4 /* use password */
 
+// attach types...
+#define ROAR_ATTACH_SIMPLE 1 /* move a stream from one to another client (attach the stream to it) */
+#define ROAR_ATTACH_SOURCE 2 /* attach a new source to the server */
+#define ROAR_ATTACH_OUTPUT 3 /* attach a new output stream to the server */
+
 #endif
 
 //ll
