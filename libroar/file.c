@@ -163,6 +163,7 @@ ssize_t roar_file_play_full  (struct roar_connection * con, char * file, int exe
  int codec = -1;
  int in, out = -1;
  ssize_t r = 0;
+ int seek;
  int len;
  char buf[BUFSIZE];
  int rate = ROAR_RATE_DEFAULT, channels = ROAR_CHANNELS_DEFAULT, bits = ROAR_BITS_DEFAULT;
@@ -191,9 +192,15 @@ ssize_t roar_file_play_full  (struct roar_connection * con, char * file, int exe
 
  codec = roar_file_codecdetect(buf, len);
 
+ seek = lseek(in, 0, SEEK_SET) == (off_t) -1 ? 0 : 1;
+
  if ( codec == -1 ) {
   close(in);
   return -1;
+ }
+
+ if ( passfh && !seek ) {
+  ROAR_WARN("roar_file_play_full(*): passfh on non seekable file: this may produce incorrect playback");
  }
 
  if ( exec ) {
@@ -216,13 +223,26 @@ ssize_t roar_file_play_full  (struct roar_connection * con, char * file, int exe
 
   out = con->fh;
  } else {
-  if ( (out = roar_simple_new_stream_obj(con, s, rate, channels, bits, codec, ROAR_DIR_PLAY)) == -1 ) {
-   close(in);
-   return -1;
+  if ( !(passfh && seek) ) {
+   if ( (out = roar_simple_new_stream_obj(con, s, rate, channels, bits, codec, ROAR_DIR_PLAY)) == -1 ) {
+    close(in);
+    return -1;
+   }
+  } else {
+   if ( roar_stream_new(s, rate, channels, bits, codec) == -1 ) {
+    close(in);
+    return -1;
+   }
+
+   if ( roar_stream_connect(con, s, ROAR_DIR_PLAY) == -1 ) {
+    close(in);
+    return -1;
+   }
   }
  }
 
- write(out, buf, len);
+ if ( !seek )
+  write(out, buf, len);
 
  if ( !passfh ) {
   r = roar_file_send_raw(out, in);
