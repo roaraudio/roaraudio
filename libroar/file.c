@@ -216,7 +216,7 @@ ssize_t roar_file_play_full  (struct roar_connection * con, char * file, int exe
 
   out = con->fh;
  } else {
-  if ( (out = roar_simple_new_stream(con, rate, channels, bits, codec, ROAR_DIR_PLAY)) == -1 ) {
+  if ( (out = roar_simple_new_stream_obj(con, s, rate, channels, bits, codec, ROAR_DIR_PLAY)) == -1 ) {
    close(in);
    return -1;
   }
