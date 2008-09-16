@@ -67,6 +67,7 @@
 #endif
 
 #include <roaraudio/proto.h>
+#include <roaraudio/error.h>
 #include <roaraudio/audio.h>
 #include <roaraudio/stream.h>
 #include <roaraudio/client.h>
