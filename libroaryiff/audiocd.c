@@ -24,8 +24,72 @@
 
 #include <libroaryiff.h>
 
+struct {
+ int fh;
+ int stream;
+ char * device;
+} _g_roaryiff_cdrom = {-1, -1, NULL};
+
 int YEjectAudioCD(YConnection *con) {
+ YStopAudioCD(con);
  return system("eject") == 0 ? 0 : -1;
+}
+
+int YPlayAudioCDTrack(YConnection *con, int track_number) {
+ struct roar_connection rcon;
+ int flags;
+
+ if ( con == NULL )
+  return -1;
+
+ rcon.fh = con->fd;
+
+
+ if ( _g_roaryiff_cdrom.fh == -1 ) {
+  // ok, we need to open the cdrom device
+  if ( _g_roaryiff_cdrom.device == NULL ) {
+   _g_roaryiff_cdrom.device = roar_cdromdevice();
+   if ( _g_roaryiff_cdrom.device == NULL )
+    return -1;
+  }
+  if ( (_g_roaryiff_cdrom.fh = open(_g_roaryiff_cdrom.device, O_RDONLY, 0644)) == -1 )
+   return -1;
+
+  if ( (flags = fcntl(_g_roaryiff_cdrom.fh, F_GETFL, 0)) == -1 ) {
+   close(_g_roaryiff_cdrom.fh);
+   _g_roaryiff_cdrom.fh = -1;
+   return -1;
+  }
+
+  flags |= FD_CLOEXEC;
+
+  if ( fcntl(_g_roaryiff_cdrom.fh, F_SETFL, flags) == -1 ) {
+   close(_g_roaryiff_cdrom.fh);
+   _g_roaryiff_cdrom.fh = -1;
+   return -1;
+  }
+ }
+
+ return -1;
+}
+
+int YStopAudioCD(YConnection *con) {
+ struct roar_connection rcon;
+
+ if ( con == NULL )
+  return -1;
+
+ rcon.fh = con->fd;
+
+ if ( _g_roaryiff_cdrom.fh != -1 ) {
+  close(_g_roaryiff_cdrom.fh);
+ }
+
+ if ( _g_roaryiff_cdrom.stream != -1 ) {
+  roar_kick(&rcon, ROAR_OT_STREAM, _g_roaryiff_cdrom.stream);
+ }
+
+ return 0;
 }
 
 //ll
