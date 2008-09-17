@@ -34,4 +34,41 @@
 
 #include "libroar.h"
 
+int roar_cdrom_open (struct roar_connection * con, struct roar_cdrom * cdrom, char * device) {
+ if ( cdrom == NULL )
+  return -1;
+
+ memset((void*)cdrom, 0, sizeof(struct roar_cdrom));
+
+ if ( device == NULL )
+  device = roar_cdromdevice();
+
+ if ( device == NULL )
+  return -1;
+
+ strncpy(cdrom->device, device, ROAR_CDROM_MAX_DEVLEN);
+
+ cdrom->con    = con; // we do not care here if it is set or not as we can operate in local only mode
+
+ cdrom->stream = -1;
+ cdrom->fh     = -1;
+
+ return 0;
+}
+
+int roar_cdrom_close(struct roar_cdrom * cdrom) {
+ if ( cdrom == NULL )
+  return -1;
+
+ if ( cdrom->fh != -1 )
+  close(cdrom->fh);
+
+ memset((void*)cdrom, 0, sizeof(struct roar_cdrom));
+
+ return 0;
+}
+
+int roar_cdrom_stop (struct roar_cdrom * cdrom);
+int roar_cdrom_play (struct roar_cdrom * cdrom, int track);
+
 //ll
