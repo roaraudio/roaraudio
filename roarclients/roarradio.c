@@ -43,7 +43,7 @@ int main (int argc, char * argv[]) {
  int    rate     = 44100;
  int    bits     = 16;
  int    channels = 2;
- int    codec    = ROAR_CODEC_DEFAULT;
+ int    codec    = ROAR_CODEC_OGG_VORBIS;
  char * server   = NULL;
  char * k;
  int    i;
@@ -115,7 +115,7 @@ int main (int argc, char * argv[]) {
 
    fprintf(http, "GET %s HTTP/1.1\r\n", file);
    fprintf(http, "Host: %s\r\n", host);
-   fprintf(http, "User-Agent: roarradio $Revision: 1.1 $\r\n");
+   fprintf(http, "User-Agent: roarradio $Revision: 1.2 $\r\n");
    fprintf(http, "Connection: close\r\n");
    fprintf(http, "\r\n");
    fflush(http);
