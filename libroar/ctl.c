@@ -157,8 +157,12 @@ int roar_get_stream   (struct roar_connection * con, struct roar_stream * stream
  m.datalen = 1;
  m.data[0] = id;
 
- if ( roar_req(con, &m, NULL) == -1 )
+ roar_errno = ROAR_ERROR_UNKNOWN;
+
+ if ( roar_req(con, &m, NULL) == -1 ) {
+  roar_errno = ROAR_ERROR_PROTO;
   return -1;
+ }
 
  if ( m.cmd != ROAR_CMD_OK )
   return -1;
