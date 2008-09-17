@@ -29,7 +29,6 @@
 int YGetNextEvent (YConnection *con, YEvent *event, Boolean block) {
  struct roar_connection rcon;
  struct roar_stream s;
- struct roar_message    m;
 
  if ( con == NULL || event == NULL )
   return -1;
@@ -39,11 +38,7 @@ int YGetNextEvent (YConnection *con, YEvent *event, Boolean block) {
  if ( con->prev_generated_yid != YIDNULL ) {
   if ( roar_get_stream(&rcon, &s, ROARYIFF_YID2ROAR(con->prev_generated_yid)) == -1 ) {
    // ok, we know something happened.
-   // next we try to seend a noop to see of the server is still alive
-   m.cmd = ROAR_CMD_NOOP;
-   m.datalen = 0;
-
-   if (  roar_req(&rcon, &m, NULL) == -1 ) {
+   if ( roar_errno == ROAR_ERROR_PROTO ) {
     // the server died
     event->type     = YDisconnect;
     return 1;
