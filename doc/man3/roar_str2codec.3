@@ -22,9 +22,13 @@ If a \fBcodec\fR is valid the following should be true:
 
 Note that because of aliasing and case insensitivity the revers operation needs not to be true.
 
+.SH "THREAD SAFETY"
+Because \fBroar_codec2str\fR returns a static unique pointer for each codec it is fully thread safe.
+
 .SH "RETURN VALUE"
 On success \fBroar_str2codec\fR returns a codec ID.  On error, -1 is returned.
 \fBroar_codec2str\fR returns the name of the codec or NULL on error.
+You must not free this pointer or write to it.
 
 .SH "EXAMPLES"
 FIXME
