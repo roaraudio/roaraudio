@@ -33,6 +33,7 @@ void YShutdownServer(YConnection *con) {
  rcon.fh = con->fd;
 
  roar_exit(&rcon);
+ YCloseConnection(con, 1);
 }
 
 //ll
