@@ -2,6 +2,7 @@ v. 0.1beta2 - ?
 	* check for __LP64__
 	* added roaraudio/error.h
 	* added manpages for roar_codec2str() and roar_str2codec()
+	* got some YIFF clients working, including yplay!
 
 v. 0.1beta1 - Sun Sep 07 2008
 	* fixed a lot typos
