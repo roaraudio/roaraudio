@@ -1,3 +1,7 @@
+v. 0.1beta2 - ?
+	* check for __LP64__
+	* added roaraudio/error.h
+
 v. 0.1beta1 - Sun Sep 07 2008
 	* fixed a lot typos
 	* Added readonly support for A-Law
