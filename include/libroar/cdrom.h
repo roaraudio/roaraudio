@@ -1,4 +1,4 @@
-//libroar.h:
+//cdrom.h:
 
 /*
  *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008
@@ -32,41 +32,10 @@
  *  them with any software that uses libesd, libartsc or libpulse*.
  */
 
-#ifndef _LIBROAR_H_
-#define _LIBROAR_H_
+#ifndef _LIBROARCDROM_H_
+#define _LIBROARCDROM_H_
 
-#define ROAR_DBG_PREFIX  "libroar"
-
-#include <roaraudio.h>
-
-#include <fcntl.h>
-#include <sys/socket.h>
-#include <netinet/in_systm.h>
-#include <netinet/in.h>
-#include <netinet/ip.h>
-#ifdef ROAR_HAVE_LIBDNET
-#include <netdnet/dn.h>
-#include <netdnet/dnetdb.h>
-#endif
-#ifdef ROAR_HAVE_IPX
-#include <netipx/ipx.h>
-#endif
-
-#include "error.h"
-#include "vio.h"
-#include "basic.h"
-#include "stream.h"
-#include "simple.h"
-#include "cdrom.h"
-#include "auth.h"
-#include "socket.h"
-#include "ctl.h"
-#include "buffer.h"
-#include "convert.h"
-#include "poly.h"
-#include "meta.h"
-#include "file.h"
-#include "acl.h"
+#include "libroar.h"
 
 #endif
 
