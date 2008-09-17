@@ -49,7 +49,7 @@ int cf_alaw_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
   return len;
  }
 
- roardsp_conv_alaw2pcm16(buf, buf, len);
+ roardsp_conv_alaw2pcm16((int16_t *)buf, buf, len);
 
  return len*2;
 }

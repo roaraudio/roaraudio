@@ -68,6 +68,9 @@ struct roar_codecfilter {
 #include "codecfilter_speex.h"
 #endif
 
+//cf alaw:
+#include <libroardsp/libroardsp.h>
+
 void print_codecfilterlist (void);
 
 int codecfilter_open (CODECFILTER_USERDATA_T * inst,
