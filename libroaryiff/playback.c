@@ -29,18 +29,27 @@ YID YStartPlaySoundObjectSimple (YConnection *con, const char *path) {
 }
 
 YID YStartPlaySoundObject (YConnection *con, const char *path, YEventSoundPlay *value) {
+ struct roar_connection rcon;
+ struct roar_stream     stream[1];
+
  if ( !con )
   return YIDNULL;
 
  if ( !path )
   return YIDNULL;
 
+ rcon.fh = con->fd;
+
  // hm,... find out how to do this.
  // need to start ssize_t roar_file_play (struct roar_connection * con, char * file, int exec)
  // in background
 
+ if ( roar_file_play_full(&rcon, path, 0, 1, stream) == -1 ) {
+  ROAR_ERR("Can not start playback");
+  return YIDNULL;
+ }
 
- return YIDNULL;
+ return ROARYIFF_ROAR2YID(stream->id);
 }
 
 void YDestroyPlaySoundObject(YConnection *con, YID yid) {
