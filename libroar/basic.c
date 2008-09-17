@@ -43,6 +43,8 @@ int roar_connect_raw (char * server) {
  int is_decnet = 0;
  char * obj = NULL;
 
+ roar_errno = ROAR_ERROR_UNKNOWN;
+
  if ( server == NULL && (roar_server = getenv("ROAR_SERVER")) != NULL )
   server = roar_server;
 
@@ -113,16 +115,22 @@ int roar_connect_raw (char * server) {
   }
  }
 
+ if ( fh == -1 )
+  roar_errno = ROAR_ERROR_CONNREFUSED;
+
  ROAR_DBG("roar_connect_raw(*) = %i", fh);
 
  return fh;
 }
 
 int roar_connect    (struct roar_connection * con, char * server) {
+ roar_errno = ROAR_ERROR_UNKNOWN;
  con->fh = roar_connect_raw(server);
 
  if ( con->fh == -1 )
   return -1;
+
+ roar_errno = ROAR_ERROR_NONE;
 
  return 0;
 }
@@ -141,6 +149,8 @@ int roar_disconnect (struct roar_connection * con) {
 
  con->fh = -1;
 
+ roar_errno = ROAR_ERROR_NONE;
+
  return 0;
 }
 
@@ -148,6 +158,8 @@ int roar_identify   (struct roar_connection * con, char * name) {
  struct roar_message mes;
  pid_t pid;
  int max_len;
+
+ roar_errno = ROAR_ERROR_UNKNOWN;
 
  ROAR_DBG("roar_identify(*): try to identify myself...");
 
@@ -184,6 +196,8 @@ int roar_identify   (struct roar_connection * con, char * name) {
 int roar_send_message (struct roar_connection * con, struct roar_message * mes, char * data) {
  char buf[_ROAR_MESS_BUF_LEN];
 
+ roar_errno = ROAR_ERROR_UNKNOWN;
+
  ROAR_DBG("roar_send_message(*): try to send an request...");
 
  buf[0] = _ROAR_MESSAGE_VERSION;
@@ -192,12 +206,19 @@ int roar_send_message (struct roar_connection * con, struct roar_message * mes, 
  *(uint32_t*)(buf+4) = ROAR_HOST2NET32(mes->pos);
  *(uint16_t*)(buf+8) = ROAR_HOST2NET16(mes->datalen);
 
- if ( write(con->fh, buf, _ROAR_MESS_BUF_LEN) != _ROAR_MESS_BUF_LEN )
+ if ( write(con->fh, buf, _ROAR_MESS_BUF_LEN) != _ROAR_MESS_BUF_LEN ) {
+  roar_errno = ROAR_ERROR_PIPE;
   return -1;
+ }
 
- if ( mes->datalen != 0 )
-  if ( write(con->fh, data == NULL ? mes->data : data, mes->datalen) != mes->datalen )
+ if ( mes->datalen != 0 ) {
+  if ( write(con->fh, data == NULL ? mes->data : data, mes->datalen) != mes->datalen ) {
+   roar_errno = ROAR_ERROR_PIPE;
    return -1;
+  }
+ }
+
+ roar_errno = ROAR_ERROR_NONE;
 
  ROAR_DBG("roar_send_message(*) = 0");
  return 0;
@@ -206,18 +227,24 @@ int roar_send_message (struct roar_connection * con, struct roar_message * mes, 
 int roar_recv_message (struct roar_connection * con, struct roar_message * mes, char ** data) {
  char buf[_ROAR_MESS_BUF_LEN];
 
+ roar_errno = ROAR_ERROR_UNKNOWN;
+
  ROAR_DBG("roar_recv_message(*): try to get a response form the server...");
 
  if ( data )
   *data = NULL;
 
- if ( read(con->fh, buf, _ROAR_MESS_BUF_LEN) != _ROAR_MESS_BUF_LEN )
+ if ( read(con->fh, buf, _ROAR_MESS_BUF_LEN) != _ROAR_MESS_BUF_LEN ) {
+  roar_errno = ROAR_ERROR_PROTO;
   return -1;
+ }
 
  ROAR_DBG("roar_recv_message(*): Got a header");
 
- if ( buf[0] != _ROAR_MESSAGE_VERSION )
+ if ( buf[0] != _ROAR_MESSAGE_VERSION ) {
+  roar_errno = ROAR_ERROR_PROTO;
   return -1;
+ }
 
  mes->cmd     = (unsigned char)buf[1];
  mes->stream  = ROAR_NET2HOST16(*(uint16_t*)(buf+2));
@@ -230,6 +257,7 @@ int roar_recv_message (struct roar_connection * con, struct roar_message * mes, 
  if ( mes->datalen == 0 ) {
   ROAR_DBG("roar_recv_message(*): no data in this pkg");
   ROAR_DBG("roar_recv_message(*) = 0");
+  roar_errno = ROAR_ERROR_NONE;
   return 0;
  }
 
@@ -237,27 +265,40 @@ int roar_recv_message (struct roar_connection * con, struct roar_message * mes, 
   if ( read(con->fh, mes->data, mes->datalen) == mes->datalen ) {
    ROAR_DBG("roar_recv_message(*): Got data!");
    ROAR_DBG("roar_recv_message(*) = 0");
+   roar_errno = ROAR_ERROR_NONE;
    return 0;
   }
+
+  roar_errno = ROAR_ERROR_PIPE;
   return -1;
  } else {
-  if ( data == NULL )
+  if ( data == NULL ) {
+   roar_errno = ROAR_ERROR_MSGSIZE;
    return -1;
+  }
 
-  if ( (*data = malloc(mes->datalen)) == NULL )
+  if ( (*data = malloc(mes->datalen)) == NULL ) {
+   roar_errno = ROAR_ERROR_NOMEM;
    return -1;
+  }
 
-  if ( mes->datalen == 0 )
+  if ( mes->datalen == 0 ) {
+   roar_errno = ROAR_ERROR_NONE;
    return 0;
+  }
 
   if ( read(con->fh, *data, mes->datalen) == mes->datalen ) {
    ROAR_DBG("roar_recv_message(*): Got data!");
    ROAR_DBG("roar_recv_message(*) = 0");
+   roar_errno = ROAR_ERROR_NONE;
    return 0;
   }
+
+  roar_errno = ROAR_ERROR_PIPE;
   return -1;
  }
 
+ // what happened here?
  return -1;
 }
 
