@@ -44,12 +44,12 @@ YID YStartPlaySoundObject (YConnection *con, const char *path, YEventSoundPlay *
  // need to start ssize_t roar_file_play (struct roar_connection * con, char * file, int exec)
  // in background
 
- if ( roar_file_play_full(&rcon, path, 0, 1, stream) == -1 ) {
+ if ( roar_file_play_full(&rcon, (char*)path, 0, 1, stream) == -1 ) {
   ROAR_ERR("Can not start playback");
   return YIDNULL;
  }
 
- return ROARYIFF_ROAR2YID(stream->id);
+ return con->prev_generated_yid = ROARYIFF_ROAR2YID(stream->id);
 }
 
 void YDestroyPlaySoundObject(YConnection *con, YID yid) {
