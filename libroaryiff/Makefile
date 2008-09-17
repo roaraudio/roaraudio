@@ -1,5 +1,5 @@
 TARGETS=libroaryiff.so
-OBJS=libroaryiff.o connection.o playback.o audiocd.o ctl.o stub.o
+OBJS=libroaryiff.o connection.o playback.o audiocd.o ctl.o stub.o file.o
 
 include ../Makefile.conf
 
