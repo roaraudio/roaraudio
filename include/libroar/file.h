@@ -48,6 +48,9 @@ ssize_t roar_file_play_full  (struct roar_connection * con, char * file, int exe
 
 ssize_t roar_file_map        (char * filename, int flags, mode_t mode, size_t len, void ** mem);
 int     roar_file_unmap      (size_t len, void * mem);
+
+char  * roar_cdromdevice     (void);
+
 #endif
 
 //ll

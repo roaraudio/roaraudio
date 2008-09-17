@@ -266,4 +266,17 @@ ssize_t roar_file_play_full  (struct roar_connection * con, char * file, int exe
  return r;
 }
 
+char  * roar_cdromdevice     (void) {
+ char * k;
+
+ if ( (k = getenv("CDDA_DEVICE")) != NULL )
+  return k;
+
+#ifdef ROAR_DEFAULT_CDROM
+ return ROAR_DEFAULT_CDROM;
+#endif
+
+ return NULL;
+}
+
 //ll
