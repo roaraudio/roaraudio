@@ -3,6 +3,8 @@ v. 0.1beta2 - ?
 	* added roaraudio/error.h
 	* added manpages for roar_codec2str() and roar_str2codec()
 	* got some YIFF clients working, including yplay!
+	* added roarcleints/roarradio*: A RoarAudio client which inizialiszes a new source
+	                                and has buildin HTTP support.
 
 v. 0.1beta1 - Sun Sep 07 2008
 	* fixed a lot typos
