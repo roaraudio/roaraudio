@@ -231,10 +231,11 @@ EOF
  echo
 } >&3
 
-#                 #define                 name         cmds...
-test_tool_defmake ROAR_HAVE_BIN_OGG123    ogg123       ogg123
-test_tool_defmake ROAR_HAVE_BIN_FLAC      flac         flac
-test_tool_defmake ROAR_HAVE_BIN_TIMIDITY  TiMidity++   timidity
+#                 #define                  name         cmds...
+test_tool_defmake ROAR_HAVE_BIN_OGG123     ogg123       ogg123
+test_tool_defmake ROAR_HAVE_BIN_FLAC       flac         flac
+test_tool_defmake ROAR_HAVE_BIN_TIMIDITY   TiMidity++   timidity
+test_tool_defmake ROAR_HAVE_BIN_CDPARANOIA cdparanoia   cdparanoia
 
 echo >&3
 
