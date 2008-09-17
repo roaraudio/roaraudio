@@ -332,6 +332,32 @@ else
  echo 'no (can not compile!, no stdint.h?)'
 fi
 
+echo -n 'checking for __LP64__... '
+cat > $TF_C << EOF
+#include <stdio.h>
+
+int main (void) {
+#ifdef __LP64__
+ fprintf(stderr, "set by compiler\n");
+#else
+ if ( sizeof(int) == sizeof(void*) ) {
+  fprintf(stderr, "no need to set\n");
+ } else {
+  fprintf(stderr, "need to set\n");
+  printf("\n#ifndef __LP64__\n#define __LP64__\n#endif\n\n");
+ }
+#endif
+ return 0;
+}
+EOF
+if $CCTF 2> /dev/null;
+then
+ $TF_E >&3
+else
+ echo 'error, can not compile'
+ exit 1
+fi
+
 echo -n 'checking if cp supports -v... '
 if cp -v --help > /dev/null 2> /dev/null
 then
