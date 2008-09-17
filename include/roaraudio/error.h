@@ -28,6 +28,7 @@
 #ifndef _ROARAUDIO_ERROR_H_
 #define _ROARAUDIO_ERROR_H_
 
+#define ROAR_ERROR_UNKNOWN     -1 /* Unknown (maybe no) error */
 #define ROAR_ERROR_NONE         0
 #define ROAR_ERROR_PERM         1 /* Operation not permitted */
 #define ROAR_ERROR_NOENT        2 /* No such file or directory */
