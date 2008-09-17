@@ -24,4 +24,22 @@
 
 #include <libroaryiff.h>
 
+int YGetSoundObjectAttributes (YConnection *con, const char *path, YEventSoundObjectAttributes *buf) {
+ if ( buf == NULL )
+  return -1;
+
+ buf->format = SndObjTypeDSP; // RoarAudio doesn't make a hard diffrence here
+                              // TODO: maybe we should check for the codec
+
+ // as we do not know anything we fill with defaults:
+ buf->sample_size = ROAR_BITS_DEFAULT; // don't know, but seems to be in bits not bytes
+ buf->channels    = ROAR_CHANNELS_DEFAULT;
+ buf->sample_rate = ROAR_RATE_DEFAULT;
+ buf->length      = 0;
+
+ strncpy(buf->path, path, YPathMax);
+
+ return 0;
+}
+
 //ll
