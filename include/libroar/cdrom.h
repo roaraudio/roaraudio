@@ -37,6 +37,19 @@
 
 #include "libroar.h"
 
+struct roar_cdrom {
+ int local;
+ int fh;
+ int stream;
+ char * device;
+ struct roar_connection * con;
+};
+
+int roar_cdrom_open (struct roar_connection * con, struct roar_cdrom * cdrom, char * device);
+int roar_cdrom_close(struct roar_cdrom * cdrom);
+int roar_cdrom_stop (struct roar_cdrom * cdrom);
+int roar_cdrom_play (struct roar_cdrom * cdrom, int track);
+
 #endif
 
 //ll
