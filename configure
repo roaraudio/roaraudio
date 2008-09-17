@@ -22,6 +22,8 @@ SHARED_CF=''
 PKG_CONFIG=false
 RUNTIME_DETECT=false
 
+CDROM="none"
+
 echo -n "checking for C compiler... "
 CC=$(which gcc cc 2> /dev/null | grep ^/ | head -n 1)
 if [ "$CC" = '' ]
@@ -54,6 +56,7 @@ do
    echo '--ldpath DIR'
    echo '--incpath DIR'
    echo '--addpath DIR'
+   echo '--cdrom DEV'
    echo '--no-LIB'
    echo '--runtime-detect'
    exit 0;
@@ -69,6 +72,10 @@ do
   '--addpath')
    LDPATH="$LDPATH -L$2/lib/"
    INCPATH="$INCPATH -I$2/include/"
+   shift;
+  ;;
+  '--cdrom')
+   CDROM="$2"
    shift;
   ;;
   '--no-'*)
@@ -369,6 +376,20 @@ else
  echo no
 fi
 
+echo -n 'checking for cdrom device... '
+if [ -e "$CDROM" ]
+then
+ echo "$CDROM"
+else
+ CDROM=$(ls /dev/cdrom /dev/rcd0c 2> /dev/null | head -n 1);
+ if [ -e "$CDROM" ]
+ then
+  echo "$CDROM"
+  echo '#define ROAR_DEFAULT_CDROM "'"$CDROM"'"' >&3
+ else
+  echo 'none'
+ fi
+fi
 
 cat >&3 << EOF
 
