@@ -37,11 +37,13 @@
 
 #include "libroar.h"
 
+#define ROAR_CDROM_MAX_DEVLEN 80
+
 struct roar_cdrom {
- int local;
+ int play_local;
  int fh;
  int stream;
- char * device;
+ char device[ROAR_CDROM_MAX_DEVLEN];
  struct roar_connection * con;
 };
 
