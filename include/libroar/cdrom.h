@@ -50,6 +50,7 @@ struct roar_cdrom {
  int play_local;
  int fh;
  int stream;
+ pid_t player;
  char device[ROAR_CDROM_MAX_DEVLEN];
  struct roar_connection * con;
 };

@@ -33,6 +33,8 @@
  */
 
 #include "libroar.h"
+#include <sys/types.h>
+#include <signal.h>
 
 #define ROAR_CDROM_ERROR_NORETURN(format, args...) ROAR_ERR(format, ## args); _exit(3)
 
@@ -123,6 +125,7 @@ int roar_cdrom_open (struct roar_connection * con, struct roar_cdrom * cdrom, ch
 
  cdrom->stream     = -1;
  cdrom->play_local =  1;
+ cdrom->player     = -1;
 
  if ( (cdrom->fh = open(cdrom->device, O_RDONLY, 0644)) == -1 )
   return -1;
@@ -148,6 +151,8 @@ int roar_cdrom_close(struct roar_cdrom * cdrom) {
  if ( cdrom == NULL )
   return -1;
 
+ roar_cdrom_stop(cdrom); // stop on close
+
  if ( cdrom->fh != -1 )
   close(cdrom->fh);
 
@@ -172,6 +177,10 @@ int roar_cdrom_stop (struct roar_cdrom * cdrom) {
   return -1;
  }
 
+ if ( cdrom->player != -1 )
+  kill(cdrom->player, SIGINT);
+
+ cdrom->player = -1;
  cdrom->stream = -1;
 
  return ret;
@@ -198,7 +207,8 @@ int roar_cdrom_play (struct roar_cdrom * cdrom, int track) {
    return -1;
   }
 
-  if ( roar_cdrom_run_cdparanoia(cdrom->fh, stream_fh, track, NULL) != -1 ) {
+  if ( (cdrom->player = roar_cdrom_run_cdparanoia(cdrom->fh, stream_fh, track, NULL)) != -1 ) {
+   cdrom->stream = stream->id;
    return 0;
   }
 
