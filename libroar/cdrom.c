@@ -34,6 +34,60 @@
 
 #include "libroar.h"
 
+#define ROAR_CDROM_ERROR_NORETURN(format, args...) ROAR_ERR(format, ## args); _exit(3)
+
+#if BYTE_ORDER == BIG_ENDIAN
+#define ROAR_CDROM_CDPARANOIA_OUTPUTFORMAT "--output-raw-big-endian"
+#elif BYTE_ORDER == LITTLE_ENDIA
+#define ROAR_CDROM_CDPARANOIA_OUTPUTFORMAT "--output-raw-little-endian"
+#endif
+
+pid_t roar_cdrom_run_cdparanoia (int cdrom, int data, int track, char * pos) {
+#if defined(ROAR_HAVE_BIN_CDPARANOIA) && defined(ROAR_CDROM_CDPARANOIA_OUTPUTFORMAT)
+ char my_pos[32] = {0};
+ pid_t pid;
+ int fh[2];
+
+ if ( cdrom == -1 || data == -1 || (track == -1 && pos == NULL) || (track != -1 && pos != NULL) )
+  return -1;
+
+ if ( track != -1 ) {
+  pos = my_pos;
+  snprintf(pos, 32, "%i", track);
+ }
+
+ if ( (pid = fork()) == -1 ) {
+  return -1;
+ }
+
+ if ( pid )
+  return pid;
+
+ fh[0] = dup(cdrom);
+ fh[1] = dup(data);
+
+ if ( fh[0] == -1 || fh[1] == -1 ) {
+  ROAR_CDROM_ERROR_NORETURN("Can not dup(): %s", strerror(errno));
+ }
+
+ close(ROAR_STDIN);
+ close(ROAR_STDOUT);
+
+ // TODO: should I close some other handles?
+
+ if ( dup2(fh[0], ROAR_STDIN) == -1 || dup2(fh[1], ROAR_STDOUT) == -1 ) {
+  ROAR_CDROM_ERROR_NORETURN("Can not dup2(): %s", strerror(errno));
+ }
+
+ execl(ROAR_HAVE_BIN_CDPARANOIA, "cdparanoia", ROAR_CDROM_CDPARANOIA_OUTPUTFORMAT, pos, "-", NULL);
+
+ ROAR_CDROM_ERROR_NORETURN("We are still alive after exec()!, very bad!, error was: %s", strerror(errno));
+ return -1;
+#else
+ return -1;
+#endif
+}
+
 int roar_cdrom_open (struct roar_connection * con, struct roar_cdrom * cdrom, char * device) {
  int flags;
 
@@ -109,6 +163,9 @@ int roar_cdrom_stop (struct roar_cdrom * cdrom) {
 }
 
 int roar_cdrom_play (struct roar_cdrom * cdrom, int track) {
+ int stream_fh;
+ struct roar_stream stream[1];
+
  if ( cdrom == NULL )
   return -1;
 
@@ -121,11 +178,14 @@ int roar_cdrom_play (struct roar_cdrom * cdrom, int track) {
  }
 
  if ( cdrom->play_local ) {
-#ifdef ROAR_HAVE_BIN_CDPARANOIA
+
+  if ( (stream_fh = roar_simple_new_stream_obj(cdrom->con, stream, ROAR_CDROM_STREAMINFO, ROAR_DIR_PLAY)) == -1 ) {
+   return -1;
+  }
+
+  close(stream_fh);
+
   return -1;
-#else
-  return -1;
-#endif
  } else {
   // no support for remote playback yet
   return -1;
