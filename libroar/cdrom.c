@@ -38,7 +38,7 @@
 
 #if BYTE_ORDER == BIG_ENDIAN
 #define ROAR_CDROM_CDPARANOIA_OUTPUTFORMAT "--output-raw-big-endian"
-#elif BYTE_ORDER == LITTLE_ENDIA
+#elif BYTE_ORDER == LITTLE_ENDIAN
 #define ROAR_CDROM_CDPARANOIA_OUTPUTFORMAT "--output-raw-little-endian"
 #endif
 
@@ -47,6 +47,8 @@ pid_t roar_cdrom_run_cdparanoia (int cdrom, int data, int track, char * pos) {
  char my_pos[32] = {0};
  pid_t pid;
  int fh[2];
+
+ ROAR_DBG("roar_cdrom_run_cdparanoia(cdrom=%i, data=%i, track=%i, pos='%s') = ?", cdrom, data, track, pos);
 
  if ( cdrom == -1 || data == -1 || (track == -1 && pos == NULL) || (track != -1 && pos != NULL) )
   return -1;
@@ -79,11 +81,24 @@ pid_t roar_cdrom_run_cdparanoia (int cdrom, int data, int track, char * pos) {
   ROAR_CDROM_ERROR_NORETURN("Can not dup2(): %s", strerror(errno));
  }
 
- execl(ROAR_HAVE_BIN_CDPARANOIA, "cdparanoia", ROAR_CDROM_CDPARANOIA_OUTPUTFORMAT, pos, "-", NULL);
+ // new close our backups:
+ close(fh[0]);
+ close(fh[1]);
+
+ execl(ROAR_HAVE_BIN_CDPARANOIA, "cdparanoia", "--force-cdrom-device", "/dev/stdin", "-q",
+                ROAR_CDROM_CDPARANOIA_OUTPUTFORMAT, pos, "-", NULL);
 
  ROAR_CDROM_ERROR_NORETURN("We are still alive after exec()!, very bad!, error was: %s", strerror(errno));
  return -1;
 #else
+#ifndef ROAR_HAVE_BIN_CDPARANOIA
+ ROAR_ERR("roar_cdrom_run_cdparanoia(*): ROAR_HAVE_BIN_CDPARANOIA not defined!");
+#endif
+#ifndef ROAR_CDROM_CDPARANOIA_OUTPUTFORMAT
+ ROAR_ERR("roar_cdrom_run_cdparanoia(*): ROAR_CDROM_CDPARANOIA_OUTPUTFORMAT not defined!");
+#endif
+ ROAR_ERR("roar_cdrom_run_cdparanoia(cdrom=%i, data=%i, track=%i, pos='%s') = -1 // no cdparanoia support compiled in",
+             cdrom, data, track, pos);
  return -1;
 #endif
 }
@@ -181,6 +196,10 @@ int roar_cdrom_play (struct roar_cdrom * cdrom, int track) {
 
   if ( (stream_fh = roar_simple_new_stream_obj(cdrom->con, stream, ROAR_CDROM_STREAMINFO, ROAR_DIR_PLAY)) == -1 ) {
    return -1;
+  }
+
+  if ( roar_cdrom_run_cdparanoia(cdrom->fh, stream_fh, track, NULL) != -1 ) {
+   return 0;
   }
 
   close(stream_fh);
