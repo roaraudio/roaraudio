@@ -35,6 +35,8 @@
 #include "libroar.h"
 
 int roar_cdrom_open (struct roar_connection * con, struct roar_cdrom * cdrom, char * device) {
+ int flags;
+
  if ( cdrom == NULL )
   return -1;
 
@@ -48,10 +50,27 @@ int roar_cdrom_open (struct roar_connection * con, struct roar_cdrom * cdrom, ch
 
  strncpy(cdrom->device, device, ROAR_CDROM_MAX_DEVLEN);
 
- cdrom->con    = con; // we do not care here if it is set or not as we can operate in local only mode
+ cdrom->con        = con; // we do not care here if it is set or not as we can operate in local only mode
 
- cdrom->stream = -1;
- cdrom->fh     = -1;
+ cdrom->stream     = -1;
+ cdrom->play_local =  1;
+
+ if ( (cdrom->fh = open(cdrom->device, O_RDONLY, 0644)) == -1 )
+  return -1;
+
+ if ( (flags = fcntl(cdrom->fh, F_GETFL, 0)) == -1 ) {
+  close(cdrom->fh);
+  cdrom->fh  = -1;
+  return -1;
+ }
+
+ flags |= FD_CLOEXEC;
+
+ if ( fcntl(cdrom->fh, F_SETFL, flags) == -1 ) {
+  close(cdrom->fh);
+  cdrom->fh = -1;
+  return -1;
+ }
 
  return 0;
 }
@@ -68,7 +87,49 @@ int roar_cdrom_close(struct roar_cdrom * cdrom) {
  return 0;
 }
 
-int roar_cdrom_stop (struct roar_cdrom * cdrom);
-int roar_cdrom_play (struct roar_cdrom * cdrom, int track);
+int roar_cdrom_stop (struct roar_cdrom * cdrom) {
+ int ret;
+
+ if ( cdrom == NULL )
+  return -1;
+
+ if ( cdrom->con == NULL )
+  return -1;
+
+ if ( cdrom->stream == -1 )
+  return -1;
+
+ if ( (ret = roar_kick(cdrom->con, ROAR_OT_STREAM, cdrom->stream)) == -1 ) {
+  return -1;
+ }
+
+ cdrom->stream = -1;
+
+ return ret;
+}
+
+int roar_cdrom_play (struct roar_cdrom * cdrom, int track) {
+ if ( cdrom == NULL )
+  return -1;
+
+ if ( cdrom->con == NULL )
+  return -1;
+
+ if ( cdrom->stream != -1 ) {
+  if ( roar_cdrom_stop(cdrom) == -1 )
+   return -1;
+ }
+
+ if ( cdrom->play_local ) {
+#ifdef ROAR_HAVE_BIN_CDPARANOIA
+  return -1;
+#else
+  return -1;
+#endif
+ } else {
+  // no support for remote playback yet
+  return -1;
+ }
+}
 
 //ll
