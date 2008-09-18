@@ -55,9 +55,29 @@ int cf_alaw_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
 }
 
 int cf_alaw_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
- struct codecfilter_wave_inst * self = (struct codecfilter_wave_inst *) inst;
+ struct roar_stream_server * s = ROAR_STREAM_SERVER(inst);
+ char * out;
 
- return 0;
+ // TODO: add a more effect way to use memory than allways alloc/freeing it.
+ //       maybe by keeping a buffer over instanzes or by using ca global buffer
+ //       with an refrenze counter so we can free it on last use
+
+ len /= 2;
+
+ if ( (out = (char*)malloc(len)) == NULL )
+  return -1;
+
+ roardsp_conv_pcm162alaw(out, (int16_t*)buf, len);
+
+ len = stream_vio_s_write(s, out, len);
+
+ free(out);
+
+ if ( len > 0 ) {
+  return len*2;
+ } else {
+  return -1;
+ }
 }
 
 //ll
