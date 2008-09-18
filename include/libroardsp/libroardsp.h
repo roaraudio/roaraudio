@@ -102,6 +102,7 @@ int roardsp_highp_ctl   (struct roardsp_filter * filter, int cmd, void * data);
 
 // codecs:
 int roardsp_conv_alaw2pcm16 (int16_t * out, char * in, size_t len);
+int roardsp_conv_pcm162alaw (char * out, int16_t * in, size_t len);
 
 #endif
 

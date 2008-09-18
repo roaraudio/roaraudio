@@ -796,4 +796,14 @@ int roardsp_conv_alaw2pcm16 (int16_t * out, char * in, size_t len) {
  return 0;
 }
 
+int roardsp_conv_pcm162alaw (char * out, int16_t * in, size_t len) {
+ int i;
+
+ for (i = 0; i < len; i++) {
+  out[i] = _roardsp_pcm132alaw[i >> 3];
+ }
+
+ return 0;
+}
+
 //ll
