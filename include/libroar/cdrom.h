@@ -39,6 +39,13 @@
 
 #define ROAR_CDROM_MAX_DEVLEN 80
 
+#define ROAR_CDROM_RATE      44100
+#define ROAR_CDROM_CHANNELS  2
+#define ROAR_CDROM_BITS      16
+#define ROAR_CDROM_CODEC     ROAR_CODEC_DEFAULT /* we ask cdparanoia to output in host byte order */
+
+#define ROAR_CDROM_STREAMINFO ROAR_CDROM_RATE, ROAR_CDROM_CHANNELS, ROAR_CDROM_BITS, ROAR_CDROM_CODEC
+
 struct roar_cdrom {
  int play_local;
  int fh;
