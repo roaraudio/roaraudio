@@ -55,6 +55,12 @@ struct roar_cdrom {
  struct roar_connection * con;
 };
 
+struct roar_cdrom_title {
+ int track;                 // 0..n, -1 = unset/end of list
+ uint32_t start;            // offset in samples
+ uint32_t length;           // length in samples
+};
+
 int roar_cdrom_open (struct roar_connection * con, struct roar_cdrom * cdrom, char * device);
 int roar_cdrom_close(struct roar_cdrom * cdrom);
 int roar_cdrom_stop (struct roar_cdrom * cdrom);
