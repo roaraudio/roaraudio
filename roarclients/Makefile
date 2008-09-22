@@ -1,4 +1,4 @@
-TARGETS=roarcat roarcatad roarcat2sock roarcatsendfile roarcatplay roarcatpassfh roarctl roarmon roarsockconnect roartypes roarvorbis roarvumeter roarfilt roarsin roar-config polytest roarsocktypes roarshout roarradio
+TARGETS=roarcat roarcatad roarcat2sock roarcatsendfile roarcatplay roarcatpassfh roarbidir roarctl roarmon roarsockconnect roartypes roarvorbis roarvumeter roarfilt roarsin roar-config polytest roarsocktypes roarshout roarradio
 
 include ../Makefile.conf
 
@@ -22,6 +22,7 @@ roarcatpassfh: roarcatpassfh.o
 roarradio: roarradio.o
 roarctl: roarctl.o
 roarmon: roarmon.o
+roarbidir: roarbidir.o
 roarfilt: roarfilt.o
 	${CC} ${LDFLAGS} -o roarfilt roarfilt.o -lm -lroardsp
 roarsin: roarsin.o

@@ -41,6 +41,7 @@
 //#define ROAR_DIR_INTERNAL 7
 
 #define ROAR_DIR_META     8
+#define ROAR_DIR_BIDIR    9
 
 
 #define ROAR_CARE_NOPOS  0

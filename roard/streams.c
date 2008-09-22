@@ -497,7 +497,7 @@ int streams_get_mixbuffers (void *** bufferlist, struct roar_audio_info * info, 
 
  for (i = 0; i < ROAR_STREAMS_MAX; i++) {
   if ( g_streams[i] != NULL ) {
-   if ( ROAR_STREAM(g_streams[i])->dir != ROAR_DIR_PLAY )
+   if ( ROAR_STREAM(g_streams[i])->dir != ROAR_DIR_PLAY && ROAR_STREAM(g_streams[i])->dir != ROAR_DIR_BIDIR )
     continue;
 
    if ( streams_get_outputbuffer(i, &bufs[have], ROAR_OUTPUT_CALC_OUTBUFSIZE(info)) == -1 ) {
@@ -599,7 +599,7 @@ int streams_check  (int id) {
  if ( (fh = s->fh) == -1 )
   return 0;
 
- if ( s->dir != ROAR_DIR_PLAY )
+ if ( s->dir != ROAR_DIR_PLAY && s->dir != ROAR_DIR_BIDIR )
   return 0;
 
  ROAR_DBG("streams_check(id=%i): fh = %i", id, fh);
@@ -685,7 +685,7 @@ int streams_send_mon   (int id) {
  if ( (fh = s->fh) == -1 )
   return 0;
 
- if ( s->dir != ROAR_DIR_MONITOR && s->dir != ROAR_DIR_OUTPUT )
+ if ( s->dir != ROAR_DIR_MONITOR && s->dir != ROAR_DIR_OUTPUT && s->dir != ROAR_DIR_BIDIR )
   return 0;
 
  ROAR_DBG("streams_send_mon(id=%i): fh = %i", id, fh);
