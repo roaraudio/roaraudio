@@ -23,6 +23,7 @@ PKG_CONFIG=false
 RUNTIME_DETECT=false
 
 CDROM="none"
+PROC_NET_DECNET="/proc/net/decnet"
 
 echo -n "checking for C compiler... "
 CC=$(which gcc cc 2> /dev/null | grep ^/ | head -n 1)
@@ -57,6 +58,7 @@ do
    echo '--incpath DIR'
    echo '--addpath DIR'
    echo '--cdrom DEV'
+   echo '--proc-net-decnet FILE'
    echo '--no-LIB'
    echo '--runtime-detect'
    exit 0;
@@ -390,6 +392,9 @@ else
   echo 'none'
  fi
 fi
+
+echo 'checking for cdrom device... '"$PROC_NET_DECNET"
+echo '#define ROAR_PROC_NET_DECNET "'"$PROC_NET_DECNET"'"' >&3
 
 cat >&3 << EOF
 
