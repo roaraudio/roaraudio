@@ -42,6 +42,9 @@ int roar_connect_raw (char * server) {
  int fh = -1;
  int is_decnet = 0;
  char * obj = NULL;
+#ifdef ROAR_HAVE_LIBDNET
+ struct stat decnet_stat;
+#endif
 
  roar_errno = ROAR_ERROR_UNKNOWN;
 
@@ -68,10 +71,14 @@ int roar_connect_raw (char * server) {
   if ( (fh = roar_socket_connect(ROAR_DEFAULT_HOST, ROAR_DEFAULT_PORT)) != -1 )
    return fh;
 
-  if ( roar_socket_get_local_nodename() ) {
-   snprintf(user_sock, 79, "%s::%s", roar_socket_get_local_nodename(), ROAR_DEFAULT_OBJECT);
-   return roar_socket_connect(user_sock, ROAR_DEFAULT_NUM);
+#ifdef ROAR_HAVE_LIBDNET
+  if ( stat(ROAR_PROC_NET_DECNET, &decnet_stat) == 0 ) {
+   if ( roar_socket_get_local_nodename() ) {
+    snprintf(user_sock, 79, "%s::%s", roar_socket_get_local_nodename(), ROAR_DEFAULT_OBJECT);
+    return roar_socket_connect(user_sock, ROAR_DEFAULT_NUM);
+   }
   }
+#endif
 
  } else {
   /* connect via (char*)server */
