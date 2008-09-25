@@ -593,17 +593,17 @@ int roar_socket_open_file  (int mode, char * host, int port) {
 // generic proxy code:
 
 int roar_socket_open_proxy (int mode, int type, char * host, int port, char * proxy_type) {
- int    proxy_port;
+ int    proxy_port = -1;
  char   proxy_host[ROAR_SOCKET_MAX_HOSTNAMELEN];
- char * proxy_addr;
+ char * proxy_addr = NULL;
  int    i;
- int    fh;
+ int    fh = -1;
 
  // TODO: change this so we support listen() proxys (ssh -R)
  if ( mode != MODE_CONNECT )
   return -1;
 
- if ( !strcmp(proxy_type, "socks4a") ) { // for TOR, the only supported type at the moment
+ if ( !strncmp(proxy_type, "socks", 5) ) {
   proxy_addr = getenv("socks_proxy");
 
   proxy_port = 9050; // TOR's default port
@@ -624,8 +624,24 @@ int roar_socket_open_proxy (int mode, int type, char * host, int port, char * pr
   if ( (fh = roar_socket_open(mode, type, proxy_host, proxy_port)) == -1) {
    return -1;
   }
+ }
 
+ if ( !strcmp(proxy_type, "socks4a") ) { // for TOR, the only supported type at the moment
   if ( roar_socket_open_socks4a(mode, fh, host, port) == -1 ) {
+   close(fh);
+   return -1;
+  }
+
+  return fh;
+ } else if ( !strcmp(proxy_type, "socks4d") ) { // DECnet
+  if ( roar_socket_open_socks4d(mode, fh, host, port) == -1 ) {
+   close(fh);
+   return -1;
+  }
+
+  return fh;
+ } else if ( !strcmp(proxy_type, "socks4") ) { // good old SOCKS4
+  if ( roar_socket_open_socks4(mode, fh, host, port) == -1 ) {
    close(fh);
    return -1;
   }
@@ -638,29 +654,52 @@ int roar_socket_open_proxy (int mode, int type, char * host, int port, char * pr
 
 // protocoll dependet proxy code:
 
+int roar_socket_open_socks4 (int mode, int fh, char * host, int port) {
+ struct hostent     * he;
+
+ if ( (he = gethostbyname(host)) == NULL ) {
+  ROAR_ERR("roar_socket_open_socks4(*): Can\'t resolve host name '%s'", host);
+  return -1;
+ }
+
+ return roar_socket_open_socks4x(mode, fh, he->h_addr, port, NULL, 0);
+}
+
 int roar_socket_open_socks4a(int mode, int fh, char * host, int port) {
+ return roar_socket_open_socks4x(mode, fh, "\0\0\0\1", port, host, strlen(host)+1);
+}
+
+int roar_socket_open_socks4d(int mode, int fh, char * host, int port) {
+ size_t len = strlen(host)+1;
+ char * dp;
+
+ if ( port == 0 ) {
+  if ( (dp = strstr(host, "::")) == NULL )
+   return -1;
+
+  len--;
+  *dp = 0;
+  memmove(dp+1, dp+2, len - (dp-host) - 1);
+ }
+
+ return roar_socket_open_socks4x(mode, fh, "\0\2\0\0", port, host, len);
+}
+
+int roar_socket_open_socks4x(int mode, int fh, char host[4], int port, char * app, size_t app_len) {
  char buf[9];
- int  len;
 
  buf[0] = 0x04;
  buf[1] = mode == MODE_CONNECT ? 0x01 : 0x02;
  *((uint16_t*)&buf[2]) = htons(port);
- buf[4] = 0x00;
- buf[5] = 0x00;
- buf[6] = 0x00;
- buf[7] = 0x01;
+ memcpy(buf+4, host, 4);
  buf[8] = 0x00;
 
  if ( write(fh, buf, 9) != 9 )
   return -1;
 
- len = strlen(host);
-
- if ( write(fh, host, len) != len )
-  return -1;
-
- if ( write(fh, "\0", 1) != 1 )
-  return -1;
+ if ( app_len > 0 )
+  if ( write(fh, app, app_len) != app_len )
+   return -1;
 
  if ( read(fh, buf, 8) != 8 )
   return -1;

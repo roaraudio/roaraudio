@@ -95,7 +95,10 @@ int roar_socket_dup_udp_local_end (int fh);
 int roar_socket_send_fh (int sock, int fh, char * mes, size_t   len);
 int roar_socket_recv_fh (int sock,         char * mes, size_t * len);
 
+int roar_socket_open_socks4 (int mode, int fh, char * host, int port);
 int roar_socket_open_socks4a(int mode, int fh, char * host, int port);
+int roar_socket_open_socks4d(int mode, int fh, char * host, int port);
+int roar_socket_open_socks4x(int mode, int fh, char host[4], int port, char * app, size_t app_len);
 
 #endif
 
