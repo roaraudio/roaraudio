@@ -607,9 +607,11 @@ int roar_socket_open_proxy (int mode, int type, char * host, int port, char * pr
   proxy_addr = getenv("socks_proxy");
 
   proxy_port = 9050; // TOR's default port
- } else if ( !strcmp(proxy_type, "http") ) {
-  proxy_addr = getenv("http_proxy");
+ } else if ( !strcmp(proxy_type, "http") || !strcmp(proxy_type, "https") ) {
   proxy_port = 8080;
+
+  if ( (proxy_addr = getenv("http_proxy")) == NULL )
+   proxy_addr = getenv("https_proxy");
 
   if ( proxy_addr == NULL )
    return -1;
