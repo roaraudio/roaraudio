@@ -727,7 +727,34 @@ int roar_socket_open_socks4x(int mode, int fh, char host[4], int port, char * ap
 }
 
 int roar_socket_open_http   (int mode, int fh, char * host, int port) {
- return -1;
+ char buf[1024];
+ int len;
+
+ if ( port == 0 || host == NULL )
+  return -1;
+
+ if ( *host == '/' ) // AF_UNIX
+  return -1;
+
+ if ( (len = snprintf(buf, 1024, "CONNECT %s:%i HTTP/1.0\r\nUser-Agent: libroar\r\n\r\n", host, port)) == -1 )
+  return -1;
+
+ if ( write(fh, buf, len) != len )
+  return -1;
+
+ while ( (len = read(fh, buf, 1024)) ) {
+  if ( len == 1024 ) { // overlong lion
+   return -1;
+  } else if ( len == 2 && buf[0] == '\r' && buf[1] == '\n' ) {
+   break;
+  } else if ( len == 1 && (buf[0] == '\r' || buf[0] == '\n') ) { // bad proxy or devel trying to debug ;)
+   break;
+  } else if ( len >= 4 && buf[len-4] == '\r' && buf[len-3] == '\n' && buf[len-2] == '\r' && buf[len-1] == '\n' ) {
+   break;
+  }
+ }
+
+ return 0;
 }
 
 //ll
