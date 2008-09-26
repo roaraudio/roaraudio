@@ -100,6 +100,8 @@ int roar_socket_open_socks4a(int mode, int fh, char * host, int port);
 int roar_socket_open_socks4d(int mode, int fh, char * host, int port);
 int roar_socket_open_socks4x(int mode, int fh, char host[4], int port, char * app, size_t app_len);
 
+int roar_socket_open_http   (int mode, int fh, char * host, int port);
+
 #endif
 
 //ll

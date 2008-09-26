@@ -607,23 +607,32 @@ int roar_socket_open_proxy (int mode, int type, char * host, int port, char * pr
   proxy_addr = getenv("socks_proxy");
 
   proxy_port = 9050; // TOR's default port
+ } else if ( !strcmp(proxy_type, "http") ) {
+  proxy_addr = getenv("http_proxy");
+  proxy_port = 8080;
 
   if ( proxy_addr == NULL )
    return -1;
 
-  for (i = 0; proxy_addr[i] != 0 && proxy_addr[i] != ':' && i < ROAR_SOCKET_MAX_HOSTNAMELEN; i++)
-   proxy_host[i] = proxy_addr[i];
-  proxy_host[i] = 0;
+  if ( !strncmp(proxy_addr, "http://", 7) )
+   proxy_addr += 7;
+ }
 
-  if ( i == 0 ) // no hostname found
-   return -1;
+ if ( proxy_addr == NULL )
+  return -1;
 
-  if ( proxy_addr[i] == ':' )
-   proxy_port = atoi(&proxy_addr[i+1]);
+ for (i = 0; proxy_addr[i] != 0 && proxy_addr[i] != ':' && i < ROAR_SOCKET_MAX_HOSTNAMELEN; i++)
+  proxy_host[i] = proxy_addr[i];
+ proxy_host[i] = 0;
 
-  if ( (fh = roar_socket_open(mode, type, proxy_host, proxy_port)) == -1) {
-   return -1;
-  }
+ if ( i == 0 ) // no hostname found
+  return -1;
+
+ if ( proxy_addr[i] == ':' )
+  proxy_port = atoi(&proxy_addr[i+1]);
+
+ if ( (fh = roar_socket_open(mode, type, proxy_host, proxy_port)) == -1) {
+  return -1;
  }
 
  if ( !strcmp(proxy_type, "socks4a") ) { // for TOR, the only supported type at the moment
@@ -642,6 +651,13 @@ int roar_socket_open_proxy (int mode, int type, char * host, int port, char * pr
   return fh;
  } else if ( !strcmp(proxy_type, "socks4") ) { // good old SOCKS4
   if ( roar_socket_open_socks4(mode, fh, host, port) == -1 ) {
+   close(fh);
+   return -1;
+  }
+
+  return fh;
+ } else if ( !strcmp(proxy_type, "http") ) { // HTTP CONNECT
+  if ( roar_socket_open_http(mode, fh, host, port) == -1 ) {
    close(fh);
    return -1;
   }
@@ -708,6 +724,10 @@ int roar_socket_open_socks4x(int mode, int fh, char host[4], int port, char * ap
   return -1;
 
  return 0;
+}
+
+int roar_socket_open_http   (int mode, int fh, char * host, int port) {
+ return -1;
 }
 
 //ll
