@@ -598,6 +598,7 @@ int roar_socket_open_proxy (int mode, int type, char * host, int port, char * pr
  char * proxy_addr = NULL;
  int    i;
  int    fh = -1;
+ int (* code)(int mode, int fh, char * host, int port) = NULL;
 
  // TODO: change this so we support listen() proxys (ssh -R)
  if ( mode != MODE_CONNECT )
@@ -638,36 +639,28 @@ int roar_socket_open_proxy (int mode, int type, char * host, int port, char * pr
  }
 
  if ( !strcmp(proxy_type, "socks4a") ) { // for TOR, the only supported type at the moment
-  if ( roar_socket_open_socks4a(mode, fh, host, port) == -1 ) {
-   close(fh);
-   return -1;
-  }
-
-  return fh;
+  code = roar_socket_open_socks4a;
  } else if ( !strcmp(proxy_type, "socks4d") ) { // DECnet
-  if ( roar_socket_open_socks4d(mode, fh, host, port) == -1 ) {
-   close(fh);
-   return -1;
-  }
-
-  return fh;
+  code = roar_socket_open_socks4d;
  } else if ( !strcmp(proxy_type, "socks4") ) { // good old SOCKS4
-  if ( roar_socket_open_socks4(mode, fh, host, port) == -1 ) {
-   close(fh);
-   return -1;
-  }
-
-  return fh;
+  code = roar_socket_open_socks4;
  } else if ( !strcmp(proxy_type, "http") ) { // HTTP CONNECT
-  if ( roar_socket_open_http(mode, fh, host, port) == -1 ) {
-   close(fh);
-   return -1;
-  }
-
-  return fh;
+  code = roar_socket_open_http;
  } else {
   return -1; // unknown type
  }
+
+ if ( code != NULL ) {
+  if ( code(mode, fh, host, port) == -1 ) {
+   close(fh);
+   return -1;
+  }
+
+  return fh;
+ }
+
+ close(fh);
+ return -1;
 }
 
 // protocoll dependet proxy code:
