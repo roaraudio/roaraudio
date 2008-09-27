@@ -598,7 +598,19 @@ int roar_socket_open_proxy (int mode, int type, char * host, int port, char * pr
  char * proxy_addr = NULL;
  int    i;
  int    fh = -1;
+ char * user = NULL, * pw = NULL, * opts = NULL;
+ static struct passwd * passwd;
  int (* code)(int mode, int fh, char * host, int port, char * user, char * pw, char * opts) = NULL;
+
+ if ( passwd == NULL ) {
+  passwd = getpwuid(getuid());
+ }
+
+ if ( passwd != NULL )
+  user = passwd->pw_name;
+
+ if ( user == NULL )
+  user = getenv("USER");
 
  // TODO: change this so we support listen() proxys (ssh -R)
  if ( mode != MODE_CONNECT )
@@ -651,7 +663,7 @@ int roar_socket_open_proxy (int mode, int type, char * host, int port, char * pr
  }
 
  if ( code != NULL ) {
-  if ( code(mode, fh, host, port, NULL, NULL, NULL) == -1 ) {
+  if ( code(mode, fh, host, port, user, pw, opts) == -1 ) {
    close(fh);
    return -1;
   }
@@ -698,15 +710,28 @@ int roar_socket_open_socks4d(int mode, int fh, char * host, int port, char * use
 
 int roar_socket_open_socks4x(int mode, int fh, char host[4], int port, char * app, size_t app_len, char * user) {
  char buf[9];
+ int len;
 
  buf[0] = 0x04;
  buf[1] = mode == MODE_CONNECT ? 0x01 : 0x02;
  *((uint16_t*)&buf[2]) = htons(port);
  memcpy(buf+4, host, 4);
- buf[8] = 0x00;
 
- if ( write(fh, buf, 9) != 9 )
+ if ( user == NULL ) {
+  buf[8] = 0x00;
+  len = 9;
+ } else {
+  len = 8;
+ }
+
+ if ( write(fh, buf, len) != len )
   return -1;
+
+ if ( user != NULL ) {
+  len = strlen(user) + 1;
+  if ( write(fh, user, len) != len )
+   return -1;
+ }
 
  if ( app_len > 0 )
   if ( write(fh, app, app_len) != app_len )
