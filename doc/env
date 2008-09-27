@@ -5,6 +5,9 @@ ROAR_DEVICE
 Client:
 ROAR_PROXY
 socks_proxy
+http_proxy
+https_proxy
+ssh_proxy
 
 Both:
 HOME
