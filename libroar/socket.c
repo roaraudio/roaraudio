@@ -811,6 +811,7 @@ int roar_socket_open_ssh    (int mode, int fh, char * host, int port, char * use
  char * sep;
  char   cmd[1024] = {0}, rcmd[1024] = {0};
  int    proxy_port = 22;
+ int    use_socat = 0;
  int r;
  int socks[2];
 
@@ -818,13 +819,23 @@ int roar_socket_open_ssh    (int mode, int fh, char * host, int port, char * use
   return -1;
 
  if ( *host == '/' )
-  return -1;
+  use_socat = 1;
 
  if ( mode == MODE_LISTEN )
   return -1;
 
  if ( proxy_addr == NULL )
   return -1;
+
+ if ( opts != NULL ) {
+  if ( !strcmp(opts, "socat") ) {
+   use_socat = 1;
+  } else if ( !strcmp(opts, "netcat") ) {
+   use_socat = 0;
+  } else {
+   return -1;
+  }
+ }
 
  if ( (sep = strstr(proxy_addr, "@")) != NULL )
   proxy_addr = sep+1;
@@ -838,7 +849,16 @@ int roar_socket_open_ssh    (int mode, int fh, char * host, int port, char * use
  if ( !strcmp(host, "+fork") ) {
   strcpy(rcmd, "roard --no-listen --client-fh 0");
  } else {
-  snprintf(rcmd, 1023, "$(which netcat nc 2> /dev/null | grep -v \" \" | head -n 1) \"%s\" %i", host, port);
+  if ( use_socat ) {
+   if ( *host == '/' ) {
+    snprintf(rcmd, 1023, "socat stdio unix-connect:\"%s\"", host);
+   } else {
+    snprintf(rcmd, 1023, "socat stdio tcp:\"%s\":%i", host, port);
+   }
+  } else {
+   snprintf(rcmd, 1023, "$(which netcat nc 2> /dev/null | grep -v \" \" | head -n 1) \"%s\" %i", host, port);
+  }
+
   rcmd[1023] = 0;
  }
 
