@@ -599,6 +599,7 @@ int roar_socket_open_proxy (int mode, int type, char * host, int port, char * pr
  int    i;
  int    fh = -1;
  char * user = NULL, * pw = NULL, * opts = NULL;
+ char * sep;
  static struct passwd * passwd;
  int (* code)(int mode, int fh, char * host, int port, char * user, char * pw, char * opts) = NULL;
 
@@ -635,6 +636,17 @@ int roar_socket_open_proxy (int mode, int type, char * host, int port, char * pr
 
  if ( proxy_addr == NULL )
   return -1;
+
+ if ( (sep = strstr(proxy_addr, "@")) != NULL ) {
+  *sep = 0;
+  user = proxy_addr;
+  proxy_addr = sep+1;
+
+  if ( (sep = strstr(user, ":")) != NULL ) {
+   *sep = 0;
+   pw = sep+1;
+  }
+ }
 
  for (i = 0; proxy_addr[i] != 0 && proxy_addr[i] != ':' && i < ROAR_SOCKET_MAX_HOSTNAMELEN; i++)
   proxy_host[i] = proxy_addr[i];
