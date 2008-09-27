@@ -393,7 +393,7 @@ else
  fi
 fi
 
-echo 'checking for cdrom device... '"$PROC_NET_DECNET"
+echo 'checking for decnet status file... '"$PROC_NET_DECNET"
 echo '#define ROAR_PROC_NET_DECNET "'"$PROC_NET_DECNET"'"' >&3
 
 cat >&3 << EOF
