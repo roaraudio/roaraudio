@@ -40,12 +40,28 @@ more information.
 .TP
 \fBROAR_PROXY\fR
 Set the type of the proxy being used to connect to the server.
-The only valid value at the moment is 'socks4a'. Note that this is incompatible
-with SOCKS4 like OpenSSH supports it.
+Valid values are 'socks4', 'socks4a', 'socks4d', 'http' and 'ssh' for the moment.
+You can add type depending options in form 'type/opts'.
 
 .TP
 \fBsocks_proxy\fR
-The SOCKS4/4a/5 proxy to use in form host:port.
+The SOCKS4/4a/4d/5 proxy to use in form [user@]host[:port].
+Default port is 9050.
+
+.TP
+\fBhttp_proxy\fR, \fBhttps_proxy\fR
+The HTTP/HTTPS Proxy server. This server needs to understand the CONNECT request type.
+Give the server name in this format: [http://]host[:port][/]
+The default port is 8080.
+
+.TP
+\fBssh_proxy\fR
+The remote host to use as SSH Proxy server.
+Give the server name in this format: [user@]host[:port]
+The default port is 22.
+Note that you may need to use publickey based auth or ssh-agent because the application
+may start SSH in a non interactive enviroment and SSH can not ask you for a password.
+
 
 .SH "FILES"
 .TP
