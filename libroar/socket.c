@@ -600,6 +600,7 @@ int roar_socket_open_proxy (int mode, int type, char * host, int port, char * pr
  int    fh = -1;
  char * user = NULL, * pw = NULL, * opts = NULL;
  char * sep;
+ int    no_fh = 0;
  static struct passwd * passwd;
  int (* code)(int mode, int fh, char * host, int port, char * user, char * pw, char * opts) = NULL;
 
@@ -632,6 +633,10 @@ int roar_socket_open_proxy (int mode, int type, char * host, int port, char * pr
 
   if ( !strncmp(proxy_addr, "http://", 7) )
    proxy_addr += 7;
+ } else if ( !strncmp(proxy_type, "ssh", 3) ) {
+  proxy_port = 22;
+  proxy_addr = getenv("ssh_proxy");
+  no_fh      = 1;
  }
 
  if ( (sep = strstr(proxy_type, "/")) != NULL )
@@ -661,8 +666,10 @@ int roar_socket_open_proxy (int mode, int type, char * host, int port, char * pr
  if ( proxy_addr[i] == ':' )
   proxy_port = atoi(&proxy_addr[i+1]);
 
- if ( (fh = roar_socket_open(mode, type, proxy_host, proxy_port)) == -1) {
-  return -1;
+ if ( ! no_fh ) {
+  if ( (fh = roar_socket_open(mode, type, proxy_host, proxy_port)) == -1) {
+   return -1;
+  }
  }
 
  if ( !strcmp(proxy_type, "socks4a") ) { // for TOR, the only supported type at the moment
@@ -678,9 +685,13 @@ int roar_socket_open_proxy (int mode, int type, char * host, int port, char * pr
  }
 
  if ( code != NULL ) {
-  if ( code(mode, fh, host, port, user, pw, opts) == -1 ) {
-   close(fh);
-   return -1;
+  if ( no_fh ) {
+   fh = code(mode, fh, host, port, user, pw, opts);
+  } else {
+   if ( code(mode, fh, host, port, user, pw, opts) == -1 ) {
+    close(fh);
+    return -1;
+   }
   }
 
   return fh;
