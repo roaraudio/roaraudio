@@ -598,7 +598,7 @@ int roar_socket_open_proxy (int mode, int type, char * host, int port, char * pr
  char * proxy_addr = NULL;
  int    i;
  int    fh = -1;
- int (* code)(int mode, int fh, char * host, int port) = NULL;
+ int (* code)(int mode, int fh, char * host, int port, char * user, char * pw, char * opts) = NULL;
 
  // TODO: change this so we support listen() proxys (ssh -R)
  if ( mode != MODE_CONNECT )
@@ -651,7 +651,7 @@ int roar_socket_open_proxy (int mode, int type, char * host, int port, char * pr
  }
 
  if ( code != NULL ) {
-  if ( code(mode, fh, host, port) == -1 ) {
+  if ( code(mode, fh, host, port, NULL, NULL, NULL) == -1 ) {
    close(fh);
    return -1;
   }
@@ -665,7 +665,7 @@ int roar_socket_open_proxy (int mode, int type, char * host, int port, char * pr
 
 // protocoll dependet proxy code:
 
-int roar_socket_open_socks4 (int mode, int fh, char * host, int port) {
+int roar_socket_open_socks4 (int mode, int fh, char * host, int port, char * user, char * pw, char * opts) {
  struct hostent     * he;
 
  if ( (he = gethostbyname(host)) == NULL ) {
@@ -673,14 +673,14 @@ int roar_socket_open_socks4 (int mode, int fh, char * host, int port) {
   return -1;
  }
 
- return roar_socket_open_socks4x(mode, fh, he->h_addr, port, NULL, 0);
+ return roar_socket_open_socks4x(mode, fh, he->h_addr, port, NULL, 0, user);
 }
 
-int roar_socket_open_socks4a(int mode, int fh, char * host, int port) {
- return roar_socket_open_socks4x(mode, fh, "\0\0\0\1", port, host, strlen(host)+1);
+int roar_socket_open_socks4a(int mode, int fh, char * host, int port, char * user, char * pw, char * opts) {
+ return roar_socket_open_socks4x(mode, fh, "\0\0\0\1", port, host, strlen(host)+1, user);
 }
 
-int roar_socket_open_socks4d(int mode, int fh, char * host, int port) {
+int roar_socket_open_socks4d(int mode, int fh, char * host, int port, char * user, char * pw, char * opts) {
  size_t len = strlen(host)+1;
  char * dp;
 
@@ -693,10 +693,10 @@ int roar_socket_open_socks4d(int mode, int fh, char * host, int port) {
   memmove(dp+1, dp+2, len - (dp-host) - 1);
  }
 
- return roar_socket_open_socks4x(mode, fh, "\0\2\0\0", port, host, len);
+ return roar_socket_open_socks4x(mode, fh, "\0\2\0\0", port, host, len, user);
 }
 
-int roar_socket_open_socks4x(int mode, int fh, char host[4], int port, char * app, size_t app_len) {
+int roar_socket_open_socks4x(int mode, int fh, char host[4], int port, char * app, size_t app_len, char * user) {
  char buf[9];
 
  buf[0] = 0x04;
@@ -721,7 +721,7 @@ int roar_socket_open_socks4x(int mode, int fh, char host[4], int port, char * ap
  return 0;
 }
 
-int roar_socket_open_http   (int mode, int fh, char * host, int port) {
+int roar_socket_open_http   (int mode, int fh, char * host, int port, char * user, char * pw, char * opts) {
  char buf[1024];
  int len;
 
