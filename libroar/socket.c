@@ -634,6 +634,9 @@ int roar_socket_open_proxy (int mode, int type, char * host, int port, char * pr
    proxy_addr += 7;
  }
 
+ if ( (sep = strstr(proxy_type, "/")) != NULL )
+  opts = sep+1;
+
  if ( proxy_addr == NULL )
   return -1;
 
