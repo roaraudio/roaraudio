@@ -680,6 +680,8 @@ int roar_socket_open_proxy (int mode, int type, char * host, int port, char * pr
   code = roar_socket_open_socks4;
  } else if ( !strcmp(proxy_type, "http") ) { // HTTP CONNECT
   code = roar_socket_open_http;
+ } else if ( !strncmp(proxy_type, "ssh", 3) ) { // SSH...
+  code = roar_socket_open_ssh;
  } else {
   return -1; // unknown type
  }
@@ -801,6 +803,80 @@ int roar_socket_open_http   (int mode, int fh, char * host, int port, char * use
  }
 
  return 0;
+}
+
+
+int roar_socket_open_ssh    (int mode, int fh, char * host, int port, char * user, char * pw, char * opts) {
+ char * proxy_addr = getenv("ssh_proxy");
+ char * sep;
+ char   cmd[1024] = {0}, rcmd[1024] = {0};
+ int    proxy_port = 22;
+ int r;
+ int socks[2];
+
+ if ( host == NULL )
+  return -1;
+
+ if ( *host == '/' )
+  return -1;
+
+ if ( mode == MODE_LISTEN )
+  return -1;
+
+ if ( proxy_addr == NULL )
+  return -1;
+
+ if ( (sep = strstr(proxy_addr, "@")) != NULL )
+  proxy_addr = sep+1;
+
+ if ( (sep = strstr(proxy_addr, ":")) != NULL ) {
+  *sep = 0;
+  proxy_port = atoi(sep+1);
+ }
+
+
+ if ( !strcmp(host, "+fork") ) {
+  strcpy(rcmd, "roard --no-listen --client-fh 0");
+ } else {
+  snprintf(rcmd, 1023, "$(which netcat nc 2> /dev/null | grep -v \" \" | head -n 1) \"%s\" %i", host, port);
+  rcmd[1023] = 0;
+ }
+
+ snprintf(cmd, 1023, "ssh -p %i -l '%s' '%s' '%s'", proxy_port, user, proxy_addr, rcmd);
+ cmd[1023] = 0;
+
+
+ if ( socketpair(AF_UNIX, SOCK_STREAM, 0, socks) == -1 ) {
+  return -1;
+ }
+
+ r = fork();
+
+ if ( r == -1 ) { // error!
+  ROAR_ERR("roar_socket_open_ssh(*): Can not fork: %s", strerror(errno));
+  close(socks[0]);
+  close(socks[1]);
+  return -1;
+ } else if ( r == 0 ) { // we are the child
+  close(socks[0]);
+
+  close(ROAR_STDIN ); // we do not want roard to have any standard input
+  close(ROAR_STDOUT); // STDOUT is also not needed, so we close it,
+                      // but STDERR we keep open for error messages.
+
+  dup2(socks[1], 0);
+  dup2(socks[1], 1);
+
+  execlp("sh", "sh", "-c", cmd, NULL);
+
+  // we are still alive?
+  ROAR_ERR("roar_socket_open_ssh(*): alive after exec(), that's bad!");
+  _exit(1);
+ } else { // we are the parent
+  close(socks[1]);
+  return socks[0];
+ }
+ return -1;
 }
 
 //ll

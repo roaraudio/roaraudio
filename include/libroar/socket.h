@@ -102,6 +102,8 @@ int roar_socket_open_socks4x(int mode, int fh, char host[4], int port, char * ap
 
 int roar_socket_open_http   (int mode, int fh, char * host, int port, char * user, char * pw, char * opts);
 
+int roar_socket_open_ssh    (int mode, int fh, char * host, int port, char * user, char * pw, char * opts);
+
 #endif
 
 //ll
