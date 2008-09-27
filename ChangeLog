@@ -5,6 +5,9 @@ v. 0.1beta2 - ?
 	* got some YIFF clients working, including yplay!
 	* added roarcleints/roarradio*: A RoarAudio client which inizialiszes a new source
 	                                and has buildin HTTP support.
+	* added CDRum support
+	* added writeing support for A-Law
+	* added proxy support for SOckS4 and 4d, SSH and HTTP CONNECT
 
 v. 0.1beta1 - Sun Sep 07 2008
 	* fixed a lot typos
