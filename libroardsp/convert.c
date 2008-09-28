@@ -48,11 +48,11 @@ int roar_conv_bits (void * out, void * in, int samples, int from, int to) {
  format = ((from / 8) << 4) + (to / 8);
 
  switch (format) {
-  case 0x12: return roar_conv_bits_8to16(out, in, samples);
-  case 0x14: return roar_conv_bits_8to32(out, in, samples);
-  case 0x21: return roar_conv_bits_16to8(out, in, samples);
+  case 0x12: return roar_conv_bits_8to16( out, in, samples);
+  case 0x14: return roar_conv_bits_8to32( out, in, samples);
+  case 0x21: return roar_conv_bits_16to8( out, in, samples);
   case 0x24: return roar_conv_bits_16to32(out, in, samples);
-  case 0x41: return roar_conv_bits_32to8(out, in, samples);
+  case 0x41: return roar_conv_bits_32to8( out, in, samples);
   case 0x42: return roar_conv_bits_32to16(out, in, samples);
   default:
    errno = ENOSYS;
@@ -252,18 +252,18 @@ int raor_conv_codec (void * out, void * in, int samples, int from, int to, int b
  if ( ins != outs ) {
   if ( ins && !outs ) {
    switch (bits) {
-    case  8: roar_conv_codec_s2u8(out, in, samples);  break;
+    case  8: roar_conv_codec_s2u8( out, in, samples);  break;
     case 16: roar_conv_codec_s2u16(out, in, samples); break;
-    case 32: roar_conv_codec_s2u16(out, in, samples); break;
+    case 32: roar_conv_codec_s2u32(out, in, samples); break;
     default:
      errno = ENOSYS;
      return -1;
    }
   } else if ( !ins && outs ) {
    switch (bits) {
-    case  8: roar_conv_codec_u2s8(out, in, samples);  break;
+    case  8: roar_conv_codec_u2s8( out, in, samples);  break;
     case 16: roar_conv_codec_u2s16(out, in, samples); break;
-    case 32: roar_conv_codec_u2s16(out, in, samples); break;
+    case 32: roar_conv_codec_u2s32(out, in, samples); break;
     default:
      errno = ENOSYS;
      return -1;
