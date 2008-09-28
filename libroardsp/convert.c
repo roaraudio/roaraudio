@@ -202,13 +202,13 @@ int roar_conv_chans_1ton8  (void * out, void * in, int samples, int to) {
 
 int roar_conv_chans_1to28  (void * out, void * in, int samples) {
  char * ip = (char*) in, * op = (char*) out;
- int i;
+ int i, h;
 
- samples = (samples - 1) * 2;
+ samples--;
 
- for (i = samples; i >= 0; i -= 2) {
-  op[i + 0] = ip[i];
-  op[i + 1] = ip[i];
+ for (i = (h = samples) * 2; i >= 0; i -= 2, h--) {
+  op[i + 0] = ip[h];
+  op[i + 1] = ip[h];
  }
 
  return 0;
@@ -228,13 +228,13 @@ int roar_conv_chans_1ton16 (void * out, void * in, int samples, int to) {
 
 int roar_conv_chans_1to216 (void * out, void * in, int samples) {
  int16_t * ip = (int16_t*) in, * op = (int16_t*) out;
- int i;
+ int i, h;
 
- samples = (samples - 1) * 2;
+ samples--;
 
- for (i = samples; i >= 0; i -= 2) {
-  op[i + 0] = ip[i];
-  op[i + 1] = ip[i];
+ for (i = (h = samples) * 2; i >= 0; i -= 2, h--) {
+  op[i + 0] = ip[h];
+  op[i + 1] = ip[h];
  }
 
  return 0;
@@ -263,12 +263,12 @@ int roar_conv_chans_nto18  (void * out, void * in, int samples, int from) {
 
 int roar_conv_chans_2to18  (void * out, void * in, int samples) {
  int8_t * ip = (int8_t*) in, * op = (int8_t*) out;
- int i;
+ int i, h;
 
  samples -= 2;
 
- for (i = samples; i >= 0; i -= 2)
-  op[i] = ((int)ip[i + 0] + (int)ip[i + 1]) / 2;
+ for (h = (i = samples) / 2; i >= 0; i -= 2, h--)
+  op[h] = ((int)ip[i + 0] + (int)ip[i + 1]) / 2;
 
  return 0;
 }
@@ -296,12 +296,12 @@ int roar_conv_chans_nto116 (void * out, void * in, int samples, int from) {
 
 int roar_conv_chans_2to116  (void * out, void * in, int samples) {
  int16_t * ip = (int16_t*) in, * op = (int16_t*) out;
- int i;
+ int i, h;
 
  samples -= 2;
 
- for (i = samples; i >= 0; i -= 2)
-  op[i] = ((int)ip[i + 0] + (int)ip[i + 1]) / 2;
+ for (h = (i = samples) / 2; i >= 0; i -= 2, h--)
+  op[h] = ((int)ip[i + 0] + (int)ip[i + 1]) / 2;
 
  return 0;
 }
@@ -340,7 +340,7 @@ int raor_conv_codec (void * out, void * in, int samples, int from, int to, int b
  if ( ins != outs ) {
   if ( ins && !outs ) {
    switch (bits) {
-    case  8: roar_conv_codec_s2u8( out, in, samples);  break;
+    case  8: roar_conv_codec_s2u8( out, in, samples); break;
     case 16: roar_conv_codec_s2u16(out, in, samples); break;
     case 32: roar_conv_codec_s2u32(out, in, samples); break;
     default:
@@ -349,7 +349,7 @@ int raor_conv_codec (void * out, void * in, int samples, int from, int to, int b
    }
   } else if ( !ins && outs ) {
    switch (bits) {
-    case  8: roar_conv_codec_u2s8( out, in, samples);  break;
+    case  8: roar_conv_codec_u2s8( out, in, samples); break;
     case 16: roar_conv_codec_u2s16(out, in, samples); break;
     case 32: roar_conv_codec_u2s32(out, in, samples); break;
     default:
@@ -444,6 +444,13 @@ int roar_conv       (void * out, void * in, int samples, struct roar_audio_info 
    ip = out;
  }
 
+ if ( from->codec != to->codec ) {
+  if ( raor_conv_codec (out, ip, samples, from->codec, to->codec, to->bits) == -1 )
+   return -1;
+  else
+   ip = out;
+ }
+
  if ( from->rate != to->rate ) {
   if ( roar_conv_rate(out, ip, samples, from->rate, to->rate, to->bits, from->channels) == -1 )
    return -1;
@@ -453,13 +460,6 @@ int roar_conv       (void * out, void * in, int samples, struct roar_audio_info 
 
  if ( from->channels != to->channels ) {
   if ( roar_conv_chans(out, ip, samples, from->channels, to->channels, to->bits) == -1 )
-   return -1;
-  else
-   ip = out;
- }
-
- if ( from->codec != to->codec ) {
-  if ( raor_conv_codec (out, ip, samples, from->codec, to->codec, to->bits) == -1 )
    return -1;
   else
    ip = out;
