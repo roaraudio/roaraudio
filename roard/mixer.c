@@ -104,26 +104,27 @@ int mix_clients_24bit (void * output, void ** input, int samples) {
 }
 
 int mix_clients_32bit (void * output, void ** input, int samples) {
-/*
+#ifdef ROAR_NATIVE_INT64
  int i, s;
- int c;
+ ROAR_NATIVE_INT64 c;
 
  for (s = 0; s < samples; s++) {
   c = 0;
 
   for (i = 0; input[i]; i++)
-   c += ((int**)input)[i][s];
+   c += ((ROAR_NATIVE_INT64**)input)[i][s];
 
-  if ( c > 127 )
-   c = 127;
-  else if ( c < -128 )
-   c = -128;
+  if ( c > 21474836487LL )
+   c = 2147483647LL;
+  else if ( c < -2147483648LL )
+   c = -2147483648LL;
   ((int*)output)[s] = (char)c;
  }
 
- return 0;
-*/
- return 1;
+ return  0;
+#else
+ return -1;
+#endif
 }
 
 int change_vol (void * output, int bits, void * input, int samples, int channels, struct roar_mixer_settings * set) {
