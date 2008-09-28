@@ -203,7 +203,34 @@ int change_vol_24bit (void * output, void * input, int samples, int channels, st
 }
 
 int change_vol_32bit (void * output, void * input, int samples, int channels, struct roar_mixer_settings * set) {
+#ifdef ROAR_NATIVE_INT64
+ int32_t * in = input, * out = output;
+ int       i;
+ ROAR_NATIVE_INT64 s;
+
+ if ( !(in && out) )
+  return -1;
+
+ if (set->rpg_mul == set->rpg_div) {
+  for (i = 0; i < samples; i++) {
+   s  = in[i];
+   s *= set->mixer[i % channels];
+   s /= set->scale;
+   out[i] = s;
+  }
+ } else {
+  for (i = 0; i < samples; i++) {
+   s  = in[i];
+   s *= (set->mixer[i % channels] * set->rpg_mul) / set->rpg_div;
+   s /= set->scale;
+   out[i] = s;
+  }
+ }
+
+ return 0;
+#else
  return -1;
+#endif
 }
 
 
