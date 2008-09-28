@@ -105,6 +105,8 @@ int mix_clients_24bit (void * output, void ** input, int samples) {
 
 int mix_clients_32bit (void * output, void ** input, int samples) {
 #ifdef ROAR_NATIVE_INT64
+ int32_t ** in  = (int32_t**) input;
+ int32_t *  out = (int32_t**) output;
  int i, s;
  ROAR_NATIVE_INT64 c;
 
@@ -112,13 +114,13 @@ int mix_clients_32bit (void * output, void ** input, int samples) {
   c = 0;
 
   for (i = 0; input[i]; i++)
-   c += ((ROAR_NATIVE_INT64**)input)[i][s];
+   c += in[i][s];
 
   if ( c > 21474836487LL )
    c = 2147483647LL;
   else if ( c < -2147483648LL )
    c = -2147483648LL;
-  ((int*)output)[s] = (char)c;
+  out[s] = (int32_t)c;
  }
 
  return  0;
