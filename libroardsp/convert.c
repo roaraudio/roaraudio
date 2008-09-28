@@ -251,12 +251,22 @@ int raor_conv_codec (void * out, void * in, int samples, int from, int to, int b
 
  if ( ins != outs ) {
   if ( ins && !outs ) {
-   if ( bits == 8 ) {
-    roar_conv_codec_s2u8(out, in, samples);
-   } else if ( bits == 16 ) {
-    roar_conv_codec_s2u16(out, in, samples);
-   } else {
-    return -1;
+   switch (bits) {
+    case  8: roar_conv_codec_s2u8(out, in, samples);  break;
+    case 16: roar_conv_codec_s2u16(out, in, samples); break;
+    case 32: roar_conv_codec_s2u16(out, in, samples); break;
+    default:
+     errno = ENOSYS;
+     return -1;
+   }
+  } else if ( !ins && outs ) {
+   switch (bits) {
+    case  8: roar_conv_codec_u2s8(out, in, samples);  break;
+    case 16: roar_conv_codec_u2s16(out, in, samples); break;
+    case 32: roar_conv_codec_u2s16(out, in, samples); break;
+    default:
+     errno = ENOSYS;
+     return -1;
    }
   } else {
    return -1;
@@ -284,6 +294,50 @@ int roar_conv_codec_s2u16 (void * out, void * in, int samples) {
 
  for(i = 0; i < samples; i++)
   op[i] = ip[i] + 32768;
+
+ return 0;
+}
+
+int roar_conv_codec_s2u32 (void * out, void * in, int samples) {
+ int32_t  * ip = in;
+ uint32_t * op = out;
+ int i;
+
+ for(i = 0; i < samples; i++)
+  op[i] = ip[i] + 2147483648U;
+
+ return 0;
+}
+
+int roar_conv_codec_u2s8 (void * out, void * in, int samples) {
+ unsigned char * ip = in;
+          char * op = out;
+ int i;
+
+ for(i = 0; i < samples; i++)
+  op[i] = ip[i] - 128;
+
+ return 0;
+}
+
+int roar_conv_codec_u2s16 (void * out, void * in, int samples) {
+ uint16_t  * ip = in;
+ int16_t   * op = out;
+ int i;
+
+ for(i = 0; i < samples; i++)
+  op[i] = ip[i] - 32768;
+
+ return 0;
+}
+
+int roar_conv_codec_u2s32 (void * out, void * in, int samples) {
+ uint32_t  * ip = in;
+ int32_t   * op = out;
+ int i;
+
+ for(i = 0; i < samples; i++)
+  op[i] = ip[i] - 2147483648U;
 
  return 0;
 }
