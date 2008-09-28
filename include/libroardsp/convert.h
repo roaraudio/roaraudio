@@ -39,8 +39,19 @@
 
 int roar_conv_bits       (void * out, void * in, int samples, int from, int to);
 
-int roar_conv_bits_8to16 (void * out, void * in, int samples);
-int roar_conv_bits_16to8 (void * out, void * in, int samples);
+                                                                 // implemnted?
+int roar_conv_bits_8to16  (void * out, void * in, int samples);  // yes
+int roar_conv_bits_8to24  (void * out, void * in, int samples);
+int roar_conv_bits_8to32  (void * out, void * in, int samples);  // yes
+int roar_conv_bits_16to8  (void * out, void * in, int samples);  // yes
+int roar_conv_bits_16to24 (void * out, void * in, int samples);
+int roar_conv_bits_16to32 (void * out, void * in, int samples);  // yes
+int roar_conv_bits_24to8  (void * out, void * in, int samples);
+int roar_conv_bits_24to16 (void * out, void * in, int samples);
+int roar_conv_bits_24to32 (void * out, void * in, int samples);
+int roar_conv_bits_32to8  (void * out, void * in, int samples);  // yes
+int roar_conv_bits_32to16 (void * out, void * in, int samples);  // yes
+int roar_conv_bits_32to24 (void * out, void * in, int samples);
 
 int roar_conv_chans (void * out, void * in, int samples, int from, int to, int bits);
 
@@ -57,6 +68,11 @@ int raor_conv_codec (void * out, void * in, int samples, int from, int to, int b
 
 int roar_conv_codec_s2u8  (void * out, void * in, int samples);
 int roar_conv_codec_s2u16 (void * out, void * in, int samples);
+int roar_conv_codec_s2u32 (void * out, void * in, int samples);
+int roar_conv_codec_u2s8  (void * out, void * in, int samples);
+int roar_conv_codec_u2s16 (void * out, void * in, int samples);
+int roar_conv_codec_u2s32 (void * out, void * in, int samples);
+
 
 int roar_conv       (void * out, void * in, int samples, struct roar_audio_info * from, struct roar_audio_info * to);
 
