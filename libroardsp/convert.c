@@ -35,6 +35,8 @@
 #include "libroar.h"
 
 int roar_conv_bits (void * out, void * in, int samples, int from, int to) {
+ int format;
+
  if ( from == to ) {
   if ( in == out )
    return 0;
@@ -43,11 +45,19 @@ int roar_conv_bits (void * out, void * in, int samples, int from, int to) {
   return 0;
  }
 
- if ( from ==  8 && to == 16 )
-  return roar_conv_bits_8to16(out, in, samples);
+ format = ((from / 8) << 4) + (to / 8);
 
- if ( from == 16 && to ==  8 )
-  return roar_conv_bits_16to8(out, in, samples);
+ switch (format) {
+  case 0x12: return roar_conv_bits_8to16(out, in, samples);
+  case 0x14: return roar_conv_bits_8to32(out, in, samples);
+  case 0x21: return roar_conv_bits_16to8(out, in, samples);
+  case 0x24: return roar_conv_bits_16to32(out, in, samples);
+  case 0x41: return roar_conv_bits_32to8(out, in, samples);
+  case 0x42: return roar_conv_bits_32to16(out, in, samples);
+  default:
+   errno = ENOSYS;
+   return -1;
+ }
 
  return -1;
 }
@@ -59,6 +69,17 @@ int roar_conv_bits_8to16 (void * out, void * in, int samples) {
 
  for (i = samples - 1; i >= 0; i--)
   op[i] = ip[i] << 8;
+
+ return 0;
+}
+
+int roar_conv_bits_8to32  (void * out, void * in, int samples) {
+ char    * ip = (char   *)in;
+ int32_t * op = (int32_t*)out;
+ int i;
+
+ for (i = samples - 1; i >= 0; i--)
+  op[i] = ip[i] << 24;
 
  return 0;
 }
@@ -76,6 +97,38 @@ int roar_conv_bits_16to8 (void * out, void * in, int samples) {
  return 0;
 }
 
+int roar_conv_bits_16to32 (void * out, void * in, int samples) {
+ int16_t * ip = (int16_t*)in;
+ int32_t * op = (int32_t*)out;
+ int i;
+
+ for (i = samples - 1; i >= 0; i--)
+  op[i] = ip[i] << 16;
+
+ return 0;
+}
+
+int roar_conv_bits_32to8 (void * out, void * in, int samples) {
+ int32_t * ip = (int32_t*)in;
+ char    * op = (char   *)out;
+ int i;
+
+ for (i = 0; i < samples; i++)
+  op[i] = ip[i] >> 24;
+
+ return 0;
+}
+
+int roar_conv_bits_32to16 (void * out, void * in, int samples) {
+ int32_t * ip = (int32_t*)in;
+ int16_t * op = (int16_t*)out;
+ int i;
+
+ for (i = 0; i < samples; i++)
+  op[i] = ip[i] >> 16;
+
+ return 0;
+}
 
 int roar_conv_chans (void * out, void * in, int samples, int from, int to, int bits) {
  if ( from == 1 ) {
