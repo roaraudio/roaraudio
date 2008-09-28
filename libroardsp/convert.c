@@ -131,22 +131,58 @@ int roar_conv_bits_32to16 (void * out, void * in, int samples) {
 }
 
 int roar_conv_chans (void * out, void * in, int samples, int from, int to, int bits) {
- if ( from == 1 ) {
-  if ( bits == 8 ) {
-   return roar_conv_chans_1ton8(out, in, samples, to);
-  } else if ( bits == 16 ) {
-   return roar_conv_chans_1ton16(out, in, samples, to);
-  } else {
-   return -1;
-  }
- } else if ( to == 1 ) {
-  if ( bits == 8 ) {
-   return roar_conv_chans_nto18(out, in, samples, from);
-  } else if ( bits == 16 ) {
-   return roar_conv_chans_nto116(out, in, samples, from);
-  } else {
-   return -1;
-  }
+ if ( from == to ) {
+  if ( in == out )
+   return 0;
+
+  memcpy(out, in, samples * from * bits / 8);
+  return 0;
+ }
+
+ switch (bits) {
+  case 8:
+   switch (from) {
+    case 1:
+     switch (to) {
+      case  2: return roar_conv_chans_1to28(out, in, samples);
+      default: return roar_conv_chans_1ton8(out, in, samples, to);
+     }
+     break;
+    case 2:
+     switch (to) {
+      case  1: return roar_conv_chans_2to18(out, in, samples);
+      default: return -1;
+     }
+     break;
+    default:
+     switch (to) {
+      case  1: return roar_conv_chans_nto18(out, in, samples, from);
+      default: return -1;
+     }
+   }
+  break;
+  case 16:
+   switch (from) {
+    case 1:
+     switch (to) {
+      case  2: return roar_conv_chans_1to216(out, in, samples);
+      default: return roar_conv_chans_1ton16(out, in, samples, to);
+     }
+     break;
+    case 2:
+     switch (to) {
+      case  1: return roar_conv_chans_2to116(out, in, samples);
+      default: return -1;
+     }
+     break;
+    default:
+     switch (to) {
+      case  1: return roar_conv_chans_nto116(out, in, samples, from);
+      default: return -1;
+     }
+   }
+  break;
+  default: return -1;
  }
 
  return -1;
@@ -164,6 +200,20 @@ int roar_conv_chans_1ton8  (void * out, void * in, int samples, int to) {
  return 0;
 }
 
+int roar_conv_chans_1to28  (void * out, void * in, int samples) {
+ char * ip = (char*) in, * op = (char*) out;
+ int i;
+
+ samples = (samples - 1) * 2;
+
+ for (i = samples; i >= 0; i -= 2) {
+  op[i + 0] = ip[i];
+  op[i + 1] = ip[i];
+ }
+
+ return 0;
+}
+
 int roar_conv_chans_1ton16 (void * out, void * in, int samples, int to) {
  int16_t * ip = (int16_t*) in, * op = (int16_t*) out;
  int i;
@@ -172,6 +222,20 @@ int roar_conv_chans_1ton16 (void * out, void * in, int samples, int to) {
  for (i = samples - 1; i >= 0; i--)
   for (c = to - 1; c >= 0; c--)
    op[i*to + c] = ip[i];
+
+ return 0;
+}
+
+int roar_conv_chans_1to216 (void * out, void * in, int samples) {
+ int16_t * ip = (int16_t*) in, * op = (int16_t*) out;
+ int i;
+
+ samples = (samples - 1) * 2;
+
+ for (i = samples; i >= 0; i -= 2) {
+  op[i + 0] = ip[i];
+  op[i + 1] = ip[i];
+ }
 
  return 0;
 }
@@ -197,6 +261,18 @@ int roar_conv_chans_nto18  (void * out, void * in, int samples, int from) {
  return 0;
 }
 
+int roar_conv_chans_2to18  (void * out, void * in, int samples) {
+ int8_t * ip = (int8_t*) in, * op = (int8_t*) out;
+ int i;
+
+ samples -= 2;
+
+ for (i = samples; i >= 0; i -= 2)
+  op[i] = ((int)ip[i + 0] + (int)ip[i + 1]) / 2;
+
+ return 0;
+}
+
 int roar_conv_chans_nto116 (void * out, void * in, int samples, int from) {
  int16_t * ip = (int16_t*) in, * op = (int16_t*) out;
  int i;
@@ -214,6 +290,18 @@ int roar_conv_chans_nto116 (void * out, void * in, int samples, int from) {
   s /= from;
   op[i] = s;
  }
+
+ return 0;
+}
+
+int roar_conv_chans_2to116  (void * out, void * in, int samples) {
+ int16_t * ip = (int16_t*) in, * op = (int16_t*) out;
+ int i;
+
+ samples -= 2;
+
+ for (i = samples; i >= 0; i -= 2)
+  op[i] = ((int)ip[i + 0] + (int)ip[i + 1]) / 2;
 
  return 0;
 }
