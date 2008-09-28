@@ -368,6 +368,42 @@ else
  exit 1
 fi
 
+echo -n 'checking for 64 bit types... '
+cat > $TF_C << EOF
+#include <stdio.h>
+#include <stdint.h>
+
+int main (void) {
+ char * i64 = NULL, * ui64 = NULL;
+
+ if ( sizeof(int) == 8 ) {
+  i64 = "int"; ui64 = "unsigned int";
+ } else if ( sizeof(long int) == 8 ) {
+  i64 = "long int"; ui64 = "unsigned long int";
+ } else if ( sizeof(long long int) == 8 ) {
+  i64 = "long long int"; ui64 = "unsigned long long int";
+ } else if ( sizeof(int64_t) == 8 ) {
+  i64 = "int64_t"; ui64 = "uint64_t";
+ } else {
+  fprintf(stderr, "none\n");
+  return 0;
+ }
+
+ fprintf(stderr, "%s, %s\n", i64, ui64);
+ printf("#define ROAR_NATIVE_INT64 %s\n#define ROAR_NATIVE_UINT64 %s\n", i64, ui64);
+
+ return 0;
+}
+EOF
+if $CCTF 2> /dev/null;
+then
+ $TF_E >&3
+else
+ echo 'error, can not compile'
+ exit 1
+fi
+
+
 echo -n 'checking if cp supports -v... '
 if cp -v --help > /dev/null 2> /dev/null
 then
