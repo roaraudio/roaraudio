@@ -68,6 +68,10 @@ struct roar_codecfilter {
 #include "codecfilter_speex.h"
 #endif
 
+#ifdef ROAR_HAVE_LIBSNDFILE
+#include "codecfilter_sndfile.h"
+#endif
+
 //cf alaw:
 #include <libroardsp/libroardsp.h>
 
