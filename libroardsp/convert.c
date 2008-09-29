@@ -430,6 +430,30 @@ int roar_conv_codec_u2s32 (void * out, void * in, int samples) {
  return 0;
 }
 
+int roar_conv_endian_16   (void * out, void * in, int samples) {
+ char          * ip = in;
+ char          * op = out;
+ register char   c;
+ int             i;
+
+ samples *= 2;
+
+ if ( out != in ) {
+  for(i = 0; i < samples; i += 2) {
+   op[i  ] = ip[i+1];
+   op[i+1] = ip[i  ];
+  }
+ } else {
+  for(i = 0; i < samples; i += 2) {
+   c       = ip[i+1];
+   op[i+1] = ip[i  ];
+   op[i  ] = c;
+  }
+ }
+
+ return 0;
+}
+
 int roar_conv       (void * out, void * in, int samples, struct roar_audio_info * from, struct roar_audio_info * to) {
  void * ip = in;
 
