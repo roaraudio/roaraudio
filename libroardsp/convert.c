@@ -474,6 +474,33 @@ int roar_conv_endian_16   (void * out, void * in, int samples) {
  return 0;
 }
 
+int roar_conv_endian_24   (void * out, void * in, int samples) {
+ char          * ip = in;
+ char          * op = out;
+ register char   c;
+ int             i;
+
+ samples *= 3;
+
+ if ( out != in ) {
+//  printf("out != in\n");
+  for(i = 0; i < samples; i += 3) {
+//   printf("op[%i] = ip[%i]\nop[%i] = ip[%i]\n", i, i+1, i+1, i);
+   op[i  ] = ip[i+2];
+   op[i+2] = ip[i  ];
+  }
+ } else {
+//  printf("out == in\n");
+  for(i = 0; i < samples; i += 3) {
+   c       = ip[i+2];
+   op[i+2] = ip[i  ];
+   op[i  ] = c;
+  }
+ }
+
+ return 0;
+}
+
 int roar_conv       (void * out, void * in, int samples, struct roar_audio_info * from, struct roar_audio_info * to) {
  void * ip = in;
 
