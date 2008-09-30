@@ -22,6 +22,12 @@ SHARED_CF=''
 PKG_CONFIG=false
 RUNTIME_DETECT=false
 
+PREFIX='/usr/local'
+PREFIX_BIN=''
+PREFIX_LIB=''
+PREFIX_INC=''
+PREFIX_MAN=''
+
 CDROM="none"
 PROC_NET_DECNET="/proc/net/decnet"
 
@@ -218,12 +224,24 @@ then
  LDPATH="$LDPATH -L/usr/local/lib/"
 fi
 
+[ "$PREFIX_BIN" = '' ] && PREFIX_BIN="$PREFIX/bin/"
+[ "$PREFIX_LIB" = '' ] && PREFIX_LIB="$PREFIX/lib/"
+[ "$PREFIX_INC" = '' ] && PREFIX_INC="$PREFIX/include/"
+[ "$PREFIX_MAN" = '' ] && PREFIX_MAN="$PREFIX/share/man/"
+
 # now write the cc name to Makefile.conf
-echo "SHARED=$SHARED" >&4
-echo "SHARED_CF=$SHARED_CF" >&4
-echo "CC=$CC" >&4
-echo "LDPATH=$LDPATH" >&4
-echo "INCPATH=$INCPATH" >&4
+{
+ echo "SHARED=$SHARED"
+ echo "SHARED_CF=$SHARED_CF"
+ echo "CC=$CC"
+ echo "LDPATH=$LDPATH"
+ echo "INCPATH=$INCPATH"
+ echo "PREFIX=$PREFIX"
+ echo "PREFIX_BIN=$PREFIX_BIN"
+ echo "PREFIX_LIB=$PREFIX_LIB"
+ echo "PREFIX_INC=$PREFIX_INC"
+ echo "PREFIX_MAN=$PREFIX_MAN"
+} >&4
 
 CCTF="$CC $LDPATH $INCPATH -o $TF_E $TF_C"
 
