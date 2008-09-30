@@ -53,14 +53,15 @@ while [ "$1" != '' ]
 do
  case "$1" in
   '--help')
-   echo '--help'
-   echo '--ldpath DIR'
-   echo '--incpath DIR'
-   echo '--addpath DIR'
-   echo '--cdrom DEV'
-   echo '--proc-net-decnet FILE'
-   echo '--no-LIB'
-   echo '--runtime-detect'
+   echo '--help                      - This Help'
+   echo '--ldpath DIR                - Add DIR to (compile time) search list for libs'
+   echo '--incpath DIR               - Add DIR to search list for headers'
+   echo '--addpath DIR               - Add DIR/lib to lib, DIR/include to header search list'
+   echo '--cdrom DEV                 - Set default CDRum device'
+   echo '--proc-net-decnet FILE      - Set DECnet file for DECnet support auto detecting'
+   echo '                              (ignore this on non-Linux)'
+   echo '--no-LIB                    - disable LIB'
+   echo '--runtime-detect            - do as much as posible auto detecting on runtime (for distributors)'
    exit 0;
   ;;
   '--ldpath')
