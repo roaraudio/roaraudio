@@ -68,6 +68,11 @@ do
    echo '                              (ignore this on non-Linux)'
    echo '--no-LIB                    - disable LIB'
    echo '--runtime-detect            - do as much as posible auto detecting on runtime (for distributors)'
+   echo '--prefix DIR'
+   echo '--prefix-bin DIR'
+   echo '--prefix-lib DIR'
+   echo '--prefix-inc DIR'
+   echo '--prefix-man DIR'
    exit 0;
   ;;
   '--ldpath')
@@ -92,7 +97,27 @@ do
    eval no_lib_$lib=true
   ;;
   '--runtime-detect')
-  RUNTIME_DETECT=true
+   RUNTIME_DETECT=true
+  ;;
+  '--prefix')
+   PREFIX="$2"
+   shift;
+  ;;
+  '--prefix-bin')
+   PREFIX_BIN="$2"
+   shift;
+  ;;
+  '--prefix-lib')
+   PREFIX_LIB="$2"
+   shift;
+  ;;
+  '--prefix-inc')
+   PREFIX_INC="$2"
+   shift;
+  ;;
+  '--prefix-man')
+   PREFIX_MAN="$2"
+   shift;
   ;;
  esac;
 
