@@ -17,4 +17,4 @@ prep-install-dirs:
 install: prep-install-dirs
 	sh -c 'for dir in man*; do cp $(cp_v) $$dir/*.?* $(PREFIX_MAN)/$$dir/; done'
 semi-install: prep-install-dirs
-	sh -c 'for dir in man*; do for file in $$dir/*.?*; do ln -s `pwd`/$$file $(PREFIX_MAN)/$$dir/; done; done'
+	sh -c 'for dir in man*; do for file in $$dir/*.?*; do ln -fs `pwd`/$$file $(PREFIX_MAN)/$$dir/; done; done'
