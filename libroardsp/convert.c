@@ -333,25 +333,42 @@ int roar_conv_rate_16 (void * out, void * in, int samples, int from, int to, int
 int raor_conv_codec (void * out, void * in, int samples, int from, int to, int bits) {
  int inbo = ROAR_CODEC_BYTE_ORDER(from), outbo = ROAR_CODEC_BYTE_ORDER(to);
  int ins  = ROAR_CODEC_IS_SIGNED(from),  outs  = ROAR_CODEC_IS_SIGNED(to);
+ void * nin = in;
 
- if ( inbo != outbo )
-  return -1;
+ if ( bits == 8 || bits == 16 ) {
+  if ( inbo  == ROAR_CODEC_PDP )
+   inbo  = ROAR_CODEC_LE;
+  if ( outbo == ROAR_CODEC_PDP )
+   outbo = ROAR_CODEC_LE;
+ }
+
+ if ( inbo != outbo ) {
+  if ( bits != 8 ) { // there is no need to talk about eddines on 8 bit data streams
+   if ( bits == 16 ) {
+    // in this case we can only have LE vs. BE, so, only need to swap:
+    roar_conv_endian_16(out, nin, samples);
+    nin = out;
+   } else {
+    return -1;
+   }
+  }
+ }
 
  if ( ins != outs ) {
   if ( ins && !outs ) {
    switch (bits) {
-    case  8: roar_conv_codec_s2u8( out, in, samples); break;
-    case 16: roar_conv_codec_s2u16(out, in, samples); break;
-    case 32: roar_conv_codec_s2u32(out, in, samples); break;
+    case  8: roar_conv_codec_s2u8( out, nin, samples); break;
+    case 16: roar_conv_codec_s2u16(out, nin, samples); break;
+    case 32: roar_conv_codec_s2u32(out, nin, samples); break;
     default:
      errno = ENOSYS;
      return -1;
    }
   } else if ( !ins && outs ) {
    switch (bits) {
-    case  8: roar_conv_codec_u2s8( out, in, samples); break;
-    case 16: roar_conv_codec_u2s16(out, in, samples); break;
-    case 32: roar_conv_codec_u2s32(out, in, samples); break;
+    case  8: roar_conv_codec_u2s8( out, nin, samples); break;
+    case 16: roar_conv_codec_u2s16(out, nin, samples); break;
+    case 32: roar_conv_codec_u2s32(out, nin, samples); break;
     default:
      errno = ENOSYS;
      return -1;
@@ -439,11 +456,14 @@ int roar_conv_endian_16   (void * out, void * in, int samples) {
  samples *= 2;
 
  if ( out != in ) {
+//  printf("out != in\n");
   for(i = 0; i < samples; i += 2) {
+//   printf("op[%i] = ip[%i]\nop[%i] = ip[%i]\n", i, i+1, i+1, i);
    op[i  ] = ip[i+1];
    op[i+1] = ip[i  ];
   }
  } else {
+//  printf("out == in\n");
   for(i = 0; i < samples; i += 2) {
    c       = ip[i+1];
    op[i+1] = ip[i  ];
