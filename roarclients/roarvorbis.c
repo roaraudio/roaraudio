@@ -53,11 +53,15 @@ void usage (void) {
 
 #ifdef ROAR_HAVE_LIBVORBISFILE
 FILE * open_http (char * file) {
+#ifdef ROAR_HAVE_BIN_WGET
  char cmd[1024];
 
- snprintf(cmd, 1023, "wget -qO - '%s'", file);
+ snprintf(cmd, 1023, ROAR_HAVE_BIN_WGET " -qO - '%s'", file);
 
  return popen(cmd, "r");
+#else
+ return NULL;
+#endif
 }
 
 int update_stream (struct roar_connection * con, struct roar_stream * s, int * out, OggVorbis_File * vf, char * file, struct roar_audio_info * info) {
