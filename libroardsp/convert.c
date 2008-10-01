@@ -335,7 +335,10 @@ int raor_conv_codec (void * out, void * in, int samples, int from, int to, int b
  int ins  = ROAR_CODEC_IS_SIGNED(from),  outs  = ROAR_CODEC_IS_SIGNED(to);
  void * nin = in;
 
- if ( bits == 8 || bits == 16 ) {
+ if ( bits == 8 ) {
+  inbo = outbo = ROAR_CODEC_NATIVE_ENDIAN;
+
+ } else if ( bits == 16 ) {
   if ( inbo  == ROAR_CODEC_PDP )
    inbo  = ROAR_CODEC_LE;
   if ( outbo == ROAR_CODEC_PDP )
@@ -346,7 +349,6 @@ int raor_conv_codec (void * out, void * in, int samples, int from, int to, int b
               out, in, samples, from, roar_codec2str(from), to, roar_codec2str(to), bits);
 
  if ( inbo != outbo ) {
-  if ( bits != 8 ) { // there is no need to talk about eddines on 8 bit data streams
    if ( bits == 16 ) {
     // in this case we can only have LE vs. BE, so, only need to swap:
     roar_conv_endian_16(out, nin, samples);
@@ -368,7 +370,6 @@ int raor_conv_codec (void * out, void * in, int samples, int from, int to, int b
    } else {
     return -1;
    }
-  }
  }
 
  if ( ins != outs ) {
