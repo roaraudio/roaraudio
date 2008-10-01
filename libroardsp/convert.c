@@ -342,6 +342,9 @@ int raor_conv_codec (void * out, void * in, int samples, int from, int to, int b
    outbo = ROAR_CODEC_LE;
  }
 
+ ROAR_DBG("raor_conv_codec(out=%p, in=%p, samples=%i, from=%i(%s), to=%i(%s), bits=%i) = ?",
+              out, in, samples, from, roar_codec2str(from), to, roar_codec2str(to), bits);
+
  if ( inbo != outbo ) {
   if ( bits != 8 ) { // there is no need to talk about eddines on 8 bit data streams
    if ( bits == 16 ) {
@@ -353,6 +356,13 @@ int raor_conv_codec (void * out, void * in, int samples, int from, int to, int b
      roar_conv_endian_24(out, nin, samples);
      nin = out;
     } else { // what the hell is PDP eddines in 24 bit mode?
+     return -1;
+    }
+   } else if ( bits == 32 ) {
+    if ( (inbo == ROAR_CODEC_LE || inbo == ROAR_CODEC_BE) && (outbo == ROAR_CODEC_LE || outbo == ROAR_CODEC_BE) ) {
+     roar_conv_endian_32(out, nin, samples);
+     nin = out;
+    } else { // need to handle 32 PDP eddines here?
      return -1;
     }
    } else {
@@ -503,6 +513,31 @@ int roar_conv_endian_24   (void * out, void * in, int samples) {
    op[i+2] = ip[i  ];
    op[i  ] = c;
   }
+ }
+
+ return 0;
+}
+
+int roar_conv_endian_32   (void * out, void * in, int samples) {
+ int32_t       * ip = in;
+ int32_t       * op = out;
+ union {
+  int32_t val;
+  char    data[4];
+ }               c, h;
+ int             i;
+
+ // may the holly optimizer save our souls!
+
+ ROAR_DBG("roar_conv_endian_32(out=%p, in=%p, samples=%i) = ?", out, in, samples);
+
+ for (i = 0; i < samples; i++) {
+  c.val     = ip[i];
+  h.data[0] = c.data[3];
+  h.data[1] = c.data[2];
+  h.data[2] = c.data[1];
+  h.data[3] = c.data[0];
+  op[i]     = h.val;
  }
 
  return 0;

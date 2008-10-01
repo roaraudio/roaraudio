@@ -81,7 +81,7 @@ int roar_conv_codec_u2s32 (void * out, void * in, int samples);
                                                                 // implemnted?
 int roar_conv_endian_16   (void * out, void * in, int samples); // yes
 int roar_conv_endian_24   (void * out, void * in, int samples); // yes
-int roar_conv_endian_32   (void * out, void * in, int samples);
+int roar_conv_endian_32   (void * out, void * in, int samples); // yes
 
 int roar_conv       (void * out, void * in, int samples, struct roar_audio_info * from, struct roar_audio_info * to);
 
