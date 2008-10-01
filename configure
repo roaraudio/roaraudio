@@ -31,6 +31,8 @@ PREFIX_MAN=''
 CDROM="none"
 PROC_NET_DECNET="/proc/net/decnet"
 
+AO_INST_DIR=''
+
 echo -n "checking for C compiler... "
 CC=$(which gcc cc 2> /dev/null | grep ^/ | head -n 1)
 if [ "$CC" = '' ]
@@ -68,6 +70,7 @@ do
    echo '                              (ignore this on non-Linux)'
    echo '--no-LIB                    - disable LIB'
    echo '--runtime-detect            - do as much as posible auto detecting on runtime (for distributors)'
+   echo '--ao-install-dir DIR'
    echo '--prefix DIR'
    echo '--prefix-bin DIR'
    echo '--prefix-lib DIR'
@@ -98,6 +101,10 @@ do
   ;;
   '--runtime-detect')
    RUNTIME_DETECT=true
+  ;;
+  '--ao-install-dir')
+   AO_INST_DIR="$2"
+   shift;
   ;;
   '--prefix')
    PREFIX="$2"
@@ -483,6 +490,16 @@ cat >&3 << EOF
 
 //ll
 EOF
+
+echo 'running libao plugin configure...'
+ cd plugins/ao/
+if [ "$AO_INST_DIR" = '' ]
+then
+ ./configure
+else
+ ./configure --inst-dir "$AO_INST_DIR"
+fi
+cd ../..
 
 rm -f $TF_C $TF_E
 
