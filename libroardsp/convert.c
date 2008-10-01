@@ -348,6 +348,13 @@ int raor_conv_codec (void * out, void * in, int samples, int from, int to, int b
     // in this case we can only have LE vs. BE, so, only need to swap:
     roar_conv_endian_16(out, nin, samples);
     nin = out;
+   } else if ( bits == 24 ) {
+    if ( (inbo == ROAR_CODEC_LE || inbo == ROAR_CODEC_BE) && (outbo == ROAR_CODEC_LE || outbo == ROAR_CODEC_BE) ) {
+     roar_conv_endian_24(out, nin, samples);
+     nin = out;
+    } else { // what the hell is PDP eddines in 24 bit mode?
+     return -1;
+    }
    } else {
     return -1;
    }
