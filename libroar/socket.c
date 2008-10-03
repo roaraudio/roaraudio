@@ -108,11 +108,23 @@ int roar_socket_new_unix (void) {
  return fh;
 }
 
+int roar_socket_decnet_set_timeout (int fh, time_t sec, int usec) {
+#ifdef ROAR_HAVE_LIBDNET
+ struct timeval timeout = {sec, usec};
+
+ return setsockopt(fh, SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof(timeout));
+#else
+ return -1;
+#endif
+}
+
 int roar_socket_new_decnet_seqpacket (void) {
 #ifdef ROAR_HAVE_LIBDNET
  int fh;
 
  fh = socket(AF_DECnet, SOCK_SEQPACKET, DNPROTO_NSP);
+
+ roar_socket_decnet_set_timeout(fh, 300, 0);
 
  return fh;
 #else
@@ -126,6 +138,8 @@ int roar_socket_new_decnet_stream (void) {
  int fh;
 
  fh = socket(AF_DECnet, SOCK_STREAM, DNPROTO_NSP);
+
+ roar_socket_decnet_set_timeout(fh, 300, 0);
 
  return fh;
 #else
