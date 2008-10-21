@@ -69,7 +69,7 @@ int roar_conv_rate    (void * out, void * in, int samples, int from, int to, int
 int roar_conv_rate_8  (void * out, void * in, int samples, int from, int to, int channels);
 int roar_conv_rate_16 (void * out, void * in, int samples, int from, int to, int channels);
 
-int raor_conv_codec (void * out, void * in, int samples, int from, int to, int bits);
+int roar_conv_codec (void * out, void * in, int samples, int from, int to, int bits);
 
 int roar_conv_signedness  (void * out, void * in, int samples, int from, int to, int bits);
 int roar_conv_codec_s2u8  (void * out, void * in, int samples);

@@ -352,24 +352,26 @@ int roar_conv_signedness  (void * out, void * in, int samples, int from, int to,
      return -1;
    }
   } else {
-   if ( out == in )
-    return 0;
-
-   memcpy(out, in, samples * bits / 8);
-   return 0;
+   return -1;
   }
+ } else {
+  if ( out == in )
+   return 0;
+
+  memcpy(out, in, samples * bits / 8);
+  return 0;
  }
 
- return -1;
+ return 0;
 }
 
-int raor_conv_codec (void * out, void * in, int samples, int from, int to, int bits) {
+int roar_conv_codec (void * out, void * in, int samples, int from, int to, int bits) {
  int inbo = ROAR_CODEC_BYTE_ORDER(from), outbo = ROAR_CODEC_BYTE_ORDER(to);
  int ins  = ROAR_CODEC_IS_SIGNED(from),  outs  = ROAR_CODEC_IS_SIGNED(to);
  void * nin = in;
 
 
- ROAR_DBG("raor_conv_codec(out=%p, in=%p, samples=%i, from=%i(%s), to=%i(%s), bits=%i) = ?",
+ ROAR_DBG("roar_conv_codec(out=%p, in=%p, samples=%i, from=%i(%s), to=%i(%s), bits=%i) = ?",
               out, in, samples, from, roar_codec2str(from), to, roar_codec2str(to), bits);
 
  roar_conv_endian(out, in, samples, inbo, outbo, bits);
@@ -457,14 +459,17 @@ int roar_conv_endian      (void * out, void * in, int samples, int from, int to,
    to   = ROAR_CODEC_LE;
  }
 
+ ROAR_DBG("roar_conv_endian(out=%p, in=%p, samples=%i, from=%i, to=%i, bits=%i) = ?", out, in, samples, from, to, bits);
+
  if ( from == to ) {
   if ( in != out ) {
    memcpy(out, in, samples * bits / 8);
-   return 0;
   }
-
+  return 0;
+ } else {
   if ( bits == 16 ) {
    // in this case we can only have LE vs. BE, so, only need to swap:
+   ROAR_DBG("roar_conv_endian(*): Doing 16 bit byteswap");
    return roar_conv_endian_16(out, in, samples);
   } else if ( bits == 24 ) {
    if ( (from == ROAR_CODEC_LE || from == ROAR_CODEC_BE) && (to == ROAR_CODEC_LE || to == ROAR_CODEC_BE) ) {
@@ -573,8 +578,11 @@ int roar_conv       (void * out, void * in, int samples, struct roar_audio_info 
  //       data between the steps.
  //       for the moment: guess out >= in
 
+ ROAR_DBG("roar_conv(*): bo conv: %i->%i(native)", ROAR_CODEC_BYTE_ORDER(from->codec), ROAR_CODEC_NATIVE_ENDIAN);
+
  if ( ROAR_CODEC_BYTE_ORDER(from->codec) != ROAR_CODEC_NATIVE_ENDIAN ) {
-  if ( roar_conv_endian(out, ip, samples, ROAR_CODEC_BYTE_ORDER(from->codec), ROAR_CODEC_NATIVE_ENDIAN, to->bits) == -1 )
+  ROAR_DBG("roar_conv(*): doing bo input conv");
+  if ( roar_conv_endian(out, ip, samples, ROAR_CODEC_BYTE_ORDER(from->codec), ROAR_CODEC_NATIVE_ENDIAN, from->bits) == -1 )
    return -1;
   else
    ip = out;
@@ -596,7 +604,7 @@ int roar_conv       (void * out, void * in, int samples, struct roar_audio_info 
 
 /*
  if ( from->codec != to->codec ) {
-  if ( raor_conv_codec (out, ip, samples, from->codec, to->codec, to->bits) == -1 )
+  if ( roar_conv_codec (out, ip, samples, from->codec, to->codec, to->bits) == -1 )
    return -1;
   else
    ip = out;
