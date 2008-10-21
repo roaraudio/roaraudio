@@ -71,12 +71,15 @@ int roar_conv_rate_16 (void * out, void * in, int samples, int from, int to, int
 
 int raor_conv_codec (void * out, void * in, int samples, int from, int to, int bits);
 
+int roar_conv_signedness  (void * out, void * in, int samples, int from, int to, int bits);
 int roar_conv_codec_s2u8  (void * out, void * in, int samples);
 int roar_conv_codec_s2u16 (void * out, void * in, int samples);
 int roar_conv_codec_s2u32 (void * out, void * in, int samples);
 int roar_conv_codec_u2s8  (void * out, void * in, int samples);
 int roar_conv_codec_u2s16 (void * out, void * in, int samples);
 int roar_conv_codec_u2s32 (void * out, void * in, int samples);
+
+int roar_conv_endian      (void * out, void * in, int samples, int from, int to, int bits);
 
                                                                 // implemnted?
 int roar_conv_endian_16   (void * out, void * in, int samples); // yes

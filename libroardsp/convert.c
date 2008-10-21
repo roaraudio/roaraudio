@@ -330,73 +330,52 @@ int roar_conv_rate_16 (void * out, void * in, int samples, int from, int to, int
  return -1;
 }
 
-int raor_conv_codec (void * out, void * in, int samples, int from, int to, int bits) {
- int inbo = ROAR_CODEC_BYTE_ORDER(from), outbo = ROAR_CODEC_BYTE_ORDER(to);
- int ins  = ROAR_CODEC_IS_SIGNED(from),  outs  = ROAR_CODEC_IS_SIGNED(to);
- void * nin = in;
+int roar_conv_signedness  (void * out, void * in, int samples, int from, int to, int bits) {
 
- if ( bits == 8 ) {
-  inbo = outbo = ROAR_CODEC_NATIVE_ENDIAN;
-
- } else if ( bits == 16 ) {
-  if ( inbo  == ROAR_CODEC_PDP )
-   inbo  = ROAR_CODEC_LE;
-  if ( outbo == ROAR_CODEC_PDP )
-   outbo = ROAR_CODEC_LE;
- }
-
- ROAR_DBG("raor_conv_codec(out=%p, in=%p, samples=%i, from=%i(%s), to=%i(%s), bits=%i) = ?",
-              out, in, samples, from, roar_codec2str(from), to, roar_codec2str(to), bits);
-
- if ( inbo != outbo ) {
-   if ( bits == 16 ) {
-    // in this case we can only have LE vs. BE, so, only need to swap:
-    roar_conv_endian_16(out, nin, samples);
-    nin = out;
-   } else if ( bits == 24 ) {
-    if ( (inbo == ROAR_CODEC_LE || inbo == ROAR_CODEC_BE) && (outbo == ROAR_CODEC_LE || outbo == ROAR_CODEC_BE) ) {
-     roar_conv_endian_24(out, nin, samples);
-     nin = out;
-    } else { // what the hell is PDP eddines in 24 bit mode?
-     return -1;
-    }
-   } else if ( bits == 32 ) {
-    if ( (inbo == ROAR_CODEC_LE || inbo == ROAR_CODEC_BE) && (outbo == ROAR_CODEC_LE || outbo == ROAR_CODEC_BE) ) {
-     roar_conv_endian_32(out, nin, samples);
-     nin = out;
-    } else { // need to handle 32 PDP eddines here?
-     return -1;
-    }
-   } else {
-    return -1;
-   }
- }
-
- if ( ins != outs ) {
-  if ( ins && !outs ) {
+ if ( from != to ) {
+  if ( from && !to ) {
    switch (bits) {
-    case  8: roar_conv_codec_s2u8( out, nin, samples); break;
-    case 16: roar_conv_codec_s2u16(out, nin, samples); break;
-    case 32: roar_conv_codec_s2u32(out, nin, samples); break;
+    case  8: roar_conv_codec_s2u8( out, in, samples); break;
+    case 16: roar_conv_codec_s2u16(out, in, samples); break;
+    case 32: roar_conv_codec_s2u32(out, in, samples); break;
     default:
      errno = ENOSYS;
      return -1;
    }
-  } else if ( !ins && outs ) {
+  } else if ( !from && to ) {
    switch (bits) {
-    case  8: roar_conv_codec_u2s8( out, nin, samples); break;
-    case 16: roar_conv_codec_u2s16(out, nin, samples); break;
-    case 32: roar_conv_codec_u2s32(out, nin, samples); break;
+    case  8: roar_conv_codec_u2s8( out, in, samples); break;
+    case 16: roar_conv_codec_u2s16(out, in, samples); break;
+    case 32: roar_conv_codec_u2s32(out, in, samples); break;
     default:
      errno = ENOSYS;
      return -1;
    }
   } else {
-   return -1;
+   if ( out == in )
+    return 0;
+
+   memcpy(out, in, samples * bits / 8);
+   return 0;
   }
  }
 
- return 0;
+ return -1;
+}
+
+int raor_conv_codec (void * out, void * in, int samples, int from, int to, int bits) {
+ int inbo = ROAR_CODEC_BYTE_ORDER(from), outbo = ROAR_CODEC_BYTE_ORDER(to);
+ int ins  = ROAR_CODEC_IS_SIGNED(from),  outs  = ROAR_CODEC_IS_SIGNED(to);
+ void * nin = in;
+
+
+ ROAR_DBG("raor_conv_codec(out=%p, in=%p, samples=%i, from=%i(%s), to=%i(%s), bits=%i) = ?",
+              out, in, samples, from, roar_codec2str(from), to, roar_codec2str(to), bits);
+
+ roar_conv_endian(out, in, samples, inbo, outbo, bits);
+ nin = out;
+
+ return roar_conv_signedness(out, in, samples, ins, outs, bits);
 }
 
 int roar_conv_codec_s2u8 (void * out, void * in, int samples) {
@@ -464,6 +443,49 @@ int roar_conv_codec_u2s32 (void * out, void * in, int samples) {
 
  return 0;
 }
+
+
+int roar_conv_endian      (void * out, void * in, int samples, int from, int to, int bits) {
+
+ if ( bits == 8 ) {
+  from = to = ROAR_CODEC_NATIVE_ENDIAN;
+
+ } else if ( bits == 16 ) {
+  if ( from  == ROAR_CODEC_PDP )
+   from = ROAR_CODEC_LE;
+  if ( to    == ROAR_CODEC_PDP )
+   to   = ROAR_CODEC_LE;
+ }
+
+ if ( from == to ) {
+  if ( in != out ) {
+   memcpy(out, in, samples * bits / 8);
+   return 0;
+  }
+
+  if ( bits == 16 ) {
+   // in this case we can only have LE vs. BE, so, only need to swap:
+   return roar_conv_endian_16(out, in, samples);
+  } else if ( bits == 24 ) {
+   if ( (from == ROAR_CODEC_LE || from == ROAR_CODEC_BE) && (to == ROAR_CODEC_LE || to == ROAR_CODEC_BE) ) {
+    return roar_conv_endian_24(out, in, samples);
+   } else { // what the hell is PDP eddines in 24 bit mode?
+    return -1;
+   }
+  } else if ( bits == 32 ) {
+   if ( (from == ROAR_CODEC_LE || from == ROAR_CODEC_BE) && (to == ROAR_CODEC_LE || to == ROAR_CODEC_BE) ) {
+    return roar_conv_endian_32(out, in, samples);
+   } else { // need to handle 32 PDP eddines here?
+    return -1;
+   }
+  } else {
+   return -1;
+  }
+ }
+
+ return -1;
+}
+
 
 int roar_conv_endian_16   (void * out, void * in, int samples) {
  char          * ip = in;
@@ -551,6 +573,13 @@ int roar_conv       (void * out, void * in, int samples, struct roar_audio_info 
  //       data between the steps.
  //       for the moment: guess out >= in
 
+ if ( ROAR_CODEC_BYTE_ORDER(from->codec) != ROAR_CODEC_NATIVE_ENDIAN ) {
+  if ( roar_conv_endian(out, ip, samples, ROAR_CODEC_BYTE_ORDER(from->codec), ROAR_CODEC_NATIVE_ENDIAN, to->bits) == -1 )
+   return -1;
+  else
+   ip = out;
+ }
+
  if ( from->bits != to->bits ) {
   if ( roar_conv_bits(out, ip, samples, from->bits, to->bits) == -1 )
    return -1;
@@ -558,12 +587,21 @@ int roar_conv       (void * out, void * in, int samples, struct roar_audio_info 
    ip = out;
  }
 
+ if ( ROAR_CODEC_IS_SIGNED(from->codec) != ROAR_CODEC_IS_SIGNED(to->codec) ) {
+  if ( roar_conv_signedness(out, ip, samples, ROAR_CODEC_IS_SIGNED(from->codec), ROAR_CODEC_IS_SIGNED(to->codec), to->bits) == -1 )
+   return -1;
+  else
+   ip = out;
+ }
+
+/*
  if ( from->codec != to->codec ) {
   if ( raor_conv_codec (out, ip, samples, from->codec, to->codec, to->bits) == -1 )
    return -1;
   else
    ip = out;
  }
+*/
 
  if ( from->rate != to->rate ) {
   if ( roar_conv_rate(out, ip, samples, from->rate, to->rate, to->bits, from->channels) == -1 )
@@ -574,6 +612,13 @@ int roar_conv       (void * out, void * in, int samples, struct roar_audio_info 
 
  if ( from->channels != to->channels ) {
   if ( roar_conv_chans(out, ip, samples, from->channels, to->channels, to->bits) == -1 )
+   return -1;
+  else
+   ip = out;
+ }
+
+ if ( ROAR_CODEC_BYTE_ORDER(to->codec) != ROAR_CODEC_NATIVE_ENDIAN ) {
+  if ( roar_conv_endian(out, ip, samples, ROAR_CODEC_NATIVE_ENDIAN, ROAR_CODEC_BYTE_ORDER(to->codec), to->bits) == -1 )
    return -1;
   else
    ip = out;
