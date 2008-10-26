@@ -103,6 +103,8 @@
 #define ROAR_CODEC_ROAR_CELT    0x1a
 #define ROAR_CODEC_ROAR_SPEEX   0x1b
 
+#define ROAR_CODEC_RAUM         0x1c
+#define ROAR_CODEC_RAUM_VORBIS  0x1d
 
 #define ROAR_CODEC_RIFF_WAVE    0x20
 
