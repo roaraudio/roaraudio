@@ -7,7 +7,7 @@ v. 0.1beta2 - ?
 	                                and has buildin HTTP support.
 	* added CDRum support
 	* added writeing support for A-Law
-	* added proxy support for SOckS4 and 4d, SSH and HTTP CONNECT
+	* added proxy support for SOCKS4 and 4d, SSH and HTTP CONNECT
 	* improved 32 bit support a lot
 
 v. 0.1beta1 - Sun Sep 07 2008
