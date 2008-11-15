@@ -628,7 +628,7 @@ int streams_check  (int id) {
 */
   done = 0;
   while (req > 0 && done != realreq) {
-   if ( (req = read(fh, buf+done, realreq-done)) > 0 )
+   if ( (req = stream_vio_s_read(ss, buf+done, realreq-done)) > 0 )
     done += req;
   }
   req = done;
@@ -713,7 +713,7 @@ int streams_send_mon   (int id) {
  errno = 0;
 
  if ( ss->codecfilter == -1 ) {
-  if ( write(fh, obuf, olen) == olen ) {
+  if ( stream_vio_s_write(ss, obuf, olen) == olen ) {
    if ( need_to_free ) free(obuf);
    return 0;
   }
@@ -735,7 +735,7 @@ int streams_send_mon   (int id) {
 
   usleep(100); // 0.1ms
 
-  if ( write(fh, obuf, olen) == olen ) {
+  if ( stream_vio_s_write(ss, obuf, olen) == olen ) {
    if ( need_to_free ) free(obuf);
    return 0;
   }
@@ -771,9 +771,9 @@ int streams_send_filter(int id) {
 
  ROAR_DBG("streams_send_filter(id=%i): fh = %i", id, fh);
 
- if ( write(fh, g_output_buffer, g_output_buffer_len) == g_output_buffer_len ) {
+ if ( stream_vio_s_write(ss, g_output_buffer, g_output_buffer_len) == g_output_buffer_len ) {
   while ( have < g_output_buffer_len ) {
-   if ( (len = read(fh, g_output_buffer+have, g_output_buffer_len-have)) < 1 ) {
+   if ( (len = stream_vio_s_read(ss, g_output_buffer+have, g_output_buffer_len-have)) < 1 ) {
     streams_delete(id);
     return -1;
    }
@@ -820,10 +820,12 @@ ssize_t stream_vio_s_read (struct roar_stream_server * stream, void *buf, size_t
  if ( !stream )
   return -1;
 
+ roar_vio_set_fh(&(stream->vio), ROAR_STREAM(stream)->fh);
+
  if ( ! stream->vio.read )
   return -1;
 
- while ( (r = stream->vio.read(ROAR_STREAM(stream)->fh, buf, count, stream->vio.inst)) > 0 ) {
+ while ( (r = roar_vio_read(&(stream->vio), buf, count)) > 0 ) {
   len   += r;
   buf   += r;
   count -= r;
@@ -843,10 +845,9 @@ ssize_t stream_vio_s_write(struct roar_stream_server * stream, void *buf, size_t
  if ( !stream )
   return -1;
 
- if ( ! stream->vio.write )
-  return -1;
+ roar_vio_set_fh(&(stream->vio), ROAR_STREAM(stream)->fh);
 
- return stream->vio.write(ROAR_STREAM(stream)->fh, buf, count, stream->vio.inst);
+ return roar_vio_write(&(stream->vio), buf, count);
 }
 
 //ll

@@ -40,11 +40,81 @@ int roar_vio_init_calls (struct roar_vio_calls * calls) {
 
  memset((void*)calls, 0, sizeof(struct roar_vio_calls));
 
+/*
  calls->read  = (ssize_t (*)(int fd, void *buf, size_t count,      void * inst))read;
  calls->write = (ssize_t (*)(int fd, void *buf, size_t count,      void * inst))write;
  calls->lseek = (off_t   (*)(int fildes, off_t offset, int whence, void * inst))lseek;
+*/
+
+ calls->read  = roar_vio_basic_read;
+ calls->write = roar_vio_basic_write;
+ calls->lseek = roar_vio_basic_lseek;
 
  return 0;
+}
+
+int roar_vio_set_inst (struct roar_vio_calls * vio, void * inst) {
+ if ( vio == NULL )
+  return -1;
+
+ vio->inst = inst;
+
+ return 0;
+}
+
+int roar_vio_set_fh   (struct roar_vio_calls * vio, int fh) {
+ return roar_vio_set_inst(vio, (void*)(fh + 1));
+}
+
+int roar_vio_get_fh   (struct roar_vio_calls * vio) {
+ if ( vio == NULL )
+  return -1;
+
+ return ((int)vio->inst) - 1;
+}
+
+
+ssize_t roar_vio_read (struct roar_vio_calls * vio, void *buf, size_t count) {
+ if ( vio == NULL )
+  return -1;
+
+ if ( vio->read == NULL )
+  return -1;
+
+ return vio->read(vio, buf, count);
+}
+
+ssize_t roar_vio_write(struct roar_vio_calls * vio, void *buf, size_t count) {
+ if ( vio == NULL )
+  return -1;
+
+ if ( vio->write == NULL )
+  return -1;
+
+ return vio->write(vio, buf, count);
+}
+
+off_t   roar_vio_lseek(struct roar_vio_calls * vio, off_t offset, int whence) {
+ if ( vio == NULL )
+  return -1;
+
+ if ( vio->lseek == NULL )
+  return -1;
+
+ return vio->lseek(vio, offset, whence);
+}
+
+
+ssize_t roar_vio_basic_read (struct roar_vio_calls * vio, void *buf, size_t count) {
+ return read(roar_vio_get_fh(vio), buf, count);
+}
+
+ssize_t roar_vio_basic_write(struct roar_vio_calls * vio, void *buf, size_t count) {
+ return write(roar_vio_get_fh(vio), buf, count);
+}
+
+off_t   roar_vio_basic_lseek(struct roar_vio_calls * vio, off_t offset, int whence) {
+ return lseek(roar_vio_get_fh(vio), offset, whence);
 }
 
 //ll

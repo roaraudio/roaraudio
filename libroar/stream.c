@@ -383,6 +383,10 @@ struct {
  {ROAR_CODEC_ROAR_CELT,   "roar_celt"  },
  {ROAR_CODEC_ROAR_SPEEX,  "roar_speex" },
 
+ // RAUM:
+ {ROAR_CODEC_RAUM,        "raum"       },
+ {ROAR_CODEC_RAUM_VORBIS, "raum_vorbis"},
+
  // RIFF/WAVE like:
  {ROAR_CODEC_RIFF_WAVE,   "riff_wave"  },
  {ROAR_CODEC_RIFF_WAVE,   "wave"       }, // alias

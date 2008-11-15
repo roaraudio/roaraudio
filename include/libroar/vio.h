@@ -39,12 +39,34 @@
 
 struct roar_vio_calls {
  void * inst;
+/*
  ssize_t (*read) (int fd, void *buf, size_t count, void * inst);
  ssize_t (*write)(int fd, void *buf, size_t count, void * inst);
  off_t   (*lseek)(int fildes, off_t offset, int whence, void * inst);
+*/
+ssize_t (*read )(struct roar_vio_calls * vio, void *buf, size_t count);
+ssize_t (*write)(struct roar_vio_calls * vio, void *buf, size_t count);
+off_t   (*lseek)(struct roar_vio_calls * vio, off_t offset, int whence);
 };
 
 int roar_vio_init_calls (struct roar_vio_calls * calls);
+
+int roar_vio_set_inst (struct roar_vio_calls * vio, void * inst);
+int roar_vio_set_fh   (struct roar_vio_calls * vio, int fh);
+
+int roar_vio_get_fh   (struct roar_vio_calls * vio);
+
+ssize_t roar_vio_read (struct roar_vio_calls * vio, void *buf, size_t count);
+ssize_t roar_vio_write(struct roar_vio_calls * vio, void *buf, size_t count);
+off_t   roar_vio_lseek(struct roar_vio_calls * vio, off_t offset, int whence);
+
+
+// possible VIOs:
+
+// basic
+ssize_t roar_vio_basic_read (struct roar_vio_calls * vio, void *buf, size_t count);
+ssize_t roar_vio_basic_write(struct roar_vio_calls * vio, void *buf, size_t count);
+off_t   roar_vio_basic_lseek(struct roar_vio_calls * vio, off_t offset, int whence);
 
 #endif
 
