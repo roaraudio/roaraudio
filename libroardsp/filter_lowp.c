@@ -28,6 +28,8 @@ int roardsp_lowp_init  (struct roardsp_filter * filter, struct roar_stream * str
  struct roardsp_lowp * self = malloc(sizeof(struct roardsp_lowp));
  float freq = filter->rate/2;
 
+ ROAR_DBG("roardsp_lowp_init(*): self=%p", self);
+
  if ( self == NULL )
   return -1;
 
