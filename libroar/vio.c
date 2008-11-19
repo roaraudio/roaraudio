@@ -104,7 +104,9 @@ off_t   roar_vio_lseek(struct roar_vio_calls * vio, off_t offset, int whence) {
  return vio->lseek(vio, offset, whence);
 }
 
+// VIOs:
 
+// basic
 ssize_t roar_vio_basic_read (struct roar_vio_calls * vio, void *buf, size_t count) {
  return read(roar_vio_get_fh(vio), buf, count);
 }
@@ -116,5 +118,78 @@ ssize_t roar_vio_basic_write(struct roar_vio_calls * vio, void *buf, size_t coun
 off_t   roar_vio_basic_lseek(struct roar_vio_calls * vio, off_t offset, int whence) {
  return lseek(roar_vio_get_fh(vio), offset, whence);
 }
+
+// pass
+ssize_t roar_vio_pass_read (struct roar_vio_calls * vio, void *buf, size_t count) {
+ return roar_vio_read((struct roar_vio_calls *) vio->inst, buf, count);
+}
+
+ssize_t roar_vio_pass_write(struct roar_vio_calls * vio, void *buf, size_t count) {
+ return roar_vio_write((struct roar_vio_calls *) vio->inst, buf, count);
+}
+
+off_t   roar_vio_pass_lseek(struct roar_vio_calls * vio, off_t offset, int whence) {
+ return roar_vio_lseek((struct roar_vio_calls *) vio->inst, offset, whence);
+}
+
+
+// re
+ssize_t roar_vio_re_read (struct roar_vio_calls * vio, void *buf, size_t count) {
+  size_t len =  0;
+ ssize_t r   = -1;
+
+ if ( vio == NULL )
+  return -1;
+
+ if ( vio->inst == NULL )
+  return -1;
+
+ errno = 0;
+
+ while ( (r = roar_vio_read((struct roar_vio_calls *) vio->inst, buf, count)) > 0 ) {
+  len   += r;
+  buf   += r;
+  count -= r;
+  if ( count == 0 )
+   break;
+ }
+
+ if ( len == 0 && r == -1 )
+  return -1;
+
+ return len;
+}
+
+ssize_t roar_vio_re_write(struct roar_vio_calls * vio, void *buf, size_t count) {
+  size_t len =  0;
+ ssize_t r   = -1;
+
+ if ( vio == NULL )
+  return -1;
+
+ if ( vio->inst == NULL )
+  return -1;
+
+ errno = 0;
+
+ while ( (r = roar_vio_write((struct roar_vio_calls *) vio->inst, buf, count)) > 0 ) {
+  len   += r;
+  buf   += r;
+  count -= r;
+  if ( count == 0 )
+   break;
+ }
+
+ if ( len == 0 && r == -1 )
+  return -1;
+
+ return len;
+}
+
+// we should do a some more intelgent thing here.
+off_t   roar_vio_re_lseek(struct roar_vio_calls * vio, off_t offset, int whence) {
+ return roar_vio_lseek((struct roar_vio_calls *) vio->inst, offset, whence);
+}
+
 
 //ll
