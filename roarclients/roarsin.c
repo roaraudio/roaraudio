@@ -53,6 +53,21 @@ double tri (double x) {
   return  -4*(x-0.5) + 1;
 }
 
+double trap (double x) {
+ x /= 2*M_PI;
+ x -= (int)x;
+
+ if ( x < 0.125 || x > 0.875 ) {
+  return -1;
+ } else if ( x < 0.625 && x > 0.375 ) {
+  return  1;
+ } else if ( x < 0.5 ) {
+  return  8*(x-0.375) + 1;
+ } else {
+  return -8*(x-0.625) + 1;
+ }
+}
+
 int main (int argc, char * argv[]) {
  int rate     = ROAR_RATE_DEFAULT;
  int bits     = 16;
@@ -74,10 +89,14 @@ int main (int argc, char * argv[]) {
    length = atof(argv[++i]);
   } else if ( !strcmp(argv[i], "--sin") ) {
    func   = sin;
+  } else if ( !strcmp(argv[i], "--rect") ) {
+   func   = rect;
   } else if ( !strcmp(argv[i], "--saw") ) {
    func   = saw;
   } else if ( !strcmp(argv[i], "--tri") ) {
    func   = tri;
+  } else if ( !strcmp(argv[i], "--trap") ) {
+   func   = trap;
   } else {
    return 2;
   }
