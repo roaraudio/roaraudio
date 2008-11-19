@@ -3,7 +3,7 @@ include ../Makefile.conf
 TARGETS=libroardsp.so
 OBJS=libroardsp.o filter.o filterchain.o alaw.o
 OLDROAR=midi.o
-FILTER=lowp.o highp.o
+FILTER=lowp.o highp.o amp.o
 
 #DEFINES        = -DDEBUG
 INCLUDE = -I../include -I../include/libroardsp

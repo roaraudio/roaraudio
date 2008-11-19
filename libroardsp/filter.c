@@ -32,8 +32,8 @@ struct _roardsp_filterlist {
  int (*ctl         )(struct roardsp_filter * filter, int cmd, void * data);
  int (*calc  [5][3])(struct roardsp_filter * filter, void * data, size_t samples);
 } _roardsp_filterlist[] = {
- {ROARDSP_FILTER_AMP, "AMP", NULL, NULL, NULL, {
-           {NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL}}},
+ {ROARDSP_FILTER_AMP, "AMP", roardsp_amp_init, roardsp_amp_uninit, roardsp_amp_ctl, {
+           {NULL, NULL, NULL},{roardsp_amp_calc8, NULL, NULL},{roardsp_amp_calc16, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL}}},
  {ROARDSP_FILTER_LOWP, "Lowpass", roardsp_lowp_init, roardsp_lowp_uninit, roardsp_lowp_ctl, {
            {NULL, NULL, NULL},{NULL, NULL, NULL},{roardsp_lowp_calc16, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL}}},
  {ROARDSP_FILTER_HIGHP, "Highpass", roardsp_highp_init, roardsp_highp_uninit, roardsp_highp_ctl, {

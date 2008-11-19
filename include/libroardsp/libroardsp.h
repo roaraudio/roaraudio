@@ -76,6 +76,11 @@ struct roardsp_highp {
  int32_t  oldin[ROAR_MAX_CHANNELS];
 };
 
+struct roardsp_amp {
+ int32_t  mul;
+ int32_t  div;
+};
+
 // funcs:
 int    roardsp_filter_str2id(char * str);
 char * roardsp_filter_id2str(int id);
@@ -101,6 +106,12 @@ int roardsp_highp_init  (struct roardsp_filter * filter, struct roar_stream * st
 int roardsp_highp_uninit(struct roardsp_filter * filter);
 int roardsp_highp_calc16(struct roardsp_filter * filter, void * data, size_t samples);
 int roardsp_highp_ctl   (struct roardsp_filter * filter, int cmd, void * data);
+
+int roardsp_amp_init  (struct roardsp_filter * filter, struct roar_stream * stream, int id);
+int roardsp_amp_uninit(struct roardsp_filter * filter);
+int roardsp_amp_calc16(struct roardsp_filter * filter, void * data, size_t samples);
+int roardsp_amp_calc8 (struct roardsp_filter * filter, void * data, size_t samples);
+int roardsp_amp_ctl   (struct roardsp_filter * filter, int cmd, void * data);
 
 // codecs:
 int roardsp_conv_alaw2pcm16 (int16_t * out, char * in, size_t len);
