@@ -51,6 +51,8 @@ void usage (void) {
         "  --lowpass freq     - lowpass filter\n"
         "  --filter  name     - add filter name\n"
         "  --ffreq   freq     - set filter freq\n"
+        "  --fmul    mult     - set filter multiplier\n"
+        "  --fdiv    div      - set filter divider\n"
        );
 
 }
@@ -130,11 +132,13 @@ int main (int argc, char * argv[]) {
  int    fh;
  int    i;
  int    mul = 1, div = 1;
+ int32_t tmp;
  float  logscale = 0;
  float  lp       = 0;
  char buf[BUFSIZE];
  struct roardsp_filterchain fc;
- struct roardsp_filter      filter;
+ struct roardsp_filter      filter_real[8];
+ struct roardsp_filter    * filter = filter_real - 1;
  struct roar_stream         stream;
 
  memset(&g_lowpass, 0, sizeof(g_lowpass));
@@ -173,11 +177,18 @@ int main (int argc, char * argv[]) {
    stream.info.channels = channels;
    stream.info.bits     = bits;
    stream.info.rate     = rate;
-   roardsp_filter_init(&filter, &stream, roardsp_filter_str2id(argv[++i]));
-   roardsp_fchain_add(&fc, &filter);
+   filter++;
+   roardsp_filter_init(filter, &stream, roardsp_filter_str2id(argv[++i]));
+   roardsp_fchain_add(&fc, filter);
   } else if ( strcmp(k, "--ffreq") == 0 ) {
    lp = atof(argv[++i]);
-   roardsp_filter_ctl(&filter, ROARDSP_FCTL_FREQ, &lp);
+   roardsp_filter_ctl(filter, ROARDSP_FCTL_FREQ, &lp);
+  } else if ( strcmp(k, "--fmul") == 0 ) {
+   tmp = atoi(argv[++i]);
+   roardsp_filter_ctl(filter, ROARDSP_FCTL_MUL, &tmp);
+  } else if ( strcmp(k, "--fdiv") == 0 ) {
+   tmp = atoi(argv[++i]);
+   roardsp_filter_ctl(filter, ROARDSP_FCTL_DIV, &tmp);
   } else if ( strcmp(k, "--help") == 0 ) {
    usage();
    return 0;
