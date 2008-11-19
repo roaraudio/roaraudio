@@ -49,7 +49,7 @@ int roardsp_highp_uninit(struct roardsp_filter * filter) {
 int roardsp_highp_calc16(struct roardsp_filter * filter, void * data, size_t samples) {
  struct roardsp_highp * self = (struct roardsp_highp *) filter->inst;
  int16_t * samp = (int16_t *) data;
- register int32_t s;
+ register int32_t s, h;
  int i, c;
  int channels = filter->channels;
 
@@ -65,11 +65,12 @@ int roardsp_highp_calc16(struct roardsp_filter * filter, void * data, size_t sam
 
  for (i = 0; i < samples; i++) {
   for (c = 0; c < channels; c++) {
+   h = samp[i*channels + c];
    s = samp[i*channels + c] * self->a + self->oldin[c] * self->b + self->oldout[c] * self->c;
 
    s /= 65536;
 
-   self->oldin[      c] = s;
+   self->oldin[      c] = h;
    samp[i*channels + c] = s;
    self->oldout[     c] = s;
   }
@@ -89,10 +90,10 @@ int roardsp_highp_ctl   (struct roardsp_filter * filter, int cmd, void * data) {
 
  newfreq = *(float*)data;
 
- lp = exp(-2 * M_PI * newfreq / filter->rate) * 65536;
+ lp = exp(-2.0 * M_PI * newfreq / (float) filter->rate) * 65536;
 
- self->a =  (65536 + lp)/2;
- self->b = -(65536 + lp)/2;
+ self->a =  (65536 + lp)/2.0;
+ self->b = -(65536 + lp)/2.0;
  self->c =           lp;
 
 
