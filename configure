@@ -333,6 +333,21 @@ test_lib_defmake ROAR_HAVE_IPX           %            IPX           c          -
 test_lib 'linux sendfile()'       -- sys/sendfile.h && echo '#define ROAR_HAVE_LINUX_SENDFILE' >&3
 
 
+echo -n 'checking for IPv6... '
+
+echo '#include <sys/socket.h>'  > $TF_C
+echo '#include <netinet/in.h>' >> $TF_C
+echo 'int main (void) { struct sockaddr_in6 in6; return 0; }' >> $TF_C
+
+if $CCTF 2> /dev/null;
+then
+ echo '#define ROAR_HAVE_IPV6' >&3
+ echo yes
+else
+ echo no
+fi
+
+
 echo -n 'checking for mlock()... '
 
 echo '#include <sys/mman.h>' > $TF_C

@@ -392,7 +392,9 @@ int roar_socket_open (int mode, int type, char * host, int port) {
  union {
   struct sockaddr_in  in;
   struct sockaddr_un  un;
+#ifdef ROAR_HAVE_IPV6
   struct sockaddr_in6 in6;
+#endif
 #ifdef ROAR_HAVE_IPX
   struct sockaddr_ipx ipx;
 #endif
