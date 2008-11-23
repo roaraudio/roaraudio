@@ -521,4 +521,10 @@ rm -f $TF_C $TF_E
 mv config.h include/roaraudio/
 echo 'config.h created and moved into include/roaraudio/'
 
+echo "$SYSNAME" | if grep CYGWIN > /dev/null
+then
+ echo 'patching Makefiles for cygwin...'
+ find . -name Makefile -print0 | xargs -0 sed 's/\.so/.dll'/g -i
+fi
+
 #ll
