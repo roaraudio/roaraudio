@@ -34,13 +34,18 @@ PROC_NET_DECNET="/proc/net/decnet"
 AO_INST_DIR=''
 
 echo -n "checking for C compiler... "
-CC=$(which gcc cc 2> /dev/null | grep ^/ | head -n 1)
-if [ "$CC" = '' ]
+if [ "$CC" != '' ]
 then
- echo 'none'
- exit 1;
+ echo $CC
+else
+ CC=$(which gcc cc 2> /dev/null | grep ^/ | head -n 1)
+ if [ "$CC" = '' ]
+ then
+  echo 'none'
+  exit 1;
+ fi
+ echo $CC
 fi
-echo $CC
 
 echo -n "checking for pkg-config... "
 PKG_CONFIG=$(which pkg-config false 2> /dev/null | grep ^/ | head -n 1)
@@ -89,6 +94,10 @@ do
   '--addpath')
    LDPATH="$LDPATH -L$2/lib/"
    INCPATH="$INCPATH -I$2/include/"
+   shift;
+  ;;
+  '--cc')
+   CC="$2"
    shift;
   ;;
   '--cdrom')
