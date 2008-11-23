@@ -9,6 +9,9 @@ v. 0.1beta2 - ?
 	* added writeing support for A-Law
 	* added proxy support for SOCKS4 and 4d, SSH and HTTP CONNECT
 	* improved 32 bit support a lot
+	* checking for IPv6 support, not just assuming it to exist (win32 fix)
+	* updated docs a bit
+	* added install target
 
 v. 0.1beta1 - Sun Sep 07 2008
 	* fixed a lot typos
