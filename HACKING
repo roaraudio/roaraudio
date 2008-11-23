@@ -34,6 +34,11 @@ someplayer-roar       pkgs from plugins/
 
 manpages should be included in the corresponding packet.
 
+If your system includes a libdnet (Linux DECnet support) please build
+it with DECnet support compiled in. There will be no strange warning messages
+anymore with DECnet enabled on a non-DECnet system. libdnet does not
+require any Kernel modules or has any non standard deps itself.
+
 --- 2. Infos for developer
 
 At the moment all the libs are under GPLv3.
@@ -53,7 +58,7 @@ Also add full contact infos when sending code to me, this includes:
 3) E-Mail
 4) OpenPGP key
 
-Then sending code please sign it with OpenPGP.
+When sending code please sign it with OpenPGP.
 
 
 #ll
