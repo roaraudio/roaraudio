@@ -39,6 +39,10 @@ it with DECnet support compiled in. There will be no strange warning messages
 anymore with DECnet enabled on a non-DECnet system. libdnet does not
 require any Kernel modules or has any non standard deps itself.
 
+In addition you should configure with --runtime-detect: this will
+let roard/libroar detect the presens of some tools at runtime and
+will reduse deps.
+
 --- 2. Infos for developer
 
 At the moment all the libs are under GPLv3.
