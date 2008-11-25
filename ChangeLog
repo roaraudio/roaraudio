@@ -1,4 +1,4 @@
-v. 0.1beta2 - ?
+v. 0.1beta2 - Tue Nov 25 2008
 	* check for __LP64__
 	* added roaraudio/error.h
 	* added manpages for roar_codec2str() and roar_str2codec()
