@@ -39,11 +39,14 @@
 
 #include <roaraudio.h>
 
+#include <stdint.h>
+
 #include <fcntl.h>
 #include <sys/socket.h>
 #include <netinet/in_systm.h>
 #include <netinet/in.h>
 #include <netinet/ip.h>
+#include <sys/uio.h>
 #ifdef ROAR_HAVE_LIBDNET
 #include <netdnet/dn.h>
 #include <netdnet/dnetdb.h>
