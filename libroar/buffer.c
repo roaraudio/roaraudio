@@ -145,6 +145,65 @@ int roar_buffer_set_offset (struct roar_buffer *  buf, size_t off) {
  return 0;
 }
 
+int roar_buffer_shift_out (struct roar_buffer ** buf, void * data, size_t * len) {
+ size_t todo, cl;
+ struct roar_buffer * cur;
+ void * cd;
+
+ if ( len == NULL || buf == NULL || data == NULL )
+  return -1;
+
+ if ( *buf == NULL )
+  return -1;
+
+ todo = *len;
+ cur  = *buf;
+
+ *len = 0;
+
+ while (todo) {
+  ROAR_DBG("roar_buffer_shift_out(*): todo=%u, cur=%p", (unsigned int) todo, cur);
+
+  if ( roar_buffer_get_len(cur, &cl) == -1 )
+   return -1;
+
+  if ( cl > todo ) {
+   if ( roar_buffer_get_data(cur, &cd) == -1 )
+    return -1;
+
+   cl = todo;
+
+   memcpy(data, cd, cl);
+   todo -= cl;
+   data += cl;
+   *len += cl;
+
+   if ( roar_buffer_set_offset(cur, cl) == -1 )
+    return -1;
+  } else {
+   if ( roar_buffer_get_data(cur, &cd) == -1 )
+    return -1;
+
+   memcpy(data, cd, cl);
+   todo -= cl;
+   data += cl;
+   *len += cl;
+
+   if ( roar_buffer_next(&cur) == -1 )
+    return -1;
+  }
+
+/*
+  if ( cur == NULL )
+   break;
+*/
+ }
+
+ *buf = cur;
+
+ return -1;
+}
+
 int roar_buffer_set_meta (struct roar_buffer * buf, void *  meta) {
  if ( buf == NULL )
   return -1;

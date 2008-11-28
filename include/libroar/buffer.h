@@ -52,7 +52,7 @@ struct roar_buffer_stats {
  int memory_usage;
 };
 
-#define roar_buffer_next(a) roar_buffer_delete(*(a), (a));
+#define roar_buffer_next(a) roar_buffer_delete(*(a), (a))
 
 int roar_buffer_new      (struct roar_buffer ** buf, size_t len);
 int roar_buffer_free     (struct roar_buffer *  buf);
@@ -64,6 +64,8 @@ int roar_buffer_get_next (struct roar_buffer *  buf, struct roar_buffer ** next)
 int roar_buffer_get_data (struct roar_buffer *  buf, void   ** data);
 
 int roar_buffer_set_offset (struct roar_buffer *  buf, size_t off);
+
+int roar_buffer_shift_out (struct roar_buffer ** buf, void * data, size_t * len);
 
 int roar_buffer_set_meta (struct roar_buffer *  buf, void   *  meta);
 int roar_buffer_get_meta (struct roar_buffer *  buf, void   ** meta);
