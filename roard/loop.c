@@ -24,14 +24,15 @@
 
 #include "roard.h"
 
-int main_loop (int driver, DRIVER_USERDATA_T driver_inst, struct roar_audio_info * sa) {
+int main_loop (int driver, DRIVER_USERDATA_T driver_inst, struct roar_audio_info * sa, int sysclocksync) {
  void ** streams_input = NULL;
  int     term = 0;
  int     streams;
-#ifdef MONITOR_LATENCY
- struct timeval         try, ans;
- long int ans_1last = 0, ans_2last = 0, ans_3last = 0;
  long int loopc = 0;
+ struct timeval         try, ans;
+ float  freq;
+#ifdef MONITOR_LATENCY
+ long int ans_1last = 0, ans_2last = 0, ans_3last = 0;
 
  printf("\n\e[s");
  fflush(stdout);
@@ -40,6 +41,10 @@ int main_loop (int driver, DRIVER_USERDATA_T driver_inst, struct roar_audio_info
  ROAR_DBG("main_loop(*) = ?");
  alive = 1;
  g_pos = 0;
+
+ if ( sysclocksync ) {
+  gettimeofday(&try, NULL);
+ }
 
  while (alive) {
 #ifdef MONITOR_LATENCY
@@ -108,8 +113,27 @@ int main_loop (int driver, DRIVER_USERDATA_T driver_inst, struct roar_audio_info
  ans_3last = ans_2last;
  ans_2last = ans_1last;
  ans_1last = ans.tv_usec;
- loopc++;
 #endif
+
+  if ( ! (loopc % sysclocksync ) ) {
+   gettimeofday(&ans, NULL);
+
+   while (ans.tv_sec > try.tv_sec) {
+    ans.tv_sec--;
+    ans.tv_usec += 1000000;
+   }
+   ans.tv_usec -= try.tv_usec;
+
+
+   freq = (sysclocksync * ROAR_OUTPUT_BUFFER_SAMPLES) / (ans.tv_usec / 1e6);
+   printf("SYNC: f_conf=%iHz, f_real=%.2fHz\n", sa->rate, freq);
+
+//   memcpy(&try, &ans, sizeof(try));
+   gettimeofday(&try, NULL);
+  }
+
+  if ( sysclocksync )
+   loopc++;
  }
 
  return -1;
