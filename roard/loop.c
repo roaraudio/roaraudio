@@ -115,7 +115,7 @@ int main_loop (int driver, DRIVER_USERDATA_T driver_inst, struct roar_audio_info
  ans_1last = ans.tv_usec;
 #endif
 
-  if ( ! (loopc % sysclocksync ) ) {
+  if ( sysclocksync && !(loopc % sysclocksync) ) {
    gettimeofday(&ans, NULL);
 
    while (ans.tv_sec > try.tv_sec) {
