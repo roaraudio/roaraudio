@@ -51,10 +51,10 @@ int main (int argc, char * argv[]) {
  int    codec    = ROAR_CODEC_OGG_VORBIS;
  char * server   = NULL;
  char * k;
- char * s_server = "localhost";
- char * s_mount  = "/roar.ogg";
- char * s_pw     = "hackme";
- int    s_port   = 8000;
+ char * s_server = NULL;
+ char * s_mount  = NULL;
+ char * s_pw     = NULL;
+ int    s_port   = -1;
  int    fh;
  int    i;
  char buf[BUFSIZE];
@@ -76,12 +76,32 @@ int main (int argc, char * argv[]) {
   } else if ( strcmp(k, "--help") == 0 ) {
    usage();
    return 0;
+  } else if ( s_server == NULL ) {
+   s_server = k;
+  } else if ( s_port   == -1 ) {
+   s_port   = atoi(k);
+  } else if ( s_pw     == NULL ) {
+   s_pw     = k;
+  } else if ( s_mount  == NULL ) {
+   s_mount  = k;
   } else {
    fprintf(stderr, "Error: unknown argument: %s\n", k);
    usage();
    return 1;
   }
  }
+
+ if ( s_server == NULL )
+  s_server = "localhost";
+
+ if ( s_mount == NULL )
+  s_mount  = "/roar.ogg";
+
+ if ( s_pw == NULL )
+  s_pw     = "hackme";
+
+ if ( s_port == -1 )
+  s_port   = 8000;
 
  shout_init();
 
