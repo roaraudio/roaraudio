@@ -27,7 +27,7 @@
 struct roar_driver g_driver[] = {
  { "null", "null audio driver", "/dev/null", NULL, NULL, NULL, NULL, NULL, NULL, NULL},
 #ifdef ROAR_HAVE_ESD
- { "esd", "EsounD audio driver", "localhost, remote.host.dom", driver_esd_open, driver_esd_close, driver_esd_pause, driver_esd_write, driver_esd_read, driver_esd_flush, NULL},
+ { "esd", "EsounD audio driver", "localhost, remote.host.dom", NULL, driver_esd_close, driver_esd_pause, NULL, NULL, driver_esd_flush, driver_esd_open_vio},
 #endif
  { "roar", "RoarAudio driver", "localhost, remote.host.dom", driver_roar_open, driver_roar_close, driver_roar_pause, driver_roar_write, driver_roar_read, driver_roar_flush, NULL},
  { "raw",  "RAW PCM driver", "/some/file", driver_raw_open, driver_raw_close, driver_roar_pause, driver_raw_write, driver_raw_read, driver_raw_flush, NULL},
@@ -61,12 +61,16 @@ int driver_open (DRIVER_USERDATA_T * inst, int * driver_id, char * driver, char 
     if ( (*inst = malloc(sizeof(struct roar_vio_calls))) == NULL )
      return -1;
 
+    memset(*inst, 0, sizeof(struct roar_vio_calls));
+
     if ( (i = g_driver[i].vio_init(*inst, device, info)) == -1 ) {
      free(*inst);
      return -1;
     }
     return i;
    }
+
+   ROAR_WARN("driver_open(*): driver uses old non-vio interface!");
 
    if ( g_driver[i].open )
     return g_driver[i].open(inst, device, info);
@@ -78,15 +82,19 @@ int driver_open (DRIVER_USERDATA_T * inst, int * driver_id, char * driver, char 
 }
 
 int driver_close(DRIVER_USERDATA_T   inst, int driver) {
+ int ret = 0;
  ROAR_DBG("driver_close(inst=%p, driver=%i) = ?", inst, driver);
 
  if ( driver == -1 )
   return -1;
 
  if ( g_driver[driver].close )
-  return g_driver[driver].close(inst);
+  ret = g_driver[driver].close(inst);
 
- return 0;
+ if ( g_driver[driver].vio_init != NULL )
+  free(inst);
+
+ return ret;
 }
 
 int driver_pause(DRIVER_USERDATA_T   inst, int driver, int newstate) {

@@ -31,7 +31,7 @@
  8 and 16 bits per sample. so we use inst as an array of two ints: 0: fh, 1: are we in 8 bit mode?
 */
 
-int driver_esd_open(DRIVER_USERDATA_T * inst, char * device, struct roar_audio_info * info) {
+int driver_esd_open_sysio(DRIVER_USERDATA_T * inst, char * device, struct roar_audio_info * info) {
  esd_format_t format = ESD_STREAM | ESD_PLAY;
  char name[80] = "roard";
  int * di = malloc(sizeof(int)*2);
@@ -59,8 +59,18 @@ int driver_esd_open(DRIVER_USERDATA_T * inst, char * device, struct roar_audio_i
  return 0;
 }
 
+int driver_esd_open_vio(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info) {
+ inst->read  = driver_esd_read;
+ inst->write = driver_esd_write;
+ return driver_esd_open_sysio(&(inst->inst), device, info);
+}
+
 int driver_esd_close(DRIVER_USERDATA_T   inst) {
- int fh = *(int*)inst;
+ int fh;
+
+ inst = ((struct roar_vio_calls *)inst)->inst;
+
+ fh = *(int*)inst;
 
  free((void*)inst);
 
@@ -71,8 +81,8 @@ int driver_esd_pause(DRIVER_USERDATA_T   inst, int newstate) {
  return -1;
 }
 
-int driver_esd_write(DRIVER_USERDATA_T   inst, char * buf, int len) {
- int * di = (int*)inst;
+int driver_esd_write(struct roar_vio_calls * inst, void * buf, size_t len) {
+ int * di = (int*)((struct roar_vio_calls *)inst)->inst;
 
  if ( di[1] )
   roar_conv_codec_s2u8(buf, buf, len);
@@ -80,8 +90,8 @@ int driver_esd_write(DRIVER_USERDATA_T   inst, char * buf, int len) {
  return write(di[0], buf, len);
 }
 
-int driver_esd_read(DRIVER_USERDATA_T   inst, char * buf, int len) {
- return read(*(int*)inst, buf, len);
+int driver_esd_read(struct roar_vio_calls * inst, void * buf, size_t len) {
+ return read(*(int*)((struct roar_vio_calls *)inst)->inst, buf, len);
 }
 
 int driver_esd_flush(DRIVER_USERDATA_T   inst) {
