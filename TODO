@@ -3,6 +3,7 @@ Things we need to do:
  * add support for sync streams
 
 Things we should do:
+ * use vio for output stream, rewrite drivers
  * add a lot other things
  * add support for config file
  * add a sample rc file
