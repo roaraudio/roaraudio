@@ -90,7 +90,9 @@ void usage (void) {
         "                         (only usefull for relaing, impleys --terminate)\n"
         " --client-fh           - Comunicate with a client over this handle\n"
         "                         (only usefull for relaing)\n"
-        " --close-fh            - Closes the given fh\n",
+        " --close-fh            - Closes the given fh\n"
+        " --standby             - Start in standby state\n"
+        " --auto-standby        - Automatical goes into standby if there are no streams\n",
         ROAR_DEFAULT_SOCKGRP
        );
 // printf("\n Options:\n\n");
@@ -147,6 +149,7 @@ int main (int argc, char * argv[]) {
 
  g_listen_socket = -1;
  g_standby       =  0;
+ g_autostandby   =  0;
 
  sa.bits     = ROAR_BITS_DEFAULT;
  sa.channels = ROAR_CHANNELS_DEFAULT;
@@ -324,6 +327,10 @@ int main (int argc, char * argv[]) {
   } else if ( strcmp(k, "--close-fh") == 0 ) {
    close(atoi(argv[++i]));
 
+  } else if ( strcmp(k, "--standby") == 0 ) {
+   g_standby = 1;
+  } else if ( strcmp(k, "--auto-standby") == 0 ) {
+   g_autostandby = 1;
   } else {
    usage();
    return 1;

@@ -81,7 +81,7 @@ int main_loop (int driver, DRIVER_USERDATA_T driver_inst, struct roar_audio_info
   // a break
 */
 
-  if ( g_standby ) {
+  if ( g_standby || (streams < 1 && g_autostandby) ) {
    usleep((1000000 * ROAR_OUTPUT_BUFFER_SAMPLES) / sa->rate);
    ROAR_DBG("usleep(%u) = ?\n", (1000000 * ROAR_OUTPUT_BUFFER_SAMPLES) / sa->rate);
   } else {
