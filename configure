@@ -29,6 +29,7 @@ PREFIX_INC=''
 PREFIX_MAN=''
 
 CDROM="none"
+OSS_DEV="none"
 PROC_NET_DECNET="/proc/net/decnet"
 
 AO_INST_DIR=''
@@ -102,6 +103,10 @@ do
   ;;
   '--cdrom')
    CDROM="$2"
+   shift;
+  ;;
+  '--oss-dev')
+   OSS_DEV="$2"
    shift;
   ;;
   '--no-'*)
@@ -500,6 +505,21 @@ else
  then
   echo "$CDROM"
   echo '#define ROAR_DEFAULT_CDROM "'"$CDROM"'"' >&3
+ else
+  echo 'none'
+ fi
+fi
+
+echo -n 'checking for OSS device... '
+if [ -e "$OSS_DEV" ]
+then
+ echo "$OSS_DEV"
+else
+ OSS_DEV=$(ls /dev/dsp /dev/audio 2> /dev/null | head -n 1);
+ if [ -e "$OSS_DEV" ]
+ then
+  echo "$OSS_DEV"
+  echo '#define ROAR_DEFAULT_OSS_DEV "'"$OSS_DEV"'"' >&3
  else
   echo 'none'
  fi
