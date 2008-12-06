@@ -44,9 +44,9 @@ struct roar_vio_calls {
  ssize_t (*write)(int fd, void *buf, size_t count, void * inst);
  off_t   (*lseek)(int fildes, off_t offset, int whence, void * inst);
 */
-ssize_t (*read )(struct roar_vio_calls * vio, void *buf, size_t count);
-ssize_t (*write)(struct roar_vio_calls * vio, void *buf, size_t count);
-off_t   (*lseek)(struct roar_vio_calls * vio, off_t offset, int whence);
+ ssize_t (*read )(struct roar_vio_calls * vio, void *buf, size_t count);
+ ssize_t (*write)(struct roar_vio_calls * vio, void *buf, size_t count);
+ off_t   (*lseek)(struct roar_vio_calls * vio, off_t offset, int whence);
 };
 
 int roar_vio_init_calls (struct roar_vio_calls * calls);
