@@ -48,6 +48,16 @@
 #include "driver_ao.h"
 #endif
 
+#if defined(ROAR_HAVE_OSS_BSD) || defined(ROAR_HAVE_OSS)
+#if defined(__OpenBSD__) || defined(__NetBSD__)
+#include <soundcard.h>
+#else
+#include <sys/soundcard.h>
+#endif
+#include <sys/ioctl.h>
+
+#include "driver_oss.h"
+#endif
 
 struct roar_driver {
  char * name;
