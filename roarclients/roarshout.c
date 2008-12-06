@@ -30,16 +30,25 @@
 #define BUFSIZE 2048
 
 void usage (void) {
- printf("roarmon [OPTIONS]...\n");
+ printf("roarmon [OPTIONS]... [address [port [password [mountpoint]]]\n");
 
- printf("\nOptions:\n\n");
+ printf("\nRoarAudio Options:\n\n");
 
- printf("  --server SERVER    - Set server hostname\n"
-        "  --rate   RATE      - Set sample rate\n"
-        "  --bits   BITS      - Set bits per sample\n"
-        "  --chans  CHANNELS  - Set number of channels\n"
-        "  --codec  CODEC     - Set the codec\n"
-        "  --help             - Show this help\n"
+ printf("    --server SERVER    - Set server hostname\n"
+        "    --rate   RATE      - Set sample rate\n"
+        "    --bits   BITS      - Set bits per sample\n"
+        "    --chans  CHANNELS  - Set number of channels\n"
+        "    --codec  CODEC     - Set the codec\n"
+        " -h --help             - Show this help\n"
+       );
+
+ printf("\nlibshout Options:\n\n");
+
+ printf(" -p --public           - Allow listing in stream directory\n"
+        " -d          DESC      - Set stream description\n"
+        " -g          GENRE     - Set stream genre\n"
+        " -n          NAME      - Set stream name\n"
+        " -u          URL       - Set stream URL/homepage\n"
        );
 
 }
@@ -55,6 +64,11 @@ int main (int argc, char * argv[]) {
  char * s_mount  = NULL;
  char * s_pw     = NULL;
  int    s_port   = -1;
+ char * s_desc   = NULL;
+ char * s_genre  = NULL;
+ char * s_name   = NULL;
+ char * s_url    = NULL;
+ int    s_public = 0;
  int    fh;
  int    i;
  char buf[BUFSIZE];
@@ -73,7 +87,17 @@ int main (int argc, char * argv[]) {
    channels = atoi(argv[++i]);
   } else if ( strcmp(k, "--codec") == 0 ) {
    codec = roar_str2codec(argv[++i]);
-  } else if ( strcmp(k, "--help") == 0 ) {
+  } else if ( strcmp(k, "-p") == 0 || strcmp(k, "--public") == 0 ) {
+   s_public = 1;
+  } else if ( strcmp(k, "-d") == 0 ) {
+   s_desc   = argv[++i];
+  } else if ( strcmp(k, "-g") == 0 ) {
+   s_genre  = argv[++i];
+  } else if ( strcmp(k, "-n") == 0 ) {
+   s_name   = argv[++i];
+  } else if ( strcmp(k, "-u") == 0 ) {
+   s_url    = argv[++i];
+  } else if ( strcmp(k, "-h") == 0 || strcmp(k, "--help") == 0 ) {
    usage();
    return 0;
   } else if ( s_server == NULL ) {
@@ -145,6 +169,20 @@ int main (int argc, char * argv[]) {
   return 1;
  }
 
+ shout_set_public(shout, s_public);
+
+ if (s_desc  != NULL)
+  shout_set_description(shout, s_desc);
+
+ if (s_genre != NULL)
+  shout_set_genre(shout, s_genre);
+
+ if (s_name  != NULL)
+  shout_set_name(shout, s_name);
+
+ if (s_url   != NULL)
+  shout_set_url(shout, s_url);
+
  if ( (fh = roar_simple_monitor(rate, channels, bits, codec, server, "roarshout")) == -1 ) {
   fprintf(stderr, "Error: can not start monetoring\n");
   return 1;
@@ -156,7 +194,7 @@ int main (int argc, char * argv[]) {
  }
 
  while((i = read(fh, buf, BUFSIZE)))
-  if (shout_send(shout, buf, i) != SHOUTERR_SUCCESS)
+  if (shout_send(shout, (unsigned char*)buf, i) != SHOUTERR_SUCCESS)
    break;
 
  roar_simple_close(fh);
