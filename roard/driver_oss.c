@@ -25,10 +25,12 @@
 #include "roard.h"
 #if defined(ROAR_HAVE_OSS_BSD) || defined(ROAR_HAVE_OSS)
 
-int driver_oss_open(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info);
-int driver_esd_close(DRIVER_USERDATA_T   inst);
-int driver_esd_write(struct roar_vio_calls * inst, void * buf, size_t len);
-int driver_esd_read(struct roar_vio_calls  * inst, void * buf, size_t len);
+int driver_oss_open(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info) {
+}
+
+int driver_oss_close(DRIVER_USERDATA_T   inst) {
+}
+
 
 #endif
 //ll
