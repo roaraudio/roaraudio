@@ -31,6 +31,9 @@ struct roar_driver g_driver[] = {
 #endif
  { "roar", "RoarAudio driver", "localhost, remote.host.dom", driver_roar_open, driver_roar_close, driver_roar_pause, driver_roar_write, driver_roar_read, driver_roar_flush, NULL},
  { "raw",  "RAW PCM driver", "/some/file", driver_raw_open, driver_raw_close, driver_roar_pause, driver_raw_write, driver_raw_read, driver_raw_flush, NULL},
+#if defined(ROAR_HAVE_OSS_BSD) || defined(ROAR_HAVE_OSS)
+ { "oss", "Open Sound System", ROAR_DEFAULT_OSS_DEV, NULL, driver_oss_close, NULL, NULL, NULL, NULL, driver_oss_open},
+#endif
 #ifdef ROAR_HAVE_LIBAO
  { "ao", "libao audio driver", "DRIVER", driver_ao_open, driver_ao_close, driver_ao_pause, driver_ao_write, driver_ao_read, driver_ao_flush, NULL},
 #endif
