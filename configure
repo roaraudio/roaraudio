@@ -342,6 +342,8 @@ test_lib_defmake ROAR_HAVE_LIBY2         libroaryiff  libyiff       Y2         -
 test_lib_defmake ROAR_HAVE_LIBARTSC      libroararts  libartsc      artsc      -- kde/artsc/artsc.h
 test_lib_defmake ROAR_HAVE_LIBDNET       %            libdnet       dnet       -- sys/socket.h netdnet/dn.h netdnet/dnetdb.h
 test_lib_defmake ROAR_HAVE_IPX           %            IPX           c          -- netipx/ipx.h
+test_lib_defmake ROAR_HAVE_OSS           %            OSS           c          -- sys/ioctl.h sys/soundcard.h
+test_lib_defmake ROAR_HAVE_OSS_BSD       %            BSDOSS        c          -- sys/ioctl.h soundcard.h
 
 # add a better test here
 test_lib 'linux sendfile()'       -- sys/sendfile.h && echo '#define ROAR_HAVE_LINUX_SENDFILE' >&3
