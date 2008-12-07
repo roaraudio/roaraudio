@@ -32,6 +32,8 @@ CDROM="none"
 OSS_DEV="none"
 PROC_NET_DECNET="/proc/net/decnet"
 
+DEFAULT_GRP=''
+
 AO_INST_DIR=''
 
 echo -n "checking for C compiler... "
@@ -107,6 +109,10 @@ do
   ;;
   '--oss-dev')
    OSS_DEV="$2"
+   shift;
+  ;;
+  '--audio-group')
+   DEFAULT_GRP="$2"
    shift;
   ;;
   '--no-'*)
@@ -270,14 +276,18 @@ then
  LDPATH="$LDPATH -L/usr/local/lib/"
 elif [ "$SYSNAME" = 'FreeBSD' ]
 then
+ echo "Adding $SYSNAME search path arguments..."
  LDPATH="$LDPATH -L/usr/local/lib/"
  INCPATH="$INCPATH -I/usr/local/include/"
+ [ "$DEFAULT_GRP" = '' ] && DEFAULT_GRP='wheel'
 fi
 
 [ "$PREFIX_BIN" = '' ] && PREFIX_BIN="$PREFIX/bin/"
 [ "$PREFIX_LIB" = '' ] && PREFIX_LIB="$PREFIX/lib/"
 [ "$PREFIX_INC" = '' ] && PREFIX_INC="$PREFIX/include/"
 [ "$PREFIX_MAN" = '' ] && PREFIX_MAN="$PREFIX/share/man/"
+
+[ "$DEFAULT_GRP" = '' ] && DEFAULT_GRP='audio'
 
 # now write the cc name to Makefile.conf
 {
@@ -536,6 +546,10 @@ fi
 
 echo 'checking for decnet status file... '"$PROC_NET_DECNET"
 echo '#define ROAR_PROC_NET_DECNET "'"$PROC_NET_DECNET"'"' >&3
+
+
+echo 'checking for default audio group... '"$DEFAULT_GRP"
+echo '#define ROAR_DEFAULT_SOCKGRP "'"$DEFAULT_GRP"'"' >&3
 
 cat >&3 << EOF
 

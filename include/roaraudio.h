@@ -102,7 +102,8 @@ __BEGIN_DECLS
 #define ROAR_DEFAULT_NUM         0
 #define ROAR_DEFAULT_LISTEN_OBJECT "::" ROAR_DEFAULT_OBJECT
 
-#define ROAR_DEFAULT_SOCKGRP     "audio"
+// now handled by condiguere
+//#define ROAR_DEFAULT_SOCKGRP     "audio"
 
 #define ROAR_LIBS                "-lroar"
 #define ROAR_CFLAGS              ""
