@@ -125,11 +125,13 @@ int add_output (char * drv, char * dev, char * opts) {
  int stream;
  struct roar_stream * s;
  struct roar_stream_server * ss;
+ char * k, * v;
+ int codec;
 
- ROAR_WARN("add_output(drv='%s', dev='%s', opts='%s') = ?", drv, dev, opts);
+ ROAR_DBG("add_output(drv='%s', dev='%s', opts='%s') = ?", drv, dev, opts);
 
  if ( (stream = streams_new()) == -1 ) {
-  ROAR_WARN("add_output(drv='%s', dev='%s', opts='%s') = -1", drv, dev, opts);
+  ROAR_DBG("add_output(drv='%s', dev='%s', opts='%s') = -1", drv, dev, opts);
   return -1;
  }
 
@@ -142,12 +144,48 @@ int add_output (char * drv, char * dev, char * opts) {
  s->pos_rel_id = -1;
 // s->info.codec = codec;
 
+ codec = s->info.codec;
+
+ k = strtok(opts, ",");
+ while (k != NULL) {
+//  ROAR_WARN("add_output(*): opts: %s", k);
+
+  if ( (v = strstr(k, "=")) != NULL ) {
+   *v++ = 0;
+  }
+
+  ROAR_DBG("add_output(*): opts: k='%s', v='%s'", k, v);
+  if ( strcmp(k, "rate") == 0 ) {
+   s->info.rate = atoi(v);
+  } else if ( strcmp(k, "channels") == 0 ) {
+   s->info.channels = atoi(v);
+  } else if ( strcmp(k, "bits") == 0 ) {
+   s->info.bits = atoi(v);
+  } else if ( strcmp(k, "codec") == 0 ) {
+   if ( (codec = roar_str2codec(v)) == -1 ) {
+    ROAR_ERR("add_output(*): unknown codec '%s'", v);
+    streams_delete(stream);
+    return -1;
+   }
+  } else {
+   ROAR_ERR("add_output(*): unknown option '%s'", k);
+   streams_delete(stream);
+   return -1;
+  }
+
+  k = strtok(NULL, ",");
+ }
+
+ s->info.codec = codec;
+ ROAR_STREAM_SERVER(s)->codec_orgi = codec;
 
  if ( driver_openvio(&(ss->vio), &(ss->driver_id), drv, dev, &(s->info), -1) ) {
   streams_delete(stream);
-  ROAR_WARN("add_output(drv='%s', dev='%s', opts='%s') = -1", drv, dev, opts);
+  ROAR_DBG("add_output(drv='%s', dev='%s', opts='%s') = -1", drv, dev, opts);
   return -1;
  }
+
+ streams_set_fh(stream, -1); // update some internal structures
 
  client_stream_add(g_source_client, stream);
 
