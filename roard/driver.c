@@ -30,7 +30,7 @@ struct roar_driver g_driver[] = {
  { "esd", "EsounD audio driver", "localhost, remote.host.dom", NULL, driver_esd_close, driver_esd_pause, NULL, NULL, driver_esd_flush, driver_esd_open_vio},
 #endif
  { "roar", "RoarAudio driver", "localhost, remote.host.dom", driver_roar_open, driver_roar_close, driver_roar_pause, driver_roar_write, driver_roar_read, driver_roar_flush, NULL},
- { "raw",  "RAW PCM driver", "/some/file", driver_raw_open, driver_raw_close, driver_roar_pause, driver_raw_write, driver_raw_read, driver_raw_flush, NULL},
+ { "raw",  "RAW PCM driver", "/some/file", NULL, driver_raw_close, driver_roar_pause, NULL, NULL, driver_raw_flush, driver_raw_open_vio},
 #if defined(ROAR_HAVE_OSS_BSD) || defined(ROAR_HAVE_OSS)
 #ifndef ROAR_DEFAULT_OSS_DEV
 #define ROAR_DEFAULT_OSS_DEV "no default device"
@@ -47,7 +47,10 @@ void print_driverlist (void) {
  int i;
 
  for (i = 0; g_driver[i].name != NULL; i++) {
-  printf("  %-8s - %s (devices: %s)\n", g_driver[i].name, g_driver[i].desc, g_driver[i].devices);
+  printf("  %-8s %c%c - %s (devices: %s)\n", g_driver[i].name,
+                g_driver[i].open     != NULL || (g_driver[i].open == NULL && g_driver[i].vio_init == NULL) ? 'S' : ' ',
+                g_driver[i].vio_init != NULL || (g_driver[i].open == NULL && g_driver[i].vio_init == NULL) ? 'V' : ' ',
+                g_driver[i].desc, g_driver[i].devices);
  }
 }
 
