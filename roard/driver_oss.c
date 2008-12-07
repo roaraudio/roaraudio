@@ -53,6 +53,21 @@ int driver_oss_open(struct roar_vio_calls * inst, char * device, struct roar_aud
 
  roar_vio_set_fh(inst, fh);
 
+
+
+#ifdef SNDCTL_DSP_CHANNELS
+ tmp = info->channels;
+
+ if ( ioctl(fh, SNDCTL_DSP_CHANNELS, &tmp) == -1 ) {
+  ROAR_ERR("driver_oss_open(*): can not set number of channels");
+  er();
+ }
+
+ if ( tmp != info->channels ) {
+   ROAR_ERR("driver_oss_open(*): can not set requested numer of channels, OSS suggested %i channels, to use this restart with -oO channels=%i or set codec manuelly via -oO channels=num", tmp, tmp);
+  er();
+ }
+#else
  switch (info->channels) {
   case  1: tmp = 0; break;
   case  2: tmp = 1; break;
@@ -60,8 +75,10 @@ int driver_oss_open(struct roar_vio_calls * inst, char * device, struct roar_aud
  }
 
  if ( ioctl(fh, SNDCTL_DSP_STEREO, &tmp) == -1 ) {
+  ROAR_ERR("driver_oss_open(*): can not set number of channels");
   er();
  }
+#endif
 
  switch (info->codec) {
   case ROAR_CODEC_PCM_S_LE:
