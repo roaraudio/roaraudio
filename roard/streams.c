@@ -694,7 +694,7 @@ int streams_send_mon   (int id) {
  if ( s->dir == ROAR_DIR_OUTPUT && g_standby )
   return 0;
 
- ROAR_WARN("streams_send_mon(id=%i): fh = %i", id, fh);
+ ROAR_DBG("streams_send_mon(id=%i): fh = %i", id, fh);
 
  if ( s->info.channels != g_sa->channels || s->info.bits  != g_sa->bits ||
       s->info.rate     != g_sa->rate     || s->info.codec != g_sa->codec  ) {
