@@ -122,6 +122,12 @@ int streams_delete (int id) {
   s->codecfilter = -1;
  }
 
+ if ( s->driver_id != -1 ) {
+  driver_close((DRIVER_USERDATA_T)&(s->vio), s->driver_id);
+  roar_vio_init_calls(&(s->vio));
+  s->driver_id = -1;
+ }
+
  if ( s->client != -1 ) {
   ROAR_DBG("streams_delete(id=%i): Stream is owned by client %i", id, g_streams[id]->client);
   client_stream_delete(s->client, id);
@@ -669,7 +675,7 @@ int streams_check  (int id) {
 
 
 int streams_send_mon   (int id) {
- int fh;
+// int fh;
  struct roar_stream        *   s;
  struct roar_stream_server *  ss;
  void * obuf;
