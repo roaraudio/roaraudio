@@ -29,7 +29,7 @@ struct roar_driver g_driver[] = {
 #ifdef ROAR_HAVE_ESD
  { "esd", "EsounD audio driver", "localhost, remote.host.dom", NULL, driver_esd_close, driver_esd_pause, NULL, NULL, driver_esd_flush, driver_esd_open_vio},
 #endif
- { "roar", "RoarAudio driver", "localhost, remote.host.dom", driver_roar_open, driver_roar_close, driver_roar_pause, driver_roar_write, driver_roar_read, driver_roar_flush, NULL},
+ { "roar", "RoarAudio driver", "localhost, remote.host.dom", NULL, driver_roar_close, driver_roar_pause, NULL, NULL, driver_roar_flush, driver_roar_open_vio},
  { "raw",  "RAW PCM driver", "/some/file", NULL, driver_raw_close, driver_roar_pause, NULL, NULL, driver_raw_flush, driver_raw_open_vio},
 #if defined(ROAR_HAVE_OSS_BSD) || defined(ROAR_HAVE_OSS)
 #ifndef ROAR_DEFAULT_OSS_DEV
@@ -39,6 +39,9 @@ struct roar_driver g_driver[] = {
 #endif
 #ifdef ROAR_HAVE_LIBAO
  { "ao", "libao audio driver", "DRIVER", driver_ao_open, driver_ao_close, driver_ao_pause, driver_ao_write, driver_ao_read, driver_ao_flush, NULL},
+#endif
+#ifdef ROAR_HAVE_LIBSHOUT
+ {"shout", "libshout streaming", "http://user:pw@host/mount.ogg", NULL, driver_shout_close, NULL, NULL, NULL, NULL, driver_shout_open_vio},
 #endif
  {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL} // end of list
                                 };
