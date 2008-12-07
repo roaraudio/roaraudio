@@ -129,6 +129,7 @@ int add_output (char * drv, char * dev, char * opts) {
  ROAR_WARN("add_output(drv='%s', dev='%s', opts='%s') = ?", drv, dev, opts);
 
  if ( (stream = streams_new()) == -1 ) {
+  ROAR_WARN("add_output(drv='%s', dev='%s', opts='%s') = -1", drv, dev, opts);
   return -1;
  }
 
@@ -144,6 +145,7 @@ int add_output (char * drv, char * dev, char * opts) {
 
  if ( driver_openvio(&(ss->vio), &(ss->driver_id), drv, dev, &(s->info), -1) ) {
   streams_delete(stream);
+  ROAR_WARN("add_output(drv='%s', dev='%s', opts='%s') = -1", drv, dev, opts);
   return -1;
  }
 

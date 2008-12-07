@@ -87,6 +87,8 @@ int driver_oss_open(struct roar_vio_calls * inst, char * device, struct roar_aud
   er();
  }
 
+ ROAR_WARN("driver_oss_open(*): OSS devices opened :)");
+
  return 0;
 }
 

@@ -683,8 +683,10 @@ int streams_send_mon   (int id) {
 
  s = ROAR_STREAM((ss = g_streams[id]));
 
+/*
  if ( (fh = s->fh) == -1 )
   return 0;
+*/
 
  if ( s->dir != ROAR_DIR_MONITOR && s->dir != ROAR_DIR_OUTPUT && s->dir != ROAR_DIR_BIDIR )
   return 0;
@@ -692,7 +694,7 @@ int streams_send_mon   (int id) {
  if ( s->dir == ROAR_DIR_OUTPUT && g_standby )
   return 0;
 
- ROAR_DBG("streams_send_mon(id=%i): fh = %i", id, fh);
+ ROAR_WARN("streams_send_mon(id=%i): fh = %i", id, fh);
 
  if ( s->info.channels != g_sa->channels || s->info.bits  != g_sa->bits ||
       s->info.rate     != g_sa->rate     || s->info.codec != g_sa->codec  ) {
@@ -849,7 +851,10 @@ ssize_t stream_vio_s_write(struct roar_stream_server * stream, void *buf, size_t
  if ( !stream )
   return -1;
 
- roar_vio_set_fh(&(stream->vio), ROAR_STREAM(stream)->fh);
+ if ( roar_vio_get_fh(&(stream->vio)) == -1 && ROAR_STREAM(stream)->fh != -1 )
+  roar_vio_set_fh(&(stream->vio), ROAR_STREAM(stream)->fh);
+
+// ROAR_WARN("stream_vio_s_write(*): writing...");
 
  return roar_vio_write(&(stream->vio), buf, count);
 }
