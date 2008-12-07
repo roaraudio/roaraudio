@@ -1,6 +1,11 @@
 v. 0.1beta4 - ???
 	* added roar_buffer_shift_out()
 	* changed roarshout to be 100% compatible with oggfwd options
+	* added full support for mu-Law
+	* added VIO support for driver API
+	* changed esd output driver to use new vio driver API
+	* wrote OSS driver
+	* added support for --standby and --auto-standby
 
 v. 0.1beta3 - Thu Nov 27 2008
 	* fixed some includes, patch by janus
