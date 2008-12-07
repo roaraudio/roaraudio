@@ -117,6 +117,9 @@ int roardsp_amp_ctl   (struct roardsp_filter * filter, int cmd, void * data);
 int roardsp_conv_alaw2pcm16 (int16_t * out, char * in, size_t len);
 int roardsp_conv_pcm162alaw (char * out, int16_t * in, size_t len);
 
+int roardsp_conv_mulaw2pcm16 (int16_t * out, char * in, size_t len);
+int roardsp_conv_pcm162mulaw (char * out, int16_t * in, size_t len);
+
 __END_DECLS
 
 #endif

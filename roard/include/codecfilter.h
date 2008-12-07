@@ -96,6 +96,16 @@ int cf_alaw_close(CODECFILTER_USERDATA_T   inst);
 int cf_alaw_read(CODECFILTER_USERDATA_T   inst, char * buf, int len);
 int cf_alaw_write(CODECFILTER_USERDATA_T   inst, char * buf, int len);
 
+int cf_mulaw_open(CODECFILTER_USERDATA_T * inst, int codec,
+                                            struct roar_stream_server * info,
+                                            struct roar_codecfilter   * filter);
+
+int cf_mulaw_close(CODECFILTER_USERDATA_T   inst);
+
+int cf_mulaw_read(CODECFILTER_USERDATA_T   inst, char * buf, int len);
+int cf_mulaw_write(CODECFILTER_USERDATA_T   inst, char * buf, int len);
+
+
 #endif
 
 //ll

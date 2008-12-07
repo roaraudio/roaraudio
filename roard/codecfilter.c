@@ -38,6 +38,9 @@ struct roar_codecfilter g_codecfilter[] = {
  {ROAR_CODEC_ALAW, "alaw", "A-Law", NULL, ROAR_CODECFILTER_READ|ROAR_CODECFILTER_WRITE,
   cf_alaw_open, cf_alaw_close, NULL, cf_alaw_write, cf_alaw_read, NULL},
 
+ {ROAR_CODEC_MULAW, "mulaw", "mu-Law", NULL, ROAR_CODECFILTER_READ|ROAR_CODECFILTER_WRITE,
+  cf_mulaw_open, cf_mulaw_close, NULL, cf_mulaw_write, cf_mulaw_read, NULL},
+
 #ifdef ROAR_HAVE_BIN_OGG123
  {ROAR_CODEC_OGG_GENERAL, "cmd",  "ogg123",
   ROAR_HAVE_BIN_OGG123 " -q -d raw -f - -", ROAR_CODECFILTER_READ,
