@@ -502,6 +502,7 @@ echo -n 'checking for cdrom device... '
 if [ -e "$CDROM" ]
 then
  echo "$CDROM"
+ echo '#define ROAR_DEFAULT_CDROM "'"$CDROM"'"' >&3
 else
  CDROM=$(ls /dev/cdrom /dev/rcd0c 2> /dev/null | head -n 1);
  if [ -e "$CDROM" ]
@@ -517,6 +518,7 @@ echo -n 'checking for OSS device... '
 if [ -e "$OSS_DEV" ]
 then
  echo "$OSS_DEV"
+ echo '#define ROAR_DEFAULT_OSS_DEV "'"$OSS_DEV"'"' >&3
 else
  OSS_DEV=$(ls /dev/dsp /dev/audio 2> /dev/null | head -n 1);
  if [ -e "$OSS_DEV" ]

@@ -31,8 +31,15 @@ int driver_oss_open(struct roar_vio_calls * inst, char * device, struct roar_aud
  int tmp;
  int fh;
 
+#ifdef ROAR_DEFAULT_OSS_DEV
  if ( device == NULL )
   device = ROAR_DEFAULT_OSS_DEV;
+#endif
+
+ if ( device == NULL ) {
+  ROAR_ERR("driver_oss_open(*): no default device found, you need to specify one manuelly");
+  return -1;
+ }
 
  roar_vio_init_calls(inst);
 
