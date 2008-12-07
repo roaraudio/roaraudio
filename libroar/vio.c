@@ -127,6 +127,14 @@ off_t   roar_vio_basic_lseek(struct roar_vio_calls * vio, off_t offset, int when
  return lseek(roar_vio_get_fh(vio), offset, whence);
 }
 
+// null
+ssize_t roar_vio_null_rw    (struct roar_vio_calls * vio, void *buf, size_t count) {
+ if ( vio == NULL || buf == NULL )
+  return -1;
+
+ return 0;
+}
+
 // pass
 ssize_t roar_vio_pass_read (struct roar_vio_calls * vio, void *buf, size_t count) {
  return roar_vio_read((struct roar_vio_calls *) vio->inst, buf, count);

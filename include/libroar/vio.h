@@ -68,6 +68,10 @@ ssize_t roar_vio_basic_read (struct roar_vio_calls * vio, void *buf, size_t coun
 ssize_t roar_vio_basic_write(struct roar_vio_calls * vio, void *buf, size_t count);
 off_t   roar_vio_basic_lseek(struct roar_vio_calls * vio, off_t offset, int whence);
 
+// null
+// this is read an write in one!
+ssize_t roar_vio_null_rw    (struct roar_vio_calls * vio, void *buf, size_t count);
+
 // pass
 
 ssize_t roar_vio_pass_read (struct roar_vio_calls * vio, void *buf, size_t count);
