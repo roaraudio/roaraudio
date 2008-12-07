@@ -130,6 +130,18 @@ int driver_close(DRIVER_USERDATA_T   inst, int driver) {
  return ret;
 }
 
+int driver_closevio(struct roar_vio_calls * calls, int driver) {
+ ROAR_DBG("driver_closevio(calls=%p, driver=%i) = ?", calls, driver);
+
+ if ( driver == -1 )
+  return -1;
+
+ if ( g_driver[driver].close )
+  return g_driver[driver].close((DRIVER_USERDATA_T)calls);
+
+ return 0;
+}
+
 int driver_pause(DRIVER_USERDATA_T   inst, int driver, int newstate) {
  if ( driver == -1 )
   return -1;

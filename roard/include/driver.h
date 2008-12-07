@@ -93,6 +93,7 @@ int driver_openvio(struct roar_vio_calls * calls,
                  char * device, struct roar_audio_info * info, int fh);
 
 int driver_close(DRIVER_USERDATA_T   inst, int driver);
+int driver_closevio(struct roar_vio_calls * calls, int driver);
 int driver_pause(DRIVER_USERDATA_T   inst, int driver, int newstate);
 int driver_write(DRIVER_USERDATA_T   inst, int driver, char * buf, int len);
 int driver_read (DRIVER_USERDATA_T   inst, int driver, char * buf, int len);

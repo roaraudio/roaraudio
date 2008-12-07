@@ -123,7 +123,7 @@ int streams_delete (int id) {
  }
 
  if ( s->driver_id != -1 ) {
-  driver_close((DRIVER_USERDATA_T)&(s->vio), s->driver_id);
+  driver_closevio(&(s->vio), s->driver_id);
   roar_vio_init_calls(&(s->vio));
   s->driver_id = -1;
  }
