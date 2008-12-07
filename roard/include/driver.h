@@ -59,6 +59,11 @@
 #include "driver_ao.h"
 #endif
 
+#ifdef ROAR_HAVE_LIBSHOUT
+#include <shout/shout.h>
+#include "driver_shout.h"
+#endif
+
 #if defined(ROAR_HAVE_OSS_BSD) || defined(ROAR_HAVE_OSS)
 #if defined(__OpenBSD__) || defined(__NetBSD__)
 #include <soundcard.h>
