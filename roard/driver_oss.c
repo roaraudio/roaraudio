@@ -27,9 +27,8 @@
 
 #define er() close(fh); return -1
 
-int driver_oss_open(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info) {
+int driver_oss_open(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh) {
  int tmp;
- int fh;
 
 #ifdef ROAR_DEFAULT_OSS_DEV
  if ( device == NULL )
@@ -43,9 +42,11 @@ int driver_oss_open(struct roar_vio_calls * inst, char * device, struct roar_aud
 
  roar_vio_init_calls(inst);
 
- if ( (fh = open(device, O_WRONLY, 0644)) == -1 ) {
-  ROAR_ERR("driver_oss_open(*): Can not open OSS device: %s: %s", device, strerror(errno));
-  return -1;
+ if (  fh == -1 ) {
+  if ( (fh = open(device, O_WRONLY, 0644)) == -1 ) {
+   ROAR_ERR("driver_oss_open(*): Can not open OSS device: %s: %s", device, strerror(errno));
+   return -1;
+  }
  }
 
  roar_vio_set_fh(inst, fh);

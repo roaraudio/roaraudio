@@ -59,7 +59,11 @@ int driver_esd_open_sysio(DRIVER_USERDATA_T * inst, char * device, struct roar_a
  return 0;
 }
 
-int driver_esd_open_vio(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info) {
+int driver_esd_open_vio(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh) {
+
+ if ( fh != -1 )
+  return -1;
+
  inst->read  = driver_esd_read;
  inst->write = driver_esd_write;
  return driver_esd_open_sysio(&(inst->inst), device, info);

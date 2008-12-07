@@ -25,7 +25,7 @@
 #ifndef _DRIVER_OSS_H_
 #define _DRIVER_OSS_H_
 
-int driver_oss_open(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info);
+int driver_oss_open(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh);
 int driver_oss_close(DRIVER_USERDATA_T   inst);
 
 #endif

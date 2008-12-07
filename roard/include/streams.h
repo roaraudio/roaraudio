@@ -54,6 +54,7 @@ struct roar_stream_server {
  int post_underruns;
  struct roar_vio_calls vio;
  int primary;
+ int driver_id;
 } * g_streams[ROAR_STREAMS_MAX];
 
 int streams_init   (void);

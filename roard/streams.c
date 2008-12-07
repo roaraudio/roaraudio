@@ -94,6 +94,7 @@ int streams_new    (void) {
    }
 
    roar_vio_init_calls(&(s->vio));
+   s->driver_id = -1;
 
    g_streams[i] = s;
    ROAR_DBG("streams_new(void): n->id=%i", n->id);
@@ -686,6 +687,9 @@ int streams_send_mon   (int id) {
   return 0;
 
  if ( s->dir != ROAR_DIR_MONITOR && s->dir != ROAR_DIR_OUTPUT && s->dir != ROAR_DIR_BIDIR )
+  return 0;
+
+ if ( s->dir == ROAR_DIR_OUTPUT && g_standby )
   return 0;
 
  ROAR_DBG("streams_send_mon(id=%i): fh = %i", id, fh);

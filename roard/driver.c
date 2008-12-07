@@ -69,7 +69,7 @@ int driver_open (DRIVER_USERDATA_T * inst, int * driver_id, char * driver, char 
 
     memset(*inst, 0, sizeof(struct roar_vio_calls));
 
-    if ( (i = g_driver[i].vio_init(*inst, device, info)) == -1 ) {
+    if ( (i = g_driver[i].vio_init(*inst, device, info, -1)) == -1 ) {
      free(*inst);
      return -1;
     }
