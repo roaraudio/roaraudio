@@ -29,6 +29,8 @@
 
 int driver_oss_open(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh) {
  int tmp;
+ int ctmp;
+ char * es;
 
 #ifdef ROAR_DEFAULT_OSS_DEV
  if ( device == NULL )
@@ -61,29 +63,103 @@ int driver_oss_open(struct roar_vio_calls * inst, char * device, struct roar_aud
   er();
  }
 
- switch (info->bits) {
-  case  8: tmp = AFMT_S8; break;
-  case 16:
-    switch (info->codec) {
-     case ROAR_CODEC_PCM_S_LE: tmp = AFMT_S16_LE; break;
-     case ROAR_CODEC_PCM_S_BE: tmp = AFMT_S16_BE; break;
-     default                 : er();
+ switch (info->codec) {
+  case ROAR_CODEC_PCM_S_LE:
+    switch (info->bits) {
+     case  8: tmp = AFMT_S8;     break;
+     case 16: tmp = AFMT_S16_LE; break;
+//     case 24: tmp = AFMT_S24_PACKED; break;
+#ifdef AFMT_S32_LE
+     case 32: tmp = AFMT_S32_LE; break;
+#endif
+     default: er();
     }
    break;
-  default: er();
+  case ROAR_CODEC_PCM_S_BE:
+    switch (info->bits) {
+     case  8: tmp = AFMT_S8;     break;
+     case 16: tmp = AFMT_S16_BE; break;
+//     case 24: tmp = AFMT_S24_PACKED; break;
+#ifdef AFMT_S32_BE
+     case 32: tmp = AFMT_S32_BE; break;
+#endif
+     default: er();
+    }
+   break;
+  case ROAR_CODEC_PCM_U_LE:
+    switch (info->bits) {
+     case  8: tmp = AFMT_U8;     break;
+     case 16: tmp = AFMT_U16_LE; break;
+     default: er();
+    }
+   break;
+  case ROAR_CODEC_PCM_U_BE:
+    switch (info->bits) {
+     case  8: tmp = AFMT_U8;     break;
+     case 16: tmp = AFMT_U16_BE; break;
+     default: er();
+    }
+  case ROAR_CODEC_ALAW:
+    tmp = AFMT_A_LAW;
+   break;
+  case ROAR_CODEC_MULAW:
+    tmp = AFMT_MU_LAW;
+   break;
+#ifdef AFMT_VORBIS
+  case ROAR_CODEC_OGG_VORBIS:
+    tmp = AFMT_VORBIS;
+   break;
+#endif
+  default:
+    er();
+   break;
  }
 
+ ctmp = tmp;
  if ( ioctl(fh, SNDCTL_DSP_SAMPLESIZE, &tmp) == -1 ) {
+  ROAR_ERR("driver_oss_open(*): can not set sample format");
+  er();
+ }
+
+ if ( tmp != ctmp ) {
+  es = NULL;
+  switch (tmp) {
+   case AFMT_S8    : es = "bits=8,codec=pcm";       break;
+   case AFMT_U8    : es = "bits=8,codec=pcm_u_le";  break;
+   case AFMT_S16_LE: es = "bits=16,codec=pcm_s_le"; break;
+   case AFMT_S16_BE: es = "bits=16,codec=pcm_s_be"; break;
+   case AFMT_U16_LE: es = "bits=16,codec=pcm_u_le"; break;
+   case AFMT_U16_BE: es = "bits=16,codec=pcm_u_be"; break;
+#ifdef AFMT_S32_LE
+   case AFMT_S32_LE: es = "bits=32,codec=pcm_s_le"; break;
+#endif
+#ifdef AFMT_S32_BE
+   case AFMT_S32_BE: es = "bits=32,codec=pcm_s_be"; break;
+#endif
+   case AFMT_A_LAW : es = "codec=alaw";             break;
+   case AFMT_MU_LAW: es = "codec=mulaw";            break;
+#ifdef AFMT_VORBIS
+   case AFMT_VORBIS: es = "codec=ogg_vorbis";       break;
+#endif
+  }
+
+  if ( es != NULL ) {
+   ROAR_ERR("driver_oss_open(*): can not set requested codec, OSS retruned another codec then requested, to use this restart with -oO %s or set codec manuelly via -oO codec=somecodec", es);
+  } else {
+   ROAR_ERR("driver_oss_open(*): can not set requested codec, set codec manuelly via -oO codec=somecodec");
+  }
   er();
  }
 
  tmp = info->rate;
 
  if ( ioctl(fh, SNDCTL_DSP_SPEED, &tmp) == -1 ) {
+  ROAR_ERR("driver_oss_open(*): can not set sample rate");
   er();
  }
 
  if ( tmp < info->rate * 0.98 || tmp > info->rate * 1.02 ) {
+  ROAR_ERR("driver_oss_open(*): sample rate out of acceptable accuracy");
   er();
  }
 
