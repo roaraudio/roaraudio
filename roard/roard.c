@@ -54,6 +54,12 @@ void usage (void) {
  printf(" -D  --device DEV      - Set the device\n");
  printf(" -dO OPTS              - Set output options\n");
 
+ printf("\nOutput Options:\n\n");
+ printf(" -o  --odriver DRV     - Set the driver, use '-d list' to get a list\n");
+ printf(" -O  --odevice DEV     - Set the device\n");
+ printf(" -oO OPTS              - Set output options\n");
+ printf(" -oN                   - Adds another output\n");
+
  printf("\nSource Options:\n\n");
  printf(" -s  --source DRV      - Use DRV as input driver\n"
         " -S           DEV      - Use DEV as input device\n"
@@ -115,6 +121,11 @@ int restart_server (char * server) {
 #define R_SETUID 1
 #define R_SETGID 2
 
+int add_output (char * drv, char * dev, char * opts) {
+ ROAR_WARN("add_output(drv='%s', dev='%s', opts='%s') = ?", drv, dev, opts);
+ return -1;
+}
+
 int main (int argc, char * argv[]) {
  int i;
  char * k;
@@ -133,6 +144,9 @@ int main (int argc, char * argv[]) {
  char * s_con     = NULL;
  char * s_opt     = NULL;
  int    s_prim    = 0;
+ char * o_drv     = NULL;
+ char * o_dev     = NULL;
+ char * o_opts    = NULL;
  char * sock_grp  = ROAR_DEFAULT_SOCKGRP;
  char * sock_user = NULL;
  int    sock_type = ROAR_SOCKET_TYPE_UNKNOWN;
@@ -240,6 +254,15 @@ int main (int argc, char * argv[]) {
   } else if ( strcmp(k, "-dO") == 0 ) {
    opts = argv[++i];
 
+  } else if ( strcmp(k, "-o") == 0 || strcmp(k, "--odriver") == 0 ) {
+   o_drv  = argv[++i];
+  } else if ( strcmp(k, "-O") == 0 || strcmp(k, "--odevice") == 0 ) {
+   o_dev  = argv[++i];
+  } else if ( strcmp(k, "-oO") == 0 ) {
+   o_opts = argv[++i];
+  } else if ( strcmp(k, "-oN") == 0 ) {
+   add_output(o_drv, o_dev, o_opts);
+
   } else if ( strcmp(k, "-s") == 0 || strcmp(k, "--source") == 0 ) {
    s_drv = argv[++i];
   } else if ( strcmp(k, "-S") == 0 ) {
@@ -337,6 +360,9 @@ int main (int argc, char * argv[]) {
   }
 
  }
+
+ if ( o_drv != NULL )
+  add_output(o_drv, o_dev, o_opts);
 
  ROAR_DBG("Server config: rate=%i, bits=%i, chans=%i", sa.rate, sa.bits, sa.channels);
 
