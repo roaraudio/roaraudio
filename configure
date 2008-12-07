@@ -268,6 +268,10 @@ elif [ "$SYSNAME" = 'NetBSD' ]
 then
  echo "Adding $SYSNAME libpath arguments..."
  LDPATH="$LDPATH -L/usr/local/lib/"
+elif [ "$SYSNAME" = 'FreeBSD' ]
+then
+ LDPATH="$LDPATH -L/usr/local/lib/"
+ INCPATH="$INCPATH -I/usr/local/include/"
 fi
 
 [ "$PREFIX_BIN" = '' ] && PREFIX_BIN="$PREFIX/bin/"
