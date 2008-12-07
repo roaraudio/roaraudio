@@ -76,10 +76,11 @@ int driver_open (DRIVER_USERDATA_T * inst, int * driver_id, char * driver, char 
     return i;
    }
 
-   ROAR_WARN("driver_open(*): driver(%s) uses old non-vio interface!", driver);
-
-   if ( g_driver[i].open )
+   if ( g_driver[i].open ) {
+    ROAR_WARN("driver_open(*): driver(%s) uses old non-vio interface!", driver);
     return g_driver[i].open(inst, device, info);
+   }
+
    return 0;
   }
  }
@@ -102,6 +103,13 @@ int driver_openvio(struct roar_vio_calls * calls,
    *driver_id = i;
 
    if ( g_driver[i].vio_init == NULL ) {
+    if ( g_driver[i].open == NULL ) { // this is the null driver
+     memset(calls, 0, sizeof(struct roar_vio_calls));
+     calls->read  = roar_vio_null_rw;
+     calls->write = roar_vio_null_rw;
+     return 0;
+    }
+
     ROAR_WARN("driver_open(*): driver(%s) uses old non-vio interface!", driver);
     ROAR_ERR("driver_openvio(calls=%p, driver_id={%i}, driver='%s', device='%s', info=%p, fh=%i): not a VIO driver!",
         calls, i, driver, device, info, fh);
