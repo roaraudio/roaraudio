@@ -6,6 +6,8 @@ v. 0.1beta4 - ???
 	* changed esd output driver to use new vio driver API
 	* wrote OSS driver
 	* added support for --standby and --auto-standby
+	* write support for stream based drivers, finally!
+	* added -o/-O-/-oO/-oN to roard: stream based output drivers
 
 v. 0.1beta3 - Thu Nov 27 2008
 	* fixed some includes, patch by janus
