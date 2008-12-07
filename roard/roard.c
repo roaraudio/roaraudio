@@ -176,6 +176,9 @@ int add_output (char * drv, char * dev, char * opts) {
   k = strtok(NULL, ",");
  }
 
+ if ( codec == ROAR_CODEC_ALAW || codec == ROAR_CODEC_MULAW )
+  s->info.bits = 8; // needed to open OSS driver, will be overriden by codecfilter
+
  s->info.codec = codec;
  ROAR_STREAM_SERVER(s)->codec_orgi = codec;
 
