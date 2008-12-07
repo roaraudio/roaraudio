@@ -133,7 +133,11 @@ int driver_oss_open(struct roar_vio_calls * inst, char * device, struct roar_aud
  }
 
  ctmp = tmp;
+#ifdef SNDCTL_DSP_SETFMT
+ if ( ioctl(fh, SNDCTL_DSP_SETFMT, &tmp) == -1 ) {
+#else
  if ( ioctl(fh, SNDCTL_DSP_SAMPLESIZE, &tmp) == -1 ) {
+#endif
   ROAR_ERR("driver_oss_open(*): can not set sample format");
   er();
  }
