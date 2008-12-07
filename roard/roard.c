@@ -122,8 +122,34 @@ int restart_server (char * server) {
 #define R_SETGID 2
 
 int add_output (char * drv, char * dev, char * opts) {
+ int stream;
+ struct roar_stream * s;
+ struct roar_stream_server * ss;
+
  ROAR_WARN("add_output(drv='%s', dev='%s', opts='%s') = ?", drv, dev, opts);
- return -1;
+
+ if ( (stream = streams_new()) == -1 ) {
+  return -1;
+ }
+
+ streams_get(stream, &ss);
+ s = ROAR_STREAM(ss);
+
+ memcpy(&(s->info), g_sa, sizeof(struct roar_audio_info));
+
+ s->dir        = ROAR_DIR_OUTPUT;
+ s->pos_rel_id = -1;
+// s->info.codec = codec;
+
+
+ if ( driver_openvio(&(ss->vio), &(ss->driver_id), drv, dev, &(s->info), -1) ) {
+  streams_delete(stream);
+  return -1;
+ }
+
+ client_stream_add(g_source_client, stream);
+
+ return 0;
 }
 
 int main (int argc, char * argv[]) {
@@ -262,6 +288,7 @@ int main (int argc, char * argv[]) {
    o_opts = argv[++i];
   } else if ( strcmp(k, "-oN") == 0 ) {
    add_output(o_drv, o_dev, o_opts);
+   o_drv = o_dev = o_opts = NULL;
 
   } else if ( strcmp(k, "-s") == 0 || strcmp(k, "--source") == 0 ) {
    s_drv = argv[++i];
