@@ -80,8 +80,10 @@ int cf_sndfile_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
 
   return ret * obj->bytes;
  } else {
-  if ( (obj->state = sf_open_fd(s->fh, SFM_READ, &(obj->info), 0)) == NULL )
+  if ( (obj->state = sf_open_fd(s->fh, SFM_READ, &(obj->info), 0)) == NULL ) {
+   ROAR_ERR("cf_sndfile_read(*): can not sf_open_fd(*)!");
    return -1;
+  }
 
   s->info.codec    = ROAR_CODEC_DEFAULT;
   s->info.rate     = obj->info.samplerate;
@@ -96,6 +98,7 @@ int cf_sndfile_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
   s->info.bits     = obj->bytes * 8;
 
   obj->opened      = 1;
+  errno = EAGAIN;
  }
 
  return -1;
