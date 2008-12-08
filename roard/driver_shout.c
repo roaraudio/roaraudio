@@ -47,8 +47,6 @@ int     driver_shout_open_vio(struct roar_vio_calls * inst, char * device, struc
   return -1;
  }
 
- ROAR_WARN("try to connect...");
-
  if ( s_server == NULL )
   s_server = "localhost";
 
