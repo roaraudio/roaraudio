@@ -59,6 +59,7 @@ void usage (void) {
  printf(" -O  --odevice DEV     - Set the device\n");
  printf(" -oO OPTS              - Set output options\n");
  printf(" -oN                   - Adds another output\n");
+ printf(" -oP                   - Mark output as primary\n");
 
  printf("\nSource Options:\n\n");
  printf(" -s  --source DRV      - Use DRV as input driver\n"
@@ -121,7 +122,7 @@ int restart_server (char * server) {
 #define R_SETUID 1
 #define R_SETGID 2
 
-int add_output (char * drv, char * dev, char * opts) {
+int add_output (char * drv, char * dev, char * opts, int prim) {
  int stream;
  struct roar_stream * s;
  struct roar_stream_server * ss;
@@ -192,6 +193,9 @@ int add_output (char * drv, char * dev, char * opts) {
 
  client_stream_add(g_source_client, stream);
 
+ if ( prim )
+  streams_mark_primary(stream);
+
  return 0;
 }
 
@@ -216,6 +220,7 @@ int main (int argc, char * argv[]) {
  char * o_drv     = NULL;
  char * o_dev     = NULL;
  char * o_opts    = NULL;
+ int    o_prim    = 0;
  char * sock_grp  = ROAR_DEFAULT_SOCKGRP;
  char * sock_user = NULL;
  int    sock_type = ROAR_SOCKET_TYPE_UNKNOWN;
@@ -329,9 +334,12 @@ int main (int argc, char * argv[]) {
    o_dev  = argv[++i];
   } else if ( strcmp(k, "-oO") == 0 ) {
    o_opts = argv[++i];
+  } else if ( strcmp(k, "-oP") == 0 ) {
+   o_prim = 1;
   } else if ( strcmp(k, "-oN") == 0 ) {
-   add_output(o_drv, o_dev, o_opts);
-   o_drv = o_dev = o_opts = NULL;
+   add_output(o_drv, o_dev, o_opts, o_prim);
+   o_drv  = o_dev = o_opts = NULL;
+   o_prim = 0;
 
   } else if ( strcmp(k, "-s") == 0 || strcmp(k, "--source") == 0 ) {
    s_drv = argv[++i];
@@ -432,7 +440,7 @@ int main (int argc, char * argv[]) {
  }
 
  if ( o_drv != NULL )
-  add_output(o_drv, o_dev, o_opts);
+  add_output(o_drv, o_dev, o_opts, o_prim);
 
  ROAR_DBG("Server config: rate=%i, bits=%i, chans=%i", sa.rate, sa.bits, sa.channels);
 
