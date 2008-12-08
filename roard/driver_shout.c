@@ -38,7 +38,7 @@ int     driver_shout_open_vio(struct roar_vio_calls * inst, char * device, struc
  char * s_name   = NULL;
  char * s_url    = NULL;
  int    s_public = 0;
- char * a, * b, * c;
+ char * a;
  shout_t * shout;
 
  if ( info->codec == ROAR_CODEC_DEFAULT )
