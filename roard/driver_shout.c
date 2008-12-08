@@ -30,6 +30,7 @@ int _driver_shout_usage_counter = 0;
 int     driver_shout_open_vio(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh) {
  char * s_server = NULL;
  char * s_mount  = NULL;
+ char * s_user   = NULL;
  char * s_pw     = NULL;
  int    s_port   = -1;
  char * s_desc   = NULL;
@@ -37,6 +38,7 @@ int     driver_shout_open_vio(struct roar_vio_calls * inst, char * device, struc
  char * s_name   = NULL;
  char * s_url    = NULL;
  int    s_public = 0;
+ char * a, * b, * c;
  shout_t * shout;
 
  if ( info->codec == ROAR_CODEC_DEFAULT )
@@ -47,6 +49,68 @@ int     driver_shout_open_vio(struct roar_vio_calls * inst, char * device, struc
   return -1;
  }
 
+ if ( device != NULL ) {
+  // device sould be an URL in this form:
+  // [http[s]://][user[:pw]@]host[:port][/mp.ogg]
+
+  if ( (a = strstr(device, "://")) != NULL ) {
+   *a = 0;
+   if ( strcmp(device, "http") ) {
+    return -1;
+   }
+   device = a + 3;
+  }
+
+  // [user[:pw]@]host[:port][/mp.ogg]
+
+  if ( (a = strstr(device, "@")) != NULL ) {
+   *a = 0;
+   s_user = device;
+   device = a + 1;
+  }
+
+  if ( s_user != NULL ) {
+   if ( (a = strstr(s_user, ":")) != NULL ) {
+    *a = 0;
+    s_pw = a+1;
+   }
+  }
+
+  if ( s_user != NULL && ! *s_user )
+   s_user = NULL;
+
+  if ( s_pw != NULL && ! *s_pw )
+   s_pw = NULL;
+
+  // host[:port][/mp.ogg]
+
+  if ( (a = strstr(device, "/")) != NULL ) {
+   *a = 0;
+   s_server = device;
+   device = a + 1;
+  } else {
+   s_server  = device;
+   device   += strlen(device);
+  }
+
+  if ( (a = strstr(s_server, ":")) != NULL ) {
+   *a = 0;
+   s_port = atoi(a+1);
+  }
+
+  if ( ! *s_server )
+   s_server = NULL;
+
+  // [/mp.ogg]
+
+  if ( *device ) {
+   s_mount = device;
+  }
+ }
+
+ ROAR_DBG("driver_shout_open_vio(*): user='%s', pw='%s', server='%s', port=%i, mount='%s'",
+                   s_user, s_pw, s_server, s_port, s_mount);
+
  if ( s_server == NULL )
   s_server = "localhost";
 
@@ -55,6 +119,9 @@ int     driver_shout_open_vio(struct roar_vio_calls * inst, char * device, struc
 
  if ( s_pw == NULL )
   s_pw     = "hackme";
+
+ if ( s_user == NULL )
+  s_user     = "source";
 
  if ( s_port == -1 )
   s_port   = 8000;
@@ -92,7 +159,7 @@ int     driver_shout_open_vio(struct roar_vio_calls * inst, char * device, struc
   return 1;
  }
 
- if (shout_set_user(shout, "source") != SHOUTERR_SUCCESS) {
+ if (shout_set_user(shout, s_user) != SHOUTERR_SUCCESS) {
   ROAR_ERR("Error setting user: %s", shout_get_error(shout));
   return 1;
  }
