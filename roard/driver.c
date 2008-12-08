@@ -38,7 +38,7 @@ struct roar_driver g_driver[] = {
  { "oss", "Open Sound System", ROAR_DEFAULT_OSS_DEV, NULL, driver_oss_close, NULL, NULL, NULL, NULL, driver_oss_open},
 #endif
 #ifdef ROAR_HAVE_LIBAO
- { "ao", "libao audio driver", "DRIVER", driver_ao_open, driver_ao_close, driver_ao_pause, driver_ao_write, driver_ao_read, driver_ao_flush, NULL},
+ { "ao", "libao audio driver", "DRIVER", NULL, driver_ao_close, NULL, NULL, NULL, NULL, driver_ao_open_vio},
 #endif
 #ifdef ROAR_HAVE_LIBSHOUT
  {"shout", "libshout streaming", "http://user:pw@host/mount.ogg", NULL, driver_shout_close, NULL, NULL, NULL, NULL, driver_shout_open_vio},
