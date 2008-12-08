@@ -10,6 +10,7 @@ v. 0.1beta4 - ???
 	* added -o/-O-/-oO/-oN to roard: stream based output drivers
 	* patched null and raw driver to use VIO interface
 	* ported libao plugin to new VIO interface
+	* added -oP support to mark outputs primary
 
 v. 0.1beta3 - Thu Nov 27 2008
 	* fixed some includes, patch by janus
