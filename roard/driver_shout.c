@@ -41,12 +41,30 @@ int     driver_shout_open_vio(struct roar_vio_calls * inst, char * device, struc
  char * a;
  shout_t * shout;
 
+/*
  if ( info->codec == ROAR_CODEC_DEFAULT )
   info->codec = ROAR_CODEC_OGG_VORBIS;
 
  if ( info->codec != ROAR_CODEC_OGG_VORBIS ) {
   ROAR_ERR("This driver only supports Ogg/Vorbis, current codec is %s", roar_codec2str(info->codec));
   return -1;
+ }
+*/
+
+ switch (info->codec) {
+  case ROAR_CODEC_DEFAULT:
+    info->codec = ROAR_CODEC_OGG_VORBIS;
+   break;
+  case ROAR_CODEC_OGG_VORBIS:
+  case ROAR_CODEC_OGG_SPEEX:
+  case ROAR_CODEC_OGG_FLAC:
+  case ROAR_CODEC_OGG_GENERAL:
+    // ok, no errors here
+   break;
+  default:
+    ROAR_ERR("This driver only supports Ogg/Vorbis, current codec is %s", roar_codec2str(info->codec));
+    return -1;
+   break;
  }
 
  if ( device != NULL ) {
