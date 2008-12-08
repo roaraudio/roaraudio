@@ -43,6 +43,8 @@ int driver_ao_open_vio(struct roar_vio_calls * inst, char * device, struct roar_
  ao_sample_format     format;
  int driver;
 
+ ROAR_WARN("The libao driver is obsolete, use another!");
+
  if ( fh != -1 )
   return -1;
 
@@ -61,7 +63,38 @@ int driver_ao_open_vio(struct roar_vio_calls * inst, char * device, struct roar_
  format.bits        = info->bits;
  format.channels    = info->channels;
  format.rate        = info->rate;
- format.byte_format = AO_FMT_NATIVE;
+
+ if ( info->bits == 8 ) {
+  ROAR_WARN("This is the libao driver in 8 bit mode, It's not known to me if I need to provide data in signed or in unsigned mode. If your musik sounds strange try -oO codec=pcm_s_le or -oO codec=pcm_u_le");
+/* NOTE: the following is only true for EsounD driver, not for OSS driver, don't know for the others
+  switch (info->codec) {
+   case ROAR_CODEC_PCM_U_LE:
+   case ROAR_CODEC_PCM_U_BE:
+   case ROAR_CODEC_PCM_U_PDP:
+     format.byte_format = AO_FMT_NATIVE;
+    break;
+   default:
+     ROAR_ERR("Can not open audio device via libao: codec not supported. You may want to try -oO codec=pcm_u_le or -oO codec=pcm,bits=16");
+     driver_ao_uninit();
+     return -1;
+    break;
+  }
+*/
+ }
+
+ switch (info->codec) {
+  case ROAR_CODEC_PCM_S_LE:
+    format.byte_format = AO_FMT_LITTLE;
+   break;
+  case ROAR_CODEC_PCM_S_BE:
+    format.byte_format = AO_FMT_BIG;
+   break;
+  default:
+   ROAR_ERR("Can not open audio device via libao: codec not supported. You may want to try -oO codec=pcm");
+   driver_ao_uninit();
+   return -1;
+  break;
+ }
 
  aodevice = ao_open_live(driver, &format, NULL /* no options */);
 
