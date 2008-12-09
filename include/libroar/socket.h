@@ -90,6 +90,7 @@ char * roar_socket_get_local_nodename(void);
 
 int roar_socket_nonblock(int fh, int state);
 int roar_socket_decnet_set_timeout (int fh, time_t sec, int usec);
+int roar_socket_recvbuf(int fh, int len);
 
 int roar_socket_dup_udp_local_end (int fh);
 

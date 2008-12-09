@@ -118,6 +118,12 @@ int roar_socket_decnet_set_timeout (int fh, time_t sec, int usec) {
 #endif
 }
 
+int roar_socket_recvbuf(int fh, int len) {
+ if ( len < 256 ) len = 256;
+
+ return setsockopt(fh, SOL_SOCKET, SO_RCVBUF, &len, sizeof(len));
+}
+
 int roar_socket_new_decnet_seqpacket (void) {
 #ifdef ROAR_HAVE_LIBDNET
  int fh;
