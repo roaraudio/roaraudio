@@ -308,6 +308,8 @@ int req_on_server_oinfo    (int client, struct roar_message * mes, char * data) 
  struct roar_stream s;
 //ROAR_DIR_OUTPUT
 
+ memset(s, 0, sizeof(struct roar_stream));
+
  s.dir           = ROAR_DIR_OUTPUT;
  s.pos_rel_id    = -1;
  s.info.rate     = g_sa->rate;
@@ -484,6 +486,8 @@ int req_on_get_stream_para (int client, struct roar_message * mes, char * data) 
  for (i = 0; i < mes->datalen/2; i++) {
   d[i] = ROAR_HOST2NET16(d[i]);
  }
+
+ mes->pos = s->pos;
 
  mes->cmd = ROAR_CMD_OK;
  return 0;

@@ -317,6 +317,8 @@ int roar_stream_s2m     (struct roar_stream * s, struct roar_message * m) {
  ROAR_DBG("roar_stream_s2m(*): s->info:");
  roar_debug_audio_info_print(&s->info);
 
+ m->pos = s->pos;
+
  return 0;
 }
 int roar_stream_m2s     (struct roar_stream * s, struct roar_message * m) {
@@ -328,6 +330,8 @@ int roar_stream_m2s     (struct roar_stream * s, struct roar_message * m) {
 
  if ( m->datalen != _ROAR_STREAM_MESSAGE_LEN )
   return -1;
+
+ s->pos = m->pos;
 
  data = (uint32_t*) m->data;
 

@@ -176,6 +176,8 @@ void list_streams (struct roar_connection * con) {
    printf("Relativ position id   : none (stream not synchronized)\n");
   else
    printf("Relativ position id   : %i\n", s.pos_rel_id);
+  if ( g_verbose > 1 )
+   printf("Position              : %lu S (%.3fs)\n", (unsigned long int) s.pos, (float)s.pos/(s.info.rate*s.info.channels));
   printf("Input rate            : %i\n", s.info.rate);
   printf("Input bits            : %i\n", s.info.bits);
   printf("Input channels        : %i\n", s.info.channels);
