@@ -47,11 +47,20 @@
                            "unknown" )
 */
 
+#define ROAR_FLAG_NONE           0x00
+#define ROAR_FLAG_PRIMARY        0x01
+#define ROAR_FLAG_OUTPUT         0x02
+#define ROAR_FLAG_DRIVER         ROAR_FLAG_OUTPUT
+#define ROAR_FLAG_SOURCE         0x04
+#define ROAR_FLAG_SYNC           0x08
+
 struct roar_stream_info {
  int block_size;
  int pre_underruns;
  int post_underruns;
  int codec;
+ int flags;
+ char * driver;
 };
 
 int roar_stream_connect (struct roar_connection * con, struct roar_stream * s, int dir);

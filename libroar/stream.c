@@ -281,10 +281,13 @@ int roar_stream_get_info (struct roar_connection * con, struct roar_stream * s, 
  if ( data[0] != 0 || data[1] != 1 )
   return -1;
 
+ memset(info, 0, sizeof(struct roar_stream_info));
+
  info->block_size     = data[2];
  info->pre_underruns  = data[3];
  info->post_underruns = data[4];
  info->codec          = data[5];
+ info->flags          = data[6];
 
  return 0;
 }

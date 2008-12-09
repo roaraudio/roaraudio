@@ -447,6 +447,7 @@ int req_on_get_stream  (int client, struct roar_message * mes, char * data) {
 
 int req_on_get_stream_para (int client, struct roar_message * mes, char * data) {
  struct roar_stream * s;
+ struct roar_stream_server * ss;
  struct roar_audio_info * audio_info;
  uint16_t * d = (uint16_t *) mes->data;
  int i;
@@ -458,10 +459,12 @@ int req_on_get_stream_para (int client, struct roar_message * mes, char * data) 
   d[i] = ROAR_NET2HOST16(d[i]);
  }
 
- if ( streams_get(mes->stream, (struct roar_stream_server **)&s) == -1 ) {
+ if ( streams_get(mes->stream, &ss) == -1 ) {
   ROAR_WARN("req_on_get_stream_para(*): request on non existing (or other error?) stream %i", mes->stream);
   return -1;
  }
+
+ s = ROAR_STREAM(ss);
 
  audio_info = &(s->info);
 
@@ -470,12 +473,13 @@ int req_on_get_stream_para (int client, struct roar_message * mes, char * data) 
   return -1;
  }
 
- mes->datalen = 2*6;
+ mes->datalen = 2*7;
 
  d[2] = ROAR_OUTPUT_CALC_OUTBUFSIZE(audio_info);
- d[3] = ROAR_STREAM_SERVER(s)->pre_underruns;
- d[4] = ROAR_STREAM_SERVER(s)->post_underruns;
- d[5] = ROAR_STREAM_SERVER(s)->codec_orgi;
+ d[3] = ss->pre_underruns;
+ d[4] = ss->post_underruns;
+ d[5] = ss->codec_orgi;
+ d[6] = ROAR_FLAG_NONE | (ss->primary ? ROAR_FLAG_PRIMARY : 0) | (ss->driver_id != -1 ? ROAR_FLAG_OUTPUT : 0);
 
  for (i = 0; i < mes->datalen/2; i++) {
   d[i] = ROAR_HOST2NET16(d[i]);

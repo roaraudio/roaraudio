@@ -26,6 +26,7 @@
 #include <pwd.h>
 #include <grp.h>
 
+int g_verbose = 0;
 
 int display_mixer (struct roar_connection * con, int stream);
 int show_meta_all (struct roar_connection * con, int id);
@@ -37,6 +38,7 @@ void usage (void) {
 
  printf("  --server SERVER         - Set server hostname\n"
         "  --help                  - Show this help\n"
+        "  --verbose   -v          - Show verbose output\n"
        );
 
  printf("\nCommands:\n\n");
@@ -155,6 +157,7 @@ void list_streams (struct roar_connection * con) {
  int id[ROAR_STREAMS_MAX];
  struct roar_stream s;
  struct roar_stream_info info;
+ char flags[80];
 
 
  if ( (num = roar_list_streams(con, id, ROAR_STREAMS_MAX)) == -1 ) {
@@ -181,8 +184,22 @@ void list_streams (struct roar_connection * con) {
   if ( roar_stream_get_info(con, &s, &info) != -1 ) {
    printf("Input codec (streamed): %2i (%s%s)\n", info.codec, roar_codec2str(info.codec),
                                       info.codec == ROAR_CODEC_DEFAULT ? " native" : "");
-   printf("Input block size      : %i Byte\n", info.block_size);
-   printf("Underruns pre/post    : %i/%i\n",   info.pre_underruns, info.post_underruns);
+   if ( g_verbose ) {
+    printf("Input block size      : %i Byte\n", info.block_size);
+    printf("Underruns pre/post    : %i/%i\n",   info.pre_underruns, info.post_underruns);
+
+    *flags = 0;
+    if ( info.flags & ROAR_FLAG_PRIMARY )
+     strcat(flags, "primary ");
+    if ( info.flags & ROAR_FLAG_SYNC )
+     strcat(flags, "sync ");
+    if ( info.flags & ROAR_FLAG_OUTPUT )
+     strcat(flags, "output ");
+    if ( info.flags & ROAR_FLAG_SOURCE )
+     strcat(flags, "source ");
+
+    printf("Flags                 : %s\n", flags);
+   }
   }
   display_mixer(con, id[i]);
   show_meta_all(con, id[i]);
@@ -367,6 +384,8 @@ int main (int argc, char * argv[]) {
 
   if ( strcmp(k, "--server") == 0 ) {
    server = argv[++i];
+  } else if ( strcmp(k, "-v") == 0 || strcmp(k, "--verbose") == 0 ) {
+   g_verbose++;
   } else if ( strcmp(k, "--help") == 0 ) {
    usage();
    return 0;
