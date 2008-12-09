@@ -237,7 +237,7 @@ int cf_celt_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
   buf += diff;
   len -= diff;
 
-  pkglen     = celt_encode(self->encoder, (celt_int16_t *) self->obuf, cbits+2, BS);
+  pkglen     = celt_encode(self->encoder, (celt_int16_t *) self->obuf, NULL, cbits+2, BS);
   pkglen_net = ROAR_HOST2NET16(pkglen);
   *(uint16_t*)cbits = pkglen_net;
 
@@ -245,7 +245,7 @@ int cf_celt_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
    return -1;
 
   while (len >= fs2) {
-   pkglen     = celt_encode(self->encoder, (celt_int16_t *) buf, cbits+2, BS);
+   pkglen     = celt_encode(self->encoder, (celt_int16_t *) buf, NULL, cbits+2, BS);
    pkglen_net = ROAR_HOST2NET16(pkglen);
    *(uint16_t*)cbits = pkglen_net;
 
