@@ -194,7 +194,7 @@ int streams_set_fh     (int id, int fh) {
   return 0;
  }
 
- roar_socket_recvbuf(fh, 0); // set recv buffer to minimum
+ roar_socket_recvbuf(fh, ROAR_OUTPUT_CALC_OUTBUFSIZE( &(ROAR_STREAM(g_streams[id])->info) )); // set recv buffer to minimum
 
  dir = ROAR_STREAM(g_streams[id])->dir;
 
