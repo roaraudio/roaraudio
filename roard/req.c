@@ -308,7 +308,7 @@ int req_on_server_oinfo    (int client, struct roar_message * mes, char * data) 
  struct roar_stream s;
 //ROAR_DIR_OUTPUT
 
- memset(s, 0, sizeof(struct roar_stream));
+ memset(&s, 0, sizeof(struct roar_stream));
 
  s.dir           = ROAR_DIR_OUTPUT;
  s.pos_rel_id    = -1;
