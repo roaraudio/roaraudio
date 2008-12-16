@@ -53,6 +53,7 @@ void usage (void) {
  printf(" -d  --driver DRV      - Set the driver, use '-d list' to get a list (default: %s)\n", ROAR_DRIVER_DEFAULT);
  printf(" -D  --device DEV      - Set the device\n");
  printf(" -dO OPTS              - Set output options\n");
+ printf(" --list-driver         - List all drivers\n");
 
  printf("\nOutput Options:\n\n");
  printf(" -o  --odriver DRV     - Set the driver, use '-d list' to get a list\n");
@@ -322,11 +323,15 @@ int main (int argc, char * argv[]) {
    driver = argv[++i];
    if ( strcmp(driver, "list") == 0 ) {
     print_driverlist();
+    return 0;
    }
   } else if ( strcmp(k, "-D") == 0 || strcmp(k, "--device") == 0 ) {
    device = argv[++i];
   } else if ( strcmp(k, "-dO") == 0 ) {
    opts = argv[++i];
+  } else if ( strcmp(k, "--list-driver") == 0 ) {
+   print_driverlist();
+   return 0;
 
   } else if ( strcmp(k, "-o") == 0 || strcmp(k, "--odriver") == 0 ) {
    o_drv  = argv[++i];
