@@ -87,6 +87,8 @@ void server_oinfo (struct roar_connection * con) {
  printf("Server Output codec   : %i (%s%s)\n", s.info.codec, roar_codec2str(s.info.codec),
                                      s.info.codec == ROAR_CODEC_DEFAULT ? " native" : "");
 // printf("Server Output rate: %i", s.info.rate);
+  if ( g_verbose > 1 )
+   printf("Server Position       : %lu S (%.3fs)\n", (unsigned long int) s.pos, (float)s.pos/(s.info.rate*s.info.channels));
 }
 
 const char * proc_name (pid_t pid) {
