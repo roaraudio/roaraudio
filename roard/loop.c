@@ -39,7 +39,7 @@ int main_loop (int driver, DRIVER_USERDATA_T driver_inst, struct roar_audio_info
 #endif
 
  ROAR_DBG("main_loop(*) = ?");
- alive = 1;
+// alive = 1;
  g_pos = 0;
 
  if ( sysclocksync ) {
@@ -93,7 +93,7 @@ int main_loop (int driver, DRIVER_USERDATA_T driver_inst, struct roar_audio_info
   midi_cb_update();
 //  output_buffer_reinit();
 
-  g_pos = ROAR_MATH_OVERFLOW_ADD(g_pos, ROAR_OUTPUT_BUFFER_SAMPLES);
+  g_pos = ROAR_MATH_OVERFLOW_ADD(g_pos, ROAR_OUTPUT_BUFFER_SAMPLES*g_sa->channels);
   ROAR_DBG("main_loop(*): current pos: %u", g_pos);
 #ifdef MONITOR_LATENCY
  gettimeofday(&ans, NULL);

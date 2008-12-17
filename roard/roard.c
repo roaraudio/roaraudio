@@ -134,6 +134,7 @@ int add_output (char * drv, char * dev, char * opts, int prim) {
 
  if ( (stream = streams_new()) == -1 ) {
   ROAR_DBG("add_output(drv='%s', dev='%s', opts='%s') = -1", drv, dev, opts);
+  if ( prim ) alive = 0;
   return -1;
  }
 
@@ -167,11 +168,13 @@ int add_output (char * drv, char * dev, char * opts, int prim) {
    if ( (codec = roar_str2codec(v)) == -1 ) {
     ROAR_ERR("add_output(*): unknown codec '%s'", v);
     streams_delete(stream);
+    if ( prim ) alive = 0;
     return -1;
    }
   } else {
    ROAR_ERR("add_output(*): unknown option '%s'", k);
    streams_delete(stream);
+   if ( prim ) alive = 0;
    return -1;
   }
 
@@ -187,6 +190,7 @@ int add_output (char * drv, char * dev, char * opts, int prim) {
  if ( driver_openvio(&(ss->vio), &(ss->driver_id), drv, dev, &(s->info), -1) ) {
   streams_delete(stream);
   ROAR_DBG("add_output(drv='%s', dev='%s', opts='%s') = -1", drv, dev, opts);
+  if ( prim ) alive = 0;
   return -1;
  }
 
@@ -239,6 +243,7 @@ int main (int argc, char * argv[]) {
  g_listen_socket = -1;
  g_standby       =  0;
  g_autostandby   =  0;
+ alive           =  1;
 
  sa.bits     = ROAR_BITS_DEFAULT;
  sa.channels = ROAR_CHANNELS_DEFAULT;
