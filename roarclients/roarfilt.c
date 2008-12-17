@@ -53,6 +53,8 @@ void usage (void) {
         "  --ffreq   freq     - set filter freq\n"
         "  --fmul    mult     - set filter multiplier\n"
         "  --fdiv    div      - set filter divider\n"
+        "  --fn      N        - set filter N parameter\n"
+        "  --flimit  limit    - set filter limit parameter\n"
        );
 
 }
@@ -189,6 +191,12 @@ int main (int argc, char * argv[]) {
   } else if ( strcmp(k, "--fdiv") == 0 ) {
    tmp = atoi(argv[++i]);
    roardsp_filter_ctl(filter, ROARDSP_FCTL_DIV, &tmp);
+  } else if ( strcmp(k, "--fn") == 0 ) {
+   tmp = atoi(argv[++i]);
+   roardsp_filter_ctl(filter, ROARDSP_FCTL_N, &tmp);
+  } else if ( strcmp(k, "--flimit") == 0 ) {
+   tmp = atoi(argv[++i]);
+   roardsp_filter_ctl(filter, ROARDSP_FCTL_LIMIT, &tmp);
   } else if ( strcmp(k, "--help") == 0 ) {
    usage();
    return 0;
