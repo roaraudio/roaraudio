@@ -55,6 +55,12 @@ struct roar_codecfilter g_codecfilter[] = {
  ROAR_CODECFILTER_READ,
 #endif
  cf_vorbis_open, cf_vorbis_close, NULL, cf_vorbis_write, cf_vorbis_read, NULL},
+#else
+#ifdef ROAR_HAVE_BIN_OGG123
+ {ROAR_CODEC_OGG_VORBIS, "cmd",  "ogg123",
+  ROAR_HAVE_BIN_OGG123 " -q -d raw -f - -", ROAR_CODECFILTER_READ,
+  cf_cmd_open, NULL, NULL, NULL, NULL, NULL},
+#endif
 #endif
 
 #ifdef ROAR_HAVE_BIN_TIMIDITY
