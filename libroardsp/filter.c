@@ -34,10 +34,16 @@ struct _roardsp_filterlist {
 } _roardsp_filterlist[] = {
  {ROARDSP_FILTER_AMP, "AMP", roardsp_amp_init, roardsp_amp_uninit, roardsp_amp_ctl, {
            {NULL, NULL, NULL},{roardsp_amp_calc8, NULL, NULL},{roardsp_amp_calc16, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL}}},
+ {ROARDSP_FILTER_ADD, "Add", roardsp_add_init, roardsp_amp_uninit, roardsp_amp_ctl, {
+           {NULL, NULL, NULL},{NULL, NULL, NULL},{roardsp_add_calc16, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL}}},
  {ROARDSP_FILTER_LOWP, "Lowpass", roardsp_lowp_init, roardsp_lowp_uninit, roardsp_lowp_ctl, {
            {NULL, NULL, NULL},{NULL, NULL, NULL},{roardsp_lowp_calc16, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL}}},
  {ROARDSP_FILTER_HIGHP, "Highpass", roardsp_highp_init, roardsp_highp_uninit, roardsp_highp_ctl, {
            {NULL, NULL, NULL},{NULL, NULL, NULL},{roardsp_highp_calc16, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL}}},
+ {ROARDSP_FILTER_QUANTIFY, "Quantifier", roardsp_quantify_init, NULL, roardsp_quantify_ctl, {
+           {NULL, NULL, NULL},{NULL, NULL, NULL},{roardsp_quantify_calc16, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL}}},
+ {ROARDSP_FILTER_CLIP, "Clip", roardsp_clip_init, NULL, roardsp_clip_ctl, {
+           {NULL, NULL, NULL},{NULL, NULL, NULL},{roardsp_clip_calc16, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL}}},
  {-1, NULL, NULL, NULL, NULL, {
       // ?                  8Bit               16Bit              24Bit              32Bit
       // 0B:n     1     2   1B:n     1     2   2B:n     1     2   3B:n     1    2    4B:n     1     2

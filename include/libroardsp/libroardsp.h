@@ -38,6 +38,10 @@ __BEGIN_DECLS
 #define ROARDSP_FILTER_AMP            1
 #define ROARDSP_FILTER_LOWP           2
 #define ROARDSP_FILTER_HIGHP          3
+#define ROARDSP_FILTER_MODULATE       4
+#define ROARDSP_FILTER_QUANTIFY       5
+#define ROARDSP_FILTER_CLIP           6
+#define ROARDSP_FILTER_ADD            7
 
 // filter CTLs:
 
@@ -45,6 +49,9 @@ __BEGIN_DECLS
 #define ROARDSP_FCTL_TIME             2
 #define ROARDSP_FCTL_MUL              3
 #define ROARDSP_FCTL_DIV              4
+#define ROARDSP_FCTL_N                5
+#define ROARDSP_FCTL_LIMIT            6
+#define ROARDSP_FCTL_PHASE            7
 
 // types:
 
@@ -112,6 +119,18 @@ int roardsp_amp_uninit(struct roardsp_filter * filter);
 int roardsp_amp_calc16(struct roardsp_filter * filter, void * data, size_t samples);
 int roardsp_amp_calc8 (struct roardsp_filter * filter, void * data, size_t samples);
 int roardsp_amp_ctl   (struct roardsp_filter * filter, int cmd, void * data);
+
+int roardsp_add_init  (struct roardsp_filter * filter, struct roar_stream * stream, int id);
+int roardsp_add_calc16(struct roardsp_filter * filter, void * data, size_t samples);
+
+int roardsp_quantify_init  (struct roardsp_filter * filter, struct roar_stream * stream, int id);
+int roardsp_quantify_uninit(struct roardsp_filter * filter);
+int roardsp_quantify_calc16(struct roardsp_filter * filter, void * data, size_t samples);
+int roardsp_quantify_ctl   (struct roardsp_filter * filter, int cmd, void * data);
+
+int roardsp_clip_init  (struct roardsp_filter * filter, struct roar_stream * stream, int id);
+int roardsp_clip_calc16(struct roardsp_filter * filter, void * data, size_t samples);
+int roardsp_clip_ctl   (struct roardsp_filter * filter, int cmd, void * data);
 
 // codecs:
 int roardsp_conv_alaw2pcm16 (int16_t * out, char * in, size_t len);
