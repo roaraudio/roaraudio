@@ -78,6 +78,8 @@
 
 #define ROAR_CMD_PASSFH        30 /* send an fh via UNIX Domain Socket to the roard */
 
+#define ROAR_CMD_GETTIMEOFDAY  31
+
 
 #define ROAR_CMD_EPERM        252 /* error: permition denided */
 #define ROAR_CMD_OK_STOP      253 /* used internaly in the serveer: */
@@ -106,6 +108,14 @@
 #define ROAR_ATTACH_SIMPLE 1 /* move a stream from one to another client (attach the stream to it) */
 #define ROAR_ATTACH_SOURCE 2 /* attach a new source to the server */
 #define ROAR_ATTACH_OUTPUT 3 /* attach a new output stream to the server */
+
+
+struct roar_timeofday {
+ int64_t  t_sec;   // secund part of system time
+ uint64_t t_nsec;  // nano-secund part of system time // we use a int64 here so all types are int64...
+ uint64_t c_nhz;   // system hi res timer freq in nHz
+ uint64_t d_nsps;  // clock drift in nano secs per sec
+};
 
 #endif
 
