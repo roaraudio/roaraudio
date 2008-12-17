@@ -96,6 +96,8 @@ int streams_new    (void) {
    roar_vio_init_calls(&(s->vio));
    s->driver_id = -1;
 
+   roardsp_fchain_init(&(s->fc));
+
    g_streams[i] = s;
    ROAR_DBG("streams_new(void): n->id=%i", n->id);
    ROAR_DBG("streams_new(void) = %i", i);
@@ -127,6 +129,8 @@ int streams_delete (int id) {
   roar_vio_init_calls(&(s->vio));
   s->driver_id = -1;
  }
+
+ roardsp_fchain_uninit(&(s->fc));
 
  if ( s->client != -1 ) {
   ROAR_DBG("streams_delete(id=%i): Stream is owned by client %i", id, g_streams[id]->client);
@@ -729,12 +733,14 @@ int streams_send_mon   (int id) {
  if ( ss->codecfilter == -1 ) {
   if ( stream_vio_s_write(ss, obuf, olen) == olen ) {
    if ( need_to_free ) free(obuf);
+   s->pos = ROAR_MATH_OVERFLOW_ADD(s->pos, ROAR_OUTPUT_CALC_OUTBUFSAMP(&(s->info), olen)*s->info.channels);
    return 0;
   }
  } else {
   if ( codecfilter_write(ss->codecfilter_inst, ss->codecfilter, obuf, olen)
             == olen ) {
    if ( need_to_free ) free(obuf);
+   s->pos = ROAR_MATH_OVERFLOW_ADD(s->pos, ROAR_OUTPUT_CALC_OUTBUFSAMP(&(s->info), olen)*s->info.channels);
    return 0;
   } else { // we cann't retry on codec filetered streams
    if ( need_to_free ) free(obuf);
@@ -751,6 +757,7 @@ int streams_send_mon   (int id) {
 
   if ( stream_vio_s_write(ss, obuf, olen) == olen ) {
    if ( need_to_free ) free(obuf);
+   s->pos = ROAR_MATH_OVERFLOW_ADD(s->pos, ROAR_OUTPUT_CALC_OUTBUFSAMP(&(s->info), olen)*s->info.channels);
    return 0;
   }
  }
