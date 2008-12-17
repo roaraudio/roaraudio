@@ -40,6 +40,7 @@
 #define roar_dir2str(x)   ((x) == ROAR_DIR_PLAY   ? "play"   : (x) == ROAR_DIR_MONITOR ? "monitor" : \
                            (x) == ROAR_DIR_FILTER ? "filter" : (x) == ROAR_DIR_RECORD  ? "record"  : \
                            (x) == ROAR_DIR_OUTPUT ? "output" : (x) == ROAR_DIR_BIDIR   ? "bidir"   : \
+                           (x) == ROAR_DIR_MIXING ? "mixing" : \
                            "unknown")
 /*
 #define roar_codec2str(x) ((x) == ROAR_CODEC_PCM_S_LE  ? "pcm_s_le"  : (x) == ROAR_CODEC_PCM_S_BE  ? "pcm_s_be"  : \
@@ -53,6 +54,8 @@
 #define ROAR_FLAG_DRIVER         ROAR_FLAG_OUTPUT
 #define ROAR_FLAG_SOURCE         0x04
 #define ROAR_FLAG_SYNC           0x08
+//#define ROAR_FLAG_SAMPLE         0x10
+//#define ROAR_FLAG_SYNC           0x08
 
 struct roar_stream_info {
  int block_size;

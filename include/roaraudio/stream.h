@@ -37,7 +37,7 @@
 
 #define ROAR_DIR_OUTPUT   5
 
-//#define ROAR_DIR_MIXING   6
+#define ROAR_DIR_MIXING   6
 //#define ROAR_DIR_INTERNAL 7
 
 #define ROAR_DIR_META     8
