@@ -49,6 +49,9 @@ struct roar_driver g_driver[] = {
 void print_driverlist (void) {
  int i;
 
+ printf("  Driver Type - Description (devices)\n");
+ printf("------------------------------------------------------\n");
+
  for (i = 0; g_driver[i].name != NULL; i++) {
   printf("  %-8s %c%c - %s (devices: %s)\n", g_driver[i].name,
                 g_driver[i].open     != NULL || (g_driver[i].open == NULL && g_driver[i].vio_init == NULL) ? 'S' : ' ',
