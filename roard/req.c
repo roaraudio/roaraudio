@@ -310,12 +310,13 @@ int req_on_server_oinfo    (int client, struct roar_message * mes, char * data) 
 
  memset(&s, 0, sizeof(struct roar_stream));
 
- s.dir           = ROAR_DIR_OUTPUT;
+ s.dir           = ROAR_DIR_MIXING;
  s.pos_rel_id    = -1;
  s.info.rate     = g_sa->rate;
  s.info.bits     = g_sa->bits;
  s.info.channels = g_sa->channels;
  s.info.codec    = g_sa->codec;
+ s.pos           = g_pos;
 
  if ( roar_stream_s2m(&s, mes) == -1 )
   return -1;
