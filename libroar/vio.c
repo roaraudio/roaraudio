@@ -34,14 +34,6 @@
 
 #include "libroar.h"
 
-// this is to avoid warning messages on platforms
-// where sizeof(void*) == 8 and szeof(int) == 4
-#ifdef __LP64__
-#define INSTINT long int
-#else
-#define INSTINT int
-#endif
-
 int roar_vio_init_calls (struct roar_vio_calls * calls) {
  if ( !calls )
   return -1;
@@ -71,14 +63,14 @@ int roar_vio_set_inst (struct roar_vio_calls * vio, void * inst) {
 }
 
 int roar_vio_set_fh   (struct roar_vio_calls * vio, int fh) {
- return roar_vio_set_inst(vio, (void*)(INSTINT)(fh + 1));
+ return roar_vio_set_inst(vio, (void*)(ROAR_INSTINT)(fh + 1));
 }
 
 int roar_vio_get_fh   (struct roar_vio_calls * vio) {
  if ( vio == NULL )
   return -1;
 
- return ((int)(INSTINT)vio->inst) - 1;
+ return ((int)(ROAR_INSTINT)vio->inst) - 1;
 }
 
 

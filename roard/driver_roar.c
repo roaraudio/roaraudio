@@ -24,14 +24,6 @@
 
 #include "roard.h"
 
-// this is to avoid warning messages on platforms
-// where sizeof(void*) == 8 and szeof(int) == 4
-#ifdef __LP64__
-#define INSTINT long int
-#else
-#define INSTINT int
-#endif
-
 int driver_roar_open_vio(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh) {
 
  if ( fh != -1 ) { // this is a connection to a roard, no roar_simple_*() interface avalible for this case
