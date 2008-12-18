@@ -13,6 +13,8 @@ v. 0.1beta4 - ???
 	* added -oP support to mark outputs primary
 	* added ROAR_INSTINT to abstract from __LP64__
 	* added new trivial filters: Add, Quantifier, Clip
+	* added codecfilter for libfishsound, use it as default for ogg_flac and ogg_speex
+	* added Ogg FLAC and Ogg Speex Magic
 
 v. 0.1beta3 - Thu Nov 27 2008
 	* fixed some includes, patch by janus
