@@ -67,6 +67,10 @@ struct roar_codecfilter g_codecfilter[] = {
  {ROAR_CODEC_OGG_SPEEX, "fishsound",  "fishsound",
   NULL, ROAR_CODECFILTER_READ,
   cf_fishsound_open, cf_fishsound_close, NULL, NULL, cf_fishsound_read, NULL},
+
+ {ROAR_CODEC_OGG_FLAC, "fishsound",  "fishsound",
+  NULL, ROAR_CODECFILTER_READ,
+  cf_fishsound_open, cf_fishsound_close, NULL, NULL, cf_fishsound_read, NULL},
 #endif
 
 #ifdef ROAR_HAVE_BIN_TIMIDITY
