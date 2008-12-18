@@ -63,6 +63,12 @@ struct roar_codecfilter g_codecfilter[] = {
 #endif
 #endif
 
+#ifdef ROAR_HAVE_LIBFISHSOUND
+ {ROAR_CODEC_OGG_SPEEX, "fishsound",  "fishsound",
+  NULL, ROAR_CODECFILTER_READ,
+  cf_fishsound_open, cf_fishsound_close, NULL, NULL, cf_fishsound_read, NULL},
+#endif
+
 #ifdef ROAR_HAVE_BIN_TIMIDITY
  {ROAR_CODEC_MIDI_FILE, "MIDIFILE", "timidity MIDI synth",
   ROAR_HAVE_BIN_TIMIDITY " -Or1sl -s %R -o - -", ROAR_CODECFILTER_READ,
