@@ -43,9 +43,15 @@ int roar_file_codecdetect(char * buf, int len) {
  if ( len > 3 ) {
   if ( strncmp(buf, "OggS", 4) == 0 ) {
    codec = ROAR_CODEC_OGG_GENERAL;
-   if ( len > 34 ) { // this is 7 bytes after the end of the header
-    if ( strncmp(buf+28, "\001vorbis", 7) == 0 )
-     codec = ROAR_CODEC_OGG_VORBIS;
+   if ( len > 32 ) { // this is 5 bytes after the end of the header
+    if ( strncmp(buf+28, "\177FLAC", 5) == 0 ) {
+     codec = ROAR_CODEC_OGG_FLAC;
+    } else if ( strncmp(buf+28, "Speex", 5) == 0 ) {
+     codec = ROAR_CODEC_OGG_SPEEX;
+    } else if ( len > 34 ) { // this is 7 bytes after the end of the header
+     if ( strncmp(buf+28, "\001vorbis", 7) == 0 )
+      codec = ROAR_CODEC_OGG_VORBIS;
+    }
    }
   } else if ( strncmp(buf, "MThd", 4) == 0 ) {
    codec = ROAR_CODEC_MIDI_FILE;
@@ -193,6 +199,8 @@ ssize_t roar_file_play_full  (struct roar_connection * con, char * file, int exe
  }
 
  codec = roar_file_codecdetect(buf, len);
+
+ ROAR_DBG("roar_file_play_full(*): codec=%i(%s)", codec, roar_codec2str(codec));
 
  seek = lseek(in, 0, SEEK_SET) == (off_t) -1 ? 0 : 1;
 
