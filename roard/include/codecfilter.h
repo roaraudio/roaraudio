@@ -72,7 +72,11 @@ struct roar_codecfilter {
 #include "codecfilter_sndfile.h"
 #endif
 
-//cf alaw:
+#ifdef ROAR_HAVE_LIBFISHSOUND
+#include "codecfilter_fishsound.h"
+#endif
+
+//cf alaw/mulaw:
 #include <libroardsp/libroardsp.h>
 
 void print_codecfilterlist (void);
