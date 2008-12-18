@@ -150,11 +150,15 @@ int roar_buffer_shift_out (struct roar_buffer ** buf, void * data, size_t * len)
  struct roar_buffer * cur;
  void * cd;
 
- if ( len == NULL || buf == NULL || data == NULL )
+ if ( len == NULL || buf == NULL || data == NULL ) {
+  ROAR_DBG("roar_buffer_shift_out(buf=%p, data=%p, len={%lu}) = -1 // Invalid input", buf, data, (unsigned long)len);
   return -1;
+ }
 
- if ( *buf == NULL )
+ if ( *buf == NULL ) {
+  ROAR_DBG("roar_buffer_shift_out(buf=%p, data=%p, len={%lu}) = -1 // Invalid pointer to buffer ring", buf, data, (unsigned long)len);
   return -1;
+ }
 
  todo = *len;
  cur  = *buf;
@@ -201,7 +205,7 @@ int roar_buffer_shift_out (struct roar_buffer ** buf, void * data, size_t * len)
 
  *buf = cur;
 
- return -1;
+ return 0;
 }
 
 int roar_buffer_set_meta (struct roar_buffer * buf, void *  meta) {
