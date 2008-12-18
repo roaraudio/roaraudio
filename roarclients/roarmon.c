@@ -27,7 +27,7 @@
 #define BUFSIZE 1024
 
 void usage (void) {
- printf("roarmon [OPTIONS]...\n");
+ printf("roarmon [OPTIONS]... [FILE]\n");
 
  printf("\nOptions:\n\n");
 
@@ -50,6 +50,7 @@ int main (int argc, char * argv[]) {
  char * k;
  int    fh;
  int    i;
+ int    out = -1;
  char buf[BUFSIZE];
 
  for (i = 1; i < argc; i++) {
@@ -68,6 +69,11 @@ int main (int argc, char * argv[]) {
   } else if ( strcmp(k, "--help") == 0 ) {
    usage();
    return 0;
+  } else if ( out == -1 ) {
+   if ( (out = open(k, O_CREAT|O_TRUNC|O_WRONLY, 0644)) == -1 ) {
+    fprintf(stderr, "Error: can not open file: %s: %s\n", k, strerror(errno));
+    return 1;
+   }
   } else {
    fprintf(stderr, "Error: unknown argument: %s\n", k);
    usage();
@@ -75,13 +81,16 @@ int main (int argc, char * argv[]) {
   }
  }
 
+ if ( out == -1 )
+  out = ROAR_STDOUT;
+
  if ( (fh = roar_simple_monitor(rate, channels, bits, codec, server, "roarmon")) == -1 ) {
-  fprintf(stderr, "Error: can not start monetoring\n");
+  fprintf(stderr, "Error: can not start monitoring\n");
   return 1;
  }
 
  while((i = read(fh, buf, BUFSIZE)))
-  if (write(1, buf, i) != i)
+  if (write(out, buf, i) != i)
    break;
 
  roar_simple_close(fh);
