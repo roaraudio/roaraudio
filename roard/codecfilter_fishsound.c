@@ -27,14 +27,71 @@
 #ifdef ROAR_HAVE_LIBFISHSOUND
 
 int cf_fishsound_decoded_float (FishSound * fsound, float ** pcm, long frames, void * user_data) {
+ struct codecfilter_fishsound_inst * self = (struct codecfilter_fishsound_inst *) user_data;
+ struct roar_stream * stream = ROAR_STREAM(self->stream);
+ struct roar_buffer * buf;
+ int i;
+ double s;
+ union {
+  void    * v;
+  char    * c;
+  int16_t * i16;
+  int32_t * i32;
+ } data;
+
+ if (!self->opened) {
+   fish_sound_command(fsound, FISH_SOUND_GET_INFO, &(self->fsinfo),
+                       sizeof(FishSoundInfo));
+ }
+
+ if ( roar_buffer_new(&buf, frames*stream->info.bits*stream->info.channels) == -1 )
+  return -1;
+
+ if ( roar_buffer_get_data(buf, &data.v) == -1 )
+  return -1;
+
+ frames *= self->fsinfo.channels;
+
+ switch (stream->info.bits) {
+  case  8:
+    for (i = 0; i < frames; i++) {
+     s  = ((float*)pcm)[i];
+     s *= 127;
+     data.c[i] = s;
+    }
+   break;
+  case 16:
+    for (i = 0; i < frames; i++) {
+     s  = ((float*)pcm)[i];
+     s *= 32767;
+     data.i16[i] = s;
+    }
+   break;
+  case 32:
+    for (i = 0; i < frames; i++) {
+     s  = ((float*)pcm)[i];
+     s *= 2147483647;
+     data.i32[i] = s;
+    }
+   break;
+  default:
+    return -1;
+ }
+
+ if ( self->buffer == NULL ) {
+  self->buffer = buf;
+ } else {
+  roar_buffer_add(self->buffer, buf);
+ }
+
  return -1;
 }
 
 int cf_fishsound_read_packet (OGGZ * oggz, ogg_packet * op, long serialno, void * user_data) {
  FishSound * fsound = (FishSound *)user_data;
 
- fish_sound_prepare_truncation (fsound, op->granulepos, op->e_o_s);
- fish_sound_decode (fsound, op->packet, op->bytes);
+ fish_sound_prepare_truncation(fsound, op->granulepos, op->e_o_s);
+ fish_sound_decode(fsound, op->packet, op->bytes);
 
  return 0;
 }
@@ -55,6 +112,7 @@ int cf_fishsound_open(CODECFILTER_USERDATA_T * inst, int codec,
 
  self->stream               = info;
  self->opened               = 0;
+ self->buffer               = NULL;
  self->fsound               = fish_sound_new(FISH_SOUND_DECODE, &(self->fsinfo));
 
  fish_sound_set_interleave(self->fsound, 1);
@@ -77,6 +135,9 @@ int cf_fishsound_close(CODECFILTER_USERDATA_T   inst) {
 
  oggz_close(self->oggz);
  fish_sound_delete(self->fsound);
+
+ if ( self->buffer != NULL )
+  roar_buffer_free(self->buffer);
 
  free(inst);
  return 0;
@@ -114,6 +175,9 @@ int cf_fishsound_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
   s->info.rate     = self->fsinfo.samplerate;
   s->info.bits     = g_sa->bits;
   s->info.codec    = ROAR_CODEC_NATIVE;
+  self->opened     = 1;
+  errno            = EAGAIN;
+  return -1;
  }
 
  return -1;

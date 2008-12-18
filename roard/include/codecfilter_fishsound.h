@@ -37,6 +37,7 @@ struct codecfilter_fishsound_inst {
  FishSoundInfo fsinfo;
  FishSound * fsound;
  OGGZ * oggz;
+ struct roar_buffer * buffer;
 };
 
 
