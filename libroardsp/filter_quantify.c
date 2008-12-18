@@ -41,10 +41,10 @@ int roardsp_quantify_calc16  (struct roardsp_filter * filter, void * data, size_
  for (i = 0; i < samples; i++) {
   s        = samp[i];
   s       /= 32768;
-  s       *= (int32_t)filter->inst;
+  s       *= (ROAR_INSTINT)filter->inst;
   s        = (int16_t)s;
 //  ROAR_WARN("roardsp_quantify_calc16(*): s=%f", s);
-  s       /= (int32_t)filter->inst;
+  s       /= (ROAR_INSTINT)filter->inst;
   s       *= 32768;
   samp[i]  = s;
  };
@@ -57,8 +57,8 @@ int roardsp_quantify_ctl   (struct roardsp_filter * filter, int cmd, void * data
  int32_t old;
 
  if ( cmd == ROARDSP_FCTL_N ) {
-  old = (int32_t)filter->inst;
-  filter->inst = (void*)*(int32_t*)data;
+  old = (ROAR_INSTINT)filter->inst;
+  filter->inst = (void*)(ROAR_INSTINT)*(int32_t*)data;
   *(int32_t*)data = old;
  } else {
   ROAR_DBG("roardsp_quantify_ctl(*) = -1");

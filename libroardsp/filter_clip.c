@@ -34,7 +34,7 @@ int roardsp_clip_init  (struct roardsp_filter * filter, struct roar_stream * str
 
 int roardsp_clip_calc16  (struct roardsp_filter * filter, void * data, size_t samples) {
  int16_t * samp = (int16_t *) data;
- register int32_t s = (int32_t)filter->inst;
+ register int32_t s = (ROAR_INSTINT)filter->inst;
  size_t i;
 
  for (i = 0; i < samples; i++) {
@@ -53,7 +53,7 @@ int roardsp_clip_ctl   (struct roardsp_filter * filter, int cmd, void * data) {
  int32_t old;
 
  if ( cmd == ROARDSP_FCTL_LIMIT ) {
-  old = (int32_t)filter->inst;
+  old = (ROAR_INSTINT)filter->inst;
   filter->inst = (void*)labs(*(int32_t*)data);
   *(int32_t*)data = old;
  } else {
