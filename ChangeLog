@@ -11,6 +11,8 @@ v. 0.1beta4 - ???
 	* patched null and raw driver to use VIO interface
 	* ported libao plugin to new VIO interface
 	* added -oP support to mark outputs primary
+	* added ROAR_INSTINT to abstract from __LP64__
+	* added new trivial filters: Add, Quantifier, Clip
 
 v. 0.1beta3 - Thu Nov 27 2008
 	* fixed some includes, patch by janus
