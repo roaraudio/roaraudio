@@ -39,9 +39,9 @@ int cf_fishsound_decoded_float (FishSound * fsound, float ** pcm, long frames, v
   int32_t * i32;
  } data;
 
- ROAR_WARN("cf_fishsound_decoded_float(fsound=%p, pcm=%p, frames=%li, user_data=%p) = ?", fsound, pcm, frames, user_data);
+ ROAR_DBG("cf_fishsound_decoded_float(fsound=%p, pcm=%p, frames=%li, user_data=%p) = ?", fsound, pcm, frames, user_data);
 
- ROAR_WARN("cf_fishsound_decoded_float(*): self->opened=%i", self->opened);
+ ROAR_DBG("cf_fishsound_decoded_float(*): self->opened=%i", self->opened);
 
  if (!self->opened) {
    fish_sound_command(fsound, FISH_SOUND_GET_INFO, &(self->fsinfo),
@@ -155,7 +155,7 @@ int cf_fishsound_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  struct roar_buffer_stats stats;
  size_t stlen;
 
- ROAR_WARN("cf_fishsound_read(inst=%p, buf=%p, len=%i) = ?", inst, buf, len);
+ ROAR_DBG("cf_fishsound_read(inst=%p, buf=%p, len=%i) = ?", inst, buf, len);
 
 /*
  if ( self->opened ) {
@@ -184,25 +184,42 @@ int cf_fishsound_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
    need_data = 1;
  }
 
- ROAR_WARN("cf_fishsound_read(*): need_data=%i, self->opened=%i", need_data, self->opened);
+ ROAR_DBG("cf_fishsound_read(*): need_data=%i, self->opened=%i", need_data, self->opened);
 
- while (need_data) {
-  if ( (inlen = stream_vio_s_read(self->stream, buf, len)) == -1 )
-   return -1;
-
-  oggz_read_input(self->oggz, (unsigned char *)buf, inlen);
-
-  if ( roar_buffer_ring_stats(self->buffer, &stats) == -1 )
-   return -1;
-
-  if ( stats.bytes < len ) {
-   need_data = 1;
+// while (need_data) {
+  if ( (inlen = stream_vio_s_read(self->stream, buf, len)) == -1 ) {
+//   if ( errno != EAGAIN ) {
+    return -1;
+/*
+   } else {
+    return -1;
+   }
+*/
   } else {
-   need_data = 0;
-  }
- }
+   if ( inlen == 0 )
+    return 0;
 
- ROAR_WARN("cf_fishsound_read(*): need_data=%i, self->opened=%i", need_data, self->opened);
+   oggz_read_input(self->oggz, (unsigned char *)buf, inlen);
+
+   if( self->buffer != NULL ) {
+    if ( roar_buffer_ring_stats(self->buffer, &stats) == -1 )
+     return -1;
+
+    if ( stats.bytes < len ) {
+     need_data = 1;
+    } else {
+     need_data = 0;
+    }
+   }
+  }
+// }
+
+ ROAR_DBG("cf_fishsound_read(*): need_data=%i, self->opened=%i", need_data, self->opened);
+
+ if ( need_data ) {
+  errno = EAGAIN;
+  return -1;
+ }
 
  if ( !self->opened ) {
   s->info.channels = self->fsinfo.channels;
@@ -211,7 +228,7 @@ int cf_fishsound_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
   s->info.codec    = ROAR_CODEC_NATIVE;
   self->opened     = 1;
   errno            = EAGAIN;
-  ROAR_WARN("cf_fishsound_read(inst=%p, buf=%p, len=%i) = -1 // errno=EAGAIN", inst, buf, len);
+  ROAR_DBG("cf_fishsound_read(inst=%p, buf=%p, len=%i) = -1 // errno=EAGAIN", inst, buf, len);
   return -1;
  }
 
@@ -219,11 +236,11 @@ int cf_fishsound_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
 
  stlen = len;
  if ( roar_buffer_shift_out(&(self->buffer), buf, &stlen) == -1 ) {
-  ROAR_WARN("cf_fishsound_read(inst=%p, buf=%p, len=%i) = -1 // roar_buffer_shift_out() failed", inst, buf, len);
+  ROAR_DBG("cf_fishsound_read(inst=%p, buf=%p, len=%i) = -1 // roar_buffer_shift_out() failed", inst, buf, len);
   return -1;
  }
 
- ROAR_WARN("cf_fishsound_read(inst=%p, buf=%p, len=%i) = %i", inst, buf, len, (int)stlen);
+ ROAR_DBG("cf_fishsound_read(inst=%p, buf=%p, len=%i) = %i", inst, buf, len, (int)stlen);
  return stlen;
 }
 
