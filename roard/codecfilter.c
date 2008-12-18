@@ -64,11 +64,11 @@ struct roar_codecfilter g_codecfilter[] = {
 #endif
 
 #ifdef ROAR_HAVE_LIBFISHSOUND
- {ROAR_CODEC_OGG_SPEEX, "fishsound",  "fishsound",
+ {ROAR_CODEC_OGG_SPEEX, "fishsound",  "libfishsound Xiph Codec library",
   NULL, ROAR_CODECFILTER_READ,
   cf_fishsound_open, cf_fishsound_close, NULL, NULL, cf_fishsound_read, NULL},
 
- {ROAR_CODEC_OGG_FLAC, "fishsound",  "fishsound",
+ {ROAR_CODEC_OGG_FLAC, "fishsound",  "libfishsound Xiph Codec library",
   NULL, ROAR_CODECFILTER_READ,
   cf_fishsound_open, cf_fishsound_close, NULL, NULL, cf_fishsound_read, NULL},
 #endif
