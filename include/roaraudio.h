@@ -66,6 +66,14 @@
 #define roar_uintm16 uint16_t
 #endif
 
+// this is to avoid warning messages on platforms
+// where sizeof(void*) == 8 and szeof(int) == 4
+#ifdef __LP64__
+#define ROAR_INSTINT long int
+#else
+#define ROAR_INSTINT int
+#endif
+
 #ifndef __BEGIN_DECLS
 #ifdef __cplusplus
 # define __BEGIN_DECLS extern "C" {
