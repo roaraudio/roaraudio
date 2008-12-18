@@ -35,6 +35,7 @@ void usage (void) {
         "  --simple           - Use the simple interface (default)\n"
         "  --passive          - Use passiv playback (experimental, works only localy)\n"
         "  --background       - Use background playback, impleys passive mode\n"
+        "  --verbose          - Use verbose output\n"
         "  --help             - Show this help\n"
        );
 
@@ -47,9 +48,10 @@ int main (int argc, char * argv[]) {
  char * server   = NULL;
  char * k;
  int    i;
- char * file = NULL;
- int    mode = MODE_SIMPLE;
- int    bg   = 0;
+ char * file    = NULL;
+ int    mode    = MODE_SIMPLE;
+ int    bg      = 0;
+ int    verbose = 0;
  struct roar_connection con[1];
  struct roar_stream     stream[1];
 
@@ -64,6 +66,8 @@ int main (int argc, char * argv[]) {
    mode = MODE_PASSIVE;
   } else if ( strcmp(k, "--background") == 0 ) {
    bg = 1;
+  } else if ( strcmp(k, "--verbose") == 0 || strcmp(k, "-v") == 0 ) {
+   verbose++;
   } else if ( strcmp(k, "--help") == 0 ) {
    usage();
    return 0;
