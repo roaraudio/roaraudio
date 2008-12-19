@@ -37,6 +37,7 @@ int roardsp_downmix_calc162  (struct roardsp_filter * filter, void * data, size_
  int16_t * samp = (int16_t *) data;
  register int32_t mode = (ROAR_INSTINT)filter->inst;
  register union {
+//  int16_t i16;
   int32_t i32;
   int64_t i64;
  } s;
@@ -45,6 +46,14 @@ int roardsp_downmix_calc162  (struct roardsp_filter * filter, void * data, size_
  ROAR_DBG("roardsp_downmix_calc162(*): mode=%i", mode);
 
  switch (mode) {
+  case ROARDSP_DOWNMIX_LEFT:
+    for (i = 0; i < samples; i += 2)
+     samp[i+1] = samp[i];
+   break;
+  case ROARDSP_DOWNMIX_RIGHT:
+    for (i = 0; i < samples; i += 2)
+     samp[i] = samp[i+1];
+   break;
   case ROARDSP_DOWNMIX_ARITHMETIC:
     for (i = 0; i < samples; i += 2) {
      s.i32     = (samp[i] + samp[i+1])/2;
