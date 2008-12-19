@@ -55,6 +55,8 @@ void usage (void) {
         "  --fdiv    div      - set filter divider\n"
         "  --fn      N        - set filter N parameter\n"
         "  --flimit  limit    - set filter limit parameter\n"
+        "  --fmode   mode     - set filter mode parameter\n"
+        "  --fq      Q        - set filter quality\n"
        );
 
 }
@@ -194,9 +196,15 @@ int main (int argc, char * argv[]) {
   } else if ( strcmp(k, "--fn") == 0 ) {
    tmp = atoi(argv[++i]);
    roardsp_filter_ctl(filter, ROARDSP_FCTL_N, &tmp);
+  } else if ( strcmp(k, "--fq") == 0 ) {
+   tmp = atoi(argv[++i]);
+   roardsp_filter_ctl(filter, ROARDSP_FCTL_Q, &tmp);
   } else if ( strcmp(k, "--flimit") == 0 ) {
    tmp = atoi(argv[++i]);
    roardsp_filter_ctl(filter, ROARDSP_FCTL_LIMIT, &tmp);
+  } else if ( strcmp(k, "--fmode") == 0 ) {
+   tmp = atoi(argv[++i]);
+   roardsp_filter_ctl(filter, ROARDSP_FCTL_MODE, &tmp);
   } else if ( strcmp(k, "--help") == 0 ) {
    usage();
    return 0;
