@@ -56,7 +56,11 @@ int roardsp_downmix_calc162  (struct roardsp_filter * filter, void * data, size_
     for (i = 0; i < samples; i += 2) {
      s.i64      = (int64_t)samp[i]*samp[i] + (int64_t)samp[i+1]*samp[i+1];
      s.i64      = sqrt(s.i64);
-     s.i64     /= 2;
+     s.i64     /=  2;
+
+     if ( (samp[i] + samp[i+1]) < 0 )
+      s.i64    *= -1;
+
      samp[i  ]  = s.i64;
      samp[i+1]  = s.i64;
     }
