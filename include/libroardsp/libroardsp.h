@@ -52,6 +52,8 @@ __BEGIN_DECLS
 #define ROARDSP_FCTL_N                5
 #define ROARDSP_FCTL_LIMIT            6
 #define ROARDSP_FCTL_PHASE            7
+#define ROARDSP_FCTL_Q                8
+#define ROARDSP_FCTL_MODE             9
 
 // types:
 
