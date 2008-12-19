@@ -42,6 +42,7 @@ __BEGIN_DECLS
 #define ROARDSP_FILTER_QUANTIFY       5
 #define ROARDSP_FILTER_CLIP           6
 #define ROARDSP_FILTER_ADD            7
+#define ROARDSP_FILTER_DOWNMIX        8
 
 // filter CTLs:
 
@@ -54,6 +55,12 @@ __BEGIN_DECLS
 #define ROARDSP_FCTL_PHASE            7
 #define ROARDSP_FCTL_Q                8
 #define ROARDSP_FCTL_MODE             9
+
+// filter specific constants:
+#define ROARDSP_DOWNMIX_LEFT          1
+#define ROARDSP_DOWNMIX_RIGHT         2
+#define ROARDSP_DOWNMIX_ARITHMETIC    3
+#define ROARDSP_DOWNMIX_RMS           4
 
 // types:
 
@@ -133,6 +140,10 @@ int roardsp_quantify_ctl   (struct roardsp_filter * filter, int cmd, void * data
 int roardsp_clip_init  (struct roardsp_filter * filter, struct roar_stream * stream, int id);
 int roardsp_clip_calc16(struct roardsp_filter * filter, void * data, size_t samples);
 int roardsp_clip_ctl   (struct roardsp_filter * filter, int cmd, void * data);
+
+int roardsp_downmix_init   (struct roardsp_filter * filter, struct roar_stream * stream, int id);
+int roardsp_downmix_calc162(struct roardsp_filter * filter, void * data, size_t samples);
+int roardsp_downmix_ctl    (struct roardsp_filter * filter, int cmd, void * data);
 
 // codecs:
 int roardsp_conv_alaw2pcm16 (int16_t * out, char * in, size_t len);
