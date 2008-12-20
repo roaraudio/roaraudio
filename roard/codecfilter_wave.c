@@ -89,8 +89,8 @@ int cf_wave_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  int16_t  bits;
  int16_t  codec;
 
- ROAR_WARN("cf_wave_write(inst=%p, buf=%p, len=%i) = ?", inst, buf, len);
- ROAR_WARN("cf_wave_write(inst=%p, buf=%p, len=%i): self->opened=%i", inst, buf, len, self->opened);
+ ROAR_DBG("cf_wave_write(inst=%p, buf=%p, len=%i) = ?", inst, buf, len);
+ ROAR_DBG("cf_wave_write(inst=%p, buf=%p, len=%i): self->opened=%i", inst, buf, len, self->opened);
 
  if ( self->opened ) {
   return stream_vio_s_write(self->stream, buf, len);
@@ -114,7 +114,7 @@ int cf_wave_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
     break;
   }
 
-  ROAR_WARN("cf_wave_write(*) Codec supported!");
+  ROAR_DBG("cf_wave_write(*) Codec supported!");
 
   bits = s->info.bits;
   memcpy(header+24, &(s->info.rate    ), 4);
