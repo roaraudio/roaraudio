@@ -27,13 +27,15 @@
 struct roar_codecfilter g_codecfilter[] = {
  {-1,                     "null", "null codec filter", NULL, ROAR_CODECFILTER_NONE, NULL, NULL, NULL, NULL, NULL, NULL},
 
+/*
 #ifdef ROAR_HAVE_LIBSNDFILE
- {ROAR_CODEC_RIFF_WAVE, "sndfile", "libsndfile codec filter", NULL, ROAR_CODECFILTER_READ,
-  cf_sndfile_open, cf_sndfile_close, NULL, NULL, cf_sndfile_read, NULL},
+ {ROAR_CODEC_RIFF_WAVE, "sndfile", "libsndfile codec filter", NULL, ROAR_CODECFILTER_READ|ROAR_CODECFILTER_WRITE,
+  cf_sndfile_open, cf_sndfile_close, NULL, cf_sndfile_write, cf_sndfile_read, NULL},
 #else
+*/
  {ROAR_CODEC_RIFF_WAVE, "RIFF/WAVE", "RIFF/WAVE", NULL, ROAR_CODECFILTER_READ,
-  cf_wave_open, cf_wave_close, NULL, NULL, cf_wave_read, NULL},
-#endif
+  cf_wave_open, cf_wave_close, NULL, cf_wave_write, cf_wave_read, NULL},
+//#endif
 
  {ROAR_CODEC_ALAW, "alaw", "A-Law", NULL, ROAR_CODECFILTER_READ|ROAR_CODECFILTER_WRITE,
   cf_alaw_open, cf_alaw_close, NULL, cf_alaw_write, cf_alaw_read, NULL},

@@ -737,15 +737,18 @@ int streams_send_mon   (int id) {
    return 0;
   }
  } else {
+  errno = 0;
   if ( codecfilter_write(ss->codecfilter_inst, ss->codecfilter, obuf, olen)
             == olen ) {
    if ( need_to_free ) free(obuf);
    s->pos = ROAR_MATH_OVERFLOW_ADD(s->pos, ROAR_OUTPUT_CALC_OUTBUFSAMP(&(s->info), olen)*s->info.channels);
    return 0;
   } else { // we cann't retry on codec filetered streams
-   if ( need_to_free ) free(obuf);
-   streams_delete(id);
-   return -1;
+   if ( errno != EAGAIN ) {
+    if ( need_to_free ) free(obuf);
+    streams_delete(id);
+    return -1;
+   }
   }
  }
 

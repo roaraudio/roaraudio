@@ -38,12 +38,16 @@ int cf_sndfile_open(CODECFILTER_USERDATA_T * inst, int codec,
 
  obj->stream = info;
 
+ ROAR_STREAM(info)->info.codec = ROAR_CODEC_DEFAULT;
+
  *inst = (CODECFILTER_USERDATA_T) obj;
 
 /*
  s->info.bits  = 16;
  s->info.codec = ROAR_CODEC_DEFAULT;
 */
+
+ ROAR_WARN("cf_sndfile_open(*) = 0");
 
  return 0;
 }
@@ -84,6 +88,7 @@ int cf_sndfile_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
    ROAR_ERR("cf_sndfile_read(*): can not sf_open_fd(*)!");
    return -1;
   }
+  ROAR_WARN("cf_sndfile_read(*): obj->info={.format=0x%.8x, .samplerate=%i, .channels=%i}", obj->info.format, obj->info.samplerate, obj->info.channels);
 
   s->info.codec    = ROAR_CODEC_DEFAULT;
   s->info.rate     = obj->info.samplerate;
@@ -105,7 +110,67 @@ int cf_sndfile_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
 }
 
 int cf_sndfile_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
- return -1;
+ struct codecfilter_sndfile_inst * obj = (struct codecfilter_sndfile_inst *) inst;
+ struct roar_stream * s = ROAR_STREAM(obj->stream);
+ int ret;
+
+ ROAR_WARN("cf_sndfile_write(*): obj->opened=%i", obj->opened);
+
+ if ( !obj->opened ) {
+  if ( s->fh == -1 ) {
+   errno = EAGAIN;
+   return -1;
+  }
+
+  switch (s->info.codec) {
+   case ROAR_CODEC_PCM_S_LE:
+   case ROAR_CODEC_PCM_S_BE:
+     switch (s->info.bits) {
+      case  8:
+        obj->info.format = SF_FORMAT_PCM_S8;
+       break;
+      case 16:
+        obj->info.format = SF_FORMAT_PCM_16;
+       break;
+      case 24:
+        obj->info.format = SF_FORMAT_PCM_24;
+       break;
+      case 32:
+        obj->info.format = SF_FORMAT_PCM_32;
+       break;
+     }
+     //obj->info.format |= s->info.codec == ROAR_CODEC_PCM_S_LE ? SF_ENDIAN_LITTLE : SF_ENDIAN_BIG;
+     obj->info.format |= SF_ENDIAN_FILE;
+     obj->info.format |= SF_FORMAT_WAV;
+    break;
+   default:
+     ROAR_ERR("cf_sndfile_write(*): codec(%s) not supported!", roar_codec2str(s->info.bits));
+     return -1;
+    break;
+  }
+
+  obj->info.samplerate = s->info.rate;
+  obj->info.channels   = s->info.channels;
+  obj->info.sections   = 1;
+  obj->info.frames     = 182592; // 2147483647;
+  obj->info.seekable   = 1;
+  obj->info.format     = 0x00010002;
+
+  if ( (obj->state = sf_open_fd(s->fh, SFM_WRITE, &(obj->info), 0)) == NULL ) {
+   ROAR_ERR("cf_sndfile_write(*): can not sf_open_fd(*)!");
+   ROAR_ERR("cf_sndfile_write(*): s->fh=%i", s->fh);
+   ROAR_ERR("cf_sndfile_write(*): obj->info={.format=0x%.8x, .samplerate=%i, .channels=%i}", obj->info.format, obj->info.samplerate, obj->info.channels);
+   return -1;
+  }
+
+  obj->opened = 1;
+//  errno = EAGAIN;
+ }
+
+ ROAR_WARN("cf_sndfile_write(*): obj->opened=%i", obj->opened);
+ ret = sf_write_raw(obj->state, (void*) buf, len);
+ ROAR_WARN("cf_sndfile_write(inst=%p, buf=%p, len=%i) = %i", inst, buf, len, ret);
+ return ret;
 }
 
 #endif
