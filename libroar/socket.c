@@ -623,6 +623,7 @@ int roar_socket_open_proxy (int mode, int type, char * host, int port, char * pr
  char * user = NULL, * pw = NULL, * opts = NULL;
  char * sep;
  int    no_fh = 0;
+ char   proxy_addr_buf[1024];
  static struct passwd * passwd;
  int (* code)(int mode, int fh, char * host, int port, char * user, char * pw, char * opts) = NULL;
 
@@ -661,6 +662,10 @@ int roar_socket_open_proxy (int mode, int type, char * host, int port, char * pr
   no_fh      = 1;
  }
 
+ proxy_addr_buf[1023] = 0;
+ strncpy(proxy_addr_buf, proxy_addr, 1023);
+ proxy_addr = proxy_addr_buf;
+
  if ( (sep = strstr(proxy_type, "/")) != NULL )
   opts = sep+1;
 
@@ -677,6 +682,8 @@ int roar_socket_open_proxy (int mode, int type, char * host, int port, char * pr
    pw = sep+1;
   }
  }
+
+ ROAR_DBG("roar_socket_open_proxy(*): proxy_type='%s', opts='%s', user='%s', pw=(not shown), proxy_addr='%s'", proxy_type, opts, user, proxy_addr);
 
  for (i = 0; proxy_addr[i] != 0 && proxy_addr[i] != ':' && i < ROAR_SOCKET_MAX_HOSTNAMELEN; i++)
   proxy_host[i] = proxy_addr[i];
@@ -859,6 +866,8 @@ int roar_socket_open_ssh    (int mode, int fh, char * host, int port, char * use
   }
  }
 
+ ROAR_DBG("roar_socket_open_ssh(*): proxy_addr='%s'", proxy_addr);
+
  if ( (sep = strstr(proxy_addr, "@")) != NULL )
   proxy_addr = sep+1;
 
@@ -884,6 +893,7 @@ int roar_socket_open_ssh    (int mode, int fh, char * host, int port, char * use
   rcmd[1023] = 0;
  }
 
+ ROAR_DBG("roar_socket_open_ssh(*): proxy_port=%i, user='%s', proxy_addr='%s'", proxy_port, user, proxy_addr);
  snprintf(cmd, 1023, "ssh -p %i -l '%s' '%s' '%s'", proxy_port, user, proxy_addr, rcmd);
  cmd[1023] = 0;
 
