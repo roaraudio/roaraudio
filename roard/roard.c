@@ -231,6 +231,7 @@ int main (int argc, char * argv[]) {
  int    sock_type = ROAR_SOCKET_TYPE_UNKNOWN;
  char * chrootdir = NULL;
  int    setids    = 0;
+ char * env_roar_proxy_backup;
  struct group   * grp  = NULL;
  struct passwd  * pwd  = NULL;
  struct servent * serv = NULL;
@@ -461,6 +462,10 @@ int main (int argc, char * argv[]) {
  if ( *server != 0 ) {
   if ( (g_listen_socket = roar_socket_listen(sock_type, server, port)) == -1 ) {
    if ( *server == '/' ) {
+    if ( (env_roar_proxy_backup = getenv("ROAR_PROXY")) != NULL ) {
+     env_roar_proxy_backup = strdup(env_roar_proxy_backup);
+     unsetenv("ROAR_PROXY");
+    }
     if ( (i = roar_socket_connect(server, port)) != -1 ) {
      close(i);
      ROAR_ERR("Can not open listen socket!");
@@ -471,6 +476,10 @@ int main (int argc, char * argv[]) {
       ROAR_ERR("Can not open listen socket!");
       return 1;
      }
+    }
+    if ( env_roar_proxy_backup != NULL ) {
+     setenv("ROAR_PROXY", env_roar_proxy_backup, 0);
+     free(env_roar_proxy_backup);
     }
    } else {
     ROAR_ERR("Can not open listen socket!");
