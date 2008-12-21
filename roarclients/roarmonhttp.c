@@ -33,6 +33,9 @@ void print_header (int codec) {
   case ROAR_CODEC_OGG_VORBIS:
     mime = "application/ogg";
    break;
+  case ROAR_CODEC_RIFF_WAVE:
+    mime = "audio/x-wav";
+   break;
  }
 
  printf("Content-type: %s\r\n", mime);
@@ -58,7 +61,9 @@ int stream (int dest, int src) {
   FD_ZERO(fsi);
   FD_ZERO(fso);
   FD_SET(src, fsi);
-  FD_SET(dest, fso);
+  if ( ring != NULL ) {
+   FD_SET(dest, fso);
+  }
 
   tv.tv_sec  = 0;
   tv.tv_usec = 100000; // 100ms
@@ -84,6 +89,9 @@ int stream (int dest, int src) {
        return -1;
       break;
     }
+
+    if ( roar_buffer_set_len(cur, len) == -1 )
+     return -1;
 
     if ( ring == NULL ) {
      ring = cur;
@@ -125,13 +133,33 @@ int main (int argc, char * argv[]) {
  int    rate     = 44100;
  int    bits     = 16;
  int    channels = 2;
-// int    codec    = ROAR_CODEC_OGG_VORBIS;
- int    codec    = ROAR_CODEC_DEFAULT;
+ int    codec    = ROAR_CODEC_OGG_VORBIS;
+// int    codec    = ROAR_CODEC_DEFAULT;
  char * server   = NULL;
  int    fh;
+ char * c, * k, * v;
+ char * sp0, * sp1;
+ 
+
+ c = strtok_r(getenv("QUERY_STRING"), "&", &sp0);
+
+ while (c != NULL) {
+  k = strtok_r(c,    "=", &sp1);
+  v = strtok_r(NULL, "=", &sp1);
+
+  if ( !strcmp(k, "codec") ) {
+   if ( (codec = roar_str2codec(v)) == -1 )
+    return 1;
+  } else {
+   return 1;
+  }
+
+  c = strtok_r(NULL, "&", &sp0);
+ }
+
 
  if ( (fh = roar_simple_monitor(rate, channels, bits, codec, server, "roarmon")) == -1 ) {
-  fprintf(stderr, "Error: can not start monitoring\n");
+//  fprintf(stderr, "Error: can not start monitoring\n");
   return 1;
  }
 
