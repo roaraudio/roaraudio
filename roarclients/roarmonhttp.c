@@ -39,6 +39,7 @@ void print_header (int codec) {
  }
 
  printf("Content-type: %s\r\n", mime);
+ printf("Server: RoarAudio (roarmonhttp $Revision: 1.5 $)\r\n");
  printf("\r\n");
 
  fflush(stdout);
@@ -151,6 +152,12 @@ int main (int argc, char * argv[]) {
   if ( !strcmp(k, "codec") ) {
    if ( (codec = roar_str2codec(v)) == -1 )
     return 1;
+  } else if ( !strcmp(k, "channels") ) {
+   channels = atoi(v);
+  } else if ( !strcmp(k, "rate") ) {
+   rate = atoi(v);
+  } else if ( !strcmp(k, "bits") ) {
+   bits = atoi(v);
   } else {
    return 1;
   }
