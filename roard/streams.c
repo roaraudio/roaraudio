@@ -731,6 +731,9 @@ int streams_send_mon   (int id) {
  errno = 0;
 
  if ( ss->codecfilter == -1 ) {
+  if ( s->fh == -1 )
+   return 0;
+
   if ( stream_vio_s_write(ss, obuf, olen) == olen ) {
    if ( need_to_free ) free(obuf);
    s->pos = ROAR_MATH_OVERFLOW_ADD(s->pos, ROAR_OUTPUT_CALC_OUTBUFSAMP(&(s->info), olen)*s->info.channels);
