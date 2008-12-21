@@ -765,6 +765,9 @@ int streams_send_mon   (int id) {
    if ( need_to_free ) free(obuf);
    s->pos = ROAR_MATH_OVERFLOW_ADD(s->pos, ROAR_OUTPUT_CALC_OUTBUFSAMP(&(s->info), olen)*s->info.channels);
    return 0;
+  } else if ( errno == EAGAIN ) {
+   ROAR_WARN("streams_send_mon(id=%i): Can not send data to client: %s", id, strerror(errno));
+   return 0;
   }
  }
 
