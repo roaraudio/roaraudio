@@ -33,7 +33,7 @@ struct roar_codecfilter g_codecfilter[] = {
   cf_sndfile_open, cf_sndfile_close, NULL, cf_sndfile_write, cf_sndfile_read, NULL},
 #else
 */
- {ROAR_CODEC_RIFF_WAVE, "RIFF/WAVE", "RIFF/WAVE", NULL, ROAR_CODECFILTER_READ,
+ {ROAR_CODEC_RIFF_WAVE, "RIFF/WAVE", "RIFF/WAVE", NULL, ROAR_CODECFILTER_READ|ROAR_CODECFILTER_WRITE,
   cf_wave_open, cf_wave_close, NULL, cf_wave_write, cf_wave_read, NULL},
 //#endif
 
