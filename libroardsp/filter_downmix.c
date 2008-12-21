@@ -64,7 +64,11 @@ int roardsp_downmix_calc162  (struct roardsp_filter * filter, void * data, size_
   case ROARDSP_DOWNMIX_RMS:
     for (i = 0; i < samples; i += 2) {
      s.i64      = (int64_t)samp[i]*samp[i] + (int64_t)samp[i+1]*samp[i+1];
+#ifdef ROAR_HAVE_SQRTL
      s.i64      = sqrtl((long double)s.i64/2.0);
+#else
+     s.i64      = sqrt((double)s.i64/2.0);
+#endif
 //     s.i64     /=  2;
 
      if ( (samp[i] + samp[i+1]) < 0 )
