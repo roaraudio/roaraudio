@@ -139,7 +139,8 @@ int main (int argc, char * argv[]) {
  int    fh;
  char * c, * k, * v;
  char * sp0, * sp1;
- 
+
+ alarm(0); // reset alarm timers from httpd 
 
  c = strtok_r(getenv("QUERY_STRING"), "&", &sp0);
 
