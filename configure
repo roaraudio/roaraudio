@@ -393,6 +393,19 @@ else
  echo no
 fi
 
+echo -n 'checking for square root func... '
+
+echo '#include <math.h>' > $TF_C
+echo 'int main (void) { sqrtl(0); return 0; }' >> $TF_C
+
+if $CCTF -lm 2> /dev/null;
+then
+ echo '#define ROAR_HAVE_SQRTL' >&3
+ echo 'sqrtl()'
+else
+ echo 'sqrt()'
+fi
+
 echo -n 'checking for inline funcs... '
 
 echo 'inline int test (void) { return 0; }' > $TF_C
