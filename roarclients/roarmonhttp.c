@@ -26,7 +26,7 @@
 
 #define BUFSIZE 1024
 
-void print_header (int codec) {
+void print_header (int codec, int rate, int channels) {
  char * mime = "application/octet-stream";
 
  switch (codec) {
@@ -39,7 +39,9 @@ void print_header (int codec) {
  }
 
  printf("Content-type: %s\r\n", mime);
- printf("Server: RoarAudio (roarmonhttp $Revision: 1.6 $)\r\n");
+ printf("ice-audio-info: ice-samplerate=%i;ice-channels=%i\r\n", rate, channels);
+ printf("icy-pub:0\r\n");
+ printf("Server: RoarAudio (roarmonhttp $Revision: 1.7 $)\r\n");
  printf("\r\n");
 
  fflush(stdout);
@@ -214,7 +216,7 @@ int main (int argc, char * argv[]) {
   return 1;
  }
 
- print_header(codec);
+ print_header(codec, rate, channels);
 
 /*
  while((i = read(fh, buf, BUFSIZE)))
