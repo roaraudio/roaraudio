@@ -49,6 +49,8 @@ int sources_add (char * driver, char * device, char * container, char * options,
   return sources_add_wav(driver, device, container, options, primary);
  } else if ( strcmp(driver, "cf") == 0 ) {
   return sources_add_cf(driver, device, container, options, primary);
+ } else if ( strcmp(driver, "roar") == 0 ) {
+  return sources_add_roar(driver, device, container, options, primary);
  }
 
  return -1;
@@ -176,6 +178,47 @@ int sources_add_cf (char * driver, char * device, char * container, char * optio
 
  streams_set_fh(stream, fh);
  streams_set_socktype(stream, ROAR_SOCKET_TYPE_FILE);
+
+ if ( primary )
+  streams_mark_primary(stream);
+
+ client_stream_add(g_source_client, stream);
+
+ return 0;
+}
+
+int sources_add_roar (char * driver, char * device, char * container, char * options, int primary) {
+ int  stream;
+ int  fh;
+ int  codec = ROAR_CODEC_DEFAULT;
+ struct roar_stream * s;
+
+ if ( options != NULL && *options ) {
+  if ( (codec = roar_str2codec(options)) == -1 ) {
+   return -1;
+  }
+ }
+
+ if ( (fh = roar_simple_monitor(g_sa->rate, g_sa->channels, g_sa->bits, codec, device, "roard")) == -1 ) {
+  return -1;
+ }
+
+ if ( (stream = streams_new()) == -1 ) {
+  close(fh);
+  return -1;
+ }
+
+ streams_get(stream, (struct roar_stream_server **)&s);
+
+ memcpy(&(s->info), g_sa, sizeof(struct roar_audio_info));
+
+ s->dir        = ROAR_DIR_PLAY;
+ s->pos_rel_id = -1;
+ s->info.codec = codec;
+
+ ROAR_STREAM_SERVER(s)->codec_orgi = codec;
+
+ streams_set_fh(stream, fh);
 
  if ( primary )
   streams_mark_primary(stream);
