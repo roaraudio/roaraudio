@@ -81,6 +81,7 @@ int sources_add_raw (char * driver, char * device, char * container, char * opti
 
  streams_set_fh(stream, fh);
 
+ streams_set_flag(stream, ROAR_FLAG_SOURCE);
  client_stream_add(g_source_client, stream);
 
  return 0;
@@ -121,6 +122,7 @@ int sources_add_wav (char * driver, char * device, char * container, char * opti
 
  streams_set_fh(stream, fh);
 
+ streams_set_flag(stream, ROAR_FLAG_SOURCE);
  client_stream_add(g_source_client, stream);
 
  return 0;
@@ -182,6 +184,7 @@ int sources_add_cf (char * driver, char * device, char * container, char * optio
  if ( primary )
   streams_mark_primary(stream);
 
+ streams_set_flag(stream, ROAR_FLAG_SOURCE);
  client_stream_add(g_source_client, stream);
 
  return 0;
@@ -223,6 +226,7 @@ int sources_add_roar (char * driver, char * device, char * container, char * opt
  if ( primary )
   streams_mark_primary(stream);
 
+ streams_set_flag(stream, ROAR_FLAG_SOURCE);
  client_stream_add(g_source_client, stream);
 
  return 0;
