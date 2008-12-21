@@ -39,7 +39,7 @@ void print_header (int codec) {
  }
 
  printf("Content-type: %s\r\n", mime);
- printf("Server: RoarAudio (roarmonhttp $Revision: 1.5 $)\r\n");
+ printf("Server: RoarAudio (roarmonhttp $Revision: 1.6 $)\r\n");
  printf("\r\n");
 
  fflush(stdout);
@@ -130,6 +130,44 @@ int stream (int dest, int src) {
  return 0;
 }
 
+
+int parse_http (void) {
+ char buf[1024];
+ char * qs, *str;
+ ssize_t len;
+
+ if ( (len = read(ROAR_STDIN, buf, 1023)) == -1 )
+  return -1;
+
+ buf[len] = 0;
+
+ if ( strncmp(buf, "GET /", 5) )
+  return -1;
+
+ qs = buf+5;
+
+ if ( (str = strstr(qs, " ")) == NULL )
+  return -1;
+
+ *str = 0;
+
+ for (; *qs != '?'; qs++)
+  if ( !*qs )
+   break;
+
+ if ( *qs == '?' )
+  qs++;
+
+ printf("HTTP/1.0 200 OK\r\n");
+// printf("QS: %s\r\n", qs);
+
+ fflush(stdout);
+
+ setenv("QUERY_STRING", qs, 1);
+
+ return 0;
+}
+
 int main (int argc, char * argv[]) {
  int    rate     = 44100;
  int    bits     = 16;
@@ -142,6 +180,11 @@ int main (int argc, char * argv[]) {
  char * sp0, * sp1;
 
  alarm(0); // reset alarm timers from httpd 
+
+ if ( argc > 1 )
+  if ( ! strcmp(argv[1], "--inetd") )
+   if ( parse_http() == -1 )
+    return 1;
 
  c = strtok_r(getenv("QUERY_STRING"), "&", &sp0);
 
