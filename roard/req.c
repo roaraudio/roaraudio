@@ -482,7 +482,7 @@ int req_on_get_stream_para (int client, struct roar_message * mes, char * data) 
  d[3] = ss->pre_underruns;
  d[4] = ss->post_underruns;
  d[5] = ss->codec_orgi;
- d[6] = ROAR_FLAG_NONE | (ss->primary ? ROAR_FLAG_PRIMARY : 0) | (ss->driver_id != -1 ? ROAR_FLAG_OUTPUT : 0);
+ d[6] = ss->flags | (ss->primary ? ROAR_FLAG_PRIMARY : 0) | (ss->driver_id != -1 ? ROAR_FLAG_OUTPUT : 0);
 
  for (i = 0; i < mes->datalen/2; i++) {
   d[i] = ROAR_HOST2NET16(d[i]);

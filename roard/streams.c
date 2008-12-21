@@ -95,7 +95,7 @@ int streams_new    (void) {
 
    roar_vio_init_calls(&(s->vio));
    s->driver_id = -1;
-   s->flags     =  0;
+   s->flags     =  ROAR_FLAG_NONE;
 
    roardsp_fchain_init(&(s->fc));
 
