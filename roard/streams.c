@@ -95,6 +95,7 @@ int streams_new    (void) {
 
    roar_vio_init_calls(&(s->vio));
    s->driver_id = -1;
+   s->flags     =  0;
 
    roardsp_fchain_init(&(s->fc));
 
@@ -260,6 +261,26 @@ int streams_set_primary (int id, int prim) {
 int streams_mark_primary (int id) {
  return streams_set_primary(id, 1);
 }
+
+int streams_set_flag     (int id, int flag) {
+ if ( g_streams[id] == NULL )
+  return -1;
+
+ g_streams[id]->flags |= flag;
+
+ return 0;
+}
+
+int streams_reset_flag   (int id, int flag) {
+ if ( g_streams[id] == NULL )
+  return -1;
+
+ g_streams[id]->flags |= flag;
+ g_streams[id]->flags -= flag;
+
+ return 0;
+}
+
 int streams_get_outputbuffer  (int id, void ** buffer, size_t size) {
  if ( g_streams[id] == NULL )
   return -1;
