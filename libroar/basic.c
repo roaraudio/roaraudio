@@ -42,6 +42,7 @@ int roar_connect_raw (char * server) {
  int fh = -1;
  int is_decnet = 0;
  char * obj = NULL;
+ struct passwd * pwd;
 #ifdef ROAR_HAVE_LIBDNET
  struct stat decnet_stat;
 #endif
@@ -60,7 +61,17 @@ int roar_connect_raw (char * server) {
   /* connect via defaults */
 
 
-  snprintf(user_sock, 79, "%s/%s", getenv("HOME"), ROAR_DEFAULT_SOCK_USER);
+  roar_server = getenv("HOME");
+
+  if ( roar_server == NULL ) {
+   if ( (pwd = getpwuid(getuid())) == NULL ) {
+    roar_server = "/NX-HOME-DIR";
+   } else {
+    roar_server = pwd->pw_dir;
+   }
+  }
+
+  snprintf(user_sock, 79, "%s/%s", roar_server, ROAR_DEFAULT_SOCK_USER);
 
   if ( (fh = roar_socket_connect(user_sock, 0)) != -1 )
    return fh;
