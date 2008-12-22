@@ -894,6 +894,7 @@ int roar_socket_open_ssh    (int mode, int fh, char * host, int port, char * use
  }
 
  ROAR_DBG("roar_socket_open_ssh(*): proxy_port=%i, user='%s', proxy_addr='%s'", proxy_port, user, proxy_addr);
+ ROAR_DBG("roar_socket_open_ssh(*): rcmd: %s", rcmd);
  snprintf(cmd, 1023, "ssh -p %i -l '%s' '%s' '%s'", proxy_port, user, proxy_addr, rcmd);
  cmd[1023] = 0;
 
