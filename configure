@@ -395,15 +395,20 @@ fi
 
 echo -n 'checking for square root func... '
 
-echo '#include <math.h>' > $TF_C
-echo 'int main (void) { sqrtl(0); return 0; }' >> $TF_C
-
-if $CCTF -lm 2> /dev/null;
+echo "$SYSNAME" | if grep CYGWIN > /dev/null
 then
- echo '#define ROAR_HAVE_SQRTL' >&3
- echo 'sqrtl()'
+ echo 'sqrt() (cygwin)'
 else
- echo 'sqrt()'
+ echo '#include <math.h>' > $TF_C
+ echo 'int main (void) { sqrtl(0); return 0; }' >> $TF_C
+
+ if $CCTF -lm 2> /dev/null;
+ then
+  echo '#define ROAR_HAVE_SQRTL' >&3
+  echo 'sqrtl()'
+ else
+  echo 'sqrt()'
+ fi
 fi
 
 echo -n 'checking for inline funcs... '
@@ -589,7 +594,7 @@ echo 'config.h created and moved into include/roaraudio/'
 
 echo "$SYSNAME" | if grep CYGWIN > /dev/null
 then
- rm -f $TF_E
+ rm -f $TF_E.exe
  echo 'patching Makefiles for cygwin...'
  find . -name Makefile -print0 | xargs -0 sed 's/\.so/.dll'/g -i
 fi
