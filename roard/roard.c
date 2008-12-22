@@ -171,6 +171,8 @@ int add_output (char * drv, char * dev, char * opts, int prim) {
     if ( prim ) alive = 0;
     return -1;
    }
+  } else if ( strcmp(k, "meta") == 0 ) {
+   streams_set_flag(stream, ROAR_FLAG_META);
   } else {
    ROAR_ERR("add_output(*): unknown option '%s'", k);
    streams_delete(stream);

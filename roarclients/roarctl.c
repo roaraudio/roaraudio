@@ -201,6 +201,8 @@ void list_streams (struct roar_connection * con) {
      strcat(flags, "output ");
     if ( info.flags & ROAR_FLAG_SOURCE )
      strcat(flags, "source ");
+    if ( info.flags & ROAR_FLAG_META )
+     strcat(flags, "meta ");
 
     printf("Flags                 : %s\n", flags);
    }

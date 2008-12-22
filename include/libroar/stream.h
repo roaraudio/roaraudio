@@ -54,7 +54,7 @@
 #define ROAR_FLAG_DRIVER         ROAR_FLAG_OUTPUT
 #define ROAR_FLAG_SOURCE         0x04
 #define ROAR_FLAG_SYNC           0x08
-//#define ROAR_FLAG_SAMPLE         0x10
+#define ROAR_FLAG_META           0x10
 //#define ROAR_FLAG_SYNC           0x08
 
 struct roar_stream_info {
