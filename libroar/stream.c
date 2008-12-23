@@ -292,6 +292,34 @@ int roar_stream_get_info (struct roar_connection * con, struct roar_stream * s, 
  return 0;
 }
 
+int roar_stream_set_flags (struct roar_connection * con, struct roar_stream * s, int flags, int reset) {
+ struct roar_message m;
+ uint16_t * data = (uint16_t *) m.data;
+ int i;
+
+ m.cmd     = ROAR_CMD_SET_STREAM_PARA;
+ m.stream  = s->id;
+ m.datalen = 8;
+ m.pos     = 0;
+
+ data[0] = 0; // Version and reserved
+ data[1] = 2; // flags
+ data[2] = reset == ROAR_RESET_FLAG ? ROAR_RESET_FLAG : ROAR_SET_FLAG;
+ data[3] = flags;
+
+ for (i = 0; i < m.datalen/2; i++) {
+  data[i] = ROAR_HOST2NET16(data[i]);
+ }
+
+ if ( roar_req(con, &m, NULL) == -1 )
+  return -1;
+
+ if ( m.cmd != ROAR_CMD_OK )
+  return -1;
+
+ return 0;
+}
+
 #define _ROAR_STREAM_MESSAGE_LEN ((5+1)*4)
 
 int roar_stream_s2m     (struct roar_stream * s, struct roar_message * m) {

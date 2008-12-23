@@ -378,6 +378,32 @@ int show_meta_all (struct roar_connection * con, int id) {
  return 0;
 }
 
+int set_flags (struct roar_connection * con, int id, int reset, char * flags) {
+ int f = ROAR_FLAG_NONE;
+ char * c;
+ struct roar_stream s[1];
+
+ memset(s, 0, sizeof(struct roar_stream));
+
+ s->id = id;
+
+ c = strtok(flags, ",");
+ while (c != NULL) {
+  if ( !strcmp(c, "meta") ) {
+   f |= ROAR_FLAG_META;
+  } else if ( !strcmp(c, "primary") ) {
+   f |= ROAR_FLAG_PRIMARY;
+  } else {
+   fprintf(stderr, "Error: unknown flag: %s\n", c);
+   return -1;
+  }
+
+  c = strtok(NULL, ",");
+ }
+
+ return roar_stream_set_flags(con, s, f, reset);
+}
+
 int main (int argc, char * argv[]) {
  struct roar_connection con;
  char * server   = NULL;
@@ -512,6 +538,22 @@ int main (int argc, char * argv[]) {
     printf("volume changed\n");
    }
 
+  } else if ( !strcmp(k, "flag") ) {
+   i++;
+   if ( set_flags(&con, atoi(argv[i]), ROAR_SET_FLAG, argv[i+1]) == -1 ) {
+    fprintf(stderr, "Error: can not set flags\n");
+   } else {
+    printf("flags changed\n");
+   }
+   i++;
+  } else if ( !strcmp(k, "unflag") ) {
+   i++;
+   if ( set_flags(&con, atoi(argv[i]), ROAR_RESET_FLAG, argv[i+1]) == -1 ) {
+    fprintf(stderr, "Error: can not reset flags\n");
+   } else {
+    printf("flags changed\n");
+   }
+   i++;
   } else if ( !strcmp(k, "metaset") ) {
    i++;
    if ( set_meta(&con, atoi(argv[i]), argv[i+1], argv[i+2], argv[i+3]) == -1 ) {

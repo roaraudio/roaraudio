@@ -54,6 +54,7 @@ struct roar_command g_commands[COMMAND_MAX_COMMANDS] = {
   {ROAR_CMD_SET_VOL,      "SET_VOL",      req_on_set_vol},
   {ROAR_CMD_GET_VOL,      "GET_VOL",      req_on_get_vol},
   {ROAR_CMD_GET_STREAM_PARA, "GET_STREAM_PARA", req_on_get_stream_para},
+  {ROAR_CMD_SET_STREAM_PARA, "SET_STREAM_PARA", req_on_set_stream_para},
 
   {ROAR_CMD_ADD_DATA,     "ADD_DATA",     req_on_add_data},
 

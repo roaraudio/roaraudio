@@ -55,6 +55,7 @@ int req_on_get_client  (int client, struct roar_message * mes, char * data);
 int req_on_get_stream  (int client, struct roar_message * mes, char * data);
 
 int req_on_get_stream_para (int client, struct roar_message * mes, char * data);
+int req_on_set_stream_para (int client, struct roar_message * mes, char * data);
 
 int req_on_kick        (int client, struct roar_message * mes, char * data);
 int req_on_attach      (int client, struct roar_message * mes, char * data);

@@ -57,6 +57,9 @@
 #define ROAR_FLAG_META           0x10
 //#define ROAR_FLAG_SYNC           0x08
 
+#define ROAR_SET_FLAG            0
+#define ROAR_RESET_FLAG          1
+
 struct roar_stream_info {
  int block_size;
  int pre_underruns;
@@ -82,6 +85,8 @@ int roar_stream_add_data (struct roar_connection * con, struct roar_stream * s, 
 int roar_stream_send_data (struct roar_connection * con, struct roar_stream * s, char * data, size_t len);
 
 int roar_stream_get_info (struct roar_connection * con, struct roar_stream * s, struct roar_stream_info * info);
+
+int roar_stream_set_flags (struct roar_connection * con, struct roar_stream * s, int flags, int reset);
 
 int roar_stream_s2m     (struct roar_stream * s, struct roar_message * m);
 int roar_stream_m2s     (struct roar_stream * s, struct roar_message * m);

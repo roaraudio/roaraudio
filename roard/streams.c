@@ -266,7 +266,15 @@ int streams_set_flag     (int id, int flag) {
  if ( g_streams[id] == NULL )
   return -1;
 
+ if ( flag & ROAR_FLAG_PRIMARY ) {
+  streams_set_primary(id, 1);
+  flag -= ROAR_FLAG_PRIMARY;
+ }
+
  g_streams[id]->flags |= flag;
+
+ if ( flag & ROAR_FLAG_META )
+  stream_meta_finalize(id);
 
  return 0;
 }
@@ -274,6 +282,11 @@ int streams_set_flag     (int id, int flag) {
 int streams_reset_flag   (int id, int flag) {
  if ( g_streams[id] == NULL )
   return -1;
+
+ if ( flag & ROAR_FLAG_PRIMARY ) {
+  streams_set_primary(id, 0);
+  flag -= ROAR_FLAG_PRIMARY;
+ }
 
  g_streams[id]->flags |= flag;
  g_streams[id]->flags -= flag;
