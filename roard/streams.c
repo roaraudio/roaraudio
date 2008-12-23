@@ -119,6 +119,13 @@ int streams_delete (int id) {
  ROAR_DBG("streams_delete(id=%i) = ?", id);
  ROAR_DBG("streams_delete(id=%i): g_streams[id]->id=%i", id, ROAR_STREAM(s)->id);
 
+ // delete meta data form other meta streams if needed
+ if ( streams_get_flag(id, ROAR_FLAG_META) == 1 ) {
+  ROAR_DBG("streams_delete(id=%i): deleting meta stream!", id);
+  stream_meta_clear(id);
+  stream_meta_finalize(id);
+ }
+
  if ( s->codecfilter != -1 ) {
   codecfilter_close(s->codecfilter_inst, s->codecfilter);
   s->codecfilter_inst = NULL;
