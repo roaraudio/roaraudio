@@ -519,7 +519,7 @@ int req_on_set_stream_para (int client, struct roar_message * mes, char * data) 
  mes->cmd     = ROAR_CMD_OK;
  mes->datalen = 0;
 
- ROAR_WARN("req_on_set_stream_para(*): request seems to be valid");
+ ROAR_DBG("req_on_set_stream_para(*): request seems to be valid");
 
  if ( d[2] == ROAR_RESET_FLAG ) {
   return streams_reset_flag(mes->stream, d[3]);
