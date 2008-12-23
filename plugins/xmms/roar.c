@@ -316,6 +316,10 @@ int roar_update_metadata(void) {
   free(info);
  }
 
+ meta.value = &empty;
+ meta.type = ROAR_META_TYPE_NONE;
+ roar_stream_meta_set(&(g_inst.con), &(g_inst.stream), ROAR_META_MODE_FINALIZE, &meta);
+
  return 0;
 }
 
