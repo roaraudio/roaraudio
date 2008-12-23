@@ -577,6 +577,7 @@ int main (int argc, char * argv[]) {
   setsid();
   if ( fork() )
    _exit(0);
+  clients_set_pid(g_self_client, getpid()); // reset pid as it changed
  }
 
  if (chrootdir) {
