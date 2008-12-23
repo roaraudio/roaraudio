@@ -1,0 +1,64 @@
+#RoarAudio Configuration
+
+# --- [ General Options ]---
+
+# Start roard? YES or NO:
+ROARD='YES'
+
+# Additionl Options to pass to roard, should normally be empty
+ROARD_OPTS=''
+
+# Should we run roard in realtime mode:
+# NO     - Don't run in realtime mode
+# YES    - Run in realtime mode
+# DOUBLE - Try to run in a 'very realtime mode'
+# ROARD_REALTIME='YES'
+
+# Default location for roard:
+# Set this to a remote address and disable local roard
+# to run a network only setup.
+# ROARAUDIO_DEFAULT_SOCKET='server.local'
+
+# --- [ Network ] ---
+
+# Listening socket's address family:
+# UNIX   - Local connections only
+# TCP    - Connections via TCP/IP
+# DECnet - Connections via DECnet
+ROARD_AF='UNIX'
+
+# Socket to listen on (UNIX):
+ROARD_SOCKET='/tmp/roar'
+
+# Port to listen on (TCP):
+# ROARD_PORT=16002
+
+# Host/Nodename to listen on (TCP, DECnet):
+# use a value of '0.0.0.0' to listen publicly for TCP.
+# ROARD_HOST='0.0.0.0'
+
+# Object to listen on (DECnet):
+# ROARD_OBJECT='roar'
+
+# --- [ Audio and Devices ] ---
+
+# Samplerate, number of channels and bits per sample:
+# ROARD_RATE=44100
+# ROARD_CHANNELS=2
+# ROARD_BITS=16
+
+# Sound Driver and Device:
+# To get a list run: roard --list-driver
+# ROARD_DRIVER='oss'
+# ROARD_DEVICE='/dev/dsp'
+# ROARD_DRIVER_OPTIONS=''
+
+# --- [ Permitions ] ---
+
+# User and Group to run roard with:
+# Note: Users in the same group my access roard
+#       if runnung in UNIX mode.
+# ROARD_USER='roard'
+# ROARD_GROUP='audio'
+
+#ll

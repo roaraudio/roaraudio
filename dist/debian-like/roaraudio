@@ -1,0 +1,98 @@
+#!/bin/sh
+#
+set -e
+
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+DAEMON=/usr/bin/roard
+ROARCTL=/usr/bin/roarctl
+NAME=roaraudio
+DESC="RoarAudio"
+
+#PIDFILE=/var/run/$NAME.pid
+SCRIPTNAME=/etc/init.d/$NAME
+
+# Gracefully exit if the package has been removed.
+test -x $DAEMON || exit 0;
+
+# Read config file if it is present.
+if [ -r /etc/default/$NAME ]
+then
+    . /etc/default/$NAME
+fi
+
+if [ "$ROARAUDIO_DEFAULT_SOCKET" != '' ]
+then
+ ln -s "$ROARAUDIO_DEFAULT_SOCKET" /etc/roarserver
+fi
+
+[ "$ROARD" = 'YES' ] || exit 0;
+
+ROARD_OPTS="--daemon $ROARD_OPTS"
+
+[ "$ROARD_REALTIME" = 'YES'    ] && ROARD_OPTS="--realtime $ROARD_OPTS"
+[ "$ROARD_REALTIME" = 'DOUBLE' ] && ROARD_OPTS="--realtime --realtime $ROARD_OPTS"
+
+case "$ROARD_AF" in
+  UNIX|unix)
+   ROARD_OPTS="-u $ROARD_OPTS"
+  ;;
+  TCP|tcp)
+   ROARD_OPTS="-t $ROARD_OPTS"
+  ;;
+  DECnet|DECNET|decnet)
+   ROARD_OPTS="-n $ROARD_OPTS"
+  ;;
+esac
+
+[ "$ROARD_SOCKET" = '' ]  || ROARD_OPTS="--sock $ROARD_SOCKET $ROARD_OPTS"
+[ "$ROARD_PORT"   = '' ]  || ROARD_OPTS="--port $ROARD_PORT $ROARD_OPTS"
+
+if [ "$ROARD_OBJECT" = '' ]
+then
+ [ "$ROARD_HOST" = '' ]   || ROARD_OPTS="--bind $ROARD_HOST $ROARD_OPTS"
+else
+ ROARD_OPTS="--sock $ROARD_HOST::$ROARD_OBJECT $ROARD_OPTS"
+fi
+
+[ "$ROARD_RATE"    = '' ] || ROARD_OPTS="-R $ROARD_RATE $ROARD_OPTS"
+[ "$ROARD_CHANNEL" = '' ] || ROARD_OPTS="-C $ROARD_CHANNEL $ROARD_OPTS"
+[ "$ROARD_BITS"    = '' ] || ROARD_OPTS="-B $ROARD_BITS $ROARD_OPTS"
+
+[ "$ROARD_DRIVER" = '' ]  || ROARD_OPTS="-d $ROARD_DRIVER $ROARD_OPTS"
+[ "$ROARD_DEVICE" = '' ]  || ROARD_OPTS="-D $ROARD_DEVICE $ROARD_OPTS"
+[ "$ROARD_DRIVER_OPTIONS" = '' ]  || ROARD_OPTS="-dO $ROARD_DRIVER_OPTIONS $ROARD_OPTS"
+
+if [ "$ROARD_USER" = '' ]
+then
+ ROARD_OPTS="--setuid -U roard $ROARD_OPTS"
+else
+ ROARD_OPTS="--setuid -U $ROARD_USER $ROARD_OPTS"
+fi
+
+ROARD_OPTS="--setgid $ROARD_OPTS"
+[ "$ROARD_GROUP"  = '' ]  || ROARD_OPTS="-G $ROARD_GROUP $ROARD_OPTS"
+
+case "$1" in
+  start)
+	echo -n "Starting $DESC: $NAME"
+	$DAEMON $ROARD_OPTS
+	echo "."
+	;;
+  stop)
+	echo -n "Stopping $DESC: $NAME"
+	# FIXME: use --server here
+	$ROARCTL exit > /dev/null
+	echo "."
+	;;
+  restart)
+	echo -n "Restarting $DESC: $NAME"
+	$DAEMON --restart $ROARD_OPTS
+	echo "."
+	;;
+  *)
+	echo "Usage: $SCRIPTNAME {start|stop|restart}" >&2
+	exit 1
+	;;
+esac
+
+exit 0
