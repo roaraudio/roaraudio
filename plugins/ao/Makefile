@@ -7,6 +7,8 @@ new: clean all
 
 install: libroar.so
 	cp libroar.so ${INSTALL_DIR}
+semi-install: libroar.so
+	ln -s `pwd`/libroar.so ${INSTALL_DIR}
 
 libroar.so: ao_roar.c
 	cc -shared -lroar -o libroar.so ao_roar.c

@@ -227,9 +227,10 @@ test_lib_defmake () {
 
  if test_lib "$name" $LIBS "$@"
  then
+  subdir_var='subdir_'"`echo $subdir | tr / _`"
   echo "#define $def"            >&3
   [ "$subdir" != '' ] && \
-   echo "subdir_$subdir=$subdir" >&4
+   echo "$subdir_var=$subdir" >&4
   echo "lib_$lib=$LIBS" >&4
  else
   [ "$subdir" != '' ] && \
@@ -342,7 +343,7 @@ echo >&3
 
 #                #define                 subdir       name          -lxxx      -- header
 test_lib_defmake ROAR_HAVE_ESD           libroaresd   EsounD        esd        -- esd.h
-test_lib_defmake ROAR_HAVE_LIBAO         %            libao         ao         -- ao/ao.h ao/plugin.h
+test_lib_defmake ROAR_HAVE_LIBAO         plugins/ao   libao         ao         -- ao/ao.h ao/plugin.h
 test_lib_defmake ROAR_HAVE_LIBVORBIS     %            libvorbis     vorbis     -- vorbis/codec.h
 test_lib_defmake ROAR_HAVE_LIBVORBISFILE %            libvorbisfile vorbisfile -- vorbis/vorbisfile.h
 test_lib_defmake ROAR_HAVE_LIBVORBISENC  %            libvorbisenc  vorbisenc  -- vorbis/vorbisenc.h
