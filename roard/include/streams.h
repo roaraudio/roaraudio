@@ -79,6 +79,7 @@ int streams_set_primary  (int id, int prim);
 int streams_mark_primary (int id);
 int streams_set_flag     (int id, int flag);
 int streams_reset_flag   (int id, int flag);
+int streams_get_flag     (int id, int flag);
 
 int stream_add_buffer     (int id, struct roar_buffer *  buf);
 //int stream_get_buffer     (int id, struct roar_buffer ** buf);

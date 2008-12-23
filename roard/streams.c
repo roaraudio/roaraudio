@@ -281,6 +281,13 @@ int streams_reset_flag   (int id, int flag) {
  return 0;
 }
 
+int streams_get_flag     (int id, int flag) {
+ if ( g_streams[id] == NULL )
+  return -1;
+
+ return g_streams[id]->flags & flag ? 1 : 0;
+}
+
 int streams_get_outputbuffer  (int id, void ** buffer, size_t size) {
  if ( g_streams[id] == NULL )
   return -1;
@@ -727,7 +734,7 @@ int streams_send_mon   (int id) {
  if ( s->dir == ROAR_DIR_OUTPUT && g_standby )
   return 0;
 
- ROAR_DBG("streams_send_mon(id=%i): fh = %i", id, fh);
+ ROAR_DBG("streams_send_mon(id=%i): fh = %i", id, s->fh);
 
  if ( s->info.channels != g_sa->channels || s->info.bits  != g_sa->bits ||
       s->info.rate     != g_sa->rate     || s->info.codec != g_sa->codec  ) {
@@ -752,7 +759,8 @@ int streams_send_mon   (int id) {
  errno = 0;
 
  if ( ss->codecfilter == -1 ) {
-  if ( s->fh == -1 )
+  ROAR_DBG("streams_send_mon(id=%i): not a CF stream", id);
+  if ( s->fh == -1 && roar_vio_get_fh(&(ss->vio)) == -1 )
    return 0;
 
   if ( stream_vio_s_write(ss, obuf, olen) == olen ) {
