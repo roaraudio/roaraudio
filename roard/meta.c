@@ -164,6 +164,66 @@ int stream_meta_clear (int id) {
 }
 
 int stream_meta_finalize(int id) {
+ register int dir;
+ register int co, ci, i;
+ struct roar_stream_server * s;
+
+ if ( streams_get_flag(id, ROAR_FLAG_META) != 1 ) // ignore non meta streams
+  return 0;
+
+ dir = ROAR_STREAM(g_streams[id])->dir;
+
+ if ( dir != ROAR_DIR_PLAY   && dir != ROAR_DIR_META &&  // ignore on non input streams
+      dir != ROAR_DIR_FILTER && dir != ROAR_DIR_BIDIR )
+  return 0;
+
+ ROAR_DBG("stream_meta_finalize(id=%i) = ?", id);
+
+ for (co = 0; co < ROAR_STREAMS_MAX; co++) {
+  if ( g_streams[co] == NULL )
+   continue;
+
+  dir = ROAR_STREAM(g_streams[co])->dir;
+
+  if ( dir != ROAR_DIR_MONITOR && dir != ROAR_DIR_FILTER &&
+       dir != ROAR_DIR_META    && dir != ROAR_DIR_BIDIR  &&
+       dir != ROAR_DIR_OUTPUT                             )
+   continue;
+
+  if ( streams_get_flag(co, ROAR_FLAG_META) != 1 )
+   continue;
+
+  ROAR_DBG("stream_meta_finalize(id=%i): found output stream: id=%i", id, co);
+  stream_meta_clear(co);
+
+  for (ci = 0; ci < ROAR_STREAMS_MAX; ci++) {
+   if ( g_streams[ci] == NULL )
+    continue;
+
+   dir = ROAR_STREAM(g_streams[ci])->dir;
+
+   if ( dir != ROAR_DIR_PLAY   && dir != ROAR_DIR_META &&
+        dir != ROAR_DIR_FILTER && dir != ROAR_DIR_BIDIR )
+    continue;
+
+   if ( streams_get_flag(ci, ROAR_FLAG_META) != 1 )
+    continue;
+
+   ROAR_DBG("stream_meta_finalize(id=%i): found input stream: id=%i", id, ci);
+
+   // ok, next we copy the date of ci to co:
+   s = g_streams[ci];
+
+   for (i = 0; i < ROAR_META_MAX_PER_STREAM; i++) {
+    if ( s->meta[i].type == ROAR_META_TYPE_NONE )
+     continue;
+
+    ROAR_DBG("stream_meta_finalize(id=%i): found meta data, copy: %i->%i", id, ci, co);
+    stream_meta_add(co, s->meta[i].type, s->meta[i].key, s->meta[i].value); // ignore errors
+   }
+  }
+ }
+
  return 0;
 }
 
