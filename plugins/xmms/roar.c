@@ -81,8 +81,9 @@ OutputPlugin roar_op = {
         roar_get_written_time,
 };
 
-#define STATE_CONNECTED 1
-#define STATE_PLAYING   2
+#define STATE_CONNECTED   1
+#define STATE_PLAYING     2
+#define STATE_NORECONNECT 4
 
 struct xmms_roar_out {
  int state;
@@ -186,7 +187,13 @@ int roar_open(AFormat fmt, int rate, int nch) {
   roar_disconnect(&(g_inst.con));
   g_inst.state |= STATE_CONNECTED;
   g_inst.state -= STATE_CONNECTED;
-  return FALSE;
+  if ( !(g_inst.state & STATE_NORECONNECT) ) {
+   g_inst.state |= STATE_NORECONNECT;
+   return roar_open(fmt, rate, nch);
+  } else {
+   g_inst.state -= STATE_NORECONNECT;
+   return FALSE;
+  }
  }
  g_inst.state |= STATE_PLAYING;
 
@@ -293,13 +300,13 @@ int roar_update_metadata(void) {
    meta.type = ROAR_META_TYPE_FILENAME;
 
   meta.value = info;
+  ROAR_DBG("roar_update_metadata(*): setting meta data: type=%i, strlen(value)=%i", meta.type, strlen(info));
   roar_stream_meta_set(&(g_inst.con), &(g_inst.stream), ROAR_META_MODE_SET, &meta);
 
   free(info);
  }
 
  info = xmms_remote_get_playlist_title(g_inst.session, pos);
-
  if ( info ) {
   meta.type = ROAR_META_TYPE_TITLE;
 
