@@ -25,6 +25,19 @@ EOF
  shift;
 done
 
+on_error () {
+ cat <<'EOF' > Makefile
+all: error
+clean: error
+new: error
+install: error
+error:
+	echo Error while configuring this plugin
+	echo rerun configure script to fix
+EOF
+ exit 1;
+}
+
 echo -n 'testing for C compiler... '
 CC=$(which gcc cc 2> /dev/null | head -n 1)
 if [ -x "$CC" ]
@@ -32,7 +45,7 @@ then
  echo $CC
 else
  echo no.
- exit 1;
+ on_error;
 fi
 
 echo -n 'testing for libao... '
@@ -50,7 +63,7 @@ then
  echo yes
 else
  echo no.
- exit 1
+ on_error
 fi
 rm -f tests tests.c
 
@@ -68,7 +81,7 @@ then
  echo yes
 else
  echo no.
- exit 1
+ on_error
 fi
 rm -f tests tests.c
 
