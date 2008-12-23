@@ -163,4 +163,8 @@ int stream_meta_clear (int id) {
  return 0;
 }
 
+int stream_meta_finalize(int id) {
+ return 0;
+}
+
 //ll

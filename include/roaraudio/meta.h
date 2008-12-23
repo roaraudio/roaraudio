@@ -68,6 +68,7 @@
 #define ROAR_META_MODE_ADD           1
 #define ROAR_META_MODE_DELETE        2
 #define ROAR_META_MODE_CLEAR         3
+#define ROAR_META_MODE_FINALIZE      4
 
 #define ROAR_META_MAX_NAMELEN 32
 

@@ -207,6 +207,12 @@ int req_on_set_meta    (int client, struct roar_message * mes, char * data) {
   mes->cmd     = ROAR_CMD_OK;
   return 0;
  } else if ( mode == ROAR_META_MODE_DELETE ) { // unsuppoerted at the moment
+  return -1;
+ } else if ( mode == ROAR_META_MODE_FINALIZE ) {
+  stream_meta_finalize(mes->stream);
+  mes->datalen = 0;
+  mes->cmd     = ROAR_CMD_OK;
+  return 0;
  } else if ( mode == ROAR_META_MODE_SET || mode == ROAR_META_MODE_ADD ) {
   if ( mes->datalen < 5 )
    return -1;
