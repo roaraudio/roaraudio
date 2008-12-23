@@ -28,7 +28,7 @@ apt-get install build-essential libesd0-dev libao-dev libfishsound1-dev libvorbi
  $ cd plugins/
  $ make
 
---- Writeing software for RoarAudio:
+--- Writing software for RoarAudio:
 
 See manpages: libroar(7) and roartut(7).
 You also sould read the examplecode in roarclients/*.c
@@ -54,3 +54,4 @@ OpenBSD	?	?		gcc ?		OK
 FreeBSD 6.2	i386		gcc 3.4.6	OK
 Cygwin 1.5.25	i686		gcc 3.4.4	Client+	Client libs work, roard only party
 							Hostsystem: WinXP Home
+archlinux ?	i686		gcc 4.3.2	OK

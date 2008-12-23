@@ -1,4 +1,4 @@
-v. 0.1beta4 - ???
+v. 0.1beta4 - Tue Dec 23 2008
 	* added roar_buffer_shift_out()
 	* changed roarshout to be 100% compatible with oggfwd options
 	* added full support for mu-Law
@@ -19,6 +19,11 @@ v. 0.1beta4 - ???
 	* added wirting support for RIFF/WAVE
 	* flag sources as sources
 	* patched some things for cygwin
+	* fixed double-reconnect bug within XMMS plugin
+	* include libao plugin in normal configure/build/install
+	* added passthru for meta streams
+	* fixed a lot small bugs
+	* include basic rc/init script for debian like systems
 
 v. 0.1beta3 - Thu Nov 27 2008
 	* fixed some includes, patch by janus
