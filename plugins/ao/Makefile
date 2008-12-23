@@ -11,6 +11,6 @@ semi-install: libroar.so
 	ln -s `pwd`/libroar.so ${INSTALL_DIR}
 
 libroar.so: ao_roar.c
-	cc -shared -L../../lib -lroar -o libroar.so ao_roar.c
+	cc -shared -L../../lib -lroar -fPIC -o libroar.so ao_roar.c
 
 ao_roar.c:
