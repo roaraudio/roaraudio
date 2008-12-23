@@ -126,12 +126,15 @@ int roar_stream_meta_set (struct roar_connection * con, struct roar_stream * s, 
  if ( len > 255 )
   return -1;
 
- m.datalen = 5 + m.data[3] + m.data[4];
+ m.datalen = (int) 5 + (int) m.data[3] + len;
  if ( m.datalen > LIBROAR_BUFFER_MSGDATA )
   return -1;
 
  strncpy(&(m.data[5]), meta->key, ROAR_META_MAX_NAMELEN);
  strncpy(&(m.data[5+m.data[3]]), meta->value, len);
+
+ ROAR_DBG("roar_stream_meta_set(*): meta value length is %i byte", len);
+ ROAR_DBG("roar_stream_meta_set(*): message data length is %i byte", m.datalen);
 
  if ( roar_req(con, &m, NULL) == -1 )
   return -1;
