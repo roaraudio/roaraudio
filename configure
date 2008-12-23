@@ -582,9 +582,9 @@ echo 'running libao plugin configure...'
  cd plugins/ao/
 if [ "$AO_INST_DIR" = '' ]
 then
- ./configure
+ ./configure --force-have-roar
 else
- ./configure --inst-dir "$AO_INST_DIR"
+ ./configure --force-have-roar --inst-dir "$AO_INST_DIR"
 fi
 cd ../..
 
