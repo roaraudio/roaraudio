@@ -304,7 +304,7 @@ fi
  echo "PREFIX_MAN=$PREFIX_MAN"
 } >&4
 
-CCTF="$CC $LDPATH $INCPATH -o $TF_E $TF_C"
+CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 
 cat >&3 << EOF
 //config.h:
@@ -423,6 +423,18 @@ then
  echo yes
 else
  echo no
+fi
+
+echo -n 'checking for broken peercred... '
+echo '#include <roaraudio.h>' > $TF_C
+echo 'int main (void) { struct ucred cred; return 0; }'  >> $TF_C
+
+if $CCTF 2> /dev/null;
+then
+ echo working
+else
+ echo '#define ROAR_BROKEN_PEERCRED' >&3
+ echo broken
 fi
 
 echo -n 'checking for safe 32 bit integer overflow... '

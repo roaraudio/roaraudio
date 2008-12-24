@@ -24,6 +24,10 @@
 
 #include "roard.h"
 
+#ifdef ROAR_BROKEN_PEERCRED
+#undef SO_PEERCRED
+#endif
+
 int net_check_listen  (void) {
  int r;
  fd_set sl;
