@@ -140,9 +140,15 @@
 
 #define ROAR_BITS_MAX             32
 
+#ifndef ROAR_BITS_DEFAULT
 #define ROAR_BITS_DEFAULT         16
+#endif
+#ifndef ROAR_CHANNELS_DEFAULT
 #define ROAR_CHANNELS_DEFAULT      2
+#endif
+#ifndef ROAR_RATE_DEFAULT
 #define ROAR_RATE_DEFAULT      44100
+#endif
 
 #define ROAR_MAX_CHANNELS         64
 

@@ -35,6 +35,11 @@ PROC_NET_DECNET="/proc/net/decnet"
 DEFAULT_GRP=''
 
 AO_INST_DIR=''
+XMMS_INST_DIR=''
+
+DEFAULT_RATE=''
+DEFAULT_CHANNELS=''
+DEFAULT_BITS=''
 
 echo -n "checking for C compiler... "
 if [ "$CC" != '' ]
@@ -85,6 +90,9 @@ do
    echo '--prefix-lib DIR'
    echo '--prefix-inc DIR'
    echo '--prefix-man DIR'
+   echo '--default-rate RATE'
+   echo '--default-channels CHANNELS'
+   echo '--default-bits BITS'
    exit 0;
   ;;
   '--ldpath')
@@ -129,6 +137,18 @@ do
   ;;
   '--xmms-install-dir')
    XMMS_INST_DIR="$2"
+   shift;
+  ;;
+  '--default-rate')
+   DEFAULT_RATE="$2"
+   shift;
+  ;;
+  '--default-channels')
+   DEFAULT_CHANNELS="$2"
+   shift;
+  ;;
+  '--default-bits')
+   DEFAULT_BITS="$2"
    shift;
   ;;
   '--prefix')
@@ -322,6 +342,10 @@ EOF
 {
  echo '/* uname: ' $(uname -a) '*/'
  echo '/* Date : ' $(date)  '*/'
+ echo
+ [ "$DEFAULT_RATE"     = '' ] || echo "#define ROAR_RATE_DEFAULT     $DEFAULT_RATE"
+ [ "$DEFAULT_CHANNELS" = '' ] || echo "#define ROAR_CHANNELS_DEFAULT $DEFAULT_CHANNELS"
+ [ "$DEFAULT_BITS"     = '' ] || echo "#define ROAR_BITS_DEFAULT     $DEFAULT_BITS"
  echo
 } >&3
 
