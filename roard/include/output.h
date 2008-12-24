@@ -37,8 +37,8 @@
 
 #define ROAR_OUTPUT_WRITE_SIZE     1024
 
-#define ROAR_OUTPUT_CALC_OUTBUFSIZE(x)   (ROAR_OUTPUT_BUFFER_SAMPLES * (x)->channels * ((x)->bits / 8))
-#define ROAR_OUTPUT_CALC_OUTBUFSAMP(x,y) ((y) / ((x)->channels * ((x)->bits / 8)))
+#define ROAR_OUTPUT_CALC_OUTBUFSIZE(x)   (ROAR_OUTPUT_BUFFER_SAMPLES * (x)->channels * ((x)->bits / 8) * ((float)(x)->rate/g_sa->rate))
+#define ROAR_OUTPUT_CALC_OUTBUFSAMP(x,y) ((y) / ((x)->channels * ((x)->bits / 8)*((float)(x)->rate/g_sa->rate)))
 
 void         * g_output_buffer;
 unsigned int   g_output_buffer_len;

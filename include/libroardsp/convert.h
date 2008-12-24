@@ -65,9 +65,12 @@ int roar_conv_chans_nto116 (void * out, void * in, int samples, int from); // ye
 int roar_conv_chans_2to18  (void * out, void * in, int samples);           // yes          yes
 int roar_conv_chans_2to116 (void * out, void * in, int samples);           // yes          yes
 
-int roar_conv_rate    (void * out, void * in, int samples, int from, int to, int bits, int channels);
-int roar_conv_rate_8  (void * out, void * in, int samples, int from, int to, int channels);
-int roar_conv_rate_16 (void * out, void * in, int samples, int from, int to, int channels);
+int roar_conv_rate       (void * out, void * in, int samples, int from, int to, int bits, int channels);
+int roar_conv_rate_8     (void * out, void * in, int samples, int from, int to, int channels);
+int roar_conv_rate_16    (void * out, void * in, int samples, int from, int to, int channels);
+int roar_conv_rate_161zoh(void * out, void * in, int samples, int from, int to);
+int roar_conv_rate_162zoh(void * out, void * in, int samples, int from, int to);
+int roar_conv_rate_16nzoh(void * out, void * in, int samples, int from, int to, int channels);
 
 int roar_conv_codec (void * out, void * in, int samples, int from, int to, int bits);
 

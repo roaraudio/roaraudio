@@ -321,13 +321,38 @@ int roar_conv_rate_8  (void * out, void * in, int samples, int from, int to, int
 }
 
 int roar_conv_rate_16 (void * out, void * in, int samples, int from, int to, int channels) {
- if ( channels == 1 ) {
-  printf("roar_conv_rate_16(): samples=%i -> %i, rate=%i -> %i\n", samples*from/to, samples, from, to);
-  return roar_conv_poly4_16s((int16_t*) out, (int16_t*) in, samples, samples*from/to, (float)from/to);
-//  return roar_conv_poly4_16((int16_t*) out, (int16_t*) in, samples*to/from, samples);
+ if ( from > to ) {
+  switch (channels) {
+   case 1:
+     return roar_conv_rate_161zoh(out, in, samples, from, to);
+   case 2:
+   default:
+     return -1;
+  }
+ } else {
+  if ( channels == 1 ) {
+   printf("roar_conv_rate_16(): samples=%i -> %i, rate=%i -> %i\n", samples*from/to, samples, from, to);
+   return roar_conv_poly4_16s((int16_t*) out, (int16_t*) in, samples, samples*from/to, (float)from/to);
+ //  return roar_conv_poly4_16((int16_t*) out, (int16_t*) in, samples*to/from, samples);
+  }
  }
 
  return -1;
+}
+
+int roar_conv_rate_161zoh(void * out, void * in, int samples, int from, int to) {
+ int16_t * ip = in;
+ int16_t * op = out;
+ float t = 0;
+ float step = (float)to/from;
+ int i;
+
+ for (i= 0; i < samples; i++) {
+  op[(int)t] = ip[i];
+  t += step;
+ }
+
+ return 0;
 }
 
 int roar_conv_signedness  (void * out, void * in, int samples, int from, int to, int bits) {
