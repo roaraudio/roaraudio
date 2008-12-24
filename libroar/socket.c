@@ -710,7 +710,11 @@ int roar_socket_open_proxy (int mode, int type, char * host, int port, char * pr
  } else if ( !strcmp(proxy_type, "http") ) { // HTTP CONNECT
   code = roar_socket_open_http;
  } else if ( !strncmp(proxy_type, "ssh", 3) ) { // SSH...
+#ifdef ROAR_HAVE_BIN_SSH
   code = roar_socket_open_ssh;
+#else
+  ROAR_ERR("roar_socket_open_proxy(*): No SSH support compiled in");
+#endif
  } else {
   return -1; // unknown type
  }
@@ -835,6 +839,7 @@ int roar_socket_open_http   (int mode, int fh, char * host, int port, char * use
 }
 
 
+#ifdef ROAR_HAVE_BIN_SSH
 int roar_socket_open_ssh    (int mode, int fh, char * host, int port, char * user, char * pw, char * opts) {
  char * proxy_addr = getenv("ssh_proxy");
  char * sep;
@@ -895,7 +900,7 @@ int roar_socket_open_ssh    (int mode, int fh, char * host, int port, char * use
 
  ROAR_DBG("roar_socket_open_ssh(*): proxy_port=%i, user='%s', proxy_addr='%s'", proxy_port, user, proxy_addr);
  ROAR_DBG("roar_socket_open_ssh(*): rcmd: %s", rcmd);
- snprintf(cmd, 1023, "ssh -p %i -l '%s' '%s' '%s'", proxy_port, user, proxy_addr, rcmd);
+ snprintf(cmd, 1023, ROAR_HAVE_BIN_SSH " -p %i -l '%s' '%s' '%s'", proxy_port, user, proxy_addr, rcmd);
  cmd[1023] = 0;
 
 
@@ -931,5 +936,6 @@ int roar_socket_open_ssh    (int mode, int fh, char * host, int port, char * use
  }
  return -1;
 }
+#endif
 
 //ll
