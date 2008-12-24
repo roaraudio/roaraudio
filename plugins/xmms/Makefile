@@ -2,12 +2,7 @@ TARGET=libroar.so
 
 OBJ=roar.o
 
-
-GTK_LIBS=`gtk-config --libs`
-GTK_CFLAFS=`gtk-config --cflags`
-XMMS_LIBS=`xmms-config --libs`
-XMMS_CFLAGS=`xmms-config --cflags`
-INSTALL_DIR=`xmms-config --output-plugin-dir`
+include Makefile.conf
 
 #DEFINES=-DDEBUG
 CFLAGS  = -g -Wall -O2 $(DEFINES) $(INCLUDE) -fPIC $(GTK_CFLAFS) $(XMMS_CFLAGS)
