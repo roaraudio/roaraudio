@@ -573,33 +573,54 @@ int roar_conv_endian_32   (void * out, void * in, int samples) {
 
 int roar_conv       (void * out, void * in, int samples, struct roar_audio_info * from, struct roar_audio_info * to) {
  void * ip = in;
+ void * real_out;
+ size_t from_size, to_size;
 
  // TODO: decide how to work around both in and out beeing to small to hold all
  //       data between the steps.
  //       for the moment: guess out >= in
 
+ from_size = from->channels * from->bits * samples / 8;
+ to_size   =   to->channels *   to->bits * samples / 8;
+
+ if ( to_size < from_size ) {
+  real_out = out;
+
+  if ( (out = malloc(from_size)) == NULL )
+   return -1;
+ }
+
  ROAR_DBG("roar_conv(*): bo conv: %i->%i(native)", ROAR_CODEC_BYTE_ORDER(from->codec), ROAR_CODEC_NATIVE_ENDIAN);
 
  if ( ROAR_CODEC_BYTE_ORDER(from->codec) != ROAR_CODEC_NATIVE_ENDIAN ) {
   ROAR_DBG("roar_conv(*): doing bo input conv");
-  if ( roar_conv_endian(out, ip, samples, ROAR_CODEC_BYTE_ORDER(from->codec), ROAR_CODEC_NATIVE_ENDIAN, from->bits) == -1 )
+  if ( roar_conv_endian(out, ip, samples, ROAR_CODEC_BYTE_ORDER(from->codec), ROAR_CODEC_NATIVE_ENDIAN, from->bits) == -1 ) {
+   if ( to_size < from_size )
+    free(out);
    return -1;
-  else
+  } else {
    ip = out;
+  }
  }
 
  if ( from->bits != to->bits ) {
-  if ( roar_conv_bits(out, ip, samples, from->bits, to->bits) == -1 )
+  if ( roar_conv_bits(out, ip, samples, from->bits, to->bits) == -1 ) {
+   if ( to_size < from_size )
+    free(out);
    return -1;
-  else
+  } else {
    ip = out;
+  }
  }
 
  if ( ROAR_CODEC_IS_SIGNED(from->codec) != ROAR_CODEC_IS_SIGNED(to->codec) ) {
-  if ( roar_conv_signedness(out, ip, samples, ROAR_CODEC_IS_SIGNED(from->codec), ROAR_CODEC_IS_SIGNED(to->codec), to->bits) == -1 )
+  if ( roar_conv_signedness(out, ip, samples, ROAR_CODEC_IS_SIGNED(from->codec), ROAR_CODEC_IS_SIGNED(to->codec), to->bits) == -1 ) {
+   if ( to_size < from_size )
+    free(out);
    return -1;
-  else
+  } else {
    ip = out;
+  }
  }
 
 /*
@@ -612,24 +633,38 @@ int roar_conv       (void * out, void * in, int samples, struct roar_audio_info 
 */
 
  if ( from->rate != to->rate ) {
-  if ( roar_conv_rate(out, ip, samples, from->rate, to->rate, to->bits, from->channels) == -1 )
+  if ( roar_conv_rate(out, ip, samples, from->rate, to->rate, to->bits, from->channels) == -1 ) {
+   if ( to_size < from_size )
+    free(out);
    return -1;
-  else
+  } else {
    ip = out;
+  }
  }
 
  if ( from->channels != to->channels ) {
-  if ( roar_conv_chans(out, ip, samples, from->channels, to->channels, to->bits) == -1 )
+  if ( roar_conv_chans(out, ip, samples, from->channels, to->channels, to->bits) == -1 ) {
+   if ( to_size < from_size )
+    free(out);
    return -1;
-  else
+  } else {
    ip = out;
+  }
  }
 
  if ( ROAR_CODEC_BYTE_ORDER(to->codec) != ROAR_CODEC_NATIVE_ENDIAN ) {
-  if ( roar_conv_endian(out, ip, samples, ROAR_CODEC_NATIVE_ENDIAN, ROAR_CODEC_BYTE_ORDER(to->codec), to->bits) == -1 )
+  if ( roar_conv_endian(out, ip, samples, ROAR_CODEC_NATIVE_ENDIAN, ROAR_CODEC_BYTE_ORDER(to->codec), to->bits) == -1 ) {
+   if ( to_size < from_size )
+    free(out);
    return -1;
-  else
+  } else {
    ip = out;
+  }
+ }
+
+ if ( to_size < from_size ) {
+  memcpy(real_out, out, to_size);
+  free(out);
  }
 
  return 0;
