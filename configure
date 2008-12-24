@@ -79,6 +79,7 @@ do
    echo '--no-LIB                    - disable LIB'
    echo '--runtime-detect            - do as much as posible auto detecting on runtime (for distributors)'
    echo '--ao-install-dir DIR'
+   echo '--xmms-install-dir DIR'
    echo '--prefix DIR'
    echo '--prefix-bin DIR'
    echo '--prefix-lib DIR'
@@ -124,6 +125,10 @@ do
   ;;
   '--ao-install-dir')
    AO_INST_DIR="$2"
+   shift;
+  ;;
+  '--xmms-install-dir')
+   XMMS_INST_DIR="$2"
    shift;
   ;;
   '--prefix')
@@ -598,6 +603,16 @@ then
 else
  ./configure --force-have-roar --inst-dir "$AO_INST_DIR"
 fi
+
+echo 'running xmms plugin configure...'
+ cd ../xmms/
+if [ "$XMMS_INST_DIR" = '' ]
+then
+ ./configure --force-have-roar
+else
+ ./configure --force-have-roar --inst-dir "$XMMS_INST_DIR"
+fi
+
 cd ../..
 
 rm -f $TF_C $TF_E
