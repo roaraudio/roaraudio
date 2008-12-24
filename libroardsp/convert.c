@@ -573,21 +573,23 @@ int roar_conv_endian_32   (void * out, void * in, int samples) {
 
 int roar_conv       (void * out, void * in, int samples, struct roar_audio_info * from, struct roar_audio_info * to) {
  void * ip = in;
- void * real_out;
+ void * real_out = NULL;
  size_t from_size, to_size;
 
  // TODO: decide how to work around both in and out beeing to small to hold all
  //       data between the steps.
  //       for the moment: guess out >= in
 
- from_size = from->channels * from->bits * samples / 8;
- to_size   =   to->channels *   to->bits * samples / 8;
+ from_size = (from->bits * samples) / 8;
+ to_size   = (  to->bits * samples) / 8;
 
  if ( to_size < from_size ) {
   real_out = out;
 
   if ( (out = malloc(from_size)) == NULL )
    return -1;
+
+  ROAR_DBG("roar_conv(*): malloc(%i)=%p", (int)from_size, out);
  }
 
  ROAR_DBG("roar_conv(*): bo conv: %i->%i(native)", ROAR_CODEC_BYTE_ORDER(from->codec), ROAR_CODEC_NATIVE_ENDIAN);
@@ -634,8 +636,7 @@ int roar_conv       (void * out, void * in, int samples, struct roar_audio_info 
 
  if ( from->rate != to->rate ) {
   if ( roar_conv_rate(out, ip, samples, from->rate, to->rate, to->bits, from->channels) == -1 ) {
-   if ( to_size < from_size )
-    free(out);
+   ROAR_DBG("roar_conv(*): failed to convert rate %i->%i (%ich%ibits)", from->rate, to->rate, to->bits, from->channels);
    return -1;
   } else {
    ip = out;
@@ -663,6 +664,7 @@ int roar_conv       (void * out, void * in, int samples, struct roar_audio_info 
  }
 
  if ( to_size < from_size ) {
+  ROAR_DBG("roar_conv(*): memcpy(%p, %p, %i) = ?", real_out, out, (int)to_size);
   memcpy(real_out, out, to_size);
   free(out);
  }
