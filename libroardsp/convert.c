@@ -33,6 +33,7 @@
  */
 
 #include "libroar.h"
+//#define free(p) {ROAR_WARN("free(%p) = ?", (p)); free((p)); ROAR_WARN("free(%p): OK", (p));}
 
 int roar_conv_bits (void * out, void * in, int samples, int from, int to) {
  int format;
@@ -298,10 +299,14 @@ int roar_conv_chans_2to116  (void * out, void * in, int samples) {
  int16_t * ip = (int16_t*) in, * op = (int16_t*) out;
  int i, h;
 
+ ROAR_DBG("roar_conv_chans_2to116(out=%p, in=%p, samples=%i) = ?", out, in, samples);
+
  samples -= 2;
 
- for (h = (i = samples) / 2; i >= 0; i -= 2, h--)
+ for (h = (i = samples) / 2; i >= 0; i -= 2, h--) {
+  ROAR_DBG("roar_conv_chans_2to116(out=%p, in=%p, samples=%i): op[%i] = (ip[%i] + ip[%i])/2", out, in, samples, h, i, i+1);
   op[h] = ((int)ip[i + 0] + (int)ip[i + 1]) / 2;
+ }
 
  return 0;
 }
@@ -326,6 +331,7 @@ int roar_conv_rate_16 (void * out, void * in, int samples, int from, int to, int
    case 1:
      return roar_conv_rate_161zoh(out, in, samples, from, to);
    case 2:
+     return roar_conv_rate_162zoh(out, in, samples, from, to);
    default:
      return -1;
   }
@@ -349,6 +355,28 @@ int roar_conv_rate_161zoh(void * out, void * in, int samples, int from, int to) 
 
  for (i= 0; i < samples; i++) {
   op[(int)t] = ip[i];
+  t += step;
+ }
+
+ return 0;
+}
+
+int roar_conv_rate_162zoh(void * out, void * in, int samples, int from, int to) {
+ int16_t * ip = in;
+ int16_t * op = out;
+ float t = 0;
+ float step = (float)to/from;
+ int i;
+
+ ROAR_DBG("roar_conv_rate_162zoh(*): samples=%i", samples);
+ samples /= 2;
+ samples -= 1;
+ ROAR_DBG("roar_conv_rate_162zoh(*): samples=%i", samples);
+
+ for (i= 0; i < samples; i++) {
+  ROAR_DBG("roar_conv_rate_162zoh(*): t=%f, i=%i // op[%i] = ip[%i]", t, i, 2*(int)t, 2*i);
+  op[2*(int)t    ] = ip[2*i    ];
+  op[2*(int)t + 1] = ip[2*i + 1];
   t += step;
  }
 
@@ -606,7 +634,9 @@ int roar_conv       (void * out, void * in, int samples, struct roar_audio_info 
  //       for the moment: guess out >= in
 
  from_size = (from->bits * samples) / 8;
- to_size   = (  to->bits * samples) / 8;
+ to_size   = (  to->bits * samples * to->rate * to->channels) / (8 * from->rate * from->channels);
+
+ ROAR_DBG("roar_conv(*): size: %i->%i", from_size, to_size);
 
  if ( to_size < from_size ) {
   real_out = out;
@@ -662,9 +692,12 @@ int roar_conv       (void * out, void * in, int samples, struct roar_audio_info 
  if ( from->rate != to->rate ) {
   if ( roar_conv_rate(out, ip, samples, from->rate, to->rate, to->bits, from->channels) == -1 ) {
    ROAR_DBG("roar_conv(*): failed to convert rate %i->%i (%ich%ibits)", from->rate, to->rate, to->bits, from->channels);
+   if ( to_size < from_size )
+    free(out);
    return -1;
   } else {
    ip = out;
+   samples = (samples * to->rate) / from->rate;
   }
  }
 
@@ -692,6 +725,7 @@ int roar_conv       (void * out, void * in, int samples, struct roar_audio_info 
   ROAR_DBG("roar_conv(*): memcpy(%p, %p, %i) = ?", real_out, out, (int)to_size);
   memcpy(real_out, out, to_size);
   free(out);
+  ROAR_DBG("roar_conv(*): free(%p): OK!", out);
  }
 
  return 0;
