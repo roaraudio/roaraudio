@@ -55,6 +55,7 @@
 
 #include "libroardsp.h"
 
+#ifdef ROAR_SUPPORT_ALAW
 int16_t _roardsp_alaw2pcm16[] = {
 /* -------- SUN -------- */
      -5504,   -5248,   -6016,   -5760,   -4480,   -4224,   -4992,
@@ -97,6 +98,7 @@ int16_t _roardsp_alaw2pcm16[] = {
 /* -------- /SUN -------- */
 };
 
+#ifdef ROAR_SUPPORT_ALAW_RW
 int8_t _roardsp_pcm132alaw[] = {
 /* -------- SUN -------- */
    0x2a, 0x2a, 0x2a, 0x2a, 0x2a, 0x2a, 0x2a, 0x2a, 0x2a, 0x2a, 0x2a, 0x2a,
@@ -784,8 +786,11 @@ int8_t _roardsp_pcm132alaw[] = {
    0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa
 /* -------- /SUN -------- */
 };
+#endif
+#endif
 
 int roardsp_conv_alaw2pcm16 (int16_t * out, char * in, size_t len) {
+#ifdef ROAR_SUPPORT_ALAW
  unsigned char * inp = (unsigned char *) in;
  ssize_t i;
 
@@ -794,9 +799,13 @@ int roardsp_conv_alaw2pcm16 (int16_t * out, char * in, size_t len) {
  }
 
  return 0;
+#else
+ return -1;
+#endif
 }
 
 int roardsp_conv_pcm162alaw (char * out, int16_t * in, size_t len) {
+#ifdef ROAR_SUPPORT_ALAW_RW
  int i;
 
  for (i = 0; i < len; i++) {
@@ -804,6 +813,10 @@ int roardsp_conv_pcm162alaw (char * out, int16_t * in, size_t len) {
  }
 
  return 0;
+#else
+ return -1;
+#endif
 }
+
 
 //ll

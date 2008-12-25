@@ -37,11 +37,37 @@ struct roar_codecfilter g_codecfilter[] = {
   cf_wave_open, cf_wave_close, NULL, cf_wave_write, cf_wave_read, NULL},
 //#endif
 
- {ROAR_CODEC_ALAW, "alaw", "A-Law", NULL, ROAR_CODECFILTER_READ|ROAR_CODECFILTER_WRITE,
-  cf_alaw_open, cf_alaw_close, NULL, cf_alaw_write, cf_alaw_read, NULL},
+#ifdef ROAR_SUPPORT_ALAW
+ {ROAR_CODEC_ALAW, "alaw", "A-Law", NULL,
+#ifdef ROAR_SUPPORT_ALAW_RW
+  ROAR_CODECFILTER_READ|ROAR_CODECFILTER_WRITE,
+#else
+  ROAR_CODECFILTER_READ,
+#endif
+  cf_alaw_open, cf_alaw_close, NULL,
+#ifdef ROAR_SUPPORT_ALAW_RW
+  cf_alaw_write,
+#else
+  NULL,
+#endif
+  cf_alaw_read, NULL},
+#endif
 
- {ROAR_CODEC_MULAW, "mulaw", "mu-Law", NULL, ROAR_CODECFILTER_READ|ROAR_CODECFILTER_WRITE,
-  cf_mulaw_open, cf_mulaw_close, NULL, cf_mulaw_write, cf_mulaw_read, NULL},
+#ifdef ROAR_SUPPORT_MULAW
+ {ROAR_CODEC_MULAW, "mulaw", "mu-Law", NULL,
+#ifdef ROAR_SUPPORT_MULAW_RW
+  ROAR_CODECFILTER_READ|ROAR_CODECFILTER_WRITE,
+#else
+  ROAR_CODECFILTER_READ,
+#endif
+  cf_mulaw_open, cf_mulaw_close, NULL,
+#ifdef ROAR_SUPPORT_MULAW_RW
+  cf_mulaw_write,
+#else
+  NULL,
+#endif
+  cf_mulaw_read, NULL},
+#endif
 
 #ifdef ROAR_HAVE_BIN_OGG123
  {ROAR_CODEC_OGG_GENERAL, "cmd",  "ogg123",

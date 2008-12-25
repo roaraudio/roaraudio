@@ -41,6 +41,11 @@ DEFAULT_RATE=''
 DEFAULT_CHANNELS=''
 DEFAULT_BITS=''
 
+ALAW=true
+MULAW=true
+ALAW_RW=true
+MULAW_RW=true
+
 echo -n "checking for C compiler... "
 if [ "$CC" != '' ]
 then
@@ -93,6 +98,10 @@ do
    echo '--default-rate RATE'
    echo '--default-channels CHANNELS'
    echo '--default-bits BITS'
+   echo '--without-alaw'
+   echo '--without-alaw-rw'
+   echo '--without-mulaw'
+   echo '--without-mulaw-rw'
    exit 0;
   ;;
   '--ldpath')
@@ -150,6 +159,20 @@ do
   '--default-bits')
    DEFAULT_BITS="$2"
    shift;
+  ;;
+  '--without-alaw')
+   ALAW=false
+   ALAW_RW=false
+  ;;
+  '--without-alaw-rw')
+   ALAW_RW=false
+  ;;
+  '--without-mulaw')
+   MULAW=false
+   MULAW_RW=false
+  ;;
+  '--without-mulaw-rw')
+   MULAW_RW=false
   ;;
   '--prefix')
    PREFIX="$2"
@@ -346,6 +369,11 @@ EOF
  [ "$DEFAULT_RATE"     = '' ] || echo "#define ROAR_RATE_DEFAULT     $DEFAULT_RATE"
  [ "$DEFAULT_CHANNELS" = '' ] || echo "#define ROAR_CHANNELS_DEFAULT $DEFAULT_CHANNELS"
  [ "$DEFAULT_BITS"     = '' ] || echo "#define ROAR_BITS_DEFAULT     $DEFAULT_BITS"
+ echo
+ $ALAW     && echo '#define ROAR_SUPPORT_ALAW'
+ $ALAW_RW  && echo '#define ROAR_SUPPORT_ALAW_RW'
+ $MULAW    && echo '#define ROAR_SUPPORT_MULAW'
+ $MULAW_RW && echo '#define ROAR_SUPPORT_MULAW_RW'
  echo
 } >&3
 

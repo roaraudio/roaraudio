@@ -24,6 +24,8 @@
 
 #include "roard.h"
 
+#ifdef ROAR_SUPPORT_MULAW
+
 int cf_mulaw_open(CODECFILTER_USERDATA_T * inst, int codec,
                                             struct roar_stream_server * info,
                                             struct roar_codecfilter   * filter) {
@@ -54,6 +56,7 @@ int cf_mulaw_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  return len*2;
 }
 
+#ifdef ROAR_SUPPORT_MULAW_RW
 int cf_mulaw_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  struct roar_stream_server * s = ROAR_STREAM_SERVER(inst);
  char * out;
@@ -79,5 +82,8 @@ int cf_mulaw_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
   return -1;
  }
 }
+#endif
+
+#endif
 
 //ll

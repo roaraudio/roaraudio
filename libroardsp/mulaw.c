@@ -55,6 +55,7 @@
 
 #include "libroardsp.h"
 
+#ifdef ROAR_SUPPORT_MULAW
 int16_t _roardsp_mulaw2pcm16[] = {
 /* -------- SUN -------- */
     -32124,  -31100,  -30076,  -29052,  -28028,  -27004,  -25980,
@@ -97,6 +98,7 @@ int16_t _roardsp_mulaw2pcm16[] = {
 /* -------- /SUN -------- */
 };
 
+#ifdef ROAR_SUPPORT_MULAW_RW
 int8_t _roardsp_pcm142mulaw[] = {
 /* -------- SUN -------- */
    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -1467,8 +1469,11 @@ int8_t _roardsp_pcm142mulaw[] = {
    0x80, 0x80, 0x80, 0x80
 /* -------- /SUN -------- */
 };
+#endif
+#endif
 
 int roardsp_conv_mulaw2pcm16 (int16_t * out, char * in, size_t len) {
+#ifdef ROAR_SUPPORT_MULAW
  unsigned char * inp = (unsigned char *) in;
  ssize_t i;
 
@@ -1477,9 +1482,13 @@ int roardsp_conv_mulaw2pcm16 (int16_t * out, char * in, size_t len) {
  }
 
  return 0;
+#else
+ return -1;
+#endif
 }
 
 int roardsp_conv_pcm162mulaw (char * out, int16_t * in, size_t len) {
+#ifdef ROAR_SUPPORT_MULAW_RW
  int i;
 
  for (i = 0; i < len; i++) {
@@ -1487,6 +1496,9 @@ int roardsp_conv_pcm162mulaw (char * out, int16_t * in, size_t len) {
  }
 
  return 0;
+#else
+ return -1;
+#endif
 }
 
 //ll
