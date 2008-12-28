@@ -38,6 +38,9 @@
 #define gid_t     int
 #define socklen_t int
 
+#define SHUT_RD SD_RECEIVE
+#define SHUT_WR SD_SEND
+
 #endif
 
 #endif
