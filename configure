@@ -37,6 +37,9 @@ DEFAULT_GRP=''
 AO_INST_DIR=''
 XMMS_INST_DIR=''
 
+LIBAO=true
+XMMS=true
+
 DEFAULT_RATE=''
 DEFAULT_CHANNELS=''
 DEFAULT_BITS=''
@@ -49,6 +52,8 @@ MULAW_RW=true
 PROXY=true
 
 TARGET_WIN32=false
+
+EXEC_HELPER=''
 
 echo -n "checking for C compiler... "
 if [ "$CC" != '' ]
@@ -107,7 +112,10 @@ do
    echo '--without-mulaw'
    echo '--without-mulaw-rw'
    echo '--without-proxy'
+   echo '--without-libao'
+   echo '--without-xmms'
    echo '--target-win32'
+   echo '--exec-helper HELPER'
    exit 0;
   ;;
   '--ldpath')
@@ -183,6 +191,13 @@ do
   '--without-proxy')
    PROXY=false
   ;;
+  '--without-libao')
+   LIBAO=false
+   no_lib_ao=true
+  ;;
+  '--without-xmms')
+   XMMS=false
+  ;;
   '--prefix')
    PREFIX="$2"
    shift;
@@ -203,11 +218,16 @@ do
    PREFIX_MAN="$2"
    shift;
   ;;
+  '--exec-helper')
+   EXEC_HELPER="$2"
+   shift;
+  ;;
   '--target-win32')
    RUNTIME_DETECT=true
    no_lib_dnet=true
    TARGET_WIN32=true
    PROXY=false
+   XMMS=false
   ;;
  esac;
 
@@ -540,7 +560,7 @@ EOF
 
 if $CCTF 2> /dev/null;
 then
- $TF_E >&3
+ $EXEC_HELPER $TF_E >&3
  if [ "$?" = '0' ]
  then
   echo yes
@@ -571,7 +591,7 @@ int main (void) {
 EOF
 if $CCTF 2> /dev/null;
 then
- $TF_E >&3
+ $EXEC_HELPER $TF_E >&3
 else
  echo 'error, can not compile'
  exit 1
@@ -606,7 +626,7 @@ int main (void) {
 EOF
 if $CCTF 2> /dev/null;
 then
- $TF_E >&3
+ $EXEC_HELPER $TF_E >&3
 else
  echo 'error, can not compile'
  exit 1
@@ -669,25 +689,39 @@ cat >&3 << EOF
 //ll
 EOF
 
-echo 'running libao plugin configure...'
- cd plugins/ao/
-if [ "$AO_INST_DIR" = '' ]
+cd plugins
+
+if $LIBAO
 then
- ./configure --force-have-roar
+ echo 'running libao plugin configure...'
+  cd ao/
+ if [ "$AO_INST_DIR" = '' ]
+ then
+  ./configure --force-have-roar
+ else
+  ./configure --force-have-roar --inst-dir "$AO_INST_DIR"
+ fi
+ cd ..
 else
- ./configure --force-have-roar --inst-dir "$AO_INST_DIR"
+ echo "running libao plugin configure... disabled by user"
 fi
 
-echo 'running xmms plugin configure...'
- cd ../xmms/
-if [ "$XMMS_INST_DIR" = '' ]
+if $XMMS
 then
- ./configure --force-have-roar
+ echo 'running xmms plugin configure...'
+  cd xmms/
+ if [ "$XMMS_INST_DIR" = '' ]
+ then
+  ./configure --force-have-roar
+ else
+  ./configure --force-have-roar --inst-dir "$XMMS_INST_DIR"
+ fi
+ cd ..
 else
- ./configure --force-have-roar --inst-dir "$XMMS_INST_DIR"
+ echo "running xmms plugin configure... disabled by user"
 fi
 
-cd ../..
+cd ..
 
 rm -f $TF_C $TF_E
 
