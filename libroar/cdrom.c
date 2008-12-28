@@ -44,6 +44,10 @@
 #define ROAR_CDROM_CDPARANOIA_OUTPUTFORMAT "--output-raw-little-endian"
 #endif
 
+#ifdef ROAR_TARGET_WIN32
+#undef ROAR_HAVE_BIN_CDPARANOIA
+#endif
+
 pid_t roar_cdrom_run_cdparanoia (int cdrom, int data, int track, char * pos) {
 #if defined(ROAR_HAVE_BIN_CDPARANOIA) && defined(ROAR_CDROM_CDPARANOIA_OUTPUTFORMAT)
  char my_pos[32] = {0};
