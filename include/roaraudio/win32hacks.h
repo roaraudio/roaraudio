@@ -41,6 +41,12 @@
 #define SHUT_RD SD_RECEIVE
 #define SHUT_WR SD_SEND
 
+
+#define ROAR_NETWORK_READ(x,y,z)  recv((x), (y), (z), 0)
+#define ROAR_NETWORK_WRITE(x,y,z) send((x), (y), (z), 0)
+#else
+#define ROAR_NETWORK_READ(x,y,z)  read((x), (y), (z))
+#define ROAR_NETWORK_WRITE(x,y,z) write((x), (y), (z))
 #endif
 
 #endif

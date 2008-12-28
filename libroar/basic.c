@@ -234,13 +234,13 @@ int roar_send_message (struct roar_connection * con, struct roar_message * mes, 
  *(uint32_t*)(buf+4) = ROAR_HOST2NET32(mes->pos);
  *(uint16_t*)(buf+8) = ROAR_HOST2NET16(mes->datalen);
 
- if ( write(con->fh, buf, _ROAR_MESS_BUF_LEN) != _ROAR_MESS_BUF_LEN ) {
+ if ( ROAR_NETWORK_WRITE(con->fh, buf, _ROAR_MESS_BUF_LEN) != _ROAR_MESS_BUF_LEN ) {
   roar_errno = ROAR_ERROR_PIPE;
   return -1;
  }
 
  if ( mes->datalen != 0 ) {
-  if ( write(con->fh, data == NULL ? mes->data : data, mes->datalen) != mes->datalen ) {
+  if ( ROAR_NETWORK_WRITE(con->fh, data == NULL ? mes->data : data, mes->datalen) != mes->datalen ) {
    roar_errno = ROAR_ERROR_PIPE;
    return -1;
   }
@@ -262,7 +262,7 @@ int roar_recv_message (struct roar_connection * con, struct roar_message * mes, 
  if ( data )
   *data = NULL;
 
- if ( read(con->fh, buf, _ROAR_MESS_BUF_LEN) != _ROAR_MESS_BUF_LEN ) {
+ if ( ROAR_NETWORK_READ(con->fh, buf, _ROAR_MESS_BUF_LEN) != _ROAR_MESS_BUF_LEN ) {
   roar_errno = ROAR_ERROR_PROTO;
   return -1;
  }
@@ -290,7 +290,7 @@ int roar_recv_message (struct roar_connection * con, struct roar_message * mes, 
  }
 
  if ( mes->datalen <= LIBROAR_BUFFER_MSGDATA ) {
-  if ( read(con->fh, mes->data, mes->datalen) == mes->datalen ) {
+  if ( ROAR_NETWORK_READ(con->fh, mes->data, mes->datalen) == mes->datalen ) {
    ROAR_DBG("roar_recv_message(*): Got data!");
    ROAR_DBG("roar_recv_message(*) = 0");
    roar_errno = ROAR_ERROR_NONE;
@@ -315,7 +315,7 @@ int roar_recv_message (struct roar_connection * con, struct roar_message * mes, 
    return 0;
   }
 
-  if ( read(con->fh, *data, mes->datalen) == mes->datalen ) {
+  if ( ROAR_NETWORK_READ(con->fh, *data, mes->datalen) == mes->datalen ) {
    ROAR_DBG("roar_recv_message(*): Got data!");
    ROAR_DBG("roar_recv_message(*) = 0");
    roar_errno = ROAR_ERROR_NONE;
