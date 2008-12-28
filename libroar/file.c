@@ -115,6 +115,7 @@ ssize_t roar_file_send_raw (int out, int in) {
 }
 
 ssize_t     roar_file_map        (char * filename, int flags, mode_t mode, size_t len, void ** mem) {
+#ifndef ROAR_TARGET_WIN32
  int fh;
  int mmap_flags = 0;
  struct stat stat;
@@ -156,10 +157,19 @@ ssize_t     roar_file_map        (char * filename, int flags, mode_t mode, size_
  close(fh);
 
  return len;
+#else
+ ROAR_ERR("roar_file_map(*): There is no support to fast access files via mmap() within win32, download a real OS...");
+ return -1;
+#endif
 }
 
 int     roar_file_unmap      (size_t len, void * mem) {
+#ifndef ROAR_TARGET_WIN32
  return munmap(mem, len);
+#else
+ ROAR_ERR("roar_file_map(*): There is no support to fast access files via mmap() within win32, download a real OS...");
+ return -1;
+#endif
 }
 
 
