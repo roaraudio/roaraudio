@@ -64,11 +64,15 @@ int roar_connect_raw (char * server) {
   roar_server = getenv("HOME");
 
   if ( roar_server == NULL ) {
+#ifndef ROAR_TARGET_WIN32
    if ( (pwd = getpwuid(getuid())) == NULL ) {
     roar_server = "/NX-HOME-DIR";
    } else {
     roar_server = pwd->pw_dir;
    }
+#else
+   roar_server = "/WIN32-SUCKS";
+#endif
   }
 
   snprintf(user_sock, 79, "%s/%s", roar_server, ROAR_DEFAULT_SOCK_USER);
