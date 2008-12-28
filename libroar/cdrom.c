@@ -134,6 +134,7 @@ int roar_cdrom_open (struct roar_connection * con, struct roar_cdrom * cdrom, ch
  if ( (cdrom->fh = open(cdrom->device, O_RDONLY, 0644)) == -1 )
   return -1;
 
+#ifndef ROAR_TARGET_WIN32
  if ( (flags = fcntl(cdrom->fh, F_GETFL, 0)) == -1 ) {
   close(cdrom->fh);
   cdrom->fh  = -1;
@@ -147,6 +148,7 @@ int roar_cdrom_open (struct roar_connection * con, struct roar_cdrom * cdrom, ch
   cdrom->fh = -1;
   return -1;
  }
+#endif
 
  return 0;
 }
