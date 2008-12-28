@@ -432,7 +432,9 @@ int roar_socket_open (int mode, int type, char * host, int port) {
 #endif
  union {
   struct sockaddr_in  in;
+#ifdef ROAR_HAVE_UNIX
   struct sockaddr_un  un;
+#endif
 #ifdef ROAR_HAVE_IPV6
   struct sockaddr_in6 in6;
 #endif
@@ -538,6 +540,7 @@ int roar_socket_open (int mode, int type, char * host, int port) {
    }
   // hey! we have a socket...
  } else if ( type == ROAR_SOCKET_TYPE_UNIX ) {
+#ifdef ROAR_HAVE_UNIX
   socket_addr.un.sun_family = AF_UNIX;
   strncpy(socket_addr.un.sun_path, host, sizeof(socket_addr.un.sun_path) - 1);
 
@@ -548,6 +551,10 @@ int roar_socket_open (int mode, int type, char * host, int port) {
    close(fh);
    return -1;
   }
+#else
+  ROAR_ERR("roar_socket_open(*): There is no UNIX Domain Socket support in win32, download a real OS.");
+  return -1;
+#endif
  } else if ( type == ROAR_SOCKET_TYPE_IPX ) {
 #ifdef ROAR_HAVE_IPX
   socket_addr.ipx.sipx_family = AF_IPX;
