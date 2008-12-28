@@ -52,10 +52,12 @@ int roar_connect_raw (char * server) {
  if ( server == NULL && (roar_server = getenv("ROAR_SERVER")) != NULL )
   server = roar_server;
 
+#ifndef ROAR_TARGET_WIN32
  if ( server == NULL && (i = readlink("/etc/roarserver", user_sock, 79)) != -1 ) {
    user_sock[i] = 0;
    server = user_sock;
  }
+#endif
 
  if ( server == NULL || *server == 0 ) {
   /* connect via defaults */

@@ -599,6 +599,7 @@ int roar_socket_open (int mode, int type, char * host, int port) {
 }
 
 int roar_socket_open_fork  (int mode, char * host, int port) {
+#ifndef ROAR_TARGET_WIN32
  int socks[2];
  int r;
  char fhstr[8];
@@ -637,6 +638,10 @@ int roar_socket_open_fork  (int mode, char * host, int port) {
  }
 
  return -1;
+#else
+ ROAR_ERR("roar_socket_open_fork(*): There is no UNIX Domain Socket support in win32, download a real OS.");
+ return -1;
+#endif
 }
 
 int roar_socket_open_file  (int mode, char * host, int port) {

@@ -183,8 +183,14 @@ int roar_cdrom_stop (struct roar_cdrom * cdrom) {
   return -1;
  }
 
+#ifndef ROAR_TARGET_WIN32
  if ( cdrom->player != -1 )
   kill(cdrom->player, SIGINT);
+#else
+ if ( cdrom->player != -1 ) {
+  ROAR_ERR("roar_cdrom_stop(*): Can not kill player with pid %i, not supported on win32", cdrom->player);
+ }
+#endif
 
  cdrom->player = -1;
  cdrom->stream = -1;
