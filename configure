@@ -438,7 +438,8 @@ test_lib_defmake ROAR_HAVE_UNIX          %            UNIX          c          -
 test_lib_defmake ROAR_HAVE_IPX           %            IPX           c          -- netipx/ipx.h
 test_lib_defmake ROAR_HAVE_OSS           %            OSS           c          -- sys/ioctl.h sys/soundcard.h
 test_lib_defmake ROAR_HAVE_OSS_BSD       %            BSDOSS        c          -- sys/ioctl.h soundcard.h
-test_lib_defmake ROAR_HAVE_LIBWSOCK32    %            WinSock       wsock32    -- winsock2.h
+test_lib_defmake ROAR_HAVE_LIBWSOCK32    %            WinSockP0     wsock32    -- winsock2.h
+test_lib_defmake ROAR_HAVE_LIBWS2_32     %            WinSockP1     ws2_32     -- winsock2.h
 
 # add a better test here
 test_lib 'linux sendfile()'       -- sys/sendfile.h && echo '#define ROAR_HAVE_LINUX_SENDFILE' >&3
