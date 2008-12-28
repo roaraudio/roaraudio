@@ -28,6 +28,7 @@
 #ifndef _ROARAUDIO_H_
 #define _ROARAUDIO_H_
 
+#include <roaraudio/config.h>
 #include <roaraudio/win32hacks.h> // we include this at the beginning of the file
                                   // so we can define well known standard types known to everyone
                                   // and everywhere but win32 here
@@ -42,9 +43,11 @@
 #include <sys/mman.h>
 
 // TODO: can we move the next block into roard specific includes?
+#ifndef ROAR_TARGET_WIN32
 #include <grp.h>
 #include <pwd.h>
 #include <sys/stat.h>
+#endif
 
 #ifdef ROAR_TARGET_WIN32
 #include <winsock2.h>
@@ -61,9 +64,9 @@
 #include <netinet/in_systm.h>
 #endif
 
+#ifndef ROAR_TARGET_WIN32
 #include <netdb.h>
-
-#include <roaraudio/config.h>
+#endif
 
 // NOTE: we need this macro in some of our header files.
 #if INT_MAX >= 32767
