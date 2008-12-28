@@ -207,6 +207,7 @@ do
    RUNTIME_DETECT=true
    no_lib_dnet=true
    TARGET_WIN32=true
+   PROXY=false
   ;;
  esac;
 
