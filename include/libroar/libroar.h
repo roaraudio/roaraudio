@@ -42,11 +42,13 @@
 #include <stdint.h>
 
 #include <fcntl.h>
+#ifndef ROAR_TARGET_WIN32
 #include <sys/socket.h>
 #include <netinet/in_systm.h>
 #include <netinet/in.h>
 #include <netinet/ip.h>
 #include <sys/uio.h>
+#endif
 #ifdef ROAR_HAVE_LIBDNET
 #include <netdnet/dn.h>
 #include <netdnet/dnetdb.h>
