@@ -175,12 +175,7 @@ int _ROAR_MLOCK(const void *addr, size_t len);
 #endif
 #endif
 
-#ifdef ROAR_TARGET_WIN32
-#undef BYTE_ORDER
-#define BYTE_ORDER LITTLE_ENDIAN
-#endif
-
-#if BYTE_ORDER == BIG_ENDIAN
+#if BYTE_ORDER == BIG_ENDIAN && !defined(ROAR_TARGET_WIN32)
 
 #ifdef ROAR_TARGET_WIN32
 #error This is nonsens. No win32 runs on a BE machine
