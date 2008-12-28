@@ -46,6 +46,8 @@ MULAW=true
 ALAW_RW=true
 MULAW_RW=true
 
+TARGET_WIN32=false
+
 echo -n "checking for C compiler... "
 if [ "$CC" != '' ]
 then
@@ -198,6 +200,7 @@ do
   '--target-win32')
    RUNTIME_DETECT=true
    no_lib_dnet=true
+   TARGET_WIN32=true
   ;;
  esac;
 
@@ -379,6 +382,7 @@ EOF
  $ALAW_RW  && echo '#define ROAR_SUPPORT_ALAW_RW'
  $MULAW    && echo '#define ROAR_SUPPORT_MULAW'
  $MULAW_RW && echo '#define ROAR_SUPPORT_MULAW_RW'
+ $TARGET_WIN32 && echo '#define ROAR_TARGET_WIN32'
  echo
 } >&3
 

@@ -42,12 +42,16 @@
 #include <pwd.h>
 #include <sys/stat.h>
 
+#ifdef ROAR_TARGET_WIN32
+#include <winsock2.h>
+#else
 #include <arpa/inet.h>
 
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <sys/un.h>
+#endif
 
 #ifdef __NetBSD__
 #include <netinet/in_systm.h>
