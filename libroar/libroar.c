@@ -35,6 +35,7 @@
 #include "libroar.h"
 
 int _ROAR_MLOCK(const void *addr, size_t len) {
+#ifndef ROAR_TARGET_WIN32
  long sz = sysconf(_SC_PAGESIZE);
  unsigned long int pos = (unsigned long int) addr;
 
@@ -43,6 +44,9 @@ int _ROAR_MLOCK(const void *addr, size_t len) {
  pos -= pos % sz;
 
  return mlock((void*)pos, len);
+#else
+ return GlobalLock(pos) == pos ? 0 : -1;
+#endif
 }
 
 //ll

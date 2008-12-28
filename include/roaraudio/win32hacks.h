@@ -30,6 +30,8 @@
 
 #ifdef ROAR_TARGET_WIN32
 
+#include <windows.h>
+
 #define id_t      int
 #define pid_t     int
 #define uid_t     int
