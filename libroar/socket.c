@@ -175,6 +175,7 @@ int roar_socket_new_ipx    (void) {
 
 
 int roar_socket_nonblock(int fh, int state) {
+#ifndef ROAR_TARGET_WIN32
  int flags;
 
  if ( (flags = fcntl(fh, F_GETFL, 0)) == -1 ) {
@@ -196,9 +197,14 @@ int roar_socket_nonblock(int fh, int state) {
 
  ROAR_DBG("roar_socket_nonblock(fh=%i, state=%i) = 0", fh, state);
  return 0;
+#else
+ ROAR_WARN("roar_socket_nonblock(*): no nonblocking IO support on win32, use a real OS");
+ return -1;
+#endif
 }
 
 int roar_socket_dup_udp_local_end (int fh) {
+#ifndef ROAR_TARGET_WIN32
  int                  n              = -1;
  int                  flags          = -1;
  struct sockaddr_in   socket_addr;
@@ -236,11 +242,16 @@ int roar_socket_dup_udp_local_end (int fh) {
 
 
  return n;
+#else
+ ROAR_WARN("roar_socket_dup_udp_local_end(*): this function is not supported on win32, use a real OS");
+ return -1;
+#endif
 }
 
 
 #define _SCMR_CONTROLLEN (sizeof(struct cmsghdr) + sizeof(int))
 int roar_socket_send_fh (int sock, int fh, char * mes, size_t len) {
+#ifndef ROAR_TARGET_WIN32
  struct iovec     iov[1];
  struct msghdr    msg;
  char             cmptr_buf[_SCMR_CONTROLLEN];
@@ -274,9 +285,14 @@ int roar_socket_send_fh (int sock, int fh, char * mes, size_t len) {
  *(int *)CMSG_DATA(cmptr) = fh;
 
  return sendmsg(sock, &msg, 0);
+#else
+ ROAR_ERR("roar_socket_send_fh(*): There is no UNIX Domain Socket support in win32, download a real OS.");
+ return -1;
+#endif
 }
 
 int roar_socket_recv_fh (int sock,         char * mes, size_t * len) {
+#ifndef ROAR_TARGET_WIN32
  struct iovec     iov[1];
  struct msghdr    msg;
  char             cmptr_buf[_SCMR_CONTROLLEN];
@@ -309,6 +325,10 @@ int roar_socket_recv_fh (int sock,         char * mes, size_t * len) {
   return -1;
 
  return *(int *)CMSG_DATA(cmptr);
+#else
+ ROAR_ERR("roar_socket_recv_fh(*): There is no UNIX Domain Socket support in win32, download a real OS.");
+ return -1;
+#endif
 }
 
 int roar_socket_listen  (int type, char * host, int port) {
