@@ -529,7 +529,11 @@ int roar_socket_open (int mode, int type, char * host, int port) {
 
    /* set the connect information */
    socket_addr.in.sin_family = AF_INET;
+#ifndef ROAR_TARGET_WIN32
    socket_addr.in.sin_port   = ROAR_HOST2NET16(port);
+#else
+   socket_addr.in.sin_port   = port;
+#endif
 
    fh = roar_socket_new_tcp();
 
