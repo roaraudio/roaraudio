@@ -28,6 +28,10 @@
 #ifndef _ROARAUDIO_H_
 #define _ROARAUDIO_H_
 
+#include <roaraudio/win32hacks.h> // we include this at the beginning of the file
+                                  // so we can define well known standard types known to everyone
+                                  // and everywhere but win32 here
+
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
