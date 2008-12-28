@@ -178,6 +178,10 @@ int _ROAR_MLOCK(const void *addr, size_t len);
 
 #if BYTE_ORDER == BIG_ENDIAN
 
+#ifdef ROAR_TARGET_WIN32
+#error This is nonsens. No win32 runs on a BE machine
+#endif
+
 #define ROAR_NET2HOST32(x) (x)
 #define ROAR_HOST2NET32(x) (x)
 #define ROAR_NET2HOST16(x) (x)
