@@ -454,7 +454,7 @@ int roar_socket_open (int mode, int type, char * host, int port) {
    }
 
    if ( port ) {
-    sprintf(obj, "%i", port); // no need for snprintf() as dec(port) is smaller than obj[]
+    snprintf(obj, 7, "%i", port); // no need for snprintf() as dec(port) is smaller than obj[]
    } else {
     *obj = 0;
     strncat(obj, del+2, 79);

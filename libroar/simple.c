@@ -121,10 +121,10 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
  }
 
  if ( type == ROAR_SOCKET_TYPE_UNIX ) {
-  sprintf(file, "/tmp/.libroar-simple-stream.%i-%i", getpid(), count++);
+  snprintf(file, 79, "/tmp/.libroar-simple-stream.%i-%i", getpid(), count++);
  } else if ( type == ROAR_SOCKET_TYPE_DECNET ) {
   if ( roar_socket_get_local_nodename() ) {
-   sprintf(file, "%s::roar$TMP%04x%02x", roar_socket_get_local_nodename(), getpid(), count++);
+   snprintf(file, 24,"%s::roar$TMP%04x%02x", roar_socket_get_local_nodename(), getpid(), count++);
   } else {
    return -1;
   }
