@@ -62,6 +62,7 @@ int roar_simple_stream(int rate, int channels, int bits, int codec, char * serve
 
  if ( roar_simple_connect(&con, server, name) == -1 ) {
   ROAR_DBG("roar_simple_play(*): roar_simple_connect() faild!");
+  ROAR_ERR("roar_simple_stream(*): Can not connect to server");
   return -1;
  }
 
