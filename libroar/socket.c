@@ -345,7 +345,9 @@ int roar_socket_listen_decnet (char * object, int num) {
   bind_sockaddr.sdn_objnamel = 0;
  } else {
   bind_sockaddr.sdn_objnamel  = ROAR_dn_htons(strlen(object));
-  strcpy((char*)bind_sockaddr.sdn_objname, object); // FIXME: shouldn't we use strncpy()?
+  if ( bind_sockaddr.sdn_objnamel > DN_MAXOBJL )
+   bind_sockaddr.sdn_objnamel = DN_MAXOBJL;
+  strncpy((char*)bind_sockaddr.sdn_objname, object, DN_MAXOBJL);
  }
 
  if ( bind(fh, (struct sockaddr *) &bind_sockaddr, sizeof(bind_sockaddr)) == -1 ) {
@@ -883,7 +885,7 @@ int roar_socket_open_ssh    (int mode, int fh, char * host, int port, char * use
 
 
  if ( !strcmp(host, "+fork") ) {
-  strcpy(rcmd, "roard --no-listen --client-fh 0");
+  strncpy(rcmd, "roard --no-listen --client-fh 0", 32);
  } else {
   if ( use_socat ) {
    if ( *host == '/' ) {

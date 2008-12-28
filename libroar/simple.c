@@ -129,7 +129,7 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
    return -1;
   }
  } else {
-  strcpy(file, inet_ntoa(socket_addr.sin_addr));
+  strncpy(file, inet_ntoa(socket_addr.sin_addr), 79);
  }
 
  if ( (listen = roar_socket_listen(type, file, port)) == -1 ) {

@@ -84,11 +84,11 @@ struct {
 
 char * roar_meta_strtype(int type) {
  int i;
- static char name[24];
+ static char name[ROAR_META_MAX_NAMELEN];
 
  for (i = 0; _libroar_meta_typelist[i].id != -1; i++)
   if ( _libroar_meta_typelist[i].id == type ) {
-   strcpy(name, _libroar_meta_typelist[i].name);
+   strncpy(name, _libroar_meta_typelist[i].name, ROAR_META_MAX_NAMELEN);
    return name;
   }
 
