@@ -45,7 +45,7 @@ int _ROAR_MLOCK(const void *addr, size_t len) {
 
  return mlock((void*)pos, len);
 #else
- return GlobalLock(pos) == pos ? 0 : -1;
+ return GlobalLock(addr) == addr ? 0 : -1;
 #endif
 }
 
