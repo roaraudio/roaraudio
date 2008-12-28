@@ -341,7 +341,12 @@ int roar_socket_connect (char * host, int port) {
  if ( proxy_type == NULL || strcmp(proxy_type, "") == 0 ) {
   return roar_socket_open(MODE_CONNECT, ROAR_SOCKET_TYPE_UNKNOWN, host, port);
  } else {
+#ifdef ROAR_SUPPORT_PROXY
   return roar_socket_open_proxy(MODE_CONNECT, ROAR_SOCKET_TYPE_UNKNOWN, host, port, proxy_type);
+#else
+  ROAR_ERR("roar_socket_connect(host='%s', port=%i): no support for proxy code (proxy_type=%s)", host, port, proxy_type);
+  return -1;
+#endif
  }
 }
 
@@ -644,6 +649,7 @@ int roar_socket_open_file  (int mode, char * host, int port) {
 
 // generic proxy code:
 
+#ifdef ROAR_SUPPORT_PROXY
 int roar_socket_open_proxy (int mode, int type, char * host, int port, char * proxy_type) {
  int    proxy_port = -1;
  char   proxy_host[ROAR_SOCKET_MAX_HOSTNAMELEN];
@@ -967,5 +973,7 @@ int roar_socket_open_ssh    (int mode, int fh, char * host, int port, char * use
  return -1;
 }
 #endif
+
+#endif // ROAR_SUPPORT_PROXY
 
 //ll

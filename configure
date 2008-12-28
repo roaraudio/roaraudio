@@ -46,6 +46,8 @@ MULAW=true
 ALAW_RW=true
 MULAW_RW=true
 
+PROXY=true
+
 TARGET_WIN32=false
 
 echo -n "checking for C compiler... "
@@ -104,6 +106,7 @@ do
    echo '--without-alaw-rw'
    echo '--without-mulaw'
    echo '--without-mulaw-rw'
+   echo '--without-proxy'
    echo '--target-win32'
    exit 0;
   ;;
@@ -176,6 +179,9 @@ do
   ;;
   '--without-mulaw-rw')
    MULAW_RW=false
+  ;;
+  '--without-proxy')
+   PROXY=false
   ;;
   '--prefix')
    PREFIX="$2"
@@ -382,6 +388,8 @@ EOF
  $ALAW_RW  && echo '#define ROAR_SUPPORT_ALAW_RW'
  $MULAW    && echo '#define ROAR_SUPPORT_MULAW'
  $MULAW_RW && echo '#define ROAR_SUPPORT_MULAW_RW'
+ $PROXY    && echo '#define ROAR_SUPPORT_PROXY'
+ echo
  $TARGET_WIN32 && echo '#define ROAR_TARGET_WIN32'
  echo
 } >&3
