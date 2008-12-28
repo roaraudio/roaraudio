@@ -102,6 +102,7 @@ do
    echo '--without-alaw-rw'
    echo '--without-mulaw'
    echo '--without-mulaw-rw'
+   echo '--target-win32'
    exit 0;
   ;;
   '--ldpath')
@@ -193,6 +194,10 @@ do
   '--prefix-man')
    PREFIX_MAN="$2"
    shift;
+  ;;
+  '--target-win32')
+   RUNTIME_DETECT=true
+   no_lib_dnet=true
   ;;
  esac;
 
