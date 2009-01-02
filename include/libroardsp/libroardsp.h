@@ -43,6 +43,7 @@ __BEGIN_DECLS
 #define ROARDSP_FILTER_CLIP           6
 #define ROARDSP_FILTER_ADD            7
 #define ROARDSP_FILTER_DOWNMIX        8
+#define ROARDSP_FILTER_DCBLOCK        9
 
 // filter CTLs:
 
@@ -61,6 +62,8 @@ __BEGIN_DECLS
 #define ROARDSP_DOWNMIX_RIGHT         2
 #define ROARDSP_DOWNMIX_ARITHMETIC    3
 #define ROARDSP_DOWNMIX_RMS           4
+
+#define ROARDSP_DCBLOCK_NUMBLOCKS     100
 
 // types:
 
@@ -95,6 +98,11 @@ struct roardsp_highp {
 struct roardsp_amp {
  int32_t  mul;
  int32_t  div;
+};
+
+struct roardsp_dcblock {
+ int cur;
+ int32_t dc[ROARDSP_DCBLOCK_NUMBLOCKS];
 };
 
 // funcs:
@@ -144,6 +152,10 @@ int roardsp_clip_ctl   (struct roardsp_filter * filter, int cmd, void * data);
 int roardsp_downmix_init   (struct roardsp_filter * filter, struct roar_stream * stream, int id);
 int roardsp_downmix_calc162(struct roardsp_filter * filter, void * data, size_t samples);
 int roardsp_downmix_ctl    (struct roardsp_filter * filter, int cmd, void * data);
+
+int roardsp_dcblock_init   (struct roardsp_filter * filter, struct roar_stream * stream, int id);
+int roardsp_dcblock_uninit (struct roardsp_filter * filter);
+int roardsp_dcblock_calc16 (struct roardsp_filter * filter, void * data, size_t samples);
 
 // codecs:
 int roardsp_conv_alaw2pcm16 (int16_t * out, char * in, size_t len);
