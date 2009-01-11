@@ -25,11 +25,11 @@ roarmon: roarmon.o
 roarmonhttp: roarmonhttp.o
 roarbidir: roarbidir.o
 roarfilt: roarfilt.o
-	${CC} ${LDFLAGS} -o roarfilt roarfilt.o -lm -lroardsp
+	${CC} ${LDFLAGS} -o roarfilt roarfilt.o $(lib_m) -lroardsp
 roarsin: roarsin.o
-	${CC} ${LDFLAGS} -o roarsin roarsin.o -lm
+	${CC} ${LDFLAGS} -o roarsin roarsin.o $(lib_m)
 roarvumeter: roarvumeter.o
-	${CC} ${LDFLAGS} -o roarvumeter roarvumeter.o -lm
+	${CC} ${LDFLAGS} -o roarvumeter roarvumeter.o $(lib_m)
 roarsockconnect: roarsockconnect.o
 roartypes: roartypes.o
 roarsocktypes: roarsocktypes.o
@@ -40,4 +40,4 @@ roarshout: roarshout.o
 	${CC} ${LDFLAGS} -o roarshout roarshout.o $(lib_shout)
 polytest: polytest.o
 roarfctest: roarfctest.o
-	${CC} ${LDFLAGS} -o roarfctest roarfctest.o -lm -lroardsp
+	${CC} ${LDFLAGS} -o roarfctest roarfctest.o $(lib_m) -lroardsp
