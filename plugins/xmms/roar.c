@@ -217,25 +217,6 @@ int roar_get_written_time(void) {
 }
 
 
-// ABOUT:
-
-void roar_about(void) {
- static GtkWidget *dialog;
-
- if (dialog != NULL)
-  return;
-
- dialog = xmms_show_message(
-                _("About RoarAudio Plugin"),
-                _("RoarAudio XMMS Plugin..."
-                 ), _("OK"), FALSE, NULL, NULL);
- gtk_signal_connect(GTK_OBJECT(dialog), "destroy",
-                    GTK_SIGNAL_FUNC(gtk_widget_destroyed),
-                    &dialog);
-}
-
-// CONFIG:
-
 // META DATA:
 
 int roar_update_metadata(void) {

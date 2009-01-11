@@ -24,4 +24,26 @@
 
 #include "all.h"
 
+// ABOUT:
+
+void roar_about(void) {
+ static GtkWidget *dialog;
+
+ if (dialog != NULL)
+  return;
+
+ dialog = xmms_show_message(
+                _("About RoarAudio Plugin"),
+                _("RoarAudio XMMS Plugin..."
+                 ), _("OK"), FALSE, NULL, NULL);
+ gtk_signal_connect(GTK_OBJECT(dialog), "destroy",
+                    GTK_SIGNAL_FUNC(gtk_widget_destroyed),
+                    &dialog);
+}
+
+// CONFIG:
+
+void roar_configure(void) {
+}
+
 //ll
