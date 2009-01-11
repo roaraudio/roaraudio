@@ -22,9 +22,12 @@
  *
  */
 
+#include <roaraudio.h>  /* libroar */
+
+#ifdef ROAR_HAVE_LIBM
+
 #include <math.h>       /* sin() */
 #include <stdio.h>      /* *printf*() */
-#include <roaraudio.h>  /* libroar */
 
 double rect (double x) {
  x /= 2*M_PI;
@@ -121,5 +124,12 @@ int main (int argc, char * argv[]) {
 
  return 0;
 }
+
+#else
+int main (void) {
+ fprintf(stderr, "Error: No Math library support compiled in.\n");
+ return 1;
+}
+#endif
 
 //ll

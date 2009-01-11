@@ -23,6 +23,9 @@
  */
 
 #include <roaraudio.h>
+
+#ifdef ROAR_HAVE_LIBM
+
 #include <math.h>
 
 #define BUFSIZE 1024
@@ -133,5 +136,12 @@ int main (int argc, char * argv[]) {
 
  return 0;
 }
+
+#else
+int main (void) {
+ fprintf(stderr, "Error: No Math library support compiled in.\n");
+ return 1;
+}
+#endif
 
 //ll

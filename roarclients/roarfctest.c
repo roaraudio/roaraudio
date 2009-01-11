@@ -22,9 +22,12 @@
  *
  */
 
+#include <roaraudio.h>  /* libroar */
+
+#ifdef ROAR_HAVE_LIBM
+
 #include <math.h>       /* sin() */
 #include <stdio.h>      /* *printf*() */
-#include <roaraudio.h>  /* libroar */
 #include <libroardsp/libroardsp.h>
 
 int main (void) {
@@ -129,5 +132,12 @@ int main (void) {
 
  return 0;
 }
+
+#else
+int main (void) {
+ fprintf(stderr, "Error: No Math library support compiled in.\n");
+ return 1;
+}
+#endif
 
 //ll

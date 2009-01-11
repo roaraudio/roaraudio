@@ -24,13 +24,18 @@
 
 #include <roaraudio.h>
 #include <libroardsp/libroardsp.h>
+
+#ifdef ROAR_HAVE_LIBM
 #include <math.h>
+#endif
 
 #define BUFSIZE 1024
+#ifdef ROAR_HAVE_LIBM
 struct {
  uint16_t a, b;
  int16_t  old[ROAR_MAX_CHANNELS];
 } g_lowpass;
+#endif
 
 void usage (void) {
  printf("roarfilt [OPTIONS]...\n");
@@ -48,7 +53,9 @@ void usage (void) {
         "  --amp VAL          - Set amplification\n"
         "  --mul VAL          - Set mul\n"
         "  --div VAL          - Set div\n"
+#ifdef ROAR_HAVE_LIBM
         "  --lowpass freq     - lowpass filter\n"
+#endif
         "  --filter  name     - add filter name\n"
         "  --ffreq   freq     - set filter freq\n"
         "  --fmul    mult     - set filter multiplier\n"
@@ -79,6 +86,7 @@ void vol1 (void * data, int mul, int div, int len) {
   samples[i] = ((int) samples[i] * mul) / div;
 }
 
+#ifdef ROAR_HAVE_LIBM
 void logs2 (void * data, float scale, int len) {
  int16_t * samples = (int16_t *) data;
  int i;
@@ -125,6 +133,7 @@ void lowpass2 (void * data, int len, int channels) {
   }
  }
 }
+#endif
 
 int main (int argc, char * argv[]) {
  int    rate     = 44100;
@@ -145,7 +154,9 @@ int main (int argc, char * argv[]) {
  struct roardsp_filter    * filter = filter_real - 1;
  struct roar_stream         stream;
 
+#ifdef ROAR_HAVE_LIBM
  memset(&g_lowpass, 0, sizeof(g_lowpass));
+#endif
 
  roardsp_fchain_init(&fc);
 
@@ -172,10 +183,12 @@ int main (int argc, char * argv[]) {
    div  = atoi(argv[++i]);
   } else if ( strcmp(k, "--log") == 0 ) {
    logscale = atof(argv[++i]);
+#ifdef ROAR_HAVE_LIBM
   } else if ( strcmp(k, "--lowpass") == 0 ) {
    lp = exp(-2 * M_PI * atof(argv[++i]) / rate) * 65536;
    g_lowpass.b = lp;
    g_lowpass.a = 65536 - lp;
+#endif
 //   printf("lowpass: A=%i, B=%i\n", g_lowpass.a, g_lowpass.b);
   } else if ( strcmp(k, "--filter") == 0 ) {
    stream.info.channels = channels;
@@ -220,7 +233,11 @@ int main (int argc, char * argv[]) {
   return 1;
  }
 
- if ( mul == div && logscale == 0 && g_lowpass.a == 0 && roardsp_fchain_num(&fc) == 0 ) {
+ if ( mul == div &&
+#ifdef ROAR_HAVE_LIBM
+      logscale == 0 && g_lowpass.a == 0 &&
+#endif
+      roardsp_fchain_num(&fc) == 0 ) {
   fprintf(stderr, "Error: filter is useless!\n");
   return 0;
  }
@@ -229,10 +246,12 @@ int main (int argc, char * argv[]) {
   while((i = read(fh, buf, BUFSIZE))) {
    if ( mul != div )
     vol2((void*)buf, mul, div, i);
+#ifdef ROAR_HAVE_LIBM
    if ( logscale )
     logs2((void*)buf, logscale, i);
    if ( g_lowpass.a )
     lowpass2((void*)buf, i, channels);
+#endif
    roardsp_fchain_calc(&fc, (void*)buf, (8*i)/bits);
    if (write(fh, buf, i) != i)
     break;
