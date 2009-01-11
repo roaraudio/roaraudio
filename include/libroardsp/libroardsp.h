@@ -82,6 +82,7 @@ struct roardsp_filterchain {
  struct roardsp_filter * filter[ROARDSP_MAX_FILTERS_PER_CHAIN];
 };
 
+#ifdef ROAR_HAVE_LIBM
 struct roardsp_lowp {
  uint32_t freq; // in mHz (0Hz..4MHz)
  uint16_t a, b;
@@ -94,6 +95,7 @@ struct roardsp_highp {
  int32_t  oldout[ROAR_MAX_CHANNELS];
  int32_t  oldin[ROAR_MAX_CHANNELS];
 };
+#endif
 
 struct roardsp_amp {
  int32_t  mul;
@@ -121,6 +123,7 @@ int roardsp_fchain_num   (struct roardsp_filterchain * chain);
 
 // filter:
 
+#ifdef ROAR_HAVE_LIBM
 int roardsp_lowp_init  (struct roardsp_filter * filter, struct roar_stream * stream, int id);
 int roardsp_lowp_uninit(struct roardsp_filter * filter);
 int roardsp_lowp_calc16(struct roardsp_filter * filter, void * data, size_t samples);
@@ -130,6 +133,7 @@ int roardsp_highp_init  (struct roardsp_filter * filter, struct roar_stream * st
 int roardsp_highp_uninit(struct roardsp_filter * filter);
 int roardsp_highp_calc16(struct roardsp_filter * filter, void * data, size_t samples);
 int roardsp_highp_ctl   (struct roardsp_filter * filter, int cmd, void * data);
+#endif
 
 int roardsp_amp_init  (struct roardsp_filter * filter, struct roar_stream * stream, int id);
 int roardsp_amp_uninit(struct roardsp_filter * filter);

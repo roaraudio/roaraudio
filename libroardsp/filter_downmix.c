@@ -61,6 +61,7 @@ int roardsp_downmix_calc162  (struct roardsp_filter * filter, void * data, size_
      samp[i+1] = s.i32;
     }
    break;
+#ifdef ROAR_HAVE_LIBM
   case ROARDSP_DOWNMIX_RMS:
     for (i = 0; i < samples; i += 2) {
      s.i64      = (int64_t)samp[i]*samp[i] + (int64_t)samp[i+1]*samp[i+1];
@@ -78,6 +79,7 @@ int roardsp_downmix_calc162  (struct roardsp_filter * filter, void * data, size_
      samp[i+1]  = s.i64;
     }
    break;
+#endif
   default:
    ROAR_DBG("roardsp_downmix_calc162(*) = -1 // unknown mode");
    return -1;

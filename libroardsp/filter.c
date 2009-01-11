@@ -36,10 +36,12 @@ struct _roardsp_filterlist {
            {NULL, NULL, NULL},{roardsp_amp_calc8, NULL, NULL},{roardsp_amp_calc16, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL}}},
  {ROARDSP_FILTER_ADD, "Add", roardsp_add_init, roardsp_amp_uninit, roardsp_amp_ctl, {
            {NULL, NULL, NULL},{NULL, NULL, NULL},{roardsp_add_calc16, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL}}},
+#ifdef ROAR_HAVE_LIBM
  {ROARDSP_FILTER_LOWP, "Lowpass", roardsp_lowp_init, roardsp_lowp_uninit, roardsp_lowp_ctl, {
            {NULL, NULL, NULL},{NULL, NULL, NULL},{roardsp_lowp_calc16, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL}}},
  {ROARDSP_FILTER_HIGHP, "Highpass", roardsp_highp_init, roardsp_highp_uninit, roardsp_highp_ctl, {
            {NULL, NULL, NULL},{NULL, NULL, NULL},{roardsp_highp_calc16, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL}}},
+#endif
  {ROARDSP_FILTER_QUANTIFY, "Quantifier", roardsp_quantify_init, NULL, roardsp_quantify_ctl, {
            {NULL, NULL, NULL},{NULL, NULL, NULL},{roardsp_quantify_calc16, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL}}},
  {ROARDSP_FILTER_CLIP, "Clip", roardsp_clip_init, NULL, roardsp_clip_ctl, {

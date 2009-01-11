@@ -24,6 +24,8 @@
 
 #include "libroardsp.h"
 
+#ifdef ROAR_HAVE_LIBM
+
 int roardsp_highp_init  (struct roardsp_filter * filter, struct roar_stream * stream, int id) {
  struct roardsp_highp * self = malloc(sizeof(struct roardsp_highp));
  float freq = 25;
@@ -107,5 +109,7 @@ int roardsp_highp_ctl   (struct roardsp_filter * filter, int cmd, void * data) {
 
  return 0;
 }
+
+#endif
 
 //ll

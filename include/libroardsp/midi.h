@@ -26,7 +26,10 @@
 #define _LIBROARMIDI_H_
 
 #include "libroardsp.h"
+
+#ifdef ROAR_HAVE_LIBM
 #include <math.h>
+#endif
 
 #define ROAR_MIDI_NOTE_NONE -1
 

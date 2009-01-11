@@ -106,6 +106,7 @@ int            roar_midi_notefill    (struct roar_note_octave * note) {
 }
 
 int roar_midi_gen_tone (struct roar_note_octave * note, int16_t * samples, float t, int rate, int channels, int type, void * opts) {
+#ifdef ROAR_HAVE_LIBM
  int i, c;
  float ct;
  float step = M_PI*2*note->freq/rate;
@@ -136,6 +137,9 @@ int roar_midi_gen_tone (struct roar_note_octave * note, int16_t * samples, float
  }
 
  return 0;
+#else
+ return -1;
+#endif
 }
 
 
