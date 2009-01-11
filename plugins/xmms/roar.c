@@ -22,44 +22,7 @@
  *
  */
 
-#include <roaraudio.h>
-
-//#include "xmms/i18n.h"
-#include <gtk/gtk.h>
-#include <stdio.h>
-#include <string.h>
-
-#include "xmms/plugin.h"
-#include "xmms/xmmsctrl.h"
-#include "xmms/dirbrowser.h"
-#include "xmms/configfile.h"
-#include "xmms/util.h"
-
-#define _(x) (x)
-
-gint ctrlsocket_get_session_id(void);
-
-void roar_init(void);
-void roar_about(void);
-void roar_configure(void);
-
-void roar_get_volume(int *l, int *r);
-void roar_set_volume(int l, int r);
-void roar_mixer_init(void);
-void roar_mixer_init_vol(int l, int r);
-
-int roar_playing(void);
-int roar_free(void);
-void roar_write(void *ptr, int length);
-void roar_close(void);
-void roar_flush(int time);
-void roar_pause(short p);
-int roar_open(AFormat fmt, int rate, int nch);
-int roar_get_output_time(void);
-int roar_get_written_time(void);
-
-int roar_update_metadata(void);
-int roar_chk_metadata(void);
+#include "all.h"
 
 OutputPlugin roar_op = {
         NULL,
@@ -67,7 +30,7 @@ OutputPlugin roar_op = {
         "RoarAudio XMMS Plugin", /* Description */
         roar_init,
         roar_about,
-        NULL, //roar_configure,
+        roar_configure,
         roar_get_volume,
         roar_set_volume,
         roar_open,
@@ -80,29 +43,6 @@ OutputPlugin roar_op = {
         roar_get_output_time,
         roar_get_written_time,
 };
-
-#define STATE_CONNECTED   1
-#define STATE_PLAYING     2
-#define STATE_NORECONNECT 4
-
-struct xmms_roar_out {
- int                 state;
- char              * server;
- struct roar_connection con;
- struct roar_stream     stream;
- int                 data_fh;
- long unsigned int   written;
- long unsigned int   bps;
- int                 session;
- int                 pause;
- struct {
-  int                server_type;
-  int                port;
-  int              * proxy_type;
-  char             * proxy;
-  char             * player_name;
- } cfg;
-} g_inst;
 
 OutputPlugin *get_oplugin_info(void) {
  return &roar_op;
