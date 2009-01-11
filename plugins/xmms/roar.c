@@ -86,15 +86,22 @@ OutputPlugin roar_op = {
 #define STATE_NORECONNECT 4
 
 struct xmms_roar_out {
- int state;
- char * server;
+ int                 state;
+ char              * server;
  struct roar_connection con;
  struct roar_stream     stream;
- int data_fh;
- long unsigned int written;
- long unsigned int bps;
- int session;
- int pause;
+ int                 data_fh;
+ long unsigned int   written;
+ long unsigned int   bps;
+ int                 session;
+ int                 pause;
+ struct {
+  int                server_type;
+  int                port;
+  int              * proxy_type;
+  char             * proxy;
+  char             * player_name;
+ } cfg;
 } g_inst;
 
 OutputPlugin *get_oplugin_info(void) {
@@ -102,9 +109,23 @@ OutputPlugin *get_oplugin_info(void) {
 }
 
 void roar_init(void) {
+ ConfigFile * cfgfile;
+
+ cfgfile = xmms_cfg_open_default_file();
+
  g_inst.state = 0;
  g_inst.server = NULL;
  g_inst.session = ctrlsocket_get_session_id();
+
+ xmms_cfg_read_string(cfgfile, "ROAR", "server", &g_inst.server);
+
+ xmms_cfg_read_string(cfgfile, "ROAR", "player_name", &g_inst.cfg.player_name);
+
+ xmms_cfg_free(cfgfile);
+
+ if ( g_inst.cfg.player_name == NULL )
+  g_inst.cfg.player_name = "XMMS";
+
  ROAR_DBG("roar_init(*) = (void)");
 }
 
@@ -136,7 +157,7 @@ int roar_open(AFormat fmt, int rate, int nch) {
  int bits;
 
  if ( !(g_inst.state & STATE_CONNECTED) ) {
-  if ( roar_simple_connect(&(g_inst.con), g_inst.server, "XMMS") == -1 ) {
+  if ( roar_simple_connect(&(g_inst.con), g_inst.server, g_inst.cfg.player_name) == -1 ) {
    return FALSE;
   }
   g_inst.state |= STATE_CONNECTED;

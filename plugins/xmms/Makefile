@@ -1,6 +1,6 @@
 TARGET=libroar.so
 
-OBJ=roar.o
+OBJ=roar.o gui.o
 
 include Makefile.conf
 
