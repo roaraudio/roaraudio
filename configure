@@ -426,7 +426,8 @@ test_tool_defmake ROAR_HAVE_BIN_SSH        OpenSSH      ssh
 
 echo >&3
 
-test_lib 'Math Library' m          -- math.h                         && echo '#define ROAR_HAVE_LIBM' >&3
+#                #define                 subdir       name           -lxxx      -- header
+test_lib_defmake ROAR_HAVE_LIBM          %            'Math Library' m          -- math.h
 if test_lib 'realtime Library' rt -- sys/mman.h mqueue.h semaphore.h
 then
  {
