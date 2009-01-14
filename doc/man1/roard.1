@@ -28,7 +28,31 @@ Go into background after startup.
 
 .TP
 \fB--realtime\fR
-Ask for higher priority.
+Ask for higher priority. May be used multiple times.
+
+.TP
+\fB--chroot DIR\fR
+Chroots to the given directory. This improves the security. This normally needs root privileg's.
+
+.SH "USER AND GROUPS"
+.TP
+\fB--setgid\fR
+Sets GroupID to the audio group as specified via \fB-G\fR.
+
+.TP
+\fB--setuid\fR
+Sets UserID to the audio user as specified via \fB-U\fR.
+
+.TP
+\fB-G GROUP\fR
+Sets the group for the UNIX Domain Socket, (default: audio)
+You need the permittions to change the GID.
+
+.TP
+\fB-U USER\fR
+Sets the user for the UNIX Domain Socket, (default: do not set)
+You need the permittions to change the UID (normaly only root has).
+
 
 .SH "AUDIO OPTIONS"
 .TP
@@ -44,16 +68,38 @@ Set server bits.
 Set server channels.
 
 .SH "DRIVER OPTIONS"
+.TP
+\fB--list-driver\fR
+Shows a list of all available drivers.
 
 .TP
 \fB--driver\fR, \fB-d\fR
-Set the output driver. To get a list of all drivers use \fB-d list\fR.
+Set the output driver. To get a list of all drivers use \fB--list-driver\fR.
+This option will obsolete soon.
 
 .TP
 \fB--device\fR, \fB-D\fR
 Set the device for the output driver. Possible devices depends on the driver.
 They may be a path to a device node or a hostname.
-Use \fB-d list\fR to get a hint.
+Use \fB--list-driver\fR to get a hint.
+This option will obsolete soon.
+
+.SH "SOURCE OPTIONS"
+.TP
+\fB--source\fR, \fB-s\fR
+Adds a source of the given type.
+
+.TP
+\fB-S\fR
+Sets the device or filename for the source. Type may depend on the source type.
+
+.TP
+\fB-sO\fR
+Sets options for the current source.
+
+.TP
+\fB-sP\fR
+Marks the source as primary. If the source reaches EOF roard will quit automatically.
 
 .SH "NETWORK OPTIONS"
 .TP
@@ -65,6 +111,10 @@ Sets defaults for TCP/IP Socket.
 Sets defaults for UNIX Domain Socket.
 
 .TP
+\fB--decnet\fR, \fB-n\fR
+Sets defaults for DECnet Socket.
+
+.TP
 \fB--port\fR, \fB-p\fR
 Sets the port the server should listen on.
 
@@ -73,9 +123,16 @@ Sets the port the server should listen on.
 Sets the hostname or path the server should listen on.
 
 .TP
-\fB-G GROUP\fR
-Sets the group the UNIX Domain Socket should be \fBchgrp\fR(1)ed if UNIX Domain Socket is used.
-Default group is "audio".
+\fB--no-listen\fR
+Do not listen for new clients (only usefull for relaing, impleys --terminate).
+
+.TP
+\fB--client-fh FH\fR
+Expects a client on the given FH. This may be useful with \fB--no-listen\fR.
+
+.TP
+\fB--close-fh FH\fR
+Close the given FH. This is not useful for endusers but used internaly.
 
 
 .SH "ENVIRONMENT VARIABLES"
@@ -97,7 +154,7 @@ The driver to select. Same as \fB-d\fR.
 The device to select. Same as \fB-D\fR.
 
 .SH "BUGS"
-There are a lot of bugs...
+There are lots of bugs...
 
 .SH "SEE ALSO"
 \fBroar-config\fR(1),

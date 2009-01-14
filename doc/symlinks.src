@@ -12,3 +12,4 @@ roar_simple_monitor		3	roar_simple_play	3
 roar_simple_new_stream_obj	3	roar_simple_new_stream	3
 roar_simple_record		3	roar_simple_play	3
 roar_codec2str			3	roar_str2codec		3
+roar_terminate			3	roar_exit		3

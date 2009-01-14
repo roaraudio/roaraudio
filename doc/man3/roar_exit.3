@@ -5,20 +5,35 @@
 .SH NAME
 roar_exit \- let RoarAudio's sound server quit
 
+roar_terminate \- let RoarAudio's sound server quit as soon as all clients quit
+
 .SH SYNOPSIS
 
 #include <roaraudio.h>
 
 int roar_exit(struct roar_connection * con);
 
+int roar_terminate(struct roar_connection * con, int terminate);
+
 .SH "DESCRIPTION"
 Ask the sound server to quit.
+
+roar_exit() let the server quit ....
+
+roar_terminate() will let the server quit as soon as all clients disconnects
+and all input streams ended. The listening socket will be closed. This is useful
+in case of restarting roard.
 
 
 .SH "PARAMETERS"
 .TP
 \fBcon\fR
 An open controll connection to the server.
+
+.TP
+\fBterminate\fR
+Wait for all clients to disconnect and all streams to EOF in case of 1.
+In case of 0 roar_terminate() is equal to roar_exit().
 
 .SH "RETURN VALUE"
 On success these calls return 0.  On error, -1 is returned.

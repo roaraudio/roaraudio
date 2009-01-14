@@ -19,12 +19,16 @@ This is done by sending commands to the server. See \fBCOMMANDS\fR for a list.
 \fB--help\fR
 Print some help text.
 
+.TP
+\fB-v\fR
+Be verbose. May be used multiple times.
+
 .SH "NETWORK OPTIONS"
 .TP
 \fB--server SERVER\fR
 The server to connect to
 
-.SH "COMMANDS"
+.SH "BASIC COMMANDS"
 .TP
 \fBhelp\fR
 Same as \fB--help\fR.
@@ -41,6 +45,12 @@ Tells if the server is in standby mode or not.
 \fBexit\fR
 Quits the server.
 
+.TP
+\fBterminate\fR
+Terminates the server as soon as all clients disconnected and all streams reaches EOF.
+
+
+.SH "STREAM COMMANDS"
 .TP
 \fBvolume STREAMID CHANNELS VOL0 VOL1 VOL2...\fR
 Sets the mixing level for a stream with id \fISTREAMID\fR.
@@ -68,6 +78,7 @@ Possible types are: \fBclient stream sample source\fR
 
 You can get the \fIID\fR via \fBlist*\fR (see bellow).
 
+.SH "LISTING COMMANDS"
 .TP
 \fBserveroinfo\fR
 Gets Informations about server output.
