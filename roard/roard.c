@@ -89,7 +89,7 @@ void usage (void) {
 #endif
         " -p  --port            - TCP Port to bind to\n"
         " -b  --bind            - IP/Hostname to bind to\n"
-        " -s  --sock            - Filename for UNIX Domain Socket\n"
+        "     --sock            - Filename for UNIX Domain Socket\n"
         " -G  GROUP             - Sets the group for the UNIX Domain Socket, (default: %s)\n"
         "                         You need the permittions to change the GID\n"
         " -U  USER              - Sets the user for the UNIX Domain Socket, (default: do not set)\n"
@@ -390,7 +390,7 @@ int main (int argc, char * argv[]) {
             serv->s_name, ROAR_NET2HOST16(serv->s_port), serv->s_proto);
     port = ROAR_NET2HOST16(serv->s_port);
    }
-  } else if ( strcmp(k, "-b") == 0 || strcmp(k, "--bind") == 0 || strcmp(k, "-s") == 0 || strcmp(k, "--sock") == 0 ) {
+  } else if ( strcmp(k, "-b") == 0 || strcmp(k, "--bind") == 0 || strcmp(k, "--sock") == 0 ) {
    server = argv[++i];
 
   } else if ( strcmp(k, "-t") == 0 || strcmp(k, "--tcp") == 0 ) {
