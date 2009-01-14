@@ -269,6 +269,15 @@ int streams_mark_primary (int id) {
  return streams_set_primary(id, 1);
 }
 
+int streams_set_sync     (int id, int sync) {
+ int fh;
+
+ if ( (fh = streams_get_fh(id)) == -1 )
+  return -1;
+
+ return roar_socket_nonblock(fh, sync ? ROAR_SOCKET_BLOCK : ROAR_SOCKET_NONBLOCK);
+}
+
 int streams_set_flag     (int id, int flag) {
  if ( g_streams[id] == NULL )
   return -1;
@@ -276,6 +285,11 @@ int streams_set_flag     (int id, int flag) {
  if ( flag & ROAR_FLAG_PRIMARY ) {
   streams_set_primary(id, 1);
   flag -= ROAR_FLAG_PRIMARY;
+ }
+
+ if ( flag & ROAR_FLAG_SYNC ) {
+  streams_set_sync(id, 1);
+  flag -= ROAR_FLAG_SYNC;
  }
 
  g_streams[id]->flags |= flag;
@@ -293,6 +307,11 @@ int streams_reset_flag   (int id, int flag) {
  if ( flag & ROAR_FLAG_PRIMARY ) {
   streams_set_primary(id, 0);
   flag -= ROAR_FLAG_PRIMARY;
+ }
+
+ if ( flag & ROAR_FLAG_SYNC ) {
+  streams_set_sync(id, 0);
+  flag -= ROAR_FLAG_SYNC;
  }
 
  g_streams[id]->flags |= flag;

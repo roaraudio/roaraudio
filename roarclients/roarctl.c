@@ -393,6 +393,8 @@ int set_flags (struct roar_connection * con, int id, int reset, char * flags) {
    f |= ROAR_FLAG_META;
   } else if ( !strcmp(c, "primary") ) {
    f |= ROAR_FLAG_PRIMARY;
+  } else if ( !strcmp(c, "sync") ) {
+   f |= ROAR_FLAG_SYNC;
   } else {
    fprintf(stderr, "Error: unknown flag: %s\n", c);
    return -1;
