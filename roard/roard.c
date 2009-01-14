@@ -221,6 +221,7 @@ int main (int argc, char * argv[]) {
  int      port = ROAR_DEFAULT_PORT;
  int               drvid;
  char * s_drv     = "cf";
+ char * s_dev     = NULL;
  char * s_con     = NULL;
  char * s_opt     = NULL;
  int    s_prim    = 0;
@@ -358,18 +359,20 @@ int main (int argc, char * argv[]) {
   } else if ( strcmp(k, "-s") == 0 || strcmp(k, "--source") == 0 ) {
    s_drv = argv[++i];
   } else if ( strcmp(k, "-S") == 0 ) {
-   k = argv[++i];
-   if ( sources_add(s_drv, k, s_con, s_opt, s_prim) == -1 ) {
-    ROAR_ERR("main(*): adding source '%s' via '%s' failed!", k, s_drv);
-   }
-   s_opt = s_con = NULL;
-   s_prim = 0;
+   s_dev = argv[++i];
   } else if ( strcmp(k, "-sO") == 0 ) {
    s_opt = argv[++i];
   } else if ( strcmp(k, "-sC") == 0 ) {
    s_con = argv[++i];
   } else if ( strcmp(k, "-sP") == 0 ) {
    s_prim = 1;
+  } else if ( strcmp(k, "-sN") == 0 ) {
+   if ( sources_add(s_drv, s_dev, s_con, s_opt, s_prim) == -1 ) {
+    ROAR_ERR("main(*): adding source '%s' via '%s' failed!", s_dev, s_drv);
+   }
+   s_opt = s_dev = s_con = NULL;
+   s_drv = "cf";
+   s_prim = 0;
 
   } else if ( strcmp(k, "-p") == 0 || strcmp(k, "--port") == 0 ) {
    // This is only usefull in INET not UNIX mode.
@@ -451,6 +454,12 @@ int main (int argc, char * argv[]) {
    return 1;
   }
 
+ }
+
+ if ( s_dev != NULL ) {
+  if ( sources_add(s_drv, s_dev, s_con, s_opt, s_prim) == -1 ) {
+   ROAR_ERR("main(*): adding source '%s' via '%s' failed!", s_dev, s_drv);
+  }
  }
 
  if ( o_drv != NULL )
