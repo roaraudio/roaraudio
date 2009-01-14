@@ -110,9 +110,10 @@ int main (int argc, char * argv[]) {
    if ( FD_ISSET(fh, &sl) ) {
     if ( (i = read(fh, buf, BUFSIZE)) == -1 )
      return -1;
-    if ( write(in, buf, i) != i )
+    if ( write(out, buf, i) != i )
      return -1;
-   } else {
+   }
+   if ( FD_ISSET(in, &sl) ) {
     if ( (i = read(in, buf, BUFSIZE)) == -1 )
      return -1;
     if ( write(fh, buf, i) != i )
