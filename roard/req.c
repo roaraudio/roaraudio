@@ -543,6 +543,12 @@ int req_on_kick (int client, struct roar_message * mes, char * data) {
   clients_delete(info[1]);
  } else if ( info[0] == ROAR_OT_STREAM ) {
   streams_delete(info[1]);
+ } else if ( info[0] == ROAR_OT_SOURCE ) {
+  if ( streams_get_flag(info[1], ROAR_FLAG_SOURCE) == 1 ) {
+   streams_delete(info[1]);
+  } else {
+   return -1;
+  }
  } else {
   return -1;
  }
