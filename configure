@@ -51,6 +51,8 @@ MULAW_RW=true
 
 PROXY=true
 
+MINIMAL=false
+
 TARGET_WIN32=false
 
 EXEC_HELPER=''
@@ -89,33 +91,44 @@ do
  case "$1" in
   '--help')
    echo '--help                      - This Help'
+   echo
    echo '--ldpath DIR                - Add DIR to (compile time) search list for libs'
    echo '--incpath DIR               - Add DIR to search list for headers'
    echo '--addpath DIR               - Add DIR/lib to lib, DIR/include to header search list'
+   echo
    echo '--cdrom DEV                 - Set default CDRum device'
    echo '--proc-net-decnet FILE      - Set DECnet file for DECnet support auto detecting'
    echo '                              (ignore this on non-Linux)'
-   echo '--no-LIB                    - disable LIB'
+   echo
+   echo '--no-LIB                    - disable library LIB'
    echo '--runtime-detect            - do as much as posible auto detecting on runtime (for distributors)'
-   echo '--ao-install-dir DIR'
-   echo '--xmms-install-dir DIR'
-   echo '--prefix DIR'
-   echo '--prefix-bin DIR'
-   echo '--prefix-lib DIR'
-   echo '--prefix-inc DIR'
-   echo '--prefix-man DIR'
-   echo '--default-rate RATE'
-   echo '--default-channels CHANNELS'
-   echo '--default-bits BITS'
-   echo '--without-alaw'
-   echo '--without-alaw-rw'
-   echo '--without-mulaw'
-   echo '--without-mulaw-rw'
-   echo '--without-proxy'
-   echo '--without-libao'
-   echo '--without-xmms'
-   echo '--target-win32'
-   echo '--exec-helper HELPER'
+   echo
+   echo '--ao-install-dir DIR        - Set install dir for libao plugin'
+   echo '--xmms-install-dir DIR      - Set install dir for XMMS plugin'
+   echo
+   echo '--prefix DIR                - Set general prefix (default: '"$PREFIX"')'
+   echo '--prefix-bin DIR            - Set prefix for binarys (default: $PREFIX/bin)'
+   echo '--prefix-lib DIR            - Set prefix for librarys (default: $PREFIX/libs)'
+   echo '--prefix-inc DIR            - Set prefix for include files (default: $PREFIX/include)'
+   echo '--prefix-man DIR            - Set prefix for manpages (default: $PREFIX/man)'
+   echo
+   echo '--default-rate RATE         - Set default sample rate for roard and roarclients'
+   echo '--default-channels CHANNELS - Set default number of channels for roard and roarclients'
+   echo '--default-bits BITS         - Set default number of bits per sample for roard and roarclients'
+   echo
+   echo '--without-alaw              - Disable support of A-Law codec (de- and encoding)'
+   echo '--without-alaw-rw           - Disable support for writing A-Law (saves 8KB)'
+   echo '--without-mulaw             - Disable support of mu-Law codec (de- and encoding)'
+   echo '--without-mulaw-rw          - Disable support for writing mu-Law (saves 16KB)'
+   echo '--without-proxy             - Disable support for proxys'
+   echo
+   echo '--without-libao             - Disable build of libao plugin'
+   echo '--without-xmms              - Disable build of XMMS plugin'
+   echo
+   echo '--minimal                   - Disable all optional components'
+   echo '--target-win32              - Disable everything useful'
+   echo '--exec-helper HELPER        - Exec all test programms using this command (HELPER $cmd $args)'
+   echo '                              use '\''--exec-helper wine'\'' when building win32 binarys'
    exit 0;
   ;;
   '--ldpath')
@@ -197,6 +210,16 @@ do
   ;;
   '--without-xmms')
    XMMS=false
+  ;;
+  '--minimal')
+   MINIMAL=true
+   XMMS=false
+   LIBAO=false
+   PROXY=false
+   MULAW=false
+   MULAW_RW=false
+   ALAW=false
+   ALAW_RW=false
   ;;
   '--prefix')
    PREFIX="$2"
@@ -291,6 +314,7 @@ test_lib_defmake () {
  if [ "$lib" != '--' ]
  then
   eval _no="\$no_lib_$lib";
+  $MINIMAL && _no='XXX'
 
   if [ "$_no" != '' ]
   then
@@ -333,6 +357,9 @@ test_tool_defmake () {
  then
   echo "$1 (runtime detect)"
  echo "#define $DEF "\""$1"\" >&3
+ elif $MINIMAL
+ then
+  echo "disabled by user (minimalstic build)"
  else
 
   LIST=$(which "$@" 2> /dev/null | grep ^/ | head -n 1)
