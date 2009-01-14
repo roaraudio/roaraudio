@@ -1,3 +1,11 @@
+v. 0.1beta5 - ?
+	* done some patchs to help porting libroar to win32
+	* made libm optional
+	* added option to configure to build without any optional compontents
+	* added option to configure to give a helper programm to exec tests (e.g. wine)
+	* updated help a bit
+	* fixed roarbidir
+
 v. 0.1beta4 - Tue Dec 23 2008
 	* added roar_buffer_shift_out()
 	* changed roarshout to be 100% compatible with oggfwd options
