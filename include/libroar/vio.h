@@ -44,9 +44,11 @@ struct roar_vio_calls {
  ssize_t (*write)(int fd, void *buf, size_t count, void * inst);
  off_t   (*lseek)(int fildes, off_t offset, int whence, void * inst);
 */
- ssize_t (*read )(struct roar_vio_calls * vio, void *buf, size_t count);
- ssize_t (*write)(struct roar_vio_calls * vio, void *buf, size_t count);
- off_t   (*lseek)(struct roar_vio_calls * vio, off_t offset, int whence);
+ ssize_t (*read    )(struct roar_vio_calls * vio, void *buf, size_t count);
+ ssize_t (*write   )(struct roar_vio_calls * vio, void *buf, size_t count);
+ off_t   (*lseek   )(struct roar_vio_calls * vio, off_t offset, int whence);
+ int     (*nonblock)(struct roar_vio_calls * vio, int state);
+ int     (*sync    )(struct roar_vio_calls * vio);
 };
 
 int roar_vio_init_calls (struct roar_vio_calls * calls);
@@ -56,17 +58,21 @@ int roar_vio_set_fh   (struct roar_vio_calls * vio, int fh);
 
 int roar_vio_get_fh   (struct roar_vio_calls * vio);
 
-ssize_t roar_vio_read (struct roar_vio_calls * vio, void *buf, size_t count);
-ssize_t roar_vio_write(struct roar_vio_calls * vio, void *buf, size_t count);
-off_t   roar_vio_lseek(struct roar_vio_calls * vio, off_t offset, int whence);
+ssize_t roar_vio_read    (struct roar_vio_calls * vio, void *buf, size_t count);
+ssize_t roar_vio_write   (struct roar_vio_calls * vio, void *buf, size_t count);
+off_t   roar_vio_lseek   (struct roar_vio_calls * vio, off_t offset, int whence);
+int     roar_vio_nonblock(struct roar_vio_calls * vio, int state);
+int     roar_vio_sync    (struct roar_vio_calls * vio);
 
 
 // possible VIOs:
 
 // basic
-ssize_t roar_vio_basic_read (struct roar_vio_calls * vio, void *buf, size_t count);
-ssize_t roar_vio_basic_write(struct roar_vio_calls * vio, void *buf, size_t count);
-off_t   roar_vio_basic_lseek(struct roar_vio_calls * vio, off_t offset, int whence);
+ssize_t roar_vio_basic_read    (struct roar_vio_calls * vio, void *buf, size_t count);
+ssize_t roar_vio_basic_write   (struct roar_vio_calls * vio, void *buf, size_t count);
+off_t   roar_vio_basic_lseek   (struct roar_vio_calls * vio, off_t offset, int whence);
+int     roar_vio_basic_nonblock(struct roar_vio_calls * vio, int state);
+int     roar_vio_basic_sync    (struct roar_vio_calls * vio);
 
 // null
 // this is read an write in one!

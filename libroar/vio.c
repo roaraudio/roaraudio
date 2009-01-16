@@ -35,7 +35,7 @@
 #include "libroar.h"
 
 int roar_vio_init_calls (struct roar_vio_calls * calls) {
- if ( !calls )
+ if ( calls == NULL )
   return -1;
 
  memset((void*)calls, 0, sizeof(struct roar_vio_calls));
@@ -46,9 +46,11 @@ int roar_vio_init_calls (struct roar_vio_calls * calls) {
  calls->lseek = (off_t   (*)(int fildes, off_t offset, int whence, void * inst))lseek;
 */
 
- calls->read  = roar_vio_basic_read;
- calls->write = roar_vio_basic_write;
- calls->lseek = roar_vio_basic_lseek;
+ calls->read     = roar_vio_basic_read;
+ calls->write    = roar_vio_basic_write;
+ calls->lseek    = roar_vio_basic_lseek;
+ calls->nonblock = roar_vio_basic_nonblock;
+ calls->sync     = roar_vio_basic_sync;
 
  return 0;
 }
@@ -104,6 +106,26 @@ off_t   roar_vio_lseek(struct roar_vio_calls * vio, off_t offset, int whence) {
  return vio->lseek(vio, offset, whence);
 }
 
+int     roar_vio_nonblock(struct roar_vio_calls * vio, int state) {
+ if ( vio == NULL )
+  return -1;
+
+ if ( vio->nonblock == NULL )
+  return -1;
+
+ return vio->nonblock(vio, state);
+}
+
+int     roar_vio_sync    (struct roar_vio_calls * vio) {
+ if ( vio == NULL )
+  return -1;
+
+ if ( vio->sync == NULL )
+  return -1;
+
+ return vio->sync(vio);
+}
+
 // VIOs:
 
 // basic
@@ -117,6 +139,20 @@ ssize_t roar_vio_basic_write(struct roar_vio_calls * vio, void *buf, size_t coun
 
 off_t   roar_vio_basic_lseek(struct roar_vio_calls * vio, off_t offset, int whence) {
  return lseek(roar_vio_get_fh(vio), offset, whence);
+}
+
+int     roar_vio_basic_nonblock(struct roar_vio_calls * vio, int state) {
+ if ( roar_socket_nonblock(roar_vio_get_fh(vio), state) == -1 )
+  return -1;
+
+ if ( state == ROAR_SOCKET_NONBLOCK )
+  return 0;
+
+ return roar_vio_sync(vio);
+}
+
+int     roar_vio_basic_sync    (struct roar_vio_calls * vio) {
+ return fdatasync(roar_vio_get_fh(vio));
 }
 
 // null
