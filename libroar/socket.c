@@ -184,6 +184,9 @@ int roar_socket_nonblock(int fh, int state) {
   return -1;
  }
 
+ if ( !(flags & O_NONBLOCK) && state == ROAR_SOCKET_BLOCK )
+  return 0;
+
  flags |= O_NONBLOCK;
 
  if ( state == ROAR_SOCKET_BLOCK )
