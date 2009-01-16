@@ -150,6 +150,7 @@ int roar_open(AFormat fmt, int rate, int nch) {
   g_inst.state -= STATE_CONNECTED;
   if ( !(g_inst.state & STATE_NORECONNECT) ) {
    g_inst.state |= STATE_NORECONNECT;
+   usleep(100000);
    return roar_open(fmt, rate, nch);
   } else {
    g_inst.state -= STATE_NORECONNECT;

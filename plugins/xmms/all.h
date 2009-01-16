@@ -29,6 +29,7 @@
 
 //#include "xmms/i18n.h"
 #include <gtk/gtk.h>
+#include <gdk/gdkkeysyms.h>
 #include <stdio.h>
 #include <string.h>
 

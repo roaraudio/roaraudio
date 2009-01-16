@@ -42,9 +42,27 @@ else
  on_error;
 fi
 
+echo -n "checking for pkg-config... "
+PKG_CONFIG=$(which pkg-config false 2> /dev/null | grep ^/ | head -n 1)
+if $PKG_CONFIG --help > /dev/null 2> /dev/null
+then
+ echo $PKG_CONFIG
+else
+ PKG_CONFIG=''
+ echo no
+fi
+
 echo -n 'testing for gtk... '
-GTK_LIBS=`gtk-config --libs 2> /dev/null`
-GTK_CFLAFS=`gtk-config --cflags 2> /dev/null`
+#pkg-config
+
+#if [ "$PKG_CONFIG" != '' ]
+#then
+# GTK_LIBS=`pkg-config --libs gtk+-2.0 2> /dev/null`
+# GTK_CFLAFS=`pkg-config --cflags gtk+-2.0 2> /dev/null`
+#else
+ GTK_LIBS=`gtk-config --libs 2> /dev/null`
+ GTK_CFLAFS=`gtk-config --cflags 2> /dev/null`
+#fi
 
 if [ "$GTK_LIBS" = '' -a "$GTK_CFLAFS" = '' ]
 then
