@@ -64,8 +64,11 @@ int driver_esd_open_vio(struct roar_vio_calls * inst, char * device, struct roar
  if ( fh != -1 )
   return -1;
 
- inst->read  = driver_esd_read;
- inst->write = driver_esd_write;
+ inst->read     = driver_esd_read;
+ inst->write    = driver_esd_write;
+ inst->nonblock = driver_esd_nonblock;
+ inst->sync     = driver_esd_sync;
+
  return driver_esd_open_sysio(&(inst->inst), device, info);
 }
 
@@ -102,6 +105,13 @@ int driver_esd_flush(DRIVER_USERDATA_T   inst) {
  return 0;
 }
 
+int driver_esd_nonblock(struct roar_vio_calls * vio, int state) {
+ return roar_socket_nonblock(*(int*)vio->inst, state);
+}
+
+int driver_esd_sync    (struct roar_vio_calls * vio) {
+ return fdatasync(*(int*)vio->inst);
+}
 
 #endif
 //ll

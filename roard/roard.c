@@ -206,8 +206,11 @@ int add_output (char * drv, char * dev, char * opts, int prim) {
  if ( prim )
   streams_mark_primary(stream);
 
- if ( sync )
+ if ( sync ) {
   streams_set_flag(stream, ROAR_FLAG_SYNC);
+ } else {
+  streams_reset_flag(stream, ROAR_FLAG_SYNC);
+ }
 
  return 0;
 }
