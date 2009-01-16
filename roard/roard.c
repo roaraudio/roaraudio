@@ -129,6 +129,7 @@ int add_output (char * drv, char * dev, char * opts, int prim) {
  struct roar_stream_server * ss;
  char * k, * v;
  int codec;
+ int sync = 0;
 
  ROAR_DBG("add_output(drv='%s', dev='%s', opts='%s') = ?", drv, dev, opts);
 
@@ -173,6 +174,8 @@ int add_output (char * drv, char * dev, char * opts, int prim) {
    }
   } else if ( strcmp(k, "meta") == 0 ) {
    streams_set_flag(stream, ROAR_FLAG_META);
+  } else if ( strcmp(k, "sync") == 0 ) {
+   sync = 1;
   } else {
    ROAR_ERR("add_output(*): unknown option '%s'", k);
    streams_delete(stream);
@@ -202,6 +205,9 @@ int add_output (char * drv, char * dev, char * opts, int prim) {
 
  if ( prim )
   streams_mark_primary(stream);
+
+ if ( sync )
+  streams_set_flag(stream, ROAR_FLAG_SYNC);
 
  return 0;
 }

@@ -270,12 +270,16 @@ int streams_mark_primary (int id) {
 }
 
 int streams_set_sync     (int id, int sync) {
- int fh;
+ int fh = streams_get_fh(id);
 
- if ( (fh = streams_get_fh(id)) == -1 )
-  return -1;
+ if ( fh != -1 ) {
+  if ( roar_socket_nonblock(fh, sync ? ROAR_SOCKET_BLOCK : ROAR_SOCKET_NONBLOCK) == -1 )
+   return -1;
 
- return roar_socket_nonblock(fh, sync ? ROAR_SOCKET_BLOCK : ROAR_SOCKET_NONBLOCK);
+  return fdatasync(fh);
+ } else {
+  return roar_vio_nonblock(&(g_streams[id]->vio), sync);
+ }
 }
 
 int streams_set_flag     (int id, int flag) {
