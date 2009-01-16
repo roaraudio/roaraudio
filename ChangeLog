@@ -5,6 +5,7 @@ v. 0.1beta5 - ?
 	* added option to configure to give a helper programm to exec tests (e.g. wine)
 	* updated help a bit
 	* fixed roarbidir
+	* added support for sync vio
 
 v. 0.1beta4 - Tue Dec 23 2008
 	* added roar_buffer_shift_out()
@@ -24,7 +25,7 @@ v. 0.1beta4 - Tue Dec 23 2008
 	* added codecfilter for libfishsound, use it as default for ogg_flac and ogg_speex
 	* added Ogg FLAC and Ogg Speex Magic
 	* added tool roarmonhttp: http streaming tool, CGI or inetd
-	* added wirting support for RIFF/WAVE
+	* added writing support for RIFF/WAVE
 	* flag sources as sources
 	* patched some things for cygwin
 	* fixed double-reconnect bug within XMMS plugin
