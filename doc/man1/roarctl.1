@@ -78,6 +78,13 @@ Possible types are: \fBclient stream sample source\fR
 
 You can get the \fIID\fR via \fBlist*\fR (see bellow).
 
+.TP
+\fBflag ID FLAGS\fR, \fBunflag ID FLAGS\fR
+Sets or removes flags from a stream. ID is the stream id.
+FLAGS is a comma seperated list of flags.
+
+It is not possible to set all kinds of flags at runtime.
+
 .SH "LISTING COMMANDS"
 .TP
 \fBserveroinfo\fR
