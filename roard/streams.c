@@ -276,7 +276,9 @@ int streams_set_sync     (int id, int sync) {
   if ( roar_socket_nonblock(fh, sync ? ROAR_SOCKET_BLOCK : ROAR_SOCKET_NONBLOCK) == -1 )
    return -1;
 
-  return fdatasync(fh);
+  fdatasync(fh);
+
+  return 0;
  } else {
   return roar_vio_nonblock(&(g_streams[id]->vio), sync);
  }
@@ -292,8 +294,8 @@ int streams_set_flag     (int id, int flag) {
  }
 
  if ( flag & ROAR_FLAG_SYNC ) {
-  streams_set_sync(id, 1);
-  flag -= ROAR_FLAG_SYNC;
+  if ( streams_set_sync(id, 1) == -1 )
+   flag -= ROAR_FLAG_SYNC;
  }
 
  g_streams[id]->flags |= flag;
@@ -315,7 +317,6 @@ int streams_reset_flag   (int id, int flag) {
 
  if ( flag & ROAR_FLAG_SYNC ) {
   streams_set_sync(id, 0);
-  flag -= ROAR_FLAG_SYNC;
  }
 
  g_streams[id]->flags |= flag;

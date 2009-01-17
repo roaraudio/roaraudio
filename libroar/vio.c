@@ -148,7 +148,9 @@ int     roar_vio_basic_nonblock(struct roar_vio_calls * vio, int state) {
  if ( state == ROAR_SOCKET_NONBLOCK )
   return 0;
 
- return roar_vio_sync(vio);
+ roar_vio_sync(vio);
+
+ return 0;
 }
 
 int     roar_vio_basic_sync    (struct roar_vio_calls * vio) {
