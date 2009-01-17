@@ -85,6 +85,18 @@ FLAGS is a comma seperated list of flags.
 
 It is not possible to set all kinds of flags at runtime.
 
+.SH "META DATA COMMANDS"
+.TP
+\fBmetasave ID FILE\fR
+Saves the meta data of stream ID to file FILE.
+The Format is one KEY=Value pair per line.
+The same format is used by Xiph's tools.
+
+.TP
+\fBmetaload ID FILE\fR
+Load meta data from file FILE into stream ID. The format is the same
+as for \fBmetasave\fR.
+
 .SH "LISTING COMMANDS"
 .TP
 \fBserveroinfo\fR
