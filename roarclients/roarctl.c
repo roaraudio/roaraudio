@@ -342,6 +342,54 @@ int set_meta (struct roar_connection * con, int id, char * mode, char * type, ch
  return roar_stream_meta_set(con, &s, mode_i, &meta);
 }
 
+int load_meta (struct roar_connection * con, int id, char * file) {
+ struct roar_meta   meta;
+ struct roar_stream s;
+ int mode_i = ROAR_META_MODE_SET;
+ FILE * in;
+ char lion[1024];
+ char * v;
+
+ memset(&s, 0, sizeof(s));
+
+ s.id = id;
+
+ if ( (in = fopen(file, "r")) == NULL )
+  return -1;
+
+ while (fgets(lion, 1024, in) != NULL) {
+  if ( (v = strtok(lion, "\r\n")) != NULL )
+   if ( (v = strtok(NULL, "\r\n")) != NULL )
+    *(v-1) = 0;
+
+  if ( (v = strstr(lion, "=")) == NULL ) {
+   fprintf(stderr, "Error: can not parse meta data lion: %s\n", lion);
+   continue;
+  }
+
+  *v++ = 0;
+
+  meta.type   = roar_meta_inttype(lion);
+  meta.value  = v;
+  meta.key[0] = 0;
+
+  if ( meta.type == -1 ) {
+   fprintf(stderr, "Error: unknown type: %s\n", lion);
+   continue;
+  }
+
+  if ( roar_stream_meta_set(con, &s, mode_i, &meta) == -1 )
+   return -1;
+ }
+
+ fclose(in);
+
+ meta.type  = ROAR_META_TYPE_NONE;
+ meta.value = NULL;
+
+ return roar_stream_meta_set(con, &s, ROAR_META_MODE_FINALIZE, &meta);
+}
+
 int show_meta_type (struct roar_connection * con, int id, char * type) {
  struct roar_meta   meta;
  struct roar_stream s;
@@ -378,6 +426,45 @@ int show_meta_all (struct roar_connection * con, int id) {
 
  for (i = 0; i < len; i++)
   show_meta_type(con, id, roar_meta_strtype(types[i]));
+
+ return 0;
+}
+
+int save_meta (struct roar_connection * con, int id, char * file) {
+ struct roar_stream s;
+ struct roar_meta   meta;
+ int types[ROAR_META_MAX_PER_STREAM];
+ int i;
+ int len;
+ FILE * out;
+
+ memset(&s, 0, sizeof(s));
+
+ s.id = id;
+
+ if ( (out = fopen(file, "w")) == NULL )
+  return -1;
+
+ if ( (len = roar_stream_meta_list(con, &s, types, ROAR_META_MAX_PER_STREAM)) == -1 )
+  return -1;
+
+ for (i = 0; i < len; i++) {
+/*
+  show_meta_type(con, id, roar_meta_strtype(types[i]));
+*/
+  meta.type  = types[i];
+
+  if ( roar_stream_meta_get(con, &s, &meta) == -1 )
+   continue;
+
+//  printf("Meta %-17s: %s\n", roar_meta_strtype(meta.type), meta.value);
+
+  fprintf(out, "%s=%s\n", roar_meta_strtype(meta.type), meta.value);
+
+  roar_meta_free(&meta);
+ }
+
+ fclose(out);
 
  return 0;
 }
@@ -572,6 +659,22 @@ int main (int argc, char * argv[]) {
    i++;
    if ( show_meta_type(&con, atoi(argv[i]), argv[i+1]) == -1 ) {
     fprintf(stderr, "Error: can not get meta data\n");
+   }
+   i++;
+  } else if ( !strcmp(k, "metasave") ) {
+   i++;
+   if ( save_meta(&con, atoi(argv[i]), argv[i+1]) == -1 ) {
+    fprintf(stderr, "Error: can not get meta data\n");
+   } else {
+    printf("meta data saved\n");
+   }
+   i++;
+  } else if ( !strcmp(k, "metaload") ) {
+   i++;
+   if ( load_meta(&con, atoi(argv[i]), argv[i+1]) == -1 ) {
+    fprintf(stderr, "Error: can not set meta data\n");
+   } else {
+    printf("meta data saved\n");
    }
    i++;
 
