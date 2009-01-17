@@ -41,7 +41,7 @@ void print_header (int codec, int rate, int channels) {
  printf("Content-type: %s\r\n", mime);
  printf("ice-audio-info: ice-samplerate=%i;ice-channels=%i\r\n", rate, channels);
  printf("icy-pub:0\r\n");
- printf("Server: RoarAudio (roarmonhttp $Revision: 1.7 $)\r\n");
+ printf("Server: RoarAudio (roarmonhttp $Revision: 1.8 $)\r\n");
  printf("\r\n");
 
  fflush(stdout);
@@ -135,18 +135,25 @@ int stream (int dest, int src) {
 
 int parse_http (void) {
  char buf[1024];
- char * qs, *str;
+ char * qs = buf, *str;
  ssize_t len;
+ int dir = ROAR_DIR_MONITOR;
 
  if ( (len = read(ROAR_STDIN, buf, 1023)) == -1 )
   return -1;
 
  buf[len] = 0;
 
- if ( strncmp(buf, "GET /", 5) )
-  return -1;
+ if ( strncmp(buf, "GET /", 5) ) {
+  if ( strncmp(buf, "SOURCE /", 8) ) {
+   return -1;
+  } else {
+   dir = ROAR_DIR_PLAY;
+   qs += 3; 
+  }
+ }
 
- qs = buf+5;
+ qs += 5;
 
  if ( (str = strstr(qs, " ")) == NULL )
   return -1;
@@ -167,7 +174,7 @@ int parse_http (void) {
 
  setenv("QUERY_STRING", qs, 1);
 
- return 0;
+ return dir;
 }
 
 int main (int argc, char * argv[]) {
@@ -180,12 +187,13 @@ int main (int argc, char * argv[]) {
  int    fh;
  char * c, * k, * v;
  char * sp0, * sp1;
+ int dir = ROAR_DIR_MONITOR;
 
  alarm(0); // reset alarm timers from httpd 
 
  if ( argc > 1 )
   if ( ! strcmp(argv[1], "--inetd") )
-   if ( parse_http() == -1 )
+   if ( (dir = parse_http()) == -1 )
     return 1;
 
  c = strtok_r(getenv("QUERY_STRING"), "&", &sp0);
@@ -211,7 +219,7 @@ int main (int argc, char * argv[]) {
  }
 
 
- if ( (fh = roar_simple_monitor(rate, channels, bits, codec, server, "roarmon")) == -1 ) {
+ if ( (fh = roar_simple_stream(rate, channels, bits, codec, server, dir, "roarmonhttp")) == -1 ) {
 //  fprintf(stderr, "Error: can not start monitoring\n");
   return 1;
  }
@@ -224,7 +232,14 @@ int main (int argc, char * argv[]) {
    break;
 */
 
- stream(ROAR_STDOUT, fh);
+ switch (dir) {
+  case ROAR_DIR_PLAY:
+    stream(fh, ROAR_STDIN);
+   break;
+  case ROAR_DIR_MONITOR:
+    stream(ROAR_STDOUT, fh);
+   break;
+ }
 
  roar_simple_close(fh);
 
