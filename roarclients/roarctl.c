@@ -320,6 +320,8 @@ int set_meta (struct roar_connection * con, int id, char * mode, char * type, ch
  struct roar_stream s;
  int mode_i = ROAR_META_MODE_SET;
 
+ memset(&s, 0, sizeof(s));
+
  s.id = id;
 
 // printf("set_meta(*): mode='%s', type='%s', val='%s'\n", mode, type, val);
@@ -339,7 +341,13 @@ int set_meta (struct roar_connection * con, int id, char * mode, char * type, ch
 
 // printf("D: type=%i, mode=%i\n", meta.type, mode_i);
 
- return roar_stream_meta_set(con, &s, mode_i, &meta);
+ if ( roar_stream_meta_set(con, &s, mode_i, &meta) == -1 )
+  return -1;
+
+ meta.type  = ROAR_META_TYPE_NONE;
+ meta.value = NULL;
+
+ return roar_stream_meta_set(con, &s, ROAR_META_MODE_FINALIZE, &meta);
 }
 
 int load_meta (struct roar_connection * con, int id, char * file) {
@@ -394,6 +402,8 @@ int show_meta_type (struct roar_connection * con, int id, char * type) {
  struct roar_meta   meta;
  struct roar_stream s;
 
+ memset(&s, 0, sizeof(s));
+
  s.id = id;
 
  meta.type  = roar_meta_inttype(type);
@@ -418,6 +428,8 @@ int show_meta_all (struct roar_connection * con, int id) {
  int types[ROAR_META_MAX_PER_STREAM];
  int i;
  int len;
+
+ memset(&s, 0, sizeof(s));
 
  s.id = id;
 
