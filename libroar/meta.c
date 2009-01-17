@@ -116,6 +116,12 @@ int roar_stream_meta_set (struct roar_connection * con, struct roar_stream * s, 
  m.stream  = s->id;
 // m.datalen = len;
 
+ if ( (mode == ROAR_META_MODE_FINALIZE || mode == ROAR_META_MODE_CLEAR) && meta->value == NULL )
+  meta->value = "";
+
+ if ( meta->value == NULL )
+   return -1;
+
  m.data[0] = 0;
  m.data[1] = mode;
  m.data[2] = meta->type;
