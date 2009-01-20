@@ -77,6 +77,39 @@ int roardsp_fchain_calc  (struct roardsp_filterchain * chain, void * data, size_
  return ret;
 }
 
+int roardsp_fchain_reset (struct roardsp_filterchain * chain, int what) {
+ int i;
+ int ret = 0;
+/*
+ struct roardsp_filterchain backup[1];
+*/
+
+ if ( chain == NULL )
+  return -1;
+
+/*
+ if ( what == ROARDSP_RESET_FULL ) {
+  if ( roardsp_fchain_init(backup) == -1 )
+   return -1;
+
+  if ( roardsp_fchain_uninit(chain) == -1 )
+   return -1;
+
+  if ( roardsp_fchain_init(chain) == -1 )
+   return -1;
+ } else {
+*/
+  for (i = 0; i < chain->filters; i++) {
+   if ( roardsp_filter_reset(chain->filter[i], what) == -1 )
+    ret = -1;
+  }
+/*
+ }
+*/
+
+ return ret;
+}
+
 int roardsp_fchain_num   (struct roardsp_filterchain * chain) {
  if ( chain == NULL )
   return -1;

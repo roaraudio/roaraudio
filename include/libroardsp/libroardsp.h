@@ -57,6 +57,11 @@ __BEGIN_DECLS
 #define ROARDSP_FCTL_Q                8
 #define ROARDSP_FCTL_MODE             9
 
+// consts for filter(chain) reset:
+#define ROARDSP_RESET_NONE            0
+#define ROARDSP_RESET_FULL            1
+#define ROARDSP_RESET_STATE           2
+
 // filter specific constants:
 #define ROARDSP_DOWNMIX_LEFT          1
 #define ROARDSP_DOWNMIX_RIGHT         2
@@ -75,6 +80,7 @@ struct roardsp_filter {
  int (*calc  )(struct roardsp_filter * filter, void * data, size_t samples);
  int (*uninit)(struct roardsp_filter * filter);
  int (*ctl   )(struct roardsp_filter * filter, int cmd, void * data);
+ int (*reset )(struct roardsp_filter * filter, int what);
 };
 
 struct roardsp_filterchain {
@@ -114,11 +120,13 @@ int    roardsp_filter_init  (struct roardsp_filter * filter, struct roar_stream 
 int    roardsp_filter_uninit(struct roardsp_filter * filter);
 int    roardsp_filter_calc  (struct roardsp_filter * filter, void * data, size_t len);
 int    roardsp_filter_ctl   (struct roardsp_filter * filter, int cmd, void * data);
+int    roardsp_filter_reset (struct roardsp_filter * filter, int what);
 
 int roardsp_fchain_init  (struct roardsp_filterchain * chain);
 int roardsp_fchain_uninit(struct roardsp_filterchain * chain);
 int roardsp_fchain_add   (struct roardsp_filterchain * chain, struct roardsp_filter * filter);
 int roardsp_fchain_calc  (struct roardsp_filterchain * chain, void * data, size_t len);
+int roardsp_fchain_reset (struct roardsp_filterchain * chain, int what);
 int roardsp_fchain_num   (struct roardsp_filterchain * chain);
 
 // filter:
@@ -160,6 +168,7 @@ int roardsp_downmix_ctl    (struct roardsp_filter * filter, int cmd, void * data
 int roardsp_dcblock_init   (struct roardsp_filter * filter, struct roar_stream * stream, int id);
 int roardsp_dcblock_uninit (struct roardsp_filter * filter);
 int roardsp_dcblock_calc16 (struct roardsp_filter * filter, void * data, size_t samples);
+int roardsp_dcblock_reset  (struct roardsp_filter * filter, int what);
 
 // codecs:
 int roardsp_conv_alaw2pcm16 (int16_t * out, char * in, size_t len);

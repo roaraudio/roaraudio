@@ -53,6 +53,32 @@ int roardsp_dcblock_uninit (struct roardsp_filter * filter) {
  return 0;
 }
 
+int roardsp_dcblock_reset  (struct roardsp_filter * filter, int what) {
+ if ( filter == NULL )
+  return -1;
+
+ if ( filter->inst == NULL )
+  return -1;
+
+ switch (what) {
+  case ROARDSP_RESET_NONE:
+    return  0;
+   break;
+  case ROARDSP_RESET_FULL:
+    memset(filter->inst, 0, sizeof(struct roardsp_dcblock));
+    return  0;
+   break;
+  case ROARDSP_RESET_STATE:
+    memset(((struct roardsp_dcblock*)filter->inst)->dc, 0, sizeof(int32_t)*ROARDSP_DCBLOCK_NUMBLOCKS);
+    return  0;
+   break;
+  default:
+    return -1;
+ }
+
+ return -1;
+}
+
 int roardsp_dcblock_calc16  (struct roardsp_filter * filter, void * data, size_t samples) {
  struct roardsp_dcblock * inst = filter->inst;
  int16_t * samp = (int16_t *) data;
