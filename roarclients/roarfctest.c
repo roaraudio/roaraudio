@@ -30,7 +30,7 @@
 #include <stdio.h>      /* *printf*() */
 #include <libroardsp/libroardsp.h>
 
-int main (void) {
+int main (int argc, char * argv[]) {
  int rate     = ROAR_RATE_DEFAULT;
  int bits     = 16;
  int channels = 1; /* mono */
@@ -41,6 +41,7 @@ int main (void) {
  float length = 5; /* 5 sec */
  int16_t amp  = 32767;
  int      i;
+ char   * k;
  int32_t  tmp;
  int16_t  out[1024];
  int16_t  maxval, maxval_in;
@@ -50,17 +51,55 @@ int main (void) {
  struct roardsp_filterchain fc[1];
  struct roardsp_filter      filt[3];
  struct roar_stream         stream[1];
+ FILE * rmsout = NULL;
+ int kill_var;
+#ifdef ROAR_HAVE_BIN_GNUPLOT
+ int do_gnuplot = 0;
+#endif
+
+ for (i = 1; i < argc; i++) {
+  k = argv[i];
+  kill_var = 1;
+
+  if ( !strcmp(k, "--rate") ) {
+   rate = atoi(argv[++i]);
+#ifdef ROAR_HAVE_BIN_GNUPLOT
+  } else if ( !strcmp(k, "--gnuplot") ) {
+   do_gnuplot = 1;
+#endif
+  } else if ( !strcmp(k, "--rmsout") ) {
+   rmsout = fopen(argv[++i], "w");
+  } else {
+   kill_var = 0;
+  }
+
+  if ( kill_var )
+   *k = 0;
+ }
+
+#ifdef ROAR_HAVE_BIN_GNUPLOT
+ if ( do_gnuplot && rmsout == NULL ) {
+  if ( (rmsout = popen(ROAR_HAVE_BIN_GNUPLOT, "w")) != NULL ) {
+   fprintf(rmsout, "set grid\n");
+   fprintf(rmsout, "set log x 10\n");
+   fprintf(rmsout, "set log y 10\n");
+   fprintf(rmsout, "plot \"-\" with lines title \"filter amplification\"\n");
+  }
+ }
+#endif
 
  if ( roar_stream_new(stream, rate, channels, bits, codec) == -1 )
   return 2;
 
- if ( roardsp_filter_init(filt, stream, ROARDSP_FILTER_LOWP) == -1 ) {
+ if ( roardsp_filter_init(filt, stream, ROARDSP_FILTER_DCBLOCK) == -1 ) {
   ROAR_ERR("main(*): roardsp_filter_init() failed: errno=%s(%i)", strerror(errno), errno);
   return 1;
  }
 
+/*
  freq = 1000;
  roardsp_filter_ctl(filt, ROARDSP_FCTL_FREQ, &freq);
+*/
 
  if ( roardsp_filter_init(filt+1, stream, ROARDSP_FILTER_HIGHP) == -1 ) {
   ROAR_ERR("main(*): roardsp_filter_init() failed: errno=%s(%i)", strerror(errno), errno);
@@ -88,7 +127,7 @@ int main (void) {
 
  fprintf(stderr, "Starting analysis in frequency domain...\n");
 
- for (freq = 1/* 2*exp(1) */; freq < (float)rate/2; freq *= (1+exp(1)/100), length /= (1+exp(1)/100)) {
+ for (freq = 1/* 2*exp(1) */; freq < /* (float)rate/2 */ 100; freq *= (1+exp(1)/100), length /= (1+exp(1)/100)) {
   step      = M_PI*2*freq/rate;
   maxval    = -amp;
   maxval_in = -amp;
@@ -123,12 +162,19 @@ int main (void) {
   rms /= rms_in;
 
   printf("%f: %f %u %f\n", freq, (float)maxval/maxval_in, sc, rms);
+
+  if ( rmsout != NULL )
+   fprintf(rmsout, "%f: %f\n", freq, rms);
  }
+
 
  fprintf(stderr, "Finished analysis in frequency domain: done tests on a total of %u samples on %i frequencies\n",
            sc_tot, count);
 
  roardsp_fchain_uninit(fc);
+
+ if ( rmsout != NULL )
+  fclose(rmsout);
 
  return 0;
 }
