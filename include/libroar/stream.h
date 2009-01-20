@@ -67,6 +67,7 @@ struct roar_stream_info {
  int codec;
  int flags;
  char * driver;
+ uint_least32_t delay;
 };
 
 int roar_stream_connect (struct roar_connection * con, struct roar_stream * s, int dir);

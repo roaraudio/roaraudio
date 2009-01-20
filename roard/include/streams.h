@@ -57,6 +57,7 @@ struct roar_stream_server {
  int driver_id;
  struct roardsp_filterchain fc;
  int flags;
+ uint_least32_t delay;
 } * g_streams[ROAR_STREAMS_MAX];
 
 int streams_init   (void);

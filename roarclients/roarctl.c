@@ -195,6 +195,8 @@ void list_streams (struct roar_connection * con) {
    if ( g_verbose ) {
     printf("Input block size      : %i Byte\n", info.block_size);
     printf("Underruns pre/post    : %i/%i\n",   info.pre_underruns, info.post_underruns);
+    if ( g_verbose > 1 )
+     printf("Stream delay          : %ims\n",   (int)info.delay/1000);
 
     *flags = 0;
     if ( info.flags & ROAR_FLAG_PRIMARY )

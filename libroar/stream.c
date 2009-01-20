@@ -275,7 +275,7 @@ int roar_stream_get_info (struct roar_connection * con, struct roar_stream * s, 
   data[i] = ROAR_NET2HOST16(data[i]);
  }
 
- if ( m.datalen < 6*2 )
+ if ( m.datalen < 7*2 )
   return -1;
 
  if ( data[0] != 0 || data[1] != 1 )
@@ -288,6 +288,7 @@ int roar_stream_get_info (struct roar_connection * con, struct roar_stream * s, 
  info->post_underruns = data[4];
  info->codec          = data[5];
  info->flags          = data[6];
+ info->delay          = data[7]*1000;
 
  return 0;
 }

@@ -482,13 +482,14 @@ int req_on_get_stream_para (int client, struct roar_message * mes, char * data) 
   return -1;
  }
 
- mes->datalen = 2*7;
+ mes->datalen = 2*8;
 
  d[2] = ROAR_OUTPUT_CALC_OUTBUFSIZE(audio_info);
  d[3] = ss->pre_underruns;
  d[4] = ss->post_underruns;
  d[5] = ss->codec_orgi;
  d[6] = ss->flags | (ss->primary ? ROAR_FLAG_PRIMARY : 0) | (ss->driver_id != -1 ? ROAR_FLAG_OUTPUT : 0);
+ d[7] = ss->delay/1000;
 
  for (i = 0; i < mes->datalen/2; i++) {
   d[i] = ROAR_HOST2NET16(d[i]);
