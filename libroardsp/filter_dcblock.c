@@ -60,6 +60,8 @@ int roardsp_dcblock_reset  (struct roardsp_filter * filter, int what) {
  if ( filter->inst == NULL )
   return -1;
 
+ ROAR_DBG("roardsp_dcblock_reset(filter=%p, what=%i) = ?", filter, what);
+
  switch (what) {
   case ROARDSP_RESET_NONE:
     return  0;
@@ -70,6 +72,7 @@ int roardsp_dcblock_reset  (struct roardsp_filter * filter, int what) {
    break;
   case ROARDSP_RESET_STATE:
     memset(((struct roardsp_dcblock*)filter->inst)->dc, 0, sizeof(int32_t)*ROARDSP_DCBLOCK_NUMBLOCKS);
+    ((struct roardsp_dcblock*)filter->inst)->cur = 0;
     return  0;
    break;
   default:
@@ -90,11 +93,11 @@ int roardsp_dcblock_calc16  (struct roardsp_filter * filter, void * data, size_t
   s += samp[i];
  }
 
- ROAR_WARN("roardsp_dcblock_calc16(*): s=%i (current block of %i samples)", s, samples);
+ ROAR_DBG("roardsp_dcblock_calc16(*): s=%i (current block of %i samples)", s, samples);
 
  s = (float)(s / samples);
 
- ROAR_WARN("roardsp_dcblock_calc16(*): inst=%p, inst->cur=%i", inst, inst->cur);
+ ROAR_DBG("roardsp_dcblock_calc16(*): inst=%p, inst->cur=%i", inst, inst->cur);
  inst->dc[(inst->cur)++] = s;
 
  if ( inst->cur == ROARDSP_DCBLOCK_NUMBLOCKS )
@@ -109,7 +112,7 @@ int roardsp_dcblock_calc16  (struct roardsp_filter * filter, void * data, size_t
 
 // s += (ROAR_INSTINT)filter->inst;
 
- ROAR_WARN("roardsp_dcblock_calc16(*): new DC value: %i", s);
+ ROAR_DBG("roardsp_dcblock_calc16(*): new DC value: %i", s);
 
  for (i = 0; i < samples; i++)
   samp[i] -= s;
