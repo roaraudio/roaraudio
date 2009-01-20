@@ -109,6 +109,7 @@ int roardsp_filter_init  (struct roardsp_filter * filter, struct roar_stream * s
 
  filter->uninit = l->uninit;
  filter->ctl    = l->ctl;
+ filter->reset  = l->reset;
 
  if ( filter->channels < 3 )
   calc = l->calc[bytes][filter->channels];
