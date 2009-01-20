@@ -43,6 +43,7 @@ int driver_oss_open(struct roar_vio_calls * inst, char * device, struct roar_aud
  }
 
  roar_vio_init_calls(inst);
+ inst->sync = driver_oss_sync;
 
  if (  fh == -1 ) {
   if ( (fh = open(device, O_WRONLY, 0644)) == -1 ) {
@@ -165,7 +166,7 @@ int driver_oss_open(struct roar_vio_calls * inst, char * device, struct roar_aud
   }
 
   if ( es != NULL ) {
-   ROAR_ERR("driver_oss_open(*): can not set requested codec, OSS retruned another codec then requested, to use this restart with -oO %s or set codec manuelly via -oO codec=somecodec", es);
+   ROAR_ERR("driver_oss_open(*): can not set requested codec, OSS retruned another codec than requested, to use this restart with -oO %s or set codec manuelly via -oO codec=somecodec", es);
   } else {
    ROAR_ERR("driver_oss_open(*): can not set requested codec, set codec manuelly via -oO codec=somecodec");
   }
@@ -193,6 +194,13 @@ int driver_oss_close(DRIVER_USERDATA_T   inst) {
  return close(roar_vio_get_fh((struct roar_vio_calls *)inst));
 }
 
+int driver_oss_sync(struct roar_vio_calls * vio) {
+#ifdef SNDCTL_DSP_SYNC
+ return ioctl(roar_vio_get_fh(vio), SNDCTL_DSP_SYNC, NULL);
+#else
+ return 0;
+#endif
+}
 
 #endif
 //ll
