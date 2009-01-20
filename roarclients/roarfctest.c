@@ -38,7 +38,7 @@ int main (int argc, char * argv[]) {
  float freq   = 523.2;            /* middle C */
  float step; //   = M_PI*2*freq/rate; /* how much time per sample we have to encode ... */
  float t      = 0; /* current time */
- float length = 5; /* 5 sec */
+ float length;
  int16_t amp  = 32767;
  int      i;
  char   * k;
@@ -48,6 +48,10 @@ int main (int argc, char * argv[]) {
  uint32_t sc, sc_tot = 0;
  int      count = 0;
  float    rms, rms_in = amp/sqrt(2);
+ float    worklen;
+ float    sfreq  = 1, efreq = -1;
+ float    engage = 0;
+ float    tmax   = 1024;
  struct roardsp_filterchain fc[1];
  struct roardsp_filter      filt[3];
  struct roar_stream         stream[1];
@@ -63,6 +67,14 @@ int main (int argc, char * argv[]) {
 
   if ( !strcmp(k, "--rate") ) {
    rate = atoi(argv[++i]);
+  } else if ( !strcmp(k, "--sfreq") ) {
+   sfreq = atof(argv[++i]);
+  } else if ( !strcmp(k, "--efreq") ) {
+   efreq = atof(argv[++i]);
+  } else if ( !strcmp(k, "--engage") ) {
+   engage = atof(argv[++i]);
+  } else if ( !strcmp(k, "--tmax") ) {
+   tmax = atof(argv[++i]);
 #ifdef ROAR_HAVE_BIN_GNUPLOT
   } else if ( !strcmp(k, "--gnuplot") ) {
    do_gnuplot = 1;
@@ -127,15 +139,34 @@ int main (int argc, char * argv[]) {
 
  fprintf(stderr, "Starting analysis in frequency domain...\n");
 
- for (freq = 1/* 2*exp(1) */; freq < /* (float)rate/2 */ 100; freq *= (1+exp(1)/100), length /= (1+exp(1)/100)) {
+ if ( efreq == -1 )
+  efreq = (float)rate/2;
+
+ length = 5/sfreq;
+
+ for (freq = sfreq; freq < efreq; freq *= (1+exp(1)/100), length /= (1+exp(1)/100)) {
   step      = M_PI*2*freq/rate;
   maxval    = -amp;
   maxval_in = -amp;
   sc        = 0;
   rms       = 0;
-  t         = 0;
+  t         = -engage;
 
-  while (t < 2*M_PI*freq*length) {
+  if ( roardsp_fchain_reset(fc, ROARDSP_RESET_STATE) == -1 ) {
+   ROAR_ERR("Can not reset filterchain.");
+   return 8;
+  }
+
+
+  worklen = length;
+
+  if ( worklen > tmax )
+   worklen = tmax;
+
+  worklen = 2*M_PI*freq*worklen;
+
+
+  while (t < worklen) {
    for (i = 0; i < 1024; i++) {
     out[i] = amp*sin(t);
     if ( out[i] > maxval_in )
@@ -145,11 +176,15 @@ int main (int argc, char * argv[]) {
 
    roardsp_fchain_calc(fc, out, 1024);
 
-   for (i = 0; i < 1024; i++) {
-    sc++;
-    rms += out[i] * out[i];
-    if ( out[i] > maxval )
-     maxval = out[i];
+   if ( t >= 0 ) {
+    for (i = 0; i < 1024; i++) {
+     rms += out[i] * out[i];
+     if ( out[i] > maxval )
+      maxval = out[i];
+    }
+    sc += 1024;
+   } else {
+    sc_tot += 1024;
    }
   }
 
