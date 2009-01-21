@@ -123,7 +123,7 @@ int restart_server (char * server) {
 #define R_SETUID 1
 #define R_SETGID 2
 
-int add_output (char * drv, char * dev, char * opts, int prim) {
+int add_output (char * drv, char * dev, char * opts, int prim, int count) {
  int stream;
  struct roar_stream * s;
  struct roar_stream_server * ss;
@@ -132,6 +132,12 @@ int add_output (char * drv, char * dev, char * opts, int prim) {
  int sync = 0;
 
  ROAR_DBG("add_output(drv='%s', dev='%s', opts='%s') = ?", drv, dev, opts);
+
+ if ( drv == NULL && count == 0 ) {
+  drv  = ROAR_DRIVER_DEFAULT;
+  prim = 1;
+  sync = 1;
+ }
 
  if ( (stream = streams_new()) == -1 ) {
   ROAR_DBG("add_output(drv='%s', dev='%s', opts='%s') = -1", drv, dev, opts);
@@ -192,7 +198,7 @@ int add_output (char * drv, char * dev, char * opts, int prim) {
  s->info.codec = codec;
  ROAR_STREAM_SERVER(s)->codec_orgi = codec;
 
- if ( driver_openvio(&(ss->vio), &(ss->driver_id), drv, dev, &(s->info), -1) ) {
+ if ( driver_openvio(&(ss->vio), &(ss->driver_id), drv, dev, &(s->info), -1) == -1 ) {
   streams_delete(stream);
   ROAR_DBG("add_output(drv='%s', dev='%s', opts='%s') = -1", drv, dev, opts);
   if ( prim ) alive = 0;
@@ -238,6 +244,7 @@ int main (int argc, char * argv[]) {
  char * o_dev     = NULL;
  char * o_opts    = NULL;
  int    o_prim    = 0;
+ int    o_count   = 0;
  char * sock_grp  = ROAR_DEFAULT_SOCKGRP;
  char * sock_user = NULL;
  int    sock_type = ROAR_SOCKET_TYPE_UNKNOWN;
@@ -361,7 +368,9 @@ int main (int argc, char * argv[]) {
   } else if ( strcmp(k, "-oP") == 0 ) {
    o_prim = 1;
   } else if ( strcmp(k, "-oN") == 0 ) {
-   add_output(o_drv, o_dev, o_opts, o_prim);
+   if ( add_output(o_drv, o_dev, o_opts, o_prim, o_count) != -1 )
+    o_count++;
+
    o_drv  = o_dev = o_opts = NULL;
    o_prim = 0;
 
@@ -471,8 +480,7 @@ int main (int argc, char * argv[]) {
   }
  }
 
- if ( o_drv != NULL )
-  add_output(o_drv, o_dev, o_opts, o_prim);
+ add_output(o_drv, o_dev, o_opts, o_prim, o_count);
 
  ROAR_DBG("Server config: rate=%i, bits=%i, chans=%i", sa.rate, sa.bits, sa.channels);
 
@@ -532,6 +540,12 @@ int main (int argc, char * argv[]) {
  if ( output_buffer_init(&sa) == -1 ) {
   ROAR_ERR("Can not init output buffer!");
   return 1;
+ }
+
+ if ( driver == NULL ) {
+  driver = "null";
+ } else {
+  ROAR_WARN("Usage of old driver interface. use -o not -d!");
  }
 
  if ( driver_open(&drvinst, &drvid, driver, device, &sa) == -1 ) {
