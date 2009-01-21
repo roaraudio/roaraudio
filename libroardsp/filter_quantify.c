@@ -25,11 +25,9 @@
 #include "libroardsp.h"
 
 int roardsp_quantify_init  (struct roardsp_filter * filter, struct roar_stream * stream, int id) {
- int n = 64;
 
- roardsp_amp_ctl(filter, ROARDSP_FCTL_N, &n);
+ roardsp_filter_reset(filter, ROARDSP_RESET_FULL);
 
- ROAR_DBG("roardsp_quantify_init(*) = 0");
  return 0;
 }
 
@@ -68,6 +66,28 @@ int roardsp_quantify_ctl   (struct roardsp_filter * filter, int cmd, void * data
 
  ROAR_DBG("roardsp_quantify_ctl(*) = 0");
  return 0;
+}
+
+int roardsp_quantify_reset (struct roardsp_filter * filter, int what) {
+ int n = 64;
+
+ if ( filter == NULL )
+  return -1;
+
+ switch (what) {
+  case ROARDSP_RESET_NONE:
+  case ROARDSP_RESET_STATE:
+    return  0;
+   break;
+  case ROARDSP_RESET_FULL:
+    roardsp_quantify_ctl(filter, ROARDSP_FCTL_N, &n);
+    return  0;
+   break;
+  default:
+    return -1;
+ }
+
+ return -1;
 }
 
 //ll

@@ -33,21 +33,21 @@ struct _roardsp_filterlist {
  int (*reset       )(struct roardsp_filter * filter, int what);
  int (*calc  [5][3])(struct roardsp_filter * filter, void * data, size_t samples);
 } _roardsp_filterlist[] = {
- {ROARDSP_FILTER_AMP, "AMP", roardsp_amp_init, roardsp_amp_uninit, roardsp_amp_ctl, NULL, {
+ {ROARDSP_FILTER_AMP, "AMP", roardsp_amp_init, roardsp_amp_uninit, roardsp_amp_ctl, roardsp_amp_reset, {
            {NULL, NULL, NULL},{roardsp_amp_calc8, NULL, NULL},{roardsp_amp_calc16, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL}}},
- {ROARDSP_FILTER_ADD, "Add", roardsp_add_init, roardsp_amp_uninit, roardsp_amp_ctl, NULL, {
+ {ROARDSP_FILTER_ADD, "Add", roardsp_add_init, roardsp_amp_uninit, roardsp_amp_ctl, roardsp_add_reset, {
            {NULL, NULL, NULL},{NULL, NULL, NULL},{roardsp_add_calc16, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL}}},
 #ifdef ROAR_HAVE_LIBM
- {ROARDSP_FILTER_LOWP, "Lowpass", roardsp_lowp_init, roardsp_lowp_uninit, roardsp_lowp_ctl, NULL, {
+ {ROARDSP_FILTER_LOWP, "Lowpass", roardsp_lowp_init, roardsp_lowp_uninit, roardsp_lowp_ctl, roardsp_lowp_reset, {
            {NULL, NULL, NULL},{NULL, NULL, NULL},{roardsp_lowp_calc16, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL}}},
- {ROARDSP_FILTER_HIGHP, "Highpass", roardsp_highp_init, roardsp_highp_uninit, roardsp_highp_ctl, NULL, {
+ {ROARDSP_FILTER_HIGHP, "Highpass", roardsp_highp_init, roardsp_highp_uninit, roardsp_highp_ctl, roardsp_highp_reset, {
            {NULL, NULL, NULL},{NULL, NULL, NULL},{roardsp_highp_calc16, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL}}},
 #endif
- {ROARDSP_FILTER_QUANTIFY, "Quantifier", roardsp_quantify_init, NULL, roardsp_quantify_ctl, NULL, {
+ {ROARDSP_FILTER_QUANTIFY, "Quantifier", roardsp_quantify_init, NULL, roardsp_quantify_ctl, roardsp_quantify_reset, {
            {NULL, NULL, NULL},{NULL, NULL, NULL},{roardsp_quantify_calc16, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL}}},
- {ROARDSP_FILTER_CLIP, "Clip", roardsp_clip_init, NULL, roardsp_clip_ctl, NULL, {
+ {ROARDSP_FILTER_CLIP, "Clip", roardsp_quantify_init, NULL, roardsp_clip_ctl, roardsp_clip_reset, {
            {NULL, NULL, NULL},{NULL, NULL, NULL},{roardsp_clip_calc16, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL}}},
- {ROARDSP_FILTER_DOWNMIX, "downmix", roardsp_downmix_init, NULL, roardsp_downmix_ctl, NULL, {
+ {ROARDSP_FILTER_DOWNMIX, "downmix", roardsp_quantify_init, NULL, roardsp_downmix_ctl, roardsp_downmix_reset, {
            {NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, roardsp_downmix_calc162},{NULL, NULL, NULL},{NULL, NULL, NULL}}},
  {ROARDSP_FILTER_DCBLOCK, "DCBlock", roardsp_dcblock_init, NULL, NULL, roardsp_dcblock_reset, {
            {NULL, NULL, NULL},{NULL, NULL, NULL},{roardsp_dcblock_calc16, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL}}},

@@ -26,7 +26,6 @@
 
 int roardsp_add_init  (struct roardsp_filter * filter, struct roar_stream * stream, int id) {
  struct roardsp_amp * self = malloc(sizeof(struct roardsp_amp));
- int32_t fac;
 
  if ( self == NULL )
   return -1;
@@ -35,10 +34,7 @@ int roardsp_add_init  (struct roardsp_filter * filter, struct roar_stream * stre
 
  filter->inst = (void*) self;
 
- fac = 0;
- roardsp_amp_ctl(filter, ROARDSP_FCTL_MUL, &fac);
- fac = 1;
- roardsp_amp_ctl(filter, ROARDSP_FCTL_DIV, &fac);
+ roardsp_filter_reset(filter, ROARDSP_RESET_FULL);
 
  return 0;
 }
@@ -53,6 +49,34 @@ int roardsp_add_calc16  (struct roardsp_filter * filter, void * data, size_t sam
  };
 
  return 0;
+}
+
+int roardsp_add_reset (struct roardsp_filter * filter, int what) {
+ struct roardsp_amp * self;
+
+ if ( filter == NULL )
+  return -1;
+
+ if ( filter->inst == NULL )
+  return -1;
+
+ self = filter->inst;
+
+ switch (what) {
+  case ROARDSP_RESET_NONE:
+  case ROARDSP_RESET_STATE:
+    return  0;
+   break;
+  case ROARDSP_RESET_FULL:
+    self->mul = 0;
+    self->div = 1;
+    return  0;
+   break;
+  default:
+    return -1;
+ }
+
+ return -1;
 }
 
 //ll

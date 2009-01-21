@@ -24,14 +24,6 @@
 
 #include "libroardsp.h"
 
-int roardsp_clip_init  (struct roardsp_filter * filter, struct roar_stream * stream, int id) {
- int n = 64;
-
- roardsp_amp_ctl(filter, ROARDSP_FCTL_N, &n);
-
- return 0;
-}
-
 int roardsp_clip_calc16  (struct roardsp_filter * filter, void * data, size_t samples) {
  int16_t * samp = (int16_t *) data;
  register int32_t s = (ROAR_INSTINT)filter->inst;
@@ -64,6 +56,28 @@ int roardsp_clip_ctl   (struct roardsp_filter * filter, int cmd, void * data) {
 
  ROAR_DBG("roardsp_clip_ctl(*) = 0");
  return 0;
+}
+
+int roardsp_clip_reset (struct roardsp_filter * filter, int what) {
+ int32_t n = 16384;
+
+ if ( filter == NULL )
+  return -1;
+
+ switch (what) {
+  case ROARDSP_RESET_NONE:
+  case ROARDSP_RESET_STATE:
+    return  0;
+   break;
+  case ROARDSP_RESET_FULL:
+    roardsp_clip_ctl(filter, ROARDSP_FCTL_LIMIT, &n);
+    return  0;
+   break;
+  default:
+    return -1;
+ }
+
+ return -1;
 }
 
 //ll

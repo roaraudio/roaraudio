@@ -106,6 +106,36 @@ int roardsp_lowp_ctl   (struct roardsp_filter * filter, int cmd, void * data) {
  return 0;
 }
 
+int roardsp_lowp_reset (struct roardsp_filter * filter, int what) {
+ struct roardsp_lowp * self;
+ float freq;
+
+ if ( filter == NULL )
+  return -1;
+
+ if ( filter->inst == NULL )
+  return -1;
+
+ self = filter->inst;
+ freq = filter->rate/2;
+
+ switch (what) {
+  case ROARDSP_RESET_NONE:
+    return  0;
+   break;
+  case ROARDSP_RESET_FULL:
+    roardsp_lowp_ctl(filter, ROARDSP_FCTL_FREQ, &freq);
+  case ROARDSP_RESET_STATE:
+    memset(self->old, 0, sizeof(int32_t)*ROAR_MAX_CHANNELS);
+    return  0;
+   break;
+  default:
+    return -1;
+ }
+
+ return -1;
+}
+
 #endif
 
 //ll

@@ -136,11 +136,13 @@ int roardsp_lowp_init  (struct roardsp_filter * filter, struct roar_stream * str
 int roardsp_lowp_uninit(struct roardsp_filter * filter);
 int roardsp_lowp_calc16(struct roardsp_filter * filter, void * data, size_t samples);
 int roardsp_lowp_ctl   (struct roardsp_filter * filter, int cmd, void * data);
+int roardsp_lowp_reset (struct roardsp_filter * filter, int what);
 
 int roardsp_highp_init  (struct roardsp_filter * filter, struct roar_stream * stream, int id);
 int roardsp_highp_uninit(struct roardsp_filter * filter);
 int roardsp_highp_calc16(struct roardsp_filter * filter, void * data, size_t samples);
 int roardsp_highp_ctl   (struct roardsp_filter * filter, int cmd, void * data);
+int roardsp_highp_reset (struct roardsp_filter * filter, int what);
 #endif
 
 int roardsp_amp_init  (struct roardsp_filter * filter, struct roar_stream * stream, int id);
@@ -148,22 +150,26 @@ int roardsp_amp_uninit(struct roardsp_filter * filter);
 int roardsp_amp_calc16(struct roardsp_filter * filter, void * data, size_t samples);
 int roardsp_amp_calc8 (struct roardsp_filter * filter, void * data, size_t samples);
 int roardsp_amp_ctl   (struct roardsp_filter * filter, int cmd, void * data);
+int roardsp_amp_reset (struct roardsp_filter * filter, int what);
 
 int roardsp_add_init  (struct roardsp_filter * filter, struct roar_stream * stream, int id);
 int roardsp_add_calc16(struct roardsp_filter * filter, void * data, size_t samples);
+int roardsp_add_reset (struct roardsp_filter * filter, int what);
 
 int roardsp_quantify_init  (struct roardsp_filter * filter, struct roar_stream * stream, int id);
 int roardsp_quantify_uninit(struct roardsp_filter * filter);
 int roardsp_quantify_calc16(struct roardsp_filter * filter, void * data, size_t samples);
 int roardsp_quantify_ctl   (struct roardsp_filter * filter, int cmd, void * data);
+int roardsp_quantify_reset (struct roardsp_filter * filter, int what);
 
-int roardsp_clip_init  (struct roardsp_filter * filter, struct roar_stream * stream, int id);
 int roardsp_clip_calc16(struct roardsp_filter * filter, void * data, size_t samples);
 int roardsp_clip_ctl   (struct roardsp_filter * filter, int cmd, void * data);
+int roardsp_clip_reset (struct roardsp_filter * filter, int what);
 
 int roardsp_downmix_init   (struct roardsp_filter * filter, struct roar_stream * stream, int id);
 int roardsp_downmix_calc162(struct roardsp_filter * filter, void * data, size_t samples);
 int roardsp_downmix_ctl    (struct roardsp_filter * filter, int cmd, void * data);
+int roardsp_downmix_reset  (struct roardsp_filter * filter, int what);
 
 int roardsp_dcblock_init   (struct roardsp_filter * filter, struct roar_stream * stream, int id);
 int roardsp_dcblock_uninit (struct roardsp_filter * filter);

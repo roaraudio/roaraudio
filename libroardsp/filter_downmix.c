@@ -24,15 +24,6 @@
 
 #include "libroardsp.h"
 
-int roardsp_downmix_init  (struct roardsp_filter * filter, struct roar_stream * stream, int id) {
- int mode = ROARDSP_DOWNMIX_ARITHMETIC;
-
- roardsp_downmix_ctl(filter, ROARDSP_FCTL_MODE, &mode);
-
- ROAR_DBG("roardsp_downmix_init(*) = 0");
- return 0;
-}
-
 int roardsp_downmix_calc162  (struct roardsp_filter * filter, void * data, size_t samples) {
  int16_t * samp = (int16_t *) data;
  register int32_t mode = (ROAR_INSTINT)filter->inst;
@@ -103,6 +94,28 @@ int roardsp_downmix_ctl   (struct roardsp_filter * filter, int cmd, void * data)
 
 
  return 0;
+}
+
+int roardsp_downmix_reset  (struct roardsp_filter * filter, int what) {
+ int mode = ROARDSP_DOWNMIX_ARITHMETIC;
+
+ if ( filter == NULL )
+  return -1;
+
+ switch (what) {
+  case ROARDSP_RESET_NONE:
+  case ROARDSP_RESET_STATE:
+    return  0;
+   break;
+  case ROARDSP_RESET_FULL:
+    roardsp_downmix_ctl(filter, ROARDSP_FCTL_MODE, &mode);
+    return  0;
+   break;
+  default:
+    return -1;
+ }
+
+ return -1;
 }
 
 //ll

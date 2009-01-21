@@ -110,6 +110,36 @@ int roardsp_highp_ctl   (struct roardsp_filter * filter, int cmd, void * data) {
  return 0;
 }
 
+int roardsp_highp_reset (struct roardsp_filter * filter, int what) {
+ struct roardsp_highp * self;
+ float freq = 25;
+
+ if ( filter == NULL )
+  return -1;
+
+ if ( filter->inst == NULL )
+  return -1;
+
+ self = filter->inst;
+
+ switch (what) {
+  case ROARDSP_RESET_NONE:
+    return  0;
+   break;
+  case ROARDSP_RESET_FULL:
+    roardsp_highp_ctl(filter, ROARDSP_FCTL_FREQ, &freq);
+  case ROARDSP_RESET_STATE:
+    memset(self->oldin,  0, sizeof(int32_t)*ROAR_MAX_CHANNELS);
+    memset(self->oldout, 0, sizeof(int32_t)*ROAR_MAX_CHANNELS);
+    return  0;
+   break;
+  default:
+    return -1;
+ }
+
+ return -1;
+}
+
 #endif
 
 //ll
