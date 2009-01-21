@@ -1,4 +1,4 @@
-v. 0.1beta5 - ?
+v. 0.1beta5 - Wed Jan 21 2009
 	* done some patchs to help porting libroar to win32
 	* made libm optional
 	* added option to configure to build without any optional compontents
@@ -6,6 +6,8 @@ v. 0.1beta5 - ?
 	* updated help a bit
 	* fixed roarbidir
 	* added support for sync vio
+	* updated roarfctest
+	* added filter reset command
 
 v. 0.1beta4 - Tue Dec 23 2008
 	* added roar_buffer_shift_out()
