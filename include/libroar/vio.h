@@ -1,4 +1,4 @@
-//auth.h:
+//vio.h:
 
 /*
  *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008
@@ -37,6 +37,15 @@
 
 #include "libroar.h"
 
+// CTLs:
+
+// stream:
+#define ROAR_VIO_CTL_SET_STREAM    0x00010001
+#define ROAR_VIO_CTL_GET_STREAM    0x00010002
+#define ROAR_VIO_CTL_GET_DELAY     0x00010011
+
+// sys io:
+
 struct roar_vio_calls {
  void * inst;
 /*
@@ -49,6 +58,7 @@ struct roar_vio_calls {
  off_t   (*lseek   )(struct roar_vio_calls * vio, off_t offset, int whence);
  int     (*nonblock)(struct roar_vio_calls * vio, int state);
  int     (*sync    )(struct roar_vio_calls * vio);
+ int     (*ctl     )(struct roar_vio_calls * vio, int cmd, void * data);
 };
 
 int roar_vio_init_calls (struct roar_vio_calls * calls);
@@ -63,6 +73,7 @@ ssize_t roar_vio_write   (struct roar_vio_calls * vio, void *buf, size_t count);
 off_t   roar_vio_lseek   (struct roar_vio_calls * vio, off_t offset, int whence);
 int     roar_vio_nonblock(struct roar_vio_calls * vio, int state);
 int     roar_vio_sync    (struct roar_vio_calls * vio);
+int     roar_vio_ctl     (struct roar_vio_calls * vio, int cmd, void * data);
 
 
 // possible VIOs:

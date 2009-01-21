@@ -126,6 +126,16 @@ int     roar_vio_sync    (struct roar_vio_calls * vio) {
  return vio->sync(vio);
 }
 
+int     roar_vio_ctl     (struct roar_vio_calls * vio, int cmd, void * data) {
+ if ( vio == NULL )
+  return -1;
+
+ if ( vio->ctl == NULL )
+  return -1;
+
+ return vio->ctl(vio, cmd, data);
+}
+
 // VIOs:
 
 // basic
