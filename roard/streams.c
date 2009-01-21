@@ -333,6 +333,24 @@ int streams_get_flag     (int id, int flag) {
  return g_streams[id]->flags & flag ? 1 : 0;
 }
 
+int sreams_calc_delay    (int id) {
+ struct roar_stream_server * ss;
+ register uint_least32_t d = 0;
+ uint_least32_t t[1];
+
+ if ( (ss = g_streams[id]) == NULL )
+  return -1;
+
+ if ( ss->codecfilter != -1 ) {
+  if ( codecfilter_delay(ss->codecfilter_inst, ss->codecfilter, t) != -1 )
+   d += *t;
+ }
+
+ ss->delay = d;
+
+ return 0;
+}
+
 int streams_get_outputbuffer  (int id, void ** buffer, size_t size) {
  if ( g_streams[id] == NULL )
   return -1;
