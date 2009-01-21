@@ -41,7 +41,7 @@ struct roar_driver g_driver[] = {
  { "ao", "libao audio driver", "DRIVER", NULL, driver_ao_close, NULL, NULL, NULL, NULL, driver_ao_open_vio},
 #endif
 #ifdef ROAR_HAVE_LIBSHOUT
- {"shout", "libshout streaming", "http://user:pw@host/mount.ogg", NULL, driver_shout_close, NULL, NULL, NULL, NULL, driver_shout_open_vio},
+ {"shout", "libshout streaming", "http://user:pw@host:port/mount.ogg", NULL, driver_shout_close, NULL, NULL, NULL, NULL, driver_shout_open_vio},
 #endif
  {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL} // end of list
                                 };
