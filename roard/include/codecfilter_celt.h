@@ -59,6 +59,8 @@ int cf_celt_close(CODECFILTER_USERDATA_T   inst);
 int cf_celt_read(CODECFILTER_USERDATA_T   inst, char * buf, int len);
 int cf_celt_write(CODECFILTER_USERDATA_T   inst, char * buf, int len);
 
+int cf_celt_delay(CODECFILTER_USERDATA_T   inst, uint_least32_t * delay);
+
 #endif
 
 #endif

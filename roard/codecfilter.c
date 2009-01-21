@@ -25,7 +25,8 @@
 #include "roard.h"
 
 struct roar_codecfilter g_codecfilter[] = {
- {-1,                     "null", "null codec filter", NULL, ROAR_CODECFILTER_NONE, NULL, NULL, NULL, NULL, NULL, NULL},
+ {-1,                     "null", "null codec filter", NULL, ROAR_CODECFILTER_NONE,
+                                          NULL, NULL, NULL, NULL, NULL, NULL, NULL},
 
 /*
 #ifdef ROAR_HAVE_LIBSNDFILE
@@ -34,7 +35,7 @@ struct roar_codecfilter g_codecfilter[] = {
 #else
 */
  {ROAR_CODEC_RIFF_WAVE, "RIFF/WAVE", "RIFF/WAVE", NULL, ROAR_CODECFILTER_READ|ROAR_CODECFILTER_WRITE,
-  cf_wave_open, cf_wave_close, NULL, cf_wave_write, cf_wave_read, NULL},
+  cf_wave_open, cf_wave_close, NULL, cf_wave_write, cf_wave_read, NULL, NULL},
 //#endif
 
 #ifdef ROAR_SUPPORT_ALAW
@@ -50,7 +51,7 @@ struct roar_codecfilter g_codecfilter[] = {
 #else
   NULL,
 #endif
-  cf_alaw_read, NULL},
+  cf_alaw_read, NULL, cf_alaw_delay},
 #endif
 
 #ifdef ROAR_SUPPORT_MULAW
@@ -66,13 +67,13 @@ struct roar_codecfilter g_codecfilter[] = {
 #else
   NULL,
 #endif
-  cf_mulaw_read, NULL},
+  cf_mulaw_read, NULL, cf_alaw_delay},
 #endif
 
 #ifdef ROAR_HAVE_BIN_OGG123
  {ROAR_CODEC_OGG_GENERAL, "cmd",  "ogg123",
   ROAR_HAVE_BIN_OGG123 " -q -d raw -f - -", ROAR_CODECFILTER_READ,
-  cf_cmd_open, NULL, NULL, NULL, NULL, NULL},
+  cf_cmd_open, NULL, NULL, NULL, NULL, NULL, codecfilter_delay_fulldyn},
 #endif
 
 #ifdef ROAR_HAVE_LIBVORBISFILE
@@ -82,39 +83,39 @@ struct roar_codecfilter g_codecfilter[] = {
 #else
  ROAR_CODECFILTER_READ,
 #endif
- cf_vorbis_open, cf_vorbis_close, NULL, cf_vorbis_write, cf_vorbis_read, NULL},
+ cf_vorbis_open, cf_vorbis_close, NULL, cf_vorbis_write, cf_vorbis_read, NULL, codecfilter_delay_fulldyn},
 #else
 #ifdef ROAR_HAVE_BIN_OGG123
  {ROAR_CODEC_OGG_VORBIS, "cmd",  "ogg123",
   ROAR_HAVE_BIN_OGG123 " -q -d raw -f - -", ROAR_CODECFILTER_READ,
-  cf_cmd_open, NULL, NULL, NULL, NULL, NULL},
+  cf_cmd_open, NULL, NULL, NULL, NULL, NULL, codecfilter_delay_fulldyn},
 #endif
 #endif
 
 #ifdef ROAR_HAVE_LIBFISHSOUND
  {ROAR_CODEC_OGG_SPEEX, "fishsound",  "libfishsound Xiph Codec library",
   NULL, ROAR_CODECFILTER_READ,
-  cf_fishsound_open, cf_fishsound_close, NULL, NULL, cf_fishsound_read, NULL},
+  cf_fishsound_open, cf_fishsound_close, NULL, NULL, cf_fishsound_read, NULL, codecfilter_delay_fulldyn},
 
  {ROAR_CODEC_OGG_FLAC, "fishsound",  "libfishsound Xiph Codec library",
   NULL, ROAR_CODECFILTER_READ,
-  cf_fishsound_open, cf_fishsound_close, NULL, NULL, cf_fishsound_read, NULL},
+  cf_fishsound_open, cf_fishsound_close, NULL, NULL, cf_fishsound_read, NULL, codecfilter_delay_fulldyn},
 #endif
 
 #ifdef ROAR_HAVE_BIN_TIMIDITY
  {ROAR_CODEC_MIDI_FILE, "MIDIFILE", "timidity MIDI synth",
   ROAR_HAVE_BIN_TIMIDITY " -Or1sl -s %R -o - -", ROAR_CODECFILTER_READ,
-  cf_cmd_open, NULL, NULL, NULL, NULL, NULL},
+  cf_cmd_open, NULL, NULL, NULL, NULL, NULL, codecfilter_delay_fulldyn},
 #endif
 
 #ifdef ROAR_HAVE_LIBCELT
  {ROAR_CODEC_ROAR_CELT, "RoarCELT", "RoarAudio CELT", NULL, ROAR_CODECFILTER_READ|ROAR_CODECFILTER_WRITE,
-  cf_celt_open, cf_celt_close, NULL, cf_celt_write, cf_celt_read, NULL},
+  cf_celt_open, cf_celt_close, NULL, cf_celt_write, cf_celt_read, NULL, cf_celt_delay},
 #endif
 
 #ifdef ROAR_HAVE_LIBSPEEX
  {ROAR_CODEC_ROAR_SPEEX, "RoarSpeex", "RoarAudio Speex", NULL, ROAR_CODECFILTER_READ|ROAR_CODECFILTER_WRITE,
-  cf_speex_open, cf_speex_close, NULL, cf_speex_write, cf_speex_read, NULL},
+  cf_speex_open, cf_speex_close, NULL, cf_speex_write, cf_speex_read, NULL, NULL},
 #endif
 
 #ifdef ROAR_HAVE_BIN_FLAC
@@ -127,18 +128,20 @@ struct roar_codecfilter g_codecfilter[] = {
   "false",
 #endif
   ROAR_CODECFILTER_READ,
-  cf_cmd_open, NULL, NULL, NULL, NULL, NULL},
+  cf_cmd_open, NULL, NULL, NULL, NULL, NULL, codecfilter_delay_fulldyn},
 #endif
 
- {-1, NULL, NULL, NULL, ROAR_CODECFILTER_NONE, NULL, NULL, NULL, NULL, NULL, NULL} // end of list
+ {-1, NULL, NULL, NULL, ROAR_CODECFILTER_NONE, NULL, NULL, NULL, NULL, NULL, NULL, NULL} // end of list
 };
 
 void print_codecfilterlist (void) {
  int i;
  int flags;
  char mode[5];
+ char delay[6];
+ uint_least32_t d;
 
- printf("  Codec        Filtername   Mode - Description\n");
+ printf("  Codec        Filtername   Mode Delay - Description\n");
  printf("------------------------------------------------------\n");
 
  for (i = 0; g_codecfilter[i].name != NULL; i++) {
@@ -153,11 +156,25 @@ void print_codecfilterlist (void) {
    if ( flags & ROAR_CODECFILTER_WRITE )
     mode[1] = 'w';
   }
+
+  *delay = 0;
+  if ( g_codecfilter[i].codec == -1 ) { // null codec filter
+   strcpy(delay, "0ms");
+  } else if ( g_codecfilter[i].delay == NULL ) {
+   strcpy(delay, "?");
+  } else {
+   if ( codecfilter_delay(NULL, i, &d) == -1 ) {
+    strcpy(delay, "dyn");
+   } else {
+    snprintf(delay, 5, "%ims", d/1000);
+   }
+  }
  
-  printf("  %-12s %-12s %-4s - %s\n",
+  printf("  %-12s %-12s %-4s %-5s - %s\n",
              roar_codec2str(g_codecfilter[i].codec),
              g_codecfilter[i].name,
              mode,
+             delay,
              g_codecfilter[i].desc
              );
  }
@@ -250,6 +267,23 @@ int codecfilter_flush(CODECFILTER_USERDATA_T   inst, int codecfilter) {
   return g_codecfilter[codecfilter].flush(inst);
 
  return 0;
+}
+
+int codecfilter_delay(CODECFILTER_USERDATA_T   inst, int codecfilter, uint_least32_t * delay) {
+ ROAR_DBG("codecfilter_delay(inst=%p, codecfilter=%i, *delay=?) = ?", inst, codecfilter);
+
+ if ( codecfilter == -1 )
+  return -1;
+
+ if ( g_codecfilter[codecfilter].delay )
+  return g_codecfilter[codecfilter].delay(inst, delay);
+
+ return -1;
+}
+
+int codecfilter_delay_fulldyn(CODECFILTER_USERDATA_T   inst, uint_least32_t * delay) {
+ *delay = 0; // just to be sure
+ return -1;
 }
 
 //ll

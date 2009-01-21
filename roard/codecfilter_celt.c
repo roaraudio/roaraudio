@@ -265,5 +265,23 @@ int cf_celt_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  return org_len;
 }
 
+int cf_celt_delay(CODECFILTER_USERDATA_T   inst, uint_least32_t * delay) {
+ struct codecfilter_celt_inst * self = (struct codecfilter_celt_inst *) inst;
+
+ ROAR_DBG("cf_celt_delay(*) = ?");
+
+ if ( self == NULL ) {
+  *delay = (1000000 * 256) / ROAR_RATE_DEFAULT;
+  return 0;
+ } else {
+  *delay = (1000000 * self->frame_size) / ROAR_STREAM(self->stream)->info.rate;
+  ROAR_DBG("cf_celt_delay(*): frame_size=%i, rate=%i, *delay=%i",
+                  self->frame_size, ROAR_STREAM(self->stream)->info.rate, *delay);
+  return 0;
+ }
+
+ return -1;
+}
+
 #endif
 //ll

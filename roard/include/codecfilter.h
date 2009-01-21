@@ -49,6 +49,7 @@ struct roar_codecfilter {
  int (*write)(CODECFILTER_USERDATA_T   inst, char * buf, int len);
  int (*read )(CODECFILTER_USERDATA_T   inst, char * buf, int len);
  int (*flush)(CODECFILTER_USERDATA_T   inst);
+ int (*delay)(CODECFILTER_USERDATA_T   inst, uint_least32_t * delay);
 };
 
 
@@ -89,6 +90,10 @@ int codecfilter_pause(CODECFILTER_USERDATA_T   inst, int codecfilter, int newsta
 int codecfilter_write(CODECFILTER_USERDATA_T   inst, int codecfilter, char * buf, int len);
 int codecfilter_read (CODECFILTER_USERDATA_T   inst, int codecfilter, char * buf, int len);
 int codecfilter_flush(CODECFILTER_USERDATA_T   inst, int codecfilter);
+int codecfilter_delay(CODECFILTER_USERDATA_T   inst, int codecfilter, uint_least32_t * delay);
+
+int codecfilter_delay_fulldyn(CODECFILTER_USERDATA_T   inst, uint_least32_t * delay);
+
 
 // codecfilter without a own .h:
 int cf_alaw_open(CODECFILTER_USERDATA_T * inst, int codec,
@@ -99,6 +104,7 @@ int cf_alaw_close(CODECFILTER_USERDATA_T   inst);
 
 int cf_alaw_read(CODECFILTER_USERDATA_T   inst, char * buf, int len);
 int cf_alaw_write(CODECFILTER_USERDATA_T   inst, char * buf, int len);
+int cf_alaw_delay(CODECFILTER_USERDATA_T   inst, uint_least32_t * delay);
 
 int cf_mulaw_open(CODECFILTER_USERDATA_T * inst, int codec,
                                             struct roar_stream_server * info,
@@ -108,7 +114,7 @@ int cf_mulaw_close(CODECFILTER_USERDATA_T   inst);
 
 int cf_mulaw_read(CODECFILTER_USERDATA_T   inst, char * buf, int len);
 int cf_mulaw_write(CODECFILTER_USERDATA_T   inst, char * buf, int len);
-
+// cf_mulaw_delay() would be exactly the same as cf_alaw_delay() so it is just used by mulaw, too.
 
 #endif
 

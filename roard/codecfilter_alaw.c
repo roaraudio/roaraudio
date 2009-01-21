@@ -86,4 +86,13 @@ int cf_alaw_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
 
 #endif
 
+#if defined(ROAR_SUPPORT_ALAW) || defined(ROAR_SUPPORT_MULAW)
+int cf_alaw_delay(CODECFILTER_USERDATA_T   inst, uint_least32_t * delay) {
+ // this codec does not create any addition latency.
+
+ *delay = 0;
+ return 0;
+}
+#endif
+
 //ll
