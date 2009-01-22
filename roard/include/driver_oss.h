@@ -28,6 +28,7 @@
 int driver_oss_open(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh);
 int driver_oss_close(DRIVER_USERDATA_T   inst);
 int driver_oss_sync(struct roar_vio_calls * vio);
+int driver_oss_ctl(struct roar_vio_calls * vio, int cmd, void * data);
 
 #endif
 

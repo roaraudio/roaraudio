@@ -46,7 +46,8 @@
 #define ROAR_VIO_CTL_SET_SSTREAM   0x00011001 /* server streams */
 #define ROAR_VIO_CTL_GET_SSTREAM   0x00011002
 
-#define ROAR_VIO_CTL_GET_DELAY     0x00010011
+#define ROAR_VIO_CTL_GET_DELAY     0x00010011 /* return in bytes as the vio interface */
+                                              /* does not know anything about streams */
 
 // sys io:
 

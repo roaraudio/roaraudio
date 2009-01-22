@@ -44,6 +44,7 @@ int driver_oss_open(struct roar_vio_calls * inst, char * device, struct roar_aud
 
  roar_vio_init_calls(inst);
  inst->sync = driver_oss_sync;
+ inst->ctl  = driver_oss_ctl;
 
  if (  fh == -1 ) {
   if ( (fh = open(device, O_WRONLY, 0644)) == -1 ) {
@@ -200,6 +201,25 @@ int driver_oss_sync(struct roar_vio_calls * vio) {
 #else
  return 0;
 #endif
+}
+
+int driver_oss_ctl(struct roar_vio_calls * vio, int cmd, void * data) {
+ int d;
+
+ if ( vio == NULL )
+  return -1;
+
+ if ( cmd != ROAR_VIO_CTL_GET_DELAY )
+  return -1;
+
+ if ( ioctl(roar_vio_get_fh(vio), SNDCTL_DSP_GETODELAY, &d) == -1 )
+  return -1;
+
+ ROAR_WARN("driver_oss_ctl(*): delay=%i byte", d);
+
+ *(uint_least32_t *)data = d;
+
+ return 0;
 }
 
 #endif
