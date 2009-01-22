@@ -40,8 +40,12 @@
 // CTLs:
 
 // stream:
-#define ROAR_VIO_CTL_SET_STREAM    0x00010001
+#define ROAR_VIO_CTL_SET_STREAM    0x00010001 /* normal streams */
 #define ROAR_VIO_CTL_GET_STREAM    0x00010002
+
+#define ROAR_VIO_CTL_SET_SSTREAM   0x00011001 /* server streams */
+#define ROAR_VIO_CTL_GET_SSTREAM   0x00011002
+
 #define ROAR_VIO_CTL_GET_DELAY     0x00010011
 
 // sys io:
