@@ -58,6 +58,7 @@
 
 
 int alive;
+int g_no_listen;
 
 uint32_t g_pos; // current possition in output stream
 

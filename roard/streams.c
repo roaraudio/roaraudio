@@ -51,7 +51,7 @@ int streams_new    (void) {
  struct roar_stream        * n = NULL;
  struct roar_stream_server * s = NULL;
 
- if ( g_terminate ) // don't accept new streams in case of termination state
+ if ( g_terminate && !g_no_listen ) // don't accept new streams in case of termination state
   return -1;
 
  for (i = 0; i < ROAR_STREAMS_MAX; i++) {

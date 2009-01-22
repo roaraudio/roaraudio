@@ -264,6 +264,7 @@ int main (int argc, char * argv[]) {
  g_standby       =  0;
  g_autostandby   =  0;
  alive           =  1;
+ g_no_listen     =  0;
 
  sa.bits     = ROAR_BITS_DEFAULT;
  sa.channels = ROAR_CHANNELS_DEFAULT;
@@ -455,6 +456,7 @@ int main (int argc, char * argv[]) {
   } else if ( strcmp(k, "--no-listen") == 0 ) {
    *server     = 0;
    g_terminate = 1;
+   g_no_listen = 1;
   } else if ( strcmp(k, "--client-fh") == 0 ) {
    if ( clients_set_fh(clients_new(), atoi(argv[++i])) == -1 ) {
     ROAR_ERR("main(*): Can not set client's fh");
