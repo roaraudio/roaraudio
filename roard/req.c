@@ -495,6 +495,8 @@ int req_on_get_stream_para (int client, struct roar_message * mes, char * data) 
  d[6] = ss->flags | (ss->primary ? ROAR_FLAG_PRIMARY : 0) | (ss->driver_id != -1 ? ROAR_FLAG_OUTPUT : 0);
  d[7] = ss->delay/1000;
 
+ ROAR_DBG("req_on_get_stream_para(*): ss->driver_id=%i", ss->driver_id);
+
  ROAR_DBG("req_on_get_stream_para(*): delay=%i, send delay=%i", ss->delay, d[7]);
 
  for (i = 0; i < mes->datalen/2; i++) {

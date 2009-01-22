@@ -205,6 +205,8 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
   return -1;
  }
 
+ ROAR_DBG("add_output(*): ss->driver_id=%i", ss->driver_id);
+
  streams_set_fh(stream, -1); // update some internal structures
 
  client_stream_add(g_source_client, stream);
