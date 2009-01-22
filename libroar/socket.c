@@ -42,11 +42,17 @@ int roar_socket_new_tcp (void) {
 #ifndef ROAR_TARGET_WIN32
  int opt = IPTOS_LOWDELAY;
 #endif
+#ifdef TCP_NODELAY
+ int t   = 1;
+#endif
 
  fh = socket(PF_INET, SOCK_STREAM, 0);
 
 #ifndef ROAR_TARGET_WIN32
  setsockopt(fh, IPPROTO_IP, IP_TOS, &opt, sizeof(int));
+#endif
+#ifdef TCP_NODELAY
+ setsockopt(fh, IPPROTO_TCP, TCP_NODELAY, &t, sizeof(int));
 #endif
 
  return fh;
