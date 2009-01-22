@@ -51,6 +51,9 @@ int streams_new    (void) {
  struct roar_stream        * n = NULL;
  struct roar_stream_server * s = NULL;
 
+ if ( g_terminate ) // don't accept new streams in case of termination state
+  return -1;
+
  for (i = 0; i < ROAR_STREAMS_MAX; i++) {
   if ( g_streams[i] == NULL ) {
    s = ROAR_STREAM_SERVER(n = ROAR_STREAM(malloc(sizeof(struct roar_stream_server))));
