@@ -49,9 +49,11 @@ ROARD_SOCKET='/tmp/roar'
 
 # Sound Driver and Device:
 # To get a list run: roard --list-driver
+# Don't forget to include 'sync' in the options unless
+# you REALLY, REALLY know what you are doing
 # ROARD_DRIVER='oss'
 # ROARD_DEVICE='/dev/dsp'
-# ROARD_DRIVER_OPTIONS=''
+# ROARD_DRIVER_OPTIONS='sync'
 
 # --- [ Permitions ] ---
 
