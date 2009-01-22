@@ -215,7 +215,7 @@ int driver_oss_ctl(struct roar_vio_calls * vio, int cmd, void * data) {
  if ( ioctl(roar_vio_get_fh(vio), SNDCTL_DSP_GETODELAY, &d) == -1 )
   return -1;
 
- ROAR_WARN("driver_oss_ctl(*): delay=%i byte", d);
+ ROAR_DBG("driver_oss_ctl(*): delay=%i byte", d);
 
  *(uint_least32_t *)data = d;
 
