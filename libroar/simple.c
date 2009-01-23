@@ -57,8 +57,13 @@ int roar_simple_connect (struct roar_connection * con, char * server, char * nam
 }
 
 int roar_simple_stream(int rate, int channels, int bits, int codec, char * server, int dir, char * name) {
- struct roar_connection con;
  struct roar_stream     s;
+
+ return roar_simple_stream_obj(&s, rate, channels, bits, codec, server, dir, name);
+}
+
+int roar_simple_stream_obj  (struct roar_stream * s, int rate, int channels, int bits, int codec, char * server, int dir, char * name) {
+ struct roar_connection con;
 
  if ( roar_simple_connect(&con, server, name) == -1 ) {
   ROAR_DBG("roar_simple_play(*): roar_simple_connect() faild!");
@@ -66,17 +71,17 @@ int roar_simple_stream(int rate, int channels, int bits, int codec, char * serve
   return -1;
  }
 
- if ( roar_stream_new(&s, rate, channels, bits, codec) == -1 ) {
+ if ( roar_stream_new(s, rate, channels, bits, codec) == -1 ) {
   roar_disconnect(&con);
   return -1;
  }
 
- if ( roar_stream_connect(&con, &s, dir) == -1 ) {
+ if ( roar_stream_connect(&con, s, dir) == -1 ) {
   roar_disconnect(&con);
   return -1;
  }
 
- if ( roar_stream_exec(&con, &s) == -1 ) {
+ if ( roar_stream_exec(&con, s) == -1 ) {
   roar_disconnect(&con);
   return -1;
  }
