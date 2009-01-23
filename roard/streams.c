@@ -794,9 +794,10 @@ int streams_send_mon   (int id) {
 // int fh;
  struct roar_stream        *   s;
  struct roar_stream_server *  ss;
- void * obuf;
- int    olen;
- int    need_to_free = 0;
+ void  * obuf;
+ int     olen;
+ int     need_to_free = 0;
+ ssize_t ret;
 
  if ( g_streams[id] == NULL )
   return -1;
@@ -845,9 +846,16 @@ int streams_send_mon   (int id) {
   if ( s->fh == -1 && roar_vio_get_fh(&(ss->vio)) == -1 )
    return 0;
 
-  if ( stream_vio_s_write(ss, obuf, olen) == olen ) {
+  if ( (ret = stream_vio_s_write(ss, obuf, olen)) == olen ) {
    if ( need_to_free ) free(obuf);
    s->pos = ROAR_MATH_OVERFLOW_ADD(s->pos, ROAR_OUTPUT_CALC_OUTBUFSAMP(&(s->info), olen)*s->info.channels);
+   return 0;
+  }
+
+  if ( ret > 0 && errno == 0 ) {
+   ROAR_WARN("streams_send_mon(id=%i): Overrun in stream: write %i of %i bytes, %i bytes missing", id, ret, olen, olen-ret);
+   if ( need_to_free ) free(obuf);
+   s->pos = ROAR_MATH_OVERFLOW_ADD(s->pos, ROAR_OUTPUT_CALC_OUTBUFSAMP(&(s->info), ret)*s->info.channels);
    return 0;
   }
  } else {
