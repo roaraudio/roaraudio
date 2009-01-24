@@ -111,6 +111,8 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
  int    opt  = 1;
  struct sockaddr_in   socket_addr;
  socklen_t            len            = sizeof(struct sockaddr_in);
+ fd_set fds;
+ struct timeval timeout = {10, 0};
 
  if ( getsockname(con->fh, (struct sockaddr *)&socket_addr, &len) == -1 ) {
   return -1;
@@ -176,6 +178,17 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
  }
 
  if ( roar_stream_connect_to_ask(con, s, type, file, port) != -1 ) {
+
+  FD_ZERO(&fds);
+  FD_SET(listen, &fds);
+
+  if ( select(listen + 1, &fds, &fds, &fds, &timeout) < 1 ) {
+   close(listen);
+   if ( roar_kick(con, ROAR_OT_STREAM, s->id) == -1 )
+    return -1;
+
+   return -1;
+  }
 
   if ( (fh = accept(listen, NULL, NULL)) != -1 ) {
    if ( dir == ROAR_DIR_PLAY ) {
