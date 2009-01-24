@@ -83,6 +83,7 @@ int clients_new (void) {
 
 int clients_delete (int id) {
  int i;
+ int close_client_fh = 1;
 
  if ( g_clients[id] == NULL )
   return -1;
@@ -90,13 +91,14 @@ int clients_delete (int id) {
  if (g_clients[id]->execed != -1) {
 //  return streams_delete(g_clients[id]->execed);
   g_clients[id]->execed = -1;
+  close_client_fh = 0;
  }
 
  for (i = 0; i < ROAR_CLIENTS_MAX_STREAMS_PER_CLIENT; i++) {
   streams_delete(g_clients[id]->streams[i]);
  }
 
- if ( g_clients[id]->fh != -1 )
+ if ( g_clients[id]->fh != -1 && close_client_fh )
   close(g_clients[id]->fh);
 
  free(g_clients[id]);
