@@ -107,6 +107,8 @@ int roar_simple_new_stream_attachexeced_obj (struct roar_connection * con, struc
   return -1;
  }
 
+ s->fh = fh;
+
  return fh;
 }
 
