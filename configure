@@ -385,6 +385,11 @@ elif [ "$SYSNAME" = 'NetBSD' ]
 then
  echo "Adding $SYSNAME libpath arguments..."
  LDPATH="$LDPATH -L/usr/local/lib/"
+elif [ "$SYSNAME" = 'OpenBSD' ]
+then
+ echo "Adding $SYSNAME search path arguments..."
+ LDPATH="$LDPATH -L/usr/local/lib/"
+ INCPATH="$INCPATH -I/usr/local/include/"
 elif [ "$SYSNAME" = 'FreeBSD' ]
 then
  echo "Adding $SYSNAME search path arguments..."
@@ -517,6 +522,19 @@ echo 'int main (void) { mlock((void*)0, 0); return 0; }' >> $TF_C
 if $CCTF 2> /dev/null;
 then
  echo '#define ROAR_HAVE_MLOCK' >&3
+ echo yes
+else
+ echo no
+fi
+
+echo -n 'checking for fdatasync()... '
+
+echo '#include <unistd.h>' > $TF_C
+echo 'int main (void) { fdatasync(0); return 0; }' >> $TF_C
+
+if $CCTF 2> /dev/null;
+then
+ echo '#define ROAR_HAVE_FDATASYNC' >&3
  echo yes
 else
  echo no
