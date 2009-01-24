@@ -119,8 +119,8 @@ int roar_simple_new_stream (struct roar_connection * con, int rate, int channels
 
 int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream * s, int rate, int channels, int bits, int codec, int dir) {
  struct roar_message    mes;
- char file[80];
- int fh = -1, listen;
+ char file[80] = {0};
+ int fh = -1, listen = -1;
  static int count = 0;
  struct group   * grp  = NULL;
  int    type = ROAR_SOCKET_TYPE_UNIX;
@@ -130,6 +130,7 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
  socklen_t            len            = sizeof(struct sockaddr_in);
  fd_set fds;
  struct timeval timeout = {10, 0};
+ int socks[2]; // for socketpair()
 
  if ( getsockname(con->fh, (struct sockaddr *)&socket_addr, &len) == -1 ) {
   return -1;
@@ -145,9 +146,10 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
   return -1;
  }
 
+/*
  if ( type == ROAR_SOCKET_TYPE_UNIX ) {
   snprintf(file, 79, "/tmp/.libroar-simple-stream.%i-%i", getpid(), count++);
- } else if ( type == ROAR_SOCKET_TYPE_DECNET ) {
+ } else */ if ( type == ROAR_SOCKET_TYPE_DECNET ) {
   if ( roar_socket_get_local_nodename() ) {
    snprintf(file, 24,"%s::roar$TMP%04x%02x", roar_socket_get_local_nodename(), getpid(), count++);
   } else {
@@ -157,8 +159,10 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
   strncpy(file, inet_ntoa(socket_addr.sin_addr), 79);
  }
 
- if ( (listen = roar_socket_listen(type, file, port)) == -1 ) {
-  return -1;
+ if ( type != ROAR_SOCKET_TYPE_UNIX ) {
+  if ( (listen = roar_socket_listen(type, file, port)) == -1 ) {
+   return -1;
+  }
  }
 
  if ( type == ROAR_SOCKET_TYPE_INET ) {
@@ -170,6 +174,7 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
   }
   port = ROAR_NET2HOST16(socket_addr.sin_port);
   ROAR_DBG("roar_simple_new_stream_obj(*): port=%i", port);
+/*
  } else if ( type == ROAR_SOCKET_TYPE_UNIX ) {
 #ifndef ROAR_TARGET_WIN32
   chmod(file, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP);
@@ -181,6 +186,7 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
 #else
   ROAR_ERR("roar_simple_new_stream_obj(*): There is no UNIX Domain Socket support in win32, download a real OS.");
 #endif
+*/
  } else if ( type == ROAR_SOCKET_TYPE_DECNET ) {
   len = sizeof(struct sockaddr_in);
   setsockopt(listen, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(int));
@@ -194,31 +200,28 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
   return -1;
  }
 
- if ( roar_stream_connect_to_ask(con, s, type, file, port) != -1 ) {
+ if ( type != ROAR_SOCKET_TYPE_UNIX ) {
+  if ( roar_stream_connect_to_ask(con, s, type, file, port) != -1 ) {
 
-  FD_ZERO(&fds);
-  FD_SET(listen, &fds);
+   FD_ZERO(&fds);
+   FD_SET(listen, &fds);
 
-  if ( select(listen + 1, &fds, &fds, &fds, &timeout) < 1 ) {
-   close(listen);
+   if ( select(listen + 1, &fds, &fds, &fds, &timeout) < 1 ) {
+    close(listen);
 
-   // we don't need to check the content as we know it failed...
-   if ( roar_recv_message(con, &mes, NULL) == -1 )
-    return -1;
+    // we don't need to check the content as we know it failed...
+    if ( roar_recv_message(con, &mes, NULL) == -1 )
+     return -1;
 
-   if ( roar_kick(con, ROAR_OT_STREAM, s->id) == -1 )
-    return -1;
+    if ( roar_kick(con, ROAR_OT_STREAM, s->id) == -1 )
+     return -1;
 
-   return roar_simple_new_stream_attachexeced_obj(con, s, rate, channels, bits, codec, dir);
-  }
-
-  if ( (fh = accept(listen, NULL, NULL)) != -1 ) {
-   if ( dir == ROAR_DIR_PLAY ) {
-    shutdown(fh, SHUT_RD);
-   } else if ( dir == ROAR_DIR_MONITOR || dir == ROAR_DIR_RECORD ) {
-    shutdown(fh, SHUT_WR);
+    return roar_simple_new_stream_attachexeced_obj(con, s, rate, channels, bits, codec, dir);
    }
-  }
+
+   if ( (fh = accept(listen, NULL, NULL)) != -1 ) {
+    /* errr, do we need we any error handling here? */
+   }
    if ( roar_recv_message(con, &mes, NULL) == -1 ) {
     close(fh);
     fh = -1;
@@ -226,12 +229,36 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
     close(fh);
     fh = -1;
    }
+  }
+
+  close(listen);
+ } else { // this is type == ROAR_SOCKET_TYPE_UNIX
+  if ( socketpair(AF_UNIX, SOCK_STREAM, 0, socks) == -1 ) {
+   roar_kick(con, ROAR_OT_STREAM, s->id); // we do not need to check for errors
+                                          // as we return -1 in both whys
+   return -1;
+  }
+
+  if ( roar_stream_passfh(con, s, socks[0]) == -1 ) {
+   roar_kick(con, ROAR_OT_STREAM, s->id); // we do not need to check for errors
+                                          // as we return -1 in both whys
+   return -1;
+  }
+
+  close(socks[0]);
+  fh = socks[1];
  }
 
- close(listen);
-
+/*
  if ( type == ROAR_SOCKET_TYPE_UNIX ) {
   unlink(file);
+ }
+*/
+
+ if ( dir == ROAR_DIR_PLAY ) {
+  shutdown(fh, SHUT_RD);
+ } else if ( dir == ROAR_DIR_MONITOR || dir == ROAR_DIR_RECORD ) {
+  shutdown(fh, SHUT_WR);
  }
 
  s->fh = fh;
