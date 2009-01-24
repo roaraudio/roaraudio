@@ -95,6 +95,21 @@ int roar_simple_stream_obj  (struct roar_stream * s, int rate, int channels, int
  return con.fh;
 }
 
+int roar_simple_new_stream_attachexeced_obj (struct roar_connection * con, struct roar_stream * s, int rate, int channels, int bits, int codec, int dir) {
+ int fh;
+
+ if ( (fh = roar_simple_stream_obj(s, rate, channels, bits, codec, NULL /* server, we hope this goes ok here... */,
+                                   dir, "libroar temp stream")) == -1 )
+  return -1;
+
+ if ( roar_stream_attach_simple(con, s, roar_get_clientid(con)) == -1 ) {
+  close(fh);
+  return -1;
+ }
+
+ return fh;
+}
+
 int roar_simple_new_stream (struct roar_connection * con, int rate, int channels, int bits, int codec, int dir) {
  struct roar_stream     s;
  return roar_simple_new_stream_obj(con, &s, rate, channels, bits, codec, dir);
@@ -184,10 +199,15 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
 
   if ( select(listen + 1, &fds, &fds, &fds, &timeout) < 1 ) {
    close(listen);
+
+   // we don't need to check the content as we know it failed...
+   if ( roar_recv_message(con, &mes, NULL) == -1 )
+    return -1;
+
    if ( roar_kick(con, ROAR_OT_STREAM, s->id) == -1 )
     return -1;
 
-   return -1;
+   return roar_simple_new_stream_attachexeced_obj(con, s, rate, channels, bits, codec, dir);
   }
 
   if ( (fh = accept(listen, NULL, NULL)) != -1 ) {
