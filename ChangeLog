@@ -6,6 +6,8 @@ v, 0.2beta0 - ?
 	* added vio support for ctl()s
 	* allow overruns in sync output streams
 	* solved double close bug
+	* added support for non-execed streams with client behinde a NAT gateway
+	* use socketpair() for AF_UNIX streams to create a new non-execed stream
 
 v. 0.1beta5 - Wed Jan 21 2009
 	* done some patchs to help porting libroar to win32
