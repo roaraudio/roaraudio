@@ -29,6 +29,7 @@
 
 #define DRIVER_USERDATA_T void *
 
+#ifndef ROAR_DRIVER_DEFAULT
 #ifdef ROAR_HAVE_ESD
 #define ROAR_DRIVER_DEFAULT "esd"
 #else
@@ -42,6 +43,7 @@
 #else
 
 #define ROAR_DRIVER_DEFAULT "null"
+#endif
 #endif
 #endif
 #endif

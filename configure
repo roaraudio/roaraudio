@@ -57,6 +57,8 @@ TARGET_WIN32=false
 
 EXEC_HELPER=''
 
+ROAR_DRIVER_DEFAULT=''
+
 echo -n "checking for C compiler... "
 if [ "$CC" != '' ]
 then
@@ -115,6 +117,7 @@ do
    echo '--default-rate RATE         - Set default sample rate for roard and roarclients'
    echo '--default-channels CHANNELS - Set default number of channels for roard and roarclients'
    echo '--default-bits BITS         - Set default number of bits per sample for roard and roarclients'
+   echo '--default-driver DRIVER     - Set default driver for roard'
    echo
    echo '--without-alaw              - Disable support of A-Law codec (de- and encoding)'
    echo '--without-alaw-rw           - Disable support for writing A-Law (saves 8KB)'
@@ -185,6 +188,10 @@ do
   ;;
   '--default-bits')
    DEFAULT_BITS="$2"
+   shift;
+  ;;
+  '--default-driver')
+   ROAR_DRIVER_DEFAULT="$2"
    shift;
   ;;
   '--without-alaw')
@@ -433,9 +440,10 @@ EOF
  echo '/* uname: ' $(uname -a) '*/'
  echo '/* Date : ' $(date)  '*/'
  echo
- [ "$DEFAULT_RATE"     = '' ] || echo "#define ROAR_RATE_DEFAULT     $DEFAULT_RATE"
- [ "$DEFAULT_CHANNELS" = '' ] || echo "#define ROAR_CHANNELS_DEFAULT $DEFAULT_CHANNELS"
- [ "$DEFAULT_BITS"     = '' ] || echo "#define ROAR_BITS_DEFAULT     $DEFAULT_BITS"
+ [ "$DEFAULT_RATE"        = '' ] || echo "#define ROAR_RATE_DEFAULT     $DEFAULT_RATE"
+ [ "$DEFAULT_CHANNELS"    = '' ] || echo "#define ROAR_CHANNELS_DEFAULT $DEFAULT_CHANNELS"
+ [ "$DEFAULT_BITS"        = '' ] || echo "#define ROAR_BITS_DEFAULT     $DEFAULT_BITS"
+ [ "$ROAR_DRIVER_DEFAULT" = '' ] || echo "#define ROAR_DRIVER_DEFAULT   \"$ROAR_DRIVER_DEFAULT\""
  echo
  $ALAW     && echo '#define ROAR_SUPPORT_ALAW'
  $ALAW_RW  && echo '#define ROAR_SUPPORT_ALAW_RW'
