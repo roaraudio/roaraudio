@@ -153,7 +153,7 @@ int pa_simple_flush(pa_simple *s, int *error) {
  if ( !s )
   return -1;
 
- return fdatasync(ss->data_fh);
+ return ROAR_FDATASYNC(ss->data_fh);
 }
 
 //ll

@@ -110,7 +110,7 @@ int driver_esd_nonblock(struct roar_vio_calls * vio, int state) {
 }
 
 int driver_esd_sync    (struct roar_vio_calls * vio) {
- return fdatasync(*(int*)vio->inst);
+ return ROAR_FDATASYNC(*(int*)vio->inst);
 }
 
 #endif

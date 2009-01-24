@@ -164,7 +164,7 @@ int     roar_vio_basic_nonblock(struct roar_vio_calls * vio, int state) {
 }
 
 int     roar_vio_basic_sync    (struct roar_vio_calls * vio) {
- return fdatasync(roar_vio_get_fh(vio));
+ return ROAR_FDATASYNC(roar_vio_get_fh(vio));
 }
 
 // null

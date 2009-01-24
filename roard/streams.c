@@ -280,7 +280,7 @@ int streams_set_sync     (int id, int sync) {
   if ( roar_socket_nonblock(fh, sync ? ROAR_SOCKET_BLOCK : ROAR_SOCKET_NONBLOCK) == -1 )
    return -1;
 
-  fdatasync(fh);
+  ROAR_FDATASYNC(fh);
 
   return 0;
  } else {
