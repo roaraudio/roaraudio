@@ -88,6 +88,56 @@ int roar_stream_new (struct roar_stream * s, unsigned int rate,
  return 0;
 }
 
+int roar_stream_new_by_id(struct roar_stream * s, int id) {
+ if ( s == NULL )
+  return -1;
+
+ if ( roar_stream_new_empty(s) == -1 )
+  return -1;
+
+ return roar_stream_set_id(s, id);
+}
+
+int roar_stream_new_empty(struct roar_stream * s) {
+ if ( s == NULL )
+  return -1;
+
+ return roar_stream_new(s, 0, 0, 0, 0);
+}
+
+int roar_stream_set_id (struct roar_stream * s, int id) {
+ if ( s == NULL )
+  return -1;
+
+ s->id = id;
+
+ return 0;
+}
+
+int roar_stream_get_id (struct roar_stream * s) {
+ if ( s == NULL )
+  return -1;
+
+ return s->id;
+}
+
+int roar_stream_set_fh (struct roar_stream * s, int fh) {
+ if ( s == NULL )
+  return -1;
+
+ s->fh = fh;
+
+ return 0;
+}
+
+int roar_stream_get_fh (struct roar_stream * s) {
+ if ( s == NULL )
+  return -1;
+
+ return s->fh;
+}
+
+
 int roar_stream_exec    (struct roar_connection * con, struct roar_stream * s) {
  struct roar_message m;
 
