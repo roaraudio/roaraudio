@@ -80,6 +80,8 @@
 
 #define ROAR_CMD_GETTIMEOFDAY  31
 
+#define ROAR_CMD_WHOAMI        32
+
 
 #define ROAR_CMD_EPERM        252 /* error: permition denided */
 #define ROAR_CMD_OK_STOP      253 /* used internaly in the serveer: */

@@ -32,6 +32,8 @@ int req_on_noop        (int client, struct roar_message * mes, char * data);
 int req_on_identify    (int client, struct roar_message * mes, char * data);
 int req_on_auth        (int client, struct roar_message * mes, char * data);
 
+int req_on_whoami      (int client, struct roar_message * mes, char * data);
+
 int req_on_new_stream  (int client, struct roar_message * mes, char * data);
 int req_on_exec_stream (int client, struct roar_message * mes, char * data);
 int req_on_con_stream  (int client, struct roar_message * mes, char * data);

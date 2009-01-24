@@ -607,6 +607,8 @@ int main (int argc, char * argv[]) {
     fprintf(stderr, "Error: unknown standby mode: %i\n", t);
    }
 
+  } else if ( !strcmp(k, "whoami") ) {
+   printf("My client ID is: %i\n", roar_get_clientid(&con));
   } else if ( !strcmp(k, "serveroinfo") ) {
    server_oinfo(&con);
   } else if ( !strcmp(k, "listclients") ) {

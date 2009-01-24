@@ -28,6 +28,9 @@ struct roar_command g_commands[COMMAND_MAX_COMMANDS] = {
   {ROAR_CMD_NOOP,         "NOOP",         req_on_noop},
   {ROAR_CMD_IDENTIFY,     "IDENTIFY",     req_on_identify},
   {ROAR_CMD_AUTH,         "AUTH",         req_on_auth},
+  {ROAR_CMD_WHOAMI,       "WHOAMI",       req_on_whoami},
+
+
   {ROAR_CMD_NEW_STREAM,   "NEW_STREAM",   req_on_new_stream},
 
   {ROAR_CMD_SET_META,     "SET_META",     req_on_set_meta},

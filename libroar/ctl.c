@@ -34,6 +34,26 @@
 
 #include "libroar.h"
 
+int roar_get_clientid  (struct roar_connection * con) {
+ struct roar_message mes;
+
+ memset(&mes, 0, sizeof(struct roar_message)); // make valgrind happy!
+
+ mes.cmd     = ROAR_CMD_WHOAMI;
+ mes.datalen = 0;
+
+ if ( roar_req(con, &mes, NULL) == -1 )
+  return -1;
+
+ if ( mes.cmd != ROAR_CMD_OK )
+  return -1;
+
+ if ( mes.datalen != 1 )
+  return -1;
+
+ return mes.data[0];
+}
+
 int roar_server_oinfo   (struct roar_connection * con, struct roar_stream * sa) {
  struct roar_message mes;
 

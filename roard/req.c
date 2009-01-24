@@ -71,6 +71,14 @@ int req_on_auth        (int client, struct roar_message * mes, char * data) {
 }
 
 
+int req_on_whoami      (int client, struct roar_message * mes, char * data) {
+ mes->cmd     = ROAR_CMD_OK;
+ mes->datalen = 1;
+ mes->data[0] = client;
+ return 0;
+}
+
+
 int req_on_new_stream  (int client, struct roar_message * mes, char * data) {
  int stream;
  struct roar_stream * s;
