@@ -5,6 +5,7 @@ v, 0.2beta0 - ?
 	* added basic support to report latency
 	* added vio support for ctl()s
 	* allow overruns in sync output streams
+	* solved double close bug
 
 v. 0.1beta5 - Wed Jan 21 2009
 	* done some patchs to help porting libroar to win32
