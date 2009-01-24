@@ -175,6 +175,7 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
   port = ROAR_NET2HOST16(socket_addr.sin_port);
   ROAR_DBG("roar_simple_new_stream_obj(*): port=%i", port);
 /*
+#if 0
  } else if ( type == ROAR_SOCKET_TYPE_UNIX ) {
 #ifndef ROAR_TARGET_WIN32
   chmod(file, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP);
@@ -185,6 +186,7 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
    chown(file, -1, grp->gr_gid);
 #else
   ROAR_ERR("roar_simple_new_stream_obj(*): There is no UNIX Domain Socket support in win32, download a real OS.");
+#endif
 #endif
 */
  } else if ( type == ROAR_SOCKET_TYPE_DECNET ) {
