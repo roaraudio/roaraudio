@@ -13,6 +13,7 @@ CFLAGS += -g -Wall -O2 $(DEFINES) $(INCLUDE) $(INCPATH)
 LDFLAGS = -g -L../lib/ $(LDPATH) -lroar -lroardsp $(lib_esd) $(lib_ossaudio) $(lib_ao) $(lib_vorbisfile) $(lib_vorbisenc) $(lib_m) $(lib_celt) $(lib_speex) $(lib_speexdsp) $(lib_vorbis) $(lib_sndfile) $(lib_shout) $(lib_fishsound) $(lib_oggz)
 
 all: ${TARGETS}
+	rm -f ../lib/${TARGETS} 2> /dev/null || true
 	cp $(cp_v) ${TARGETS} ../lib/
 clean:
 	rm -f ${TARGETS} *.o
