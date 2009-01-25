@@ -504,6 +504,8 @@ test_lib_defmake ROAR_HAVE_OSS_BSD       %            BSDOSS        c          -
 test_lib_defmake ROAR_HAVE_LIBWSOCK32    %            WinSockP0     wsock32    -- winsock2.h
 test_lib_defmake ROAR_HAVE_LIBWS2_32     %            WinSockP1     ws2_32     -- winsock2.h
 
+echo >&3
+
 # add a better test here
 test_lib 'linux sendfile()'       -- sys/sendfile.h && echo '#define ROAR_HAVE_LINUX_SENDFILE' >&3
 
@@ -592,6 +594,18 @@ then
 else
  echo '#define ROAR_BROKEN_PEERCRED' >&3
  echo broken
+fi
+
+echo -n 'checking for getpeereid()... '
+echo '#include <roaraudio.h>' > $TF_C
+echo 'int main (void) { getpeereid(0, NULL, NULL); return 0; }'  >> $TF_C
+
+if $CCTF 2> /dev/null;
+then
+ echo '#define ROAR_HAVE_GETPEEREID' >&3
+ echo yes
+else
+ echo no
 fi
 
 echo -n 'checking for safe 32 bit integer overflow... '
