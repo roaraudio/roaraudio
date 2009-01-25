@@ -122,7 +122,7 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
  char file[80] = {0};
  int fh = -1, listen = -1;
  static int count = 0;
- struct group   * grp  = NULL;
+// struct group   * grp  = NULL;
  int    type = ROAR_SOCKET_TYPE_UNIX;
  int    port = 0;
  int    opt  = 1;
@@ -136,14 +136,22 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
   return -1;
  }
 
- if ( socket_addr.sin_family == AF_INET ) {
-  type = ROAR_SOCKET_TYPE_INET;
- } else if ( socket_addr.sin_family == AF_UNIX ) {
-  type = ROAR_SOCKET_TYPE_UNIX;
- } else if ( socket_addr.sin_family == AF_DECnet ) {
-  type = ROAR_SOCKET_TYPE_DECNET;
- } else {
+ if ( len == 0 ) {
+#ifdef ROAR_OS_OPENBSD
+  ROAR_WARN("roar_simple_new_stream_obj(*): Unknown address family: guess AF_UNIX because OS is OpenBSD");
+  socket_addr.sin_family = AF_UNIX;
+#else
   return -1;
+#endif
+ }
+
+ switch (socket_addr.sin_family) {
+  case AF_UNIX:   type = ROAR_SOCKET_TYPE_UNIX; break;
+  case AF_INET:   type = ROAR_SOCKET_TYPE_INET; break;
+  case AF_DECnet: type = ROAR_SOCKET_TYPE_DECNET; break;
+  default:
+    return -1;
+   break;
  }
 
 /*
