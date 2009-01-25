@@ -50,8 +50,10 @@ int net_check_listen  (void) {
 int net_get_new_client (void) {
  int fh;
  int client;
-#ifdef SO_PEERCRED
+#if defined(SO_PEERCRED) || defined(ROAR_HAVE_GETPEEREID)
  struct roar_client * c;
+#endif
+#ifdef SO_PEERCRED
  struct ucred cred;
  socklen_t cred_len = sizeof(cred);
 #endif
