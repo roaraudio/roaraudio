@@ -22,6 +22,8 @@
  *
  */
 
+#define ROAR_REQUIRE_LIBVORBISFILE
+
 #include "roard.h"
 
 #ifdef ROAR_HAVE_LIBVORBISFILE

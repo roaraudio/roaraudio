@@ -22,6 +22,8 @@
  *
  */
 
+#define ROAR_REQUIRE_LIBVORBISFILE
+
 #include "roard.h"
 
 struct roar_codecfilter g_codecfilter[] = {

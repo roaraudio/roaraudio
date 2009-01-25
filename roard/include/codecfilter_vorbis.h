@@ -27,7 +27,7 @@
 
 #include <roaraudio.h>
 
-#ifdef ROAR_HAVE_LIBVORBISFILE
+#if defined(ROAR_HAVE_LIBVORBISFILE) && defined(ROAR_REQUIRE_LIBVORBISFILE)
 
 #include <vorbis/codec.h>
 #include <vorbis/vorbisfile.h>
