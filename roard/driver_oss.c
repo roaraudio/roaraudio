@@ -204,6 +204,7 @@ int driver_oss_sync(struct roar_vio_calls * vio) {
 }
 
 int driver_oss_ctl(struct roar_vio_calls * vio, int cmd, void * data) {
+#ifdef SNDCTL_DSP_GETODELAY
  int d;
 
  if ( vio == NULL )
@@ -220,6 +221,9 @@ int driver_oss_ctl(struct roar_vio_calls * vio, int cmd, void * data) {
  *(uint_least32_t *)data = d;
 
  return 0;
+#else
+ return -1;
+#endif
 }
 
 #endif
