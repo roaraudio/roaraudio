@@ -452,6 +452,7 @@ EOF
  $PROXY    && echo '#define ROAR_SUPPORT_PROXY'
  echo
  $TARGET_WIN32 && echo '#define ROAR_TARGET_WIN32'
+                  echo '#define ROAR_OS_'$(echo $SYSNAME | tr a-z A-Z)
  echo
 } >&3
 
