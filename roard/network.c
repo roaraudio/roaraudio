@@ -84,6 +84,12 @@ int net_get_new_client (void) {
    ROAR_DBG("req_on_identify(): Can't get creds via SO_PEERCRED: %s", strerror(errno));
   }
  }
+#elif defined(ROAR_HAVE_GETPEEREID)
+ if ( clients_get(client, &c) != -1 ) {
+  if (getpeereid(fh, &(c->uid), &(c->gid)) == -1) {
+   ROAR_DBG("req_on_identify(): Can't get creds via getpeereid(): %s", strerror(errno));
+  }
+ }
 #endif
 
 // close(fh);
