@@ -141,7 +141,7 @@ int sources_add_cf (char * driver, char * device, char * container, char * optio
  }
 
  // TODO: finy out a better way of doing auto detetion without need for seek!
- if ( !options ) {
+ if ( options == NULL ) {
   if ( (len = read(fh, buf, 64)) < 1 ) {
    close(fh);
    return -1;
@@ -157,6 +157,9 @@ int sources_add_cf (char * driver, char * device, char * container, char * optio
    return -1;
   }
  } else {
+  if ( !strncmp(options, "codec=", 6) )
+   options += 6;
+
   if ( (codec = roar_str2codec(options)) == -1 ) {
    close(fh);
    return -1;
@@ -197,6 +200,9 @@ int sources_add_roar (char * driver, char * device, char * container, char * opt
  struct roar_stream * s;
 
  if ( options != NULL && *options ) {
+  if ( !strncmp(options, "codec=", 6) )
+   options += 6;
+
   if ( (codec = roar_str2codec(options)) == -1 ) {
    return -1;
   }
