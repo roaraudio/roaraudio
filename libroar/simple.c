@@ -1,7 +1,7 @@
 //simple.c:
 
 /*
- *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008
+ *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008, 2009
  *
  *  This file is part of libroar a part of RoarAudio,
  *  a cross-platform sound system for both, home and professional use.
@@ -122,7 +122,6 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
  char file[80] = {0};
  int fh = -1, listen = -1;
  static int count = 0;
-// struct group   * grp  = NULL;
  int    type = ROAR_SOCKET_TYPE_UNIX;
  int    port = 0;
  int    opt  = 1;
@@ -154,10 +153,7 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
    break;
  }
 
-/*
- if ( type == ROAR_SOCKET_TYPE_UNIX ) {
-  snprintf(file, 79, "/tmp/.libroar-simple-stream.%i-%i", getpid(), count++);
- } else */ if ( type == ROAR_SOCKET_TYPE_DECNET ) {
+ if ( type == ROAR_SOCKET_TYPE_DECNET ) {
   if ( roar_socket_get_local_nodename() ) {
    snprintf(file, 24,"%s::roar$TMP%04x%02x", roar_socket_get_local_nodename(), getpid(), count++);
   } else {
@@ -182,21 +178,6 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
   }
   port = ROAR_NET2HOST16(socket_addr.sin_port);
   ROAR_DBG("roar_simple_new_stream_obj(*): port=%i", port);
-/*
-#if 0
- } else if ( type == ROAR_SOCKET_TYPE_UNIX ) {
-#ifndef ROAR_TARGET_WIN32
-  chmod(file, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP);
-
-  grp = getgrnam(ROAR_DEFAULT_SOCKGRP);
-
-  if ( grp )
-   chown(file, -1, grp->gr_gid);
-#else
-  ROAR_ERR("roar_simple_new_stream_obj(*): There is no UNIX Domain Socket support in win32, download a real OS.");
-#endif
-#endif
-*/
  } else if ( type == ROAR_SOCKET_TYPE_DECNET ) {
   len = sizeof(struct sockaddr_in);
   setsockopt(listen, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(int));
