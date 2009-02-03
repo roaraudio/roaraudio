@@ -5,11 +5,13 @@ Things we need to do:
 Things we should do:
  * add a lot other things
  * add support for config file
- * add a sample rc file
  * add RAUM support
  * add sndio support
  * write a libroarsndio
  * replace OpenBSD's aucat
+ * add esd* like options to roarclients
+ * add support to to roard to auto select a sync stream
+ * add support for auto config streams
 
 Things it would be nice to have:
  * add code to handle streams with more than ROAR_MAX_CHANNELS channels
