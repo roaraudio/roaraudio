@@ -74,15 +74,41 @@ Shows a list of all available drivers.
 
 .TP
 \fB--driver\fR, \fB-d\fR
-Set the output driver. To get a list of all drivers use \fB--list-driver\fR.
-This option will obsolete soon.
+.\"Set the output driver. To get a list of all drivers use \fB--list-driver\fR.
+This option is obsolete.
+Use \fB-o\fR instead.
 
 .TP
 \fB--device\fR, \fB-D\fR
+.\"Set the device for the output driver. Possible devices depends on the driver.
+.\"They may be a path to a device node or a hostname.
+.\"Use \fB--list-driver\fR to get a hint.
+.\"This option will obsolete soon.
+This option is obsolete.
+Use \fB-O\fR instead.
+
+.TP
+\fB--odriver\fR, \fB-o\fR
+Set the output driver. To get a list of all drivers use \fB--list-driver\fR.
+
+.TP
+\fB--odevice\fR, \fB-O\fR
 Set the device for the output driver. Possible devices depends on the driver.
 They may be a path to a device node or a hostname.
 Use \fB--list-driver\fR to get a hint.
-This option will obsolete soon.
+
+.TP
+\fB-oO\fR
+Sets options for the new stream.
+
+.TP
+\fB-oN\fR
+Adds another output.
+
+.TP
+\fB-oP\fR
+Marks the output primary.
+
 
 .SH "SOURCE OPTIONS"
 .TP
