@@ -1,4 +1,4 @@
-v, 0.2beta0 - ?
+v, 0.2beta0 - Wed Feb 04 2009
 	* use new driver interface as default (finally!)
 	* fixed a bug in roard to not accept new streams in termination state
 	* added support to filters to reset
