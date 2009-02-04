@@ -12,6 +12,7 @@ roar_buffer_add
 roar_buffer_get_next
 roar_buffer_get_data
 roar_buffer_set_offset
+roar_buffer_shift_out
 roar_buffer_set_meta
 roar_buffer_get_meta
 roar_buffer_set_len
@@ -22,6 +23,7 @@ roar_buffer_ring_stats
 roar_get_standby
 roar_set_standby
 roar_exit
+roar_terminate
 roar_server_oinfo
 
 roar_meta_strtype
@@ -43,6 +45,15 @@ roar_socket_nonblock
 
 roar_stream_connect
 roar_stream_new
+roar_stream_new_by_id
+roar_stream_new_empty
+roar_stream_set_id
+roar_stream_get_id
+roar_stream_set_fh
+roar_stream_get_fh
 roar_stream_exec
 roar_stream_connect_to
 roar_stream_add_data
+
+roar_str2codec
+roar_codec2str
