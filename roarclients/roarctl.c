@@ -44,6 +44,7 @@ void usage (void) {
  printf("\nCommands:\n\n");
  printf(
         "  help                    - Show this help\n"
+        "  sleep TIME              - Sleeps for TIME seconds\n"
         "\n"
         "  standby, off            - Go into standby mode\n"
         "  resume, on              - Go into active mode\n"
