@@ -51,15 +51,14 @@ int lib_run_bg(char * cmd, int infh, int outfh, int errfh, int * closefh, int le
 
  close(g_listen_socket); // listen socket.
 
- clients_free(); // delete all clients!, this allso delets all streams
+// this breaks the new driver interface
+// clients_free(); // delete all clients!, this allso delets all streams
 
  midi_free(); // close midi devices
 
  // close fh's we got ask to close:
  for (i = 0; i < lenclose; i++)
   close(closefh[i]);
-
- // TODO: what aout the output driver?
 
  // next we need to remap our stdio:
  // stdio: fh 0..2
