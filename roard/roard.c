@@ -211,8 +211,10 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
 
  client_stream_add(g_source_client, stream);
 
- if ( prim )
+ if ( prim ) {
   streams_mark_primary(stream);
+  s->pos_rel_id = stream;
+ }
 
  if ( sync ) {
   streams_set_flag(stream, ROAR_FLAG_SYNC);
