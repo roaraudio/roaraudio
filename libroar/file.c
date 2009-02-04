@@ -71,7 +71,9 @@ int roar_file_codecdetect(char * buf, int len) {
     if ( strncmp(buf, ROAR_CELT_MAGIC, ROAR_CELT_MAGIC_LEN) == 0 )
      codec = ROAR_CODEC_ROAR_CELT;
    }
-  } else if ( strncmp(buf, "RAUM-CF0", 8) == 0 ) {
+  } else if ( strncmp(buf, "fLaC", 4) == 0 ) {
+   codec = ROAR_CODEC_FLAC;
+  } else if ( len > 7 && strncmp(buf, "RAUM-CF0", 8) == 0 ) {
    codec = ROAR_CODEC_RAUM;
   }
  }
