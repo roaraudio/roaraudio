@@ -181,10 +181,13 @@ void list_streams (struct roar_connection * con) {
    continue;
   }
   printf("Stream direction      : %s\n", roar_dir2str(s.dir));
-  if ( s.pos_rel_id == -1 )
+  if ( s.pos_rel_id == -1 ) {
    printf("Relativ position id   : none (stream not synchronized)\n");
-  else
-   printf("Relativ position id   : %i\n", s.pos_rel_id);
+  } else if ( s.pos_rel_id == id[i] ) {
+   printf("Relativ position id   : %i (self synchronized)\n", s.pos_rel_id);
+  } else {
+   printf("Relativ position id   : %i (synchronized)\n", s.pos_rel_id);
+  }
   if ( g_verbose > 1 )
    printf("Position              : %lu S (%.3fs)\n", (unsigned long int) s.pos, (float)s.pos/(s.info.rate*s.info.channels));
   printf("Input rate            : %i\n", s.info.rate);
