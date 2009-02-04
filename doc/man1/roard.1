@@ -99,7 +99,7 @@ Use \fB--list-driver\fR to get a hint.
 
 .TP
 \fB-oO\fR
-Sets options for the new stream.
+Sets options for the new stream. See STREAM OPTIONS.
 
 .TP
 \fB-oN\fR
@@ -160,6 +160,35 @@ Expects a client on the given FH. This may be useful with \fB--no-listen\fR.
 \fB--close-fh FH\fR
 Close the given FH. This is not useful for endusers but used internaly.
 
+
+.SH "STREAM OPTIONS"
+.TP
+\fBrate\fR
+Sets the sample rate.
+
+.TP
+\fBchannels\fR
+Sets the number of channels.
+
+.TP
+\fBbits\fR
+Sets the number of bits per sample.
+
+.TP
+\fBcodec\fR
+Sets the codec.
+
+.TP
+\fBmeta\fR
+Sets the meta flag.
+
+.TP
+\fBsync\fR
+Sets the sync flag.
+
+.TP
+Example:
+rate=44100,bits=16,channels=2,codec=pcm,sync
 
 .SH "ENVIRONMENT VARIABLES"
 .TP
