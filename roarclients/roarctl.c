@@ -569,6 +569,8 @@ int main (int argc, char * argv[]) {
   if ( !strcmp(k, "help") ) {
    usage();
 
+  } else if ( !strcmp(k, "sleep") ) {
+   sleep(atoi(argv[++i]));
 
   } else if ( !strcmp(k, "standby") || !strcmp(k, "off") ) {
    if ( roar_set_standby(&con, ROAR_STANDBY_ACTIVE) == -1 ) {
