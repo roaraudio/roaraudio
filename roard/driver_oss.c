@@ -186,6 +186,14 @@ int driver_oss_open(struct roar_vio_calls * inst, char * device, struct roar_aud
   er();
  }
 
+
+#ifdef SNDCTL_DSP_SETFRAGMENT
+ tmp = 4 << 16 | 11; // 4 fragements of 2048 Bytes.
+ if ( ioctl(fh, SNDCTL_DSP_SETFRAGMENT, &tmp) == -1 ) {
+  ROAR_WARN("driver_oss_open(*): Can not set fragment size, sorry :(");
+ }
+#endif
+
  ROAR_DBG("driver_oss_open(*): OSS devices opened :)");
 
  return 0;
