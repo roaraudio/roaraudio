@@ -72,10 +72,12 @@ struct roar_codecfilter g_codecfilter[] = {
   cf_mulaw_read, NULL, cf_alaw_delay},
 #endif
 
+#ifndef ROAR_WITHOUT_CF_CMD
 #ifdef ROAR_HAVE_BIN_OGG123
  {ROAR_CODEC_OGG_GENERAL, "cmd",  "ogg123",
   ROAR_HAVE_BIN_OGG123 " -q -d raw -f - -", ROAR_CODECFILTER_READ,
   cf_cmd_open, NULL, NULL, NULL, NULL, NULL, codecfilter_delay_fulldyn},
+#endif
 #endif
 
 #ifdef ROAR_HAVE_LIBVORBISFILE
@@ -87,10 +89,12 @@ struct roar_codecfilter g_codecfilter[] = {
 #endif
  cf_vorbis_open, cf_vorbis_close, NULL, cf_vorbis_write, cf_vorbis_read, NULL, codecfilter_delay_fulldyn},
 #else
+#ifndef ROAR_WITHOUT_CF_CMD
 #ifdef ROAR_HAVE_BIN_OGG123
  {ROAR_CODEC_OGG_VORBIS, "cmd",  "ogg123",
   ROAR_HAVE_BIN_OGG123 " -q -d raw -f - -", ROAR_CODECFILTER_READ,
   cf_cmd_open, NULL, NULL, NULL, NULL, NULL, codecfilter_delay_fulldyn},
+#endif
 #endif
 #endif
 
@@ -104,10 +108,12 @@ struct roar_codecfilter g_codecfilter[] = {
   cf_fishsound_open, cf_fishsound_close, NULL, NULL, cf_fishsound_read, NULL, codecfilter_delay_fulldyn},
 #endif
 
+#ifndef ROAR_WITHOUT_CF_CMD
 #ifdef ROAR_HAVE_BIN_TIMIDITY
  {ROAR_CODEC_MIDI_FILE, "MIDIFILE", "timidity MIDI synth",
   ROAR_HAVE_BIN_TIMIDITY " -Or1sl -s %R -o - -", ROAR_CODECFILTER_READ,
   cf_cmd_open, NULL, NULL, NULL, NULL, NULL, codecfilter_delay_fulldyn},
+#endif
 #endif
 
 #ifdef ROAR_HAVE_LIBCELT
@@ -120,6 +126,7 @@ struct roar_codecfilter g_codecfilter[] = {
   cf_speex_open, cf_speex_close, NULL, cf_speex_write, cf_speex_read, NULL, NULL},
 #endif
 
+#ifndef ROAR_WITHOUT_CF_CMD
 #ifdef ROAR_HAVE_BIN_FLAC
  {ROAR_CODEC_FLAC, "cmd",  "flac",
 #if BYTE_ORDER == BIG_ENDIAN
@@ -131,6 +138,7 @@ struct roar_codecfilter g_codecfilter[] = {
 #endif
   ROAR_CODECFILTER_READ,
   cf_cmd_open, NULL, NULL, NULL, NULL, NULL, codecfilter_delay_fulldyn},
+#endif
 #endif
 
  {-1, NULL, NULL, NULL, ROAR_CODECFILTER_NONE, NULL, NULL, NULL, NULL, NULL, NULL, NULL} // end of list

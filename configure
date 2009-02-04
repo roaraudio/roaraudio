@@ -51,6 +51,8 @@ MULAW_RW=true
 
 PROXY=true
 
+WITHOUT_CF=''
+
 MINIMAL=false
 
 TARGET_WIN32=false
@@ -124,6 +126,8 @@ do
    echo '--without-mulaw             - Disable support of mu-Law codec (de- and encoding)'
    echo '--without-mulaw-rw          - Disable support for writing mu-Law (saves 16KB)'
    echo '--without-proxy             - Disable support for proxys'
+   echo
+   echo '--without-cf-cmd            - Disable support for command codecfilter'
    echo
    echo '--without-libao             - Disable build of libao plugin'
    echo '--without-xmms              - Disable build of XMMS plugin'
@@ -210,6 +214,9 @@ do
   ;;
   '--without-proxy')
    PROXY=false
+  ;;
+  '--without-cf-'*)
+   WITHOUT_CF="$WITHOUT_CF"' '$(echo "$1" | cut -d- -f5)
   ;;
   '--without-libao')
    LIBAO=false
@@ -450,6 +457,14 @@ EOF
  $MULAW    && echo '#define ROAR_SUPPORT_MULAW'
  $MULAW_RW && echo '#define ROAR_SUPPORT_MULAW_RW'
  $PROXY    && echo '#define ROAR_SUPPORT_PROXY'
+ echo
+
+ for i in $WITHOUT_CF
+ do
+  i=$(echo $i | tr /a-z/ /A-Z/);
+  echo '#define ROAR_WITHOUT_CF_'$i
+ done
+
  echo
  $TARGET_WIN32 && echo '#define ROAR_TARGET_WIN32'
                   echo '#define ROAR_OS_'$(echo $SYSNAME | tr a-z A-Z)

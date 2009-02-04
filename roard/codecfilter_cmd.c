@@ -24,6 +24,8 @@
 
 #include "roard.h"
 
+#ifndef ROAR_WITHOUT_CF_CMD
+
 #define CMDMAXLEN 1024
 
 int cf_cmd_open(CODECFILTER_USERDATA_T * inst, int codec,
@@ -107,5 +109,7 @@ int cf_cmd_open(CODECFILTER_USERDATA_T * inst, int codec,
 
  return 0;
 }
+
+#endif
 
 //ll
