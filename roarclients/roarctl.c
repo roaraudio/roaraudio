@@ -265,6 +265,8 @@ int set_mixer (struct roar_connection * con, int * cur, int max, char * arg[]) {
  }
 
 
+// TODO: clean up code here as the % vs. abs code is very duplicate...
+
  if ( strcmp(k, "mono") == 0 && old_chans != 1 ) {
   chans = 1;
 
@@ -285,6 +287,37 @@ int set_mixer (struct roar_connection * con, int * cur, int max, char * arg[]) {
    mixer.mixer[i] = vol_l;
 
   chans = old_chans;
+
+ } else if ( strcmp(k, "stereo") == 0 && old_chans == 4 ) {
+  chans = 4;
+
+  if ( *cur + 2 > max )
+   return -1;
+
+  k   = arg[++(*cur)];
+  len = strlen(k);
+
+  if ( k[len - 1] == '%' ) {
+   k[len - 1] = 0;
+   vol_l = (atof(k)*65535)/100;
+  } else {
+   vol_l = atoi(k);
+  }
+
+  k   = arg[++(*cur)];
+  len = strlen(k);
+
+  if ( k[len - 1] == '%' ) {
+   k[len - 1] = 0;
+   vol_r = (atof(k)*65535)/100;
+  } else {
+   vol_r = atoi(k);
+  }
+
+  mixer.mixer[0] = vol_l;
+  mixer.mixer[1] = vol_r;
+  mixer.mixer[2] = vol_l;
+  mixer.mixer[3] = vol_r;
 
  } else if ( strcmp(k, "stereo") == 0 && old_chans != 2 ) {
   chans = 2;
