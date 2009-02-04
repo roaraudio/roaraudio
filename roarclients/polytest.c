@@ -24,17 +24,20 @@
 
 #include <roaraudio.h>
 
-#define MAX 1024
+#define BUF_MAX 1024
 
 int main (void) {
- int16_t  in[MAX];
- int16_t out[MAX];
+ int16_t  in[BUF_MAX];
+ int16_t out[BUF_MAX];
  size_t il = 10;
  size_t ol = 20;
  int i;
+ int tmp;
 
- for (i = 0; i < il; i++)
-  scanf("%i", &in[i]);
+ for (i = 0; i < il; i++) {
+  scanf("%i", &tmp);
+  in[i] = tmp;
+ }
 
  roar_conv_poly4_16(out, in, ol, il);
 
