@@ -42,31 +42,38 @@ void usage (void) {
 }
 
 int main (int argc, char * argv[]) {
- int    rate     = 44100;
- int    bits     = 16;
- int    channels = 2;
+ int    rate     = ROAR_RATE_DEFAULT;
+ int    bits     = ROAR_BITS_DEFAULT;
+ int    channels = ROAR_CHANNELS_DEFAULT;
  int    codec    = ROAR_CODEC_DEFAULT;
  char * server   = NULL;
  char * k;
  int    fh;
  int    i;
  int    in = -1;
+ char * name = "roarcat";
  char buf[BUFSIZE];
 
  for (i = 1; i < argc; i++) {
   k = argv[i];
 
-  if ( strcmp(k, "--server") == 0 ) {
+  if ( !strcmp(k, "--server") || !strcmp(k, "-s") ) {
    server = argv[++i];
-  } else if ( strcmp(k, "--rate") == 0 ) {
+  } else if ( !strcmp(k, "-n") ) {
+   name = argv[++i];
+  } else if ( !strcmp(k, "--rate") || !strcmp(k, "-r") ) {
    rate = atoi(argv[++i]);
-  } else if ( strcmp(k, "--bits") == 0 ) {
+  } else if ( !strcmp(k, "--bits") ) {
    bits = atoi(argv[++i]);
-  } else if ( strcmp(k, "--channels") == 0 || strcmp(k, "--chans") == 0 ) {
+  } else if ( !strcmp(k, "-b") ) {
+   bits = 8;
+  } else if ( !strcmp(k, "--channels") || !strcmp(k, "--chans") ) {
    channels = atoi(argv[++i]);
-  } else if ( strcmp(k, "--codec") == 0 ) {
+  } else if ( !strcmp(k, "-m") ) {
+   channels = 1;
+  } else if ( !strcmp(k, "--codec") ) {
    codec = roar_str2codec(argv[++i]);
-  } else if ( strcmp(k, "--help") == 0 ) {
+  } else if ( !strcmp(k, "--help") ) {
    usage();
    return 0;
   } else if ( in == -1 ) {
@@ -81,7 +88,7 @@ int main (int argc, char * argv[]) {
   }
  }
 
- if ( (fh = roar_simple_play(rate, channels, bits, codec, server, "roarcat")) == -1 ) {
+ if ( (fh = roar_simple_play(rate, channels, bits, codec, server, name)) == -1 ) {
   fprintf(stderr, "Error: can not start playback\n");
   return 1;
  }
