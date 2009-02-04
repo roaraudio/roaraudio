@@ -128,6 +128,9 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
  struct roar_stream * s;
  struct roar_stream_server * ss;
  char * k, * v;
+#ifdef ROAR_DRIVER_CODEC
+ char * to_free = NULL;
+#endif
  int codec;
  int sync = 0;
 
@@ -137,6 +140,12 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
   drv  = ROAR_DRIVER_DEFAULT;
   prim = 1;
   sync = 1;
+
+#ifdef ROAR_DRIVER_CODEC
+  if ( opts == NULL ) {
+   opts = to_free = strdup("codec=" ROAR_DRIVER_CODEC);
+  }
+#endif
  }
 
  if ( (stream = streams_new()) == -1 ) {
@@ -176,6 +185,10 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
     ROAR_ERR("add_output(*): unknown codec '%s'", v);
     streams_delete(stream);
     if ( prim ) alive = 0;
+#ifdef ROAR_DRIVER_CODEC
+    if ( to_free != NULL )
+     free(to_free);
+#endif
     return -1;
    }
   } else if ( strcmp(k, "meta") == 0 ) {
@@ -186,11 +199,20 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
    ROAR_ERR("add_output(*): unknown option '%s'", k);
    streams_delete(stream);
    if ( prim ) alive = 0;
+#ifdef ROAR_DRIVER_CODEC
+   if ( to_free != NULL )
+    free(to_free);
+#endif
    return -1;
   }
 
   k = strtok(NULL, ",");
  }
+
+#ifdef ROAR_DRIVER_CODEC
+ if ( to_free != NULL )
+  free(to_free);
+#endif
 
  if ( codec == ROAR_CODEC_ALAW || codec == ROAR_CODEC_MULAW )
   s->info.bits = 8; // needed to open OSS driver, will be overriden by codecfilter

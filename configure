@@ -60,6 +60,7 @@ TARGET_WIN32=false
 EXEC_HELPER=''
 
 ROAR_DRIVER_DEFAULT=''
+ROAR_DRIVER_CODEC=''
 
 echo -n "checking for C compiler... "
 if [ "$CC" != '' ]
@@ -120,6 +121,7 @@ do
    echo '--default-channels CHANNELS - Set default number of channels for roard and roarclients'
    echo '--default-bits BITS         - Set default number of bits per sample for roard and roarclients'
    echo '--default-driver DRIVER     - Set default driver for roard'
+   echo '--default-codec CODEC       - Set default codec used for the default driver'
    echo
    echo '--without-alaw              - Disable support of A-Law codec (de- and encoding)'
    echo '--without-alaw-rw           - Disable support for writing A-Law (saves 8KB)'
@@ -196,6 +198,10 @@ do
   ;;
   '--default-driver')
    ROAR_DRIVER_DEFAULT="$2"
+   shift;
+  ;;
+  '--default-codec')
+   ROAR_DRIVER_CODEC="$2"
    shift;
   ;;
   '--without-alaw')
@@ -451,6 +457,7 @@ EOF
  [ "$DEFAULT_CHANNELS"    = '' ] || echo "#define ROAR_CHANNELS_DEFAULT $DEFAULT_CHANNELS"
  [ "$DEFAULT_BITS"        = '' ] || echo "#define ROAR_BITS_DEFAULT     $DEFAULT_BITS"
  [ "$ROAR_DRIVER_DEFAULT" = '' ] || echo "#define ROAR_DRIVER_DEFAULT   \"$ROAR_DRIVER_DEFAULT\""
+ [ "$ROAR_DRIVER_CODEC"   = '' ] || echo "#define ROAR_DRIVER_CODEC     \"$ROAR_DRIVER_CODEC\""
  echo
  $ALAW     && echo '#define ROAR_SUPPORT_ALAW'
  $ALAW_RW  && echo '#define ROAR_SUPPORT_ALAW_RW'
