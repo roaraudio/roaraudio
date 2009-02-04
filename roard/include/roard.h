@@ -30,6 +30,8 @@
 #include <sys/wait.h>
 #include <roaraudio.h>
 #include <pwd.h>
+#include <sys/time.h>
+#include <time.h>
 
 /*
 #ifdef __linux__
