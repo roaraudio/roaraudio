@@ -483,6 +483,14 @@ struct {
  {ROAR_CODEC_MULAW,       "mulaw"      },
  {ROAR_CODEC_MULAW,       "ulaw"       }, // alias
 
+ // Meta Codecs:
+ {ROAR_CODEC_META_VCLT,     "meta_vclt"    },
+ {ROAR_CODEC_META_RALT,     "meta_ralt"    },
+ {ROAR_CODEC_META_RALB,     "meta_ralb"    },
+ {ROAR_CODEC_META_RALB_LE,  "meta_ralb_le" },
+ {ROAR_CODEC_META_RALB_BE,  "meta_ralb_be" },
+ {ROAR_CODEC_META_RALB_PDP, "meta_ralb_pdp"},
+
  {-1, NULL}
 };
 

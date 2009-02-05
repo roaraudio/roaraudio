@@ -35,31 +35,37 @@
 /*
  Bits:
  76543210
-   |||||\---\ byte-
-   ||||\----/ order
-   |||\-----> unsigned?
-   ||\------> PCM(0) or MIDI(1)?
-   |\-------> PCM/MIDI(0) or hi-level codecs(1)
-   \--------> MISC(0) or RIFF/WAVE like(1)
+ |||||||\---\ byte-
+ ||||||\----/ order
+ |||||\-----> unsigned?
+ ||||\------> PCM(0) or MIDI(1)?
+ |||\-------> PCM/MIDI(0) or hi-level codecs(1)
+ ||\--------> MISC(0) or RIFF/WAVE like(1)
+ |\---------> first set(0) or second set(1)
+ \----------> (0)
 
  BB = Byte order / MSB/LSB
+
+ -- First Set:
 
  MIDI 0x08:
  76543210
       000 0x08 -> MIDI File
 
  hi-level 0x10:
- 76543210
-     0000 0x10 -> Ogg Vorbis
-     0001 0x11 -> Native FLAC
-     0010 0x12 -> Ogg Speex
-     0011 0x13 -> Reserved for CELT
-     0100 0x14 -> Ogg FLAC
-     0101 0x15 -> Ogg General
-     0110 0x16 -> Ogg CELT
-     [...]
-     **** 0x1a -> ROAR CELT
-     **** 0x1b -> ROAR SPEEX
+  76543210
+      0000 0x10 -> Ogg Vorbis
+      0001 0x11 -> Native FLAC
+      0010 0x12 -> Ogg Speex
+      0011 0x13 -> Reserved for CELT
+      0100 0x14 -> Ogg FLAC
+      0101 0x15 -> Ogg General
+      0110 0x16 -> Ogg CELT
+      [...]
+      **** 0x1a -> ROAR CELT
+      **** 0x1b -> ROAR SPEEX
+      **** 0x1c -> RAUM
+      **** 0x1d -> RAUM Vorbis
 
  RIFF/WAVE like 0x20:
   76543210
@@ -69,6 +75,28 @@
   76543210
       00BB 0x30 -> A-Law (base)
       01BB 0x34 -> mu-Law (base)
+
+ -- Second Set:
+
+ Bits:
+ 76543210
+ |||||||\---\ byte-
+ ||||||\----/ order
+ |||||\-----> unsigned? (or other flags)
+ ||||\------> META: text(0) or binary(1)
+ |||\-------> META(0)
+ ||\--------> (0)
+ |\---------> second set(1)
+ \----------> (0)
+
+ Meta Codecs 0x40:
+  76543210
+      0000 0x40 -> Meta Text: Vorbis Comment Like
+      [...]
+      0100 0x44 -> Meta Text: RoarAudio Like
+      [...]
+      11BB 0x4c -> Meta Binary: RoarAudio Like
+
 */
 
 #define ROAR_CODEC_IS_SIGNED(x)  (((x) & ROAR_CODEC_UNSIGNED) == 0 ? 1 : 0)
@@ -111,6 +139,16 @@
 #define ROAR_CODEC_ALAW         0x30
 #define ROAR_CODEC_MULAW        0x34
 
+// Meta Codecs:
+#define ROAR_CODEC_META_VCLT    0x40 /* VCLT = Vorbis Comment Like Text */
+#define ROAR_CODEC_META_RALT    0x44 /* RALT = RoarAudio Like Text      */
+#define ROAR_CODEC_META_RALB    0x4c /* RALB = RoarAudio Like Binary    */
+                                     /* if no byte order is given then you
+                                        should assume BE as it is network
+                                        byte order                     */
+#define ROAR_CODEC_META_RALB_LE (ROAR_CODEC_META_RALB | ROAR_CODEC_LE)
+#define ROAR_CODEC_META_RALB_BE (ROAR_CODEC_META_RALB | ROAR_CODEC_BE)
+#define ROAR_CODEC_META_RALB_PDP (ROAR_CODEC_META_RALB | ROAR_CODEC_PDP)
 
 #if BYTE_ORDER == BIG_ENDIAN
 
