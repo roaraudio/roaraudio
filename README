@@ -8,6 +8,9 @@ RoarAudio is a cross-platform sound system for both, home and professional use.
 It can be used to mix audio for output on a single-stream soundcard or to play
 audio over the network.
 
+For more Information see our website at:
+http://roaraudio.keep-cool.org/
+
 --- Build:
 
 -- Build requirements:
