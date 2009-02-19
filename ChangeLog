@@ -1,6 +1,6 @@
 v. 0.2beta1 - ?
 	* added options --default-codec and --without-cf-cmd to configure script
-	* added sole funcs to list of frozen API calls
+	* added some funcs to list of frozen API calls
 	* added sleep command to roarctl
 	* updated roard manpage
 	* fixed a possible segfault within auto codec detection and
