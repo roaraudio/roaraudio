@@ -6,7 +6,7 @@ v. 0.2beta1 - ?
 	* fixed a possible segfault within auto codec detection and
 	  added support for native flac
 	* fixed some compiler warnings
-	* made roarcat and roarmin 100% esdcat and esdmon compatible
+	* made roarcat and roarmon 100% esdcat and esdmon compatible
 	* set fragment size for OSS driver
 	* fixed some minor bugs
 
