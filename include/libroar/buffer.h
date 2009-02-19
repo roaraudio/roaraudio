@@ -37,9 +37,16 @@
 
 #include <roaraudio.h>
 
+#define ROAR_BUFFER_FLAG_NONE      0
+#define ROAR_BUFFER_FLAG_NOFREE    1
+
+#define ROAR_BUFFER_SET            0
+#define ROAR_BUFFER_RESET          1
+
 struct roar_buffer {
  size_t               len;
  size_t               user_len;
+ int                  flags;
  void               * data;
  void               * user_data;
  void               * meta;
@@ -55,6 +62,7 @@ struct roar_buffer_stats {
 #define roar_buffer_next(a) roar_buffer_delete(*(a), (a))
 
 int roar_buffer_new      (struct roar_buffer ** buf, size_t len);
+int roar_buffer_new_no_ma(struct roar_buffer ** buf, size_t len, void * data); // no internal malloc
 int roar_buffer_free     (struct roar_buffer *  buf);
 int roar_buffer_delete   (struct roar_buffer *  buf, struct roar_buffer ** next);
 int roar_buffer_add      (struct roar_buffer *  buf, struct roar_buffer *  next);
@@ -72,6 +80,9 @@ int roar_buffer_get_meta (struct roar_buffer *  buf, void   ** meta);
 
 int roar_buffer_set_len  (struct roar_buffer *  buf, size_t    len);
 int roar_buffer_get_len  (struct roar_buffer *  buf, size_t *  len);
+
+int roar_buffer_set_flag (struct roar_buffer *  buf, int flag, int reset);
+int roar_buffer_get_flag (struct roar_buffer *  buf, int flag);
 
 int roar_buffer_duplicate (struct roar_buffer *  buf, struct roar_buffer ** copy);
 

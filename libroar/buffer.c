@@ -35,20 +35,42 @@
 #include "libroar.h"
 
 int roar_buffer_new      (struct roar_buffer ** buf, size_t len) {
+ void * data;
+
+ if ((data = malloc(len)) == NULL) {
+  return -1;
+ }
+
+ if ( roar_buffer_new_no_ma(buf, len, data) == -1 ) {
+  free(data);
+  return -1;
+ }
+
+ if ( roar_buffer_set_flag(*buf, ROAR_BUFFER_FLAG_NOFREE, ROAR_BUFFER_RESET) == -1 ) {
+  roar_buffer_free(*buf);
+  free(data);
+  return -1;
+ }
+
+ return 0;
+}
+
+int roar_buffer_new_no_ma(struct roar_buffer ** buf, size_t len, void * data) { // no internal malloc
  struct roar_buffer * new;
 
  ROAR_DBG("buffer_new(buf=%p, len=%i) = ?", buf, len);
+
+ if ( buf == NULL || data == NULL )
+  return -1;
 
  if ((new = malloc(sizeof(struct roar_buffer))) == NULL) {
   *buf = NULL;
   return -1;
  }
 
- if ((new->data = malloc(len)) == NULL) {
-  free(new);
-  *buf = NULL;
-  return -1;
- }
+ new->data      = data;
+
+ new->flags     = ROAR_BUFFER_FLAG_NONE|ROAR_BUFFER_FLAG_NOFREE;
 
  new->user_data = new->data;
 
@@ -75,7 +97,9 @@ int roar_buffer_free     (struct roar_buffer * buf) {
   buf = next;
  }
 
- free(buf->data);
+ if ( roar_buffer_get_flag(buf, ROAR_BUFFER_FLAG_NOFREE) != 1 )
+  free(buf->data);
+
  free(buf);
 
  return 0;
@@ -242,6 +266,25 @@ int roar_buffer_get_len  (struct roar_buffer *  buf, size_t *  len) {
  *len = buf->user_len;
 
  return 0;
+}
+
+int roar_buffer_set_flag (struct roar_buffer *  buf, int flag, int reset) {
+ if ( buf == NULL )
+  return -1;
+
+ buf->flags |= flag;
+
+ if ( reset )
+  buf->flags -= flag;
+
+ return 0;
+}
+
+int roar_buffer_get_flag (struct roar_buffer *  buf, int flag) {
+ if ( buf == NULL )
+  return -1;
+
+ return buf->flags & flag;
 }
 
 int roar_buffer_duplicate (struct roar_buffer *  buf, struct roar_buffer ** copy) {

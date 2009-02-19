@@ -9,6 +9,7 @@ v. 0.2beta1 - ?
 	* made roarcat and roarmon 100% esdcat and esdmon compatible
 	* set fragment size for OSS driver
 	* fixed some minor bugs
+	* changed buffer interface a bit to support non buffer alloced buffers
 
 v. 0.2beta0 - Wed Feb 04 2009
 	* use new driver interface as default (finally!)
