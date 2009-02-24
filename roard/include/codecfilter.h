@@ -92,6 +92,7 @@ int codecfilter_write(CODECFILTER_USERDATA_T   inst, int codecfilter, char * buf
 int codecfilter_read (CODECFILTER_USERDATA_T   inst, int codecfilter, char * buf, int len);
 int codecfilter_flush(CODECFILTER_USERDATA_T   inst, int codecfilter);
 int codecfilter_delay(CODECFILTER_USERDATA_T   inst, int codecfilter, uint_least32_t * delay);
+int codecfilter_ctl  (CODECFILTER_USERDATA_T   inst, int codecfilter, int_least32_t cmd, void * data);
 
 int codecfilter_delay_fulldyn(CODECFILTER_USERDATA_T   inst, uint_least32_t * delay);
 

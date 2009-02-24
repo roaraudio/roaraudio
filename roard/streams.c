@@ -370,6 +370,32 @@ int streams_calc_delay    (int id) {
  return 0;
 }
 
+int streams_ctl          (int id, int_least32_t cmd, void * data) {
+ struct roar_stream_server * ss;
+ int_least32_t comp;
+
+ if ( (ss = g_streams[id]) == NULL )
+  return -1;
+
+ comp = cmd & ROAR_STREAM_CTL_COMPMASK;
+
+ cmd &= ~comp;
+
+ switch (comp) {
+  case ROAR_STREAM_CTL_COMP_BASE:
+   break;
+  case ROAR_STREAM_CTL_COMP_CF:
+    return codecfilter_ctl(ss->codecfilter_inst, ss->codecfilter, cmd, data);
+   break;
+  case ROAR_STREAM_CTL_COMP_DRV:
+   break;
+  default:
+   return -1;
+ }
+
+ return -1;
+}
+
 int streams_get_outputbuffer  (int id, void ** buffer, size_t size) {
  if ( g_streams[id] == NULL )
   return -1;

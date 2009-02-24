@@ -36,6 +36,17 @@
 //#define ROAR_STREAM(x)        ((struct roar_stream*)(x))
 #define ROAR_STREAM_SERVER(x) ((struct roar_stream_server*)(x))
 
+// stream ctls...:
+
+#define ROAR_STREAM_CTL_COMPMASK  0xFF000000
+#define ROAR_STREAM_CTL_TYPEMASK  0x00FF0000
+#define ROAR_STREAM_CTL_CMDMASK   0x0000FFFF
+
+#define ROAR_STREAM_CTL_COMP_BASE 0x00000000
+#define ROAR_STREAM_CTL_COMP_CF   0x01000000
+#define ROAR_STREAM_CTL_COMP_DRV  0x02000000
+
+
 struct roar_stream_server {
  struct roar_stream _stream;
  unsigned int pos_abs;
@@ -85,7 +96,7 @@ int streams_get_flag     (int id, int flag);
 
 int streams_calc_delay   (int id);
 
-int streams_ctl          (int id, int cmd, void * data);
+int streams_ctl          (int id, int_least32_t cmd, void * data);
 
 int stream_add_buffer     (int id, struct roar_buffer *  buf);
 //int stream_get_buffer     (int id, struct roar_buffer ** buf);

@@ -291,6 +291,17 @@ int codecfilter_delay(CODECFILTER_USERDATA_T   inst, int codecfilter, uint_least
  return -1;
 }
 
+int codecfilter_ctl  (CODECFILTER_USERDATA_T   inst, int codecfilter, int_least32_t cmd, void * data) {
+ if ( codecfilter == -1 )
+  return -1;
+
+ if ( g_codecfilter[codecfilter].ctl )
+  return g_codecfilter[codecfilter].ctl(inst, cmd, data);
+
+ return -1;
+}
+
+
 int codecfilter_delay_fulldyn(CODECFILTER_USERDATA_T   inst, uint_least32_t * delay) {
  *delay = 0; // just to be sure
  return -1;
