@@ -38,7 +38,16 @@
 #include "libroar.h"
 
 // CTLs:
-
+/*
+ * 0xAAAABBBB
+ * AAAA:
+ *   0x0001 -> Basic stream calls
+ *   0x0002 -> Driver calls
+ *
+ * BBBB:
+ *   0x0XXX -> Client
+ *   0x1XXX -> Server 
+ */
 // stream:
 #define ROAR_VIO_CTL_SET_STREAM    0x00010001 /* normal streams */
 #define ROAR_VIO_CTL_GET_STREAM    0x00010002
@@ -48,6 +57,10 @@
 
 #define ROAR_VIO_CTL_GET_DELAY     0x00010011 /* return in bytes as the vio interface */
                                               /* does not know anything about streams */
+
+#define ROAR_VIO_CTL_GET_DBLOCKS   0x00020001 /* get Driver Blocks */
+#define ROAR_VIO_CTL_SET_DBLOCKS   0x00020002 /* set Driver Blocks */
+#define ROAR_VIO_CTL_GET_DBLKSIZE  0x00020003 /* get Driver Blocks size (in byte) */
 
 // sys io:
 
