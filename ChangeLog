@@ -1,5 +1,7 @@
 v. 0.2beta2 - ?
-
+	* added (dummy) flags autoconf and cleanmeta
+	* added streams_ctl() to server
+	* added support for primary flag as -oO, support for blocks parameter
 
 v. 0.2beta1 - Mon Feb 23 2009 25:08
 	* added options --default-codec and --without-cf-cmd to configure script
