@@ -55,6 +55,8 @@
 #define ROAR_FLAG_SOURCE         0x04
 #define ROAR_FLAG_SYNC           0x08
 #define ROAR_FLAG_META           0x10
+#define ROAR_FLAG_AUTOCONF       0x20
+#define ROAR_FLAG_CLEANMETA      0x40
 //#define ROAR_FLAG_SYNC           0x08
 
 #define ROAR_SET_FLAG            0
