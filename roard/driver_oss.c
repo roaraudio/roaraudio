@@ -31,6 +31,7 @@ int driver_oss_open(struct roar_vio_calls * inst, char * device, struct roar_aud
  int tmp;
  int ctmp;
  char * es;
+ uint32_t tmp32;
 
 #ifdef ROAR_DEFAULT_OSS_DEV
  if ( device == NULL )
@@ -187,12 +188,8 @@ int driver_oss_open(struct roar_vio_calls * inst, char * device, struct roar_aud
  }
 
 
-#ifdef SNDCTL_DSP_SETFRAGMENT
- tmp = 4 << 16 | 11; // 4 fragements of 2048 Bytes.
- if ( ioctl(fh, SNDCTL_DSP_SETFRAGMENT, &tmp) == -1 ) {
-  ROAR_WARN("driver_oss_open(*): Can not set fragment size, sorry :(");
- }
-#endif
+ tmp32 = 4;
+ driver_oss_ctl(inst, ROAR_VIO_CTL_SET_DBLOCKS, &tmp32);
 
  ROAR_DBG("driver_oss_open(*): OSS devices opened :)");
 
@@ -212,26 +209,43 @@ int driver_oss_sync(struct roar_vio_calls * vio) {
 }
 
 int driver_oss_ctl(struct roar_vio_calls * vio, int cmd, void * data) {
-#ifdef SNDCTL_DSP_GETODELAY
  int d;
 
  if ( vio == NULL )
   return -1;
 
- if ( cmd != ROAR_VIO_CTL_GET_DELAY )
-  return -1;
+ switch (cmd) {
+  case ROAR_VIO_CTL_GET_DELAY:
+#ifdef SNDCTL_DSP_GETODELAY
+    if ( ioctl(roar_vio_get_fh(vio), SNDCTL_DSP_GETODELAY, &d) == -1 )
+     return -1;
 
- if ( ioctl(roar_vio_get_fh(vio), SNDCTL_DSP_GETODELAY, &d) == -1 )
-  return -1;
+    ROAR_DBG("driver_oss_ctl(*): delay=%i byte", d);
 
- ROAR_DBG("driver_oss_ctl(*): delay=%i byte", d);
-
- *(uint_least32_t *)data = d;
+    *(uint_least32_t *)data = d;
+#else
+    return -1;
+#endif
+   break;
+  case ROAR_VIO_CTL_SET_DBLOCKS:
+#ifdef SNDCTL_DSP_SETFRAGMENT
+    d = (*(uint_least32_t *)data) << 16 | 11; // (*data) fragements of 2048 Bytes.
+    if ( ioctl(roar_vio_get_fh(vio), SNDCTL_DSP_SETFRAGMENT, &d) == -1 ) {
+     ROAR_WARN("driver_oss_ctl(*): Can not set fragment size, sorry :(");
+    }
+#else
+    return -1;
+#endif
+   break;
+  case ROAR_VIO_CTL_GET_DBLKSIZE:
+    *(uint_least32_t *)data = 2048;
+    return 0;
+   break;
+  default:
+   return -1;
+ }
 
  return 0;
-#else
- return -1;
-#endif
 }
 
 #endif
