@@ -167,7 +167,7 @@ void list_streams (struct roar_connection * con) {
  int id[ROAR_STREAMS_MAX];
  struct roar_stream s;
  struct roar_stream_info info;
- char flags[80];
+ char flags[1024];
 
 
  if ( (num = roar_list_streams(con, id, ROAR_STREAMS_MAX)) == -1 ) {
@@ -216,6 +216,10 @@ void list_streams (struct roar_connection * con) {
      strcat(flags, "source ");
     if ( info.flags & ROAR_FLAG_META )
      strcat(flags, "meta ");
+    if ( info.flags & ROAR_FLAG_AUTOCONF )
+     strcat(flags, "autoconf ");
+    if ( info.flags & ROAR_FLAG_CLEANMETA )
+     strcat(flags, "cleanmeta ");
 
     printf("Flags                 : %s\n", flags);
    }
@@ -540,6 +544,8 @@ int set_flags (struct roar_connection * con, int id, int reset, char * flags) {
    f |= ROAR_FLAG_PRIMARY;
   } else if ( !strcmp(c, "sync") ) {
    f |= ROAR_FLAG_SYNC;
+  } else if ( !strcmp(c, "cleanmeta") ) {
+   f |= ROAR_FLAG_CLEANMETA;
   } else {
    fprintf(stderr, "Error: unknown flag: %s\n", c);
    return -1;
