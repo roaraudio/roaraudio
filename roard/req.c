@@ -481,7 +481,7 @@ int req_on_get_stream_para (int client, struct roar_message * mes, char * data) 
   return -1;
  }
 
- if ( sreams_calc_delay(mes->stream) == -1 ) {
+ if ( streams_calc_delay(mes->stream) == -1 ) {
   ROAR_WARN("req_on_get_stream_para(*): can not calc delay for stream %i", mes->stream);
  }
 

@@ -336,7 +336,7 @@ int streams_get_flag     (int id, int flag) {
  return g_streams[id]->flags & flag ? 1 : 0;
 }
 
-int sreams_calc_delay    (int id) {
+int streams_calc_delay    (int id) {
  struct roar_stream_server * ss;
  struct roar_stream        * s;
  register uint_least32_t d = 0;
@@ -353,17 +353,17 @@ int sreams_calc_delay    (int id) {
 
  if ( ss->vio.ctl != NULL ) {
   if ( roar_vio_ctl(&(ss->vio), ROAR_VIO_CTL_GET_DELAY, t) != -1 ) { // *t is in byte
-   ROAR_DBG("sreams_calc_delay(id=%i): VIO delay in byte: %i", id, *t);
+   ROAR_DBG("streams_calc_delay(id=%i): VIO delay in byte: %i", id, *t);
    tmp = *t;
    tmp *= 1000000; // musec per sec
    tmp /= s->info.rate * s->info.channels * (s->info.bits/8);
-   ROAR_DBG("sreams_calc_delay(id=%i): VIO delay in musec: %i", id, tmp);
+   ROAR_DBG("streams_calc_delay(id=%i): VIO delay in musec: %i", id, tmp);
 
    d += tmp;
   }
  }
 
- ROAR_DBG("sreams_calc_delay(id=%i): delay in musec: %i", id, d);
+ ROAR_DBG("streams_calc_delay(id=%i): delay in musec: %i", id, d);
 
  ss->delay = d;
 

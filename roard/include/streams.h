@@ -83,7 +83,9 @@ int streams_set_flag     (int id, int flag);
 int streams_reset_flag   (int id, int flag);
 int streams_get_flag     (int id, int flag);
 
-int sreams_calc_delay    (int id);
+int streams_calc_delay   (int id);
+
+int streams_ctl          (int id, int cmd, void * data);
 
 int stream_add_buffer     (int id, struct roar_buffer *  buf);
 //int stream_get_buffer     (int id, struct roar_buffer ** buf);

@@ -50,6 +50,7 @@ struct roar_codecfilter {
  int (*read )(CODECFILTER_USERDATA_T   inst, char * buf, int len);
  int (*flush)(CODECFILTER_USERDATA_T   inst);
  int (*delay)(CODECFILTER_USERDATA_T   inst, uint_least32_t * delay);
+ int (*ctl  )(CODECFILTER_USERDATA_T   inst, int cmd, void * data);
 };
 
 
