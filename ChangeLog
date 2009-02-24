@@ -1,4 +1,4 @@
-v. 0.2beta1 - ?
+v. 0.2beta1 - Mon Feb 23 2009 25:08
 	* added options --default-codec and --without-cf-cmd to configure script
 	* added some funcs to list of frozen API calls
 	* added sleep command to roarctl
