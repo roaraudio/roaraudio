@@ -55,7 +55,11 @@ int roar_pinentry_open (struct roar_pinentry * pe, int flags, char * display, ch
   tty = ttyname(ROAR_STDIN);
 
  if ( tty == NULL )
-  tty = "/dev/tty"; // TODO: make compile time config parameter out of this
+#ifdef ROAR_DEFAULT_TTY
+  tty = ROAR_DEFAULT_TTY;
+#else
+  return -1;
+#endif
 
  if ( term == NULL )
   term = getenv("TERM");

@@ -31,6 +31,7 @@ PREFIX_MAN=''
 CDROM="none"
 OSS_DEV="none"
 PROC_NET_DECNET="/proc/net/decnet"
+TTY_DEV="none"
 
 DEFAULT_GRP=''
 
@@ -102,6 +103,7 @@ do
    echo '--addpath DIR               - Add DIR/lib to lib, DIR/include to header search list'
    echo
    echo '--cdrom DEV                 - Set default CDRum device'
+   echo '--tty DEV                   - Set default TTY'
    echo '--proc-net-decnet FILE      - Set DECnet file for DECnet support auto detecting'
    echo '                              (ignore this on non-Linux)'
    echo
@@ -159,6 +161,10 @@ do
   ;;
   '--cdrom')
    CDROM="$2"
+   shift;
+  ;;
+  '--tty')
+   TTY_DEV="$2"
    shift;
   ;;
   '--oss-dev')
@@ -749,6 +755,22 @@ else
  then
   echo "$CDROM"
   echo '#define ROAR_DEFAULT_CDROM "'"$CDROM"'"' >&3
+ else
+  echo 'none'
+ fi
+fi
+
+echo -n 'checking for default tty device... '
+if [ -e "$TTY_DEV" ]
+then
+ echo "$TTY_DEV"
+ echo '#define ROAR_DEFAULT_TTY "'"$TTY_DEV"'"' >&3
+else
+ TTY_DEV=$(ls /dev/tty 2> /dev/null | head -n 1);
+ if [ -e "$TTY_DEV" ]
+ then
+  echo "$TTY_DEV"
+  echo '#define ROAR_DEFAULT_TTY "'"$TTY_DEV"'"' >&3
  else
   echo 'none'
  fi
