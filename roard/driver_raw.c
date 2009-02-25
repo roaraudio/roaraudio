@@ -45,12 +45,8 @@ int driver_raw_close(DRIVER_USERDATA_T   inst) {
  return close(roar_vio_get_fh((struct roar_vio_calls *)inst));
 }
 
-int driver_raw_pause(DRIVER_USERDATA_T   inst, int newstate) {
- return -1;
-}
-
 int driver_raw_flush(DRIVER_USERDATA_T   inst) {
- return 0;
+ return ROAR_FDATASYNC(roar_vio_get_fh((struct roar_vio_calls *)inst));
 }
 
 //ll
