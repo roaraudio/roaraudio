@@ -149,6 +149,11 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
 #endif
  }
 
+ if ( opts == NULL && count == 0 ) {
+  sync = 1;
+  prim = 1; // if ( prim == 0 ) prim = 1; -> prim allways = 1
+ }
+
  if ( (stream = streams_new()) == -1 ) {
   ROAR_DBG("add_output(drv='%s', dev='%s', opts='%s') = -1", drv, dev, opts);
   if ( prim ) alive = 0;
