@@ -879,7 +879,7 @@ int streams_send_mon   (int id) {
   }
 
   if ( ret > 0 && errno == 0 ) {
-   ROAR_WARN("streams_send_mon(id=%i): Overrun in stream: wrote %i of %i bytes, %i bytes missing", id, ret, olen, olen-ret);
+   ROAR_WARN("streams_send_mon(id=%i): Overrun in stream: wrote %i of %i bytes, %i bytes missing", id, (int)ret, olen, olen-(int)ret);
    if ( need_to_free ) free(obuf);
    s->pos = ROAR_MATH_OVERFLOW_ADD(s->pos, ROAR_OUTPUT_CALC_OUTBUFSAMP(&(s->info), ret)*s->info.channels);
    return 0;
