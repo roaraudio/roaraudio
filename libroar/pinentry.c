@@ -34,4 +34,102 @@
 
 #include "libroar.h"
 
+int roar_pinentry_open (struct roar_pinentry * pe, int flags, char * display, char * tty, char * term) {
+ if ( pe == NULL )
+  return -1;
+
+ memset(pe, 0, sizeof(struct roar_pinentry));
+ pe->in  = -1;
+ pe->out = -1;
+
+#ifdef ROAR_HAVE_BIN_PINENTRY
+ return 0;
+#else
+ return -1;
+#endif
+}
+
+int roar_pinentry_simple_open(struct roar_pinentry * pe) {
+ return roar_pinentry_open(pe, 0, NULL, NULL, NULL);
+}
+
+int roar_pinentry_close(struct roar_pinentry * pe) {
+ if ( pe == NULL )
+  return -1;
+
+ if ( pe->opened == 0 )
+  return 0;
+
+ if ( pe->out != -1 )
+  close(pe->out);
+
+ if ( pe->in  != -1 )
+  close(pe->in);
+
+ return 0;
+}
+
+int roar_pinentry_send (struct roar_pinentry * pe, char * cmd,  char * args) {
+ size_t len;
+
+ if ( pe == NULL )
+  return -1;
+
+ if ( cmd == NULL )
+  return -1;
+
+ len = strlen(cmd);
+
+ if ( write(pe->out, cmd, len) != len )
+  return -1;
+
+ if ( args != NULL ) {
+  len = strlen(args);
+
+  if ( write(pe->out, args, len) != len )
+   return -1;
+ }
+
+ if ( write(pe->out, "\n", 1) != 1 )
+  return -1;
+
+ return 0;
+}
+
+int roar_pinentry_recv (struct roar_pinentry * pe, char * line, char * opts) {
+ return -1;
+}
+
+int roar_pinentry_req  (struct roar_pinentry * pe, char * cmd,  char * args, char * line, char * opts) {
+ if ( pe == NULL )
+  return -1;
+
+ if ( roar_pinentry_send(pe, cmd, args) != 0 )
+  return -1;
+
+ return roar_pinentry_recv(pe, line, opts);
+}
+
+int roar_pinentry_set_desc (struct roar_pinentry * pe, char * desc) {
+ return roar_pinentry_set(pe, "DESC", desc);
+}
+
+int roar_pinentry_set      (struct roar_pinentry * pe, char * obj, char * text) {
+ char req[80] = "SET";
+
+ if ( pe == NULL )
+  return -1;
+
+ if ( obj == NULL )
+  return -1;
+
+ if ( strlen(obj) > (80-1 /* \0 */ + 3 /* "SET" */ + 1 /* " " */) )
+  return -1;
+
+ strncat(req, obj, 80-5);
+ strncat(req, " ", 2);
+
+ return roar_pinentry_req(pe, req, text, NULL, NULL);
+}
+
 //ll

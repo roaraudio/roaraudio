@@ -40,10 +40,11 @@
 //pinentry.h
 
 struct roar_pinentry {
- int open;
+ int opened;
  pid_t pid;
  int in;
  int out;
+ FILE * fin;
 };
 
 int roar_pinentry_open (struct roar_pinentry * pe, int flags, char * display, char * tty, char * term);
