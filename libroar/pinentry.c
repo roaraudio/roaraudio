@@ -95,7 +95,7 @@ int roar_pinentry_open (struct roar_pinentry * pe, int flags, char * display, ch
     if ( dup2(in[1], ROAR_STDOUT) == -1 )
      _exit(1);
 
-    execlp(ROAR_HAVE_BIN_PINENTRY, "--display", display, "--ttytype", term, "--ttyname", tty, NULL);
+    execlp(ROAR_HAVE_BIN_PINENTRY, "RoarAudio", "--display", display, "--ttytype", term, "--ttyname", tty, NULL);
 
     _exit(1);
    break;
@@ -108,6 +108,8 @@ int roar_pinentry_open (struct roar_pinentry * pe, int flags, char * display, ch
  pe->out = out[1];
 
  pe->fin = fdopen(in[0], "r");
+
+ roar_pinentry_recv(pe, NULL, NULL);
 
  return 0;
 #else
@@ -184,7 +186,7 @@ int roar_pinentry_recv (struct roar_pinentry * pe, char ** line, char ** opts) {
 
  tp = realbuf + strlen(realbuf) - 1;
 
- for (; *tp != '\r' && *tp != '\n'; tp--)
+ for (; *tp == '\r' || *tp == '\n'; tp--)
   *tp = 0;
 
  if ( (tp = strstr(realbuf, " ")) == NULL ) {
@@ -248,11 +250,11 @@ int roar_pinentry_set_prompt(struct roar_pinentry * pe, char * prompt) {
 }
 
 int roar_pinentry_set_yes  (struct roar_pinentry * pe, char * yes) {
- return roar_pinentry_set(pe, "YES", yes);
+ return roar_pinentry_set(pe, "OK", yes);
 }
 
 int roar_pinentry_set_no   (struct roar_pinentry * pe, char * no) {
- return roar_pinentry_set(pe, "NO", no);
+ return roar_pinentry_set(pe, "CANCEL", no);
 }
 
 int roar_pinentry_set      (struct roar_pinentry * pe, char * obj, char * text) {
@@ -288,7 +290,10 @@ int roar_pinentry_getpin   (struct roar_pinentry * pe, char ** pw, char * desc, 
   if ( roar_pinentry_set_prompt(pe, prompt) != 0 )
    return -1;
 
- return roar_pinentry_req(pe, "GETPIN", NULL, NULL, pw);
+ if ( roar_pinentry_req(pe, "GETPIN", NULL, NULL, pw) == -1 )
+  return -1;
+
+ return 0;
 }
 
 int roar_pinentry_confirm  (struct roar_pinentry * pe, char * desc, char * yes, char * no) {
