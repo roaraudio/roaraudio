@@ -29,8 +29,8 @@ struct roar_driver g_driver[] = {
 #ifdef ROAR_HAVE_ESD
  { "esd", "EsounD audio driver", "localhost, remote.host.dom", NULL, driver_esd_close, driver_esd_pause, NULL, NULL, driver_esd_flush, driver_esd_open_vio},
 #endif
- { "roar", "RoarAudio driver", "localhost, remote.host.dom", NULL, driver_roar_close, driver_roar_pause, NULL, NULL, driver_roar_flush, driver_roar_open_vio},
- { "raw",  "RAW PCM driver", "/some/file", NULL, driver_raw_close, driver_roar_pause, NULL, NULL, driver_raw_flush, driver_raw_open_vio},
+ { "roar", "RoarAudio driver", "localhost, remote.host.dom", NULL, driver_roar_close, NULL, NULL, NULL, driver_roar_flush, driver_roar_open_vio},
+ { "raw",  "RAW PCM driver", "/some/file", NULL, driver_raw_close, NULL, NULL, NULL, driver_raw_flush, driver_raw_open_vio},
 #if defined(ROAR_HAVE_OSS_BSD) || defined(ROAR_HAVE_OSS)
 #ifndef ROAR_DEFAULT_OSS_DEV
 #define ROAR_DEFAULT_OSS_DEV "no default device"
@@ -166,7 +166,7 @@ int driver_pause(DRIVER_USERDATA_T   inst, int driver, int newstate) {
  if ( g_driver[driver].pause )
   return g_driver[driver].pause(inst, newstate);
 
- return 0;
+ return -1;
 }
 
 int driver_write(DRIVER_USERDATA_T   inst, int driver, char * buf, int len) {
