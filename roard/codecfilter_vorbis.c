@@ -74,7 +74,8 @@ int cf_vorbis_open(CODECFILTER_USERDATA_T * inst, int codec,
  self->stream               = info;
 // self->outlen               = ROAR_OUTPUT_BUFFER_SAMPLES * s->info.channels * s->info.bits / 8; // optimal size
 #ifdef ROAR_HAVE_LIBVORBISENC
- self->encoding             = 0;
+ self->encoding               = 0;
+ self->encoder.v_base_quality = 0.3;
 #endif
 
  ROAR_DBG("cf_vorbis_open(*): info->id=%i", ROAR_STREAM(info)->id);
@@ -89,30 +90,10 @@ int cf_vorbis_open(CODECFILTER_USERDATA_T * inst, int codec,
  } else if ( s->dir == ROAR_DIR_MONITOR || s->dir == ROAR_DIR_OUTPUT ) {
 #ifdef ROAR_HAVE_LIBVORBISENC
   // set up the encoder here
-
-  memset(&(self->encoder), 0, sizeof(self->encoder));
-
-  self->encoding = 1;
-
-  vorbis_info_init(&(self->encoder.vi));
-  vorbis_comment_init(&(self->encoder.vc));
-  vorbis_comment_add_tag(&(self->encoder.vc), "SERVER", "RoarAudio");
-  vorbis_comment_add_tag(&(self->encoder.vc), "ENCODER", "RoarAudio Vorbis codecfilter");
-
-  if( vorbis_encode_init_vbr(&(self->encoder.vi), (long) s->info.channels, (long) s->info.rate,
-                                                  self->encoder.v_base_quality) != 0 ) {
-   ROAR_ERR("cf_vorbis_open(*): Can not vorbis_encode_init_vbr(*)!");
-   vorbis_info_clear(&(self->encoder.vi)); // TODO: do we need to free vc also?
-   free(self);
-   return -1;
-  }
-
-  vorbis_analysis_init(&(self->encoder.vd), &(self->encoder.vi));
-  vorbis_block_init(&(self->encoder.vd), &(self->encoder.vb));
-
-                                     //  "RA"<<16 + PID<<8 + Stream ID
-  ogg_stream_init(&(self->encoder.os), 0x52410000 + ((getpid() & 0xff)<<8) + s->id);
-
+ if ( cf_vorbis_encode_start(self) == -1 ) {
+  free(self);
+  return -1;
+ }
 #else
  free(self);
  return -1;
@@ -136,10 +117,7 @@ int cf_vorbis_close(CODECFILTER_USERDATA_T   inst) {
 
 #ifdef ROAR_HAVE_LIBVORBISENC
  if ( self->encoding ) {
-  ogg_stream_clear(&(self->encoder.os));
-  vorbis_block_clear(&(self->encoder.vb));
-  vorbis_dsp_clear(&(self->encoder.vd));
-  vorbis_info_clear(&(self->encoder.vi));
+  cf_vorbis_encode_end(self);
  }
 #endif
 
@@ -361,6 +339,51 @@ int cf_vorbis_update_stream (struct codecfilter_vorbis_inst * self) {
  return 0;
 }
 
-#endif
+int cf_vorbis_encode_start  (struct codecfilter_vorbis_inst * self) {
+#ifdef ROAR_HAVE_LIBVORBISENC
+  memset(&(self->encoder), 0, sizeof(self->encoder));
 
+  self->encoding = 1;
+
+  vorbis_info_init(&(self->encoder.vi));
+  vorbis_comment_init(&(self->encoder.vc));
+  vorbis_comment_add_tag(&(self->encoder.vc), "SERVER", "RoarAudio");
+  vorbis_comment_add_tag(&(self->encoder.vc), "ENCODER", "RoarAudio Vorbis codecfilter");
+
+  if( vorbis_encode_init_vbr(&(self->encoder.vi), (long) ROAR_STREAM(self->stream)->info.channels,
+                                                  (long) ROAR_STREAM(self->stream)->info.rate,
+                                                  self->encoder.v_base_quality) != 0 ) {
+   ROAR_ERR("cf_vorbis_encode_start(*): Can not vorbis_encode_init_vbr(*)!");
+   vorbis_info_clear(&(self->encoder.vi)); // TODO: do we need to free vc also?
+   return -1;
+  }
+
+  vorbis_analysis_init(&(self->encoder.vd), &(self->encoder.vi));
+  vorbis_block_init(&(self->encoder.vd), &(self->encoder.vb));
+
+                                     //  "RA"<<16 + PID<<8 + Stream ID
+  ogg_stream_init(&(self->encoder.os), 0x52410000 + ((getpid() & 0xff)<<8) + (ROAR_STREAM(self->stream)->id & 0xff));
+ return 0;
+#else
+ return -1;
+#endif
+}
+
+int cf_vorbis_encode_end    (struct codecfilter_vorbis_inst * self) {
+#ifdef ROAR_HAVE_LIBVORBISENC
+ if ( self->encoding ) {
+  ogg_stream_clear(&(self->encoder.os));
+  vorbis_block_clear(&(self->encoder.vb));
+  vorbis_dsp_clear(&(self->encoder.vd));
+  vorbis_info_clear(&(self->encoder.vi));
+  self->opened = 0;
+ }
+
+ return 0;
+#else
+ return -1;
+#endif
+}
+
+#endif
 //ll

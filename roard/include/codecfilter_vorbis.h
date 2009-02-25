@@ -72,6 +72,8 @@ int cf_vorbis_write(CODECFILTER_USERDATA_T   inst, char * buf, int len);
 int cf_vorbis_read(CODECFILTER_USERDATA_T   inst, char * buf, int len);
 
 int cf_vorbis_update_stream (struct codecfilter_vorbis_inst * self);
+int cf_vorbis_encode_start  (struct codecfilter_vorbis_inst * self);
+int cf_vorbis_encode_end    (struct codecfilter_vorbis_inst * self);
 
 #endif
 
