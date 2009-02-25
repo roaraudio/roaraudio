@@ -51,12 +51,18 @@ int roar_pinentry_open (struct roar_pinentry * pe, int flags, char * display, ch
 int roar_pinentry_simple_open(struct roar_pinentry * pe);
 int roar_pinentry_close(struct roar_pinentry * pe);
 
-int roar_pinentry_send (struct roar_pinentry * pe, char * cmd,  char * args);
-int roar_pinentry_recv (struct roar_pinentry * pe, char * line, char * opts);
-int roar_pinentry_req  (struct roar_pinentry * pe, char * cmd,  char * args, char * line, char * opts);
+int roar_pinentry_send (struct roar_pinentry * pe, char *  cmd,  char *  args);
+int roar_pinentry_recv (struct roar_pinentry * pe, char ** line, char ** opts);
+int roar_pinentry_req  (struct roar_pinentry * pe, char *  cmd,  char *  args, char ** line, char ** opts);
 
 int roar_pinentry_set_desc (struct roar_pinentry * pe, char * desc);
+int roar_pinentry_set_prompt(struct roar_pinentry * pe, char * prompt);
+int roar_pinentry_set_yes  (struct roar_pinentry * pe, char * yes);
+int roar_pinentry_set_no   (struct roar_pinentry * pe, char * no);
 int roar_pinentry_set      (struct roar_pinentry * pe, char * obj, char * text);
+
+int roar_pinentry_getpin   (struct roar_pinentry * pe, char ** pw, char * desc, char * prompt);
+int roar_pinentry_confirm  (struct roar_pinentry * pe, char *  desc, char * yes, char * no);
 
 #endif
 
