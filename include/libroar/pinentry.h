@@ -1,7 +1,7 @@
-//libroar.h:
+//pinentry.h:
 
 /*
- *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008
+ *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2009
  *
  *  This file is part of libroar a part of RoarAudio,
  *  a cross-platform sound system for both, home and professional use.
@@ -32,47 +32,30 @@
  *  them with any software that uses libesd, libartsc or libpulse*.
  */
 
-#ifndef _LIBROAR_H_
-#define _LIBROAR_H_
+#ifndef _LIBROAR_PINENTRY_H_
+#define _LIBROAR_PINENTRY_H_
 
-#define ROAR_DBG_PREFIX  "libroar"
+#include "libroar.h"
 
-#include <roaraudio.h>
+//pinentry.h
 
-#include <stdint.h>
+struct roar_pinentry {
+ int open;
+ pid_t pid;
+ int in;
+ int out;
+};
 
-#include <fcntl.h>
-#ifndef ROAR_TARGET_WIN32
-#include <sys/socket.h>
-#include <netinet/in_systm.h>
-#include <netinet/in.h>
-#include <netinet/ip.h>
-#include <sys/uio.h>
-#endif
-#ifdef ROAR_HAVE_LIBDNET
-#include <netdnet/dn.h>
-#include <netdnet/dnetdb.h>
-#endif
-#ifdef ROAR_HAVE_IPX
-#include <netipx/ipx.h>
-#endif
+int roar_pinentry_open (struct roar_pinentry * pe, int flags, char * display, char * tty, char * term);
+int roar_pinentry_simple_open(struct roar_pinentry * pe);
+int roar_pinentry_close(struct roar_pinentry * pe);
 
-#include "error.h"
-#include "vio.h"
-#include "basic.h"
-#include "stream.h"
-#include "simple.h"
-#include "cdrom.h"
-#include "auth.h"
-#include "socket.h"
-#include "ctl.h"
-#include "buffer.h"
-#include "convert.h"
-#include "poly.h"
-#include "meta.h"
-#include "file.h"
-#include "acl.h"
-#include "pinentry.h"
+int roar_pinentry_send (struct roar_pinentry * pe, char * cmd,  char * args);
+int roar_pinentry_recv (struct roar_pinentry * pe, char * line, char * opts);
+int roar_pinentry_req  (struct roar_pinentry * pe, char * cmd,  char * args, char * line, char * opts);
+
+int roar_pinentry_set_desc (struct roar_pinentry * pe, char * desc);
+int roar_pinentry_set      (struct roar_pinentry * pe, char * obj, char * text);
 
 #endif
 

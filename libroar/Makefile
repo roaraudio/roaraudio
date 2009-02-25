@@ -1,7 +1,7 @@
 include ../Makefile.conf
 
 TARGETS=libroar.so
-OBJS=libroar.o basic.o stream.o simple.o auth.o socket.o ctl.o buffer.o convert.o poly.o meta.o file.o acl.o vio.o cdrom.o
+OBJS=libroar.o basic.o stream.o simple.o auth.o socket.o ctl.o buffer.o convert.o poly.o meta.o file.o acl.o vio.o cdrom.o pinentry.o
 
 #DEFINES        = -DDEBUG
 INCLUDE = -I../include -I../include/libroar
