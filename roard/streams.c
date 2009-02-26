@@ -116,6 +116,7 @@ int streams_new    (void) {
 int streams_delete (int id) {
  struct roar_stream_server * s;
  int prim;
+ int no_vio_close = 0;
 
  if ( (s = g_streams[id]) == NULL )
   return 0;
@@ -140,6 +141,7 @@ int streams_delete (int id) {
   driver_closevio(&(s->vio), s->driver_id);
   roar_vio_init_calls(&(s->vio));
   s->driver_id = -1;
+  no_vio_close =  1;
  }
 
  roardsp_fchain_uninit(&(s->fc));
@@ -160,7 +162,8 @@ int streams_delete (int id) {
   close(ROAR_STREAM(s)->fh);
 */
 
- roar_vio_close(&(s->vio));
+ if ( !no_vio_close )
+  roar_vio_close(&(s->vio));
 
  prim = s->primary;
 
