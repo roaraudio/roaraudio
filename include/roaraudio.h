@@ -33,6 +33,15 @@
                                   // so we can define well known standard types known to everyone
                                   // and everywhere but win32 here
 
+// consts we need to set depending on the OS and features:
+#if defined(ROAR_NEED_GNU_SOURCE) && !defined(_GNU_SOURCE)
+#define _GNU_SOURCE
+#endif
+
+#if defined(ROAR_NEED_BSD_VISIBLE) && !defined(__BSD_VISIBLE)
+#define __BSD_VISIBLE 1
+#endif
+
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
