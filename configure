@@ -582,6 +582,21 @@ else
  echo no
 fi
 
+echo -n 'checking for fopencookie()... '
+
+echo '#define _GNU_SOURCE' > $TF_C
+echo '#include <stdio.h>' >> $TF_C
+echo 'int main (void) { cookie_io_functions_t f; fopencookie(NULL, "", f); return 0; }' >> $TF_C
+
+if $CCTF 2> /dev/null;
+then
+ echo '#define ROAR_HAVE_FOPENCOOKIE' >&3
+ echo '#define ROAR_NEED_GNU_FOPENCOOKIE' >&3
+ echo yes
+else
+ echo no
+fi
+
 echo -n 'checking for square root func... '
 
 echo "$SYSNAME" | if grep CYGWIN > /dev/null
