@@ -381,7 +381,7 @@ int streams_ctl          (int id, int_least32_t cmd, void * data) {
 
  cmd &= ~comp;
 
- ROAR_WARN("streams_ctl(id=%i, cmd=?, data=%p): comp=0x%.8x, cmd=0x%.4x", id, data, comp, cmd);
+ ROAR_DBG("streams_ctl(id=%i, cmd=?, data=%p): comp=0x%.8x, cmd=0x%.4x", id, data, comp, cmd);
 
  switch (comp) {
   case ROAR_STREAM_CTL_COMP_BASE:

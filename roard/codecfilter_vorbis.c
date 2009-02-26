@@ -366,12 +366,12 @@ int cf_vorbis_encode_start  (struct codecfilter_vorbis_inst * self) {
   vorbis_analysis_init(&(self->encoder.vd), &(self->encoder.vi));
   vorbis_block_init(&(self->encoder.vd), &(self->encoder.vb));
 
-  ROAR_WARN("cf_vorbis_encode_start(*): srn=%i", self->encoder.srn);
+  ROAR_DBG("cf_vorbis_encode_start(*): srn=%i", self->encoder.srn);
                                      //  "RA"<<16 + PID<<8 + Stream ID
   ogg_stream_init(&(self->encoder.os),
-                   ((0x5241 + self->encoder.srn)<<16) +
-                   ((getpid() & 0xff           )<< 8) +
-                   ( sid      & 0xff               ));
+                   (((0x5241 + self->encoder.srn) & 0xffff)<<16) +
+                   ( (getpid()                    & 0x00ff)<< 8) +
+                   (  sid                         & 0x00ff));
  return 0;
 #else
  return -1;
@@ -430,10 +430,10 @@ int cf_vorbis_ctl(CODECFILTER_USERDATA_T   inst, int cmd, void * data) {
 
  switch (cmd) {
   case ROAR_CODECFILTER_CTL2CMD(ROAR_CODECFILTER_CTL_META_UPDATE):
-    ROAR_WARN("stoping stream...");
+    ROAR_DBG("cf_vorbis_ctl(*): stoping stream...");
     if ( cf_vorbis_encode_end(self) == -1 )
      return -1;
-    ROAR_WARN("restarting stream...");
+    ROAR_DBG("cf_vorbis_ctl(*): restarting stream...");
     if ( cf_vorbis_encode_start(self) == -1 )
      return -1;
 
