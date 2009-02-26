@@ -597,6 +597,21 @@ else
  echo no
 fi
 
+echo -n 'checking for funopen()... '
+
+echo '#define __BSD_VISIBLE 1'  > $TF_C
+echo '#include <stdio.h>'      >> $TF_C
+echo 'int main (void) { funopen(NULL, NULL, NULL, NULL, NULL); return 0; }' >> $TF_C
+
+if $CCTF 2> /dev/null;
+then
+ echo '#define ROAR_HAVE_FUNOPEN' >&3
+ echo '#define ROAR_NEED_BSD_VISIBLE' >&3
+ echo yes
+else
+ echo no
+fi
+
 echo -n 'checking for square root func... '
 
 echo "$SYSNAME" | if grep CYGWIN > /dev/null
