@@ -197,7 +197,7 @@ int driver_oss_open(struct roar_vio_calls * inst, char * device, struct roar_aud
 }
 
 int driver_oss_close(DRIVER_USERDATA_T   inst) {
- return close(roar_vio_get_fh((struct roar_vio_calls *)inst));
+ return roar_vio_close((struct roar_vio_calls *)inst);
 }
 
 int driver_oss_sync(struct roar_vio_calls * vio) {
