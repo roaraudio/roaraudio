@@ -155,8 +155,12 @@ int streams_delete (int id) {
  if ( s->output != NULL )
   free(s->output);
 
+/*
  if ( ROAR_STREAM(s)->fh != -1 )
   close(ROAR_STREAM(s)->fh);
+*/
+
+ roar_vio_close(&(s->vio));
 
  prim = s->primary;
 
@@ -192,17 +196,23 @@ int streams_get_client (int id) {
 
 
 int streams_set_fh     (int id, int fh) {
+ struct roar_stream_server * ss;
  int dir;
 
- if ( g_streams[id] == NULL )
+ if ( (ss = g_streams[id]) == NULL )
   return -1;
 
- ROAR_DBG("streams_set_fh(id=%i): g_streams[id]->id=%i", id, ROAR_STREAM(g_streams[id])->id);
+ ROAR_DBG("streams_set_fh(id=%i): g_streams[id]->id=%i", id, ROAR_STREAM(ss)->id);
 
  ROAR_STREAM(g_streams[id])->fh = fh;
 
- if ( codecfilter_open(&(g_streams[id]->codecfilter_inst), &(g_streams[id]->codecfilter), NULL,
-                  ROAR_STREAM(g_streams[id])->info.codec, g_streams[id]) == -1 ) {
+ ROAR_DBG("streams_set_fh(id=%i, fh=%i): driverID=%i", id, fh, ss->driver_id);
+
+ if ( ss->driver_id == -1 )
+  roar_vio_set_fh(&(ss->vio), fh);
+
+ if ( codecfilter_open(&(ss->codecfilter_inst), &(ss->codecfilter), NULL,
+                  ROAR_STREAM(ss)->info.codec, ss) == -1 ) {
   return streams_delete(id);
  }
 
@@ -212,7 +222,7 @@ int streams_set_fh     (int id, int fh) {
 
 // roar_socket_recvbuf(fh, ROAR_OUTPUT_CALC_OUTBUFSIZE( &(ROAR_STREAM(g_streams[id])->info) )); // set recv buffer to minimum
 
- dir = ROAR_STREAM(g_streams[id])->dir;
+ dir = ROAR_STREAM(ss)->dir;
 
  if ( dir == ROAR_DIR_MONITOR || dir == ROAR_DIR_RECORD || dir == ROAR_DIR_OUTPUT ) {
   shutdown(fh, SHUT_RD);

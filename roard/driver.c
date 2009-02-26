@@ -105,11 +105,15 @@ int driver_openvio(struct roar_vio_calls * calls,
  if ( driver == NULL )
   driver = ROAR_DRIVER_DEFAULT;
 
+ ROAR_DBG("driver_openvio(*): searching for driver '%s'...", driver);
+
  for (i = 0; g_driver[i].name != NULL; i++) {
   if ( strcmp(g_driver[i].name, driver) == 0 ) {
    ROAR_DBG("driver_open(*): found driver: id = %i", i);
 
    *driver_id = i;
+
+   ROAR_DBG("driver_openvio(*): driver found: %s -> %i", driver, i);
 
    if ( g_driver[i].vio_init == NULL ) {
     if ( g_driver[i].open == NULL ) { // this is the null driver
@@ -125,6 +129,7 @@ int driver_openvio(struct roar_vio_calls * calls,
     return -1;
    }
 
+   ROAR_DBG("driver_openvio(*): Opening VIO driver %s(%i)...", driver, i);
    return g_driver[i].vio_init(calls, device, info, fh);
   }
  }
