@@ -76,6 +76,7 @@ int cf_vorbis_open(CODECFILTER_USERDATA_T * inst, int codec,
 #ifdef ROAR_HAVE_LIBVORBISENC
  self->encoding               = 0;
  self->encoder.v_base_quality = 0.3;
+ self->encoder.srn            = -1;
 #endif
 
  ROAR_DBG("cf_vorbis_open(*): info->id=%i", ROAR_STREAM(info)->id);
@@ -179,22 +180,8 @@ int cf_vorbis_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
 
   vorbis_analysis_wrote(&(self->encoder.vd), i);
 
-  while ( vorbis_analysis_blockout(&(self->encoder.vd), &(self->encoder.vb)) == 1 ) {
-   vorbis_analysis(&(self->encoder.vb), &(self->encoder.op));
-   vorbis_bitrate_addblock(&(self->encoder.vb));
-
-   while ( vorbis_bitrate_flushpacket(&(self->encoder.vd), &(self->encoder.op)) ) {
-    ogg_stream_packetin(&(self->encoder.os), &(self->encoder.op));
-
-    while( ogg_stream_pageout(&(self->encoder.os), &(self->encoder.og)) ) {
-     if (
-          stream_vio_s_write(self->stream, self->encoder.og.header, self->encoder.og.header_len) == -1 ||
-          stream_vio_s_write(self->stream, self->encoder.og.body,   self->encoder.og.body_len  ) == -1   ) {
-      return -1;
-     }
-    }
-   }
-  }
+  if ( cf_vorbis_encode_flushout(self) == -1 )
+   return -1;
  }
 
   return len; // we assume every thing was written (at least into our dsp anaylises buffer
@@ -341,14 +328,32 @@ int cf_vorbis_update_stream (struct codecfilter_vorbis_inst * self) {
 
 int cf_vorbis_encode_start  (struct codecfilter_vorbis_inst * self) {
 #ifdef ROAR_HAVE_LIBVORBISENC
+ int srn = self->encoder.srn; // this value is allrady inited...
+ int len = 0;
+ int i;
+ int types[ROAR_META_MAX_PER_STREAM];
+ int sid = ROAR_STREAM(self->stream)->id;
+ char val[LIBROAR_BUFFER_MSGDATA];
+
+  val[LIBROAR_BUFFER_MSGDATA-1] = 0;
+
   memset(&(self->encoder), 0, sizeof(self->encoder));
 
   self->encoding = 1;
+  self->encoder.srn = srn + 1;;
 
   vorbis_info_init(&(self->encoder.vi));
   vorbis_comment_init(&(self->encoder.vc));
   vorbis_comment_add_tag(&(self->encoder.vc), "SERVER", "RoarAudio");
   vorbis_comment_add_tag(&(self->encoder.vc), "ENCODER", "RoarAudio Vorbis codecfilter");
+
+  if ( (len = stream_meta_list(sid, types, ROAR_META_MAX_PER_STREAM)) != -1 ) {
+   for (i = 0; i < len; i++) {
+//int stream_meta_get     (int id, int type, char * name, char * val, size_t len);
+    if ( stream_meta_get(sid, types[i], NULL, val, LIBROAR_BUFFER_MSGDATA-1) == 0 )
+     vorbis_comment_add_tag(&(self->encoder.vc), roar_meta_strtype(types[i]), val);
+   }
+  }
 
   if( vorbis_encode_init_vbr(&(self->encoder.vi), (long) ROAR_STREAM(self->stream)->info.channels,
                                                   (long) ROAR_STREAM(self->stream)->info.rate,
@@ -361,8 +366,12 @@ int cf_vorbis_encode_start  (struct codecfilter_vorbis_inst * self) {
   vorbis_analysis_init(&(self->encoder.vd), &(self->encoder.vi));
   vorbis_block_init(&(self->encoder.vd), &(self->encoder.vb));
 
+  ROAR_WARN("cf_vorbis_encode_start(*): srn=%i", self->encoder.srn);
                                      //  "RA"<<16 + PID<<8 + Stream ID
-  ogg_stream_init(&(self->encoder.os), 0x52410000 + ((getpid() & 0xff)<<8) + (ROAR_STREAM(self->stream)->id & 0xff));
+  ogg_stream_init(&(self->encoder.os),
+                   ((0x5241 + self->encoder.srn)<<16) +
+                   ((getpid() & 0xff           )<< 8) +
+                   ( sid      & 0xff               ));
  return 0;
 #else
  return -1;
@@ -372,6 +381,12 @@ int cf_vorbis_encode_start  (struct codecfilter_vorbis_inst * self) {
 int cf_vorbis_encode_end    (struct codecfilter_vorbis_inst * self) {
 #ifdef ROAR_HAVE_LIBVORBISENC
  if ( self->encoding ) {
+  // try to flush up to an EOS page...
+  vorbis_analysis_buffer(&(self->encoder.vd), 2*ROAR_MAX_CHANNELS);
+  vorbis_analysis_wrote(&(self->encoder.vd), 0);
+  cf_vorbis_encode_flushout(self);
+
+  // clean up...
   ogg_stream_clear(&(self->encoder.os));
   vorbis_block_clear(&(self->encoder.vb));
   vorbis_dsp_clear(&(self->encoder.vd));
@@ -383,6 +398,52 @@ int cf_vorbis_encode_end    (struct codecfilter_vorbis_inst * self) {
 #else
  return -1;
 #endif
+}
+
+int cf_vorbis_encode_flushout(struct codecfilter_vorbis_inst * self) {
+#ifdef ROAR_HAVE_LIBVORBISENC
+ while ( vorbis_analysis_blockout(&(self->encoder.vd), &(self->encoder.vb)) == 1 ) {
+  vorbis_analysis(&(self->encoder.vb), &(self->encoder.op));
+  vorbis_bitrate_addblock(&(self->encoder.vb));
+
+  while ( vorbis_bitrate_flushpacket(&(self->encoder.vd), &(self->encoder.op)) ) {
+   ogg_stream_packetin(&(self->encoder.os), &(self->encoder.op));
+
+   while( ogg_stream_pageout(&(self->encoder.os), &(self->encoder.og)) ) {
+    if (
+         stream_vio_s_write(self->stream, self->encoder.og.header, self->encoder.og.header_len) == -1 ||
+         stream_vio_s_write(self->stream, self->encoder.og.body,   self->encoder.og.body_len  ) == -1   ) {
+     return -1;
+    }
+   }
+  }
+ }
+
+ return 0;
+#else
+ return -1;
+#endif
+}
+
+int cf_vorbis_ctl(CODECFILTER_USERDATA_T   inst, int cmd, void * data) {
+ struct codecfilter_vorbis_inst * self = (struct codecfilter_vorbis_inst *) inst;
+
+ switch (cmd) {
+  case ROAR_CODECFILTER_CTL2CMD(ROAR_CODECFILTER_CTL_META_UPDATE):
+    ROAR_WARN("stoping stream...");
+    if ( cf_vorbis_encode_end(self) == -1 )
+     return -1;
+    ROAR_WARN("restarting stream...");
+    if ( cf_vorbis_encode_start(self) == -1 )
+     return -1;
+
+    return 0;
+   break;
+  default:
+    return -1;
+ }
+
+ return -1;
 }
 
 #endif

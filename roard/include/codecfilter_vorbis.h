@@ -47,6 +47,7 @@ struct codecfilter_vorbis_inst {
 #ifdef ROAR_HAVE_LIBVORBISENC
  int encoding;
  struct {
+  int srn;
   float v_base_quality;
   ogg_stream_state os;
   ogg_page         og;
@@ -71,9 +72,12 @@ int cf_vorbis_close(CODECFILTER_USERDATA_T   inst);
 int cf_vorbis_write(CODECFILTER_USERDATA_T   inst, char * buf, int len);
 int cf_vorbis_read(CODECFILTER_USERDATA_T   inst, char * buf, int len);
 
-int cf_vorbis_update_stream (struct codecfilter_vorbis_inst * self);
-int cf_vorbis_encode_start  (struct codecfilter_vorbis_inst * self);
-int cf_vorbis_encode_end    (struct codecfilter_vorbis_inst * self);
+int cf_vorbis_ctl(CODECFILTER_USERDATA_T   inst, int cmd, void * data);
+
+int cf_vorbis_update_stream  (struct codecfilter_vorbis_inst * self);
+int cf_vorbis_encode_start   (struct codecfilter_vorbis_inst * self);
+int cf_vorbis_encode_end     (struct codecfilter_vorbis_inst * self);
+int cf_vorbis_encode_flushout(struct codecfilter_vorbis_inst * self);
 
 #endif
 

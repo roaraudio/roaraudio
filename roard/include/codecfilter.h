@@ -35,6 +35,17 @@ struct roar_stream_server;
 #define ROAR_CODECFILTER_READ  1
 #define ROAR_CODECFILTER_WRITE 2
 
+
+#define ROAR_CODECFILTER_CTL_NOOP            ROAR_STREAM_CTL_COMP_CF|0x0000 /* noop... */
+#define ROAR_CODECFILTER_CTL_BASE            ROAR_STREAM_CTL_COMP_CF|0x0000 /* Base ops... */
+#define ROAR_CODECFILTER_CTL_META            ROAR_STREAM_CTL_COMP_CF|0x1000 /* Meta data things... */
+
+#define ROAR_CODECFILTER_CTL_UPDATE          0x0001
+
+#define ROAR_CODECFILTER_CTL_META_UPDATE     ROAR_CODECFILTER_CTL_META|ROAR_CODECFILTER_CTL_UPDATE
+
+#define ROAR_CODECFILTER_CTL2CMD(x)          ((x) & (~ROAR_STREAM_CTL_COMP_CF))
+
 struct roar_codecfilter {
  int    codec;
  char * name;

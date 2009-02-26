@@ -222,6 +222,9 @@ int stream_meta_finalize(int id) {
     stream_meta_add(co, s->meta[i].type, s->meta[i].key, s->meta[i].value); // ignore errors
    }
   }
+
+  // ask the codec filter to update meta data:
+  streams_ctl(co, ROAR_CODECFILTER_CTL_META_UPDATE, NULL); // ignore errors...
  }
 
  return 0;

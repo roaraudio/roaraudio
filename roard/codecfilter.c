@@ -87,7 +87,7 @@ struct roar_codecfilter g_codecfilter[] = {
 #else
  ROAR_CODECFILTER_READ,
 #endif
- cf_vorbis_open, cf_vorbis_close, NULL, cf_vorbis_write, cf_vorbis_read, NULL, codecfilter_delay_fulldyn, NULL},
+ cf_vorbis_open, cf_vorbis_close, NULL, cf_vorbis_write, cf_vorbis_read, NULL, codecfilter_delay_fulldyn, cf_vorbis_ctl},
 #else
 #ifndef ROAR_WITHOUT_CF_CMD
 #ifdef ROAR_HAVE_BIN_OGG123

@@ -153,6 +153,11 @@ int update_stream (struct roar_connection * con, struct roar_stream * s, int * o
    ptr++;
  }
 
+ *value      = 0;
+ meta.key[0] = 0;
+ meta.type   = ROAR_META_TYPE_NONE;
+ roar_stream_meta_set(con, s, ROAR_META_MODE_FINALIZE, &meta);
+
  return 0;
 }
 
