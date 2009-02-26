@@ -126,6 +126,8 @@ int roar_pinentry_simple_open(struct roar_pinentry * pe) {
 }
 
 int roar_pinentry_close(struct roar_pinentry * pe) {
+ int status;
+
  if ( pe == NULL )
   return -1;
 
@@ -140,6 +142,8 @@ int roar_pinentry_close(struct roar_pinentry * pe) {
 
  if ( pe->in  != -1 )
   close(pe->in);
+
+ waitpid(pe->pid, &status, 0);
 
  memset(pe, 0, sizeof(struct roar_pinentry));
 

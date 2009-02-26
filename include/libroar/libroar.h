@@ -41,6 +41,8 @@
 
 #include <stdint.h>
 
+#include <sys/wait.h>
+
 #include <fcntl.h>
 #ifndef ROAR_TARGET_WIN32
 #include <sys/socket.h>
