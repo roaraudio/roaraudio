@@ -179,7 +179,17 @@ int     roar_vio_open_stdio    (struct roar_vio_calls * calls, FILE * dst) {
  if ( calls == NULL || dst == NULL )
   return -1;
 
- return -1;
+ memset(calls, 0, sizeof(struct roar_vio_calls));
+
+ calls->read  = roar_vio_stdio_read;
+ calls->write = roar_vio_stdio_write;
+ calls->lseek = roar_vio_stdio_lseek;
+ calls->sync  = roar_vio_stdio_sync;
+ calls->close = roar_vio_stdio_close;
+
+ calls->inst  = dst;
+
+ return 0;
 }
 
 FILE *  roar_vio_to_stdio      (struct roar_vio_calls * calls, int flags) {
@@ -360,5 +370,28 @@ off_t   roar_vio_re_lseek(struct roar_vio_calls * vio, off_t offset, int whence)
  return roar_vio_lseek((struct roar_vio_calls *) vio->inst, offset, whence);
 }
 
+// stdio:
+ssize_t roar_vio_stdio_read    (struct roar_vio_calls * vio, void *buf, size_t count) {
+ return fread(buf, 1, count, (FILE*)(vio->inst));
+}
+
+ssize_t roar_vio_stdio_write   (struct roar_vio_calls * vio, void *buf, size_t count) {
+ return fwrite(buf, 1, count, (FILE*)(vio->inst));
+}
+
+off_t   roar_vio_stdio_lseek   (struct roar_vio_calls * vio, off_t offset, int whence) {
+ if ( fseek((FILE*)(vio->inst), offset, whence) == -1 )
+  return -1;
+
+ return ftell((FILE*)(vio->inst));
+}
+
+int     roar_vio_stdio_sync    (struct roar_vio_calls * vio) {
+ return fflush((FILE*)(vio->inst));
+}
+
+int     roar_vio_stdio_close   (struct roar_vio_calls * vio) {
+ return fclose((FILE*)(vio->inst));
+}
 
 //ll
