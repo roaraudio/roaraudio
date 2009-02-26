@@ -77,6 +77,7 @@ struct roar_vio_calls {
  int     (*nonblock)(struct roar_vio_calls * vio, int state);
  int     (*sync    )(struct roar_vio_calls * vio);
  int     (*ctl     )(struct roar_vio_calls * vio, int cmd, void * data);
+ int     (*close   )(struct roar_vio_calls * vio);
 };
 
 int roar_vio_init_calls (struct roar_vio_calls * calls);
@@ -92,6 +93,7 @@ off_t   roar_vio_lseek   (struct roar_vio_calls * vio, off_t offset, int whence)
 int     roar_vio_nonblock(struct roar_vio_calls * vio, int state);
 int     roar_vio_sync    (struct roar_vio_calls * vio);
 int     roar_vio_ctl     (struct roar_vio_calls * vio, int cmd, void * data);
+int     roar_vio_close   (struct roar_vio_calls * vio);
 
 
 // possible VIOs:
@@ -102,16 +104,21 @@ ssize_t roar_vio_basic_write   (struct roar_vio_calls * vio, void *buf, size_t c
 off_t   roar_vio_basic_lseek   (struct roar_vio_calls * vio, off_t offset, int whence);
 int     roar_vio_basic_nonblock(struct roar_vio_calls * vio, int state);
 int     roar_vio_basic_sync    (struct roar_vio_calls * vio);
+int     roar_vio_basic_close   (struct roar_vio_calls * vio);
 
 // null
-// this is read an write in one!
+// this is a read and write in one!
 ssize_t roar_vio_null_rw    (struct roar_vio_calls * vio, void *buf, size_t count);
 
 // pass
 
-ssize_t roar_vio_pass_read (struct roar_vio_calls * vio, void *buf, size_t count);
-ssize_t roar_vio_pass_write(struct roar_vio_calls * vio, void *buf, size_t count);
-off_t   roar_vio_pass_lseek(struct roar_vio_calls * vio, off_t offset, int whence);
+ssize_t roar_vio_pass_read    (struct roar_vio_calls * vio, void *buf, size_t count);
+ssize_t roar_vio_pass_write   (struct roar_vio_calls * vio, void *buf, size_t count);
+off_t   roar_vio_pass_lseek   (struct roar_vio_calls * vio, off_t offset, int whence);
+int     roar_vio_pass_nonblock(struct roar_vio_calls * vio, int state);
+int     roar_vio_pass_sync    (struct roar_vio_calls * vio);
+int     roar_vio_pass_ctl     (struct roar_vio_calls * vio, int cmd, void * data);
+int     roar_vio_pass_close   (struct roar_vio_calls * vio);
 
 // re-read/write
 
