@@ -35,7 +35,7 @@ struct roar_driver g_driver[] = {
 #ifndef ROAR_DEFAULT_OSS_DEV
 #define ROAR_DEFAULT_OSS_DEV "no default device"
 #endif
- { "oss", "Open Sound System", ROAR_DEFAULT_OSS_DEV, NULL, driver_oss_close, NULL, NULL, NULL, NULL, driver_oss_open},
+ { "oss", "Open Sound System", ROAR_DEFAULT_OSS_DEV, NULL, NULL, NULL, NULL, NULL, NULL, driver_oss_open},
 #endif
 #ifdef ROAR_HAVE_LIBAO
  { "ao", "libao audio driver", "DRIVER", NULL, driver_ao_close, NULL, NULL, NULL, NULL, driver_ao_open_vio},
@@ -160,6 +160,9 @@ int driver_closevio(struct roar_vio_calls * calls, int driver) {
 
  if ( g_driver[driver].close )
   return g_driver[driver].close((DRIVER_USERDATA_T)calls);
+
+ if ( calls->close != NULL )
+  roar_vio_close(calls);
 
  return 0;
 }
