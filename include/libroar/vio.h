@@ -112,6 +112,7 @@ ssize_t roar_vio_null_rw    (struct roar_vio_calls * vio, void *buf, size_t coun
 
 // pass
 
+int     roar_vio_open_pass    (struct roar_vio_calls * calls, struct roar_vio_calls * dst);
 ssize_t roar_vio_pass_read    (struct roar_vio_calls * vio, void *buf, size_t count);
 ssize_t roar_vio_pass_write   (struct roar_vio_calls * vio, void *buf, size_t count);
 off_t   roar_vio_pass_lseek   (struct roar_vio_calls * vio, off_t offset, int whence);
@@ -122,6 +123,7 @@ int     roar_vio_pass_close   (struct roar_vio_calls * vio);
 
 // re-read/write
 
+int     roar_vio_open_re (struct roar_vio_calls * calls, struct roar_vio_calls * dst);
 ssize_t roar_vio_re_read (struct roar_vio_calls * vio, void *buf, size_t count);
 ssize_t roar_vio_re_write(struct roar_vio_calls * vio, void *buf, size_t count);
 off_t   roar_vio_re_lseek(struct roar_vio_calls * vio, off_t offset, int whence);

@@ -191,6 +191,24 @@ ssize_t roar_vio_null_rw    (struct roar_vio_calls * vio, void *buf, size_t coun
 }
 
 // pass
+int     roar_vio_open_pass    (struct roar_vio_calls * calls, struct roar_vio_calls * dst) {
+ if ( calls == NULL )
+  return -1;
+
+ memset((void*)calls, 0, sizeof(struct roar_vio_calls));
+
+ calls->read     = roar_vio_pass_read;
+ calls->write    = roar_vio_pass_write;
+ calls->lseek    = roar_vio_pass_lseek;
+ calls->nonblock = roar_vio_pass_nonblock;
+ calls->sync     = roar_vio_pass_sync;
+ calls->close    = roar_vio_pass_close;
+
+ calls->inst     = dst;
+
+ return 0;
+}
+
 ssize_t roar_vio_pass_read (struct roar_vio_calls * vio, void *buf, size_t count) {
  return roar_vio_read((struct roar_vio_calls *) vio->inst, buf, count);
 }
@@ -221,6 +239,16 @@ int     roar_vio_pass_close   (struct roar_vio_calls * vio) {
 
 
 // re
+int     roar_vio_open_re (struct roar_vio_calls * calls, struct roar_vio_calls * dst) {
+ if ( roar_vio_open_pass(calls, dst) == -1 )
+  return -1;
+
+ calls->read  = roar_vio_re_read;
+ calls->write = roar_vio_re_write;
+ calls->lseek = roar_vio_re_lseek;
+
+ return 0;
+}
 ssize_t roar_vio_re_read (struct roar_vio_calls * vio, void *buf, size_t count) {
   size_t len =  0;
  ssize_t r   = -1;
@@ -273,7 +301,7 @@ ssize_t roar_vio_re_write(struct roar_vio_calls * vio, void *buf, size_t count) 
  return len;
 }
 
-// we should do a some more intelgent thing here.
+// TODO: we should do a some more intelgent thing here.
 off_t   roar_vio_re_lseek(struct roar_vio_calls * vio, off_t offset, int whence) {
  return roar_vio_lseek((struct roar_vio_calls *) vio->inst, offset, whence);
 }
