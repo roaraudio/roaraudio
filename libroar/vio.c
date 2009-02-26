@@ -147,6 +147,60 @@ int     roar_vio_close    (struct roar_vio_calls * vio) {
  return vio->close(vio);
 }
 
+// converters:
+int     roar_vio_open_file     (struct roar_vio_calls * calls, char * filename, int flags, mode_t mode) {
+ int fh;
+
+ if ( calls == NULL || filename == NULL )
+  return -1;
+
+ if ( (fh = open(filename, flags, mode)) == -1 )
+  return -1;
+
+ if ( roar_vio_open_fh(calls, fh) == -1 ) {
+  close(fh);
+  return -1;
+ }
+
+ return 0;
+}
+
+int     roar_vio_open_fh       (struct roar_vio_calls * calls, int fh) {
+ if ( calls == NULL )
+  return -1;
+
+ if ( roar_vio_init_calls(calls) == -1 )
+  return -1;
+
+ return roar_vio_set_fh(calls, fh);
+}
+
+int     roar_vio_open_stdio    (struct roar_vio_calls * calls, FILE * dst) {
+ if ( calls == NULL || dst == NULL )
+  return -1;
+
+ return -1;
+}
+
+FILE *  roar_vio_to_stdio      (struct roar_vio_calls * calls, int flags) {
+#ifdef ROAR_HAVE_FOPENCOOKIE
+ cookie_io_functions_t foc_funcs;
+#endif
+
+ if ( calls == NULL )
+  return NULL;
+
+#if defined(ROAR_HAVE_FOPENCOOKIE)
+ memset(&foc_funcs, 0, sizeof(cookie_io_functions_t));
+
+ return fopencookie((void*) calls, "rw", foc_funcs);
+#elif defined(ROAR_HAVE_FUNOPEN)
+ return funopen((void*) calls, NULL /* read */, NULL /* write */, NULL /* lseek */, NULL /* close */);
+#else
+ return NULL;
+#endif
+}
+
 // VIOs:
 
 // basic
