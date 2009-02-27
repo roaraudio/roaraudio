@@ -493,6 +493,7 @@ test_tool_defmake ROAR_HAVE_BIN_WGET       Wget         wget
 test_tool_defmake ROAR_HAVE_BIN_GNUPLOT    gnuplot      gnuplot
 test_tool_defmake ROAR_HAVE_BIN_SSH        OpenSSH      ssh
 test_tool_defmake ROAR_HAVE_BIN_PINENTRY   PIN-Entry    pinentry
+test_tool_defmake ROAR_HAVE_BIN_GZIP       Gzip         gzip
 
 echo >&3
 
