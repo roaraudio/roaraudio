@@ -98,6 +98,15 @@ int roar_vio_open_cmd(struct roar_vio_calls * calls, struct roar_vio_calls * dst
 int roar_vio_cmd_close(struct roar_vio_calls * vio) {
  struct roar_vio_cmd_state * state = (struct roar_vio_cmd_state *)vio->inst;
 
+ if ( state->writer.opened ) {
+  if ( state->writer.out != -1 ) {
+   close(state->writer.out);
+   state->writer.out = -1;
+  }
+ }
+
+ roar_vio_cmd_sync(vio);
+
  if ( state->reader.opened )
   roar_vio_cmd_wait(&(state->reader));
 
@@ -209,6 +218,8 @@ ssize_t roar_vio_cmd_read    (struct roar_vio_calls * vio, void *buf, size_t cou
  char   tbuf[ROAR_VIO_CMD_BUFSIZE];
  char * tp   = NULL;
  size_t tlen = 0;
+ int    nonblock = state->options & ROAR_VIO_CMD_OPTS_NONBLOCK;
+ int    in, out;
 
  ROAR_DBG("roar_vio_cmd_read(*) = ?");
 
@@ -223,8 +234,11 @@ ssize_t roar_vio_cmd_read    (struct roar_vio_calls * vio, void *buf, size_t cou
    return -1;
  }
 
+ in  = state->reader.in;
+ out = state->reader.out;
+
  while (done < count) {
-  if ( state->options & ROAR_VIO_CMD_OPTS_NONBLOCK ) {
+  if ( nonblock ) {
    tv.tv_sec  =    0;
    tv.tv_usec =    1;
   } else {
@@ -235,32 +249,32 @@ ssize_t roar_vio_cmd_read    (struct roar_vio_calls * vio, void *buf, size_t cou
   FD_ZERO(rfhs);
   FD_ZERO(wfhs);
 
-  FD_SET(state->reader.in,  rfhs);
+  FD_SET(in,  rfhs);
 
-  if ( state->reader.out != -1 ) {
-   FD_SET(state->reader.out, wfhs);
+  if ( out != -1 ) {
+   FD_SET(out, wfhs);
   }
 
 #ifdef DEBUG
-  if ( FD_ISSET(state->reader.in, rfhs) ) {
+  if ( FD_ISSET(in, rfhs) ) {
    ROAR_DBG("roar_vio_cmd_read(*): reader set in fh group");
   }
 #endif
 
-  max_fh = state->reader.in > state->reader.out ? state->reader.in : state->reader.out;
+  max_fh = in > out ? in : out;
   ROAR_DBG("roar_vio_cmd_read(*): max_fh=%i", max_fh);
 
   if ( (ret = select(max_fh + 1, rfhs, wfhs, NULL, &tv)) == -1 )
    return -1;
 
   ROAR_DBG("roar_vio_cmd_read(*): select(*) = %i", ret);
-  ROAR_DBG("roar_vio_cmd_read(*): reader=%i, writer=%i", state->reader.in, state->reader.out);
+  ROAR_DBG("roar_vio_cmd_read(*): reader=%i, writer=%i", in, out);
 
   if ( ret > 0 ) {
-   if ( FD_ISSET(state->reader.in, rfhs) ) {
+   if ( FD_ISSET(in, rfhs) ) {
     ROAR_DBG("roar_vio_cmd_read(*): event on reader");
 
-    if ( (ret = read(state->reader.in, buf+done, count-done)) == -1 )
+    if ( (ret = read(in, buf+done, count-done)) == -1 )
      break;
 
     if ( ret == 0 )
@@ -269,7 +283,7 @@ ssize_t roar_vio_cmd_read    (struct roar_vio_calls * vio, void *buf, size_t cou
     done += ret;
    }
 
-   if ( state->reader.out != -1 && FD_ISSET(state->reader.out, wfhs) ) {
+   if ( out != -1 && FD_ISSET(out, wfhs) ) {
     ROAR_DBG("roar_vio_cmd_read(*): event on writer");
 
     if ( !tlen ) {
@@ -280,18 +294,18 @@ ssize_t roar_vio_cmd_read    (struct roar_vio_calls * vio, void *buf, size_t cou
     }
 
     if ( tlen ) {
-     if ( (ret = write(state->reader.out, tp, tlen)) > 0 ) {
+     if ( (ret = write(out, tp, tlen)) > 0 ) {
       tlen -= ret;
       tp   += ret;
      }
     } else {
-     close(state->reader.out);
-     state->reader.out = -1;
+     close(out);
+     state->reader.out = out = -1;
     }
    }
   }
 
-  if ( state->options & ROAR_VIO_CMD_OPTS_NONBLOCK )
+  if ( nonblock )
    break;
  }
 
@@ -305,6 +319,14 @@ ssize_t roar_vio_cmd_read    (struct roar_vio_calls * vio, void *buf, size_t cou
 
 ssize_t roar_vio_cmd_write   (struct roar_vio_calls * vio, void *buf, size_t count) {
  struct roar_vio_cmd_state * state = (struct roar_vio_cmd_state *)vio->inst;
+ fd_set rfhs[1], wfhs[1];
+ struct timeval tv;
+ size_t done = 0;
+ int max_fh;
+ int ret;
+ char   tbuf[ROAR_VIO_CMD_BUFSIZE];
+ int    nonblock = state->options & ROAR_VIO_CMD_OPTS_NONBLOCK;
+ int    in, out;
 
  if ( !state->writer.opened ) {
   if ( buf == NULL && count == 0 ) /* sync: no need to do anything if no writer is forked :) */
@@ -317,6 +339,84 @@ ssize_t roar_vio_cmd_write   (struct roar_vio_calls * vio, void *buf, size_t cou
    return -1;
  }
 
+ in  = state->writer.in;
+ out = state->writer.out;
+
+ if ( buf == NULL ) { // we are requested to sync
+  if ( in != -1 ) {
+   ret = 1;
+   done = 0;
+   while (ret > 0) {
+    tv.tv_sec  = 0;
+    tv.tv_usec = done ? 1 : 500000; // half a sec
+
+    done++;
+
+    FD_ZERO(rfhs);
+    FD_SET(in, rfhs);
+
+    if ( select(in+1, rfhs, NULL, NULL, &tv) < 1 )
+     break;
+
+    ret = read(in, tbuf, ROAR_VIO_CMD_BUFSIZE);
+
+    if ( roar_vio_write(state->next, tbuf, ret) != ret )
+     return -1;
+   }
+  }
+
+  return 0;
+ }
+
+ while (done < count) {
+  if ( nonblock ) {
+   tv.tv_sec  =    0;
+   tv.tv_usec =    1;
+  } else {
+   tv.tv_sec  = 3600;
+   tv.tv_usec =    0;
+  }
+
+  FD_ZERO(rfhs);
+  FD_ZERO(wfhs);
+
+  FD_SET(out, wfhs);
+
+  if ( in != -1 ) {
+   FD_SET(in,  rfhs);
+  }
+
+  max_fh = in > out ? in : out;
+
+  if ( (ret = select(max_fh + 1, rfhs, wfhs, NULL, &tv)) == -1 )
+   return -1;
+
+  if ( ret > 0 ) {
+   if ( FD_ISSET(out, wfhs) ) {
+
+    if ( (ret = write(out, buf+done, count-done)) == -1 )
+     break;
+
+    if ( ret == 0 )
+     break;
+
+    done += ret;
+   }
+   if ( in != -1 && FD_ISSET(in, wfhs) ) {
+    if ( (ret = read(in, tbuf, ROAR_VIO_CMD_BUFSIZE)) == -1 ) { /* error case: can not read on reader -> EOF */
+     close(in);
+     state->writer.in = in = -1;
+     break;
+    }
+
+    if ( roar_vio_write(state->next, tbuf, ret) != ret )
+     return -1;
+   }
+  }
+
+  if ( nonblock )
+   break;
+ }
 
  return -1;
 }
