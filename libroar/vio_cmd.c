@@ -111,7 +111,63 @@ int roar_vio_cmd_close(struct roar_vio_calls * vio) {
 }
 
 int roar_vio_cmd_fork(struct roar_vio_cmd_child * child) {
- return -1;
+ int in[2], out[2];
+
+ if ( child == NULL )
+  return -1;
+
+ if ( child->opened )
+  return 0;
+
+ if ( child->cmd == NULL )
+  return -1;
+
+ // open some pipes...
+ if ( pipe(in) != 0 )
+  return -1;
+
+ if ( pipe(out) != 0 ) {
+  close(in[0]);
+  close(in[1]);
+  return -1;
+ }
+
+ child->pid = fork();
+
+ switch (child->pid) {
+  case -1:
+    close(in[0]);
+    close(in[1]);
+    close(out[0]);
+    close(out[1]);
+    return -1;
+   break;
+  case 0:
+    close(in[0]);
+    close(out[1]);
+    close(ROAR_STDIN);
+    close(ROAR_STDOUT);
+
+    if ( dup2(out[0], ROAR_STDIN) == -1 )
+     _exit(1);
+
+    if ( dup2(in[1], ROAR_STDOUT) == -1 )
+     _exit(1);
+
+    execlp("/bin/sh", "/bin/sh", "-c", child->cmd, NULL);
+
+    _exit(1);
+   break;
+ }
+
+ close(in[1]);
+ close(out[0]);
+
+ child->opened = 1;
+ child->in     = in[0];
+ child->out    = out[1];
+
+ return 0;
 }
 
 int roar_vio_cmd_wait(struct roar_vio_cmd_child * child) {
@@ -132,6 +188,76 @@ int roar_vio_cmd_wait(struct roar_vio_cmd_child * child) {
  waitpid(child->pid, &status, 0);
 
  return 0;
+}
+
+// VIOs:
+
+ssize_t roar_vio_cmd_read    (struct roar_vio_calls * vio, void *buf, size_t count) {
+ struct roar_vio_cmd_state * state = (struct roar_vio_cmd_state *)vio->inst;
+
+ if ( !state->reader.opened ) {
+  if ( buf == NULL && count == 0 ) /* sync: no need to do anything if no reader is forked :) */
+   return 0;
+
+  if ( !(state->options & ROAR_VIO_CMD_OPTS_ON_DEMAND) ) /* we are not on demand and no reader exists? -> err */
+   return -1;
+
+  if ( roar_vio_cmd_fork(&(state->reader)) == -1 )
+   return -1;
+ }
+
+ return -1;
+}
+
+ssize_t roar_vio_cmd_write   (struct roar_vio_calls * vio, void *buf, size_t count) {
+ struct roar_vio_cmd_state * state = (struct roar_vio_cmd_state *)vio->inst;
+
+ if ( !state->writer.opened ) {
+  if ( buf == NULL && count == 0 ) /* sync: no need to do anything if no writer is forked :) */
+   return 0;
+
+  if ( !(state->options & ROAR_VIO_CMD_OPTS_ON_DEMAND) ) /* we are not on demand and no writer exists? -> err */
+   return -1;
+
+  if ( roar_vio_cmd_fork(&(state->writer)) == -1 )
+   return -1;
+ }
+
+
+ return -1;
+}
+
+int     roar_vio_cmd_nonblock(struct roar_vio_calls * vio, int state) {
+ struct roar_vio_cmd_state * self = (struct roar_vio_cmd_state *)vio->inst;
+
+ self->options |= ROAR_VIO_CMD_OPTS_NONBLOCK;
+
+ if ( state == ROAR_SOCKET_BLOCK )
+  self->options -= ROAR_VIO_CMD_OPTS_NONBLOCK;
+
+ return 0;
+}
+
+int     roar_vio_cmd_sync    (struct roar_vio_calls * vio) {
+ struct roar_vio_cmd_state * state = (struct roar_vio_cmd_state *)vio->inst;
+ int oldblock;
+ int ret = 0;
+
+ oldblock = state->options & ROAR_VIO_CMD_OPTS_NONBLOCK ? ROAR_SOCKET_NONBLOCK : ROAR_SOCKET_BLOCK;
+
+ if ( roar_vio_cmd_nonblock(vio, ROAR_SOCKET_BLOCK) == -1 )
+  return -1;
+
+ if ( roar_vio_cmd_write(vio, NULL, 0) == -1 )
+  ret = -1;
+
+ if ( roar_vio_cmd_read(vio, NULL, 0) == -1 )
+  ret = -1;
+
+ if ( roar_vio_cmd_nonblock(vio, oldblock) == -1 )
+  return -1;
+
+ return ret;
 }
 
 //ll
