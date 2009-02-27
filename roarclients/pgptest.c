@@ -46,10 +46,21 @@ int main (void) {
 
  roar_vio_write(&pgp, STRING, strlen(STRING));
 
-/*
- while ((len = roar_vio_read(&zcat, buf, BUF_MAX)))
+ roar_vio_close(&pgp);
+
+
+ if ( roar_vio_open_file(&file, FILENAME, O_RDONLY, 0666) == -1 ) {
+  ROAR_ERR("roar_vio_open_file(&file, FILENAME, O_RDONLY, 0666) = -1");
+  return 1;
+ }
+
+ if ( roar_vio_open_pgp_decrypt(&pgp, &file, PASSWORD) == -1 ) {
+  ROAR_ERR("roar_vio_open_pgp_decrypt(&pgp, &file, PASSWORD) = -1");
+  return 1;
+ }
+
+ while ((len = roar_vio_read(&pgp, buf, BUF_MAX)))
   write(ROAR_STDOUT, buf, len);
-*/
 
  roar_vio_close(&pgp);
 
