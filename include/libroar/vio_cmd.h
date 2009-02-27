@@ -43,6 +43,14 @@
 
 #define ROAR_VIO_CMD_BUFSIZE        1024
 
+
+// for OpenPGP interface:
+#define ROAR_VIO_PGP_OPTS_NONE      0x00
+#define ROAR_VIO_PGP_OPTS_ASCII     0x01
+#define ROAR_VIO_PGP_OPTS_SIGN      0x02
+#define ROAR_VIO_PGP_OPTS_TEXTMODE  0x04
+
+
 struct roar_vio_cmd_child {
  int opened;
  pid_t pid;
@@ -88,8 +96,11 @@ int     roar_vio_pass_close   (struct roar_vio_calls * vio);
 // MISC:
 int roar_vio_open_gzip(struct roar_vio_calls * calls, struct roar_vio_calls * dst, int level);
 
-int roar_vio_open_gpg(struct roar_vio_calls * calls, struct roar_vio_calls * dst, char * pw, int wronly, char * opts);
+int roar_vio_open_gpg(struct roar_vio_calls * calls, struct roar_vio_calls * dst, char * pw, int wronly, char * opts, int options);
 int roar_vio_open_pgp_decrypt(struct roar_vio_calls * calls, struct roar_vio_calls * dst, char * pw);
+int roar_vio_open_pgp_store(struct roar_vio_calls * calls, struct roar_vio_calls * dst, int options);
+int roar_vio_open_pgp_encrypt_sym(struct roar_vio_calls * calls, struct roar_vio_calls * dst, char * pw, int options);
+int roar_vio_open_pgp_encrypt_pub(struct roar_vio_calls * calls, struct roar_vio_calls * dst, char * pw, int options, char * recipient);
 
 #endif
 

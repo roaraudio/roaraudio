@@ -373,23 +373,40 @@ int roar_vio_open_gzip(struct roar_vio_calls * calls, struct roar_vio_calls * ds
 #endif
 }
 
-int roar_vio_open_gpg(struct roar_vio_calls * calls, struct roar_vio_calls * dst, char * pw, int wronly, char * opts) {
+int roar_vio_open_gpg(struct roar_vio_calls * calls, struct roar_vio_calls * dst, char * pw, int wronly, char * opts, int options) {
 #ifdef ROAR_HAVE_BIN_GPG
  char command[1024];
+ char para[1024] = {0};
  int pwpipe[2];
  int ret;
+
+/*
+#define ROAR_VIO_PGP_OPTS_NONE      0x00
+#define ROAR_VIO_PGP_OPTS_ASCII     0x01
+#define ROAR_VIO_PGP_OPTS_SIGN      0x02
+#define ROAR_VIO_PGP_OPTS_TEXTMODE  0x04
+*/
+
+ if ( options & ROAR_VIO_PGP_OPTS_ASCII )
+  strncat(para, "--armor ", 16);
+
+ if ( options & ROAR_VIO_PGP_OPTS_SIGN )
+  strncat(para, "--sign ", 16);
+
+ if ( options & ROAR_VIO_PGP_OPTS_TEXTMODE )
+  strncat(para, "--textmode ", 16);
 
  if ( pw != NULL ) {
   if ( pipe(pwpipe) == -1 )
    return -1;
 
-  snprintf(command, 1024, "%s --no-verbose --quiet --passphrase-repeat 0 --passphrase-fd %i %s", ROAR_HAVE_BIN_GPG, pwpipe[0], opts);
+  snprintf(command, 1024, "%s --batch --no-verbose --quiet --passphrase-repeat 0 --passphrase-fd %i %s %s", ROAR_HAVE_BIN_GPG, pwpipe[0], para, opts);
 
   write(pwpipe[1], pw, strlen(pw));
 
   close(pwpipe[1]);
  } else {
-  snprintf(command, 1024, "%s --no-verbose --quiet %s", ROAR_HAVE_BIN_GPG, opts);
+  snprintf(command, 1024, "%s --no-verbose --quiet --batch %s %s", ROAR_HAVE_BIN_GPG, para, opts);
  }
 
  if ( wronly ) {
@@ -408,8 +425,21 @@ int roar_vio_open_gpg(struct roar_vio_calls * calls, struct roar_vio_calls * dst
 }
 
 int roar_vio_open_pgp_decrypt(struct roar_vio_calls * calls, struct roar_vio_calls * dst, char * pw) {
- return roar_vio_open_gpg(calls, dst, pw, 0, "-d");
+ return roar_vio_open_gpg(calls, dst, pw, 0, "-d", ROAR_VIO_PGP_OPTS_NONE);
 }
 
+int roar_vio_open_pgp_store(struct roar_vio_calls * calls, struct roar_vio_calls * dst, int options) {
+ return roar_vio_open_gpg(calls, dst, NULL, 1, "--store", options);
+}
+
+int roar_vio_open_pgp_encrypt_sym(struct roar_vio_calls * calls, struct roar_vio_calls * dst, char * pw, int options) {
+ return roar_vio_open_gpg(calls, dst, pw, 1, "--symmetric", options);
+}
+int roar_vio_open_pgp_encrypt_pub(struct roar_vio_calls * calls, struct roar_vio_calls * dst, char * pw, int options, char * recipient) {
+ char buf[1024];
+
+ snprintf(buf, 1024, "-e -r %s", recipient);
+ return roar_vio_open_gpg(calls, dst, pw, 1, buf, options);
+}
 
 //ll
