@@ -165,6 +165,9 @@ int roar_pinentry_send (struct roar_pinentry * pe, char * cmd,  char * args) {
   return -1;
 
  if ( args != NULL ) {
+  if ( write(pe->out, " ", 1) != 1 )
+   return -1;
+
   len = strlen(args);
 
   if ( write(pe->out, args, len) != len )
@@ -274,11 +277,10 @@ int roar_pinentry_set      (struct roar_pinentry * pe, char * obj, char * text) 
  if ( obj == NULL )
   return -1;
 
- if ( strlen(obj) > (80-1 /* \0 */ + 3 /* "SET" */ + 1 /* " " */) )
+ if ( strlen(obj) > (80-(1 /* \0 */ + 3 /* "SET" */)) )
   return -1;
 
- strncat(req, obj, 80-5);
- strncat(req, " ", 2);
+ strncat(req, obj, 80-4);
 
  return roar_pinentry_req(pe, req, text, NULL, NULL);
 }
