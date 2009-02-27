@@ -356,4 +356,21 @@ int     roar_vio_cmd_sync    (struct roar_vio_calls * vio) {
  return ret;
 }
 
+// MISC:
+int roar_vio_open_gzip(struct roar_vio_calls * calls, struct roar_vio_calls * dst, int level) {
+#ifdef ROAR_HAVE_BIN_GZIP
+ char   wbuf[80];
+ char * writer = ROAR_HAVE_BIN_GZIP " -c";
+
+ if ( level != -1 ) {
+  snprintf(wbuf, 80, "%s -c%i", ROAR_HAVE_BIN_GZIP, level);
+  writer = wbuf;
+ }
+
+ return roar_vio_open_cmd(calls, dst, ROAR_HAVE_BIN_GZIP " -dc", writer, ROAR_VIO_CMD_OPTS_ON_DEMAND);
+#else
+ return -1;
+#endif
+}
+
 //ll

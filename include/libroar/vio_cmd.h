@@ -86,7 +86,7 @@ int     roar_vio_pass_close   (struct roar_vio_calls * vio);
 */
 
 // MISC:
-roar_vio_open_gzip(struct roar_vio_calls * calls, struct roar_vio_calls * dst, int level);
+int roar_vio_open_gzip(struct roar_vio_calls * calls, struct roar_vio_calls * dst, int level);
 
 #endif
 
