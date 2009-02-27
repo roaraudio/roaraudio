@@ -43,6 +43,11 @@
 
 #define ROAR_VIO_CMD_BUFSIZE        1024
 
+#define ROAR_VIO_CMD_STATE_NONE     0
+#define ROAR_VIO_CMD_STATE_OPEN     1
+#define ROAR_VIO_CMD_STATE_CLOSING  2
+#define ROAR_VIO_CMD_STATE_CLOSED   3
+
 
 // for OpenPGP interface:
 #define ROAR_VIO_PGP_OPTS_NONE      0x00
@@ -62,6 +67,8 @@ struct roar_vio_cmd_child {
 struct roar_vio_cmd_state {
  struct roar_vio_calls * next;
  int options;
+
+ int state;
 
  struct roar_vio_cmd_child reader;
  struct roar_vio_cmd_child writer;

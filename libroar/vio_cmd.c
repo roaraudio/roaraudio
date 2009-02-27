@@ -71,6 +71,7 @@ int roar_vio_open_cmd(struct roar_vio_calls * calls, struct roar_vio_calls * dst
  // init state
  state->next    = dst;
  state->options = options;
+ state->state   = ROAR_VIO_CMD_STATE_OPEN;
 
  // init calls
  calls->close    = roar_vio_cmd_close;
@@ -98,6 +99,8 @@ int roar_vio_open_cmd(struct roar_vio_calls * calls, struct roar_vio_calls * dst
 int roar_vio_cmd_close(struct roar_vio_calls * vio) {
  struct roar_vio_cmd_state * state = (struct roar_vio_cmd_state *)vio->inst;
 
+ state->state = ROAR_VIO_CMD_STATE_CLOSING;
+
  if ( state->writer.opened ) {
   if ( state->writer.out != -1 ) {
    close(state->writer.out);
@@ -121,6 +124,7 @@ int roar_vio_cmd_close(struct roar_vio_calls * vio) {
 
  roar_vio_close(state->next);
 
+// state->state = ROAR_VIO_CMD_STATE_CLOSED;
  free(state);
 
  return 0;
@@ -347,8 +351,13 @@ ssize_t roar_vio_cmd_write   (struct roar_vio_calls * vio, void *buf, size_t cou
    ret = 1;
    done = 0;
    while (ret > 0) {
-    tv.tv_sec  = 0;
-    tv.tv_usec = done ? 1 : 500000; // half a sec
+    if ( state->state == ROAR_VIO_CMD_STATE_CLOSING ) {
+     tv.tv_sec  = 3600;
+     tv.tv_usec = 0;
+    } else {
+     tv.tv_sec  = 0;
+     tv.tv_usec = done ? 1 : 50000; // 50ms
+    }
 
     done++;
 
