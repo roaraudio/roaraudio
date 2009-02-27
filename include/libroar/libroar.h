@@ -61,6 +61,7 @@
 
 #include "error.h"
 #include "vio.h"
+#include "vio_cmd.h"
 #include "basic.h"
 #include "stream.h"
 #include "simple.h"
