@@ -36,8 +36,8 @@ int main (void) {
   return 1;
  }
 
- if ( roar_vio_open_cmd(&zcat, &file, 0, "zcat", NULL, 0) == -1 ) {
-  ROAR_ERR("roar_vio_open_cmd(&zcat, &file, 0, \"zcat\", NULL, 0) = -1");
+ if ( roar_vio_open_gzip(&zcat, &file, -1) == -1 ) {
+  ROAR_ERR("roar_vio_open_gzip(&zcat, &file, -1) = -1");
   return 1;
  }
 
