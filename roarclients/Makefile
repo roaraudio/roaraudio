@@ -1,4 +1,4 @@
-TARGETS=roarcat roarcatad roarcat2sock roarcatsendfile roarcatplay roarcatpassfh roarbidir roarctl roarmon roarsockconnect roartypes roarvorbis roarvumeter roarfilt roarsin roar-config polytest roarsocktypes roarshout roarradio roarfctest roarmonhttp pinentrytest
+TARGETS=roarcat roarcatad roarcat2sock roarcatsendfile roarcatplay roarcatpassfh roarbidir roarctl roarmon roarsockconnect roartypes roarvorbis roarvumeter roarfilt roarsin roar-config polytest roarsocktypes roarshout roarradio roarfctest roarmonhttp pinentrytest zcattest
 
 include ../Makefile.conf
 
@@ -40,5 +40,6 @@ roarshout: roarshout.o
 	${CC} ${LDFLAGS} -o roarshout roarshout.o $(lib_shout)
 polytest: polytest.o
 pinentrytest: pinentrytest.o
+zcattest: zcattest.o
 roarfctest: roarfctest.o
 	${CC} ${LDFLAGS} -o roarfctest roarfctest.o $(lib_m) -lroardsp
