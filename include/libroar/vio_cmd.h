@@ -53,7 +53,6 @@ struct roar_vio_cmd_child {
 
 struct roar_vio_cmd_state {
  struct roar_vio_calls * next;
- int flags;
  int options;
 
  struct roar_vio_cmd_child reader;
@@ -61,7 +60,7 @@ struct roar_vio_cmd_state {
 };
 
 int roar_vio_open_cmd(struct roar_vio_calls * calls, struct roar_vio_calls * dst,
-                      int flags, char * reader, char * writer, int options);
+                      char * reader, char * writer, int options);
 int roar_vio_cmd_close(struct roar_vio_calls * vio);
 int roar_vio_cmd_fork(struct roar_vio_cmd_child * child);
 int roar_vio_cmd_wait(struct roar_vio_cmd_child * child);
@@ -75,14 +74,6 @@ int     roar_vio_cmd_nonblock(struct roar_vio_calls * vio, int state);
 int     roar_vio_cmd_sync    (struct roar_vio_calls * vio);
 
 /*
-// basic
-ssize_t roar_vio_basic_read    (struct roar_vio_calls * vio, void *buf, size_t count);
-ssize_t roar_vio_basic_write   (struct roar_vio_calls * vio, void *buf, size_t count);
-off_t   roar_vio_basic_lseek   (struct roar_vio_calls * vio, off_t offset, int whence);
-int     roar_vio_basic_nonblock(struct roar_vio_calls * vio, int state);
-int     roar_vio_basic_sync    (struct roar_vio_calls * vio);
-int     roar_vio_basic_close   (struct roar_vio_calls * vio);
-
 // pass
 int     roar_vio_open_pass    (struct roar_vio_calls * calls, struct roar_vio_calls * dst);
 ssize_t roar_vio_pass_read    (struct roar_vio_calls * vio, void *buf, size_t count);
@@ -93,6 +84,9 @@ int     roar_vio_pass_sync    (struct roar_vio_calls * vio);
 int     roar_vio_pass_ctl     (struct roar_vio_calls * vio, int cmd, void * data);
 int     roar_vio_pass_close   (struct roar_vio_calls * vio);
 */
+
+// MISC:
+roar_vio_open_gzip(struct roar_vio_calls * calls, struct roar_vio_calls * dst, int level);
 
 #endif
 

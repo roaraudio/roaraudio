@@ -35,16 +35,11 @@
 #include "libroar.h"
 
 int roar_vio_open_cmd(struct roar_vio_calls * calls, struct roar_vio_calls * dst,
-                      int flags, char * reader, char * writer, int options) {
+                      char * reader, char * writer, int options) {
  struct roar_vio_cmd_state * state;
 
  if ( calls == NULL || dst == NULL )
   return -1;
-
-/*
- if ( flags == 0 )
-  return -1;
-*/
 
  if ( reader == NULL && writer == NULL )
   return -1;
@@ -75,7 +70,6 @@ int roar_vio_open_cmd(struct roar_vio_calls * calls, struct roar_vio_calls * dst
 
  // init state
  state->next    = dst;
- state->flags   = flags;
  state->options = options;
 
  // init calls
