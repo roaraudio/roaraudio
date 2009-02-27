@@ -141,7 +141,7 @@ int     roar_vio_close    (struct roar_vio_calls * vio) {
  if ( vio == NULL )
   return -1;
 
- if ( vio->sync == NULL )
+ if ( vio->close == NULL )
   return -1;
 
  return vio->close(vio);
