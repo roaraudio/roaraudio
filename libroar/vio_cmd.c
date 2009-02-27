@@ -77,13 +77,15 @@ int roar_vio_open_cmd(struct roar_vio_calls * calls, struct roar_vio_calls * dst
  // init calls
  calls->inst = (void*) state;
 
- if ( reader != NULL )
-  if ( roar_vio_cmd_fork(&(state->reader)) == -1 )
-   return roar_vio_cmd_close(calls);
+ if ( !(options & ROAR_VIO_CMD_OPTS_ON_DEMAND) ) {
+  if ( reader != NULL )
+   if ( roar_vio_cmd_fork(&(state->reader)) == -1 )
+    return roar_vio_cmd_close(calls);
 
- if ( writer != NULL )
-  if ( roar_vio_cmd_fork(&(state->writer)) == -1 )
-   return roar_vio_cmd_close(calls);
+  if ( writer != NULL )
+   if ( roar_vio_cmd_fork(&(state->writer)) == -1 )
+    return roar_vio_cmd_close(calls);
+ }
 
  return 0;
 }
@@ -194,6 +196,14 @@ int roar_vio_cmd_wait(struct roar_vio_cmd_child * child) {
 
 ssize_t roar_vio_cmd_read    (struct roar_vio_calls * vio, void *buf, size_t count) {
  struct roar_vio_cmd_state * state = (struct roar_vio_cmd_state *)vio->inst;
+ fd_set rfhs[1], wfhs[1];
+ struct timeval tv;
+ size_t done = 0;
+ int max_fh;
+ int ret;
+ char   tbuf[ROAR_VIO_CMD_BUFSIZE];
+ char * tp   = NULL;
+ size_t tlen = 0;
 
  if ( !state->reader.opened ) {
   if ( buf == NULL && count == 0 ) /* sync: no need to do anything if no reader is forked :) */
@@ -206,7 +216,63 @@ ssize_t roar_vio_cmd_read    (struct roar_vio_calls * vio, void *buf, size_t cou
    return -1;
  }
 
- return -1;
+ while (done < count) {
+  if ( state->options & ROAR_VIO_CMD_OPTS_NONBLOCK ) {
+   tv.tv_sec  =    0;
+   tv.tv_usec =    1;
+  } else {
+   tv.tv_sec  = 3600;
+   tv.tv_usec =    0;
+  }
+
+  FD_ZERO(rfhs);
+  FD_ZERO(wfhs);
+
+  FD_SET(state->reader.in,  rfhs);
+  FD_SET(state->reader.out, wfhs);
+
+  max_fh = state->reader.in > state->reader.out ? state->reader.in : state->reader.out;
+
+  if ( (ret = select(max_fh + 1, rfhs, wfhs, rfhs, &tv)) == -1 )
+   return -1;
+
+  if ( ret > 0 ) {
+   if ( FD_ISSET(state->reader.in, rfhs) ) {
+    if ( (ret = read(state->reader.in, buf+done, count-done)) == -1 )
+     break;
+
+    if ( ret == 0 )
+     break;
+
+    done += ret;
+   }
+
+   if ( FD_ISSET(state->reader.out, wfhs) ) {
+    if ( !tlen ) {
+     tp = tbuf;
+     if ( (tlen = roar_vio_read(state->next, tp, ROAR_VIO_CMD_BUFSIZE)) == -1 )
+      tlen = 0;
+    }
+
+    if ( tlen ) {
+     if ( (ret = write(state->reader.out, tp, tlen)) > 0 ) {
+      tlen -= ret;
+      tp   += ret;
+     }
+    }
+   }
+  }
+
+  if ( state->options & ROAR_VIO_CMD_OPTS_NONBLOCK )
+   break;
+ }
+
+ if ( tlen ) { /* we have some data to write to the child... */
+  // TODO: try to write it out...
+  return -1;
+ }
+
+ return done;
 }
 
 ssize_t roar_vio_cmd_write   (struct roar_vio_calls * vio, void *buf, size_t count) {
@@ -234,6 +300,8 @@ int     roar_vio_cmd_nonblock(struct roar_vio_calls * vio, int state) {
 
  if ( state == ROAR_SOCKET_BLOCK )
   self->options -= ROAR_VIO_CMD_OPTS_NONBLOCK;
+
+ roar_vio_nonblock(self->next, state); // this should help, but may not nessessery.
 
  return 0;
 }

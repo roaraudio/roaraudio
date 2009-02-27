@@ -41,6 +41,8 @@
 #define ROAR_VIO_CMD_OPTS_NONBLOCK  0x01
 #define ROAR_VIO_CMD_OPTS_ON_DEMAND 0x02
 
+#define ROAR_VIO_CMD_BUFSIZE        1024
+
 struct roar_vio_cmd_child {
  int opened;
  pid_t pid;
