@@ -373,4 +373,43 @@ int roar_vio_open_gzip(struct roar_vio_calls * calls, struct roar_vio_calls * ds
 #endif
 }
 
+int roar_vio_open_gpg(struct roar_vio_calls * calls, struct roar_vio_calls * dst, char * pw, int wronly, char * opts) {
+#ifdef ROAR_HAVE_BIN_GPG
+ char command[1024];
+ int pwpipe[2];
+ int ret;
+
+ if ( pw != NULL ) {
+  if ( pipe(pwpipe) == -1 )
+   return -1;
+
+  snprintf(command, 1024, "%s --no-verbose --quiet --passphrase-repeat 0 --passphrase-fd %i %s", ROAR_HAVE_BIN_GPG, pwpipe[0], opts);
+
+  write(pwpipe[1], pw, strlen(pw));
+
+  close(pwpipe[1]);
+ } else {
+  snprintf(command, 1024, "%s --no-verbose --quiet %s", ROAR_HAVE_BIN_GPG, opts);
+ }
+
+ if ( wronly ) {
+  ret = roar_vio_open_cmd(calls, dst, NULL, command, 0);
+ } else {
+  ret = roar_vio_open_cmd(calls, dst, command, NULL, 0);
+ }
+
+ if ( pw != NULL )
+  close(pwpipe[0]);
+
+ return ret;
+#else
+ return -1;
+#endif
+}
+
+int roar_vio_open_pgp_decrypt(struct roar_vio_calls * calls, struct roar_vio_calls * dst, char * pw) {
+ return roar_vio_open_gpg(calls, dst, pw, 0, "-d");
+}
+
+
 //ll

@@ -88,6 +88,9 @@ int     roar_vio_pass_close   (struct roar_vio_calls * vio);
 // MISC:
 int roar_vio_open_gzip(struct roar_vio_calls * calls, struct roar_vio_calls * dst, int level);
 
+int roar_vio_open_gpg(struct roar_vio_calls * calls, struct roar_vio_calls * dst, char * pw, int wronly, char * opts);
+int roar_vio_open_pgp_decrypt(struct roar_vio_calls * calls, struct roar_vio_calls * dst, char * pw);
+
 #endif
 
 //ll
