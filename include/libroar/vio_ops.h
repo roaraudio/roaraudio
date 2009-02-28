@@ -37,6 +37,8 @@
 
 #include "libroar.h"
 
+ssize_t roar_vio_copy_data   (struct roar_vio_calls * out, struct roar_vio_calls * in);
+
 #endif
 
 //ll

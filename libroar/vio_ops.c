@@ -34,4 +34,24 @@
 
 #include "libroar.h"
 
+#define ROAR_VIO_COPY_BUFSIZE 1024
+
+ssize_t roar_vio_copy_data   (struct roar_vio_calls * out, struct roar_vio_calls * in) {
+ char    buf[ROAR_VIO_COPY_BUFSIZE];
+ ssize_t len;
+ ssize_t done = 0;
+
+ if ( out == NULL || in == NULL )
+  return -1;
+
+ while ((len = roar_vio_read(in, buf, ROAR_VIO_COPY_BUFSIZE)) > 0) {
+  if ( roar_vio_write(out, buf, len) != len )
+   return -1;
+
+  done += len;
+ }
+
+ return done;
+}
+
 //ll
