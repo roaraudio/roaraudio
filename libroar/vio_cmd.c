@@ -515,7 +515,7 @@ int roar_vio_open_gpg(struct roar_vio_calls * calls, struct roar_vio_calls * dst
 
   close(pwpipe[1]);
  } else {
-  snprintf(command, 1024, "%s --no-verbose --quiet --batch %s %s", ROAR_HAVE_BIN_GPG, para, opts);
+  snprintf(command, 1024, "%s --no-verbose --quiet %s %s", ROAR_HAVE_BIN_GPG, para, opts);
  }
 
  if ( wronly ) {
