@@ -7,6 +7,7 @@ v. 0.2beta2 - ?
 	* fixed (minor) some bugs, including segfault in vio
 	* added a lot things to the vio interface
 	* added gzip and simple OpenPGP support to vio interface
+	* added a simple pointer stack.
 
 v. 0.2beta1 - Mon Feb 23 2009 25:08
 	* added options --default-codec and --without-cf-cmd to configure script
