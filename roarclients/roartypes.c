@@ -35,11 +35,13 @@ int main (void) {
   { "roar_connection",    sizeof(struct roar_connection)    },
   { "roar_audio_info",    sizeof(struct roar_audio_info)    },
   { "roar_meta",          sizeof(struct roar_meta)          },
+  { "roar_vio_calls",     sizeof(struct roar_vio_calls)     },
+  { "roar_stack",         sizeof(struct roar_stack)         },
   { NULL, 0 }
  }, * c = types - 1;
 
  while ((++c)->name != NULL)
-  printf("%-20s = %3i Bytes = %4i Bits\n", c->name, c->len, c->len * 8);
+  printf("%-20s = %4i Bytes = %4i Bits\n", c->name, c->len, c->len * 8);
 
  return 0;
 }
