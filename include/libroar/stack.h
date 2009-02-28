@@ -44,7 +44,7 @@
 #define ROAR_STACK_FLAG_FREE_DATA  0x02
 
 struct roar_stack {
- int cur;
+ int next;
  int flags;
 
  void (*free)(void*);
@@ -57,7 +57,7 @@ struct roar_stack * roar_stack_newalloc(void);
 
 int roar_stack_free(struct roar_stack * stack);
 
-int roar_stack_set_free(struct roar_stack * stack, void (*free)(void*));
+int roar_stack_set_free(struct roar_stack * stack, void (*func)(void*));
 int roar_stack_set_flag(struct roar_stack * stack, int flag, int reset);
 
 int roar_stack_push    (struct roar_stack * stack, void *  ptr);
