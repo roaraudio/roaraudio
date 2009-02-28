@@ -1,4 +1,4 @@
-//libroar.h:
+//stack.h:
 
 /*
  *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008
@@ -32,53 +32,37 @@
  *  them with any software that uses libesd, libartsc or libpulse*.
  */
 
-#ifndef _LIBROAR_H_
-#define _LIBROAR_H_
+#ifndef _LIBROARSTACK_H_
+#define _LIBROARSTACK_H_
 
-#define ROAR_DBG_PREFIX  "libroar"
+#include "libroar.h"
 
-#include <roaraudio.h>
+#define ROAR_STACK_SIZE 32
 
-#include <stdint.h>
+#define ROAR_STACK_FLAG_NONE       0x00
+#define ROAR_STACK_FLAG_FREE_SELF  0x01
+#define ROAR_STACK_FLAG_FREE_DATA  0x02
 
-#include <sys/wait.h>
+struct roar_stack {
+ int cur;
+ int flags;
 
-#include <fcntl.h>
-#ifndef ROAR_TARGET_WIN32
-#include <sys/socket.h>
-#include <netinet/in_systm.h>
-#include <netinet/in.h>
-#include <netinet/ip.h>
-#include <sys/uio.h>
-#endif
-#ifdef ROAR_HAVE_LIBDNET
-#include <netdnet/dn.h>
-#include <netdnet/dnetdb.h>
-#endif
-#ifdef ROAR_HAVE_IPX
-#include <netipx/ipx.h>
-#endif
+ void (*free)(void*);
 
-#include "error.h"
-#include "stack.h"
-#include "vio.h"
-#include "vio_cmd.h"
-#include "vio_ops.h"
-#include "vio_magic.h"
-#include "basic.h"
-#include "stream.h"
-#include "simple.h"
-#include "cdrom.h"
-#include "auth.h"
-#include "socket.h"
-#include "ctl.h"
-#include "buffer.h"
-#include "convert.h"
-#include "poly.h"
-#include "meta.h"
-#include "file.h"
-#include "acl.h"
-#include "pinentry.h"
+ void * slot[ROAR_STACK_SIZE];
+};
+
+int roar_stack_new(struct roar_stack * stack);
+struct roar_stack * roar_stack_newalloc(void);
+
+int roar_stack_free(struct roar_stack * stack);
+
+int roar_stack_set_free(struct roar_stack * stack, void (*free)(void*));
+int roar_stack_set_flag(struct roar_stack * stack, int flag, int reset);
+
+int roar_stack_push    (struct roar_stack * stack, void *  ptr);
+int roar_stack_pop     (struct roar_stack * stack, void ** ptr);
+int roar_stack_get_cur (struct roar_stack * stack, void ** ptr);
 
 #endif
 
