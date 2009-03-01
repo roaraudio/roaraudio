@@ -37,7 +37,23 @@
 
 #include "libroar.h"
 
+#define ROAR_VIO_TEE_MAX_SLOTS 32
+
+struct roar_vio_tee {
+ int next;
+ struct roar_vio_calls * slots[ROAR_VIO_TEE_MAX_SLOTS];
+};
+
+struct roar_split {
+ struct roar_vio_calls * reader;
+ struct roar_vio_calls * writer;
+};
+
 ssize_t roar_vio_copy_data   (struct roar_vio_calls * out, struct roar_vio_calls * in);
+
+int roar_vio_open_tee (struct roar_vio_calls * calls);
+
+int roar_vio_open_split (struct roar_vio_calls * calls, struct roar_vio_calls * reader, struct roar_vio_calls * writer);
 
 #endif
 
