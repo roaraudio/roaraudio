@@ -175,6 +175,13 @@ int     roar_vio_open_fh       (struct roar_vio_calls * calls, int fh) {
  return roar_vio_set_fh(calls, fh);
 }
 
+int     roar_vio_open_fh_socket(struct roar_vio_calls * calls, int fh) {
+ if ( calls == NULL )
+  return -1;
+
+ return roar_vio_open_fh(calls, fh);
+}
+
 int     roar_vio_simple_stream (struct roar_vio_calls * calls, int rate, int channels, int bits, int codec,
                                                                char * server, int dir, char * name) {
  int fh;
@@ -185,7 +192,7 @@ int     roar_vio_simple_stream (struct roar_vio_calls * calls, int rate, int cha
  if ( (fh = roar_simple_stream(rate, channels, bits, codec, server, dir, name)) == -1 )
   return -1;
 
- return roar_vio_open_fh(calls, fh);
+ return roar_vio_open_fh_socket(calls, fh);
 }
 
 
