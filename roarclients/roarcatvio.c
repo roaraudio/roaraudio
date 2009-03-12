@@ -100,7 +100,7 @@ int main (int argc, char * argv[]) {
 
  roar_vio_copy_data(&stream, &pgp);
 
- roar_vio_close(&file);
+ roar_vio_close(&pgp);
  roar_vio_close(&stream);
 
  return 0;
