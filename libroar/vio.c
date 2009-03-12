@@ -248,13 +248,48 @@ FILE *  roar_vio_to_stdio      (struct roar_vio_calls * calls, int flags) {
 #if defined(ROAR_HAVE_FOPENCOOKIE)
  memset(&foc_funcs, 0, sizeof(cookie_io_functions_t));
 
+ foc_funcs.close = roar_vio_to_stdio_close;
+ foc_funcs.read  = roar_vio_to_stdio_read;
+ foc_funcs.write = roar_vio_to_stdio_write;
+
  return fopencookie((void*) calls, "rw", foc_funcs);
 #elif defined(ROAR_HAVE_FUNOPEN)
- return funopen((void*) calls, NULL /* read */, NULL /* write */, NULL /* lseek */, NULL /* close */);
+ return funopen((void*) calls, roar_vio_to_stdio_read,  roar_vio_to_stdio_write,
+                               roar_vio_to_stdio_lseek, roar_vio_to_stdio_close);
 #else
  return NULL;
 #endif
 }
+
+#if defined(ROAR_HAVE_FOPENCOOKIE) || defined(ROAR_HAVE_FUNOPEN)
+int roar_vio_to_stdio_close (void *__cookie) {
+ return roar_vio_close((struct roar_vio_calls *) __cookie);
+}
+#endif
+
+#if defined(ROAR_HAVE_FOPENCOOKIE)
+__ssize_t roar_vio_to_stdio_read (void *__cookie, char *__buf, size_t __nbytes) {
+#elif defined(ROAR_HAVE_FUNOPEN)
+int roar_vio_to_stdio_read(void *__cookie, char *__buf, int __nbytes) {
+#endif
+ return roar_vio_read((struct roar_vio_calls *) __cookie, __buf, __nbytes);
+}
+
+#if defined(ROAR_HAVE_FOPENCOOKIE)
+__ssize_t roar_vio_to_stdio_write (void *__cookie, __const char *__buf, size_t __n) {
+#elif defined(ROAR_HAVE_FUNOPEN)
+int roar_vio_to_stdio_write(void *__cookie, const char *__buf, int __n) {
+#endif
+ return roar_vio_write((struct roar_vio_calls *) __cookie, (char *) __buf, __n);
+}
+
+#if defined(ROAR_HAVE_FOPENCOOKIE)
+int roar_vio_to_stdio_lseek (void *__cookie, _IO_off64_t *__pos, int __w);
+#elif defined(ROAR_HAVE_FUNOPEN)
+fpos_t roar_vio_to_stdio_lseek(void *__cookie, fpos_t __pos, int __w) {
+ return roar_vio_lseek((struct roar_vio_calls *) __cookie, __pos, __w);
+}
+#endif
 
 // VIOs:
 

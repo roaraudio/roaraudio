@@ -109,6 +109,18 @@ int     roar_vio_simple_stream (struct roar_vio_calls * calls, int rate, int cha
 int     roar_vio_open_stdio    (struct roar_vio_calls * calls, FILE * dst);
 
 FILE *  roar_vio_to_stdio      (struct roar_vio_calls * calls, int flags);
+#if defined(ROAR_HAVE_FOPENCOOKIE) || defined(ROAR_HAVE_FUNOPEN)
+int roar_vio_to_stdio_close (void *__cookie);
+#endif
+#if defined(ROAR_HAVE_FOPENCOOKIE)
+__ssize_t roar_vio_to_stdio_read (void *__cookie, char *__buf, size_t __nbytes);
+__ssize_t roar_vio_to_stdio_write (void *__cookie, __const char *__buf, size_t __n);
+int roar_vio_to_stdio_lseek (void *__cookie, _IO_off64_t *__pos, int __w);
+#elif defined(ROAR_HAVE_FUNOPEN)
+int roar_vio_to_stdio_read(void *__cookie, char *__buf, int __nbytes);
+int roar_vio_to_stdio_write(void *__cookie, const char *__buf, int __n);
+fpos_t roar_vio_to_stdio_lseek(void *__cookie, fpos_t __pos, int __w);
+#endif
 
 
 // possible VIOs:
