@@ -484,17 +484,18 @@ EOF
  echo
 } >&3
 
-#                 #define                  name         cmds...
-test_tool_defmake ROAR_HAVE_BIN_OGG123     ogg123       ogg123
-test_tool_defmake ROAR_HAVE_BIN_FLAC       flac         flac
-test_tool_defmake ROAR_HAVE_BIN_TIMIDITY   TiMidity++   timidity
-test_tool_defmake ROAR_HAVE_BIN_CDPARANOIA cdparanoia   cdparanoia
-test_tool_defmake ROAR_HAVE_BIN_WGET       Wget         wget
-test_tool_defmake ROAR_HAVE_BIN_GNUPLOT    gnuplot      gnuplot
-test_tool_defmake ROAR_HAVE_BIN_SSH        OpenSSH      ssh
-test_tool_defmake ROAR_HAVE_BIN_PINENTRY   PIN-Entry    pinentry
-test_tool_defmake ROAR_HAVE_BIN_GZIP       Gzip         gzip
-test_tool_defmake ROAR_HAVE_BIN_GPG        GnuPG        gpg
+#                 #define                   name         cmds...
+test_tool_defmake ROAR_HAVE_BIN_OGG123      ogg123       ogg123
+test_tool_defmake ROAR_HAVE_BIN_FLAC        flac         flac
+test_tool_defmake ROAR_HAVE_BIN_TIMIDITY    TiMidity++   timidity
+test_tool_defmake ROAR_HAVE_BIN_CDPARANOIA  cdparanoia   cdparanoia
+test_tool_defmake ROAR_HAVE_BIN_WGET        Wget         wget
+test_tool_defmake ROAR_HAVE_BIN_GNUPLOT     gnuplot      gnuplot
+test_tool_defmake ROAR_HAVE_BIN_SSH         OpenSSH      ssh
+test_tool_defmake ROAR_HAVE_BIN_PINENTRY    PIN-Entry    pinentry
+test_tool_defmake ROAR_HAVE_BIN_SSH_ASKPASS SSH-AskPass  ssh-askpass
+test_tool_defmake ROAR_HAVE_BIN_GZIP        Gzip         gzip
+test_tool_defmake ROAR_HAVE_BIN_GPG         GnuPG        gpg
 
 echo >&3
 
