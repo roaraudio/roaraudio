@@ -36,13 +36,35 @@
 
 int roar_sshaskpass_getpass   (char ** pw, char * desc) {
 #ifdef ROAR_HAVE_BIN_SSH_ASKPASS
- FILE * pipe;
+ FILE * cpipe;
+ char   buf[1024];
+ int    pos;
 
- if ( (pipe = popen(ROAR_HAVE_BIN_SSH_ASKPASS, "r")) == NULL ) {
+ if ( pw == NULL )
+  return -1;
+
+ if ( (cpipe = popen(ROAR_HAVE_BIN_SSH_ASKPASS, "r")) == NULL ) {
   return -1;
  }
 
- fclose(pipe);
+ if ( fgets(buf, 1024, cpipe) == NULL ) {
+  fclose(cpipe);
+  return -1;
+ }
+
+ fclose(cpipe);
+
+ pos = strlen(buf);
+
+ for (; pos > -1 && (buf[pos] == '\r' || buf[pos] == '\n'); pos--)
+  buf[pos] = 0;
+
+ if ( pos == 0 )
+  return -1;
+
+ *pw = strdup(buf);
+
+ return 0;
 #else
  return -1;
 #endif
