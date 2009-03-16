@@ -61,6 +61,7 @@
 
 #include "error.h"
 #include "stack.h"
+#include "buffer.h"
 #include "vio.h"
 #include "vio_cmd.h"
 #include "vio_ops.h"
@@ -72,7 +73,6 @@
 #include "auth.h"
 #include "socket.h"
 #include "ctl.h"
-#include "buffer.h"
 #include "convert.h"
 #include "poly.h"
 #include "meta.h"
