@@ -1,4 +1,4 @@
-//vio_magic.c:
+
 
 /*
  *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2009
@@ -33,5 +33,93 @@
  */
 
 #include "libroar.h"
+
+int     roar_vio_open_magic    (struct roar_vio_calls * calls, struct roar_vio_calls * dst, int * codec);
+int     roar_vio_magic_close   (struct roar_vio_calls * vio);
+
+ssize_t roar_vio_magic_read    (struct roar_vio_calls * vio, void *buf, size_t count) {
+ struct roar_vio_magic * self = (struct roar_vio_magic *)(vio->inst);
+ void * calls;
+ size_t len;
+
+ if (self == NULL)
+  return -1;
+
+ if ( roar_stack_get_cur(&(self->vios), &calls) == -1 )
+  return -1;
+
+ if ( roar_buffer_get_len(&(self->inp), &len) == -1 )
+  return -1;
+
+ if ( len ) {
+  len = len > count ? count : len;
+  if ( roar_buffer_shift_out(&(self->inp), buf, &len) == -1 )
+   return -1;
+ }
+
+ count -= len;
+ buf += len;
+
+ if ( count ) {
+  if ( (count = roar_vio_read((struct roar_vio_calls*) calls, buf, count)) == -1 )
+   return len;
+
+  return len+count;
+ }
+
+ return len;
+}
+
+ssize_t roar_vio_magic_write   (struct roar_vio_calls * vio, void *buf, size_t count) {
+ struct roar_vio_magic * self = (struct roar_vio_magic *)(vio->inst);
+ void * calls;
+
+ if (self == NULL)
+  return -1;
+
+ if ( roar_stack_get_cur(&(self->vios), &calls) == -1 )
+  return -1;
+
+ return roar_vio_write((struct roar_vio_calls*)calls, buf, count);
+}
+
+off_t   roar_vio_magic_lseek   (struct roar_vio_calls * vio, off_t offset, int whence) {
+ struct roar_vio_magic * self = (struct roar_vio_magic *)(vio->inst);
+ void * calls;
+
+ if (self == NULL)
+  return -1;
+
+ if ( roar_stack_get_cur(&(self->vios), &calls) == -1 )
+  return -1;
+
+ return roar_vio_lseek((struct roar_vio_calls*)calls, offset, whence);
+}
+
+int     roar_vio_magic_nonblock(struct roar_vio_calls * vio, int state) {
+ struct roar_vio_magic * self = (struct roar_vio_magic *)(vio->inst);
+ void * calls;
+
+ if (self == NULL)
+  return -1;
+
+ if ( roar_stack_get_cur(&(self->vios), &calls) == -1 )
+  return -1;
+
+ return roar_vio_nonblock((struct roar_vio_calls*)calls, state);
+}
+
+int     roar_vio_magic_sync    (struct roar_vio_calls * vio) {
+ struct roar_vio_magic * self = (struct roar_vio_magic *)(vio->inst);
+ void * calls;
+
+ if (self == NULL)
+  return -1;
+
+ if ( roar_stack_get_cur(&(self->vios), &calls) == -1 )
+  return -1;
+
+ return roar_vio_sync((struct roar_vio_calls*)calls);
+}
 
 //ll
