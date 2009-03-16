@@ -39,6 +39,7 @@ int     roar_vio_magic_close   (struct roar_vio_calls * vio);
 
 ssize_t roar_vio_magic_read    (struct roar_vio_calls * vio, void *buf, size_t count) {
  struct roar_vio_magic * self = (struct roar_vio_magic *)(vio->inst);
+ struct roar_buffer    * inp;
  void * calls;
  size_t len;
 
@@ -48,12 +49,14 @@ ssize_t roar_vio_magic_read    (struct roar_vio_calls * vio, void *buf, size_t c
  if ( roar_stack_get_cur(&(self->vios), &calls) == -1 )
   return -1;
 
- if ( roar_buffer_get_len(&(self->inp), &len) == -1 )
+ inp = &(self->inp);
+
+ if ( roar_buffer_get_len(inp, &len) == -1 )
   return -1;
 
  if ( len ) {
   len = len > count ? count : len;
-  if ( roar_buffer_shift_out(&(self->inp), buf, &len) == -1 )
+  if ( roar_buffer_shift_out(&inp, buf, &len) == -1 )
    return -1;
  }
 

@@ -35,6 +35,7 @@
 #include "libroar.h"
 
 int roar_pinentry_open (struct roar_pinentry * pe, int flags, char * display, char * tty, char * term) {
+#ifdef ROAR_HAVE_BIN_PINENTRY
  int in[2], out[2];
 
  if ( pe == NULL )
@@ -44,7 +45,6 @@ int roar_pinentry_open (struct roar_pinentry * pe, int flags, char * display, ch
  pe->in  = -1;
  pe->out = -1;
 
-#ifdef ROAR_HAVE_BIN_PINENTRY
  if ( display == NULL )
   display = getenv("DISPLAY");
 
