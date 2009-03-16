@@ -37,8 +37,18 @@
 
 #include "libroar.h"
 
-int     roar_vio_open_magic    (struct roar_vio_calls * calls, struct roar_vio_calls * dst, int * codec);
+struct roar_vio_magic {
+ struct roar_buffer inp;
+ struct roar_stack  vios;
+};
 
+int     roar_vio_open_magic    (struct roar_vio_calls * calls, struct roar_vio_calls * dst, int * codec);
+ssize_t roar_vio_magic_read    (struct roar_vio_calls * vio, void *buf, size_t count);
+ssize_t roar_vio_magic_write   (struct roar_vio_calls * vio, void *buf, size_t count);
+off_t   roar_vio_magic_lseek   (struct roar_vio_calls * vio, off_t offset, int whence);
+int     roar_vio_magic_nonblock(struct roar_vio_calls * vio, int state);
+int     roar_vio_magic_sync    (struct roar_vio_calls * vio);
+int     roar_vio_magic_close   (struct roar_vio_calls * vio);
 #endif
 
 //ll
