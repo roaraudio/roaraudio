@@ -84,7 +84,7 @@
  ||||||\----/ order
  |||||\-----> unsigned? (or other flags)
  ||||\------> META: text(0) or binary(1)
- |||\-------> META(0)
+ |||\-------> META(0)/CONTAINER(1)
  ||\--------> (0)
  |\---------> second set(1)
  \----------> (0)
@@ -96,6 +96,15 @@
       0100 0x44 -> Meta Text: RoarAudio Like
       [...]
       11BB 0x4c -> Meta Binary: RoarAudio Like
+
+ Container 0x50:
+  76543210
+      0000 0x50 -> Null container: pass
+      0001 0x51 -> Gzip
+      0010 0x52 -> Bzip2
+      0011 0x53 -> OpenPGP bin
+      0100 0x54 -> OpenPGP asc
+      0101 0x55 -> TAR
 
 */
 
@@ -149,6 +158,25 @@
 #define ROAR_CODEC_META_RALB_LE (ROAR_CODEC_META_RALB | ROAR_CODEC_LE)
 #define ROAR_CODEC_META_RALB_BE (ROAR_CODEC_META_RALB | ROAR_CODEC_BE)
 #define ROAR_CODEC_META_RALB_PDP (ROAR_CODEC_META_RALB | ROAR_CODEC_PDP)
+
+// Container Codecs:
+/*
+ Container 0x50:
+  76543210
+      0000 0x50 -> Null container: pass
+      0001 0x51 -> Gzip
+      0010 0x52 -> Bzip2
+      0011 0x53 -> OpenPGP bin
+      0100 0x54 -> OpenPGP asc
+      0101 0x55 -> TAR
+*/
+#define ROAR_CODEC_CONT_NULL    0x50
+#define ROAR_CODEC_CONT_BASE    ROAR_CODEC_CONT_NULL
+#define ROAR_CODEC_CONT_GZIP    0x51
+#define ROAR_CODEC_CONT_BZIP2   0x52
+#define ROAR_CODEC_CONT_OPGPBIN 0x53
+#define ROAR_CODEC_CONT_OPGPASC 0x54
+#define ROAR_CODEC_CONT_TAR     0x55
 
 #if BYTE_ORDER == BIG_ENDIAN
 
