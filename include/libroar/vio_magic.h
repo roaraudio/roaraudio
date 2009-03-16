@@ -37,6 +37,8 @@
 
 #include "libroar.h"
 
+int     roar_vio_open_magic    (struct roar_vio_calls * calls, struct roar_vio_calls * dst, int * codec);
+
 #endif
 
 //ll
