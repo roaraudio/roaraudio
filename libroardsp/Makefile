@@ -11,6 +11,7 @@ CFLAGS += -g -Wall -O2 $(DEFINES) $(INCLUDE) $(INCPATH) $(SHARED_CF) -fPIC
 LDFLAGS = -g $(SHARED) -L../lib/ $(LDPATH) $(lib_dnet) $(lib_m) -lroar
 
 all: ${TARGETS}
+	rm -f ../lib/${TARGETS} 2> /dev/null || true
 	cp $(cp_v) ${TARGETS} ../lib/
 clean:
 	rm -f ${TARGETS} *.o
