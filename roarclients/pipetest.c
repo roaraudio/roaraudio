@@ -28,7 +28,6 @@
 
 int main (void) {
  char buf[BUF_MAX];
- size_t len;
  struct roar_vio_calls s0, s1;
  struct roar_vio_calls * me;
 
