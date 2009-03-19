@@ -37,11 +37,13 @@
 
 #include "libroar.h"
 
-#define ROAR_VIO_PIPE_TYPE_AUTO      -1
-#define ROAR_VIO_PIPE_TYPE_NONE       0
-#define ROAR_VIO_PIPE_TYPE_BUFFER     1
-#define ROAR_VIO_PIPE_TYPE_PIPE       2
-#define ROAR_VIO_PIPE_TYPE_SOCKET     3
+#define ROAR_VIO_PIPE_TYPE_AUTO        -1
+#define ROAR_VIO_PIPE_TYPE_AUTO_FORK    ROAR_VIO_PIPE_TYPE_AUTO
+#define ROAR_VIO_PIPE_TYPE_AUTO_NOFORK  ROAR_VIO_PIPE_TYPE_AUTO
+#define ROAR_VIO_PIPE_TYPE_NONE         0
+#define ROAR_VIO_PIPE_TYPE_BUFFER       1
+#define ROAR_VIO_PIPE_TYPE_PIPE         2
+#define ROAR_VIO_PIPE_TYPE_SOCKET       3
 
 #define ROAR_VIO_PIPE_S(self,stream)   ((self->s0) == (stream) ? 0 : 1)
 #define ROAR_VIO_PIPE_SR(self,stream)  ((self->s0) == (stream) ? 1 : 0)
