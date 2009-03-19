@@ -43,6 +43,8 @@
 #define ROAR_VIO_PIPE_TYPE_PIPE       2
 #define ROAR_VIO_PIPE_TYPE_SOCKET     3
 
+#define ROAR_VIO_PIPE_S(self,stream)  ((self->s0) == (stream) ? 0 : 1)
+
 struct roar_vio_pipe {
  int refcount;
  int type;
@@ -51,9 +53,17 @@ struct roar_vio_pipe {
   struct roar_buffer * b[2];
   int                  p[4];
  } b;
+ struct roar_vio_calls * s0;
 };
 
-int roar_vio_open_pipe (struct roar_vio_calls * s1, struct roar_vio_calls * s2, int type, int flags);
+int roar_vio_open_pipe (struct roar_vio_calls * s0, struct roar_vio_calls * s1, int type, int flags);
+int roar_vio_pipe_init (struct roar_vio_calls * s,  struct roar_vio_pipe * self, int flags);
+
+ssize_t roar_vio_pipe_read    (struct roar_vio_calls * vio, void *buf, size_t count);
+ssize_t roar_vio_pipe_write   (struct roar_vio_calls * vio, void *buf, size_t count);
+int     roar_vio_pipe_nonblock(struct roar_vio_calls * vio, int state);
+int     roar_vio_pipe_sync    (struct roar_vio_calls * vio);
+int     roar_vio_pipe_close   (struct roar_vio_calls * vio);
 
 #endif
 

@@ -34,11 +34,11 @@
 
 #include "libroar.h"
 
-int roar_vio_open_pipe (struct roar_vio_calls * s1, struct roar_vio_calls * s2, int type, int flags) {
+int roar_vio_open_pipe (struct roar_vio_calls * s0, struct roar_vio_calls * s1, int type, int flags) {
  struct roar_vio_pipe * self;
  int                    rw = flags & (O_RDONLY|O_WRONLY|O_RDWR);
 
- if ( s1 == NULL || s2 == NULL )
+ if ( s0 == NULL || s1 == NULL )
   return -1;
 
  if ( (self = malloc(sizeof(struct roar_vio_pipe))) == NULL )
@@ -47,7 +47,6 @@ int roar_vio_open_pipe (struct roar_vio_calls * s1, struct roar_vio_calls * s2, 
  memset(self, 0, sizeof(struct roar_vio_pipe));
 
  self->refcount = 2;
- self->type     = type;
  self->flags    = flags;
 
  if ( type == ROAR_VIO_PIPE_TYPE_AUTO ) {
@@ -58,10 +57,14 @@ int roar_vio_open_pipe (struct roar_vio_calls * s1, struct roar_vio_calls * s2, 
 #endif
  }
 
+ self->type     = type;
+
  switch (type) {
   case ROAR_VIO_PIPE_TYPE_BUFFER:
     // no buffers need to be set up here,
     // we handle the NULL pointer in the reader and writer func
+    free(self);
+    return -1;
    break;
   case ROAR_VIO_PIPE_TYPE_PIPE:
     if ( rw == O_RDWR || rw == O_RDONLY )
@@ -96,7 +99,137 @@ int roar_vio_open_pipe (struct roar_vio_calls * s1, struct roar_vio_calls * s2, 
     return -1;
  }
 
+ roar_vio_pipe_init(s0, self, flags);
+ roar_vio_pipe_init(s1, self, flags);
+
+ self->s0 = s0;
+
  return 0;
+}
+
+int roar_vio_pipe_init (struct roar_vio_calls * s,  struct roar_vio_pipe * self, int flags) {
+ if ( s == NULL || self == NULL )
+  return -1;
+
+ memset(s, 0, sizeof(struct roar_vio_calls));
+
+ s->close    = roar_vio_pipe_close;
+ s->read     = roar_vio_pipe_read;
+ s->write    = roar_vio_pipe_write;
+ s->nonblock = roar_vio_pipe_nonblock;
+ s->sync     = roar_vio_pipe_sync;
+
+ s->inst = (void*) self;
+
+ if ( flags & O_NONBLOCK ) {
+  roar_vio_pipe_nonblock(s, ROAR_SOCKET_NONBLOCK);
+ }
+
+ return 0;
+}
+
+int     roar_vio_pipe_close   (struct roar_vio_calls * vio) {
+ struct roar_vio_pipe * self;
+ int                    idx;
+
+ if ( vio == NULL )
+  return -1;
+
+ if ( (self = (struct roar_vio_pipe *)vio->inst) == NULL )
+  return -1;
+
+ self->refcount--;
+
+ switch (self->type) {
+  case ROAR_VIO_PIPE_TYPE_BUFFER:
+    // this will be a bit more complex as we need to change the flags, too.
+   break;
+  case ROAR_VIO_PIPE_TYPE_PIPE:
+   switch (ROAR_VIO_PIPE_S(self, vio)) {
+    case 0:
+      close(self->b.p[0]);
+      close(self->b.p[1]);
+      self->b.p[0] = -1;
+      self->b.p[1] = -1;
+     break;
+    case 1:
+      close(self->b.p[2]);
+      close(self->b.p[3]);
+      self->b.p[2] = -1;
+      self->b.p[3] = -1;
+     break;
+   }
+   break;
+  case ROAR_VIO_PIPE_TYPE_SOCKET:
+    close(self->b.p[idx = ROAR_VIO_PIPE_S(self, vio)]);
+    self->b.p[idx] = -1;
+   break;
+ }
+
+ if ( ! self->refcount ) {
+  free(self);
+ }
+
+ vio->inst = NULL;
+ return 0;
+}
+
+int     roar_vio_pipe_nonblock(struct roar_vio_calls * vio, int state) {
+ return -1;
+}
+
+int     roar_vio_pipe_sync    (struct roar_vio_calls * vio) {
+ // we may add fdatasync() calls here depending on the type
+ // but in general they should not be needed on pipes.
+ return 0;
+}
+
+ssize_t roar_vio_pipe_read    (struct roar_vio_calls * vio, void *buf, size_t count) {
+ struct roar_vio_pipe * self;
+
+ if ( vio == NULL )
+  return -1;
+
+ if ( (self = (struct roar_vio_pipe *)vio->inst) == NULL )
+  return -1;
+
+ switch (self->type) {
+  case ROAR_VIO_PIPE_TYPE_BUFFER:
+    // this will be a bit more complex as we need to check the flags, too.
+   break;
+  case ROAR_VIO_PIPE_TYPE_PIPE:
+    return read(self->b.p[ROAR_VIO_PIPE_S(self,vio)*2], buf, count);
+   break;
+  case ROAR_VIO_PIPE_TYPE_SOCKET:
+    return read(self->b.p[ROAR_VIO_PIPE_S(self,vio)], buf, count);
+   break;
+ }
+
+ return -1;
+}
+
+ssize_t roar_vio_pipe_write   (struct roar_vio_calls * vio, void *buf, size_t count) {
+ struct roar_vio_pipe * self;
+
+ if ( vio == NULL )
+  return -1;
+
+ if ( (self = (struct roar_vio_pipe *)vio->inst) == NULL )
+  return -1;
+
+ switch (self->type) {
+  case ROAR_VIO_PIPE_TYPE_BUFFER:
+    // this will be a bit more complex as we need to check the flags, too.
+   break;
+  case ROAR_VIO_PIPE_TYPE_PIPE:
+    return write(self->b.p[(ROAR_VIO_PIPE_S(self,vio)*2)+1], buf, count);
+   break;
+  case ROAR_VIO_PIPE_TYPE_SOCKET:
+    return write(self->b.p[ROAR_VIO_PIPE_S(self,vio)], buf, count);
+   break;
+ }
+
+ return -1;
 }
 
 //ll
