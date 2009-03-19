@@ -44,11 +44,12 @@
 #define ROAR_VIO_PIPE_TYPE_SOCKET     3
 
 struct roar_vio_pipe {
+ int refcount;
  int type;
  int flags;
  union {
-  struct roar_buffer b[2];
-  int                p[4];
+  struct roar_buffer * b[2];
+  int                  p[4];
  } b;
 };
 
