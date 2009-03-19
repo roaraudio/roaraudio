@@ -257,6 +257,11 @@ ssize_t roar_vio_pipe_write   (struct roar_vio_calls * vio, void *buf, size_t co
 
  switch (self->type) {
   case ROAR_VIO_PIPE_TYPE_BUFFER:
+    if ( self->refcount < 2 ) {
+     raise(SIGPIPE);
+     return -1;
+    }
+
     idx = ROAR_VIO_PIPE_SR(self,vio);
 
     if ( (idx == 0 ? O_WRONLY : O_RDONLY) == (self->flags & (O_RDONLY|O_WRONLY|O_RDWR)) ) {
