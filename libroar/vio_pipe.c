@@ -67,6 +67,8 @@ int roar_vio_open_pipe (struct roar_vio_calls * s0, struct roar_vio_calls * s1, 
     return -1;
    break;
   case ROAR_VIO_PIPE_TYPE_PIPE:
+    self->b.p[0] = self->b.p[1] = self->b.p[2] = self->b.p[3] = -1;
+
     if ( rw == O_RDWR || rw == O_RDONLY )
      if ( pipe(self->b.p) == -1 ) {
       free(self);
@@ -175,6 +177,25 @@ int     roar_vio_pipe_close   (struct roar_vio_calls * vio) {
 }
 
 int     roar_vio_pipe_nonblock(struct roar_vio_calls * vio, int state) {
+ struct roar_vio_pipe * self;
+
+ if ( vio == NULL )
+  return -1;
+
+ if ( (self = (struct roar_vio_pipe *)vio->inst) == NULL )
+  return -1;
+
+ switch (self->type) {
+  case ROAR_VIO_PIPE_TYPE_PIPE:
+    if ( roar_socket_nonblock(self->b.p[ROAR_VIO_PIPE_S(self,vio)*2], state) == -1 )
+     return -1;
+    return roar_socket_nonblock(self->b.p[(ROAR_VIO_PIPE_SR(self,vio)*2)+1], state);
+   break;
+  case ROAR_VIO_PIPE_TYPE_SOCKET:
+    return roar_socket_nonblock(self->b.p[ROAR_VIO_PIPE_S(self,vio)], state);
+   break;
+ }
+
  return -1;
 }
 
@@ -186,6 +207,7 @@ int     roar_vio_pipe_sync    (struct roar_vio_calls * vio) {
 
 ssize_t roar_vio_pipe_read    (struct roar_vio_calls * vio, void *buf, size_t count) {
  struct roar_vio_pipe * self;
+ int                    idx;
 
  if ( vio == NULL )
   return -1;
@@ -195,7 +217,20 @@ ssize_t roar_vio_pipe_read    (struct roar_vio_calls * vio, void *buf, size_t co
 
  switch (self->type) {
   case ROAR_VIO_PIPE_TYPE_BUFFER:
-    // this will be a bit more complex as we need to check the flags, too.
+    idx = ROAR_VIO_PIPE_S(self,vio);
+
+    if ( (idx == 0 ? O_WRONLY : O_RDONLY) == (self->flags & (O_RDONLY|O_WRONLY|O_RDWR)) ) {
+     raise(SIGPIPE);
+     return -1;
+    }
+
+    if ( self->b.b[idx] == NULL )
+     return 0;
+
+    if ( roar_buffer_shift_out(&(self->b.b[idx]), buf, &count) == -1 )
+     return -1;
+
+    return count;
    break;
   case ROAR_VIO_PIPE_TYPE_PIPE:
     return read(self->b.p[ROAR_VIO_PIPE_S(self,vio)*2], buf, count);
@@ -210,6 +245,9 @@ ssize_t roar_vio_pipe_read    (struct roar_vio_calls * vio, void *buf, size_t co
 
 ssize_t roar_vio_pipe_write   (struct roar_vio_calls * vio, void *buf, size_t count) {
  struct roar_vio_pipe * self;
+ struct roar_buffer   * next;
+ void                 * data;
+ int                    idx;
 
  if ( vio == NULL )
   return -1;
@@ -219,7 +257,33 @@ ssize_t roar_vio_pipe_write   (struct roar_vio_calls * vio, void *buf, size_t co
 
  switch (self->type) {
   case ROAR_VIO_PIPE_TYPE_BUFFER:
-    // this will be a bit more complex as we need to check the flags, too.
+    idx = ROAR_VIO_PIPE_SR(self,vio);
+
+    if ( (idx == 0 ? O_WRONLY : O_RDONLY) == (self->flags & (O_RDONLY|O_WRONLY|O_RDWR)) ) {
+     raise(SIGPIPE);
+     return -1;
+    }
+
+    if ( roar_buffer_new(&next, count) == -1 )
+     return -1;
+
+    if ( roar_buffer_get_data(next, &data) == -1 ) {
+     roar_buffer_free(next);
+     return -1;
+    }
+
+    memcpy(data, buf, count);
+
+    if ( self->b.b[idx] == NULL ) {
+     self->b.b[idx] = next;
+    } else {
+     if ( roar_buffer_add(self->b.b[idx], next) == -1 ) {
+      roar_buffer_free(next);
+      return -1;
+     }
+    }
+
+    return count;
    break;
   case ROAR_VIO_PIPE_TYPE_PIPE:
     return write(self->b.p[(ROAR_VIO_PIPE_SR(self,vio)*2)+1], buf, count);
