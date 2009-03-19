@@ -148,15 +148,15 @@ int     roar_vio_pipe_close   (struct roar_vio_calls * vio) {
    switch (ROAR_VIO_PIPE_S(self, vio)) {
     case 0:
       close(self->b.p[0]);
-      close(self->b.p[1]);
+      close(self->b.p[3]);
       self->b.p[0] = -1;
-      self->b.p[1] = -1;
+      self->b.p[3] = -1;
      break;
     case 1:
+      close(self->b.p[1]);
       close(self->b.p[2]);
-      close(self->b.p[3]);
+      self->b.p[1] = -1;
       self->b.p[2] = -1;
-      self->b.p[3] = -1;
      break;
    }
    break;
@@ -222,7 +222,7 @@ ssize_t roar_vio_pipe_write   (struct roar_vio_calls * vio, void *buf, size_t co
     // this will be a bit more complex as we need to check the flags, too.
    break;
   case ROAR_VIO_PIPE_TYPE_PIPE:
-    return write(self->b.p[(ROAR_VIO_PIPE_S(self,vio)*2)+1], buf, count);
+    return write(self->b.p[(ROAR_VIO_PIPE_SR(self,vio)*2)+1], buf, count);
    break;
   case ROAR_VIO_PIPE_TYPE_SOCKET:
     return write(self->b.p[ROAR_VIO_PIPE_S(self,vio)], buf, count);

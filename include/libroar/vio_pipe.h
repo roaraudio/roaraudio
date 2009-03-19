@@ -43,7 +43,9 @@
 #define ROAR_VIO_PIPE_TYPE_PIPE       2
 #define ROAR_VIO_PIPE_TYPE_SOCKET     3
 
-#define ROAR_VIO_PIPE_S(self,stream)  ((self->s0) == (stream) ? 0 : 1)
+#define ROAR_VIO_PIPE_S(self,stream)   ((self->s0) == (stream) ? 0 : 1)
+#define ROAR_VIO_PIPE_SR(self,stream)  ((self->s0) == (stream) ? 1 : 0)
+#define ROAR_VIO_PIPE_SF(self,stream)  ROAR_VIO_PIPE_S(self,stream)
 
 struct roar_vio_pipe {
  int refcount;
