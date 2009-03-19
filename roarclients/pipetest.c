@@ -23,6 +23,7 @@
  */
 
 #include <roaraudio.h>
+#include <unistd.h>
 
 #define BUF_MAX 1024
 
@@ -54,6 +55,8 @@ int main (void) {
  printf("This is pid %i: %s", getpid(), buf);
 
  roar_vio_close(me);
+
+ sleep(1); // wait for the other child...
 
  return 0;
 }
