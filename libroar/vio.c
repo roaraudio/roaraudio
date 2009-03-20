@@ -147,6 +147,19 @@ int     roar_vio_close    (struct roar_vio_calls * vio) {
  return vio->close(vio);
 }
 
+int     roar_vio_putc    (struct roar_vio_calls * vio, char c) {
+ return roar_vio_write(vio, &c, 1);
+}
+
+int     roar_vio_getc    (struct roar_vio_calls * vio) {
+ unsigned char c;
+
+ if ( roar_vio_read(vio, &c, 1) != 1 )
+  return EOF;
+
+ return c;
+}
+
 // converters:
 int     roar_vio_open_file     (struct roar_vio_calls * calls, char * filename, int flags, mode_t mode) {
  int fh;
