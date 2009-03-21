@@ -8,6 +8,9 @@ v. 0.2beta2 - ?
 	* added a lot things to the vio interface
 	* added gzip and simple OpenPGP support to vio interface
 	* added a simple pointer stack.
+	* added (OpenSSH) askpass support.
+	* added vio pipe support, currectly pipe() and socketpair() based onse.
+	* test for OpenSSL
 
 v. 0.2beta1 - Mon Feb 23 2009 25:08
 	* added options --default-codec and --without-cf-cmd to configure script
