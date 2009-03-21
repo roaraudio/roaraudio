@@ -58,3 +58,13 @@ roar_stream_add_data
 
 roar_str2codec
 roar_codec2str
+
+roar_vio_read
+roar_vio_write
+roar_vio_lseek
+roar_vio_nonblock
+roar_vio_sync
+roar_vio_close
+
+roar_vio_open_file
+roar_vio_open_fh
