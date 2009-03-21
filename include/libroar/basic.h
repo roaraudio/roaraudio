@@ -70,6 +70,10 @@ int roar_send_message (struct roar_connection * con, struct roar_message * mes, 
 int roar_recv_message (struct roar_connection * con, struct roar_message * mes, char ** data);
 int roar_req          (struct roar_connection * con, struct roar_message * mes, char ** data);
 
+int roar_vsend_message(struct roar_vio_calls * vio, struct roar_message * mes, char *  data);
+int roar_vrecv_message(struct roar_vio_calls * vio, struct roar_message * mes, char ** data);
+int roar_vreq         (struct roar_vio_calls * vio, struct roar_message * mes, char ** data);
+
 int roar_debug_message_print (struct roar_message * mes);
 
 int roar_debug_audio_info_print (struct roar_audio_info * info);

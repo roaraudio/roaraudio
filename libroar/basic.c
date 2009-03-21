@@ -246,6 +246,15 @@ int roar_identify   (struct roar_connection * con, char * name) {
 
 #define _ROAR_MESS_BUF_LEN (1 /* version */ + 1 /* cmd */ + 2 /* stream */ + 4 /* pos */ + 2 /* datalen */)
 int roar_send_message (struct roar_connection * con, struct roar_message * mes, char * data) {
+ struct roar_vio_calls vio;
+
+ if ( roar_vio_open_fh_socket(&vio, con->fh) == -1 )
+  return -1;
+
+ return roar_vsend_message(&vio, mes, data);
+}
+
+int roar_vsend_message(struct roar_vio_calls * vio, struct roar_message * mes, char *  data) {
  char buf[_ROAR_MESS_BUF_LEN];
 
  roar_errno = ROAR_ERROR_UNKNOWN;
@@ -258,13 +267,13 @@ int roar_send_message (struct roar_connection * con, struct roar_message * mes, 
  *(uint32_t*)(buf+4) = ROAR_HOST2NET32(mes->pos);
  *(uint16_t*)(buf+8) = ROAR_HOST2NET16(mes->datalen);
 
- if ( ROAR_NETWORK_WRITE(con->fh, buf, _ROAR_MESS_BUF_LEN) != _ROAR_MESS_BUF_LEN ) {
+ if ( roar_vio_write(vio, buf, _ROAR_MESS_BUF_LEN) != _ROAR_MESS_BUF_LEN ) {
   roar_errno = ROAR_ERROR_PIPE;
   return -1;
  }
 
  if ( mes->datalen != 0 ) {
-  if ( ROAR_NETWORK_WRITE(con->fh, data == NULL ? mes->data : data, mes->datalen) != mes->datalen ) {
+  if ( roar_vio_write(vio, data == NULL ? mes->data : data, mes->datalen) != mes->datalen ) {
    roar_errno = ROAR_ERROR_PIPE;
    return -1;
   }
@@ -277,6 +286,15 @@ int roar_send_message (struct roar_connection * con, struct roar_message * mes, 
 }
 
 int roar_recv_message (struct roar_connection * con, struct roar_message * mes, char ** data) {
+ struct roar_vio_calls vio;
+
+ if ( roar_vio_open_fh_socket(&vio, con->fh) == -1 )
+  return -1;
+
+ return roar_vrecv_message(&vio, mes, data);
+}
+
+int roar_vrecv_message(struct roar_vio_calls * vio, struct roar_message * mes, char ** data) {
  char buf[_ROAR_MESS_BUF_LEN];
 
  roar_errno = ROAR_ERROR_UNKNOWN;
@@ -286,7 +304,7 @@ int roar_recv_message (struct roar_connection * con, struct roar_message * mes, 
  if ( data )
   *data = NULL;
 
- if ( ROAR_NETWORK_READ(con->fh, buf, _ROAR_MESS_BUF_LEN) != _ROAR_MESS_BUF_LEN ) {
+ if ( roar_vio_read(vio, buf, _ROAR_MESS_BUF_LEN) != _ROAR_MESS_BUF_LEN ) {
   roar_errno = ROAR_ERROR_PROTO;
   return -1;
  }
@@ -314,7 +332,7 @@ int roar_recv_message (struct roar_connection * con, struct roar_message * mes, 
  }
 
  if ( mes->datalen <= LIBROAR_BUFFER_MSGDATA ) {
-  if ( ROAR_NETWORK_READ(con->fh, mes->data, mes->datalen) == mes->datalen ) {
+  if ( roar_vio_read(vio, mes->data, mes->datalen) == mes->datalen ) {
    ROAR_DBG("roar_recv_message(*): Got data!");
    ROAR_DBG("roar_recv_message(*) = 0");
    roar_errno = ROAR_ERROR_NONE;
@@ -339,7 +357,7 @@ int roar_recv_message (struct roar_connection * con, struct roar_message * mes, 
    return 0;
   }
 
-  if ( ROAR_NETWORK_READ(con->fh, *data, mes->datalen) == mes->datalen ) {
+  if ( roar_vio_read(vio, *data, mes->datalen) == mes->datalen ) {
    ROAR_DBG("roar_recv_message(*): Got data!");
    ROAR_DBG("roar_recv_message(*) = 0");
    roar_errno = ROAR_ERROR_NONE;
@@ -355,13 +373,22 @@ int roar_recv_message (struct roar_connection * con, struct roar_message * mes, 
 }
 
 int roar_req (struct roar_connection * con, struct roar_message * mes, char ** data) {
- if ( roar_send_message(con, mes, data ? *data : NULL) != 0 )
+ struct roar_vio_calls vio;
+
+ if ( roar_vio_open_fh_socket(&vio, con->fh) == -1 )
+  return -1;
+
+ return roar_vreq(&vio, mes, data);
+}
+
+int roar_vreq         (struct roar_vio_calls * vio, struct roar_message * mes, char ** data) {
+ if ( roar_vsend_message(vio, mes, data ? *data : NULL) != 0 )
   return -1;
 
  if ( data )
   free(*data);
 
- return roar_recv_message(con, mes, data);
+ return roar_vrecv_message(vio, mes, data);
 }
 
 int roar_debug_message_print (struct roar_message * mes) {

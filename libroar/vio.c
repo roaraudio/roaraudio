@@ -78,6 +78,8 @@ int roar_vio_get_fh   (struct roar_vio_calls * vio) {
 
 
 ssize_t roar_vio_read (struct roar_vio_calls * vio, void *buf, size_t count) {
+ ROAR_DBG("roar_vio_read(vio=%p, buf=%p, count=%u) = ?", vio, buf, (unsigned int)count);
+
  if ( vio == NULL )
   return -1;
 
