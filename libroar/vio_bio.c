@@ -34,4 +34,73 @@
 
 #include "libroar.h"
 
+int     roar_vio_open_bio      (struct roar_vio_calls * calls, BIO * bio) {
+#ifdef ROAR_HAVE_LIBSSL
+ if ( calls == NULL || bio == NULL )
+  return -1;
+
+ memset(calls, 0, sizeof(struct roar_vio_calls));
+
+ calls->read     = roar_vio_bio_read;
+ calls->write    = roar_vio_bio_write;
+ calls->lseek    = roar_vio_bio_lseek;
+ calls->nonblock = roar_vio_bio_nonblock;
+ calls->sync     = roar_vio_bio_sync;
+ calls->close    = roar_vio_bio_close;
+
+ calls->inst     = (void*) bio;
+
+ return 0;
+#else
+ return -1;
+#endif
+}
+
+BIO *   roar_vio_to_bio        (struct roar_vio_calls * calls) {
+ return NULL;
+}
+
+#ifdef ROAR_HAVE_LIBSSL
+ssize_t roar_vio_bio_read    (struct roar_vio_calls * vio, void *buf, size_t count) {
+ BIO * bio = (BIO*)(vio->inst);
+ int r;
+
+ if ( (r = BIO_read(bio, buf, count)) == -2 )
+  return -1;
+
+ return r;
+}
+ssize_t roar_vio_bio_write   (struct roar_vio_calls * vio, void *buf, size_t count) {
+ BIO * bio = (BIO*)(vio->inst);
+ int r;
+
+ if ( (r = BIO_write(bio, buf, count)) == -2 )
+  return -1;
+
+ return r;
+}
+
+off_t   roar_vio_bio_lseek   (struct roar_vio_calls * vio, off_t offset, int whence) {
+ return -1;
+}
+
+int     roar_vio_bio_nonblock(struct roar_vio_calls * vio, int state) {
+ return -1;
+}
+int     roar_vio_bio_sync    (struct roar_vio_calls * vio) {
+ return -1;
+}
+
+int     roar_vio_bio_close   (struct roar_vio_calls * vio) {
+ BIO * bio = (BIO*)(vio->inst);
+
+ // TODO: check the return values
+
+ BIO_flush(bio);
+ BIO_free_all(bio);
+
+ return 0;
+}
+#endif
+
 //ll

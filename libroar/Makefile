@@ -7,7 +7,7 @@ OBJS=libroar.o basic.o stream.o simple.o auth.o socket.o ctl.o buffer.o convert.
 #DEFINES        = -DDEBUG
 INCLUDE = -I../include -I../include/libroar
 CFLAGS += -g -Wall -O2 $(DEFINES) $(INCLUDE) $(INCPATH) $(SHARED_CF) -fPIC
-LDFLAGS = -g $(SHARED) $(LDPATH) $(lib_dnet) $(lib_wsock32) $(lib_ws2_32)
+LDFLAGS = -g $(SHARED) $(LDPATH) $(lib_dnet) $(lib_wsock32) $(lib_ws2_32) $(lib_ssl)
 
 all: ${TARGETS}
 	rm -f ../lib/${TARGETS} 2> /dev/null || true

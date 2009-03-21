@@ -37,6 +37,21 @@
 
 #include "libroar.h"
 
+#ifndef ROAR_HAVE_LIBSSL
+typedef void BIO;
+#endif
+
+int     roar_vio_open_bio      (struct roar_vio_calls * calls, BIO * bio);
+BIO *   roar_vio_to_bio        (struct roar_vio_calls * calls);
+
+#ifdef ROAR_HAVE_LIBSSL
+ssize_t roar_vio_bio_read    (struct roar_vio_calls * vio, void *buf, size_t count);
+ssize_t roar_vio_bio_write   (struct roar_vio_calls * vio, void *buf, size_t count);
+off_t   roar_vio_bio_lseek   (struct roar_vio_calls * vio, off_t offset, int whence);
+int     roar_vio_bio_nonblock(struct roar_vio_calls * vio, int state);
+int     roar_vio_bio_sync    (struct roar_vio_calls * vio);
+int     roar_vio_bio_close   (struct roar_vio_calls * vio);
+#endif
 
 #endif
 

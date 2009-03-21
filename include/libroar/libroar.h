@@ -59,6 +59,11 @@
 #include <netipx/ipx.h>
 #endif
 
+#ifdef ROAR_HAVE_LIBSSL
+#include <openssl/bio.h>
+#include <openssl/evp.h>
+#endif
+
 #include "error.h"
 #include "stack.h"
 #include "buffer.h"
