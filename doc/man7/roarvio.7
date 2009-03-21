@@ -1,0 +1,59 @@
+.\" RoarAudio
+.TH "roarvio" "7" "March 2009" "RoarAudio" "System Manager's Manual: RoarAuido"
+
+.SH NAME
+libroar \- RoarAudio sound library
+
+roarvio \- RoarAudio virtual IO layer
+
+.SH SYNOPSIS
+
+ #include <roaraudio.h>
+
+ struct roar_vio_calls;
+
+.SH "DESCRIPTION"
+The RoarAudio VIO interface is RoarAudio's IO abstraction layer. It provides basic
+IO functions such as read and write independing on the underlaying IO. For Example
+can you open a plain or a gziped file via the VIO layer. After a successful open
+both objects behave the same, libroar takes care about the compression in the gzip
+case.
+
+.\".SH "EXAMPLES"
+
+.SH "TUTORIALS"
+Tutorials can be found in \fBroartutvio\fR(7).
+
+.SH "IMPORTANT FUNCTIONS"
+There are several important functions. This is a small list of the most important ones.
+
+.TP
+\fBOpening\fR
+\fBroar_vio_open_file\fR(3), \fBroar_vio_open_fh\fR(3), \fBroar_vio_open_stdio\fR(3)
+
+.TP
+\fBClosing\fR
+\fBroar_vio_close\fR(3)
+
+.TP
+\fBReading and writing\fR
+\fBroar_vio_read\fR(3), \fBroar_vio_write\fR(3)
+
+.TP
+\fBSeeking and positioning\fR
+\fBroar_vio_lseek\fR(3)
+
+.TP
+\fBNon-Blocking and Asyncron IO\fR
+\fBroar_vio_nonblock\fR(3), \fBroar_vio_sync\fR(3)
+
+.SH "BUGS"
+A lot...
+
+.SH "SEE ALSO"
+\fBroar-config\fR(1),
+\fBroartypes\fR(1),
+\fBroartutvio\fR(7),
+\fBRoarAudio\fR(7).
+
+.\"ll
