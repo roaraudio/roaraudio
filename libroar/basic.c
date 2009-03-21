@@ -152,14 +152,38 @@ int roar_connect_raw (char * server) {
 }
 
 int roar_connect    (struct roar_connection * con, char * server) {
- roar_errno = ROAR_ERROR_UNKNOWN;
- con->fh = roar_connect_raw(server);
+ int fh;
 
- if ( con->fh == -1 )
+ if ( con == NULL ) {
+  roar_errno = ROAR_ERROR_INVAL;
+  return -1;
+ }
+
+ roar_errno = ROAR_ERROR_UNKNOWN;
+ fh = roar_connect_raw(server);
+
+ if ( fh == -1 )
   return -1;
 
- roar_errno = ROAR_ERROR_NONE;
+ return roar_connect_fh(con, fh);
+}
 
+int roar_connect_fh (struct roar_connection * con, int fh) {
+
+ if ( con == NULL || fh == -1 ) {
+  roar_errno = ROAR_ERROR_INVAL;
+  return -1;
+ }
+
+ // specal hack to set an ilegal value used internaly in libroar:
+ if ( fh == -2 )
+  fh = -1;
+
+ memset(con, 0, sizeof(struct roar_connection));
+
+ con->fh = fh;
+
+ roar_errno = ROAR_ERROR_NONE;
  return 0;
 }
 

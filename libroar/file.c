@@ -272,7 +272,9 @@ ssize_t roar_file_play_full  (struct roar_connection * con, char * file, int exe
   close(out);
 
   if ( exec ) {
-   con->fh = -1;
+   // TODO: FIXME: this ma cause a memory leak in future
+   // OLD: con->fh = -1;
+   roar_connect_fh(con, -2);
   }
 
   close(in);

@@ -42,6 +42,7 @@
 #define ROAR_ERROR_RANGE       10 /* Result too large/general out of range */
 #define ROAR_ERROR_MSGSIZE     11 /* Message too long */
 #define ROAR_ERROR_NOMEM       12 /* Not enough space */
+#define ROAR_ERROR_INVAL       13 /* Invalid argument */
 
 #endif
 

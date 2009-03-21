@@ -1,4 +1,5 @@
 roar_connect
+roar_connect_fh
 roar_disconnect
 
 roar_send_message
