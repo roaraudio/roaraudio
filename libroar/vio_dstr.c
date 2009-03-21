@@ -1,7 +1,7 @@
-//libroar.h:
+//vio_dstr.c:
 
 /*
- *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008, 2009
+ *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2009
  *
  *  This file is part of libroar a part of RoarAudio,
  *  a cross-platform sound system for both, home and professional use.
@@ -32,58 +32,6 @@
  *  them with any software that uses libesd, libartsc or libpulse*.
  */
 
-#ifndef _LIBROAR_H_
-#define _LIBROAR_H_
-
-#define ROAR_DBG_PREFIX  "libroar"
-
-#include <roaraudio.h>
-
-#include <stdint.h>
-
-#include <sys/wait.h>
-
-#include <fcntl.h>
-#ifndef ROAR_TARGET_WIN32
-#include <sys/socket.h>
-#include <netinet/in_systm.h>
-#include <netinet/in.h>
-#include <netinet/ip.h>
-#include <sys/uio.h>
-#endif
-#ifdef ROAR_HAVE_LIBDNET
-#include <netdnet/dn.h>
-#include <netdnet/dnetdb.h>
-#endif
-#ifdef ROAR_HAVE_IPX
-#include <netipx/ipx.h>
-#endif
-
-#include "error.h"
-#include "stack.h"
-#include "buffer.h"
-#include "vio.h"
-#include "vio_cmd.h"
-#include "vio_ops.h"
-#include "vio_magic.h"
-#include "vio_pipe.h"
-#include "vio_bio.h"
-#include "vio_dstr.h"
-#include "basic.h"
-#include "stream.h"
-#include "simple.h"
-#include "cdrom.h"
-#include "auth.h"
-#include "socket.h"
-#include "ctl.h"
-#include "convert.h"
-#include "poly.h"
-#include "meta.h"
-#include "file.h"
-#include "acl.h"
-#include "pinentry.h"
-#include "sshaskpass.h"
-
-#endif
+#include "libroar.h"
 
 //ll
