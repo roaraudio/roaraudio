@@ -97,7 +97,7 @@
 
 #define ROAR_VIO_DSTR_OBJT_PGP            (0x10|ROAR_VIO_DSTR_OBJGT_CRYPT)
 #define ROAR_VIO_DSTR_OBJT_PGP_ENC        (0x11|ROAR_VIO_DSTR_OBJGT_CRYPT)
-#define ROAR_VIO_DSTR_OBJT_PGP_STORE      (0x11|ROAR_VIO_DSTR_OBJGT_CRYPT)
+#define ROAR_VIO_DSTR_OBJT_PGP_STORE      (0x12|ROAR_VIO_DSTR_OBJGT_CRYPT)
 #define ROAR_VIO_DSTR_OBJT_SSL1           (0x21|ROAR_VIO_DSTR_OBJGT_CRYPT)
 #define ROAR_VIO_DSTR_OBJT_SSL2           (0x22|ROAR_VIO_DSTR_OBJGT_CRYPT)
 #define ROAR_VIO_DSTR_OBJT_SSL3           (0x23|ROAR_VIO_DSTR_OBJGT_CRYPT)
@@ -126,6 +126,8 @@ struct roar_vio_defaults {
  } d;
 };
 
+#define ROAR_VIO_DSTR_MAX_OBJ_PER_CHAIN 16
+
 struct roar_vio_dstr_chain {
  int    type;
  char * opts;
@@ -133,6 +135,7 @@ struct roar_vio_dstr_chain {
  int    need_vio;
  struct roar_vio_defaults * def;
  struct roar_vio_calls    * vio;
+ struct roar_vio_defaults   store_def;
 };
 
 int     roar_vio_dstr_get_type(char * str);
@@ -144,7 +147,7 @@ int     roar_vio_open_dstr    (struct roar_vio_calls * calls, char * dstr, struc
 int     roar_vio_open_dstr_vio(struct roar_vio_calls * calls, char * dstr, struct roar_vio_defaults * def, int dnum, struct roar_vio_calls * vio);
 
 int     roar_vio_dstr_parse_opts(struct roar_vio_dstr_chain * chain);
-int     roar_vio_dstr_set_defaults(struct roar_vio_dstr_chain * chain);
+int     roar_vio_dstr_set_defaults(struct roar_vio_dstr_chain * chain, int len, struct roar_vio_defaults * def, int dnum);
 int     roar_vio_dstr_build_chain(struct roar_vio_dstr_chain * chain, struct roar_vio_calls * calls, struct roar_vio_calls * vio);
 
 #endif
