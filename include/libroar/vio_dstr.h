@@ -37,6 +37,116 @@
 
 #include "libroar.h"
 
+#define ROAR_VIO_DEF_TYPE_EOL            -1 
+#define ROAR_VIO_DEF_TYPE_NONE            0
+#define ROAR_VIO_DEF_TYPE_FILE            1
+#define ROAR_VIO_DEF_TYPE_SOCKET          2
+#define ROAR_VIO_DEF_TYPE_FH              3
+#define ROAR_VIO_DEF_TYPE_SOCKETFH        4
+
+#define ROAR_VIO_DSTR_OBJGT_INTERNAL      0x0000
+#define ROAR_VIO_DSTR_OBJGT_GEN           0x0100
+#define ROAR_VIO_DSTR_OBJGT_SOCKET        0x0200
+#define ROAR_VIO_DSTR_OBJGT_PROXY         0x0300
+#define ROAR_VIO_DSTR_OBJGT_COMP          0x0400 /* compression */
+#define ROAR_VIO_DSTR_OBJGT_CRYPT         0x0500
+#define ROAR_VIO_DSTR_OBJGT_PROTO         0x0600 /* protocolls like HTTP and Gopher */
+#define ROAR_VIO_DSTR_OBJGT_SPECAL        0xff00
+
+#define ROAR_VIO_DSTR_OBJT_EOL           -1
+#define ROAR_VIO_DSTR_OBJT_NONE           0
+#define ROAR_VIO_DSTR_OBJT_INTERNAL       1
+
+#define ROAR_VIO_DSTR_OBJT_FILE           (0x01|ROAR_VIO_DSTR_OBJGT_GEN)
+#define ROAR_VIO_DSTR_OBJT_FH             (0x02|ROAR_VIO_DSTR_OBJGT_GEN)
+#define ROAR_VIO_DSTR_OBJT_SOCKETFH       (0x03|ROAR_VIO_DSTR_OBJGT_GEN)
+/* some space to add memory FHs and the like */
+#define ROAR_VIO_DSTR_OBJT_PASS           (0x10|ROAR_VIO_DSTR_OBJGT_GEN)
+#define ROAR_VIO_DSTR_OBJT_RE             (0x11|ROAR_VIO_DSTR_OBJGT_GEN)
+#define ROAR_VIO_DSTR_OBJT_EXEC           (0x20|ROAR_VIO_DSTR_OBJGT_GEN)
+
+#define ROAR_VIO_DSTR_OBJT_SOCKET         (0x01|ROAR_VIO_DSTR_OBJGT_SOCKET)
+#define ROAR_VIO_DSTR_OBJT_UNIX           (0x02|ROAR_VIO_DSTR_OBJGT_SOCKET)
+#define ROAR_VIO_DSTR_OBJT_DECNET         (0x10|ROAR_VIO_DSTR_OBJGT_SOCKET)
+#define ROAR_VIO_DSTR_OBJT_TCP            (0x21|ROAR_VIO_DSTR_OBJGT_SOCKET)
+#define ROAR_VIO_DSTR_OBJT_UDP            (0x22|ROAR_VIO_DSTR_OBJGT_SOCKET)
+#define ROAR_VIO_DSTR_OBJT_TCP6           (0x31|ROAR_VIO_DSTR_OBJGT_SOCKET)
+#define ROAR_VIO_DSTR_OBJT_UDP6           (0x32|ROAR_VIO_DSTR_OBJGT_SOCKET)
+
+#define ROAR_VIO_DSTR_OBJT_SOCKS          (0x10|ROAR_VIO_DSTR_OBJGT_PROXY)
+#define ROAR_VIO_DSTR_OBJT_SOCKS4         (0x14|ROAR_VIO_DSTR_OBJGT_PROXY)
+#define ROAR_VIO_DSTR_OBJT_SOCKS4A        (0x1a|ROAR_VIO_DSTR_OBJGT_PROXY)
+#define ROAR_VIO_DSTR_OBJT_SOCKS4D        (0x1d|ROAR_VIO_DSTR_OBJGT_PROXY)
+#define ROAR_VIO_DSTR_OBJT_SOCKS5         (0x15|ROAR_VIO_DSTR_OBJGT_PROXY)
+#define ROAR_VIO_DSTR_OBJT_SSH            (0x21|ROAR_VIO_DSTR_OBJGT_PROXY)
+//#define ROAR_VIO_DSTR_OBJT_HTTP           (0x31|ROAR_VIO_DSTR_OBJGT_PROXY)
+
+//#define ROAR_VIO_DSTR_OBJT_HTTP           (0x10|ROAR_VIO_DSTR_OBJGT_PROTO)
+#define ROAR_VIO_DSTR_OBJT_HTTP09         (0x11|ROAR_VIO_DSTR_OBJGT_PROTO)
+#define ROAR_VIO_DSTR_OBJT_HTTP10         (0x12|ROAR_VIO_DSTR_OBJGT_PROTO)
+#define ROAR_VIO_DSTR_OBJT_HTTP11         (0x13|ROAR_VIO_DSTR_OBJGT_PROTO)
+#define ROAR_VIO_DSTR_OBJT_HTTP           ROAR_VIO_DSTR_OBJT_HTTP11
+#define ROAR_VIO_DSTR_OBJT_GOPHER         (0x21|ROAR_VIO_DSTR_OBJGT_PROTO)
+
+/*
+#define ROAR_VIO_DSTR_OBJGT_CRYPT         0x0500
+*/
+
+#define ROAR_VIO_DSTR_OBJT_GZIP           (0x10|ROAR_VIO_DSTR_OBJGT_COMP)
+#define ROAR_VIO_DSTR_OBJT_BZIP2          (0x22|ROAR_VIO_DSTR_OBJGT_COMP)
+
+#define ROAR_VIO_DSTR_OBJT_PGP            (0x10|ROAR_VIO_DSTR_OBJGT_CRYPT)
+#define ROAR_VIO_DSTR_OBJT_PGP_ENC        (0x11|ROAR_VIO_DSTR_OBJGT_CRYPT)
+#define ROAR_VIO_DSTR_OBJT_PGP_STORE      (0x11|ROAR_VIO_DSTR_OBJGT_CRYPT)
+#define ROAR_VIO_DSTR_OBJT_SSL1           (0x21|ROAR_VIO_DSTR_OBJGT_CRYPT)
+#define ROAR_VIO_DSTR_OBJT_SSL2           (0x22|ROAR_VIO_DSTR_OBJGT_CRYPT)
+#define ROAR_VIO_DSTR_OBJT_SSL3           (0x23|ROAR_VIO_DSTR_OBJGT_CRYPT)
+#define ROAR_VIO_DSTR_OBJT_TLS            (0x2a|ROAR_VIO_DSTR_OBJGT_CRYPT)
+#define ROAR_VIO_DSTR_OBJT_SSLTLS         ROAR_VIO_DSTR_OBJT_TLS
+
+#define ROAR_VIO_DSTR_OBJT_MAGIC          (0x01|ROAR_VIO_DSTR_OBJGT_SPECAL)
+
+
+struct roar_vio_defaults {
+ int type;
+
+ mode_t o_mode;
+ int    o_flags;
+
+ union {
+  char *   file;
+  int      fh;
+  struct {
+          int               domain;
+          int               type;
+          char            * host;
+          struct sockaddr * sa;
+          socklen_t         len;
+         } socket;
+ } d;
+};
+
+struct roar_vio_dstr_chain {
+ int    type;
+ char * opts;
+ char * dst;
+ int    need_vio;
+ struct roar_vio_defaults * def;
+ struct roar_vio_calls    * vio;
+};
+
+int     roar_vio_dstr_get_type(char * str);
+char *  roar_vio_dstr_get_name(int type);
+
+int     roar_vio_dstr_init_defaults (struct roar_vio_defaults * def, int type, int o_flags, mode_t o_mode);
+
+int     roar_vio_open_dstr    (struct roar_vio_calls * calls, char * dstr, struct roar_vio_defaults * def, int dnum);
+int     roar_vio_open_dstr_vio(struct roar_vio_calls * calls, char * dstr, struct roar_vio_defaults * def, int dnum, struct roar_vio_calls * vio);
+
+int     roar_vio_dstr_parse_opts(struct roar_vio_dstr_chain * chain);
+int     roar_vio_dstr_set_defaults(struct roar_vio_dstr_chain * chain);
+int     roar_vio_dstr_build_chain(struct roar_vio_dstr_chain * chain, struct roar_vio_calls * calls, struct roar_vio_calls * vio);
+
 #endif
 
 //ll
