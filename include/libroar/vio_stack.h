@@ -37,16 +37,25 @@
 
 #include "libroar.h"
 
-int     roar_vio_open_stack    (struct roar_vio_calls * calls);
+#define ROAR_VIO_STACK_MAX 32
 
-#ifdef ROAR_HAVE_LIBSSL
+struct roar_vio_stack {
+ int next;
+
+ struct roar_vio_calls * cur;
+
+ struct roar_vio_calls * calls[ROAR_VIO_STACK_MAX];
+};
+
+int     roar_vio_open_stack    (struct roar_vio_calls * calls);
+int     roar_vio_stack_add     (struct roar_vio_calls * calls, struct roar_vio_calls * vio);
+
 ssize_t roar_vio_stack_read    (struct roar_vio_calls * vio, void *buf, size_t count);
 ssize_t roar_vio_stack_write   (struct roar_vio_calls * vio, void *buf, size_t count);
 off_t   roar_vio_stack_lseek   (struct roar_vio_calls * vio, off_t offset, int whence);
 int     roar_vio_stack_nonblock(struct roar_vio_calls * vio, int state);
 int     roar_vio_stack_sync    (struct roar_vio_calls * vio);
 int     roar_vio_stack_close   (struct roar_vio_calls * vio);
-#endif
 
 #endif
 

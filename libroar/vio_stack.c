@@ -34,4 +34,132 @@
 
 #include "libroar.h"
 
+int     roar_vio_open_stack    (struct roar_vio_calls * calls) {
+ struct roar_vio_stack * self;
+
+ if ( calls == NULL )
+  return -1;
+
+ if ( (self = malloc(sizeof(struct roar_vio_stack))) == NULL )
+  return -1;
+
+ memset(self,  0, sizeof(struct roar_vio_stack));
+ memset(calls, 0, sizeof(struct roar_vio_calls));
+
+ calls->inst     = self;
+ calls->close    = roar_vio_stack_close;
+ calls->read     = roar_vio_stack_read;
+ calls->write    = roar_vio_stack_write;
+ calls->lseek    = roar_vio_stack_lseek;
+ calls->nonblock = roar_vio_stack_nonblock;
+ calls->sync     = roar_vio_stack_sync;
+
+ return 0;
+}
+
+int     roar_vio_stack_add     (struct roar_vio_calls * calls, struct roar_vio_calls * vio) {
+ struct roar_vio_stack * self;
+
+ if ( calls == NULL || vio == NULL )
+  return -1;
+
+ if ( (self = calls->inst) == NULL )
+  return -1;
+
+ if ( self->next == ROAR_VIO_STACK_MAX )
+  return -1;
+
+ self->cur = self->calls[self->next++] = vio;
+
+ return 0;
+}
+
+int     roar_vio_stack_close   (struct roar_vio_calls * vio) {
+ struct roar_vio_stack * self;
+ int i;
+
+ if ( vio == NULL )
+  return -1;
+
+ if ( (self = vio->inst) == NULL )
+  return -1;
+
+ if ( self->cur != NULL ) {
+  if ( roar_vio_close(self->cur) == -1 )
+   return -1;
+
+  for (i = 0; i < self->next; i++)
+   free(self->calls[i]);
+ }
+
+ free(self);
+
+ return 0;
+}
+
+ssize_t roar_vio_stack_read    (struct roar_vio_calls * vio, void *buf, size_t count) {
+ if ( vio == NULL )
+  return -1;
+
+ if ( vio->inst == NULL )
+  return -1;
+
+ if ( ((struct roar_vio_stack*)(vio->inst))->cur == NULL )
+  return -1;
+
+ return roar_vio_read(((struct roar_vio_stack*)(vio->inst))->cur, buf, count);
+}
+
+ssize_t roar_vio_stack_write   (struct roar_vio_calls * vio, void *buf, size_t count) {
+ if ( vio == NULL )
+  return -1;
+
+ if ( vio->inst == NULL )
+  return -1;
+
+ if ( ((struct roar_vio_stack*)(vio->inst))->cur == NULL )
+  return -1;
+
+ return roar_vio_write(((struct roar_vio_stack*)(vio->inst))->cur, buf, count);
+}
+
+off_t   roar_vio_stack_lseek   (struct roar_vio_calls * vio, off_t offset, int whence) {
+ if ( vio == NULL )
+  return -1;
+
+ if ( vio->inst == NULL )
+  return -1;
+
+ if ( ((struct roar_vio_stack*)(vio->inst))->cur == NULL )
+  return -1;
+
+ return roar_vio_lseek(((struct roar_vio_stack*)(vio->inst))->cur, offset, whence);
+}
+
+int     roar_vio_stack_nonblock(struct roar_vio_calls * vio, int state) {
+ if ( vio == NULL )
+  return -1;
+
+ if ( vio->inst == NULL )
+  return -1;
+
+ if ( ((struct roar_vio_stack*)(vio->inst))->cur == NULL )
+  return -1;
+
+ return roar_vio_nonblock(((struct roar_vio_stack*)(vio->inst))->cur, state);
+}
+
+int     roar_vio_stack_sync    (struct roar_vio_calls * vio) {
+ if ( vio == NULL )
+  return -1;
+
+ if ( vio->inst == NULL )
+  return -1;
+
+ if ( ((struct roar_vio_stack*)(vio->inst))->cur == NULL )
+  return -1;
+
+ return roar_vio_sync(((struct roar_vio_stack*)(vio->inst))->cur);
+}
+
 //ll
