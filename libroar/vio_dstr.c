@@ -242,13 +242,13 @@ int     roar_vio_open_dstr_vio(struct roar_vio_calls * calls,
    dst  = this;
   }
 
-  ROAR_WARN("roar_vio_open_dstr_vio(*): name='%s', opts='%s', dst='%s'", name, opts, dst);
+  ROAR_DBG("roar_vio_open_dstr_vio(*): name='%s', opts='%s', dst='%s'", name, opts, dst);
 
   if ( (type = roar_vio_dstr_get_type(name)) == -1 ) {
    _ret(-1);
   }
 
-  ROAR_WARN("roar_vio_open_dstr_vio(*): type=0x%.4x(%s)", type, roar_vio_dstr_get_name(type));
+  ROAR_DBG("roar_vio_open_dstr_vio(*): type=0x%.4x(%s)", type, roar_vio_dstr_get_name(type));
 
   chain[cc].type     = type;
   chain[cc].opts     = opts;
@@ -311,7 +311,15 @@ int     roar_vio_dstr_set_defaults(struct roar_vio_dstr_chain * chain, int len, 
 
  for (i = len; i >= 0; i--) {
   c    = &chain[i];
-  next = &chain[i-1];
+
+  if ( i > 0 ) {
+   next = &chain[i-1];
+  } else {
+   next = NULL;
+
+   if ( c->type != ROAR_VIO_DSTR_OBJT_INTERNAL )
+    return -1;
+  }
 
   memset(tmp, 0, sizeof(tmp));
 
@@ -397,9 +405,14 @@ int     roar_vio_dstr_set_defaults(struct roar_vio_dstr_chain * chain, int len, 
     return -1;
   }
 
-  ROAR_WARN("roar_vio_dstr_set_defaults(*): i=%i, c->type=0x%.4x(%s): next->def=%p, next->def->type=%i", i,
-                   c->type & 0xFFFF, roar_vio_dstr_get_name(c->type),
-                   next->def, next->def == NULL ? -1 : next->def->type);
+  if ( next != NULL ) {
+   ROAR_DBG("roar_vio_dstr_set_defaults(*): i=%i, c->type=0x%.4x(%s): next->def=%p, next->def->type=%i", i,
+                    c->type & 0xFFFF, roar_vio_dstr_get_name(c->type),
+                    next->def, next->def == NULL ? -1 : next->def->type);
+  } else {
+   ROAR_DBG("roar_vio_dstr_set_defaults(*): i=%i, c->type=0x%.4x(%s): next=NULL", i,
+                    c->type & 0xFFFF, roar_vio_dstr_get_name(c->type));
+  }
  }
 
  ROAR_WARN("roar_vio_dstr_set_defaults(*) = 0");
@@ -424,7 +437,7 @@ int     roar_vio_dstr_build_chain(struct roar_vio_dstr_chain * chain, struct roa
  if ( roar_vio_open_stack(calls) == -1 )
   return -1;
 
- ROAR_WARN("roar_vio_dstr_build_chain(*): chain=%p", chain);
+ ROAR_DBG("roar_vio_dstr_build_chain(*): chain=%p", chain);
 
  if ( (def = chain->def) != NULL ) {
   if ( (tc = malloc(sizeof(struct roar_vio_calls))) == NULL ) {
