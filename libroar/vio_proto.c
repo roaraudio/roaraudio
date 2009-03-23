@@ -49,6 +49,9 @@ int roar_vio_proto_init_def  (struct roar_vio_defaults * def, char * dstr, int p
     return -1;
  }
 
+ if ( dstr == NULL )
+  dstr = "//";
+
  if ( roar_vio_dstr_init_defaults(def, ROAR_VIO_DEF_TYPE_SOCKET, O_RDWR, 0644) == -1 )
   return -1;
 
@@ -61,7 +64,11 @@ int roar_vio_proto_init_def  (struct roar_vio_defaults * def, char * dstr, int p
  if ( (ed = strstr(dstr, "/")) != NULL )
   *ed = 0;
 
+ ROAR_WARN("roar_vio_proto_init_def(*): def->o_flags=%i", def->o_flags);
+
  ret = roar_vio_socket_init_dstr_def(def, dstr, -1, SOCK_STREAM, def);
+
+ ROAR_WARN("roar_vio_proto_init_def(*): def->o_flags=%i", def->o_flags);
 
  if ( ed != NULL )
   *ed = '/';
@@ -76,27 +83,47 @@ int roar_vio_open_proto      (struct roar_vio_calls * calls, struct roar_vio_cal
 
  ROAR_WARN("roar_vio_open_proto(calls=%p, dst=%p, dstr='%s', proto=%i, odef=%p) = ?", calls, dst, dstr, proto, odef);
 
- if ( calls == NULL || dst == NULL || dstr == NULL )
+ if ( calls == NULL || dst == NULL || odef == NULL )
   return -1;
 
+ ROAR_WARN("roar_vio_open_proto(*): odef->o_flags=%i", odef->o_flags);
  ROAR_DBG("roar_vio_open_proto(*) = ?");
 
  if ( roar_vio_open_pass(calls, dst) == -1 )
   return -1;
 
- dstr += 2;
- host  = dstr;
+ ROAR_DBG("roar_vio_open_proto(*) = ?");
 
- if ( (tmp = strstr(dstr, "/")) == NULL )
-  return -1;
+ if ( dstr != NULL ) {
+  dstr += 2;
+  host  = dstr;
 
- *tmp++ = 0;
- dstr   = tmp;
+  if ( (tmp = strstr(dstr, "/")) == NULL )
+   return -1;
 
- if ( (tmp = strstr(dstr, "#")) != NULL )
-  *tmp = 0;
+  *tmp++ = 0;
+  dstr   = tmp;
+
+  if ( (tmp = strstr(dstr, "#")) != NULL )
+   *tmp = 0;
+ } else {
+  ROAR_DBG("roar_vio_open_proto(*): no dstr!, odef->type=%i", odef->type);
+  if ( odef->type == ROAR_VIO_DEF_TYPE_FILE ) {
+   dstr = odef->d.file;
+   host = "localhost";
+
+   for (; *dstr == '/'; dstr++);
+
+  } else if ( odef->type == ROAR_VIO_DEF_TYPE_SOCKET ) {
+   dstr = ""; // index document
+   host = odef->d.socket.host;
+  } else {
+   return -1;
+  }
+ }
 
  ROAR_DBG("roar_vio_open_proto(*) = ?");
+ ROAR_WARN("roar_vio_open_proto(*): proto=%i, host='%s', file='%s'", proto, host, dstr);
 
  switch (proto) {
   case ROAR_VIO_PROTO_P_HTTP:
@@ -121,7 +148,7 @@ int roar_vio_open_proto_http   (struct roar_vio_calls * calls, struct roar_vio_c
 
  roar_vio_printf(dst, "GET /%s HTTP/1.1\r\n", file);
  roar_vio_printf(dst, "Host: %s\r\n", host);
- roar_vio_printf(dst, "User-Agent: roar_vio_open_proto_http() $Revision: 1.3 $\r\n");
+ roar_vio_printf(dst, "User-Agent: roar_vio_open_proto_http() $Revision: 1.4 $\r\n");
  roar_vio_printf(dst, "Connection: close\r\n");
  roar_vio_printf(dst, "\r\n");
 

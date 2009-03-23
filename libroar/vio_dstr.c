@@ -167,6 +167,17 @@ int     roar_vio_dstr_init_defaults (struct roar_vio_defaults * def, int type, i
  return 0;
 }
 
+int     roar_vio_dstr_init_defaults_c (struct roar_vio_defaults * def, int type, struct roar_vio_defaults * odef, int o_flags) {
+ if ( o_flags < 1 )
+  o_flags = O_RDONLY;
+
+ if ( odef == NULL ) {
+  return roar_vio_dstr_init_defaults(def, type, o_flags, 0644);
+ } else {
+  return roar_vio_dstr_init_defaults(def, type, odef->o_flags, odef->o_mode);
+ }
+}
+
 int     roar_vio_open_default (struct roar_vio_calls * calls, struct roar_vio_defaults * def) {
  if ( calls == NULL || def == NULL )
   return -1;
@@ -388,11 +399,7 @@ int     roar_vio_dstr_set_defaults(struct roar_vio_dstr_chain * chain, int len, 
 
      c->need_vio = 0;
      next->def = &(next->store_def);
-     if ( c->def != NULL ) {
-      roar_vio_dstr_init_defaults(next->def, ROAR_VIO_DEF_TYPE_FILE, c->def->o_flags, c->def->o_mode);
-     } else {
-      roar_vio_dstr_init_defaults(next->def, ROAR_VIO_DEF_TYPE_FILE, O_RDONLY, 0644);
-     }
+     roar_vio_dstr_init_defaults_c(next->def, ROAR_VIO_DEF_TYPE_FILE, c->def, -1);
 
      if ( c->dst[0] == '/' && c->dst[1] == '/' ) {
       next->def->d.file = c->dst + 1;
@@ -437,14 +444,14 @@ int     roar_vio_dstr_set_defaults(struct roar_vio_dstr_chain * chain, int len, 
      next->def = &(next->store_def);
 
      if ( c->dst == NULL ) { // we don't have a destination? -> slow way
+      if ( roar_vio_dstr_init_defaults_c(next->def, ROAR_VIO_DEF_TYPE_SOCKET, c->def, O_WRONLY) == -1 )
+       return -1;
+
       if ( roar_vio_socket_init_dstr_def(next->def, c->dst, AF_UNIX, SOCK_STREAM, c->def) == -1 )
        return -1;
      } else {                // we have a destination? -> fast way
-      if ( c->def != NULL ) {
-       roar_vio_dstr_init_defaults(next->def, ROAR_VIO_DEF_TYPE_SOCKET, c->def->o_flags, c->def->o_mode);
-      } else {
-       roar_vio_dstr_init_defaults(next->def, ROAR_VIO_DEF_TYPE_SOCKET, O_WRONLY, 0644);
-      }
+      if ( roar_vio_dstr_init_defaults_c(next->def, ROAR_VIO_DEF_TYPE_SOCKET, c->def, O_WRONLY) == -1 )
+       return -1;
 
       if ( roar_vio_socket_init_unix_def(next->def, c->dst) == -1 )
        return -1;
@@ -455,6 +462,9 @@ int     roar_vio_dstr_set_defaults(struct roar_vio_dstr_chain * chain, int len, 
      c->need_vio = 0;
      next->def = &(next->store_def);
 
+     if ( roar_vio_dstr_init_defaults_c(next->def, ROAR_VIO_DEF_TYPE_SOCKET, c->def, O_WRONLY) == -1 )
+      return -1;
+
      if ( roar_vio_socket_init_dstr_def(next->def, c->dst, -1, SOCK_STREAM, c->def) == -1 )
       return -1;
     break;
@@ -462,6 +472,9 @@ int     roar_vio_dstr_set_defaults(struct roar_vio_dstr_chain * chain, int len, 
    case ROAR_VIO_DSTR_OBJT_DECNET:
      c->need_vio = 0;
      next->def = &(next->store_def);
+
+     if ( roar_vio_dstr_init_defaults_c(next->def, ROAR_VIO_DEF_TYPE_SOCKET, c->def, O_WRONLY) == -1 )
+      return -1;
 
      if ( roar_vio_socket_init_dstr_def(next->def, c->dst, AF_DECnet, SOCK_STREAM, c->def) == -1 )
       return -1;
@@ -471,12 +484,18 @@ int     roar_vio_dstr_set_defaults(struct roar_vio_dstr_chain * chain, int len, 
      c->need_vio = 0;
      next->def = &(next->store_def);
 
+     if ( roar_vio_dstr_init_defaults_c(next->def, ROAR_VIO_DEF_TYPE_SOCKET, c->def, O_WRONLY) == -1 )
+      return -1;
+
      if ( roar_vio_socket_init_dstr_def(next->def, c->dst, AF_INET, SOCK_STREAM, c->def) == -1 )
       return -1;
     break;
    case ROAR_VIO_DSTR_OBJT_UDP:
      c->need_vio = 0;
      next->def = &(next->store_def);
+
+     if ( roar_vio_dstr_init_defaults_c(next->def, ROAR_VIO_DEF_TYPE_SOCKET, c->def, O_WRONLY) == -1 )
+      return -1;
 
      if ( roar_vio_socket_init_dstr_def(next->def, c->dst, AF_INET, SOCK_DGRAM, c->def) == -1 )
       return -1;
@@ -486,12 +505,18 @@ int     roar_vio_dstr_set_defaults(struct roar_vio_dstr_chain * chain, int len, 
      c->need_vio = 0;
      next->def = &(next->store_def);
 
+     if ( roar_vio_dstr_init_defaults_c(next->def, ROAR_VIO_DEF_TYPE_SOCKET, c->def, O_WRONLY) == -1 )
+      return -1;
+
      if ( roar_vio_socket_init_dstr_def(next->def, c->dst, AF_INET6, SOCK_STREAM, c->def) == -1 )
       return -1;
     break;
    case ROAR_VIO_DSTR_OBJT_UDP6:
      c->need_vio = 0;
      next->def = &(next->store_def);
+
+     if ( roar_vio_dstr_init_defaults_c(next->def, ROAR_VIO_DEF_TYPE_SOCKET, c->def, O_WRONLY) == -1 )
+      return -1;
 
      if ( roar_vio_socket_init_dstr_def(next->def, c->dst, AF_INET6, SOCK_DGRAM, c->def) == -1 )
       return -1;
@@ -523,7 +548,7 @@ int     roar_vio_dstr_set_defaults(struct roar_vio_dstr_chain * chain, int len, 
                     c->type & 0xFFFF, roar_vio_dstr_get_name(c->type),
                     next->def, next->def == NULL ? -1 : next->def->type);
    if ( next->def != NULL ) {
-    ROAR_DBG("roar_vio_dstr_set_defaults(*): i=%i, c->type=0x%.4x(%s): next->def->o_flags=%i", i,
+    ROAR_WARN("roar_vio_dstr_set_defaults(*): i=%i, c->type=0x%.4x(%s): next->def->o_flags=%i", i,
                      c->type & 0xFFFF, roar_vio_dstr_get_name(c->type),
                      next->def->o_flags);
    }
@@ -581,8 +606,8 @@ int     roar_vio_dstr_build_chain(struct roar_vio_dstr_chain * chain, struct roa
  }
 
  for (i = 0; (c = &chain[i])->type != ROAR_VIO_DSTR_OBJT_EOL; i++) {
-  ROAR_DBG("roar_vio_dstr_build_chain(*): i=%i, c->type=0x%.4x(%s): need_vio=%i", i,
-                   c->type & 0xFFFF, roar_vio_dstr_get_name(c->type), c->need_vio);
+  ROAR_DBG("roar_vio_dstr_build_chain(*): i=%i, c->type=0x%.4x(%s): need_vio=%i, def->o_flags=%i", i,
+                   c->type & 0xFFFF, roar_vio_dstr_get_name(c->type), c->need_vio, c->def->o_flags);
 
   if ( c->need_vio ) {
    if ( (tc = malloc(sizeof(struct roar_vio_calls))) == NULL ) {
@@ -624,13 +649,13 @@ int     roar_vio_dstr_build_chain(struct roar_vio_dstr_chain * chain, struct roa
     case ROAR_VIO_DSTR_OBJT_HTTP09:
     case ROAR_VIO_DSTR_OBJT_HTTP10:
     case ROAR_VIO_DSTR_OBJT_HTTP11:
-      if ( roar_vio_open_proto(tc, prev, c->dst, ROAR_VIO_PROTO_P_HTTP, i == 0 ? NULL : chain[i-1].def) == -1 ) {
+      if ( roar_vio_open_proto(tc, prev, c->dst, ROAR_VIO_PROTO_P_HTTP, c->def) == -1 ) {
        _ret(-1);
       }
      break;
     case ROAR_VIO_DSTR_OBJT_GOPHER:
     case ROAR_VIO_DSTR_OBJT_GOPHER_PLUS:
-      if ( roar_vio_open_proto(tc, prev, c->dst, ROAR_VIO_PROTO_P_GOPHER, i == 0 ? NULL : chain[i-1].def) == -1 ) {
+      if ( roar_vio_open_proto(tc, prev, c->dst, ROAR_VIO_PROTO_P_GOPHER, c->def) == -1 ) {
        _ret(-1);
       }
      break;

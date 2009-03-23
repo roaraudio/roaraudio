@@ -159,6 +159,7 @@ int     roar_vio_dstr_get_type(char * str);
 char *  roar_vio_dstr_get_name(int type);
 
 int     roar_vio_dstr_init_defaults (struct roar_vio_defaults * def, int type, int o_flags, mode_t o_mode);
+int     roar_vio_dstr_init_defaults_c (struct roar_vio_defaults * def, int type, struct roar_vio_defaults * odef, int o_flags);
 
 int     roar_vio_open_default (struct roar_vio_calls * calls, struct roar_vio_defaults * def);
 

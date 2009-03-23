@@ -229,7 +229,9 @@ int     roar_vio_socket_init_dstr_def     (struct roar_vio_defaults * def, char 
   if ( odef->d.socket.type != type )
    return -1;
 
-  memcpy(def, odef, sizeof(struct roar_vio_defaults));
+  if ( def != odef )
+   memcpy(def, odef, sizeof(struct roar_vio_defaults));
+
   return 0;
  }
 
