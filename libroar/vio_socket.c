@@ -308,9 +308,16 @@ int     roar_vio_socket_get_port          (char * service, int domain, int type)
  struct servent * serv  = NULL;
  char           * proto = NULL;
  int              port;
+ int              len;
 
  if ( service == NULL || domain == -1 || type == -1 )
   return -1;
+
+ if ( (len = strlen(service)) < 1 )
+  return -1;
+
+ if ( service[len-1] == '/' )
+  service[len-1] = 0;
 
  if ( sscanf(service, "%i", &port) == 1 )
   return port;
@@ -348,7 +355,7 @@ int     roar_vio_socket_get_port          (char * service, int domain, int type)
   return -1;
  }
 
- return serv->s_port;
+ return ROAR_NET2HOST16(serv->s_port);
 }
 
 // AF_UNIX:
