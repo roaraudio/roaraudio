@@ -299,6 +299,8 @@ int     roar_vio_socket_conv_def          (struct roar_vio_defaults * def, int d
  if ( def->d.socket.domain == domain )
   return 0;
 
+ // we sould add support to convert IPv4 <-> IPv6 here
+
  return -1;
 }
 
