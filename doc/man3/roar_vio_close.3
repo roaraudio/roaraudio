@@ -1,0 +1,42 @@
+.\" roar_simple_play.3:
+
+.TH "roar_vio_close" "3" "March 2009" "RoarAudio" "System Manager's Manual: RoarAuido"
+
+.SH NAME
+roar_vio_close.3 \- close a RoarAudio virtual IO object
+
+.SH SYNOPSIS
+
+#include <roaraudio.h>
+
+int roar_vio_close (struct roar_vio_calls * vio);
+
+.SH "DESCRIPTION"
+Closes a VIO object. Also ensures all data to be fushed to disk or send via sockets.
+The given vio object itself is not freed as normaly located in the applications stack.
+if you want it to be freed you need to call \fBfree\fR(3) yourself.
+
+.SH "PARAMETERS"
+.TP
+\fBvio\fR
+The VIO object to be closed.
+
+.SH "RETURN VALUE"
+On success these calls return 0.  On error, -1 is returned.
+
+.SH "EXAMPLES"
+
+ struct roar_vio_calls obj;
+
+ roar_vio_open_fh(&obj, ROAR_STDOUT);
+
+ roar_vio_puts(&obj, "Hello World!\\n");
+
+ roar_vio_close(&obj);
+
+.SH "SEE ALSO"
+\fBroarvio\fR(7),
+\fBlibroar\fR(7),
+\fBRoarAudio\fR(7).
+
+.\" ll
