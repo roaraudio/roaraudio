@@ -50,10 +50,14 @@ int main (int argc, char * argv[]) {
  char * k;
  int    i;
  char * name = "roarcat";
- struct roar_vio_calls file, stream, pgp;
+ struct roar_vio_calls file, stream;
+ struct roar_vio_defaults def;
  int file_opened = 0;
 
  if ( roar_vio_open_fh(&file, ROAR_STDIN) == -1 )
+  return 1;
+
+ if ( roar_vio_dstr_init_defaults(&def, ROAR_VIO_DEF_TYPE_NONE, O_RDONLY, 0644) == -1 )
   return 1;
 
  for (i = 1; i < argc; i++) {
@@ -80,7 +84,7 @@ int main (int argc, char * argv[]) {
    return 0;
   } else if ( !file_opened ) {
    file_opened = 1;
-   if ( roar_vio_open_file(&file, k, O_RDONLY, 0644) == -1 ) {
+   if ( roar_vio_open_dstr(&file, k, &def, 1) == -1 ) {
     fprintf(stderr, "Error: can not open file: %s: %s\n", k, strerror(errno));
     return 1;
    }
@@ -96,11 +100,9 @@ int main (int argc, char * argv[]) {
   return 1;
  }
 
- roar_vio_open_pgp_decrypt(&pgp, &file, NULL);
+ roar_vio_copy_data(&stream, &file);
 
- roar_vio_copy_data(&stream, &pgp);
-
- roar_vio_close(&pgp);
+ roar_vio_close(&file);
  roar_vio_close(&stream);
 
  return 0;
