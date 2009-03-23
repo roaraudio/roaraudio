@@ -48,6 +48,9 @@ int     roar_vio_open_def_socket          (struct roar_vio_calls * calls, struct
   case AF_INET:
     len = sizeof(struct sockaddr_in);
 
+    if ( roar_vio_socket_init_inet4host_def(def) == -1 )
+     return -1;
+
     switch (def->d.socket.type) {
      case SOCK_STREAM:
        fh = roar_socket_new_tcp();
@@ -143,26 +146,147 @@ int     roar_vio_socket_init_socket_def   (struct roar_vio_defaults * def, int d
  return 0;
 }
 
+int     roar_vio_socket_init_dstr_def     (struct roar_vio_defaults * def, char * dstr, int hint, int type,
+                                           struct roar_vio_defaults * odef) {
+ char * host;
+ int    port;
+
+ if ( def == NULL || dstr == NULL )
+  return -1;
+
+ ROAR_WARN("roar_vio_socket_init_dstr_def(def=%p, dstr='%s', hint=%i, type=%i, odef=%p) = ?", def, dstr, hint, type, odef);
+
+ if ( hint == -1 ) {
+  if ( 0 ) { // this is needed to keep the syntx ok, compiler will throw it away
+#ifdef ROAR_HAVE_IPV6
+  } else if ( strstr(dstr, "[") != NULL ) { // [ip]:service
+   hint = AF_INET6;
+#endif
+#ifdef ROAR_HAVE_LIBDNET
+  } else if ( strstr(dstr, "::") != NULL ) { // node::object
+   hint = AF_DECnet;
+#endif
+#ifdef ROAR_HAVE_IPX
+  } else if ( strstr(dstr, "(") != NULL ) { // net:mac(service)
+   hint = AF_IPX;
+#endif
+#ifdef ROAR_HAVE_UNIX
+  } else if ( strstr(dstr, "/") != NULL ) { // /path/to/sock
+   hint = AF_UNIX;
+#endif
+  } else if ( strstr(dstr, ":") != NULL ) { // host:port
+   hint = AF_INET;
+  }
+ }
+
+ if ( hint == -1 && odef != NULL ) { // if we still don't know what this is we try
+                                     // to use the parent objects request
+  if ( odef->type == ROAR_VIO_DEF_TYPE_SOCKET ) {
+   hint = odef->d.socket.domain;
+  }
+ }
+
+ if ( hint == -1 ) /* we really have no glue what this is... */
+  return -1;
+
+#ifdef ROAR_HAVE_UNIX
+ if ( hint == AF_UNIX ) {
+  if ( *dstr != 0 && strcmp(dstr, "//") != 0 ) {
+   return roar_vio_socket_init_unix_def(def, dstr);
+  } else {
+   if ( roar_vio_socket_conv_def(odef, AF_UNIX) == -1 )
+    return -1;
+
+   return roar_vio_socket_init_unix_def(def, odef->d.socket.sa.un.sun_path);
+  }
+ }
+#endif
+
+ for (; *dstr == '/'; dstr++);
+
+ switch (hint) {
+  case AF_INET:
+    host = dstr;
+    for (; *dstr != 0 && *dstr != ':'; dstr++);
+
+    if ( *dstr == ':' ) { // we have a port :)
+     *dstr++ = 0;
+     if ( (port = roar_vio_socket_get_port(dstr, AF_INET, type)) == -1 )
+      return -1;
+
+     return roar_vio_socket_init_inet4_def(def, host, port, type);
+    } else {
+     if ( roar_vio_socket_conv_def(odef, AF_INET) == -1 )
+      return -1;
+
+     return roar_vio_socket_init_inet4_def(def, host, ROAR_NET2HOST16(odef->d.socket.sa.in.sin_port), type);
+    }
+   break;
+#ifdef ROAR_HAVE_LIBDNET
+  case AF_DECnet:
+    return -1;
+   break;
+#endif
+#ifdef ROAR_HAVE_IPV6
+  case AF_INET6:
+    return -1;
+   break;
+#endif
+#ifdef ROAR_HAVE_IPX
+  case AF_IPX:
+    return -1;
+   break;
+#endif
+  default:
+    return -1;
+ }
+
+ return 0;
+}
+
+int     roar_vio_socket_conv_def          (struct roar_vio_defaults * def, int domain) {
+ return -1;
+}
+
+int     roar_vio_socket_get_port          (char * service, int domain, int type) {
+ if ( service == NULL || domain == -1 || type == -1 )
+  return -1;
+
+ // TODO: we should write something better
+ return atoi(service);
+}
+
+// AF_UNIX:
 int     roar_vio_socket_init_unix_def     (struct roar_vio_defaults * def, char * path) {
+#ifdef ROAR_HAVE_UNIX
  if ( roar_vio_socket_init_socket_def(def, AF_UNIX, SOCK_STREAM) == -1 )
   return -1;
 
  strncpy(def->d.socket.sa.un.sun_path, path, sizeof(def->d.socket.sa.un.sun_path) - 1);
 
  return 0;
+#else
+ return -1;
+#endif
 }
 
+// AF_DECnet:
 int     roar_vio_socket_init_decnet_def   (struct roar_vio_defaults * def, char * node, int object, char * objname);
 
-int     roar_vio_socket_init_inet4host_def(struct roar_vio_defaults * def, char * host) {
+
+// AF_INET:
+int     roar_vio_socket_init_inet4host_def(struct roar_vio_defaults * def) {
  struct hostent     * he;
 
- if ( def == NULL || host == NULL )
+ if ( def == NULL )
   return -1;
 
- if ( (he = gethostbyname(host)) == NULL ) {
+ if ( def->d.socket.host == NULL )
+  return -1;
+
+ if ( (he = gethostbyname(def->d.socket.host)) == NULL ) {
   ROAR_ERR("roar_vio_socket_init_inet4host_def(*): Can\'t resolve host name '%s'",
-                    host);
+                    def->d.socket.host);
   return -1;
  }
 
@@ -171,21 +295,38 @@ int     roar_vio_socket_init_inet4host_def(struct roar_vio_defaults * def, char 
  return 0;
 }
 
-int     roar_vio_socket_init_tcp4_def     (struct roar_vio_defaults * def, char * host, int port) {
- if ( roar_vio_socket_init_socket_def(def, AF_INET, SOCK_STREAM) == -1 )
+int     roar_vio_socket_init_inet4_def    (struct roar_vio_defaults * def, char * host, int port, int type) {
+ if ( roar_vio_socket_init_socket_def(def, AF_INET, type) == -1 )
   return -1;
 
- if ( roar_vio_socket_init_inet4host_def(def, host) == -1 )
-  return -1;
+ def->d.socket.host             = host;
 
  def->d.socket.sa.in.sin_port   = ROAR_HOST2NET16(port);
 
  return 0;
 }
 
-int     roar_vio_socket_init_udp4_def     (struct roar_vio_defaults * def, char * host, int port);
-int     roar_vio_socket_init_inet6host_def(struct roar_vio_defaults * def, char * host);
-int     roar_vio_socket_init_tcp6_def     (struct roar_vio_defaults * def, char * host, int port);
-int     roar_vio_socket_init_udp6_def     (struct roar_vio_defaults * def, char * host, int port);
+int     roar_vio_socket_init_tcp4_def     (struct roar_vio_defaults * def, char * host, int port) {
+ return roar_vio_socket_init_inet4_def(def, host, port, SOCK_STREAM);
+}
+
+int     roar_vio_socket_init_udp4_def     (struct roar_vio_defaults * def, char * host, int port) {
+ return roar_vio_socket_init_inet4_def(def, host, port, SOCK_DGRAM);
+}
+
+
+// AF_INET6:
+int     roar_vio_socket_init_inet6host_def(struct roar_vio_defaults * def);
+int     roar_vio_socket_init_inet6_def    (struct roar_vio_defaults * def, char * host, int port, int type) {
+ return -1;
+}
+
+int     roar_vio_socket_init_tcp6_def     (struct roar_vio_defaults * def, char * host, int port) {
+ return roar_vio_socket_init_inet6_def(def, host, port, SOCK_STREAM);
+}
+
+int     roar_vio_socket_init_udp6_def     (struct roar_vio_defaults * def, char * host, int port) {
+ return roar_vio_socket_init_inet6_def(def, host, port, SOCK_DGRAM);
+}
 
 //ll

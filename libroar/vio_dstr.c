@@ -429,15 +429,6 @@ int     roar_vio_dstr_set_defaults(struct roar_vio_dstr_chain * chain, int len, 
      roar_vio_dstr_init_defaults(next->def, tmp[0] ? ROAR_VIO_DEF_TYPE_FH : ROAR_VIO_DEF_TYPE_SOCKETFH, tmp[2], tmp[3]);
      next->def->d.fh = tmp[1];
     break;
-/*
-#define ROAR_VIO_DSTR_OBJT_SOCKET         (0x01|ROAR_VIO_DSTR_OBJGT_SOCKET)
-#define ROAR_VIO_DSTR_OBJT_UNIX           (0x02|ROAR_VIO_DSTR_OBJGT_SOCKET)
-#define ROAR_VIO_DSTR_OBJT_DECNET         (0x10|ROAR_VIO_DSTR_OBJGT_SOCKET)
-#define ROAR_VIO_DSTR_OBJT_TCP            (0x21|ROAR_VIO_DSTR_OBJGT_SOCKET)
-#define ROAR_VIO_DSTR_OBJT_UDP            (0x22|ROAR_VIO_DSTR_OBJGT_SOCKET)
-#define ROAR_VIO_DSTR_OBJT_TCP6           (0x31|ROAR_VIO_DSTR_OBJGT_SOCKET)
-#define ROAR_VIO_DSTR_OBJT_UDP6           (0x32|ROAR_VIO_DSTR_OBJGT_SOCKET)
-*/
    case ROAR_VIO_DSTR_OBJT_UNIX:
      c->need_vio = 0;
      next->def = &(next->store_def);
@@ -451,6 +442,52 @@ int     roar_vio_dstr_set_defaults(struct roar_vio_dstr_chain * chain, int len, 
      if ( roar_vio_socket_init_unix_def(next->def, c->dst) == -1 )
       return -1;
     break;
+   case ROAR_VIO_DSTR_OBJT_SOCKET:
+     c->need_vio = 0;
+     next->def = &(next->store_def);
+
+     if ( roar_vio_socket_init_dstr_def(next->def, c->dst, -1, SOCK_STREAM, c->def) == -1 )
+      return -1;
+    break;
+#ifdef ROAR_HAVE_LIBDNET
+   case ROAR_VIO_DSTR_OBJT_DECNET:
+     c->need_vio = 0;
+     next->def = &(next->store_def);
+
+     if ( roar_vio_socket_init_dstr_def(next->def, c->dst, AF_DECnet, SOCK_STREAM, c->def) == -1 )
+      return -1;
+    break;
+#endif
+   case ROAR_VIO_DSTR_OBJT_TCP:
+     c->need_vio = 0;
+     next->def = &(next->store_def);
+
+     if ( roar_vio_socket_init_dstr_def(next->def, c->dst, AF_INET, SOCK_STREAM, c->def) == -1 )
+      return -1;
+    break;
+   case ROAR_VIO_DSTR_OBJT_UDP:
+     c->need_vio = 0;
+     next->def = &(next->store_def);
+
+     if ( roar_vio_socket_init_dstr_def(next->def, c->dst, AF_INET, SOCK_DGRAM, c->def) == -1 )
+      return -1;
+    break;
+#ifdef ROAR_HAVE_IPV6
+   case ROAR_VIO_DSTR_OBJT_TCP6:
+     c->need_vio = 0;
+     next->def = &(next->store_def);
+
+     if ( roar_vio_socket_init_dstr_def(next->def, c->dst, AF_INET6, SOCK_STREAM, c->def) == -1 )
+      return -1;
+    break;
+   case ROAR_VIO_DSTR_OBJT_UDP6:
+     c->need_vio = 0;
+     next->def = &(next->store_def);
+
+     if ( roar_vio_socket_init_dstr_def(next->def, c->dst, AF_INET6, SOCK_DGRAM, c->def) == -1 )
+      return -1;
+    break;
+#endif
    default:
     return -1;
   }

@@ -43,13 +43,21 @@ int     roar_vio_open_def_socket          (struct roar_vio_calls * calls, struct
 
 int     roar_vio_socket_init_socket_def   (struct roar_vio_defaults * def, int domain, int type);
 
+int     roar_vio_socket_init_dstr_def     (struct roar_vio_defaults * def, char * dstr, int hint, int type, struct roar_vio_defaults * odef);
+
+int     roar_vio_socket_conv_def          (struct roar_vio_defaults * def, int domain);
+
+int     roar_vio_socket_get_port          (char * service, int domain, int type);
+
 int     roar_vio_socket_init_unix_def     (struct roar_vio_defaults * def, char * path);
 int     roar_vio_socket_init_decnet_def   (struct roar_vio_defaults * def, char * node, int object, char * objname);
 
-int     roar_vio_socket_init_inet4host_def(struct roar_vio_defaults * def, char * host);
+int     roar_vio_socket_init_inet4host_def(struct roar_vio_defaults * def);
+int     roar_vio_socket_init_inet4_def    (struct roar_vio_defaults * def, char * host, int port, int type);
 int     roar_vio_socket_init_tcp4_def     (struct roar_vio_defaults * def, char * host, int port);
 int     roar_vio_socket_init_udp4_def     (struct roar_vio_defaults * def, char * host, int port);
-int     roar_vio_socket_init_inet6host_def(struct roar_vio_defaults * def, char * host);
+int     roar_vio_socket_init_inet6host_def(struct roar_vio_defaults * def);
+int     roar_vio_socket_init_inet6_def    (struct roar_vio_defaults * def, char * host, int port, int type);
 int     roar_vio_socket_init_tcp6_def     (struct roar_vio_defaults * def, char * host, int port);
 int     roar_vio_socket_init_udp6_def     (struct roar_vio_defaults * def, char * host, int port);
 
