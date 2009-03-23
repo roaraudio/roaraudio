@@ -429,19 +429,26 @@ int     roar_vio_dstr_set_defaults(struct roar_vio_dstr_chain * chain, int len, 
      roar_vio_dstr_init_defaults(next->def, tmp[0] ? ROAR_VIO_DEF_TYPE_FH : ROAR_VIO_DEF_TYPE_SOCKETFH, tmp[2], tmp[3]);
      next->def->d.fh = tmp[1];
     break;
+#ifdef ROAR_HAVE_UNIX
    case ROAR_VIO_DSTR_OBJT_UNIX:
      c->need_vio = 0;
      next->def = &(next->store_def);
 
-     if ( c->def != NULL ) {
-      roar_vio_dstr_init_defaults(next->def, ROAR_VIO_DEF_TYPE_SOCKET, c->def->o_flags, c->def->o_mode);
-     } else {
-      roar_vio_dstr_init_defaults(next->def, ROAR_VIO_DEF_TYPE_SOCKET, O_WRONLY, 0644);
-     }
+     if ( c->dst == NULL ) { // we don't have a destination? -> slow way
+      if ( roar_vio_socket_init_dstr_def(next->def, c->dst, AF_UNIX, SOCK_STREAM, c->def) == -1 )
+       return -1;
+     } else {                // we have a destination? -> fast way
+      if ( c->def != NULL ) {
+       roar_vio_dstr_init_defaults(next->def, ROAR_VIO_DEF_TYPE_SOCKET, c->def->o_flags, c->def->o_mode);
+      } else {
+       roar_vio_dstr_init_defaults(next->def, ROAR_VIO_DEF_TYPE_SOCKET, O_WRONLY, 0644);
+      }
 
-     if ( roar_vio_socket_init_unix_def(next->def, c->dst) == -1 )
-      return -1;
+      if ( roar_vio_socket_init_unix_def(next->def, c->dst) == -1 )
+       return -1;
+     }
     break;
+#endif
    case ROAR_VIO_DSTR_OBJT_SOCKET:
      c->need_vio = 0;
      next->def = &(next->store_def);
@@ -531,6 +538,11 @@ int     roar_vio_dstr_build_chain(struct roar_vio_dstr_chain * chain, struct roa
    _ret(-1);
   }
 
+  if ( roar_vio_init_calls(tc) == -1 ) {
+   free(tc);
+   _ret(-1);
+  }
+
   if ( roar_vio_stack_add(calls, tc) == -1 ) {
    _ret(-1);
   }
@@ -547,6 +559,11 @@ int     roar_vio_dstr_build_chain(struct roar_vio_dstr_chain * chain, struct roa
  for (i = 0; (c = &chain[i])->type != ROAR_VIO_DSTR_OBJT_EOL; i++) {
   if ( c->need_vio ) {
    if ( (tc = malloc(sizeof(struct roar_vio_calls))) == NULL ) {
+    _ret(-1);
+   }
+
+   if ( roar_vio_init_calls(tc) == -1 ) {
+    free(tc);
     _ret(-1);
    }
 

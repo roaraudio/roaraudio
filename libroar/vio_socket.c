@@ -151,8 +151,14 @@ int     roar_vio_socket_init_dstr_def     (struct roar_vio_defaults * def, char 
  char * host;
  int    port;
 
- if ( def == NULL || dstr == NULL )
+ if ( def == NULL )
   return -1;
+
+ if ( dstr == NULL && odef == NULL )
+  return -1;
+
+ if ( dstr == NULL )
+  dstr = "";
 
  ROAR_WARN("roar_vio_socket_init_dstr_def(def=%p, dstr='%s', hint=%i, type=%i, odef=%p) = ?", def, dstr, hint, type, odef);
 
@@ -202,6 +208,17 @@ int     roar_vio_socket_init_dstr_def     (struct roar_vio_defaults * def, char 
  }
 #endif
 
+ if ( *dstr == 0 ) {
+  if ( roar_vio_socket_conv_def(odef, hint) == -1 )
+   return -1;
+
+  if ( odef->d.socket.type != type )
+   return -1;
+
+  memcpy(def, odef, sizeof(struct roar_vio_defaults));
+  return 0;
+ }
+
  for (; *dstr == '/'; dstr++);
 
  switch (hint) {
@@ -245,6 +262,28 @@ int     roar_vio_socket_init_dstr_def     (struct roar_vio_defaults * def, char 
 }
 
 int     roar_vio_socket_conv_def          (struct roar_vio_defaults * def, int domain) {
+ if ( def == NULL || domain == -1 )
+  return -1;
+
+#ifdef ROAR_HAVE_UNIX
+ if ( domain == AF_UNIX ) {
+  if ( def->type == ROAR_VIO_DEF_TYPE_SOCKET ) {
+   if ( def->d.socket.domain == AF_UNIX )
+    return 0;
+
+   return -1;
+  } else {
+   return -1;
+  }
+ }
+#endif
+
+ if ( def->type != ROAR_VIO_DEF_TYPE_SOCKET )
+  return -1;
+
+ if ( def->d.socket.domain == domain )
+  return 0;
+
  return -1;
 }
 
@@ -259,6 +298,9 @@ int     roar_vio_socket_get_port          (char * service, int domain, int type)
 // AF_UNIX:
 int     roar_vio_socket_init_unix_def     (struct roar_vio_defaults * def, char * path) {
 #ifdef ROAR_HAVE_UNIX
+ if ( def == NULL || path == NULL )
+  return -1;
+
  if ( roar_vio_socket_init_socket_def(def, AF_UNIX, SOCK_STREAM) == -1 )
   return -1;
 
