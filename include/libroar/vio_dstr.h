@@ -59,6 +59,7 @@
 
 #define ROAR_VIO_DSTR_OBJT_FILE           (0x01|ROAR_VIO_DSTR_OBJGT_GEN)
 #define ROAR_VIO_DSTR_OBJT_FH             (0x02|ROAR_VIO_DSTR_OBJGT_GEN)
+#define ROAR_VIO_DSTR_OBJT_FD             ROAR_VIO_DSTR_OBJT_FH
 #define ROAR_VIO_DSTR_OBJT_SOCKETFH       (0x03|ROAR_VIO_DSTR_OBJGT_GEN)
 /* some space to add memory FHs and the like */
 #define ROAR_VIO_DSTR_OBJT_PASS           (0x10|ROAR_VIO_DSTR_OBJGT_GEN)

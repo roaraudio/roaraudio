@@ -46,6 +46,8 @@ grep '^#define ROAR_VIO_DSTR_OBJT_' vio_dstr.h | cut -d' ' -f2 | while read objt
       {ROAR_VIO_DEF_TYPE_EOL}},
  {ROAR_VIO_DSTR_OBJT_FH,         "fh",
       {ROAR_VIO_DEF_TYPE_EOL}},
+ {ROAR_VIO_DSTR_OBJT_FD,         "fd",
+      {ROAR_VIO_DEF_TYPE_EOL}},
  {ROAR_VIO_DSTR_OBJT_SOCKETFH,   "socketfh",
       {ROAR_VIO_DEF_TYPE_EOL}},
  {ROAR_VIO_DSTR_OBJT_PASS,       "pass",
@@ -181,7 +183,7 @@ int     roar_vio_open_dstr_vio(struct roar_vio_calls * calls,
  char * c;
  int    inopts;
  int    type;
- int    cc = 0; // current chain element
+ int    cc = 1; // current chain element
 
  if ( calls == NULL || dstr == NULL )
   return -1;
@@ -193,6 +195,8 @@ int     roar_vio_open_dstr_vio(struct roar_vio_calls * calls,
   return -1;
 
  memset(chain, 0, sizeof(chain));
+
+ chain[0].type = ROAR_VIO_DSTR_OBJT_INTERNAL;
 
  next = dstr;
 
@@ -258,6 +262,8 @@ int     roar_vio_open_dstr_vio(struct roar_vio_calls * calls,
 
  chain[cc].type = ROAR_VIO_DSTR_OBJT_EOL;
 
+ ROAR_WARN("roar_vio_open_dstr_vio(*): chain=%p", chain);
+
  if ( roar_vio_dstr_parse_opts(chain) == -1 ) {
   _ret(-1);
  }
@@ -284,11 +290,10 @@ int     roar_vio_dstr_parse_opts(struct roar_vio_dstr_chain * chain) {
  return 0;
 }
 
-#define _toggle(x) ((x) = ((x) ? 0 : 1))
-
 int     roar_vio_dstr_set_defaults(struct roar_vio_dstr_chain * chain, int len, struct roar_vio_defaults * def, int dnum) {
  struct roar_vio_dstr_chain * c, * next;
  int i;
+ int tmp[8];
 
  if ( chain == NULL )
   return -1;
@@ -308,6 +313,8 @@ int     roar_vio_dstr_set_defaults(struct roar_vio_dstr_chain * chain, int len, 
   c    = &chain[i];
   next = &chain[i-1];
 
+  memset(tmp, 0, sizeof(tmp));
+
   ROAR_WARN("roar_vio_dstr_set_defaults(*): i=%i, c->type=0x%.4x(%s)", i, c->type & 0xFFFF, roar_vio_dstr_get_name(c->type));
   ROAR_WARN("roar_vio_dstr_set_defaults(*): i=%i, c->type=0x%.4x(%s): c->def=%p, c->def->type=%i", i, c->type & 0xFFFF,
                    roar_vio_dstr_get_name(c->type), c->def, c->def == NULL ? -1 : c->def->type);
@@ -315,6 +322,11 @@ int     roar_vio_dstr_set_defaults(struct roar_vio_dstr_chain * chain, int len, 
   c->need_vio = 1;
 
   switch (c->type) {
+   case ROAR_VIO_DSTR_OBJT_INTERNAL:
+     c->need_vio = 0;
+    break;
+   case ROAR_VIO_DSTR_OBJT_EOL:
+     tmp[0] = 1;
    case ROAR_VIO_DSTR_OBJT_PASS:
    case ROAR_VIO_DSTR_OBJT_RE:
    case ROAR_VIO_DSTR_OBJT_GZIP:
@@ -327,9 +339,9 @@ int     roar_vio_dstr_set_defaults(struct roar_vio_dstr_chain * chain, int len, 
    case ROAR_VIO_DSTR_OBJT_SSL3:
    case ROAR_VIO_DSTR_OBJT_TLS:
    case ROAR_VIO_DSTR_OBJT_MAGIC:
-    _toggle(c->need_vio);
-   case ROAR_VIO_DSTR_OBJT_EOL:
-    _toggle(c->need_vio);
+     if ( tmp[0] )
+      c->need_vio = 0;
+
      next->def = c->def;
     break;
    case ROAR_VIO_DSTR_OBJT_FILE:
@@ -350,6 +362,37 @@ int     roar_vio_dstr_set_defaults(struct roar_vio_dstr_chain * chain, int len, 
       next->def->d.file = c->dst;
      }
     break;
+   case ROAR_VIO_DSTR_OBJT_FH:
+     tmp[0] = 1;
+   case ROAR_VIO_DSTR_OBJT_SOCKETFH:
+     c->need_vio = 0;
+     next->def = &(next->store_def);
+
+     if ( c->def != NULL ) {
+      tmp[2] = c->def->o_flags;
+      tmp[3] = c->def->o_mode;
+     } else {
+      tmp[2] = O_RDONLY;
+      tmp[3] = 0644;
+     }
+
+     if ( !strcasecmp(c->dst, "stdin") ) {
+      tmp[1] = ROAR_STDIN;
+      tmp[2] = O_RDONLY;
+     } else if ( !strcasecmp(c->dst, "stdout") ) {
+      tmp[1] = ROAR_STDOUT;
+      tmp[2] = O_WRONLY;
+     } else if ( !strcasecmp(c->dst, "stderr") ) {
+      tmp[1] = ROAR_STDERR;
+      tmp[2] = O_WRONLY;
+     } else {
+      if ( sscanf(c->dst, "%i", &tmp[1]) != 1 )
+       return -1;
+     }
+
+     roar_vio_dstr_init_defaults(next->def, tmp[0] ? ROAR_VIO_DEF_TYPE_FH : ROAR_VIO_DEF_TYPE_SOCKETFH, tmp[2], tmp[3]);
+     next->def->d.fh = tmp[1];
+    break;
    default:
     return -1;
   }
@@ -359,14 +402,123 @@ int     roar_vio_dstr_set_defaults(struct roar_vio_dstr_chain * chain, int len, 
                    next->def, next->def == NULL ? -1 : next->def->type);
  }
 
+ ROAR_WARN("roar_vio_dstr_set_defaults(*) = 0");
+
  return 0;
 }
 
-int     roar_vio_dstr_build_chain(struct roar_vio_dstr_chain * chain, struct roar_vio_calls * calls, struct roar_vio_calls * vio) {
+#define _ret(x) roar_vio_close(calls); ROAR_WARN("roar_vio_dstr_build_chain(*) = %i", (x)); return (x)
+
+int     roar_vio_dstr_build_chain(struct roar_vio_dstr_chain * chain, struct roar_vio_calls * calls,
+                                  struct roar_vio_calls * vio) {
+ struct roar_vio_dstr_chain * c;
+ struct roar_vio_defaults   * def;
+ struct roar_vio_calls      * tc, * prev;
+ int i;
+
+ ROAR_WARN("roar_vio_dstr_build_chain(*) = ?");
+
  if ( chain == NULL || calls == NULL )
   return -1;
 
- return -1;
+ if ( roar_vio_open_stack(calls) == -1 )
+  return -1;
+
+ ROAR_WARN("roar_vio_dstr_build_chain(*): chain=%p", chain);
+
+ if ( (def = chain->def) != NULL ) {
+  if ( (tc = malloc(sizeof(struct roar_vio_calls))) == NULL ) {
+   _ret(-1);
+  }
+
+  if ( roar_vio_stack_add(calls, tc) == -1 ) {
+   _ret(-1);
+  }
+
+  switch (def->type) {
+   case ROAR_VIO_DEF_TYPE_FILE:
+     if ( roar_vio_open_file(tc, def->d.file, def->o_flags, def->o_mode) == -1 ) {
+      _ret(-1);
+     }
+    break;
+   case ROAR_VIO_DEF_TYPE_SOCKET:
+     _ret(-1);
+    break;
+   case ROAR_VIO_DEF_TYPE_FH:
+     if ( roar_vio_open_fh(tc, def->d.fh) == -1 ) {
+      _ret(-1);
+     }
+    break;
+   case ROAR_VIO_DEF_TYPE_SOCKETFH:
+     if ( roar_vio_open_fh_socket(tc, def->d.fh) == -1 ) {
+      _ret(-1);
+     }
+    break;
+   default:
+     _ret(-1);
+  }
+  prev = tc;
+ } else {
+  prev = vio;
+ }
+
+ for (i = 0; (c = &chain[i])->type != ROAR_VIO_DSTR_OBJT_EOL; i++) {
+  if ( c->need_vio ) {
+   if ( (tc = malloc(sizeof(struct roar_vio_calls))) == NULL ) {
+    _ret(-1);
+   }
+
+   if ( roar_vio_stack_add(calls, tc) == -1 ) {
+    _ret(-1);
+   }
+
+   switch (c->type) {
+    case ROAR_VIO_DSTR_OBJT_PASS:
+      if ( roar_vio_open_pass(tc, prev) == -1 ) {
+       _ret(-1);
+      }
+     break;
+    case ROAR_VIO_DSTR_OBJT_RE:
+      if ( roar_vio_open_re(tc, prev) == -1 ) {
+       _ret(-1);
+      }
+     break;
+    case ROAR_VIO_DSTR_OBJT_GZIP:
+      if ( roar_vio_open_gzip(tc, prev, -1) == -1 ) {
+       _ret(-1);
+      }
+     break;
+    case ROAR_VIO_DSTR_OBJT_BZIP2:
+    case ROAR_VIO_DSTR_OBJT_PGP:
+      if ( roar_vio_open_pgp_decrypt(tc, prev, NULL) == -1 ) {
+       _ret(-1);
+      }
+     break;
+    case ROAR_VIO_DSTR_OBJT_PGP_ENC:
+    case ROAR_VIO_DSTR_OBJT_PGP_STORE:
+      if ( roar_vio_open_pgp_store(tc, prev, ROAR_VIO_PGP_OPTS_NONE) == -1 ) {
+       _ret(-1);
+      }
+     break;
+    case ROAR_VIO_DSTR_OBJT_SSL1:
+    case ROAR_VIO_DSTR_OBJT_SSL2:
+    case ROAR_VIO_DSTR_OBJT_SSL3:
+    case ROAR_VIO_DSTR_OBJT_TLS:
+    case ROAR_VIO_DSTR_OBJT_MAGIC:
+      _ret(-1);
+     break;
+    default:
+      _ret(-1);
+   }
+
+   prev = tc;
+  } // else we can skip to the next :)
+ }
+
+ ROAR_WARN("roar_vio_dstr_build_chain(*) = 0");
+ return 0;
 }
+
+#undef _ret
 
 //ll
