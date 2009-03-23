@@ -305,11 +305,50 @@ int     roar_vio_socket_conv_def          (struct roar_vio_defaults * def, int d
 }
 
 int     roar_vio_socket_get_port          (char * service, int domain, int type) {
+ struct servent * serv  = NULL;
+ char           * proto = NULL;
+ int              port;
+
  if ( service == NULL || domain == -1 || type == -1 )
   return -1;
 
- // TODO: we should write something better
- return atoi(service);
+ if ( sscanf(service, "%i", &port) == 1 )
+  return port;
+
+ switch (domain) {
+#ifdef ROAR_HAVE_IPV6
+  case AF_INET6:
+#endif
+  case AF_INET:
+    switch (type) {
+     case SOCK_STREAM: proto = "tcp"; break;
+     case SOCK_DGRAM:  proto = "udp"; break;
+     default:
+      return -1;
+    }
+   break;
+#ifdef ROAR_HAVE_LIBDNET
+  case AF_DECnet:
+#ifdef ROAR_HAVE_GETOBJECTBYNAME
+    return getobjectbyname(service);
+#else
+    if ( !strcmp(service, "roar") )
+     return 0;
+
+    return -1;
+#endif
+   break;
+#endif
+  default:
+    return -1;
+ }
+
+ if ( (serv = getservbyname(service, proto)) == NULL ) {
+  ROAR_ERR("roar_vio_socket_get_port(*): Unknown service: %s/%s: %s", service, proto, strerror(errno));
+  return -1;
+ }
+
+ return serv->s_port;
 }
 
 // AF_UNIX:
