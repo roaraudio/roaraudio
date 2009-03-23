@@ -353,7 +353,7 @@ int     roar_vio_dstr_set_defaults(struct roar_vio_dstr_chain * chain, int len, 
 
   memset(tmp, 0, sizeof(tmp));
 
-  ROAR_WARN("roar_vio_dstr_set_defaults(*): i=%i, c->type=0x%.4x(%s)", i, c->type & 0xFFFF, roar_vio_dstr_get_name(c->type));
+  ROAR_DBG("roar_vio_dstr_set_defaults(*): i=%i, c->type=0x%.4x(%s)", i, c->type & 0xFFFF, roar_vio_dstr_get_name(c->type));
   ROAR_WARN("roar_vio_dstr_set_defaults(*): i=%i, c->type=0x%.4x(%s): c->def=%p, c->def->type=%i", i, c->type & 0xFFFF,
                    roar_vio_dstr_get_name(c->type), c->def, c->def == NULL ? -1 : c->def->type);
 
@@ -519,16 +519,16 @@ int     roar_vio_dstr_set_defaults(struct roar_vio_dstr_chain * chain, int len, 
   }
 
   if ( next != NULL ) {
-   ROAR_WARN("roar_vio_dstr_set_defaults(*): i=%i, c->type=0x%.4x(%s): next->def=%p, next->def->type=%i", i,
+   ROAR_DBG("roar_vio_dstr_set_defaults(*): i=%i, c->type=0x%.4x(%s): next->def=%p, next->def->type=%i", i,
                     c->type & 0xFFFF, roar_vio_dstr_get_name(c->type),
                     next->def, next->def == NULL ? -1 : next->def->type);
    if ( next->def != NULL ) {
-    ROAR_WARN("roar_vio_dstr_set_defaults(*): i=%i, c->type=0x%.4x(%s): next->def->o_flags=%i", i,
+    ROAR_DBG("roar_vio_dstr_set_defaults(*): i=%i, c->type=0x%.4x(%s): next->def->o_flags=%i", i,
                      c->type & 0xFFFF, roar_vio_dstr_get_name(c->type),
                      next->def->o_flags);
    }
   } else {
-   ROAR_WARN("roar_vio_dstr_set_defaults(*): i=%i, c->type=0x%.4x(%s): next=NULL", i,
+   ROAR_DBG("roar_vio_dstr_set_defaults(*): i=%i, c->type=0x%.4x(%s): next=NULL", i,
                     c->type & 0xFFFF, roar_vio_dstr_get_name(c->type));
   }
  }
@@ -581,7 +581,7 @@ int     roar_vio_dstr_build_chain(struct roar_vio_dstr_chain * chain, struct roa
  }
 
  for (i = 0; (c = &chain[i])->type != ROAR_VIO_DSTR_OBJT_EOL; i++) {
-  ROAR_WARN("roar_vio_dstr_build_chain(*): i=%i, c->type=0x%.4x(%s): need_vio=%i", i,
+  ROAR_DBG("roar_vio_dstr_build_chain(*): i=%i, c->type=0x%.4x(%s): need_vio=%i", i,
                    c->type & 0xFFFF, roar_vio_dstr_get_name(c->type), c->need_vio);
 
   if ( c->need_vio ) {
@@ -624,14 +624,12 @@ int     roar_vio_dstr_build_chain(struct roar_vio_dstr_chain * chain, struct roa
     case ROAR_VIO_DSTR_OBJT_HTTP09:
     case ROAR_VIO_DSTR_OBJT_HTTP10:
     case ROAR_VIO_DSTR_OBJT_HTTP11:
-      ROAR_WARN("roar_vio_dstr_build_chain(*): HTTP*");
       if ( roar_vio_open_proto(tc, prev, c->dst, ROAR_VIO_PROTO_P_HTTP, i == 0 ? NULL : chain[i-1].def) == -1 ) {
        _ret(-1);
       }
      break;
     case ROAR_VIO_DSTR_OBJT_GOPHER:
     case ROAR_VIO_DSTR_OBJT_GOPHER_PLUS:
-      ROAR_WARN("roar_vio_dstr_build_chain(*): GOPHER*");
       if ( roar_vio_open_proto(tc, prev, c->dst, ROAR_VIO_PROTO_P_GOPHER, i == 0 ? NULL : chain[i-1].def) == -1 ) {
        _ret(-1);
       }

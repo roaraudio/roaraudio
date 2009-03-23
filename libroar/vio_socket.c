@@ -199,9 +199,9 @@ int     roar_vio_socket_init_dstr_def     (struct roar_vio_defaults * def, char 
 
  if ( hint == -1 && odef != NULL ) { // if we still don't know what this is we try
                                      // to use the parent objects request
-  ROAR_WARN("roar_vio_socket_init_dstr_def(*): hint=-1 && odef!=NULL");
+  ROAR_DBG("roar_vio_socket_init_dstr_def(*): hint=-1 && odef!=NULL");
   if ( odef->type == ROAR_VIO_DEF_TYPE_SOCKET ) {
-   ROAR_WARN("roar_vio_socket_init_dstr_def(*): hint=-1 && odef!=NULL, using hint from odef");
+   ROAR_DBG("roar_vio_socket_init_dstr_def(*): hint=-1 && odef!=NULL, using hint from odef");
    hint = odef->d.socket.domain;
   }
  }
