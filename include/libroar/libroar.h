@@ -41,6 +41,8 @@
 
 #include <stdint.h>
 
+#include <stdarg.h>
+
 #include <sys/wait.h>
 
 #include <fcntl.h>
