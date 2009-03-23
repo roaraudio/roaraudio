@@ -95,6 +95,8 @@ grep '^#define ROAR_VIO_DSTR_OBJT_' vio_dstr.h | cut -d' ' -f2 | while read objt
       {ROAR_VIO_DEF_TYPE_EOL}},
  {ROAR_VIO_DSTR_OBJT_GOPHER,     "gopher",
       {ROAR_VIO_DEF_TYPE_EOL}},
+ {ROAR_VIO_DSTR_OBJT_GOPHER_PLUS,"gopher+",
+      {ROAR_VIO_DEF_TYPE_EOL}},
 
  {ROAR_VIO_DSTR_OBJT_GZIP,       "gzip",
       {ROAR_VIO_DEF_TYPE_EOL}},
@@ -495,16 +497,38 @@ int     roar_vio_dstr_set_defaults(struct roar_vio_dstr_chain * chain, int len, 
       return -1;
     break;
 #endif
+   case ROAR_VIO_DSTR_OBJT_HTTP09:
+   case ROAR_VIO_DSTR_OBJT_HTTP10:
+   case ROAR_VIO_DSTR_OBJT_HTTP11:
+     c->need_vio = 1;
+     next->def = &(next->store_def);
+
+     if ( roar_vio_proto_init_def(next->def, c->dst, ROAR_VIO_PROTO_P_HTTP, c->def) == -1 )
+      return -1;
+    break;
+   case ROAR_VIO_DSTR_OBJT_GOPHER:
+   case ROAR_VIO_DSTR_OBJT_GOPHER_PLUS:
+     c->need_vio = 1;
+     next->def = &(next->store_def);
+
+     if ( roar_vio_proto_init_def(next->def, c->dst, ROAR_VIO_PROTO_P_GOPHER, c->def) == -1 )
+      return -1;
+    break;
    default:
     return -1;
   }
 
   if ( next != NULL ) {
-   ROAR_DBG("roar_vio_dstr_set_defaults(*): i=%i, c->type=0x%.4x(%s): next->def=%p, next->def->type=%i", i,
+   ROAR_WARN("roar_vio_dstr_set_defaults(*): i=%i, c->type=0x%.4x(%s): next->def=%p, next->def->type=%i", i,
                     c->type & 0xFFFF, roar_vio_dstr_get_name(c->type),
                     next->def, next->def == NULL ? -1 : next->def->type);
+   if ( next->def != NULL ) {
+    ROAR_WARN("roar_vio_dstr_set_defaults(*): i=%i, c->type=0x%.4x(%s): next->def->o_flags=%i", i,
+                     c->type & 0xFFFF, roar_vio_dstr_get_name(c->type),
+                     next->def->o_flags);
+   }
   } else {
-   ROAR_DBG("roar_vio_dstr_set_defaults(*): i=%i, c->type=0x%.4x(%s): next=NULL", i,
+   ROAR_WARN("roar_vio_dstr_set_defaults(*): i=%i, c->type=0x%.4x(%s): next=NULL", i,
                     c->type & 0xFFFF, roar_vio_dstr_get_name(c->type));
   }
  }
@@ -557,6 +581,9 @@ int     roar_vio_dstr_build_chain(struct roar_vio_dstr_chain * chain, struct roa
  }
 
  for (i = 0; (c = &chain[i])->type != ROAR_VIO_DSTR_OBJT_EOL; i++) {
+  ROAR_WARN("roar_vio_dstr_build_chain(*): i=%i, c->type=0x%.4x(%s): need_vio=%i", i,
+                   c->type & 0xFFFF, roar_vio_dstr_get_name(c->type), c->need_vio);
+
   if ( c->need_vio ) {
    if ( (tc = malloc(sizeof(struct roar_vio_calls))) == NULL ) {
     _ret(-1);
@@ -570,6 +597,7 @@ int     roar_vio_dstr_build_chain(struct roar_vio_dstr_chain * chain, struct roa
    if ( roar_vio_stack_add(calls, tc) == -1 ) {
     _ret(-1);
    }
+
 
    switch (c->type) {
     case ROAR_VIO_DSTR_OBJT_PASS:
@@ -590,6 +618,21 @@ int     roar_vio_dstr_build_chain(struct roar_vio_dstr_chain * chain, struct roa
     case ROAR_VIO_DSTR_OBJT_BZIP2:
     case ROAR_VIO_DSTR_OBJT_PGP:
       if ( roar_vio_open_pgp_decrypt(tc, prev, NULL) == -1 ) {
+       _ret(-1);
+      }
+     break;
+    case ROAR_VIO_DSTR_OBJT_HTTP09:
+    case ROAR_VIO_DSTR_OBJT_HTTP10:
+    case ROAR_VIO_DSTR_OBJT_HTTP11:
+      ROAR_WARN("roar_vio_dstr_build_chain(*): HTTP*");
+      if ( roar_vio_open_proto(tc, prev, c->dst, ROAR_VIO_PROTO_P_HTTP, i == 0 ? NULL : chain[i-1].def) == -1 ) {
+       _ret(-1);
+      }
+     break;
+    case ROAR_VIO_DSTR_OBJT_GOPHER:
+    case ROAR_VIO_DSTR_OBJT_GOPHER_PLUS:
+      ROAR_WARN("roar_vio_dstr_build_chain(*): GOPHER*");
+      if ( roar_vio_open_proto(tc, prev, c->dst, ROAR_VIO_PROTO_P_GOPHER, i == 0 ? NULL : chain[i-1].def) == -1 ) {
        _ret(-1);
       }
      break;

@@ -199,7 +199,9 @@ int     roar_vio_socket_init_dstr_def     (struct roar_vio_defaults * def, char 
 
  if ( hint == -1 && odef != NULL ) { // if we still don't know what this is we try
                                      // to use the parent objects request
+  ROAR_WARN("roar_vio_socket_init_dstr_def(*): hint=-1 && odef!=NULL");
   if ( odef->type == ROAR_VIO_DEF_TYPE_SOCKET ) {
+   ROAR_WARN("roar_vio_socket_init_dstr_def(*): hint=-1 && odef!=NULL, using hint from odef");
    hint = odef->d.socket.domain;
   }
  }
@@ -410,6 +412,7 @@ int     roar_vio_socket_init_decnet_def   (struct roar_vio_defaults * def, char 
 // AF_INET:
 int     roar_vio_socket_init_inet4host_def(struct roar_vio_defaults * def) {
  struct hostent     * he;
+ char               * ed;
 
  if ( def == NULL )
   return -1;
@@ -417,11 +420,17 @@ int     roar_vio_socket_init_inet4host_def(struct roar_vio_defaults * def) {
  if ( def->d.socket.host == NULL )
   return -1;
 
+ if ( (ed = strstr(def->d.socket.host, "/")) != NULL )
+  *ed = 0;
+
  if ( (he = gethostbyname(def->d.socket.host)) == NULL ) {
   ROAR_ERR("roar_vio_socket_init_inet4host_def(*): Can\'t resolve host name '%s'",
                     def->d.socket.host);
+  if ( ed != NULL ) *ed = '/';
   return -1;
  }
+
+ if ( ed != NULL ) *ed = '/';
 
  memcpy((struct in_addr *)&def->d.socket.sa.in.sin_addr, he->h_addr, sizeof(struct in_addr));
 

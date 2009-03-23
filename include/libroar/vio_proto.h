@@ -37,6 +37,19 @@
 
 #include "libroar.h"
 
+struct roar_vio_defaults;
+
+#define ROAR_VIO_PROTO_P_NONE      0
+#define ROAR_VIO_PROTO_P_HTTP      1
+#define ROAR_VIO_PROTO_P_GOPHER    2
+
+int roar_vio_proto_init_def  (struct roar_vio_defaults * def, char * dstr, int proto, struct roar_vio_defaults * odef);
+
+int roar_vio_open_proto      (struct roar_vio_calls * calls, struct roar_vio_calls * dst,
+                              char * dstr, int proto, struct roar_vio_defaults * odef);
+
+int roar_vio_open_proto_http   (struct roar_vio_calls * calls, struct roar_vio_calls * dst, char * host, char * file);
+int roar_vio_open_proto_gopher (struct roar_vio_calls * calls, struct roar_vio_calls * dst, char * host, char * file);
 #endif
 
 //ll
