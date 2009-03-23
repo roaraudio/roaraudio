@@ -11,6 +11,10 @@ v. 0.2beta2 - ?
 	* added (OpenSSH) askpass support.
 	* added vio pipe support, currectly pipe() and socketpair() based onse.
 	* test for OpenSSL
+	* added support to VIO open OpenSSL BIOs
+	* added support to read a string and convert it into a VIO stack
+	* added simple VIO stack as VIO pass object
+	* started cleaner VIO Socket implementation
 
 v. 0.2beta1 - Mon Feb 23 2009 25:08
 	* added options --default-codec and --without-cf-cmd to configure script
