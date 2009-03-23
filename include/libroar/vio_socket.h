@@ -37,6 +37,20 @@
 
 #include "libroar.h"
 
+struct roar_vio_defaults;
+
+int     roar_vio_open_def_socket          (struct roar_vio_calls * calls, struct roar_vio_defaults * def);
+
+int     roar_vio_socket_init_unix_def     (struct roar_vio_defaults * def, char * path);
+int     roar_vio_socket_init_decnet_def   (struct roar_vio_defaults * def, char * node, int object, char * objname);
+
+int     roar_vio_socket_init_inet4host_def(struct roar_vio_defaults * def, char * host);
+int     roar_vio_socket_init_tcp4_def     (struct roar_vio_defaults * def, char * host, int port);
+int     roar_vio_socket_init_udp4_def     (struct roar_vio_defaults * def, char * host, int port);
+int     roar_vio_socket_init_inet6host_def(struct roar_vio_defaults * def, char * host);
+int     roar_vio_socket_init_tcp6_def     (struct roar_vio_defaults * def, char * host, int port);
+int     roar_vio_socket_init_udp6_def     (struct roar_vio_defaults * def, char * host, int port);
+
 #endif
 
 //ll
