@@ -82,7 +82,16 @@ int     roar_vio_open_def_socket          (struct roar_vio_calls * calls, struct
   case AF_DECnet:
     len = sizeof(struct sockaddr_dn);
 
-    return -1;
+    if ( roar_vio_socket_init_decnetnode_def(def) == -1 )
+     return -1;
+
+    switch (def->d.socket.type) {
+     case SOCK_STREAM:
+       fh = roar_socket_new_decnet_stream();
+      break;
+     default:
+       return -1;
+    }
    break;
 #endif
 #ifdef ROAR_HAVE_IPV6
@@ -222,6 +231,8 @@ int     roar_vio_socket_init_dstr_def     (struct roar_vio_defaults * def, char 
  }
 #endif
 
+ ROAR_DBG("roar_vio_socket_init_dstr_def(*) = ?");
+
  if ( *dstr == 0 ) {
   if ( roar_vio_socket_conv_def(odef, hint) == -1 )
    return -1;
@@ -236,6 +247,8 @@ int     roar_vio_socket_init_dstr_def     (struct roar_vio_defaults * def, char 
  }
 
  for (; *dstr == '/'; dstr++);
+
+ ROAR_DBG("roar_vio_socket_init_dstr_def(*) = ?");
 
  switch (hint) {
   case AF_INET:
@@ -257,7 +270,23 @@ int     roar_vio_socket_init_dstr_def     (struct roar_vio_defaults * def, char 
    break;
 #ifdef ROAR_HAVE_LIBDNET
   case AF_DECnet:
-    return -1;
+    ROAR_DBG("roar_vio_socket_init_dstr_def(*) = ?");
+    host = dstr;
+
+    if ( type != SOCK_STREAM )
+     return -1;
+
+    if ( (dstr = strstr(dstr, "::")) == NULL ) {
+     if ( roar_vio_socket_conv_def(odef, AF_DECnet) == -1 )
+      return -1;
+
+     return -1;
+//     return roar_vio_socket_init_decnet_def(def, host, -1, dstr);
+    } else {
+     *dstr  = 0;
+      dstr += 2;
+     return roar_vio_socket_init_decnet_def(def, host, -1, dstr);
+    }
    break;
 #endif
 #ifdef ROAR_HAVE_IPV6
@@ -390,8 +419,38 @@ int     roar_vio_socket_init_unix_def     (struct roar_vio_defaults * def, char 
 }
 
 // AF_DECnet:
+int     roar_vio_socket_init_decnetnode_def(struct roar_vio_defaults * def) {
+ char               * node;
+ char               * ed;
+ struct nodeent     * ne;
+
+ if ( def == NULL )
+  return -1;
+
+ if ( (node = def->d.socket.host) == NULL )
+  return -1;
+
+ if ( (ed = strstr(node, "/")) != NULL )
+  *ed = 0;
+
+ if ( (ne = getnodebyname(node)) == NULL ) {
+  ROAR_ERR("roar_vio_socket_init_decnetnode_def(*): Can\'t resolve node name '%s'", node);
+  if ( ed != NULL ) *ed = '/';
+  return -1;
+ }
+
+ memcpy(&(def->d.socket.sa.dn.sdn_add.a_addr), ne->n_addr, 2);
+
+ if ( ed != NULL ) *ed = '/';
+
+
+ return 0;
+}
+
 int     roar_vio_socket_init_decnet_def   (struct roar_vio_defaults * def, char * node, int object, char * objname) {
 #ifdef ROAR_HAVE_LIBDNET
+ struct sockaddr_dn * dn;
+
  if ( def == NULL )
   return -1;
 
@@ -401,10 +460,34 @@ int     roar_vio_socket_init_decnet_def   (struct roar_vio_defaults * def, char 
  if ( object == -1 )
   object = roar_vio_socket_get_port(objname, AF_DECnet, SOCK_STREAM);
 
- if ( object == -1 )
+ if ( object == -1 ) {
+  if ( objname == NULL ) {
+   return -1;
+  } else {
+   object = 0;
+  }
+ }
+
+ if ( roar_vio_socket_init_socket_def(def, AF_DECnet, SOCK_STREAM) == -1 )
   return -1;
 
- return -1;
+ def->d.socket.host = node;
+ dn                 = &(def->d.socket.sa.dn);
+ dn->sdn_flags      = 0;
+ dn->sdn_objnum     = object;
+ dn->sdn_nodeaddrl  = 2;
+
+ if ( objname == NULL ) {
+  dn->sdn_objnamel   = 0;
+ } else {
+  dn->sdn_objnamel   = strlen(objname);
+  if ( dn->sdn_objnamel > DN_MAXOBJL )
+   dn->sdn_objnamel  = DN_MAXOBJL;
+
+  memcpy(&(dn->sdn_objname), objname, dn->sdn_objnamel);
+ }
+
+ return 0;
 #else
  return -1;
 #endif

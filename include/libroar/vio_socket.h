@@ -50,6 +50,8 @@ int     roar_vio_socket_conv_def          (struct roar_vio_defaults * def, int d
 int     roar_vio_socket_get_port          (char * service, int domain, int type);
 
 int     roar_vio_socket_init_unix_def     (struct roar_vio_defaults * def, char * path);
+
+int     roar_vio_socket_init_decnetnode_def(struct roar_vio_defaults * def);
 int     roar_vio_socket_init_decnet_def   (struct roar_vio_defaults * def, char * node, int object, char * objname);
 
 int     roar_vio_socket_init_inet4host_def(struct roar_vio_defaults * def);
