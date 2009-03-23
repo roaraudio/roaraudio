@@ -671,6 +671,18 @@ else
  echo no
 fi
 
+echo -n 'checking for getobjectbyname()... '
+echo '#include <roaraudio.h>' > $TF_C
+echo 'int main (void) { getobjectbyname(NULL); return 0; }'  >> $TF_C
+
+if $CCTF 2> /dev/null;
+then
+ echo '#define ROAR_HAVE_GETOBJECTBYNAME' >&3
+ echo yes
+else
+ echo no
+fi
+
 echo -n 'checking for safe 32 bit integer overflow... '
 
 cat > $TF_C << EOF
