@@ -41,6 +41,8 @@ struct roar_vio_defaults;
 
 int     roar_vio_open_def_socket          (struct roar_vio_calls * calls, struct roar_vio_defaults * def);
 
+int     roar_vio_socket_init_socket_def   (struct roar_vio_defaults * def, int domain, int type);
+
 int     roar_vio_socket_init_unix_def     (struct roar_vio_defaults * def, char * path);
 int     roar_vio_socket_init_decnet_def   (struct roar_vio_defaults * def, char * node, int object, char * objname);
 

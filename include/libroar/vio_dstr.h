@@ -121,7 +121,22 @@ struct roar_vio_defaults {
           int               domain;
           int               type;
           char            * host;
-          struct sockaddr * sa;
+          union {
+                 struct sockaddr     sa;
+                 struct sockaddr_in  in;
+#ifdef ROAR_HAVE_UNIX
+                 struct sockaddr_un  un;
+#endif
+#ifdef ROAR_HAVE_LIBDNET
+                 struct sockaddr_dn  dn;
+#endif
+#ifdef ROAR_HAVE_IPV6
+                 struct sockaddr_in6 in6;
+#endif
+#ifdef ROAR_HAVE_IPX
+                 struct sockaddr_ipx ipx;
+#endif
+                } sa;
           socklen_t         len;
          } socket;
  } d;
