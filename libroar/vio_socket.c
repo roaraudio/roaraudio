@@ -125,6 +125,18 @@ int     roar_vio_open_def_socket          (struct roar_vio_calls * calls, struct
   return -1;
  }
 
+ // there is no problem if the shutdown()s fail.
+ // some socket domains don't support unidirectional connections
+ // this just free()s some kernel buffers :)
+ switch (def->o_flags & (O_RDONLY|O_WRONLY|O_RDWR)) {
+  case O_RDONLY:
+    shutdown(fh, SHUT_WR);
+   break;
+  case O_WRONLY:
+    shutdown(fh, SHUT_RD);
+   break;
+ }
+
  return 0;
 }
 
@@ -273,6 +285,9 @@ int     roar_vio_socket_conv_def          (struct roar_vio_defaults * def, int d
 
    return -1;
   } else {
+   if ( def->type == ROAR_VIO_DEF_TYPE_FILE )
+    return roar_vio_socket_init_unix_def(def, def->d.file);
+
    return -1;
   }
  }
