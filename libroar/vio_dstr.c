@@ -165,6 +165,33 @@ int     roar_vio_dstr_init_defaults (struct roar_vio_defaults * def, int type, i
  return 0;
 }
 
+int     roar_vio_open_default (struct roar_vio_calls * calls, struct roar_vio_defaults * def) {
+ if ( calls == NULL || def == NULL )
+  return -1;
+
+ switch (def->type) {
+  case ROAR_VIO_DEF_TYPE_FILE:
+    if ( roar_vio_open_file(calls, def->d.file, def->o_flags, def->o_mode) == -1 )
+     return -1;
+   break;
+  case ROAR_VIO_DEF_TYPE_SOCKET:
+     return -1;
+   break;
+  case ROAR_VIO_DEF_TYPE_FH:
+    if ( roar_vio_open_fh(calls, def->d.fh) == -1 )
+     return -1;
+   break;
+  case ROAR_VIO_DEF_TYPE_SOCKETFH:
+    if ( roar_vio_open_fh_socket(calls, def->d.fh) == -1 )
+     return -1;
+   break;
+  default:
+    return -1;
+ }
+
+ return 0;
+}
+
 int     roar_vio_open_dstr    (struct roar_vio_calls * calls, char * dstr, struct roar_vio_defaults * def, int dnum) {
  return roar_vio_open_dstr_vio(calls, dstr, def, dnum, NULL);
 }
@@ -448,28 +475,10 @@ int     roar_vio_dstr_build_chain(struct roar_vio_dstr_chain * chain, struct roa
    _ret(-1);
   }
 
-  switch (def->type) {
-   case ROAR_VIO_DEF_TYPE_FILE:
-     if ( roar_vio_open_file(tc, def->d.file, def->o_flags, def->o_mode) == -1 ) {
-      _ret(-1);
-     }
-    break;
-   case ROAR_VIO_DEF_TYPE_SOCKET:
-     _ret(-1);
-    break;
-   case ROAR_VIO_DEF_TYPE_FH:
-     if ( roar_vio_open_fh(tc, def->d.fh) == -1 ) {
-      _ret(-1);
-     }
-    break;
-   case ROAR_VIO_DEF_TYPE_SOCKETFH:
-     if ( roar_vio_open_fh_socket(tc, def->d.fh) == -1 ) {
-      _ret(-1);
-     }
-    break;
-   default:
-     _ret(-1);
+  if ( roar_vio_open_default(tc, def) == -1 ) {
+   _ret(-1);
   }
+
   prev = tc;
  } else {
   prev = vio;
