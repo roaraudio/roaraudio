@@ -376,7 +376,25 @@ int     roar_vio_socket_init_unix_def     (struct roar_vio_defaults * def, char 
 }
 
 // AF_DECnet:
-int     roar_vio_socket_init_decnet_def   (struct roar_vio_defaults * def, char * node, int object, char * objname);
+int     roar_vio_socket_init_decnet_def   (struct roar_vio_defaults * def, char * node, int object, char * objname) {
+#ifdef ROAR_HAVE_LIBDNET
+ if ( def == NULL )
+  return -1;
+
+ if ( object < 1 && objname == NULL )
+  return -1;
+
+ if ( object == -1 )
+  object = roar_vio_socket_get_port(object, AF_DECnet, SOCK_STREAM);
+
+ if ( object == -1 )
+  return -1;
+
+ return -1;
+#else
+ return -1;
+#endif
+}
 
 
 // AF_INET:
