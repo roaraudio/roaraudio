@@ -111,24 +111,58 @@ int roar_vio_open_proto      (struct roar_vio_calls * calls, struct roar_vio_cal
 }
 
 int roar_vio_open_proto_http   (struct roar_vio_calls * calls, struct roar_vio_calls * dst, char * host, char * file) {
- return -1;
+ char buf[1024];
+ char b0[80], b1[80];
+ int  status;
+ int  len;
+
+ if ( calls == NULL || dst == NULL || host == NULL || file == NULL )
+  return -1;
+
+ roar_vio_printf(dst, "GET /%s HTTP/1.1\r\n", file);
+ roar_vio_printf(dst, "Host: %s\r\n", host);
+ roar_vio_printf(dst, "User-Agent: roar_vio_open_proto_http() $Revision: 1.3 $\r\n");
+ roar_vio_printf(dst, "Connection: close\r\n");
+ roar_vio_printf(dst, "\r\n");
+
+ roar_vio_sync(dst);
+
+ if ( (len = roar_vio_read(dst, buf, 1023)) < 1 )
+  return -1;
+
+ buf[len] = 0;
+
+ if ( sscanf(buf, "%79s %i %79s\n", b0, &status, b1) != 3 ) {
+  return -1;
+ }
+
+ if ( status != 200 )
+  return -1;
+
+ ROAR_WARN("roar_vio_open_proto_http(*): status=%i", status);
+// ROAR_WARN("roar_vio_open_proto_http(*): buf='%s'", buf);
+
+ if ( !strcmp((buf+len)-4, "\r\n\r\n") )
+  return 0;
+
+ while (*buf != '\r' && *buf != '\n') {
+  if ( (len = roar_vio_read(dst, buf, 1023)) < 1 )
+   return -1;
+ }
+
+ return 0;
 }
 
 int roar_vio_open_proto_gopher (struct roar_vio_calls * calls, struct roar_vio_calls * dst, char * host, char * file) {
- int len;
-
  if ( calls == NULL || dst == NULL || host == NULL || file == NULL )
   return -1;
 
  ROAR_DBG("roar_vio_open_proto_gopher(calls=%p, dst=%p, host='%s', file='%s') = ?", calls, dst, host, file);
 
- len = strlen(file);
+ if ( file[1] == '/' )
+  file += 2;
 
- if ( roar_vio_write(dst, file, len) != len )
-  return -1;
-
- if ( roar_vio_write(dst, "\n", 1) != 1 )
-  return -1;
+ roar_vio_printf(dst, "/%s\r\n", file);
 
  roar_vio_sync(dst); // for encryption/compression layers
 
