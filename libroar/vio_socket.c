@@ -308,19 +308,19 @@ int     roar_vio_socket_get_port          (char * service, int domain, int type)
  struct servent * serv  = NULL;
  char           * proto = NULL;
  int              port;
- int              len;
+ char           * ts;
 
  if ( service == NULL || domain == -1 || type == -1 )
   return -1;
 
- if ( (len = strlen(service)) < 1 )
-  return -1;
-
- if ( service[len-1] == '/' )
-  service[len-1] = 0;
+ if ( (ts = strstr(service, "/")) != NULL )
+  *ts = 0;
 
  if ( sscanf(service, "%i", &port) == 1 )
   return port;
+
+ if ( ts != NULL )
+  *ts = '/';
 
  switch (domain) {
 #ifdef ROAR_HAVE_IPV6
@@ -350,10 +350,20 @@ int     roar_vio_socket_get_port          (char * service, int domain, int type)
     return -1;
  }
 
+ if ( ts != NULL )
+  *ts = 0;
+
  if ( (serv = getservbyname(service, proto)) == NULL ) {
   ROAR_ERR("roar_vio_socket_get_port(*): Unknown service: %s/%s: %s", service, proto, strerror(errno));
+
+  if ( ts != NULL )
+   *ts = '/';
+
   return -1;
  }
+
+ if ( ts != NULL )
+  *ts = '/';
 
  return ROAR_NET2HOST16(serv->s_port);
 }
@@ -385,7 +395,7 @@ int     roar_vio_socket_init_decnet_def   (struct roar_vio_defaults * def, char 
   return -1;
 
  if ( object == -1 )
-  object = roar_vio_socket_get_port(object, AF_DECnet, SOCK_STREAM);
+  object = roar_vio_socket_get_port(objname, AF_DECnet, SOCK_STREAM);
 
  if ( object == -1 )
   return -1;
