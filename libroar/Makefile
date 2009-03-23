@@ -1,7 +1,7 @@
 include ../Makefile.conf
 
 TARGETS=libroar.so
-VIO=vio.o vio_cmd.o vio_ops.o vio_magic.o vio_pipe.o vio_socket.o vio_bio.o vio_stack.o vio_dstr.o
+VIO=vio.o vio_cmd.o vio_ops.o vio_magic.o vio_pipe.o vio_socket.o vio_bio.o vio_stack.o vio_proto.o vio_dstr.o
 OBJS=libroar.o basic.o stream.o simple.o auth.o socket.o ctl.o buffer.o convert.o poly.o meta.o file.o acl.o cdrom.o pinentry.o sshaskpass.o $(VIO) stack.o
 
 #DEFINES        = -DDEBUG
