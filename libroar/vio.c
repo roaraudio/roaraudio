@@ -338,7 +338,10 @@ int     roar_vio_basic_sync    (struct roar_vio_calls * vio) {
 }
 
 int     roar_vio_basic_close    (struct roar_vio_calls * vio) {
- return close(roar_vio_get_fh(vio));
+ if ( roar_vio_get_fh(vio) != -1 )
+  return close(roar_vio_get_fh(vio));
+
+ return 0;
 }
 
 // null
