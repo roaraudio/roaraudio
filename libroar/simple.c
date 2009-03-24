@@ -145,9 +145,15 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
  }
 
  switch (socket_addr.sin_family) {
+#ifdef ROAR_HAVE_UNIX
   case AF_UNIX:   type = ROAR_SOCKET_TYPE_UNIX; break;
+#endif
+#ifdef ROAR_HAVE_IPV4
   case AF_INET:   type = ROAR_SOCKET_TYPE_INET; break;
+#endif
+#ifdef ROAR_HAVE_LIBDNET
   case AF_DECnet: type = ROAR_SOCKET_TYPE_DECNET; break;
+#endif
   default:
     return -1;
    break;

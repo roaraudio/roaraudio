@@ -480,6 +480,7 @@ int     roar_vio_dstr_set_defaults(struct roar_vio_dstr_chain * chain, int len, 
       return -1;
     break;
 #endif
+#ifdef ROAR_HAVE_IPV4
    case ROAR_VIO_DSTR_OBJT_TCP:
      c->need_vio = 0;
      next->def = &(next->store_def);
@@ -500,6 +501,7 @@ int     roar_vio_dstr_set_defaults(struct roar_vio_dstr_chain * chain, int len, 
      if ( roar_vio_socket_init_dstr_def(next->def, c->dst, AF_INET, SOCK_DGRAM, c->def) == -1 )
       return -1;
     break;
+#endif
 #ifdef ROAR_HAVE_IPV6
    case ROAR_VIO_DSTR_OBJT_TCP6:
      c->need_vio = 0;

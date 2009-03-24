@@ -38,6 +38,8 @@
 #define MODE_CONNECT ROAR_SOCKET_MODE_CONNECT
 
 int roar_socket_new_tcp (void) {
+#ifdef ROAR_HAVE_IPV4
+ int fh;
  int fh;
 #ifndef ROAR_TARGET_WIN32
  int opt = IPTOS_LOWDELAY;
@@ -56,9 +58,13 @@ int roar_socket_new_tcp (void) {
 #endif
 
  return fh;
+#else
+ return -1;
+#endif
 }
 
 int roar_socket_new_udp (void) {
+#ifdef ROAR_HAVE_IPV4
  int fh;
 #ifndef ROAR_TARGET_WIN32
  int opt = IPTOS_LOWDELAY;
@@ -71,6 +77,9 @@ int roar_socket_new_udp (void) {
 #endif
 
  return fh;
+#else
+ return -1;
+#endif
 }
 
 int roar_socket_new_tcp6 (void) {
@@ -440,7 +449,10 @@ int roar_socket_open (int mode, int type, char * host, int port) {
  int ret;
 #endif
  union {
+  struct sockaddr     sa;
+#ifdef ROAR_HAVE_IPV4
   struct sockaddr_in  in;
+#endif
 #ifdef ROAR_HAVE_UNIX
   struct sockaddr_un  un;
 #endif
@@ -451,7 +463,9 @@ int roar_socket_open (int mode, int type, char * host, int port) {
   struct sockaddr_ipx ipx;
 #endif
  } socket_addr;
+#if defined(ROAR_HAVE_IPV4) || defined(ROAR_HAVE_IPV6)
  struct hostent     * he;
+#endif
  //unsigned int host_div = 0;
  int (*mode_func)(int sockfd, const struct sockaddr *serv_addr, socklen_t addrlen) = connect; // default is to connect
 #ifdef ROAR_HAVE_LIBDNET
@@ -522,11 +536,14 @@ int roar_socket_open (int mode, int type, char * host, int port) {
 #endif
  }
 
+#if defined(ROAR_HAVE_IPV4) || defined(ROAR_HAVE_IPV6)
  memset(&socket_addr,    0, sizeof(socket_addr));
  memset(&he,             0, sizeof(he));               // FIXME: we have a valid pointer in here????
+#endif
 
 
  if ( type == ROAR_SOCKET_TYPE_INET || type == ROAR_SOCKET_TYPE_INET6 ) {
+#if defined(ROAR_HAVE_IPV4) || defined(ROAR_HAVE_IPV6)
 
   if ( (he = gethostbyname(host)) == NULL ) {
    ROAR_ERR("roar_socket_open(*): Can\'t resolve host name '%s'",
@@ -548,6 +565,9 @@ int roar_socket_open (int mode, int type, char * host, int port) {
     return -1;
    }
   // hey! we have a socket...
+#else
+  return -1;
+#endif
  } else if ( type == ROAR_SOCKET_TYPE_UNIX ) {
 #ifdef ROAR_HAVE_UNIX
   socket_addr.un.sun_family = AF_UNIX;
