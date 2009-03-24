@@ -32,7 +32,7 @@
  *  them with any software that uses libesd, libartsc or libpulse*.
  */
 
-#include "libroar.h"
+#include "libroardsp.h"
 
 int roar_math_mkpoly (float * poly, float * data, int len) {
  if ( len == 2 )
