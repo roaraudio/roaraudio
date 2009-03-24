@@ -36,6 +36,7 @@
 
 int roar_vio_open_cmd(struct roar_vio_calls * calls, struct roar_vio_calls * dst,
                       char * reader, char * writer, int options) {
+#ifndef ROAR_WITHOUT_VIO_CMD
  struct roar_vio_cmd_state * state;
 
  if ( calls == NULL || dst == NULL )
@@ -94,8 +95,12 @@ int roar_vio_open_cmd(struct roar_vio_calls * calls, struct roar_vio_calls * dst
  }
 
  return 0;
+#else
+ return -1;
+#endif
 }
 
+#ifndef ROAR_WITHOUT_VIO_CMD
 int roar_vio_cmd_close(struct roar_vio_calls * vio) {
  struct roar_vio_cmd_state * state = (struct roar_vio_cmd_state *)vio->inst;
 
@@ -464,10 +469,11 @@ int     roar_vio_cmd_sync    (struct roar_vio_calls * vio) {
 
  return ret;
 }
+#endif
 
 // MISC:
 int roar_vio_open_gzip(struct roar_vio_calls * calls, struct roar_vio_calls * dst, int level) {
-#ifdef ROAR_HAVE_BIN_GZIP
+#if defined(ROAR_HAVE_BIN_GZIP) || !defined(ROAR_WITHOUT_VIO_CMD)
  char   wbuf[80];
  char * writer = ROAR_HAVE_BIN_GZIP " -c";
 
@@ -483,7 +489,7 @@ int roar_vio_open_gzip(struct roar_vio_calls * calls, struct roar_vio_calls * ds
 }
 
 int roar_vio_open_gpg(struct roar_vio_calls * calls, struct roar_vio_calls * dst, char * pw, int wronly, char * opts, int options) {
-#ifdef ROAR_HAVE_BIN_GPG
+#if defined(ROAR_HAVE_BIN_GPG) || !defined(ROAR_WITHOUT_VIO_CMD)
  char command[1024];
  char para[1024] = {0};
  int pwpipe[2];
