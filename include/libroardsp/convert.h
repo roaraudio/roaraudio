@@ -32,8 +32,8 @@
  *  them with any software that uses libesd, libartsc or libpulse*.
  */
 
-#ifndef _CONVERT_H_
-#define _CONVERT_H_
+#ifndef _LIBROARDSP_CONVERT_H_
+#define _LIBROARDSP_CONVERT_H_
 
 #include "libroardsp.h"
 
