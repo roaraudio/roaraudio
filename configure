@@ -55,6 +55,8 @@ PROXY=true
 
 WITHOUT_CF=''
 
+WITHOUT_VIO=''
+
 MINIMAL=false
 
 TARGET_WIN32=false
@@ -133,6 +135,8 @@ do
    echo '--without-proxy             - Disable support for proxys'
    echo
    echo '--without-cf-cmd            - Disable support for command codecfilter'
+   echo
+   echo '--without-vio-MODULE        - Disable support for VIO module MODULE'
    echo
    echo '--without-libao             - Disable build of libao plugin'
    echo '--without-xmms              - Disable build of XMMS plugin'
@@ -231,6 +235,9 @@ do
   '--without-cf-'*)
    WITHOUT_CF="$WITHOUT_CF"' '$(echo "$1" | cut -d- -f5)
   ;;
+  '--without-vio-'*)
+   WITHOUT_VIO="$WITHOUT_VIO"' '$(echo "$1" | cut -d- -f5)
+  ;;
   '--without-libao')
    LIBAO=false
    no_lib_ao=true
@@ -247,6 +254,7 @@ do
    MULAW_RW=false
    ALAW=false
    ALAW_RW=false
+   WITHOUT_VIO="$WITHOUT_VIO"' dstr cmd'
   ;;
   '--prefix')
    PREFIX="$2"
@@ -477,6 +485,12 @@ EOF
  do
   i=$(echo $i | tr /a-z/ /A-Z/);
   echo '#define ROAR_WITHOUT_CF_'$i
+ done
+
+ for i in $WITHOUT_VIO
+ do
+  i=$(echo $i | tr /a-z/ /A-Z/);
+  echo '#define ROAR_WITHOUT_VIO_'$i
  done
 
  echo
