@@ -40,7 +40,6 @@
 int roar_socket_new_tcp (void) {
 #ifdef ROAR_HAVE_IPV4
  int fh;
- int fh;
 #ifndef ROAR_TARGET_WIN32
  int opt = IPTOS_LOWDELAY;
 #endif
