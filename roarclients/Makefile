@@ -40,6 +40,7 @@ roarvorbis: roarvorbis.o
 roarshout: roarshout.o
 	${CC} ${LDFLAGS} -o roarshout roarshout.o $(lib_shout)
 polytest: polytest.o
+	${CC} ${LDFLAGS} -o polytest polytest.o  -lroardsp
 pinentrytest: pinentrytest.o
 zcattest: zcattest.o
 pgptest: pgptest.o

@@ -32,7 +32,7 @@
  *  them with any software that uses libesd, libartsc or libpulse*.
  */
 
-#include "libroar.h"
+#include "libroardsp.h"
 //#define free(p) {ROAR_WARN("free(%p) = ?", (p)); free((p)); ROAR_WARN("free(%p): OK", (p));}
 
 int roar_conv_bits (void * out, void * in, int samples, int from, int to) {
