@@ -35,7 +35,7 @@
 #ifndef _LIBROARMATH_H_
 #define _LIBROARMATH_H_
 
-#include "libroar.h"
+#include "libroardsp.h"
 
 int roar_math_mkpoly (float * poly, float * data, int len);
 
