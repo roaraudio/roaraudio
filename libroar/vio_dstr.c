@@ -34,6 +34,7 @@
 
 #include "libroar.h"
 
+#ifndef ROAR_WITHOUT_VIO_DSTR
 struct {
  int    id;
  char * name;
@@ -153,6 +154,7 @@ char *  roar_vio_dstr_get_name(int type) {
 
  return NULL;
 }
+#endif
 
 int     roar_vio_dstr_init_defaults (struct roar_vio_defaults * def, int type, int o_flags, mode_t o_mode) {
  if ( def == NULL )
@@ -178,6 +180,7 @@ int     roar_vio_dstr_init_defaults_c (struct roar_vio_defaults * def, int type,
  }
 }
 
+#ifndef ROAR_WITHOUT_VIO_DSTR
 int     roar_vio_open_default (struct roar_vio_calls * calls, struct roar_vio_defaults * def) {
  if ( calls == NULL || def == NULL )
   return -1;
@@ -205,6 +208,7 @@ int     roar_vio_open_default (struct roar_vio_calls * calls, struct roar_vio_de
 
  return 0;
 }
+#endif
 
 int     roar_vio_open_dstr    (struct roar_vio_calls * calls, char * dstr, struct roar_vio_defaults * def, int dnum) {
  return roar_vio_open_dstr_vio(calls, dstr, def, dnum, NULL);
@@ -215,6 +219,7 @@ int     roar_vio_open_dstr    (struct roar_vio_calls * calls, char * dstr, struc
 int     roar_vio_open_dstr_vio(struct roar_vio_calls * calls,
                                char * dstr, struct roar_vio_defaults * def, int dnum,
                                struct roar_vio_calls * vio) {
+#ifndef ROAR_WITHOUT_VIO_DSTR
  struct roar_vio_dstr_chain chain[ROAR_VIO_DSTR_MAX_OBJ_PER_CHAIN];
  char * next;
  char * this;
@@ -318,10 +323,14 @@ int     roar_vio_open_dstr_vio(struct roar_vio_calls * calls,
  }
 
  _ret(0);
+#else
+ return -1;
+#endif
 }
 
 #undef _ret
 
+#ifndef ROAR_WITHOUT_VIO_DSTR
 int     roar_vio_dstr_parse_opts(struct roar_vio_dstr_chain * chain) {
  if ( chain == NULL )
   return -1;
@@ -687,5 +696,6 @@ int     roar_vio_dstr_build_chain(struct roar_vio_dstr_chain * chain, struct roa
 }
 
 #undef _ret
+#endif
 
 //ll
