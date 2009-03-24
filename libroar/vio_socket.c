@@ -45,6 +45,7 @@ int     roar_vio_open_def_socket          (struct roar_vio_calls * calls, struct
   return -1;
 
  switch (def->d.socket.domain) {
+#ifdef ROAR_HAVE_IPV4
   case AF_INET:
     len = sizeof(struct sockaddr_in);
 
@@ -62,6 +63,7 @@ int     roar_vio_open_def_socket          (struct roar_vio_calls * calls, struct
        return -1;
     }
    break;
+#endif
 #ifdef ROAR_HAVE_UNIX
   case AF_UNIX:
     len = sizeof(struct sockaddr_un);
@@ -170,7 +172,9 @@ int     roar_vio_socket_init_socket_def   (struct roar_vio_defaults * def, int d
 int     roar_vio_socket_init_dstr_def     (struct roar_vio_defaults * def, char * dstr, int hint, int type,
                                            struct roar_vio_defaults * odef) {
  char * host;
+#if defined(ROAR_HAVE_IPV4) || defined(ROAR_HAVE_IPV6)
  int    port;
+#endif
 
  if ( def == NULL )
   return -1;
@@ -201,8 +205,10 @@ int     roar_vio_socket_init_dstr_def     (struct roar_vio_defaults * def, char 
   } else if ( strstr(dstr, "/") != NULL ) { // /path/to/sock
    hint = AF_UNIX;
 #endif
+#ifdef ROAR_HAVE_IPV4
   } else if ( strstr(dstr, ":") != NULL ) { // host:port
    hint = AF_INET;
+#endif
   }
  }
 
@@ -251,6 +257,7 @@ int     roar_vio_socket_init_dstr_def     (struct roar_vio_defaults * def, char 
  ROAR_DBG("roar_vio_socket_init_dstr_def(*) = ?");
 
  switch (hint) {
+#ifdef ROAR_HAVE_IPV4
   case AF_INET:
     host = dstr;
     for (; *dstr != 0 && *dstr != ':'; dstr++);
@@ -268,6 +275,7 @@ int     roar_vio_socket_init_dstr_def     (struct roar_vio_defaults * def, char 
      return roar_vio_socket_init_inet4_def(def, host, ROAR_NET2HOST16(odef->d.socket.sa.in.sin_port), type);
     }
    break;
+#endif
 #ifdef ROAR_HAVE_LIBDNET
   case AF_DECnet:
     ROAR_DBG("roar_vio_socket_init_dstr_def(*) = ?");
@@ -359,7 +367,10 @@ int     roar_vio_socket_get_port          (char * service, int domain, int type)
 #ifdef ROAR_HAVE_IPV6
   case AF_INET6:
 #endif
+#ifdef ROAR_HAVE_IPV4
   case AF_INET:
+#endif
+#if defined(ROAR_HAVE_IPV6) || defined(ROAR_HAVE_IPV4)
     switch (type) {
      case SOCK_STREAM: proto = "tcp"; break;
      case SOCK_DGRAM:  proto = "udp"; break;
@@ -367,6 +378,7 @@ int     roar_vio_socket_get_port          (char * service, int domain, int type)
       return -1;
     }
    break;
+#endif
 #ifdef ROAR_HAVE_LIBDNET
   case AF_DECnet:
 #ifdef ROAR_HAVE_GETOBJECTBYNAME
@@ -500,6 +512,7 @@ int     roar_vio_socket_init_decnet_def   (struct roar_vio_defaults * def, char 
 
 // AF_INET:
 int     roar_vio_socket_init_inet4host_def(struct roar_vio_defaults * def) {
+#ifdef ROAR_HAVE_IPV4
  struct hostent     * he;
  char               * ed;
 
@@ -524,9 +537,13 @@ int     roar_vio_socket_init_inet4host_def(struct roar_vio_defaults * def) {
  memcpy((struct in_addr *)&def->d.socket.sa.in.sin_addr, he->h_addr, sizeof(struct in_addr));
 
  return 0;
+#else
+ return -1;
+#endif
 }
 
 int     roar_vio_socket_init_inet4_def    (struct roar_vio_defaults * def, char * host, int port, int type) {
+#ifdef ROAR_HAVE_IPV4
  if ( roar_vio_socket_init_socket_def(def, AF_INET, type) == -1 )
   return -1;
 
@@ -535,6 +552,9 @@ int     roar_vio_socket_init_inet4_def    (struct roar_vio_defaults * def, char 
  def->d.socket.sa.in.sin_port   = ROAR_HOST2NET16(port);
 
  return 0;
+#else
+ return -1;
+#endif
 }
 
 int     roar_vio_socket_init_tcp4_def     (struct roar_vio_defaults * def, char * host, int port) {
