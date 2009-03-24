@@ -88,7 +88,6 @@
 #include "socket.h"
 #include "ctl.h"
 #include "convert.h"
-#include "poly.h"
 #include "meta.h"
 #include "file.h"
 #include "acl.h"
