@@ -35,7 +35,7 @@
 #ifndef _CONVERT_H_
 #define _CONVERT_H_
 
-#include "libroar.h"
+#include "libroardsp.h"
 
 int roar_conv_bits       (void * out, void * in, int samples, int from, int to);
 

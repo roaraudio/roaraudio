@@ -31,6 +31,7 @@ __BEGIN_DECLS
 
 #include "midi.h"
 #include "poly.h"
+#include "convert.h"
 
 // defines
 #define ROARDSP_MAX_FILTERS_PER_CHAIN 8

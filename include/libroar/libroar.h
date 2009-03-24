@@ -87,7 +87,6 @@
 #include "auth.h"
 #include "socket.h"
 #include "ctl.h"
-#include "convert.h"
 #include "meta.h"
 #include "file.h"
 #include "acl.h"
