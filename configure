@@ -8,6 +8,7 @@ then
  exec $SHELL $0 "$@"
 fi
 
+PATH="$PATH":/sbin:/usr/sbin:/usr/local/sbin:/usr/pkg/sbin # Ensure superuser paths
 
 #set -x
 
@@ -495,7 +496,9 @@ test_tool_defmake ROAR_HAVE_BIN_SSH         OpenSSH      ssh
 test_tool_defmake ROAR_HAVE_BIN_PINENTRY    PIN-Entry    pinentry
 test_tool_defmake ROAR_HAVE_BIN_SSH_ASKPASS SSH-AskPass  ssh-askpass
 test_tool_defmake ROAR_HAVE_BIN_GZIP        Gzip         gzip
+test_tool_defmake ROAR_HAVE_BIN_BZIP2       bzip2        bzip2
 test_tool_defmake ROAR_HAVE_BIN_GPG         GnuPG        gpg
+test_tool_defmake ROAR_HAVE_BIN_CHAT        chat         chat
 
 echo >&3
 
