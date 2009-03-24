@@ -345,7 +345,7 @@ test_lib_defmake () {
 
   if [ "$_no" != '' ]
   then
-    echo "checking for $1... disabled by user"
+    echo "checking for $name... disabled by user"
    [ "$subdir" != '' ] && \
     echo "subdir_$subdir=" >&4
    echo "lib_$lib=" >&4
