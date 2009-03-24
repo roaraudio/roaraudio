@@ -450,7 +450,7 @@ int roar_socket_open (int mode, int type, char * host, int port) {
 #endif
  union {
   struct sockaddr     sa;
-#ifdef ROAR_HAVE_IPV4
+#if defined(ROAR_HAVE_IPV4) || defined(ROAR_HAVE_IPV6)
   struct sockaddr_in  in;
 #endif
 #ifdef ROAR_HAVE_UNIX
