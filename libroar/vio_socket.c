@@ -420,6 +420,7 @@ int     roar_vio_socket_init_unix_def     (struct roar_vio_defaults * def, char 
 
 // AF_DECnet:
 int     roar_vio_socket_init_decnetnode_def(struct roar_vio_defaults * def) {
+#ifdef ROAR_HAVE_LIBDNET
  char               * node;
  char               * ed;
  struct nodeent     * ne;
@@ -445,6 +446,9 @@ int     roar_vio_socket_init_decnetnode_def(struct roar_vio_defaults * def) {
 
 
  return 0;
+#else
+ return -1;
+#endif
 }
 
 int     roar_vio_socket_init_decnet_def   (struct roar_vio_defaults * def, char * node, int object, char * objname) {
