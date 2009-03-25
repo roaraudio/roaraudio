@@ -774,6 +774,12 @@ EOF
 fi
 
 echo -n 'checking for 64 bit types... '
+f $TARGET_WIN32
+then
+ echo 'int64_t, uint64_t (win32 build)'
+ echo '#define ROAR_NATIVE_INT64  int64_t'  >&3
+ echo '#define ROAR_NATIVE_UINT64 uint64_t' >&3
+else
 cat > $TF_C << EOF
 #include <stdio.h>
 #include <stdint.h>
@@ -800,12 +806,13 @@ int main (void) {
  return 0;
 }
 EOF
-if $CCTF 2> /dev/null;
-then
- $EXEC_HELPER $TF_E >&3
-else
- echo 'error, can not compile'
- exit 1
+ if $CCTF 2> /dev/null;
+ then
+  $EXEC_HELPER $TF_E >&3
+ else
+  echo 'error, can not compile'
+  exit 1
+ fi
 fi
 
 
