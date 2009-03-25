@@ -46,11 +46,16 @@
 #include <sys/wait.h>
 
 #include <fcntl.h>
+
+#ifdef ROAR_HAVE_BSDSOCKETS
+
 #ifndef ROAR_TARGET_WIN32
 #include <sys/socket.h>
+#ifdef ROAR_HAVE_IPV4
 #include <netinet/in_systm.h>
 #include <netinet/in.h>
 #include <netinet/ip.h>
+#endif
 #include <sys/uio.h>
 #endif
 #ifdef ROAR_HAVE_LIBDNET
@@ -60,6 +65,8 @@
 #ifdef ROAR_HAVE_IPX
 #include <netipx/ipx.h>
 #endif
+
+#endif /* ROAR_HAVE_BSDSOCKETS */
 
 #ifdef ROAR_HAVE_LIBSSL
 #include <openssl/bio.h>
