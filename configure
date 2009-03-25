@@ -59,6 +59,8 @@ MULAW_RW=true
 
 PROXY=true
 
+PASSWORD_API=true
+
 WITHOUT_CF=''
 
 WITHOUT_VIO=''
@@ -245,6 +247,9 @@ do
   '--without-vio-'*)
    WITHOUT_VIO="$WITHOUT_VIO"' '$(echo "$1" | cut -d- -f5)
   ;;
+  '--without-password-api')
+   PASSWORD_API=false
+  ;;
   '--without-libao')
    LIBAO=false
    no_lib_ao=true
@@ -262,6 +267,7 @@ do
    MULAW_RW=false
    ALAW=false
    ALAW_RW=false
+   PASSWORD_API=false
    WITHOUT_VIO="$WITHOUT_VIO"' dstr cmd stdio'
   ;;
   '--prefix')
@@ -492,11 +498,12 @@ EOF
  [ "$ROAR_DRIVER_DEFAULT" = '' ] || echo "#define ROAR_DRIVER_DEFAULT   \"$ROAR_DRIVER_DEFAULT\""
  [ "$ROAR_DRIVER_CODEC"   = '' ] || echo "#define ROAR_DRIVER_CODEC     \"$ROAR_DRIVER_CODEC\""
  echo
- $ALAW     && echo '#define ROAR_SUPPORT_ALAW'
- $ALAW_RW  && echo '#define ROAR_SUPPORT_ALAW_RW'
- $MULAW    && echo '#define ROAR_SUPPORT_MULAW'
- $MULAW_RW && echo '#define ROAR_SUPPORT_MULAW_RW'
- $PROXY    && echo '#define ROAR_SUPPORT_PROXY'
+ $ALAW         && echo '#define ROAR_SUPPORT_ALAW'
+ $ALAW_RW      && echo '#define ROAR_SUPPORT_ALAW_RW'
+ $MULAW        && echo '#define ROAR_SUPPORT_MULAW'
+ $MULAW_RW     && echo '#define ROAR_SUPPORT_MULAW_RW'
+ $PROXY        && echo '#define ROAR_SUPPORT_PROXY'
+ $PASSWORD_API && echo '#define ROAR_SUPPORT_PASSWORD_API'
  echo
 
  for i in $WITHOUT_CF

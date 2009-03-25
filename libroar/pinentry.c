@@ -35,7 +35,7 @@
 #include "libroar.h"
 
 int roar_pinentry_open (struct roar_pinentry * pe, int flags, char * display, char * tty, char * term) {
-#ifdef ROAR_HAVE_BIN_PINENTRY
+#if defined(ROAR_HAVE_BIN_PINENTRY) && defined(ROAR_SUPPORT_PASSWORD_API)
  int in[2], out[2];
 
  if ( pe == NULL )
@@ -126,7 +126,7 @@ int roar_pinentry_simple_open(struct roar_pinentry * pe) {
 }
 
 int roar_pinentry_close(struct roar_pinentry * pe) {
-#ifdef ROAR_HAVE_BIN_PINENTRY
+#if defined(ROAR_HAVE_BIN_PINENTRY) && defined(ROAR_SUPPORT_PASSWORD_API)
  int status;
 
  if ( pe == NULL )
@@ -155,7 +155,7 @@ int roar_pinentry_close(struct roar_pinentry * pe) {
 }
 
 int roar_pinentry_send (struct roar_pinentry * pe, char * cmd,  char * args) {
-#ifdef ROAR_HAVE_BIN_PINENTRY
+#if defined(ROAR_HAVE_BIN_PINENTRY) && defined(ROAR_SUPPORT_PASSWORD_API)
  size_t len;
 
  if ( pe == NULL )
@@ -191,7 +191,7 @@ int roar_pinentry_send (struct roar_pinentry * pe, char * cmd,  char * args) {
 
 #define MAX_LINE_SIZE 2048
 int roar_pinentry_recv (struct roar_pinentry * pe, char ** line, char ** opts) {
-#ifdef ROAR_HAVE_BIN_PINENTRY
+#if defined(ROAR_HAVE_BIN_PINENTRY) && defined(ROAR_SUPPORT_PASSWORD_API)
  char realbuf[MAX_LINE_SIZE];
  char * tp;
 
@@ -255,6 +255,7 @@ int roar_pinentry_recv (struct roar_pinentry * pe, char ** line, char ** opts) {
 }
 
 int roar_pinentry_req  (struct roar_pinentry * pe, char * cmd,  char * args, char ** line, char ** opts) {
+#ifdef ROAR_SUPPORT_PASSWORD_API
  if ( pe == NULL )
   return -1;
 
@@ -262,6 +263,9 @@ int roar_pinentry_req  (struct roar_pinentry * pe, char * cmd,  char * args, cha
   return -1;
 
  return roar_pinentry_recv(pe, line, opts);
+#else
+ return -1;
+#endif
 }
 
 int roar_pinentry_set_desc (struct roar_pinentry * pe, char * desc) {
@@ -281,6 +285,7 @@ int roar_pinentry_set_no   (struct roar_pinentry * pe, char * no) {
 }
 
 int roar_pinentry_set      (struct roar_pinentry * pe, char * obj, char * text) {
+#ifdef ROAR_SUPPORT_PASSWORD_API
  char req[80] = "SET";
 
  if ( pe == NULL )
@@ -295,9 +300,13 @@ int roar_pinentry_set      (struct roar_pinentry * pe, char * obj, char * text) 
  strncat(req, obj, 80-4);
 
  return roar_pinentry_req(pe, req, text, NULL, NULL);
+#else
+ return -1;
+#endif
 }
 
 int roar_pinentry_getpin   (struct roar_pinentry * pe, char ** pw, char * desc, char * prompt) {
+#ifdef ROAR_SUPPORT_PASSWORD_API
  if ( pe == NULL )
   return -1;
 
@@ -316,9 +325,13 @@ int roar_pinentry_getpin   (struct roar_pinentry * pe, char ** pw, char * desc, 
   return -1;
 
  return 0;
+#else
+ return -1;
+#endif
 }
 
 int roar_pinentry_confirm  (struct roar_pinentry * pe, char * desc, char * yes, char * no) {
+#ifdef ROAR_SUPPORT_PASSWORD_API
  if ( pe == NULL )
   return -1;
 
@@ -335,6 +348,9 @@ int roar_pinentry_confirm  (struct roar_pinentry * pe, char * desc, char * yes, 
    return -1;
 
  return roar_pinentry_req(pe, "CONFIRM", NULL, NULL, NULL);
+#else
+ return -1;
+#endif
 }
 
 //ll
