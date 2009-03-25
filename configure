@@ -743,6 +743,10 @@ else
 fi
 
 echo -n 'checking for __LP64__... '
+if $TARGET_WIN32
+ echo 'need to set (win32 build)'
+then
+else
 cat > $TF_C << EOF
 #include <stdio.h>
 
@@ -760,12 +764,13 @@ int main (void) {
  return 0;
 }
 EOF
-if $CCTF 2> /dev/null;
-then
- $EXEC_HELPER $TF_E >&3
-else
- echo 'error, can not compile'
- exit 1
+ if $CCTF 2> /dev/null;
+ then
+  $EXEC_HELPER $TF_E >&3
+ else
+  echo 'error, can not compile'
+  exit 1
+ fi
 fi
 
 echo -n 'checking for 64 bit types... '
