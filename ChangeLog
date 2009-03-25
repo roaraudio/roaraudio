@@ -15,6 +15,8 @@ v. 0.2beta2 - ?
 	* added support to read a string and convert it into a VIO stack
 	* added simple VIO stack as VIO pass object
 	* started cleaner VIO Socket implementation
+	* Reduced lib size with --minimal trasticly (>33%!)
+	* Done a lot patches to makeing RoarAudio more portable (also to win32)
 
 v. 0.2beta1 - Mon Feb 23 2009 25:08
 	* added options --default-codec and --without-cf-cmd to configure script
