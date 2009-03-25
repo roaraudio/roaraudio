@@ -49,7 +49,7 @@
 #endif
 
 pid_t roar_cdrom_run_cdparanoia (int cdrom, int data, int track, char * pos) {
-#if defined(ROAR_HAVE_BIN_CDPARANOIA) && defined(ROAR_CDROM_CDPARANOIA_OUTPUTFORMAT)
+#if defined(ROAR_HAVE_BIN_CDPARANOIA) && defined(ROAR_CDROM_CDPARANOIA_OUTPUTFORMAT) && defined(ROAR_HAVE_CDROM)
  char my_pos[32] = {0};
  pid_t pid;
  int fh[2];
@@ -110,6 +110,7 @@ pid_t roar_cdrom_run_cdparanoia (int cdrom, int data, int track, char * pos) {
 }
 
 int roar_cdrom_open (struct roar_connection * con, struct roar_cdrom * cdrom, char * device) {
+#ifdef ROAR_HAVE_CDROM
  int flags;
 
  if ( cdrom == NULL )
@@ -151,9 +152,13 @@ int roar_cdrom_open (struct roar_connection * con, struct roar_cdrom * cdrom, ch
 #endif
 
  return 0;
+#else
+ return -1;
+#endif
 }
 
 int roar_cdrom_close(struct roar_cdrom * cdrom) {
+#ifdef ROAR_HAVE_CDROM
  if ( cdrom == NULL )
   return -1;
 
@@ -165,9 +170,13 @@ int roar_cdrom_close(struct roar_cdrom * cdrom) {
  memset((void*)cdrom, 0, sizeof(struct roar_cdrom));
 
  return 0;
+#else
+ return -1;
+#endif
 }
 
 int roar_cdrom_stop (struct roar_cdrom * cdrom) {
+#ifdef ROAR_HAVE_CDROM
  int ret;
 
  if ( cdrom == NULL )
@@ -196,9 +205,13 @@ int roar_cdrom_stop (struct roar_cdrom * cdrom) {
  cdrom->stream = -1;
 
  return ret;
+#else
+ return -1;
+#endif
 }
 
 int roar_cdrom_play (struct roar_cdrom * cdrom, int track) {
+#ifdef ROAR_HAVE_CDROM
  int stream_fh;
  struct roar_stream stream[1];
 
@@ -231,6 +244,9 @@ int roar_cdrom_play (struct roar_cdrom * cdrom, int track) {
   // no support for remote playback yet
   return -1;
  }
+#else
+ return -1;
+#endif
 }
 
 //ll

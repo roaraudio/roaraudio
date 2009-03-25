@@ -17,6 +17,8 @@ TF_E=./testit
 LDPATH=''
 INCPATH=''
 
+CROSS_COMPILE=false
+
 SYSNAME='unknown'
 SHARED='-shared'
 SHARED_CF=''
@@ -30,6 +32,7 @@ PREFIX_LIB=''
 PREFIX_INC=''
 PREFIX_MAN=''
 
+CDROM_IS_DEV=true
 CDROM="none"
 OSS_DEV="none"
 PROC_NET_DECNET="/proc/net/decnet"
@@ -143,6 +146,7 @@ do
    echo '--without-xmms              - Disable build of XMMS plugin'
    echo
    echo '--minimal                   - Disable all optional components'
+   echo '--cross-compile             - Enable cross compiler workarounds'
    echo '--target-win32              - Disable everything useful'
    echo '--exec-helper HELPER        - Exec all test programms using this command (HELPER $cmd $args)'
    echo '                              use '\''--exec-helper wine'\'' when building win32 binarys'
@@ -278,6 +282,9 @@ do
    PREFIX_MAN="$2"
    shift;
   ;;
+  '--cross-compile')
+   CROSS_COMPILE=true
+  ;;
   '--exec-helper')
    EXEC_HELPER="$2"
    shift;
@@ -286,6 +293,7 @@ do
    RUNTIME_DETECT=true
    no_lib_dnet=true
    TARGET_WIN32=true
+   CROSS_COMPILE=true
    PROXY=false
    XMMS=false
    WITHOUT_VIO="$WITHOUT_VIO"' pipe' # hope that with buffered pipes we can remove this soon
@@ -866,14 +874,20 @@ if [ -e "$CDROM" ]
 then
  echo "$CDROM"
  echo '#define ROAR_DEFAULT_CDROM "'"$CDROM"'"' >&3
+ echo '#define ROAR_HAVE_CDROM' >&3
+elif $CROSS_COMPILE
+then
+ echo 'none (cross compiling, use --cdrom to enable CDROM support)'
 else
  CDROM=$(ls /dev/cdrom /dev/rcd0c 2> /dev/null | head -n 1);
  if [ -e "$CDROM" ]
  then
   echo "$CDROM"
   echo '#define ROAR_DEFAULT_CDROM "'"$CDROM"'"' >&3
+  echo '#define ROAR_HAVE_CDROM' >&3
  else
   echo 'none'
+  echo '#define ROAR_HAVE_CDROM' >&3
  fi
 fi
 
