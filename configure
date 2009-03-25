@@ -655,7 +655,8 @@ fi
 
 echo -n 'checking for wait()... '
 
-echo '#include <sys/wait.h>'      > $TF_C
+echo '#include <string.h>'        >  $TF_C
+echo '#include <sys/wait.h>'      >> $TF_C
 echo 'int main (void) { wait(NULL); return 0; }' >> $TF_C
 
 if $CCTF 2> /dev/null;

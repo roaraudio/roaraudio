@@ -43,7 +43,9 @@
 
 #include <stdarg.h>
 
+#ifdef ROAR_HAVE_WAIT
 #include <sys/wait.h>
+#endif
 
 #include <fcntl.h>
 
