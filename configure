@@ -146,6 +146,8 @@ do
    echo
    echo '--without-vio-MODULE        - Disable support for VIO module MODULE'
    echo
+   echo '--without-password-api      - Disable build of Password API'
+   echo
    echo '--without-libao             - Disable build of libao plugin'
    echo '--without-xmms              - Disable build of XMMS plugin'
    echo
