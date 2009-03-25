@@ -640,6 +640,32 @@ else
  echo no
 fi
 
+echo -n 'checking for fork()... '
+
+echo '#include <unistd.h>'      > $TF_C
+echo 'int main (void) { fork(); return 0; }' >> $TF_C
+
+if $CCTF 2> /dev/null;
+then
+ echo '#define ROAR_HAVE_FORK' >&3
+ echo yes
+else
+ echo no
+fi
+
+echo -n 'checking for wait()... '
+
+echo '#include <sys/wait.h>'      > $TF_C
+echo 'int main (void) { wait(NULL); return 0; }' >> $TF_C
+
+if $CCTF 2> /dev/null;
+then
+ echo '#define ROAR_HAVE_WAIT' >&3
+ echo yes
+else
+ echo no
+fi
+
 echo -n 'checking for square root func... '
 
 echo "$SYSNAME" | if grep CYGWIN > /dev/null
