@@ -254,7 +254,7 @@ do
    MULAW_RW=false
    ALAW=false
    ALAW_RW=false
-   WITHOUT_VIO="$WITHOUT_VIO"' dstr cmd'
+   WITHOUT_VIO="$WITHOUT_VIO"' dstr cmd stdio'
   ;;
   '--prefix')
    PREFIX="$2"
