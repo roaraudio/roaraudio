@@ -248,6 +248,7 @@ do
   ;;
   '--minimal')
    MINIMAL=true
+   RUNTIME_DETECT=false
    XMMS=false
    LIBAO=false
    PROXY=false
