@@ -20,6 +20,7 @@ INCPATH=''
 SYSNAME='unknown'
 SHARED='-shared'
 SHARED_CF=''
+fPIC=true
 PKG_CONFIG=false
 RUNTIME_DETECT=false
 
@@ -432,6 +433,9 @@ then
  LDPATH="$LDPATH -L/usr/local/lib/"
  INCPATH="$INCPATH -I/usr/local/include/"
  [ "$DEFAULT_GRP" = '' ] && DEFAULT_GRP='wheel'
+elif $TARGET_WIN32
+ echo "Adding win32 build arguments..."
+ fPIC=false
 fi
 
 [ "$PREFIX_BIN" = '' ] && PREFIX_BIN="$PREFIX/bin/"
@@ -445,6 +449,7 @@ fi
 {
  echo "SHARED=$SHARED"
  echo "SHARED_CF=$SHARED_CF"
+ $fPIC && echo 'fPIC=-fPIC'
  echo "CC=$CC"
  echo "LDPATH=$LDPATH"
  echo "INCPATH=$INCPATH"

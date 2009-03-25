@@ -5,7 +5,7 @@ include ../Makefile.conf
 
 #DEFINES        = -DDEBUG
 INCLUDE = -I../include -I../include/libroaryiff
-CFLAGS += -g -Wall -O2 $(DEFINES) $(INCLUDE) $(INCPATH) $(SHARED_CF) -fPIC
+CFLAGS += -g -Wall -O2 $(DEFINES) $(INCLUDE) $(INCPATH) $(SHARED_CF) $(fPIC)
 LDFLAGS = -g $(SHARED) -lroar $(LDPATH) -L../lib/
 
 all: ${TARGETS}
