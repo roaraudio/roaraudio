@@ -38,6 +38,8 @@ OSS_DEV="none"
 PROC_NET_DECNET="/proc/net/decnet"
 TTY_DEV="none"
 
+FSYNC=false
+
 DEFAULT_GRP=''
 
 AO_INST_DIR=''
@@ -611,6 +613,21 @@ else
  echo no
 fi
 
+echo -n 'checking for fsync()... '
+
+echo '#include <unistd.h>' > $TF_C
+echo 'int main (void) { fsync(0); return 0; }' >> $TF_C
+
+if $CCTF 2> /dev/null;
+then
+ echo '#define ROAR_HAVE_FSYNC' >&3
+ FSYNC=true
+ echo yes
+else
+ FSYNC=false
+ echo no
+fi
+
 echo -n 'checking for fdatasync()... '
 
 echo '#include <unistd.h>' > $TF_C
@@ -622,7 +639,7 @@ then
  echo '#define ROAR_FDATASYNC fdatasync' >&3
  echo yes
 else
- echo '#define ROAR_FDATASYNC fsync' >&3
+ $FSYNC && echo '#define ROAR_FDATASYNC fsync' >&3
  echo no
 fi
 
