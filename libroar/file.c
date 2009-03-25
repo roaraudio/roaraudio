@@ -109,7 +109,7 @@ ssize_t roar_file_send_raw (int out, int in) {
  while ((len = read(in, buf, BUFSIZE)) > 0)
   r += write(out, buf, len);
 
-#ifdef __linux__
+#if defined(__linux__) && defined(ROAR_HAVE_IPV4)
  if ( cork_old != -1 )
   setsockopt(out, IPPROTO_TCP, TCP_CORK, &cork_old, cork_len);
 #endif
