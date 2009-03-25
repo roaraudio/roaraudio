@@ -248,6 +248,7 @@ int     roar_vio_simple_stream (struct roar_vio_calls * calls, int rate, int cha
 
 
 int     roar_vio_open_stdio    (struct roar_vio_calls * calls, FILE * dst) {
+#ifndef ROAR_WITHOUT_VIO_STDIO
  if ( calls == NULL || dst == NULL )
   return -1;
 
@@ -262,6 +263,9 @@ int     roar_vio_open_stdio    (struct roar_vio_calls * calls, FILE * dst) {
  calls->inst  = dst;
 
  return 0;
+#else
+ return -1;
+#endif
 }
 
 FILE *  roar_vio_to_stdio      (struct roar_vio_calls * calls, int flags) {
@@ -292,7 +296,6 @@ FILE *  roar_vio_to_stdio      (struct roar_vio_calls * calls, int flags) {
 int roar_vio_to_stdio_close (void *__cookie) {
  return roar_vio_close((struct roar_vio_calls *) __cookie);
 }
-#endif
 
 #if defined(ROAR_HAVE_FOPENCOOKIE)
 __ssize_t roar_vio_to_stdio_read (void *__cookie, char *__buf, size_t __nbytes) {
@@ -316,6 +319,7 @@ int roar_vio_to_stdio_lseek (void *__cookie, _IO_off64_t *__pos, int __w);
 fpos_t roar_vio_to_stdio_lseek(void *__cookie, fpos_t __pos, int __w) {
  return roar_vio_lseek((struct roar_vio_calls *) __cookie, __pos, __w);
 }
+#endif
 #endif
 
 // VIOs:
@@ -481,6 +485,7 @@ off_t   roar_vio_re_lseek(struct roar_vio_calls * vio, off_t offset, int whence)
 }
 
 // stdio:
+#ifndef ROAR_WITHOUT_VIO_STDIO
 ssize_t roar_vio_stdio_read    (struct roar_vio_calls * vio, void *buf, size_t count) {
  return fread(buf, 1, count, (FILE*)(vio->inst));
 }
@@ -503,5 +508,6 @@ int     roar_vio_stdio_sync    (struct roar_vio_calls * vio) {
 int     roar_vio_stdio_close   (struct roar_vio_calls * vio) {
  return fclose((FILE*)(vio->inst));
 }
+#endif
 
 //ll
