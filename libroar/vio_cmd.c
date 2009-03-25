@@ -489,7 +489,7 @@ int roar_vio_open_gzip(struct roar_vio_calls * calls, struct roar_vio_calls * ds
 }
 
 int roar_vio_open_gpg(struct roar_vio_calls * calls, struct roar_vio_calls * dst, char * pw, int wronly, char * opts, int options) {
-#if defined(ROAR_HAVE_BIN_GPG) || !defined(ROAR_WITHOUT_VIO_CMD)
+#if defined(ROAR_HAVE_BIN_GPG) && !defined(ROAR_WITHOUT_VIO_CMD)
  char command[1024];
  char para[1024] = {0};
  int pwpipe[2];
