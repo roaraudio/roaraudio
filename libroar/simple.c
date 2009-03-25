@@ -191,8 +191,12 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
   return -1;
 #endif
  } else if ( type == ROAR_SOCKET_TYPE_DECNET ) {
+#ifdef ROAR_HAVE_LIBDNET
   len = sizeof(struct sockaddr_in);
   setsockopt(listen, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(int));
+#else
+  return -1;
+#endif
  }
 
  if ( roar_stream_new(s, rate, channels, bits, codec) == -1 ) {
@@ -236,6 +240,7 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
 
   close(listen);
  } else { // this is type == ROAR_SOCKET_TYPE_UNIX
+#ifdef ROAR_HAVE_UNIX
   if ( socketpair(AF_UNIX, SOCK_STREAM, 0, socks) == -1 ) {
    roar_kick(con, ROAR_OT_STREAM, s->id); // we do not need to check for errors
                                           // as we return -1 in both whys
@@ -250,6 +255,10 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
 
   close(socks[0]);
   fh = socks[1];
+#else
+  roar_kick(con, ROAR_OT_STREAM, s->id);
+  return -1;
+#endif
  }
 
 /*
