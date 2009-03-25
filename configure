@@ -744,8 +744,8 @@ fi
 
 echo -n 'checking for __LP64__... '
 if $TARGET_WIN32
- echo 'need to set (win32 build)'
 then
+ echo 'need to set (win32 build)'
 else
 cat > $TF_C << EOF
 #include <stdio.h>
