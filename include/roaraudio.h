@@ -62,14 +62,25 @@
 
 #ifdef ROAR_TARGET_WIN32
 #include <winsock2.h>
-#else
+#else /* ROAR_TARGET_WIN32 */
+#ifdef ROAR_HAVE_BSDSOCKETS
+
+#if defined(ROAR_HAVE_IPV4) || defined(ROAR_HAVE_IPV6)
 #include <arpa/inet.h>
+#endif
 
 #include <sys/socket.h>
+
+#ifdef ROAR_HAVE_IPV4
 #include <netinet/in.h>
 #include <netinet/tcp.h>
+#endif
+#ifdef ROAR_HAVE_UNIX
 #include <sys/un.h>
 #endif
+
+#endif /* ROAR_HAVE_BSDSOCKETS */
+#endif /* ROAR_TARGET_WIN32 */
 
 #ifdef __NetBSD__
 #include <netinet/in_systm.h>
