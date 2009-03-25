@@ -88,7 +88,7 @@ ssize_t roar_file_send_raw (int out, int in) {
 #endif
  int len;
  char buf[BUFSIZE];
-#ifdef __linux__
+#if defined(__linux__) && defined(ROAR_HAVE_IPV4)
  int cork_new = 1, cork_old;
  socklen_t cork_len = sizeof(int);
 
