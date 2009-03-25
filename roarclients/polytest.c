@@ -23,6 +23,7 @@
  */
 
 #include <roaraudio.h>
+#include <libroardsp/libroardsp.h>
 
 #define BUF_MAX 1024
 
