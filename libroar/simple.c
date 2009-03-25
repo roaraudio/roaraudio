@@ -165,8 +165,10 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
   } else {
    return -1;
   }
+#ifdef ROAR_HAVE_IPV4
  } else {
   strncpy(file, inet_ntoa(socket_addr.sin_addr), 79);
+#endif
  }
 
  if ( type != ROAR_SOCKET_TYPE_UNIX ) {
@@ -176,6 +178,7 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
  }
 
  if ( type == ROAR_SOCKET_TYPE_INET ) {
+#ifdef ROAR_HAVE_IPV4
   len = sizeof(struct sockaddr_in);
   setsockopt(listen, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(int));
 
@@ -184,6 +187,9 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
   }
   port = ROAR_NET2HOST16(socket_addr.sin_port);
   ROAR_DBG("roar_simple_new_stream_obj(*): port=%i", port);
+#else
+  return -1;
+#endif
  } else if ( type == ROAR_SOCKET_TYPE_DECNET ) {
   len = sizeof(struct sockaddr_in);
   setsockopt(listen, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(int));
