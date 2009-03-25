@@ -126,6 +126,7 @@ int roar_pinentry_simple_open(struct roar_pinentry * pe) {
 }
 
 int roar_pinentry_close(struct roar_pinentry * pe) {
+#ifdef ROAR_HAVE_BIN_PINENTRY
  int status;
 
  if ( pe == NULL )
@@ -148,9 +149,13 @@ int roar_pinentry_close(struct roar_pinentry * pe) {
  memset(pe, 0, sizeof(struct roar_pinentry));
 
  return 0;
+#else
+ return -1;
+#endif
 }
 
 int roar_pinentry_send (struct roar_pinentry * pe, char * cmd,  char * args) {
+#ifdef ROAR_HAVE_BIN_PINENTRY
  size_t len;
 
  if ( pe == NULL )
@@ -178,11 +183,15 @@ int roar_pinentry_send (struct roar_pinentry * pe, char * cmd,  char * args) {
   return -1;
 
  return 0;
+#else
+ return -1;
+#endif
 }
 
 
 #define MAX_LINE_SIZE 2048
 int roar_pinentry_recv (struct roar_pinentry * pe, char ** line, char ** opts) {
+#ifdef ROAR_HAVE_BIN_PINENTRY
  char realbuf[MAX_LINE_SIZE];
  char * tp;
 
@@ -240,6 +249,9 @@ int roar_pinentry_recv (struct roar_pinentry * pe, char ** line, char ** opts) {
  }
 
  return -1;
+#else
+ return -1;
+#endif
 }
 
 int roar_pinentry_req  (struct roar_pinentry * pe, char * cmd,  char * args, char ** line, char ** opts) {
