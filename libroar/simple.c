@@ -124,12 +124,16 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
  static int count = 0;
  int    type = ROAR_SOCKET_TYPE_UNIX;
  int    port = 0;
+#if defined(ROAR_HAVE_IPV4) || defined(ROAR_HAVE_LIBDNET)
  int    opt  = 1;
+#endif
  struct sockaddr_in   socket_addr;
  socklen_t            len            = sizeof(struct sockaddr_in);
  fd_set fds;
  struct timeval timeout = {10, 0};
+#ifdef ROAR_HAVE_UNIX
  int socks[2]; // for socketpair()
+#endif
 
  if ( getsockname(con->fh, (struct sockaddr *)&socket_addr, &len) == -1 ) {
   return -1;
