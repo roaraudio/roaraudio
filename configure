@@ -286,6 +286,7 @@ do
    TARGET_WIN32=true
    PROXY=false
    XMMS=false
+   WITHOUT_VIO="$WITHOUT_VIO"' pipe' # hope that with buffered pipes we can remove this soon
   ;;
  esac;
 
