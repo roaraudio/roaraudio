@@ -35,6 +35,7 @@
 #include "libroar.h"
 
 int roar_vio_open_pipe (struct roar_vio_calls * s0, struct roar_vio_calls * s1, int type, int flags) {
+#ifndef ROAR_WITHOUT_VIO_PIPE
  struct roar_vio_pipe * self;
  int                    rw = flags & (O_RDONLY|O_WRONLY|O_RDWR);
 
@@ -107,8 +108,12 @@ int roar_vio_open_pipe (struct roar_vio_calls * s0, struct roar_vio_calls * s1, 
  self->s0 = s0;
 
  return 0;
+#else
+ return -1;
+#endif
 }
 
+#ifndef ROAR_WITHOUT_VIO_PIPE
 int roar_vio_pipe_init (struct roar_vio_calls * s,  struct roar_vio_pipe * self, int flags) {
  if ( s == NULL || self == NULL )
   return -1;
@@ -300,5 +305,6 @@ ssize_t roar_vio_pipe_write   (struct roar_vio_calls * vio, void *buf, size_t co
 
  return -1;
 }
+#endif
 
 //ll
