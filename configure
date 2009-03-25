@@ -434,6 +434,7 @@ then
  INCPATH="$INCPATH -I/usr/local/include/"
  [ "$DEFAULT_GRP" = '' ] && DEFAULT_GRP='wheel'
 elif $TARGET_WIN32
+then
  echo "Adding win32 build arguments..."
  fPIC=false
 fi
