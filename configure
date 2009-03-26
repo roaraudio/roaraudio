@@ -682,6 +682,19 @@ else
  echo no
 fi
 
+echo -n 'checking for pipe()... '
+
+echo '#include <unistd.h>'      > $TF_C
+echo 'int main (void) { pipe(NULL); return 0; }' >> $TF_C
+
+if $CCTF 2> /dev/null;
+then
+ echo '#define ROAR_HAVE_PIPE' >&3
+ echo yes
+else
+ echo no
+fi
+
 echo -n 'checking for fork()... '
 
 echo '#include <unistd.h>'      > $TF_C
