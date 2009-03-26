@@ -54,7 +54,7 @@ int roar_connect_raw (char * server) {
  if ( server == NULL && (roar_server = getenv("ROAR_SERVER")) != NULL )
   server = roar_server;
 
-#ifndef ROAR_TARGET_WIN32
+#if !defined(ROAR_TARGET_WIN32) && !defined(ROAR_TARGET_MICRONTROLLER)
  if ( server == NULL && (i = readlink("/etc/roarserver", user_sock, 79)) != -1 ) {
    user_sock[i] = 0;
    server = user_sock;
@@ -64,11 +64,14 @@ int roar_connect_raw (char * server) {
  if ( server == NULL || *server == 0 ) {
   /* connect via defaults */
 
-
+#ifndef ROAR_TARGET_MICRONTROLLER
   roar_server = getenv("HOME");
+#else
+  roar_server = NULL;
+#endif
 
   if ( roar_server == NULL ) {
-#ifndef ROAR_TARGET_WIN32
+#if !defined(ROAR_TARGET_WIN32) && !defined(ROAR_TARGET_MICRONTROLLER)
    if ( (pwd = getpwuid(getuid())) == NULL ) {
     roar_server = "/NX-HOME-DIR";
    } else {
