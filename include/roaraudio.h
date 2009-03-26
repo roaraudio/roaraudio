@@ -29,6 +29,7 @@
 #define _ROARAUDIO_H_
 
 #include <roaraudio/config.h>
+#include <roaraudio/muconthacks.h>
 #include <roaraudio/win32hacks.h> // we include this at the beginning of the file
                                   // so we can define well known standard types known to everyone
                                   // and everywhere but win32 here
