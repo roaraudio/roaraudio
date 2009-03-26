@@ -1,6 +1,6 @@
 include ../Makefile.conf
 
-CLIENTS=roar-config roarbidir roarcat roarcat2sock roarcatad roarcatpassfh roarcatplay roarcatsendfile roarcatvio roarctl roarfilt roarfish roarmon roarradio roarshout roarsin roarsockconnect roarsocktypes roartypes roarvorbis roarvumeter
+CLIENTS=roar-config roarbidir roarcat roarcat2sock roarcatad roarcatpassfh roarcatplay roarcatsendfile roarcatvio roarctl roarfilt roarmon roarradio roarshout roarsin roarsockconnect roarsocktypes roartypes roarvorbis roarvumeter
 
 
 all:
