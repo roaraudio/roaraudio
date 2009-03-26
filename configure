@@ -307,10 +307,10 @@ do
    CROSS_COMPILE=true
   ;;
   '--target-win32')
-   RUNTIME_DETECT=true
-   no_lib_dnet=true
    TARGET_WIN32=true
    CROSS_COMPILE=true
+   RUNTIME_DETECT=true
+   no_lib_dnet=true
    PROXY=false
    XMMS=false
    WITHOUT_VIO="$WITHOUT_VIO"' pipe' # hope that with buffered pipes we can remove this soon
