@@ -49,12 +49,12 @@
 #include <errno.h>
 #include <sys/types.h>
 #include <limits.h>
-#ifndef ROAR_TARGET_WIN32
+#if !defined(ROAR_TARGET_WIN32) && !defined(ROAR_TARGET_MICROCONTROLLER)
 #include <sys/mman.h>
 #endif
 
 // TODO: can we move the next block into roard specific includes?
-#ifndef ROAR_TARGET_WIN32
+#if !defined(ROAR_TARGET_WIN32) && !defined(ROAR_TARGET_MICROCONTROLLER)
 #include <grp.h>
 #include <pwd.h>
 #include <sys/stat.h>
