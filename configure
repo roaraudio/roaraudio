@@ -382,7 +382,7 @@ test_lib_defmake () {
   fi
  fi
 
- LIBS=$($PKG_CONFIG --silence-errors --libs $lib)
+ LIBS=$($PKG_CONFIG --silence-errors --libs $lib 2> /dev/null)
  if [ "$?" != '0' ]
  then
   LIBS="-l$lib"
