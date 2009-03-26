@@ -16,10 +16,10 @@ do
 
  if [ "$R" -le 64 ]
  then
-  OK=`expr $OK + 1`
+  _ok
   echo ok
  else
-  FAILED=`expr $FAILED + 1`
+  _failed
   echo "FAILED! ret=$R"
  fi
 

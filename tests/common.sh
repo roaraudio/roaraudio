@@ -16,6 +16,13 @@ then
  echo '---------------------'
 fi
 
+_ok() {
+ OK=`expr $OK + 1`
+}
+_failed() {
+ FAILED=`expr $FAILED + 1`
+}
+
 disp_sum() {
  SUM=`expr $OK + $FAILED`
  echo
