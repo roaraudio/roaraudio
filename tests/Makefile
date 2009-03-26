@@ -10,7 +10,9 @@ clean:
 
 new: clean all
 
-test: test-runnable
+test: test-runnable test-roard
 
 test-runnable:
 	./test-runnable.sh "$(CLIENTS)"
+test-roard:
+	./test-roard.sh
