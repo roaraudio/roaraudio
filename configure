@@ -68,6 +68,7 @@ WITHOUT_VIO=''
 MINIMAL=false
 
 TARGET_WIN32=false
+TARGET_MICROCONTROLLER=false
 
 EXEC_HELPER=''
 
@@ -153,6 +154,8 @@ do
    echo
    echo '--minimal                   - Disable all optional components'
    echo '--cross-compile             - Enable cross compiler workarounds'
+   echo '--target-microcontroller    - Set Options for mircocontrollers without a OS'
+   echo '                              Implys --cross-compile'
    echo '--target-win32              - Disable everything useful'
    echo '--exec-helper HELPER        - Exec all test programms using this command (HELPER $cmd $args)'
    echo '                              use '\''--exec-helper wine'\'' when building win32 binarys'
@@ -298,6 +301,10 @@ do
   '--exec-helper')
    EXEC_HELPER="$2"
    shift;
+  ;;
+  '--target-microcontroller')
+   TARGET_MICROCONTROLLER=true
+   CROSS_COMPILE=true
   ;;
   '--target-win32')
    RUNTIME_DETECT=true
@@ -521,8 +528,9 @@ EOF
  done
 
  echo
- $TARGET_WIN32 && echo '#define ROAR_TARGET_WIN32'
-                  echo '#define ROAR_OS_'$(echo $SYSNAME | tr a-z A-Z)
+ $TARGET_MICROCONTROLLER && echo '#define ROAR_TARGETMICROCONTROLLER'
+ $TARGET_WIN32           && echo '#define ROAR_TARGET_WIN32'
+                            echo '#define ROAR_OS_'$(echo $SYSNAME | tr a-z A-Z)
  echo
 } >&3
 
