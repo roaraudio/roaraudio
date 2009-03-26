@@ -86,7 +86,7 @@
 #include <netinet/in_systm.h>
 #endif
 
-#ifndef ROAR_TARGET_WIN32
+#if !defined(ROAR_TARGET_WIN32) && !defined(ROAR_TARGET_MICROCONTROLLER)
 #include <netdb.h>
 #endif
 
