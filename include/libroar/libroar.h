@@ -49,6 +49,10 @@
 
 #include <fcntl.h>
 
+#ifndef ROAR_TARGET_WIN32
+#include <signal.h>
+#endif
+
 #ifdef ROAR_HAVE_BSDSOCKETS
 
 #ifndef ROAR_TARGET_WIN32
