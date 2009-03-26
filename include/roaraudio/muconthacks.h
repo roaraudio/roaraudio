@@ -39,8 +39,8 @@
 #define off_t     int
 /*
 #define size_t    unsigned int
-#define ssize_t   signed   int
 */
+#define ssize_t   signed   int
 #define time_t    int64_t
 
 #define sa_family_t char
