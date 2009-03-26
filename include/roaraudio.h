@@ -43,7 +43,11 @@
 #endif
 
 #include <stdlib.h>
+
+#ifdef ROAR_HAVE_H_UNISTD
 #include <unistd.h>
+#endif
+
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
