@@ -593,9 +593,14 @@ test_lib_defmake ROAR_HAVE_LIBWS2_32     %            WinSockP1     ws2_32     -
 
 echo >&3
 
+# Those tests should not be disbaled as they do not reduce the lib size just
+# break --minimal on full systems
+OLD_MINIMAL=$MINIMAL
+MINIMAL=false
 test_lib_defmake ROAR_HAVE_H_SYS_TYPES   %            sys/types.h   c          -- sys/types.h
 test_lib_defmake ROAR_HAVE_H_FCNTL       %            fcntl.h       c          -- fcntl.h
 test_lib_defmake ROAR_HAVE_H_UNISTD      %            unistd.h      c          -- unistd.h
+MINIMAL=$OLD_MINIMAL
 
 echo >&3
 
