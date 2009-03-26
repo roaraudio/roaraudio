@@ -112,6 +112,7 @@ int roar_socket_new_udp6 (void) {
 }
 
 int roar_socket_new_unix (void) {
+#ifdef ROAR_HAVE_UNIX
  int fh;
 /*
 #ifdef SO_PEERCRED
@@ -128,6 +129,9 @@ int roar_socket_new_unix (void) {
 */
 
  return fh;
+#else
+ return -1;
+#endif
 }
 
 int roar_socket_decnet_set_timeout (int fh, time_t sec, int usec) {
@@ -141,9 +145,13 @@ int roar_socket_decnet_set_timeout (int fh, time_t sec, int usec) {
 }
 
 int roar_socket_recvbuf(int fh, int len) {
+#ifdef ROAR_HAVE_BSDSOCKETS
  if ( len < 256 ) len = 256;
 
  return setsockopt(fh, SOL_SOCKET, SO_RCVBUF, &len, sizeof(len));
+#else
+ return -1;
+#endif
 }
 
 int roar_socket_new_decnet_seqpacket (void) {
