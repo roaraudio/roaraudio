@@ -23,4 +23,8 @@ disp_sum() {
  echo
 }
 
+ret() {
+ exit $FAILED
+}
+
 #ll
