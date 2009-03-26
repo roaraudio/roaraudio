@@ -641,6 +641,19 @@ else
  echo no
 fi
 
+echo -n 'checking for mmap()... '
+
+echo '#include <sys/mman.h>' > $TF_C
+echo 'int main (void) { mmap((void*)0, 0, 0, 0, 0, 0); return 0; }' >> $TF_C
+
+if $CCTF 2> /dev/null;
+then
+ echo '#define ROAR_HAVE_MMAP' >&3
+ echo yes
+else
+ echo no
+fi
+
 echo -n 'checking for fsync()... '
 
 echo '#include <unistd.h>' > $TF_C
