@@ -33,8 +33,6 @@
  */
 
 #include "libroar.h"
-#include <sys/types.h>
-#include <signal.h>
 
 #define ROAR_CDROM_ERROR_NORETURN(format, args...) ROAR_ERR(format, ## args); _exit(3)
 
