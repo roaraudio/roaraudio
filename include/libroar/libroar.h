@@ -47,7 +47,9 @@
 #include <sys/wait.h>
 #endif
 
+#ifdef ROAR_HAVE_H_FCNTL
 #include <fcntl.h>
+#endif
 
 #if !defined(ROAR_TARGET_WIN32) && !defined(ROAR_TARGET_MICROCONTROLLER)
 #include <signal.h>

@@ -47,7 +47,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
+
+#ifdef ROAR_HAVE_H_SYS_TYPES
 #include <sys/types.h>
+#endif
+
 #include <limits.h>
 #if !defined(ROAR_TARGET_WIN32) && !defined(ROAR_TARGET_MICROCONTROLLER)
 #include <sys/mman.h>
