@@ -58,6 +58,9 @@ struct sockaddr {
  sa_family_t sa_family;
 };
 
+int bind    (int sockfd, const struct sockaddr *my_addr,   socklen_t addrlen);
+int connect (int sockfd, const struct sockaddr *serv_addr, socklen_t addrlen);
+
 #endif
 
 #endif
