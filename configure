@@ -727,6 +727,9 @@ echo -n 'checking for square root func... '
 echo "$SYSNAME" | if grep CYGWIN > /dev/null
 then
  echo 'sqrt() (cygwin)'
+elif [ "$SYSNAME" = 'FreeBSD' ]
+then
+ echo 'sqrt() (FreeBSD, fix your gcc)'
 else
  echo '#include <math.h>' > $TF_C
  echo 'int main (void) { sqrtl(0); return 0; }' >> $TF_C
