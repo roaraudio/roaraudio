@@ -574,10 +574,10 @@ test_lib_defmake ROAR_HAVE_LIBARTSC      libroararts  libartsc      artsc      -
 test_lib_defmake ROAR_HAVE_LIBOSSAUDIO   %            libossaudio   ossaudio   -- sys/ioctl.h
 test_lib_defmake ROAR_HAVE_LIBSSL        %            OpenSSL       ssl        -- openssl/bio.h openssl/evp.h
 test_lib_defmake ROAR_HAVE_LIBDNET       %            libdnet       dnet       -- sys/socket.h netdnet/dn.h netdnet/dnetdb.h
-test_lib_defmake ROAR_HAVE_BSDSOCKETS    %            BSDSockets    c          -- sys/socket.h
+test_lib_defmake ROAR_HAVE_BSDSOCKETS    %            BSDSockets    c          -- sys/types.h sys/socket.h
 test_lib_defmake ROAR_HAVE_UNIX          %            UNIX          c          -- sys/types.h sys/socket.h sys/un.h
 test_lib_defmake ROAR_HAVE_IPX           %            IPX           c          -- netipx/ipx.h
-test_lib_defmake ROAR_HAVE_IPV4          %            IPv4          c          -- sys/socket.h 'netinet/in.h'
+test_lib_defmake ROAR_HAVE_IPV4          %            IPv4          c          -- sys/types.h sys/socket.h 'netinet/in.h'
 test_lib_defmake ROAR_HAVE_OSS           %            OSS           c          -- sys/ioctl.h sys/soundcard.h
 test_lib_defmake ROAR_HAVE_OSS_BSD       %            BSDOSS        c          -- sys/ioctl.h soundcard.h
 test_lib_defmake ROAR_HAVE_LIBWSOCK32    %            WinSockP0     wsock32    -- winsock2.h
