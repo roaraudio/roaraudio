@@ -3,9 +3,16 @@
 REMOTEHOST=''
 REMOTEDIR='.'
 
+CONFIGURE=true
+BUILD=true
+TEST=true
+
 while [ "$1" != '' ]
 do
  case "$1" in
+  '--remote-dir='*)
+    REMOTEDIR=`echo "$1" | cut -d= -f2`
+  ;;
   *)
     REMOTEHOST="$1"
   ;;
@@ -17,10 +24,29 @@ LOCALDIR="sra-@$REMOTEHOST"
 
 mkdir $LOCALDIR
 
+cd $LOCALDIR
+cvs co roaraudio
+cd ..
+
 {
+ echo '#1/bin/sh'
+ echo
+
+ echo 'MAKE=`which gmake make 2> /dev/null | grep ^/ | head -n 1`'
+
+ echo 'cd roaraudio'
+
+ $CONFIGURE && echo './configure || exit 1'
+ $BUILD     && echo '$MAKE       || exit 2'
+ $TEST      && echo '$MAKE test  || exit 3'
+
+ echo 'exit 0'
+ echo '#ll'
 } > $LOCALDIR/setup
 chmod +rx $LOCALDIR/setup
 
-tar -czf - $LOCALDIR | ssh $REMOTEHOST "cd $REMOTEDIR && tar -xvzf - && cd $LOCALDIR && ./setup"
+tar -czf - $LOCALDIR | ssh $REMOTEHOST "cd $REMOTEDIR && rm -rf $LOCALDIR && tar -xvzf - && cd $LOCALDIR && ./setup"
+
+rm -rf $LOCALDIR
 
 #ll
