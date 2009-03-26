@@ -124,7 +124,9 @@ struct roar_vio_defaults {
           char            * host;
           union {
                  struct sockaddr     sa;
+#ifdef ROAR_HAVE_IPV4
                  struct sockaddr_in  in;
+#endif
 #ifdef ROAR_HAVE_UNIX
                  struct sockaddr_un  un;
 #endif
