@@ -1,0 +1,26 @@
+#!/bin/sh
+
+REMOTEHOST=''
+REMOTEDIR='.'
+
+while [ "$1" != '' ]
+do
+ case "$1" in
+  *)
+    REMOTEHOST="$1"
+  ;;
+ esac
+ shift
+done
+
+LOCALDIR="sra-@$REMOTEHOST"
+
+mkdir $LOCALDIR
+
+{
+} > $LOCALDIR/setup
+chmod +rx $LOCALDIR/setup
+
+tar -czf - $LOCALDIR | ssh $REMOTEHOST "cd $REMOTEDIR && tar -xvzf - && cd $LOCALDIR && ./setup"
+
+#ll
