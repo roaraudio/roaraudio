@@ -45,10 +45,14 @@
 
 #define sa_family_t char
 
-/*
-#define SHUT_RD SD_RECEIVE
-#define SHUT_WR SD_SEND
-*/
+#define SHUT_RD   0
+#define SHUT_WR   1
+#define SHUT_RDWR 2
+
+#define O_RDONLY       0x01
+#define O_WRONLY       0x02
+#define O_RDWR         (O_RDONLY|O_WRONLY)
+#define O_NONBLOCK     0x04
 
 struct sockaddr {
  sa_family_t sa_family;
