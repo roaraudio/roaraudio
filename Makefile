@@ -10,6 +10,9 @@ clean:
 
 new: clean all
 
+test: all
+	cd tests; make test; cd ..;
+
 prep-install-dirs:
 	mkdir -p $(PREFIX_BIN)
 	mkdir -p $(PREFIX_LIB)
