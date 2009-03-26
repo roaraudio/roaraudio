@@ -76,12 +76,12 @@ int main (int argc, char * argv[]) {
 
  if ( roar_simple_connect(&con, server, "roarcat2sock") == -1 ) {
   ROAR_DBG("roar_simple_play(*): roar_simple_connect() faild!");
-  return -1;
+  return 1;
  }
 
  if ( (fh = roar_simple_new_stream(&con, rate, channels, bits, codec, ROAR_DIR_PLAY)) == -1 ) {
   roar_disconnect(&con);
-  return -1;
+  return 1;
  }
 
  while((i = read(0, buf, BUFSIZE)))

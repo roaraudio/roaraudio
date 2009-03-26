@@ -79,22 +79,22 @@ int main (int argc, char * argv[]) {
 
  if ( roar_simple_connect(&con, server, "roarcatad") == -1 ) {
   ROAR_DBG("roar_simple_play(*): roar_simple_connect() faild!");
-  return -1;
+  return 1;
  }
 
  if ( roar_stream_new(&s, rate, channels, bits, codec) == -1 ) {
   roar_disconnect(&con);
-  return -1;
+  return 1;
  }
 
  if ( roar_stream_connect(&con, &s, ROAR_DIR_PLAY) == -1 ) {
   roar_disconnect(&con);
-  return -1;
+  return 1;
  }
 
  if ( roar_stream_passfh(&con, &s, in) == -1 ) {
   roar_disconnect(&con);
-  return -1;
+  return 1;
  }
 
  close(in);

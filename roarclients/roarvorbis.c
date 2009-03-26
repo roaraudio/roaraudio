@@ -203,7 +203,7 @@ int main (int argc, char * argv[]) {
 
  if ( roar_simple_connect(&con, server, "roarvorbis") == -1 ) {
   ROAR_DBG("roar_simple_play(*): roar_simple_connect() faild!");
-  return -1;
+  return 1;
  }
 
  if ( strncmp(file, "http:", 5) == 0 ) {
@@ -214,7 +214,7 @@ int main (int argc, char * argv[]) {
 
  if ( in == NULL ) {
   roar_disconnect(&con);
-  return -1;
+  return 1;
  }
 
 #ifdef _WIN32
@@ -224,11 +224,11 @@ int main (int argc, char * argv[]) {
  if(ov_open(in, &vf, NULL, 0) < 0) {
   fprintf(stderr,"Input does not appear to be an Ogg bitstream.\n");
   roar_disconnect(&con);
-  return -1;
+  return 1;
  }
 
 // if ( update_stream(&con, &s, &out, &vf, file) == -1 )
-//  return -1;
+//  return 1;
 
  while (!eof) {
   long ret = ov_read(&vf, pcmout, sizeof(pcmout), 0, 2, 1, &current_section);
