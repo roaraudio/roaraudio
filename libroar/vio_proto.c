@@ -35,6 +35,7 @@
 #include "libroar.h"
 
 int roar_vio_proto_init_def  (struct roar_vio_defaults * def, char * dstr, int proto, struct roar_vio_defaults * odef) {
+#ifndef ROAR_WITHOUT_VIO_PROTO
  int                        port = 0;
  int                        ret;
  char                     * ed;
@@ -74,10 +75,14 @@ int roar_vio_proto_init_def  (struct roar_vio_defaults * def, char * dstr, int p
   *ed = '/';
 
  return ret;
+#else
+ return -1;
+#endif
 }
 
 int roar_vio_open_proto      (struct roar_vio_calls * calls, struct roar_vio_calls * dst,
                               char * dstr, int proto, struct roar_vio_defaults * odef) {
+#ifndef ROAR_WITHOUT_VIO_PROTO
  char * host;
  char * tmp;
 
@@ -135,8 +140,12 @@ int roar_vio_open_proto      (struct roar_vio_calls * calls, struct roar_vio_cal
  }
 
  return -1;
+#else
+ return -1;
+#endif
 }
 
+#ifndef ROAR_WITHOUT_VIO_PROTO
 int roar_vio_open_proto_http   (struct roar_vio_calls * calls, struct roar_vio_calls * dst, char * host, char * file) {
  char buf[1024];
  char b0[80], b1[80];
@@ -148,7 +157,7 @@ int roar_vio_open_proto_http   (struct roar_vio_calls * calls, struct roar_vio_c
 
  roar_vio_printf(dst, "GET /%s HTTP/1.1\r\n", file);
  roar_vio_printf(dst, "Host: %s\r\n", host);
- roar_vio_printf(dst, "User-Agent: roar_vio_open_proto_http() $Revision: 1.4 $\r\n");
+ roar_vio_printf(dst, "User-Agent: roar_vio_open_proto_http() $Revision: 1.5 $\r\n");
  roar_vio_printf(dst, "Connection: close\r\n");
  roar_vio_printf(dst, "\r\n");
 
@@ -195,5 +204,6 @@ int roar_vio_open_proto_gopher (struct roar_vio_calls * calls, struct roar_vio_c
 
  return 0;
 }
+#endif
 
 //ll
