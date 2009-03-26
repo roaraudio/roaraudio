@@ -37,14 +37,22 @@
 #define socklen_t int
 #define mode_t    unsigned int
 #define off_t     int
+/*
 #define size_t    unsigned int
 #define ssize_t   signed   int
+*/
 #define time_t    int64_t
+
+#define sa_family_t char
 
 /*
 #define SHUT_RD SD_RECEIVE
 #define SHUT_WR SD_SEND
 */
+
+struct sockaddr {
+ sa_family_t sa_family;
+};
 
 #endif
 
