@@ -35,8 +35,11 @@
 #define uid_t     int
 #define gid_t     int
 #define socklen_t int
+#define mode_t    unsigned int
+#define off_t     int
 #define size_t    unsigned int
 #define ssize_t   signed   int
+#define time_t    int64_t
 
 /*
 #define SHUT_RD SD_RECEIVE
