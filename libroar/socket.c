@@ -189,7 +189,7 @@ int roar_socket_new_ipx    (void) {
 
 
 int roar_socket_nonblock(int fh, int state) {
-#ifndef ROAR_TARGET_WIN32
+#if !defined(ROAR_TARGET_WIN32) && !defined(ROAR_TARGET_MICROCONTROLLER)
  int flags;
 
  if ( (flags = fcntl(fh, F_GETFL, 0)) == -1 ) {
@@ -221,7 +221,7 @@ int roar_socket_nonblock(int fh, int state) {
 }
 
 int roar_socket_dup_udp_local_end (int fh) {
-#ifndef ROAR_TARGET_WIN32
+#if !defined(ROAR_TARGET_WIN32) && !defined(ROAR_TARGET_MICROCONTROLLER)
  int                  n              = -1;
  int                  flags          = -1;
  struct sockaddr_in   socket_addr;
@@ -268,7 +268,7 @@ int roar_socket_dup_udp_local_end (int fh) {
 
 #define _SCMR_CONTROLLEN (sizeof(struct cmsghdr) + sizeof(int))
 int roar_socket_send_fh (int sock, int fh, char * mes, size_t len) {
-#ifndef ROAR_TARGET_WIN32
+#if !defined(ROAR_TARGET_WIN32) && !defined(ROAR_TARGET_MICROCONTROLLER)
  struct iovec     iov[1];
  struct msghdr    msg;
  char             cmptr_buf[_SCMR_CONTROLLEN];
@@ -309,7 +309,7 @@ int roar_socket_send_fh (int sock, int fh, char * mes, size_t len) {
 }
 
 int roar_socket_recv_fh (int sock,         char * mes, size_t * len) {
-#ifndef ROAR_TARGET_WIN32
+#if !defined(ROAR_TARGET_WIN32) && !defined(ROAR_TARGET_MICROCONTROLLER)
  struct iovec     iov[1];
  struct msghdr    msg;
  char             cmptr_buf[_SCMR_CONTROLLEN];
@@ -627,7 +627,7 @@ int roar_socket_open (int mode, int type, char * host, int port) {
 }
 
 int roar_socket_open_fork  (int mode, char * host, int port) {
-#ifndef ROAR_TARGET_WIN32
+#if !defined(ROAR_TARGET_WIN32) && !defined(ROAR_TARGET_MICROCONTROLLER)
  int socks[2];
  int r;
  char fhstr[8];
