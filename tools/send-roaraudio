@@ -13,6 +13,15 @@ do
   '--remote-dir='*)
     REMOTEDIR=`echo "$1" | cut -d= -f2`
   ;;
+  '--build='*)
+   BUILD=`echo $1 | cut -d= -f2`
+  ;;
+  '--configure='*)
+   CONFIGURE=`echo $1 | cut -d= -f2`
+  ;;
+  '--test='*)
+   TEST=`echo $1 | cut -d= -f2`
+  ;;
   *)
     REMOTEHOST="$1"
   ;;
