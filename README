@@ -19,7 +19,7 @@ A POSIX system.
 
 You should install libesd and libao and maybe some codecs.
 For Debian you may use this command:
-apt-get install build-essential libesd0-dev libao-dev libfishsound1-dev libvorbis-dev libspeex-dev libshout3-dev libsndfile1-dev liboggz1-dev libssl-dev
+apt-get install build-essential libssl-dev libdnet-dev libesd0-dev libao-dev libfishsound1-dev libvorbis-dev libspeex-dev libshout3-dev libsndfile1-dev liboggz1-dev
 
 -- How to build:
 
