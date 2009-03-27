@@ -1,4 +1,4 @@
-v. 0.2beta2 - ?
+v. 0.2beta2 - Fri Mar 27 2009
 	* added (dummy) flags autoconf and cleanmeta
 	* added streams_ctl() to server
 	* added support for primary flag as -oO, support for blocks parameter
@@ -18,6 +18,10 @@ v. 0.2beta2 - ?
 	* Reduced lib size with --minimal trasticly (>33%!)
 	* Done a lot patches to makeing RoarAudio more portable (also to win32)
 	* moved convert.[ch] and poly.[ch] from libroar to libroardsp
+	* updated AUTHROS, README and check HACKING
+	* added tools/send-roaraudio: tool to send RoarAudio von CVS to a diffrent
+	                              host in order to test it.
+	* added dist/archlinux and archlinux rc script.
 
 v. 0.2beta1 - Mon Feb 23 2009 25:08
 	* added options --default-codec and --without-cf-cmd to configure script
