@@ -530,7 +530,7 @@ EOF
  echo
  $TARGET_MICROCONTROLLER && echo '#define ROAR_TARGET_MICROCONTROLLER'
  $TARGET_WIN32           && echo '#define ROAR_TARGET_WIN32'
-                            echo '#define ROAR_OS_'$(echo $SYSNAME | tr a-z A-Z)
+                            echo '#define ROAR_OS_'$(echo $SYSNAME | tr a-z- A-Z_)
  echo
 } >&3
 
