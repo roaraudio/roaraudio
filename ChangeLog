@@ -1,4 +1,4 @@
-v. 0.2beta2 - Fri Mar 27 2009
+v. 0.2beta2 - Fri Mar 27 2009 21:20
 	* added (dummy) flags autoconf and cleanmeta
 	* added streams_ctl() to server
 	* added support for primary flag as -oO, support for blocks parameter
