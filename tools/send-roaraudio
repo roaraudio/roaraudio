@@ -29,6 +29,9 @@ do
  shift
 done
 
+$CONFIGURE || BUILD=false
+$BUILD     || TEST=false
+
 LOCALDIR="sra-@$REMOTEHOST"
 
 mkdir $LOCALDIR
