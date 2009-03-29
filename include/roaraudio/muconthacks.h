@@ -49,6 +49,12 @@
 #define SHUT_WR   1
 #define SHUT_RDWR 2
 
+#define SOCK_STREAM     1
+#define SOCK_DGRAM      2
+#define SOCK_RAW        3
+#define SOCK_RDM        4
+#define SOCK_SEQPACKET  5
+
 #define O_RDONLY       0x01
 #define O_WRONLY       0x02
 #define O_RDWR         (O_RDONLY|O_WRONLY)
