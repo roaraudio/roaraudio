@@ -34,7 +34,12 @@
 
 #include "libroar.h"
 
+#ifdef ROAR_HAVE_BSDSOCKETS
+#define _CAN_OPERATE
+#endif
+
 int     roar_vio_open_def_socket          (struct roar_vio_calls * calls, struct roar_vio_defaults * def) {
+#ifdef _CAN_OPERATE
  int       fh  = -1;
  socklen_t len =  0;
 
@@ -149,9 +154,13 @@ int     roar_vio_open_def_socket          (struct roar_vio_calls * calls, struct
  }
 
  return 0;
+#else
+ return -1;
+#endif
 }
 
 int     roar_vio_socket_init_socket_def   (struct roar_vio_defaults * def, int domain, int type) {
+#ifdef _CAN_OPERATE
  if ( def == NULL || domain == -1 || type == -1 )
   return -1;
 
@@ -167,10 +176,14 @@ int     roar_vio_socket_init_socket_def   (struct roar_vio_defaults * def, int d
  def->d.socket.sa.sa.sa_family = domain;
 
  return 0;
+#else
+ return -1;
+#endif
 }
 
 int     roar_vio_socket_init_dstr_def     (struct roar_vio_defaults * def, char * dstr, int hint, int type,
                                            struct roar_vio_defaults * odef) {
+#ifdef _CAN_OPERATE
  char * host;
 #if defined(ROAR_HAVE_IPV4) || defined(ROAR_HAVE_IPV6)
  int    port;
@@ -312,8 +325,12 @@ int     roar_vio_socket_init_dstr_def     (struct roar_vio_defaults * def, char 
  }
 
  return 0;
+#else
+ return -1;
+#endif
 }
 
+#ifdef _CAN_OPERATE
 int     roar_vio_socket_conv_def          (struct roar_vio_defaults * def, int domain) {
  if ( def == NULL || domain == -1 )
   return -1;
@@ -418,10 +435,11 @@ int     roar_vio_socket_get_port          (char * service, int domain, int type)
 
  return -1;
 }
+#endif
 
 // AF_UNIX:
 int     roar_vio_socket_init_unix_def     (struct roar_vio_defaults * def, char * path) {
-#ifdef ROAR_HAVE_UNIX
+#if defined(ROAR_HAVE_UNIX) && defined(_CAN_OPERATE)
  if ( def == NULL || path == NULL )
   return -1;
 
@@ -438,7 +456,7 @@ int     roar_vio_socket_init_unix_def     (struct roar_vio_defaults * def, char 
 
 // AF_DECnet:
 int     roar_vio_socket_init_decnetnode_def(struct roar_vio_defaults * def) {
-#ifdef ROAR_HAVE_LIBDNET
+#if defined(ROAR_HAVE_LIBDNET) && defined(_CAN_OPERATE)
  char               * node;
  char               * ed;
  struct nodeent     * ne;
@@ -470,7 +488,7 @@ int     roar_vio_socket_init_decnetnode_def(struct roar_vio_defaults * def) {
 }
 
 int     roar_vio_socket_init_decnet_def   (struct roar_vio_defaults * def, char * node, int object, char * objname) {
-#ifdef ROAR_HAVE_LIBDNET
+#if defined(ROAR_HAVE_LIBDNET) && defined(_CAN_OPERATE)
  struct sockaddr_dn * dn;
 
  if ( def == NULL )
@@ -518,7 +536,7 @@ int     roar_vio_socket_init_decnet_def   (struct roar_vio_defaults * def, char 
 
 // AF_INET:
 int     roar_vio_socket_init_inet4host_def(struct roar_vio_defaults * def) {
-#ifdef ROAR_HAVE_IPV4
+#if defined(ROAR_HAVE_IPV4) && defined(_CAN_OPERATE)
  struct hostent     * he;
  char               * ed;
 
@@ -549,7 +567,7 @@ int     roar_vio_socket_init_inet4host_def(struct roar_vio_defaults * def) {
 }
 
 int     roar_vio_socket_init_inet4_def    (struct roar_vio_defaults * def, char * host, int port, int type) {
-#ifdef ROAR_HAVE_IPV4
+#if defined(ROAR_HAVE_IPV4) && defined(_CAN_OPERATE)
  if ( roar_vio_socket_init_socket_def(def, AF_INET, type) == -1 )
   return -1;
 
