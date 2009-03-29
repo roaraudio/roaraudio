@@ -813,7 +813,8 @@ else
 fi
 
 echo -n 'checking for getobjectbyname()... '
-echo '#include <roaraudio.h>' > $TF_C
+echo '#include <netdnet/dn.h>'     >  $TF_C
+echo '#include <netdnet/dnetdb.h>' >> $TF_C
 echo 'int main (void) { getobjectbyname(NULL); return 0; }'  >> $TF_C
 
 if $CCTF 2> /dev/null;
