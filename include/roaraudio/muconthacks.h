@@ -54,6 +54,8 @@
 #define O_RDWR         (O_RDONLY|O_WRONLY)
 #define O_NONBLOCK     0x04
 
+#define ENOSYS         38
+
 struct sockaddr {
  sa_family_t sa_family;
 };
