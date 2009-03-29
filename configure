@@ -854,6 +854,20 @@ else
  echo no
 fi
 
+echo -n 'checking for shutdown()... '
+echo '#include <sys/socket.h>'     >  $TF_C
+echo 'int main (void) { shutdown(0, 0); return 0; }'  >> $TF_C
+
+if $CCTF 2> /dev/null;
+then
+ echo '#define ROAR_HAVE_SHUTDOWN'     >&3
+ echo '#define ROAR_SHUTDOWN shutdown' >&3
+ echo yes
+else
+ echo '#define ROAR_SHUTDOWN(x,y) (-1)' >&3
+ echo no
+fi
+
 echo -n 'checking for getobjectbyname()... '
 echo '#include <netdnet/dn.h>'     >  $TF_C
 echo '#include <netdnet/dnetdb.h>' >> $TF_C
