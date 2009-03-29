@@ -126,8 +126,13 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
 #if defined(ROAR_HAVE_IPV4) || defined(ROAR_HAVE_LIBDNET)
  int    opt  = 1;
 #endif
+#ifdef ROAR_HAVE_IPV4
  struct sockaddr_in   socket_addr;
  socklen_t            len            = sizeof(struct sockaddr_in);
+#else
+ struct sockaddr      socket_addr;
+ socklen_t            len            = sizeof(struct sockaddr);
+#endif
 #ifdef ROAR_HAVE_SELECT
  fd_set fds;
  struct timeval timeout = {10, 0};
@@ -144,13 +149,13 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
  if ( len == 0 ) {
 #ifdef ROAR_OS_OPENBSD
   ROAR_WARN("roar_simple_new_stream_obj(*): Unknown address family: guess AF_UNIX because OS is OpenBSD");
-  socket_addr.sin_family = AF_UNIX;
+  ((struct sockaddr*)&socket_addr)->sa_family = AF_UNIX;
 #else
   return -1;
 #endif
  }
 
- switch (socket_addr.sin_family) {
+ switch (((struct sockaddr*)&socket_addr)->sa_family) {
 #ifdef ROAR_HAVE_UNIX
   case AF_UNIX:   type = ROAR_SOCKET_TYPE_UNIX; break;
 #endif
