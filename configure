@@ -827,7 +827,7 @@ fi
 
 echo -n 'checking for getservbyname()... '
 echo '#include <netdb.h>' > $TF_C
-echo 'int main (void) { getservbyname((void*), (void*)0); return 0; }'  >> $TF_C
+echo 'int main (void) { getservbyname((void*)0, (void*)0); return 0; }'  >> $TF_C
 
 if $CCTF 2> /dev/null;
 then
