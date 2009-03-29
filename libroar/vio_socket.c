@@ -146,10 +146,10 @@ int     roar_vio_open_def_socket          (struct roar_vio_calls * calls, struct
  // this just free()s some kernel buffers :)
  switch (def->o_flags & (O_RDONLY|O_WRONLY|O_RDWR)) {
   case O_RDONLY:
-    shutdown(fh, SHUT_WR);
+    ROAR_SHUTDOWN(fh, SHUT_WR);
    break;
   case O_WRONLY:
-    shutdown(fh, SHUT_RD);
+    ROAR_SHUTDOWN(fh, SHUT_RD);
    break;
  }
 

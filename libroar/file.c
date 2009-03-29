@@ -245,7 +245,7 @@ ssize_t roar_file_play_full  (struct roar_connection * con, char * file, int exe
    return -1;
   }
 
-  shutdown(con->fh, SHUT_RD);
+  ROAR_SHUTDOWN(con->fh, SHUT_RD);
 
   out = con->fh;
  } else {

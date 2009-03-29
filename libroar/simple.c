@@ -87,9 +87,9 @@ int roar_simple_stream_obj  (struct roar_stream * s, int rate, int channels, int
  }
 
  if ( dir == ROAR_DIR_PLAY ) {
-  shutdown(con.fh, SHUT_RD);
+  ROAR_SHUTDOWN(con.fh, SHUT_RD);
  } else if ( dir == ROAR_DIR_MONITOR || dir == ROAR_DIR_RECORD ) {
-  shutdown(con.fh, SHUT_WR);
+  ROAR_SHUTDOWN(con.fh, SHUT_WR);
  }
 
  return con.fh;
@@ -283,9 +283,9 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
 */
 
  if ( dir == ROAR_DIR_PLAY ) {
-  shutdown(fh, SHUT_RD);
+  ROAR_SHUTDOWN(fh, SHUT_RD);
  } else if ( dir == ROAR_DIR_MONITOR || dir == ROAR_DIR_RECORD ) {
-  shutdown(fh, SHUT_WR);
+  ROAR_SHUTDOWN(fh, SHUT_WR);
  }
 
  s->fh = fh;

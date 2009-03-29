@@ -90,11 +90,11 @@ int roar_vio_open_pipe (struct roar_vio_calls * s0, struct roar_vio_calls * s1, 
     }
 
     if ( rw == O_RDONLY ) {
-     shutdown(self->b.p[0], SHUT_WR);
-     shutdown(self->b.p[1], SHUT_RD);
+     ROAR_SHUTDOWN(self->b.p[0], SHUT_WR);
+     ROAR_SHUTDOWN(self->b.p[1], SHUT_RD);
     } else if ( rw == O_WRONLY ) {
-     shutdown(self->b.p[0], SHUT_RD);
-     shutdown(self->b.p[1], SHUT_WR);
+     ROAR_SHUTDOWN(self->b.p[0], SHUT_RD);
+     ROAR_SHUTDOWN(self->b.p[1], SHUT_WR);
     }
    break;
   default:
