@@ -824,6 +824,18 @@ else
  echo no
 fi
 
+echo -n 'checking for getservbyname()... '
+echo '#include <netdb.h>' > $TF_C
+echo 'int main (void) { getservbyname((void*), (void*)0); return 0; }'  >> $TF_C
+
+if $CCTF 2> /dev/null;
+then
+ echo '#define ROAR_HAVE_GETSERVBYNAME' >&3
+ echo yes
+else
+ echo no
+fi
+
 echo -n 'checking for safe 32 bit integer overflow... '
 
 cat > $TF_C << EOF
