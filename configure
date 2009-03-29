@@ -23,6 +23,7 @@ SYSNAME='unknown'
 SHARED='-shared'
 SHARED_CF=''
 fPIC=true
+MMCU=''
 PKG_CONFIG=false
 RUNTIME_DETECT=false
 
@@ -152,6 +153,7 @@ do
    echo '--without-libao             - Disable build of libao plugin'
    echo '--without-xmms              - Disable build of XMMS plugin'
    echo
+   echo '--mmcu MMCU                 - Sets -mmcu compiler/linker option'
    echo '--minimal                   - Disable all optional components'
    echo '--cross-compile             - Enable cross compiler workarounds'
    echo '--target-microcontroller    - Set Options for mircocontrollers without a OS'
@@ -293,6 +295,10 @@ do
   ;;
   '--prefix-man')
    PREFIX_MAN="$2"
+   shift;
+  ;;
+  '--mmcu')
+   MMCU="$2"
    shift;
   ;;
   '--cross-compile')
@@ -471,6 +477,11 @@ fi
 [ "$PREFIX_MAN" = '' ] && PREFIX_MAN="$PREFIX/share/man/"
 
 [ "$DEFAULT_GRP" = '' ] && DEFAULT_GRP='audio'
+
+if [ "$MMCU" != '' ]
+then
+ CC="$CC -mmcu=$MMCU"
+fi
 
 # now write the cc name to Makefile.conf
 {
@@ -807,6 +818,37 @@ echo 'int main (void) { getpeereid(0, NULL, NULL); return 0; }'  >> $TF_C
 if $CCTF 2> /dev/null;
 then
  echo '#define ROAR_HAVE_GETPEEREID' >&3
+ echo yes
+else
+ echo no
+fi
+
+echo -n 'checking for select()... '
+cat <<EOF > $TF_C
+#include <sys/select.h>
+#include <sys/time.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+int main (void) {
+ fd_set rfds;
+ struct timeval tv;
+
+ FD_ZERO(&rfds);
+ FD_SET(0, &rfds);
+
+ tv.tv_sec  = 0;
+ tv.tv_usec = 0;
+
+ select(1, &rfds, NULL, NULL, &tv);
+
+ return 0;
+}
+EOF
+
+if $CCTF 2> /dev/null;
+then
+ echo '#define ROAR_HAVE_SELECT' >&3
  echo yes
 else
  echo no
