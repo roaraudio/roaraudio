@@ -80,7 +80,7 @@ int roar_conv_bits_8to32  (void * out, void * in, int samples) {
  int i;
 
  for (i = samples - 1; i >= 0; i--)
-  op[i] = ip[i] << 24;
+  op[i] = (int32_t) ip[i] << 24;
 
  return 0;
 }
@@ -104,7 +104,7 @@ int roar_conv_bits_16to32 (void * out, void * in, int samples) {
  int i;
 
  for (i = samples - 1; i >= 0; i--)
-  op[i] = ip[i] << 16;
+  op[i] = (int32_t) ip[i] << 16;
 
  return 0;
 }
