@@ -346,7 +346,9 @@ int     roar_vio_socket_conv_def          (struct roar_vio_defaults * def, int d
 }
 
 int     roar_vio_socket_get_port          (char * service, int domain, int type) {
+#ifdef ROAR_HAVE_GETSERVBYNAME
  struct servent * serv  = NULL;
+#endif
  char           * proto = NULL;
  int              port;
  char           * ts;
@@ -395,6 +397,7 @@ int     roar_vio_socket_get_port          (char * service, int domain, int type)
     return -1;
  }
 
+#ifdef ROAR_HAVE_GETSERVBYNAME
  if ( ts != NULL )
   *ts = 0;
 
@@ -411,6 +414,9 @@ int     roar_vio_socket_get_port          (char * service, int domain, int type)
   *ts = '/';
 
  return ROAR_NET2HOST16(serv->s_port);
+#endif
+
+ return -1;
 }
 
 // AF_UNIX:
