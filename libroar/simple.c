@@ -118,7 +118,6 @@ int roar_simple_new_stream (struct roar_connection * con, int rate, int channels
 }
 
 int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream * s, int rate, int channels, int bits, int codec, int dir) {
- struct roar_message    mes;
  char file[80] = {0};
  int fh = -1, listen = -1;
  static int count = 0;
@@ -129,8 +128,11 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
 #endif
  struct sockaddr_in   socket_addr;
  socklen_t            len            = sizeof(struct sockaddr_in);
+#ifdef ROAR_HAVE_SELECT
  fd_set fds;
  struct timeval timeout = {10, 0};
+ struct roar_message    mes;
+#endif
 #ifdef ROAR_HAVE_UNIX
  int socks[2]; // for socketpair()
 #endif
@@ -212,6 +214,7 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
  }
 
  if ( type != ROAR_SOCKET_TYPE_UNIX ) {
+#ifdef ROAR_HAVE_SELECT
   if ( roar_stream_connect_to_ask(con, s, type, file, port) != -1 ) {
 
    FD_ZERO(&fds);
@@ -243,6 +246,9 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
   }
 
   close(listen);
+#else
+  return -1;
+#endif
  } else { // this is type == ROAR_SOCKET_TYPE_UNIX
 #ifdef ROAR_HAVE_UNIX
   if ( socketpair(AF_UNIX, SOCK_STREAM, 0, socks) == -1 ) {
