@@ -60,14 +60,16 @@
 #define O_RDWR         (O_RDONLY|O_WRONLY)
 #define O_NONBLOCK     0x04
 
+#define EAGAIN         11
 #define ENOSYS         38
 
 struct sockaddr {
  sa_family_t sa_family;
 };
 
-int bind    (int sockfd, const struct sockaddr *my_addr,   socklen_t addrlen);
-int connect (int sockfd, const struct sockaddr *serv_addr, socklen_t addrlen);
+int    bind    (int sockfd, const struct sockaddr *my_addr,   socklen_t addrlen);
+int    connect (int sockfd, const struct sockaddr *serv_addr, socklen_t addrlen);
+char * strerror(int errnum);
 
 // sam dummy funcs:
 #define getpid()    2
