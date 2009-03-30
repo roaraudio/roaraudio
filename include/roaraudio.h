@@ -78,7 +78,9 @@
 #include <arpa/inet.h>
 #endif
 
+#ifdef ROAR_HAVE_SELECT
 #include <sys/socket.h>
+#endif
 
 #ifdef ROAR_HAVE_IPV4
 #include <netinet/in.h>
