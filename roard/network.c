@@ -28,7 +28,12 @@
 #undef SO_PEERCRED
 #endif
 
+#ifdef ROAR_HAVE_SELECT
+#define _CAN_OPERATE
+#endif
+
 int net_check_listen  (void) {
+#ifdef _CAN_OPERATE
  int r;
  fd_set sl;
  struct timeval tv;
@@ -45,8 +50,12 @@ int net_check_listen  (void) {
  }
 
  return r;
+#else
+ return -1;
+#endif
 }
 
+#ifdef _CAN_OPERATE
 int net_get_new_client (void) {
  int fh;
  int client;
@@ -98,5 +107,6 @@ int net_get_new_client (void) {
 
  return 0;
 }
+#endif
 
 //ll
