@@ -455,6 +455,7 @@ int roar_socket_open (int mode, int type, char * host, int port) {
  int i;
  int ret;
 #endif
+#if defined(ROAR_HAVE_IPV4) || defined(ROAR_HAVE_IPV6) || defined(ROAR_HAVE_UNIX) || defined(ROAR_HAVE_IPX)
  union {
   struct sockaddr     sa;
 #if defined(ROAR_HAVE_IPV4) || defined(ROAR_HAVE_IPV6)
@@ -470,6 +471,7 @@ int roar_socket_open (int mode, int type, char * host, int port) {
   struct sockaddr_ipx ipx;
 #endif
  } socket_addr;
+#endif
 #if defined(ROAR_HAVE_IPV4) || defined(ROAR_HAVE_IPV6)
  struct hostent     * he;
 #endif
@@ -625,11 +627,16 @@ int roar_socket_open (int mode, int type, char * host, int port) {
   return -1;
  }
 
- if ( mode == MODE_LISTEN )
+ if ( mode == MODE_LISTEN ) {
+#ifdef ROAR_HAVE_BSDSOCKETS
   if ( listen(fh, ROAR_SOCKET_QUEUE_LEN) == -1 ) {
    close(fh);
    return -1;
   }
+#else
+  return -1;
+#endif
+ }
 
  return fh;
 }
@@ -681,6 +688,7 @@ int roar_socket_open_fork  (int mode, char * host, int port) {
 }
 
 int roar_socket_open_file  (int mode, char * host, int port) {
+#ifdef ROAR_HAVE_IO_POSIX
  int fh;
 
  if ( mode == MODE_LISTEN )
@@ -691,6 +699,9 @@ int roar_socket_open_file  (int mode, char * host, int port) {
  }
 
  return fh;
+#else
+ return -1;
+#endif
 }
 
 // --- [ PROXY CODE ] ---

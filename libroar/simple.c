@@ -98,12 +98,14 @@ int roar_simple_stream_obj  (struct roar_stream * s, int rate, int channels, int
 int roar_simple_new_stream_attachexeced_obj (struct roar_connection * con, struct roar_stream * s, int rate, int channels, int bits, int codec, int dir) {
  int fh;
 
- if ( (fh = roar_simple_stream_obj(s, rate, channels, bits, codec, NULL /* server, we hope this goes ok here... */,
+ if ( (fh = roar_simple_stream_obj(s, rate, channels, bits, codec, NULL /* server, we hope this is ok here... */,
                                    dir, "libroar temp stream")) == -1 )
   return -1;
 
  if ( roar_stream_attach_simple(con, s, roar_get_clientid(con)) == -1 ) {
+#ifdef ROAR_HAVE_IO_POSIX
   close(fh);
+#endif /* no else as we return -1 anyway */
   return -1;
  }
 
@@ -142,9 +144,13 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
  int socks[2]; // for socketpair()
 #endif
 
+#ifdef ROAR_HAVE_BSDSOCKETS
  if ( getsockname(con->fh, (struct sockaddr *)&socket_addr, &len) == -1 ) {
   return -1;
  }
+#else
+ return -1;
+#endif
 
  if ( len == 0 ) {
 #ifdef ROAR_OS_OPENBSD
@@ -322,7 +328,11 @@ int roar_simple_filter(int rate, int channels, int bits, int codec, char * serve
 
 
 int roar_simple_close(int fh) {
+#ifdef ROAR_HAVE_IO_POSIX
  return close(fh);
+#else
+ return -1;
+#endif
 }
 
 int roar_simple_get_standby (int fh) {
