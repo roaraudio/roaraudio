@@ -37,6 +37,10 @@
 #define BUFSIZE 8192
 #define BUFMAX  65536
 
+#ifdef ROAR_HAVE_IO_POSIX
+#define _CAN_OPERATE
+#endif
+
 int roar_file_codecdetect(char * buf, int len) {
  int codec = -1;
 
@@ -82,6 +86,7 @@ int roar_file_codecdetect(char * buf, int len) {
 }
 
 ssize_t roar_file_send_raw (int out, int in) {
+#ifdef _CAN_OPERATE
  ssize_t r = 0;
 #ifdef ROAR_HAVE_LINUX_SENDFILE
  ssize_t ret;
@@ -114,6 +119,9 @@ ssize_t roar_file_send_raw (int out, int in) {
   setsockopt(out, IPPROTO_TCP, TCP_CORK, &cork_old, cork_len);
 #endif
  return r;
+#else
+ return -1;
+#endif
 }
 
 ssize_t     roar_file_map        (char * filename, int flags, mode_t mode, size_t len, void ** mem) {
@@ -184,6 +192,7 @@ ssize_t roar_file_play (struct roar_connection * con, char * file, int exec) {
 }
 
 ssize_t roar_file_play_full  (struct roar_connection * con, char * file, int exec, int passfh, struct roar_stream * s) {
+#ifdef _CAN_OPERATE
  int codec = -1;
  int in, out = -1;
  ssize_t r = 0;
@@ -292,6 +301,9 @@ ssize_t roar_file_play_full  (struct roar_connection * con, char * file, int exe
  }
 
  return r;
+#else
+ return -1;
+#endif
 }
 
 char  * roar_cdromdevice     (void) {

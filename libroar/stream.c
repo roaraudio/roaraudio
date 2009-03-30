@@ -295,7 +295,11 @@ int roar_stream_send_data (struct roar_connection * con, struct roar_stream * s,
   return len;
  }
 
+#ifdef ROAR_HAVE_IO_POSIX
  return write(s->fh, data, len);
+#endif
+
+ return -1;
 }
 
 int roar_stream_get_info (struct roar_connection * con, struct roar_stream * s, struct roar_stream_info * info) {

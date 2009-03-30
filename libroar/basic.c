@@ -42,7 +42,7 @@ int roar_connect_raw (char * server) {
  int fh = -1;
  int is_decnet = 0;
  char * obj = NULL;
-#ifndef ROAR_TARGET_WIN32
+#if !defined(ROAR_TARGET_WIN32) && !defined(ROAR_TARGET_MICROCONTROLLER)
  struct passwd * pwd;
 #endif
 #ifdef ROAR_HAVE_LIBDNET
@@ -202,7 +202,9 @@ int roar_disconnect (struct roar_connection * con) {
 
  roar_req(con, &m, NULL);
 
+#ifdef ROAR_HAVE_IO_POSIX
  close(con->fh);
+#endif
 
  con->fh = -1;
 

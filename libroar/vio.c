@@ -34,7 +34,12 @@
 
 #include "libroar.h"
 
+#ifdef ROAR_HAVE_IO_POSIX
+#define _CAN_OPERATE
+#endif
+
 int roar_vio_init_calls (struct roar_vio_calls * calls) {
+#ifdef _CAN_OPERATE
  if ( calls == NULL )
   return -1;
 
@@ -54,6 +59,9 @@ int roar_vio_init_calls (struct roar_vio_calls * calls) {
  calls->close    = roar_vio_basic_close;
 
  return 0;
+#else
+ return -1;
+#endif
 }
 
 int roar_vio_set_inst (struct roar_vio_calls * vio, void * inst) {
@@ -176,6 +184,7 @@ int     roar_vio_printf(struct roar_vio_calls * vio, const char *format, ...) {
 
 // converters:
 int     roar_vio_open_file     (struct roar_vio_calls * calls, char * filename, int flags, mode_t mode) {
+#ifdef _CAN_OPERATE
  int fh;
 
  if ( calls == NULL || filename == NULL )
@@ -190,6 +199,9 @@ int     roar_vio_open_file     (struct roar_vio_calls * calls, char * filename, 
  }
 
  return 0;
+#else
+ return -1;
+#endif
 }
 
 int     roar_vio_open_fh       (struct roar_vio_calls * calls, int fh) {
@@ -326,15 +338,27 @@ fpos_t roar_vio_to_stdio_lseek(void *__cookie, fpos_t __pos, int __w) {
 
 // basic
 ssize_t roar_vio_basic_read (struct roar_vio_calls * vio, void *buf, size_t count) {
+#ifdef _CAN_OPERATE
  return read(roar_vio_get_fh(vio), buf, count);
+#else
+ return -1;
+#endif
 }
 
 ssize_t roar_vio_basic_write(struct roar_vio_calls * vio, void *buf, size_t count) {
+#ifdef _CAN_OPERATE
  return write(roar_vio_get_fh(vio), buf, count);
+#else
+ return -1;
+#endif
 }
 
 off_t   roar_vio_basic_lseek(struct roar_vio_calls * vio, off_t offset, int whence) {
+#ifdef _CAN_OPERATE
  return lseek(roar_vio_get_fh(vio), offset, whence);
+#else
+ return -1;
+#endif
 }
 
 int     roar_vio_basic_nonblock(struct roar_vio_calls * vio, int state) {
@@ -358,10 +382,14 @@ int     roar_vio_basic_sync    (struct roar_vio_calls * vio) {
 }
 
 int     roar_vio_basic_close    (struct roar_vio_calls * vio) {
+#ifdef _CAN_OPERATE
  if ( roar_vio_get_fh(vio) != -1 )
   return close(roar_vio_get_fh(vio));
 
  return 0;
+#else
+ return -1;
+#endif
 }
 
 // null
