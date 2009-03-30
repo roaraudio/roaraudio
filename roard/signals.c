@@ -24,6 +24,10 @@
 
 #include "roard.h"
 
+// we should add signal handling on micro controllsers here.
+
+#if !defined(ROAR_TARGET_MICROCONTROLLER)
+
 void on_sig_int (int signum) {
  ROAR_DBG("got SIGINT");
 
@@ -38,6 +42,8 @@ void on_sig_chld (int signum) {
 
  signal(SIGCHLD, on_sig_chld);
 }
+
+#endif
 
 
 //ll
