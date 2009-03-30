@@ -271,7 +271,9 @@ int main (int argc, char * argv[]) {
  char * k;
  char user_sock[80]  = {0};
  struct roar_audio_info sa;
+#ifdef ROAR_HAVE_FORK
  int    daemon       = 0;
+#endif
  int    realtime     = 0;
  int    sysclocksync = 0;
  char * driver    = NULL;
@@ -293,12 +295,24 @@ int main (int argc, char * argv[]) {
  char * sock_grp  = ROAR_DEFAULT_SOCKGRP;
  char * sock_user = NULL;
  int    sock_type = ROAR_SOCKET_TYPE_UNKNOWN;
+#ifdef ROAR_HAVE_CHROOT
  char * chrootdir = NULL;
+#endif
+#if defined(ROAR_HAVE_SETGID) || defined(ROAR_HAVE_SETUID)
  int    setids    = 0;
+#endif
+#ifdef ROAR_HAVE_UNIX
  char * env_roar_proxy_backup;
+#endif
+#if defined(ROAR_HAVE_SETGID) && defined(ROAR_HAVE_IO_POSIX)
  struct group   * grp  = NULL;
+#endif
+#if defined(ROAR_HAVE_SETUID) && defined(ROAR_HAVE_IO_POSIX)
  struct passwd  * pwd  = NULL;
+#endif
+#ifdef ROAR_HAVE_GETSERVBYNAME
  struct servent * serv = NULL;
+#endif
  DRIVER_USERDATA_T drvinst;
  struct roar_client * self = NULL;
 #ifdef ROAR_HAVE_LIBDNET
@@ -319,8 +333,8 @@ int main (int argc, char * argv[]) {
  g_sa = &sa;
 
 
- if ( getuid() != 0 && getenv("HOME") ) {
-  snprintf(user_sock, 79, "%s/%s", getenv("HOME"), ROAR_DEFAULT_SOCK_USER);
+ if ( getuid() != 0 && getenv("HOME") != NULL ) {
+  snprintf(user_sock, 79, "%s/%s", (char*)getenv("HOME"), ROAR_DEFAULT_SOCK_USER);
   server = user_sock;
  }
 
@@ -365,7 +379,11 @@ int main (int argc, char * argv[]) {
    }
 
   } else if ( strcmp(k, "--demon") == 0 || strcmp(k, "--daemon") == 0 ) {
+#ifdef ROAR_HAVE_FORK
    daemon = 1;
+#else
+   ROAR_ERR("--daemon not supported");
+#endif
   } else if ( strcmp(k, "--terminate") == 0 ) {
    g_terminate = 1;
   } else if ( strcmp(k, "--sysclocksync") == 0 ) {
@@ -373,11 +391,24 @@ int main (int argc, char * argv[]) {
   } else if ( strcmp(k, "--realtime") == 0 ) {
    realtime++;
   } else if ( strcmp(k, "--chroot") == 0 ) {
+#ifdef ROAR_HAVE_CHROOT
    chrootdir = argv[++i];
+#else
+   ROAR_ERR("--chroot not supported");
+   i++;
+#endif
   } else if ( strcmp(k, "--setgid") == 0 ) {
+#ifdef ROAR_HAVE_SETGID
    setids |= R_SETGID;
+#else
+   ROAR_ERR("--setgid not supported");
+#endif
   } else if ( strcmp(k, "--setuid") == 0 ) {
+#ifdef ROAR_HAVE_SETUID
    setids |= R_SETUID;
+#else
+   ROAR_ERR("--setuid not supported");
+#endif
 
   } else if ( strcmp(k, "--list-cf") == 0 ) {
    print_codecfilterlist();
@@ -445,6 +476,7 @@ int main (int argc, char * argv[]) {
 
    errno = 0;
    if ( (port = atoi(argv[++i])) < 1 ) {
+#ifdef ROAR_HAVE_GETSERVBYNAME
     if ( (serv = getservbyname(argv[i], "tcp")) == NULL ) {
      ROAR_ERR("Unknown service: %s: %s", argv[i], strerror(errno));
      return 1;
@@ -453,6 +485,10 @@ int main (int argc, char * argv[]) {
     ROAR_DBG("main(*): serv = {s_name='%s', s_aliases={...}, s_port=%i, s_proto='%s'}",
             serv->s_name, ROAR_NET2HOST16(serv->s_port), serv->s_proto);
     port = ROAR_NET2HOST16(serv->s_port);
+#else
+    ROAR_ERR("invalite port number: %s", argv[i]);
+    return 1;
+#endif
    }
   } else if ( strcmp(k, "-b") == 0 || strcmp(k, "--bind") == 0 || strcmp(k, "--sock") == 0 ) {
    server = argv[++i];
@@ -508,7 +544,12 @@ int main (int argc, char * argv[]) {
     return 1;
    }
   } else if ( strcmp(k, "--close-fh") == 0 ) {
+#ifdef ROAR_HAVE_IO_POSIX
    close(atoi(argv[++i]));
+#else
+   i++;
+   ROAR_WARN("can not close file handle %s (closing not supported)", argv[i]);
+#endif
 
   } else if ( strcmp(k, "--standby") == 0 ) {
    g_standby = 1;
@@ -536,6 +577,7 @@ int main (int argc, char * argv[]) {
 
  if ( *server != 0 ) {
   if ( (g_listen_socket = roar_socket_listen(sock_type, server, port)) == -1 ) {
+#ifdef ROAR_HAVE_UNIX
    if ( *server == '/' ) {
     if ( (env_roar_proxy_backup = getenv("ROAR_PROXY")) != NULL ) {
      env_roar_proxy_backup = strdup(env_roar_proxy_backup);
@@ -556,21 +598,29 @@ int main (int argc, char * argv[]) {
      setenv("ROAR_PROXY", env_roar_proxy_backup, 0);
      free(env_roar_proxy_backup);
     }
+#else
+   if (0) { // noop
+#endif
    } else {
     ROAR_ERR("Can not open listen socket!");
     return 1;
    }
   }
 
+#if defined(ROAR_HAVE_SETGID) && defined(ROAR_HAVE_IO_POSIX)
   if ( (grp = getgrnam(sock_grp)) == NULL ) {
    ROAR_ERR("Can not get GID for group %s: %s", sock_grp, strerror(errno));
   }
+#endif
+#if defined(ROAR_HAVE_SETUID) && defined(ROAR_HAVE_IO_POSIX)
   if ( sock_user || (setids & R_SETUID) ) {
    if ( (pwd = getpwnam(sock_user)) == NULL ) {
     ROAR_ERR("Can not get UID for user %s: %s", sock_user, strerror(errno));
    }
   }
+#endif
 
+#ifdef ROAR_HAVE_IO_POSIX
   if ( *server == '/' ) {
    if ( grp ) {
     if ( pwd ) {
@@ -582,6 +632,7 @@ int main (int argc, char * argv[]) {
      chmod(server, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP);
    }
   }
+#endif
  }
 
  if ( output_buffer_init(&sa) == -1 ) {
@@ -606,19 +657,27 @@ int main (int argc, char * argv[]) {
  }
 
 
+ // we should handle this on microcontrollers, too.
+#if !defined(ROAR_TARGET_MICROCONTROLLER)
  signal(SIGINT,  on_sig_int);
  signal(SIGCHLD, on_sig_chld);
  signal(SIGPIPE, SIG_IGN);  // ignore broken pipes
+#endif
 
  if ( realtime ) {
 #ifdef DEBUG
   ROAR_WARN("compiled with -DDEBUG but realtime is enabled: for real realtime support compiel without -DDEBUG");
 #endif
 
+#ifdef ROAR_HAVE_NICE
   errno = 0;
   nice(-5*realtime); // -5 for each --realtime
-  if ( errno )
-   ROAR_WARN("Can not decrease nice value by 5: %s", strerror(errno));
+  if ( errno ) {
+   ROAR_WARN("Can not decrease nice value by %i: %s", 5*realtime, strerror(errno));
+  }
+#else
+  ROAR_WARN("Can not decrease nice value by %i: %s", 5*realtime, strerror(errno));
+#endif
 /*
 #ifdef __linux__
   if ( ioprio_set(IOPRIO_WHO_PROCESS, getpid(), IOPRIO_PRIO_VALUE(IOPRIO_CLASS_BE, 0)) == -1 )
@@ -627,6 +686,7 @@ int main (int argc, char * argv[]) {
 */
  }
 
+#ifdef ROAR_HAVE_SETGID
  if ( setids & R_SETGID ) {
   if ( setgroups(0, (const gid_t *) NULL) == -1 ) {
    ROAR_ERR("Can not clear supplementary group IDs: %s", strerror(errno));
@@ -635,6 +695,7 @@ int main (int argc, char * argv[]) {
    ROAR_ERR("Can not set GroupID: %s", strerror(errno));
   }
  }
+#endif
 
 
  clients_set_pid(g_self_client, getpid());
@@ -649,16 +710,19 @@ int main (int argc, char * argv[]) {
 
  strcpy(self->name, "RoarAudio daemon internal");
 
+#ifdef ROAR_HAVE_FORK
  if ( daemon ) {
   close(ROAR_STDIN );
   close(ROAR_STDOUT);
   close(ROAR_STDERR);
   setsid();
   if ( fork() )
-   _exit(0);
+   ROAR_U_EXIT(0);
   clients_set_pid(g_self_client, getpid()); // reset pid as it changed
  }
+#endif
 
+#ifdef ROAR_HAVE_CHROOT
  if (chrootdir) {
   if ( chroot(chrootdir) == -1 ) {
    ROAR_ERR("Can not chroot to %s: %s", chrootdir, strerror(errno));
@@ -669,7 +733,9 @@ int main (int argc, char * argv[]) {
    return 2;
   }
  }
+#endif
 
+#ifdef ROAR_HAVE_SETUID
  if ( setids & R_SETUID ) {
   if ( !pwd || setuid(pwd->pw_uid) == -1 ) {
    ROAR_ERR("Can not set UserID: %s", strerror(errno));
@@ -677,6 +743,7 @@ int main (int argc, char * argv[]) {
   }
   clients_set_uid(g_self_client, getuid());
  }
+#endif
 
  // start main loop...
  main_loop(drvid, drvinst, &sa, sysclocksync);
@@ -692,12 +759,16 @@ int main (int argc, char * argv[]) {
 void cleanup_listen_socket (int terminate) {
 
  if ( g_listen_socket != -1 ) {
+#ifdef ROAR_HAVE_IO_POSIX
   close(g_listen_socket);
+#endif // #else is useless because we are in void context.
 
   g_listen_socket = -1;
 
+#ifdef ROAR_HAVE_UNIX
   if ( *server == '/' )
    unlink(server);
+#endif
  }
 
  if ( terminate )
