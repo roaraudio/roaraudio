@@ -639,6 +639,144 @@ else
 fi
 
 
+echo -n 'checking for _exit()... '
+
+echo '#include <unistd.h>'    > $TF_C
+echo 'int main (void) { _exit(0); return 0; }' >> $TF_C
+
+if $CCTF 2> /dev/null;
+then
+ echo '#define ROAR_HAVE_U_EXIT' >&3
+ echo '#define ROAR_U_EXIT _exit' >&3
+ echo yes
+else
+ echo '#define ROAR_U_EXIT exit' >&3
+ echo no
+fi
+
+
+echo -n 'checking for nice()... '
+
+echo '#include <unistd.h>'    > $TF_C
+echo 'int main (void) { nice(0); return 0; }' >> $TF_C
+
+if $CCTF 2> /dev/null;
+then
+ echo '#define ROAR_HAVE_NICE' >&3
+ echo yes
+else
+ echo no
+fi
+
+
+echo -n 'checking for setgid()... '
+
+echo '#include <sys/types.h>' >  $TF_C
+echo '#include <unistd.h>'    >> $TF_C
+echo 'int main (void) { setgid(0); return 0; }' >> $TF_C
+
+if $CCTF 2> /dev/null;
+then
+ echo '#define ROAR_HAVE_SETGID' >&3
+ echo yes
+else
+ echo no
+fi
+
+
+echo -n 'checking for setuid()... '
+
+echo '#include <sys/types.h>' >  $TF_C
+echo '#include <unistd.h>'    >> $TF_C
+echo 'int main (void) { setuid(0); return 0; }' >> $TF_C
+
+if $CCTF 2> /dev/null;
+then
+ echo '#define ROAR_HAVE_SETUID' >&3
+ echo yes
+else
+ echo no
+fi
+
+
+echo -n 'checking for gettimeofday()... '
+
+echo '#include <sys/time.h>' >  $TF_C
+echo '#include <time.h>'     >> $TF_C
+echo 'int main (void) { struct timeval tv; gettimeofday(&tv, NULL); return 0; }' >> $TF_C
+
+if $CCTF 2> /dev/null;
+then
+ echo '#define ROAR_HAVE_GETTIMEOFDAY' >&3
+ echo yes
+else
+ echo no
+fi
+
+
+echo -n 'checking for basic IO calls... '
+
+cat <<EOF > $TF_C
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <string.h>
+#include <unistd.h>
+
+int main(void) {
+ open(NULL, 0, 0);
+ close(0);
+ read(0, NULL, 0);
+ write(0, NULL, 0);
+ lseek(0, 0, 0);
+ return 0;
+}
+EOF
+
+if $CCTF 2> /dev/null;
+then
+ echo '#define ROAR_HAVE_IO_POSIX' >&3
+ echo posix
+else
+ echo none
+fi
+
+echo -n 'checking for basic FS calls... '
+
+cat <<EOF > $TF_C
+#include <string.h>
+#include <unistd.h>
+
+int main(void) {
+ chdir(NULL);
+ unlink(NULL);
+ return 0;
+}
+EOF
+
+if $CCTF 2> /dev/null;
+then
+ echo '#define ROAR_HAVE_FS_POSIX' >&3
+ echo posix
+else
+ echo none
+fi
+
+
+echo -n 'checking for chroot()... '
+
+echo '#include <unistd.h>' > $TF_C
+echo 'int main (void) { chroot((void*)0); return 0; }' >> $TF_C
+
+if $CCTF 2> /dev/null;
+then
+ echo '#define ROAR_HAVE_CHROOT' >&3
+ echo yes
+else
+ echo no
+fi
+
+
 echo -n 'checking for mlock()... '
 
 echo '#include <sys/mman.h>' > $TF_C
