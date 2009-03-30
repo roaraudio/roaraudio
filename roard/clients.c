@@ -164,6 +164,7 @@ int clients_set_gid   (int id, int    gid) {
 #define MAX_STREAMLESS 8
 
 int clients_check_all (void) {
+#ifdef ROAR_HAVE_SELECT
  struct timeval tv;
  fd_set r, e;
  int i, j;
@@ -301,6 +302,9 @@ int clients_check_all (void) {
 
  ROAR_DBG("clients_check_all(void) = %i // have value", have);
  return have;
+#else
+ return -1;
+#endif
 }
 
 int clients_check     (int id) {
