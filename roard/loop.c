@@ -28,9 +28,11 @@ int main_loop (int driver, DRIVER_USERDATA_T driver_inst, struct roar_audio_info
  void ** streams_input = NULL;
  int     term = 0;
  int     streams;
+#ifdef ROAR_HAVE_GETTIMEOFDAY
  long int loopc = 0;
  struct timeval         try, ans;
  float  freq;
+#endif
 #ifdef MONITOR_LATENCY
  long int ans_1last = 0, ans_2last = 0, ans_3last = 0;
 
@@ -42,12 +44,14 @@ int main_loop (int driver, DRIVER_USERDATA_T driver_inst, struct roar_audio_info
 // alive = 1;
  g_pos = 0;
 
+#ifdef ROAR_HAVE_GETTIMEOFDAY
  if ( sysclocksync ) {
   gettimeofday(&try, NULL);
  }
+#endif
 
  while (alive) {
-#ifdef MONITOR_LATENCY
+#if defined(MONITOR_LATENCY) && defined(ROAR_HAVE_GETTIMEOFDAY)
  gettimeofday(&try, NULL);
 #endif
 
@@ -95,7 +99,7 @@ int main_loop (int driver, DRIVER_USERDATA_T driver_inst, struct roar_audio_info
 
   g_pos = ROAR_MATH_OVERFLOW_ADD(g_pos, ROAR_OUTPUT_BUFFER_SAMPLES*g_sa->channels);
   ROAR_DBG("main_loop(*): current pos: %u", g_pos);
-#ifdef MONITOR_LATENCY
+#if defined(MONITOR_LATENCY) && defined(ROAR_HAVE_GETTIMEOFDAY)
  gettimeofday(&ans, NULL);
 
  while (ans.tv_sec > try.tv_sec) {
@@ -115,6 +119,7 @@ int main_loop (int driver, DRIVER_USERDATA_T driver_inst, struct roar_audio_info
  ans_1last = ans.tv_usec;
 #endif
 
+#ifdef ROAR_HAVE_GETTIMEOFDAY
   if ( sysclocksync && !(loopc % sysclocksync) ) {
    gettimeofday(&ans, NULL);
 
@@ -134,6 +139,7 @@ int main_loop (int driver, DRIVER_USERDATA_T driver_inst, struct roar_audio_info
 
   if ( sysclocksync )
    loopc++;
+#endif
  }
 
  return -1;
