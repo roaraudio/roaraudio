@@ -26,6 +26,12 @@
 
 #include "roard.h"
 
+#ifndef ROAR_WITHOUT_CF_CMD
+#if !defined(ROAR_HAVE_UNIX) || !defined(ROAR_HAVE_BSDSOCKETS) || !defined(ROAR_HAVE_IO_POSIX)
+#define ROAR_WITHOUT_CF_CMD
+#endif
+#endif
+
 struct roar_codecfilter g_codecfilter[] = {
  {-1,                     "null", "null codec filter", NULL, ROAR_CODECFILTER_NONE,
                                           NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
