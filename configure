@@ -339,7 +339,7 @@ test_lib () {
 
  while [ "$1" != '--' ]
  do
-  [ "$1" != 'c' ] && LIBS="$LIBS -l$1"
+  [ "$1" != 'c' -a "$1" != '-lc' ] && LIBS="$LIBS -l$1"
   shift;
  done
 
