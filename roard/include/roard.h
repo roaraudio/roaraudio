@@ -25,13 +25,30 @@
 #ifndef _ROARD_H_
 #define _ROARD_H_
 
-#include <signal.h>
-#include <sys/select.h>
-#include <sys/wait.h>
+// need to include this first as we need the config
 #include <roaraudio.h>
+
+
+#ifndef ROAR_TARGET_MICROCONTROLLER
+#include <signal.h>
+#endif
+
+#ifdef ROAR_HAVE_SELECT
+#include <sys/select.h>
+#endif
+
+#ifdef ROAR_HAVE_WAIT
+#include <sys/wait.h>
+#endif
+
+#if !defined(ROAR_TARGET_WIN32) && !defined(ROAR_TARGET_MICROCONTROLLER)
 #include <pwd.h>
+#endif
+
+#ifndef ROAR_TARGET_MICROCONTROLLER
 #include <sys/time.h>
 #include <time.h>
+#endif
 
 /*
 #ifdef __linux__
