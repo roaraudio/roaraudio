@@ -24,7 +24,11 @@
 
 #include "roard.h"
 
-#ifndef ROAR_WITHOUT_CF_CMD
+#if defined(ROAR_HAVE_UNIX) && defined(ROAR_HAVE_BSDSOCKETS) && defined(ROAR_HAVE_IO_POSIX)
+#define _CAN_OPERATE
+#endif
+
+#if !defined(ROAR_WITHOUT_CF_CMD) && defined(_CAN_OPERATE)
 
 #define CMDMAXLEN 1024
 
