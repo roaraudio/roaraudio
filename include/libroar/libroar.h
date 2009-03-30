@@ -39,8 +39,6 @@
 
 #include <roaraudio.h>
 
-#include <stdint.h>
-
 #include <stdarg.h>
 
 #ifdef ROAR_HAVE_WAIT

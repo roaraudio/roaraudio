@@ -43,6 +43,7 @@
 #define __BSD_VISIBLE 1
 #endif
 
+#include <stdint.h>
 #include <stdlib.h>
 
 #ifdef ROAR_HAVE_H_UNISTD
