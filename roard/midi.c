@@ -25,6 +25,7 @@
 #include "roard.h"
 
 int midi_init (void) {
+#ifdef ROAR_HAVE_IO_POSIX
  int i;
  char * files[] = {
                    "/dev/console",
@@ -49,12 +50,19 @@ int midi_init (void) {
  } else {
   return -1;
  }
+#else
+ return -1;
+#endif
 }
 
 int midi_free (void) {
+#ifdef ROAR_HAVE_IO_POSIX
  if ( g_console != -1 )
   close(g_console);
  return 0;
+#else
+ return -1;
+#endif
 }
 
 int midi_cb_play(float t, float freq, int override) {
