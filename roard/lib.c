@@ -25,6 +25,7 @@
 #include "roard.h"
 
 int lib_run_bg(char * cmd, int infh, int outfh, int errfh, int * closefh, int lenclose) {
+#ifdef ROAR_HAVE_FORK
  pid_t child = fork();
  int fh[3] = {-1, -1, -1};
  int i;
@@ -49,7 +50,9 @@ int lib_run_bg(char * cmd, int infh, int outfh, int errfh, int * closefh, int le
 
  // TODO: test for errors here.
 
+#ifdef ROAR_SUPPORT_LISTEN
  close(g_listen_socket); // listen socket.
+#endif
 
 // this breaks the new driver interface
 // clients_free(); // delete all clients!, this allso delets all streams
@@ -57,14 +60,22 @@ int lib_run_bg(char * cmd, int infh, int outfh, int errfh, int * closefh, int le
  midi_free(); // close midi devices
 
  // close fh's we got ask to close:
+#ifdef ROAR_HAVE_IO_POSIX
  for (i = 0; i < lenclose; i++)
   close(closefh[i]);
+#else
+ if ( lenclose ) {
+  ROAR_WARN("lib_run_bg(*): lenclose > 0 and no way known to close fds");
+ }
+#endif
 
  // next we need to remap our stdio:
  // stdio: fh 0..2
 
  for (i = 0; i < 3; i++) {
+#ifdef ROAR_HAVE_IO_POSIX
   close(i);
+#endif
   dup2(fh[i], i); // todo test if this is ok.
   close(fh[i]);
  }
@@ -75,8 +86,11 @@ int lib_run_bg(char * cmd, int infh, int outfh, int errfh, int * closefh, int le
 
  // still alive? BAD!
  ROAR_ERR("lib_run_bg(*): We are still alive! BAD!");
- _exit(3);
+ ROAR_U_EXIT(3);
  return -1;
+#else
+ return -1;
+#endif
 }
 
 //ll
