@@ -32,7 +32,7 @@
 
 struct roar_command {
  int cmd;
-#ifndef ROAR_TARGET_MICROCONTROLLER
+#if !defined(ROAR_TARGET_MICROCONTROLLER) && !defined(ROAR_MINIMAL)
  char name[COMMAND_MAX_NAMELEN];
 #else
  char * name;

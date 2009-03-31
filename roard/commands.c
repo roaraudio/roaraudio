@@ -24,7 +24,7 @@
 
 #include "roard.h"
 
-#ifndef ROAR_TARGET_MICROCONTROLLER
+#if !defined(ROAR_TARGET_MICROCONTROLLER) && !defined(ROAR_MINIMAL)
 #define _NAME(x) (x)
 #else
 #define _NAME(x) ((char*)NULL)
