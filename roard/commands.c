@@ -24,44 +24,52 @@
 
 #include "roard.h"
 
+#ifndef ROAR_TARGET_MICROCONTROLLER
+#define _NAME(x) (x)
+#else
+#define _NAME(x) ((char*)NULL)
+#endif
+
 struct roar_command g_commands[COMMAND_MAX_COMMANDS] = {
-  {ROAR_CMD_NOOP,         "NOOP",         req_on_noop},
-  {ROAR_CMD_IDENTIFY,     "IDENTIFY",     req_on_identify},
-  {ROAR_CMD_AUTH,         "AUTH",         req_on_auth},
-  {ROAR_CMD_WHOAMI,       "WHOAMI",       req_on_whoami},
+  {ROAR_CMD_NOOP,         _NAME("NOOP"),         req_on_noop},
+  {ROAR_CMD_IDENTIFY,     _NAME("IDENTIFY"),     req_on_identify},
+  {ROAR_CMD_AUTH,         _NAME("AUTH"),         req_on_auth},
+  {ROAR_CMD_WHOAMI,       _NAME("WHOAMI"),       req_on_whoami},
 
 
-  {ROAR_CMD_NEW_STREAM,   "NEW_STREAM",   req_on_new_stream},
+  {ROAR_CMD_NEW_STREAM,   _NAME("NEW_STREAM"),   req_on_new_stream},
 
-  {ROAR_CMD_SET_META,     "SET_META",     req_on_set_meta},
-  {ROAR_CMD_GET_META,     "GET_META",     req_on_get_meta},
-  {ROAR_CMD_LIST_META,    "LIST_META",    req_on_list_meta},
+#ifdef ROAR_SUPPORT_META
+  {ROAR_CMD_SET_META,     _NAME("SET_META"),     req_on_set_meta},
+  {ROAR_CMD_GET_META,     _NAME("GET_META"),     req_on_get_meta},
+  {ROAR_CMD_LIST_META,    _NAME("LIST_META"),    req_on_list_meta},
+#endif
 
-  {ROAR_CMD_EXEC_STREAM,  "EXEC_STREAM",  req_on_exec_stream},
-  {ROAR_CMD_QUIT,         "QUIT",         (int(*)(int client, struct roar_message * mes, char * data))clients_delete},
+  {ROAR_CMD_EXEC_STREAM,  _NAME("EXEC_STREAM"),  req_on_exec_stream},
+  {ROAR_CMD_QUIT,         _NAME("QUIT"),         (int(*)(int client, struct roar_message * mes, char * data))clients_delete},
 
-  {ROAR_CMD_CON_STREAM,   "CON_STREAM",   req_on_con_stream},
-  {ROAR_CMD_PASSFH,       "PASSFH",       req_on_passfh},
+  {ROAR_CMD_CON_STREAM,   _NAME("CON_STREAM"),   req_on_con_stream},
+  {ROAR_CMD_PASSFH,       _NAME("PASSFH"),       req_on_passfh},
 
-  {ROAR_CMD_SERVER_OINFO, "SERVER_OINFO", req_on_server_oinfo},
-  {ROAR_CMD_GET_STANDBY,  "GET_STANDBY",  req_on_get_standby},
-  {ROAR_CMD_SET_STANDBY,  "SET_STANDBY",  req_on_set_standby},
-  {ROAR_CMD_EXIT,         "EXIT",         req_on_exit},
+  {ROAR_CMD_SERVER_OINFO, _NAME("SERVER_OINFO"), req_on_server_oinfo},
+  {ROAR_CMD_GET_STANDBY,  _NAME("GET_STANDBY"),  req_on_get_standby},
+  {ROAR_CMD_SET_STANDBY,  _NAME("SET_STANDBY"),  req_on_set_standby},
+  {ROAR_CMD_EXIT,         _NAME("EXIT"),         req_on_exit},
 
-  {ROAR_CMD_LIST_CLIENTS, "LIST_CLIENTS", req_on_list_clients},
-  {ROAR_CMD_LIST_STREAMS, "LIST_STREAMS", req_on_list_streams},
-  {ROAR_CMD_GET_CLIENT,   "GET_CLIENT",   req_on_get_client},
-  {ROAR_CMD_GET_STREAM,   "GET_STREAM",   req_on_get_stream},
-  {ROAR_CMD_KICK,         "KICK",         req_on_kick},
-  {ROAR_CMD_ATTACH,       "ATTACH",       req_on_attach},
-  {ROAR_CMD_SET_VOL,      "SET_VOL",      req_on_set_vol},
-  {ROAR_CMD_GET_VOL,      "GET_VOL",      req_on_get_vol},
-  {ROAR_CMD_GET_STREAM_PARA, "GET_STREAM_PARA", req_on_get_stream_para},
-  {ROAR_CMD_SET_STREAM_PARA, "SET_STREAM_PARA", req_on_set_stream_para},
+  {ROAR_CMD_LIST_CLIENTS, _NAME("LIST_CLIENTS"), req_on_list_clients},
+  {ROAR_CMD_LIST_STREAMS, _NAME("LIST_STREAMS"), req_on_list_streams},
+  {ROAR_CMD_GET_CLIENT,   _NAME("GET_CLIENT"),   req_on_get_client},
+  {ROAR_CMD_GET_STREAM,   _NAME("GET_STREAM"),   req_on_get_stream},
+  {ROAR_CMD_KICK,         _NAME("KICK"),         req_on_kick},
+  {ROAR_CMD_ATTACH,       _NAME("ATTACH"),       req_on_attach},
+  {ROAR_CMD_SET_VOL,      _NAME("SET_VOL"),      req_on_set_vol},
+  {ROAR_CMD_GET_VOL,      _NAME("GET_VOL"),      req_on_get_vol},
+  {ROAR_CMD_GET_STREAM_PARA, _NAME("GET_STREAM_PARA"), req_on_get_stream_para},
+  {ROAR_CMD_SET_STREAM_PARA, _NAME("SET_STREAM_PARA"), req_on_set_stream_para},
 
-  {ROAR_CMD_ADD_DATA,     "ADD_DATA",     req_on_add_data},
+  {ROAR_CMD_ADD_DATA,     _NAME("ADD_DATA"),     req_on_add_data},
 
-  {ROAR_CMD_EOL,          "END OF LIST",  NULL}
+  {ROAR_CMD_EOL,          _NAME("END OF LIST"),  NULL}
  };
 
 int command_get_id_by_cmd (int command) {

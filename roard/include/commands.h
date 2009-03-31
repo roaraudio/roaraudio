@@ -32,7 +32,11 @@
 
 struct roar_command {
  int cmd;
+#ifndef ROAR_TARGET_MICROCONTROLLER
  char name[COMMAND_MAX_NAMELEN];
+#else
+ char * name;
+#endif
  int (*handler)(int client, struct roar_message * mes, char * data);
 };
 
