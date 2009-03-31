@@ -24,7 +24,9 @@
 
 #include "roard.h"
 
+#ifdef ROAR_SUPPORT_LISTEN
 char * server = ROAR_DEFAULT_SOCK_GLOBAL; // global server address
+#endif
 
 void usage (void) {
  printf("Usage: roard [OPTIONS]...\n\n");
@@ -269,7 +271,9 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
 int main (int argc, char * argv[]) {
  int i;
  char * k;
+#ifdef ROAR_SUPPORT_LISTEN
  char user_sock[80]  = {0};
+#endif
  struct roar_audio_info sa;
 #ifdef ROAR_HAVE_FORK
  int    daemon       = 0;
@@ -280,7 +284,9 @@ int main (int argc, char * argv[]) {
  char * device    = NULL;
  char * opts      = NULL;
 // char * server = ROAR_DEFAULT_SOCK_GLOBAL;
+#ifdef ROAR_SUPPORT_LISTEN
  int      port    = ROAR_DEFAULT_PORT;
+#endif
  int               drvid;
  char * s_drv     = "cf";
  char * s_dev     = NULL;
@@ -294,7 +300,9 @@ int main (int argc, char * argv[]) {
  int    o_count   = 0;
  char * sock_grp  = ROAR_DEFAULT_SOCKGRP;
  char * sock_user = NULL;
+#ifdef ROAR_SUPPORT_LISTEN
  int    sock_type = ROAR_SOCKET_TYPE_UNKNOWN;
+#endif
 #ifdef ROAR_HAVE_CHROOT
  char * chrootdir = NULL;
 #endif
@@ -319,11 +327,15 @@ int main (int argc, char * argv[]) {
  char decnethost[80];
 #endif
 
- g_listen_socket = -1;
  g_standby       =  0;
  g_autostandby   =  0;
  alive           =  1;
+#ifdef ROAR_SUPPORT_LISTEN
  g_no_listen     =  0;
+ g_listen_socket = -1;
+#else
+ g_terminate     =  1;
+#endif
 
  sa.bits     = ROAR_BITS_DEFAULT;
  sa.channels = ROAR_CHANNELS_DEFAULT;
@@ -333,6 +345,7 @@ int main (int argc, char * argv[]) {
  g_sa = &sa;
 
 
+#ifdef ROAR_SUPPORT_LISTEN
  if ( getuid() != 0 && getenv("HOME") != NULL ) {
   snprintf(user_sock, 79, "%s/%s", (char*)getenv("HOME"), ROAR_DEFAULT_SOCK_USER);
   server = user_sock;
@@ -340,6 +353,7 @@ int main (int argc, char * argv[]) {
 
  if ( getenv("ROAR_SERVER") != NULL )
   server = getenv("ROAR_SERVER");
+#endif
 
  if ( clients_init() == -1 ) {
   ROAR_ERR("Can not init clients!");
@@ -374,9 +388,13 @@ int main (int argc, char * argv[]) {
    return 0;
 
   } else if ( strcmp(k, "--restart") == 0 ) {
+#ifdef ROAR_SUPPORT_LISTEN
    if ( restart_server(server) == -1 ) {
     ROAR_WARN("Can not terminate old server (not running at %s?), tring to continue anyway", server);
    }
+#else
+   ROAR_ERR("--restart not supported");
+#endif
 
   } else if ( strcmp(k, "--demon") == 0 || strcmp(k, "--daemon") == 0 ) {
 #ifdef ROAR_HAVE_FORK
@@ -471,6 +489,7 @@ int main (int argc, char * argv[]) {
 
   } else if ( strcmp(k, "-p") == 0 || strcmp(k, "--port") == 0 ) {
    // This is only usefull in INET not UNIX mode.
+#ifdef ROAR_SUPPORT_LISTEN
    if ( *server == '/' )
     server = ROAR_DEFAULT_HOST;
 
@@ -490,21 +509,29 @@ int main (int argc, char * argv[]) {
     return 1;
 #endif
    }
+#endif
   } else if ( strcmp(k, "-b") == 0 || strcmp(k, "--bind") == 0 || strcmp(k, "--sock") == 0 ) {
+#ifdef ROAR_SUPPORT_LISTEN
    server = argv[++i];
+#endif
 
   } else if ( strcmp(k, "-t") == 0 || strcmp(k, "--tcp") == 0 ) {
+#ifdef ROAR_SUPPORT_LISTEN
    if ( sock_type != ROAR_SOCKET_TYPE_TCP && sock_type != ROAR_SOCKET_TYPE_TCP6 )
     sock_type = ROAR_SOCKET_TYPE_TCP;
 
    if ( *server == '/' )
     server = ROAR_DEFAULT_HOST;
+#endif
 
   } else if ( strcmp(k, "-4") == 0 ) {
+#ifdef ROAR_SUPPORT_LISTEN
    sock_type = ROAR_SOCKET_TYPE_TCP;
    if ( *server == '/' )
     server = ROAR_DEFAULT_HOST;
+#endif
   } else if ( strcmp(k, "-6") == 0 ) {
+#ifdef ROAR_SUPPORT_LISTEN
 #ifdef PF_INET6
    sock_type = ROAR_SOCKET_TYPE_TCP6;
    if ( *server == '/' )
@@ -513,12 +540,16 @@ int main (int argc, char * argv[]) {
     ROAR_ERR("No IPv6 support compiled in!");
     return 1;
 #endif
+#endif
 
   } else if ( strcmp(k, "-u") == 0 || strcmp(k, "--unix") == 0 ) {
+#ifdef ROAR_SUPPORT_LISTEN
    // ignore this case as it is the default behavor.
    sock_type = ROAR_SOCKET_TYPE_UNIX;
+#endif
 
   } else if ( strcmp(k, "-n") == 0 || strcmp(k, "--decnet") == 0 ) {
+#ifdef ROAR_SUPPORT_LISTEN
 #ifdef ROAR_HAVE_LIBDNET
     port   = ROAR_DEFAULT_NUM;
     strcpy(decnethost, ROAR_DEFAULT_LISTEN_OBJECT);
@@ -528,6 +559,7 @@ int main (int argc, char * argv[]) {
     ROAR_ERR("No DECnet support compiled in!");
     return 1;
 #endif
+#endif
 
   } else if ( strcmp(k, "-G") == 0 ) {
    sock_grp  = argv[++i];
@@ -535,9 +567,11 @@ int main (int argc, char * argv[]) {
    sock_user = argv[++i];
 
   } else if ( strcmp(k, "--no-listen") == 0 ) {
+#ifdef ROAR_SUPPORT_LISTEN
    *server     = 0;
    g_terminate = 1;
    g_no_listen = 1;
+#endif
   } else if ( strcmp(k, "--client-fh") == 0 ) {
    if ( clients_set_fh(clients_new(), atoi(argv[++i])) == -1 ) {
     ROAR_ERR("main(*): Can not set client's fh");
@@ -575,6 +609,7 @@ int main (int argc, char * argv[]) {
  if ( midi_init() == -1 )
   ROAR_ERR("Can not initialize MIDI subsystem");
 
+#ifdef ROAR_SUPPORT_LISTEN
  if ( *server != 0 ) {
   if ( (g_listen_socket = roar_socket_listen(sock_type, server, port)) == -1 ) {
 #ifdef ROAR_HAVE_UNIX
@@ -634,6 +669,7 @@ int main (int argc, char * argv[]) {
   }
 #endif
  }
+#endif
 
  if ( output_buffer_init(&sa) == -1 ) {
   ROAR_ERR("Can not init output buffer!");
@@ -758,6 +794,7 @@ int main (int argc, char * argv[]) {
 
 void cleanup_listen_socket (int terminate) {
 
+#ifdef ROAR_SUPPORT_LISTEN
  if ( g_listen_socket != -1 ) {
 #ifdef ROAR_HAVE_IO_POSIX
   close(g_listen_socket);
@@ -770,6 +807,8 @@ void cleanup_listen_socket (int terminate) {
    unlink(server);
 #endif
  }
+
+#endif
 
  if ( terminate )
   g_terminate = 1;

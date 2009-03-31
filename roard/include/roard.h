@@ -77,7 +77,9 @@
 
 
 int alive;
+#ifdef ROAR_SUPPORT_LISTEN
 int g_no_listen;
+#endif
 
 uint32_t g_pos; // current possition in output stream
 
@@ -92,7 +94,9 @@ void clean_quit_prep (void);
 void on_sig_int (int signum);
 void on_sig_chld (int signum);
 
+#ifdef ROAR_SUPPORT_LISTEN
 int g_listen_socket;
+#endif
 
 int g_self_client;
 

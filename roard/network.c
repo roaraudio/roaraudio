@@ -24,6 +24,8 @@
 
 #include "roard.h"
 
+#ifdef ROAR_SUPPORT_LISTEN
+
 #ifdef ROAR_BROKEN_PEERCRED
 #undef SO_PEERCRED
 #endif
@@ -107,6 +109,8 @@ int net_get_new_client (void) {
 
  return 0;
 }
+#endif
+
 #endif
 
 //ll
