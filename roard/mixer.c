@@ -60,7 +60,7 @@ int mix_clients_8bit (void * output, void ** input, int samples) {
 
 int mix_clients_16bit (void * output, void ** input, int samples) {
  int i, s;
- register int c;
+ register int_least32_t c;
  int16_t ** in  = (int16_t**) input;
  int16_t *  out = output;
 
