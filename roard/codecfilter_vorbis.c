@@ -245,6 +245,7 @@ int cf_vorbis_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
 }
 
 int cf_vorbis_update_stream (struct codecfilter_vorbis_inst * self) {
+#ifdef ROAR_SUPPORT_META
  vorbis_info *vi = ov_info(&(self->vf), -1);
  char **ptr = ov_comment(&(self->vf), -1)->user_comments;
  char key[ROAR_META_MAX_NAMELEN] = {0}, value[LIBROAR_BUFFER_MSGDATA] = {0};
@@ -322,6 +323,7 @@ int cf_vorbis_update_stream (struct codecfilter_vorbis_inst * self) {
  }
 
  stream_meta_finalize(s->id);
+#endif
  //printf("RPG: mul=%i, div=%i\n", self->stream->mixer.rpg_mul, self->stream->mixer.rpg_div);
  return 0;
 }
@@ -329,9 +331,11 @@ int cf_vorbis_update_stream (struct codecfilter_vorbis_inst * self) {
 int cf_vorbis_encode_start  (struct codecfilter_vorbis_inst * self) {
 #ifdef ROAR_HAVE_LIBVORBISENC
  int srn = self->encoder.srn; // this value is allrady inited...
+#ifdef ROAR_SUPPORT_META
  int len = 0;
  int i;
  int types[ROAR_META_MAX_PER_STREAM];
+#endif
  int sid = ROAR_STREAM(self->stream)->id;
  char val[LIBROAR_BUFFER_MSGDATA];
 
@@ -347,6 +351,7 @@ int cf_vorbis_encode_start  (struct codecfilter_vorbis_inst * self) {
   vorbis_comment_add_tag(&(self->encoder.vc), "SERVER", "RoarAudio");
   vorbis_comment_add_tag(&(self->encoder.vc), "ENCODER", "RoarAudio Vorbis codecfilter");
 
+#ifdef ROAR_SUPPORT_META
   if ( (len = stream_meta_list(sid, types, ROAR_META_MAX_PER_STREAM)) != -1 ) {
    for (i = 0; i < len; i++) {
 //int stream_meta_get     (int id, int type, char * name, char * val, size_t len);
@@ -354,6 +359,7 @@ int cf_vorbis_encode_start  (struct codecfilter_vorbis_inst * self) {
      vorbis_comment_add_tag(&(self->encoder.vc), roar_meta_strtype(types[i]), val);
    }
   }
+#endif
 
   if( vorbis_encode_init_vbr(&(self->encoder.vi), (long) ROAR_STREAM(self->stream)->info.channels,
                                                   (long) ROAR_STREAM(self->stream)->info.rate,

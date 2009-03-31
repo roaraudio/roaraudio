@@ -24,6 +24,8 @@
 
 #include "roard.h"
 
+#ifdef ROAR_SUPPORT_META
+
 int stream_meta_set   (int id, int type, char * name, char * val) {
  int i;
  struct roar_stream_server * s = g_streams[id];
@@ -229,5 +231,7 @@ int stream_meta_finalize(int id) {
 
  return 0;
 }
+
+#endif
 
 //ll

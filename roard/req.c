@@ -191,6 +191,7 @@ int req_on_passfh      (int client, struct roar_message * mes, char * data) {
  return 0;
 }
 
+#ifdef ROAR_SUPPORT_META
 int req_on_set_meta    (int client, struct roar_message * mes, char * data) {
  int type;
  int mode;
@@ -317,6 +318,7 @@ int req_on_list_meta   (int client, struct roar_message * mes, char * data) {
 
  return 0;
 }
+#endif
 
 int req_on_server_oinfo    (int client, struct roar_message * mes, char * data) {
  struct roar_stream s;
