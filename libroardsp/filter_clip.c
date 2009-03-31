@@ -46,7 +46,7 @@ int roardsp_clip_ctl   (struct roardsp_filter * filter, int cmd, void * data) {
 
  if ( cmd == ROARDSP_FCTL_LIMIT ) {
   old = (ROAR_INSTINT)filter->inst;
-  filter->inst = (void*)labs(*(int32_t*)data);
+  filter->inst = (void*)(ROAR_INSTINT)labs(*(int32_t*)data);
   *(int32_t*)data = old;
  } else {
   ROAR_DBG("roardsp_clip_ctl(*) = -1");
