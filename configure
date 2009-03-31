@@ -62,6 +62,10 @@ PROXY=true
 
 PASSWORD_API=true
 
+NO_LISTEN=false
+
+META_DATA=true
+
 WITHOUT_CF=''
 
 WITHOUT_VIO=''
@@ -144,11 +148,16 @@ do
    echo '--without-mulaw-rw          - Disable support for writing mu-Law (saves 16KB)'
    echo '--without-proxy             - Disable support for proxys'
    echo
+   echo '--without-meta-data         - Disable support for Meta Data'
+   echo
    echo '--without-cf-cmd            - Disable support for command codecfilter'
    echo
    echo '--without-vio-MODULE        - Disable support for VIO module MODULE'
    echo
    echo '--without-password-api      - Disable build of Password API'
+   echo
+   echo '--without-listen            - Disable listening sockets in roard'
+   echo '                              This is the same as allways using --no-listen'
    echo
    echo '--without-libao             - Disable build of libao plugin'
    echo '--without-xmms              - Disable build of XMMS plugin'
@@ -248,6 +257,9 @@ do
   '--without-proxy')
    PROXY=false
   ;;
+  '--without-meta-data')
+   META_DATA=false
+  ;;
   '--without-cf-'*)
    WITHOUT_CF="$WITHOUT_CF"' '$(echo "$1" | cut -d- -f5)
   ;;
@@ -256,6 +268,9 @@ do
   ;;
   '--without-password-api')
    PASSWORD_API=false
+  ;;
+  '--without-listen')
+   NO_LISTEN=true
   ;;
   '--without-libao')
    LIBAO=false
@@ -274,6 +289,7 @@ do
    MULAW_RW=false
    ALAW=false
    ALAW_RW=false
+   META_DATA=false
    PASSWORD_API=false
    WITHOUT_VIO="$WITHOUT_VIO"' dstr cmd stdio'
   ;;
@@ -524,6 +540,8 @@ EOF
  $MULAW_RW     && echo '#define ROAR_SUPPORT_MULAW_RW'
  $PROXY        && echo '#define ROAR_SUPPORT_PROXY'
  $PASSWORD_API && echo '#define ROAR_SUPPORT_PASSWORD_API'
+ $NO_LISTEN    || echo '#define ROAR_SUPPORT_LISTEN'
+ $META_DATA    && echo '#define ROAR_SUPPORT_META'
  echo
 
  for i in $WITHOUT_CF
