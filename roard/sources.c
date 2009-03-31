@@ -43,10 +43,13 @@ int sources_free (void) {
 }
 
 int sources_add (char * driver, char * device, char * container, char * options, int primary) {
- if ( strcmp(driver, "raw") == 0 ) {
+ if (0) {
+#ifdef ROAR_HAVE_IO_POSIX
+ } else if ( strcmp(driver, "raw") == 0 ) {
   return sources_add_raw(driver, device, container, options, primary);
  } else if ( strcmp(driver, "wav") == 0 ) {
   return sources_add_wav(driver, device, container, options, primary);
+#endif
  } else if ( strcmp(driver, "cf") == 0 ) {
   return sources_add_cf(driver, device, container, options, primary);
  } else if ( strcmp(driver, "roar") == 0 ) {
@@ -56,6 +59,7 @@ int sources_add (char * driver, char * device, char * container, char * options,
  return -1;
 }
 
+#ifdef ROAR_HAVE_IO_POSIX
 int sources_add_raw (char * driver, char * device, char * container, char * options, int primary) {
  int stream;
  int fh;
@@ -86,7 +90,9 @@ int sources_add_raw (char * driver, char * device, char * container, char * opti
 
  return 0;
 }
+#endif
 
+#ifdef ROAR_HAVE_IO_POSIX
 int sources_add_wav (char * driver, char * device, char * container, char * options, int primary) {
  int stream;
  int fh;
@@ -113,9 +119,9 @@ int sources_add_wav (char * driver, char * device, char * container, char * opti
 
  memcpy(&(s->info), g_sa, sizeof(struct roar_audio_info));
 
-  memcpy(&(s->info.rate    ), buf+24, 4);
-  memcpy(&(s->info.channels), buf+22, 2);
-  memcpy(&(s->info.bits    ), buf+34, 2);
+ memcpy(&(s->info.rate    ), buf+24, 4);
+ memcpy(&(s->info.channels), buf+22, 2);
+ memcpy(&(s->info.bits    ), buf+34, 2);
 
  s->dir        = ROAR_DIR_PLAY;
  s->pos_rel_id = -1;
@@ -127,47 +133,19 @@ int sources_add_wav (char * driver, char * device, char * container, char * opti
 
  return 0;
 }
+#endif
+
+#define _ret(x) roar_vio_close(vio); streams_delete(stream); return (x)
 
 int sources_add_cf (char * driver, char * device, char * container, char * options, int primary) {
  int  stream;
- int  fh;
  int  codec;
  int  len;
  char buf[64];
- struct roar_stream * s;
-
- if ( (fh = open(device, O_RDONLY, 0644)) == -1 ) {
-  return -1;
- }
-
- // TODO: finy out a better way of doing auto detetion without need for seek!
- if ( options == NULL ) {
-  if ( (len = read(fh, buf, 64)) < 1 ) {
-   close(fh);
-   return -1;
-  }
-
-  if ( lseek(fh, -len, SEEK_CUR) == (off_t)-1 ) {
-   close(fh);
-   return -1;
-  }
-
-  if ( (codec = roar_file_codecdetect(buf, len)) == -1 ) {
-   close(fh);
-   return -1;
-  }
- } else {
-  if ( !strncmp(options, "codec=", 6) )
-   options += 6;
-
-  if ( (codec = roar_str2codec(options)) == -1 ) {
-   close(fh);
-   return -1;
-  }
- }
+ struct roar_stream    * s;
+ struct roar_vio_calls * vio;
 
  if ( (stream = streams_new()) == -1 ) {
-  close(fh);
   return -1;
  }
 
@@ -177,11 +155,46 @@ int sources_add_cf (char * driver, char * device, char * container, char * optio
 
  s->dir        = ROAR_DIR_PLAY;
  s->pos_rel_id = -1;
+
+/*
+ if ( (fh = open(device, O_RDONLY, 0644)) == -1 ) {
+  return -1;
+ }
+*/
+
+ vio = &(ROAR_STREAM_SERVER(s)->vio);
+
+ if ( roar_vio_open_file(vio, device, O_RDONLY, 0644) == -1 ) {
+  _ret(-1);
+ }
+
+ // TODO: finy out a better way of doing auto detetion without need for seek!
+ if ( options == NULL ) {
+  if ( (len = roar_vio_read(vio, buf, 64)) < 1 ) {
+   _ret(-1);
+  }
+
+  if ( roar_vio_lseek(vio, -len, SEEK_CUR) == (off_t)-1 ) {
+   _ret(-1);
+  }
+
+  if ( (codec = roar_file_codecdetect(buf, len)) == -1 ) {
+   _ret(-1);
+  }
+ } else {
+  if ( !strncmp(options, "codec=", 6) )
+   options += 6;
+
+  if ( (codec = roar_str2codec(options)) == -1 ) {
+   _ret(-1);
+  }
+ }
+
  s->info.codec = codec;
 
  ROAR_STREAM_SERVER(s)->codec_orgi = codec;
 
- streams_set_fh(stream, fh);
+ streams_set_fh(stream, -1);
  streams_set_socktype(stream, ROAR_SOCKET_TYPE_FILE);
 
  if ( primary )
@@ -192,6 +205,9 @@ int sources_add_cf (char * driver, char * device, char * container, char * optio
 
  return 0;
 }
+
+#undef _ret
+
 
 int sources_add_roar (char * driver, char * device, char * container, char * options, int primary) {
  int  stream;
