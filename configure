@@ -534,6 +534,7 @@ EOF
  [ "$ROAR_DRIVER_DEFAULT" = '' ] || echo "#define ROAR_DRIVER_DEFAULT   \"$ROAR_DRIVER_DEFAULT\""
  [ "$ROAR_DRIVER_CODEC"   = '' ] || echo "#define ROAR_DRIVER_CODEC     \"$ROAR_DRIVER_CODEC\""
  echo
+ $MINIMAL      && echo '#define ROAR_MINIMAL'
  $ALAW         && echo '#define ROAR_SUPPORT_ALAW'
  $ALAW_RW      && echo '#define ROAR_SUPPORT_ALAW_RW'
  $MULAW        && echo '#define ROAR_SUPPORT_MULAW'
