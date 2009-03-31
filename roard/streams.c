@@ -51,8 +51,13 @@ int streams_new    (void) {
  struct roar_stream        * n = NULL;
  struct roar_stream_server * s = NULL;
 
+#ifdef ROAR_SUPPORT_LISTEN
  if ( g_terminate && !g_no_listen ) // don't accept new streams in case of termination state
   return -1;
+#else
+ if ( g_terminate )                 // don't accept new streams in case of termination state
+  return -1;
+#endif
 
  for (i = 0; i < ROAR_STREAMS_MAX; i++) {
   if ( g_streams[i] == NULL ) {
@@ -91,11 +96,13 @@ int streams_new    (void) {
    for (j = 0; j < ROAR_MAX_CHANNELS; j++)
     s->mixer.mixer[j] = 65535;
 
+#ifdef ROAR_SUPPORT_META
    for (j = 0; j < ROAR_META_MAX_PER_STREAM; j++) {
     s->meta[j].type   = ROAR_META_TYPE_NONE;
     s->meta[j].key[0] = 0;
     s->meta[j].value  = NULL;
    }
+#endif
 
    roar_vio_init_calls(&(s->vio));
    s->driver_id = -1;
@@ -124,12 +131,14 @@ int streams_delete (int id) {
  ROAR_DBG("streams_delete(id=%i) = ?", id);
  ROAR_DBG("streams_delete(id=%i): g_streams[id]->id=%i", id, ROAR_STREAM(s)->id);
 
+#ifdef ROAR_SUPPORT_META
  // delete meta data form other meta streams if needed
  if ( streams_get_flag(id, ROAR_FLAG_META) == 1 ) {
   ROAR_DBG("streams_delete(id=%i): deleting meta stream!", id);
   stream_meta_clear(id);
   stream_meta_finalize(id);
  }
+#endif
 
  if ( s->codecfilter != -1 ) {
   codecfilter_close(s->codecfilter_inst, s->codecfilter);
@@ -228,7 +237,7 @@ int streams_set_fh     (int id, int fh) {
  dir = ROAR_STREAM(ss)->dir;
 
  if ( dir == ROAR_DIR_MONITOR || dir == ROAR_DIR_RECORD || dir == ROAR_DIR_OUTPUT ) {
-  shutdown(fh, SHUT_RD);
+  ROAR_SHUTDOWN(fh, SHUT_RD);
  }
 
  if ( dir == ROAR_DIR_FILTER ) {
@@ -293,7 +302,9 @@ int streams_set_sync     (int id, int sync) {
   if ( roar_socket_nonblock(fh, sync ? ROAR_SOCKET_BLOCK : ROAR_SOCKET_NONBLOCK) == -1 )
    return -1;
 
+#ifdef ROAR_FDATASYNC
   ROAR_FDATASYNC(fh);
+#endif
 
   return 0;
  } else {
@@ -317,8 +328,10 @@ int streams_set_flag     (int id, int flag) {
 
  g_streams[id]->flags |= flag;
 
+#ifdef ROAR_SUPPORT_META
  if ( flag & ROAR_FLAG_META )
   stream_meta_finalize(id);
+#endif
 
  return 0;
 }
