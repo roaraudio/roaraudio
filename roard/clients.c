@@ -205,10 +205,12 @@ int clients_check_all (void) {
 
   for (j = 0; j < ROAR_CLIENTS_MAX_STREAMS_PER_CLIENT; j++) {
    if ( (fh = streams_get_fh(g_clients[i]->streams[j])) != -1 ) {
-    FD_SET(fh, &r);
+    if ( fh > -1 ) {
+     FD_SET(fh, &r);
 
-    if ( fh > max_fh )
-     max_fh = fh;
+     if ( fh > max_fh )
+      max_fh = fh;
+    }
 
     have_stream = 1;
    }
@@ -258,7 +260,9 @@ int clients_check_all (void) {
    if ( g_clients[i] == NULL ) // streams_check() bellow can delete our client (why?)
     break;
    if ( (fh = streams_get_fh(g_clients[i]->streams[j])) != -1 ) {
-    if ( FD_ISSET(fh, &r) ) {
+    if ( fh == -2 ) {
+     streams_check(g_clients[i]->streams[j]);
+    } else if ( FD_ISSET(fh, &r) ) {
      streams_check(g_clients[i]->streams[j]);
     }
    }

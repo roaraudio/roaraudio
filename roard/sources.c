@@ -194,7 +194,7 @@ int sources_add_cf (char * driver, char * device, char * container, char * optio
 
  ROAR_STREAM_SERVER(s)->codec_orgi = codec;
 
- streams_set_fh(stream, -1);
+ streams_set_fh(stream, -2);
  streams_set_socktype(stream, ROAR_SOCKET_TYPE_FILE);
 
  if ( primary )
