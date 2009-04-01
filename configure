@@ -70,6 +70,8 @@ WITHOUT_CF=''
 
 WITHOUT_VIO=''
 
+HAVE_MAIN_ARGS=true
+
 MINIMAL=false
 
 TARGET_WIN32=false
@@ -327,6 +329,7 @@ do
   '--target-microcontroller')
    TARGET_MICROCONTROLLER=true
    CROSS_COMPILE=true
+   HAVE_MAIN_ARGS=false
   ;;
   '--target-win32')
    TARGET_WIN32=true
@@ -543,6 +546,10 @@ EOF
  $PASSWORD_API && echo '#define ROAR_SUPPORT_PASSWORD_API'
  $NO_LISTEN    || echo '#define ROAR_SUPPORT_LISTEN'
  $META_DATA    && echo '#define ROAR_SUPPORT_META'
+ echo
+
+ $HAVE_MAIN_ARGS && echo '#define ROAR_HAVE_MAIN_ARGS'
+
  echo
 
  for i in $WITHOUT_CF

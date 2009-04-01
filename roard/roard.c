@@ -28,6 +28,7 @@
 char * server = ROAR_DEFAULT_SOCK_GLOBAL; // global server address
 #endif
 
+#ifdef ROAR_HAVE_MAIN_ARGS
 void usage (void) {
  printf("Usage: roard [OPTIONS]...\n\n");
 
@@ -108,6 +109,7 @@ void usage (void) {
 // printf("\n Options:\n\n");
  printf("\n");
 }
+#endif
 
 int restart_server (char * server) {
  struct roar_connection con;
@@ -268,9 +270,15 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
  return 0;
 }
 
+#ifdef ROAR_HAVE_MAIN_ARGS
 int main (int argc, char * argv[]) {
+#else
+int main (void) {
+#endif
+#ifdef ROAR_HAVE_MAIN_ARGS
  int i;
  char * k;
+#endif
 #ifdef ROAR_SUPPORT_LISTEN
  char user_sock[80]  = {0};
 #endif
@@ -282,7 +290,9 @@ int main (int argc, char * argv[]) {
  int    sysclocksync = 0;
  char * driver    = NULL;
  char * device    = NULL;
+#ifdef ROAR_HAVE_MAIN_ARGS
  char * opts      = NULL;
+#endif
 // char * server = ROAR_DEFAULT_SOCK_GLOBAL;
 #ifdef ROAR_SUPPORT_LISTEN
  int      port    = ROAR_DEFAULT_PORT;
@@ -380,6 +390,7 @@ int main (int argc, char * argv[]) {
   return 1;
  }
 
+#ifdef ROAR_HAVE_MAIN_ARGS
  for (i = 1; i < argc; i++) {
   k = argv[i];
 
@@ -595,6 +606,7 @@ int main (int argc, char * argv[]) {
   }
 
  }
+#endif
 
  if ( s_dev != NULL ) {
   if ( sources_add(s_drv, s_dev, s_con, s_opt, s_prim) == -1 ) {
