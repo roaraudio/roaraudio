@@ -48,6 +48,7 @@ int     roar_vio_open_stack    (struct roar_vio_calls * calls) {
 
  calls->inst     = self;
  calls->close    = roar_vio_stack_close;
+ calls->ctl      = roar_vio_stack_ctl;
  calls->read     = roar_vio_stack_read;
  calls->write    = roar_vio_stack_write;
  calls->lseek    = roar_vio_stack_lseek;
@@ -96,6 +97,23 @@ int     roar_vio_stack_close   (struct roar_vio_calls * vio) {
 
  return 0;
 }
+
+int     roar_vio_stack_ctl     (struct roar_vio_calls * vio, int cmd, void * data) {
+ if (vio == NULL || cmd == -1)
+  return -1;
+
+ switch (cmd) {
+  case ROAR_VIO_CTL_GET_FH:
+  case ROAR_VIO_CTL_GET_READ_FH:
+  case ROAR_VIO_CTL_GET_WRITE_FH:
+  case ROAR_VIO_CTL_SELECT:
+    return roar_vio_ctl(((struct roar_vio_stack*)(vio->inst))->cur, cmd, data);
+   break;
+ }
+
+ return -1;
+}
+
 
 ssize_t roar_vio_stack_read    (struct roar_vio_calls * vio, void *buf, size_t count) {
  if ( vio == NULL )

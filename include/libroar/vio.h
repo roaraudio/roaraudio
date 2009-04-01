@@ -48,6 +48,15 @@
  *   0x0XXX -> Client
  *   0x1XXX -> Server 
  */
+
+// basic calls:
+#define ROAR_VIO_CTL_GET_NEXT          0x0101
+#define ROAR_VIO_CTL_SET_NEXT          0x0102
+#define ROAR_VIO_CTL_GET_FH            0x0110
+#define ROAR_VIO_CTL_GET_READ_FH       0x0111
+#define ROAR_VIO_CTL_GET_WRITE_FH      0x0112
+#define ROAR_VIO_CTL_SELECT            0x0120
+
 // stream:
 #define ROAR_VIO_CTL_SET_STREAM    0x00010001 /* normal streams */
 #define ROAR_VIO_CTL_GET_STREAM    0x00010002
@@ -139,6 +148,7 @@ ssize_t roar_vio_basic_write   (struct roar_vio_calls * vio, void *buf, size_t c
 off_t   roar_vio_basic_lseek   (struct roar_vio_calls * vio, off_t offset, int whence);
 int     roar_vio_basic_nonblock(struct roar_vio_calls * vio, int state);
 int     roar_vio_basic_sync    (struct roar_vio_calls * vio);
+int     roar_vio_basic_ctl     (struct roar_vio_calls * vio, int cmd, void * data);
 int     roar_vio_basic_close   (struct roar_vio_calls * vio);
 
 // null
@@ -168,6 +178,7 @@ ssize_t roar_vio_stdio_read    (struct roar_vio_calls * vio, void *buf, size_t c
 ssize_t roar_vio_stdio_write   (struct roar_vio_calls * vio, void *buf, size_t count);
 off_t   roar_vio_stdio_lseek   (struct roar_vio_calls * vio, off_t offset, int whence);
 int     roar_vio_stdio_sync    (struct roar_vio_calls * vio);
+int     roar_vio_stdio_ctl     (struct roar_vio_calls * vio, int cmd, void * data);
 int     roar_vio_stdio_close   (struct roar_vio_calls * vio);
 
 #endif

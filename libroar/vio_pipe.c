@@ -210,6 +210,53 @@ int     roar_vio_pipe_sync    (struct roar_vio_calls * vio) {
  return 0;
 }
 
+int     roar_vio_pipe_ctl     (struct roar_vio_calls * vio, int cmd, void * data) {
+ struct roar_vio_pipe * self;
+
+ if (vio == NULL || cmd == -1)
+  return -1;
+
+ if ( (self = (struct roar_vio_pipe *)vio->inst) == NULL )
+  return -1;
+
+ switch (cmd) {
+  case ROAR_VIO_CTL_GET_FH:
+    if ( self->type == ROAR_VIO_PIPE_TYPE_SOCKET ) {
+     *(int*)data = self->b.p[ROAR_VIO_PIPE_S(self,vio)];
+     return 0;
+    } else {
+     return -1;
+    }
+   break;
+  case ROAR_VIO_CTL_GET_READ_FH:
+    switch (self->type) {
+     case ROAR_VIO_PIPE_TYPE_SOCKET:
+       *(int*)data = self->b.p[ROAR_VIO_PIPE_S(self,vio)];
+       return 0;
+      break;
+     case ROAR_VIO_PIPE_TYPE_PIPE:
+       *(int*)data = self->b.p[ROAR_VIO_PIPE_S(self,vio)*2];
+       return 0;
+      break;
+    }
+  case ROAR_VIO_CTL_GET_WRITE_FH:
+    switch (self->type) {
+     case ROAR_VIO_PIPE_TYPE_SOCKET:
+       *(int*)data = self->b.p[ROAR_VIO_PIPE_S(self,vio)];
+       return 0;
+      break;
+     case ROAR_VIO_PIPE_TYPE_PIPE:
+       *(int*)data = self->b.p[(ROAR_VIO_PIPE_SR(self,vio)*2)+1];
+       return 0;
+      break;
+    }
+   break;
+ }
+
+ return -1;
+}
+
+
 ssize_t roar_vio_pipe_read    (struct roar_vio_calls * vio, void *buf, size_t count) {
  struct roar_vio_pipe * self;
  int                    idx;

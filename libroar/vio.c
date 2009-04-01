@@ -56,6 +56,7 @@ int roar_vio_init_calls (struct roar_vio_calls * calls) {
  calls->lseek    = roar_vio_basic_lseek;
  calls->nonblock = roar_vio_basic_nonblock;
  calls->sync     = roar_vio_basic_sync;
+ calls->ctl      = roar_vio_basic_ctl;
  calls->close    = roar_vio_basic_close;
 
  return 0;
@@ -381,6 +382,23 @@ int     roar_vio_basic_sync    (struct roar_vio_calls * vio) {
 #endif
 }
 
+int     roar_vio_basic_ctl     (struct roar_vio_calls * vio, int cmd, void * data) {
+
+ if ( vio == NULL || cmd == -1 )
+  return -1;
+
+ switch (cmd) {
+  case ROAR_VIO_CTL_GET_FH:
+  case ROAR_VIO_CTL_GET_READ_FH:
+  case ROAR_VIO_CTL_GET_WRITE_FH:
+    *(int*)data = roar_vio_get_fh(vio);
+    return 0;
+   break;
+ }
+
+ return -1;
+}
+
 int     roar_vio_basic_close    (struct roar_vio_calls * vio) {
 #ifdef _CAN_OPERATE
  if ( roar_vio_get_fh(vio) != -1 )
@@ -440,6 +458,20 @@ int     roar_vio_pass_sync    (struct roar_vio_calls * vio) {
 }
 
 int     roar_vio_pass_ctl     (struct roar_vio_calls * vio, int cmd, void * data) {
+ if (vio == NULL || cmd == -1)
+  return -1;
+
+ switch (cmd) {
+  case ROAR_VIO_CTL_GET_NEXT:
+    *(struct roar_vio_calls **)data = vio->inst;
+    return 0;
+   break;
+  case ROAR_VIO_CTL_SET_NEXT:
+    vio->inst = *(struct roar_vio_calls **)data;
+    return 0;
+   break;
+ }
+
  return roar_vio_ctl((struct roar_vio_calls *) vio->inst, cmd, data);
 }
 
@@ -535,6 +567,23 @@ off_t   roar_vio_stdio_lseek   (struct roar_vio_calls * vio, off_t offset, int w
 
 int     roar_vio_stdio_sync    (struct roar_vio_calls * vio) {
  return fflush((FILE*)(vio->inst));
+}
+
+int     roar_vio_stdio_ctl     (struct roar_vio_calls * vio, int cmd, void * data) {
+
+ if ( vio == NULL || cmd == -1 )
+  return -1;
+
+ switch (cmd) {
+  case ROAR_VIO_CTL_GET_FH:
+  case ROAR_VIO_CTL_GET_READ_FH:
+  case ROAR_VIO_CTL_GET_WRITE_FH:
+   *(int*)data = fileno((FILE*)(vio->inst));
+    return 0;
+   break;
+ }
+
+ return -1;
 }
 
 int     roar_vio_stdio_close   (struct roar_vio_calls * vio) {
