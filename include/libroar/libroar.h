@@ -91,6 +91,7 @@
 #include "vio_pipe.h"
 #include "vio_socket.h"
 #include "vio_proto.h"
+#include "vio_select.h"
 // dstr needs to have access to all other VIOs, so it must be included last
 #include "vio_dstr.h"
 #include "basic.h"
