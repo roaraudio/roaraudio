@@ -165,15 +165,19 @@ int main (int argc, char * argv[]) {
 
   if ( strcmp(k, "--server") == 0 ) {
    server = argv[++i];
-  } else if ( strcmp(k, "--rate") == 0 ) {
+  } else if ( strcmp(k, "--rate") == 0 || strcmp(k, "-R") == 0 || strcmp(k, "-r") == 0 ) {
    rate = atoi(argv[++i]);
-  } else if ( strcmp(k, "--bits") == 0 ) {
+  } else if ( strcmp(k, "--bits") == 0 || strcmp(k, "-B") == 0 ) {
    bits = atoi(argv[++i]);
-  } else if ( strcmp(k, "--channels") == 0 || strcmp(k, "--chans") == 0 ) {
+  } else if ( strcmp(k, "--channels") == 0 || strcmp(k, "--chans") == 0 || strcmp(k, "-C") == 0 ) {
    channels = atoi(argv[++i]);
-  } else if ( strcmp(k, "--half") == 0 ) {
+  } else if ( strcmp(k, "-b") == 0 ) {
+   bits = 8;
+  } else if ( strcmp(k, "-m") == 0 ) {
+   channels = 1;
+  } else if ( strcmp(k, "--half") == 0 || strcmp(k, "-half") == 0 ) {
    div *= 2;
-  } else if ( strcmp(k, "--double") == 0 ) {
+  } else if ( strcmp(k, "--double") == 0 || strcmp(k, "-double") == 0 ) {
    mul *= 2;
   } else if ( strcmp(k, "--amp") == 0 ) {
    mul *= atoi(argv[++i]);

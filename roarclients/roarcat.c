@@ -31,12 +31,12 @@ void usage (void) {
 
  printf("\nOptions:\n\n");
 
- printf("  --server SERVER    - Set server hostname\n"
-        "  --rate   RATE      - Set sample rate\n"
-        "  --bits   BITS      - Set bits per sample\n"
-        "  --chans  CHANNELS  - Set number of channels\n"
-        "  --codec  CODEC     - Set the codec\n"
-        "  --help             - Show this help\n"
+ printf("  --server    SERVER    - Set server hostname\n"
+        "  --rate  -R  RATE      - Set sample rate\n"
+        "  --bits  -B  BITS      - Set bits per sample\n"
+        "  --chans -C  CHANNELS  - Set number of channels\n"
+        "  --codec     CODEC     - Set the codec\n"
+        "  --help                - Show this help\n"
        );
 
 }
@@ -61,13 +61,13 @@ int main (int argc, char * argv[]) {
    server = argv[++i];
   } else if ( !strcmp(k, "-n") ) {
    name = argv[++i];
-  } else if ( !strcmp(k, "--rate") || !strcmp(k, "-r") ) {
+  } else if ( !strcmp(k, "--rate") || !strcmp(k, "-r") || !strcmp(k, "-R") ) {
    rate = atoi(argv[++i]);
-  } else if ( !strcmp(k, "--bits") ) {
+  } else if ( !strcmp(k, "--bits") || !strcmp(k, "-B") ) {
    bits = atoi(argv[++i]);
   } else if ( !strcmp(k, "-b") ) {
    bits = 8;
-  } else if ( !strcmp(k, "--channels") || !strcmp(k, "--chans") ) {
+  } else if ( !strcmp(k, "--channels") || !strcmp(k, "--chans") || !strcmp(k, "-C") ) {
    channels = atoi(argv[++i]);
   } else if ( !strcmp(k, "-m") ) {
    channels = 1;
