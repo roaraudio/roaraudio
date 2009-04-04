@@ -103,9 +103,22 @@ int main (int argc, char * argv[]) {
     }
    }
 
-   if ( (in = roar_socket_connect(host, port)) == -1 ) {
-    ROAR_ERR("can not connect to remote server %s (port %i): %s", host, port, strerror(errno));
-    return 0;
+   if ( !*file ) {
+    file = "/";
+
+    if ( (in = roar_socket_connect(host, port)) == -1 ) {
+     ROAR_ERR("can not connect to remote server %s (port %i): %s", host, port, strerror(errno));
+     return 0;
+    }
+   } else {
+    *file = 0;
+
+    if ( (in = roar_socket_connect(host, port)) == -1 ) {
+     ROAR_ERR("can not connect to remote server %s (port %i): %s", host, port, strerror(errno));
+     return 0;
+    }
+
+    *file = '/';
    }
 
    if ( (http = fdopen(in, "r+")) == NULL ) {
@@ -115,7 +128,7 @@ int main (int argc, char * argv[]) {
 
    fprintf(http, "GET %s HTTP/1.1\r\n", file);
    fprintf(http, "Host: %s\r\n", host);
-   fprintf(http, "User-Agent: roarradio $Revision: 1.2 $\r\n");
+   fprintf(http, "User-Agent: roarradio $Revision: 1.3 $\r\n");
    fprintf(http, "Connection: close\r\n");
    fprintf(http, "\r\n");
    fflush(http);
