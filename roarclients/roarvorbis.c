@@ -201,6 +201,11 @@ int main (int argc, char * argv[]) {
   }
  }
 
+ if ( file == NULL ) {
+  ROAR_ERR("No filename given.");
+  return 1;
+ }
+
  if ( roar_simple_connect(&con, server, "roarvorbis") == -1 ) {
   ROAR_DBG("roar_simple_play(*): roar_simple_connect() faild!");
   return 1;
