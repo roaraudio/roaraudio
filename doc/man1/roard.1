@@ -124,6 +124,10 @@ Sets the device or filename for the source. Type may depend on the source type.
 Sets options for the current source.
 
 .TP
+\fB-sN\fR
+Adds another source.
+
+.TP
 \fB-sP\fR
 Marks the source as primary. If the source reaches EOF roard will quit automatically.
 
@@ -179,12 +183,34 @@ Sets the number of bits per sample.
 Sets the codec.
 
 .TP
+\fBblocks\fR
+Sets the number of memory blocks that sould be used by the devices.
+Most devices only support a few values or don't support this option at all.
+If this option or the specifyed value is not supported by the device this is not
+handled as fatal error.
+
+.TP
 \fBmeta\fR
 Sets the meta flag.
 
 .TP
 \fBsync\fR
 Sets the sync flag.
+
+.TP
+\fBprimary\fR
+Marks this stream as primary.
+
+.TP
+\fBcleanmeta\fR
+Sets the cleanmeta flag.
+
+.TP
+\fBautoconf\fR
+Sets the autoconf flag.
+This flag is not supported by all drivers.
+If the flag is set and the devices does not support this there is no
+fatal error if the device could be opend with defaults.
 
 .TP
 Example:

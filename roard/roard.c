@@ -69,6 +69,7 @@ void usage (void) {
  printf(" -s  --source DRV      - Use DRV as input driver\n"
         " -S           DEV      - Use DEV as input device\n"
         " -sO          OPTS     - Use OPTS as input options\n"
+        " -sN                   - Adds another source\n"
         " -sP                   - Make souce as primary\n"
        );
 
