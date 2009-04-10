@@ -668,7 +668,7 @@ int main (void) {
   }
 #endif
 
-#ifdef ROAR_HAVE_IO_POSIX
+#if defined(ROAR_HAVE_IO_POSIX) && defined(ROAR_HAVE_UNIX)
   if ( *server == '/' ) {
    if ( grp ) {
     if ( pwd ) {
