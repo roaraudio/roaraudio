@@ -80,7 +80,8 @@ int driver_oss_open_device(struct driver_oss * self) {
   return -1;
  }
 
- self->fh = fh;
+ self->fh          = fh;
+ self->need_config = 1;
 
  return 0;
 }
@@ -267,7 +268,6 @@ int driver_oss_config_device(struct driver_oss * self) {
 #define er() close(self->fh); if ( self->device ) free(self->device); free(self); return -1
 int driver_oss_open(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh) {
  struct driver_oss * self = NULL;
- uint32_t tmp32;
 
  if ( (self = malloc(sizeof(struct driver_oss))) == NULL ) {
   ROAR_ERR("driver_oss_open(*): Can not malloc() instance data: %s", strerror(errno));
@@ -291,18 +291,6 @@ int driver_oss_open(struct roar_vio_calls * inst, char * device, struct roar_aud
   ROAR_ERR("driver_oss_open(*): Can not open audio device");
   er();
  }
-
- self->need_config = 1;
-
-/*
- if ( driver_oss_config_device(self) == -1 ) {
-  ROAR_ERR("driver_oss_open(*): Can not configure audio device");
-  er();
- }
-*/
-
- tmp32 = 4;
- driver_oss_ctl(inst, ROAR_VIO_CTL_SET_DBLOCKS, &tmp32);
 
  ROAR_DBG("driver_oss_open(*): OSS devices opened :)");
 
