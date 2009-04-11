@@ -81,6 +81,7 @@
 #define ROAR_VIO_CTL_GET_DBLOCKS   (ROAR_VIO_CTL_DRIVER|0x0001) /* get Driver Blocks */
 #define ROAR_VIO_CTL_SET_DBLOCKS   (ROAR_VIO_CTL_DRIVER|0x0002) /* set Driver Blocks */
 #define ROAR_VIO_CTL_GET_DBLKSIZE  (ROAR_VIO_CTL_DRIVER|0x0003) /* get Driver Blocks size (in byte) */
+#define ROAR_VIO_CTL_SET_DBLKSIZE  (ROAR_VIO_CTL_DRIVER|0x0004) /* set Driver Blocks size (in byte) */
 
 // sys io:
 

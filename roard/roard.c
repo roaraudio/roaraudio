@@ -138,7 +138,7 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
 #endif
  int codec;
  int sync = 0;
- int32_t blocks = -1;
+ int32_t blocks = -1, blocksize = -1;
 
  ROAR_DBG("add_output(drv='%s', dev='%s', opts='%s') = ?", drv, dev, opts);
 
@@ -204,6 +204,8 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
    }
   } else if ( strcmp(k, "blocks") == 0 ) {
    blocks = atoi(v);
+  } else if ( strcmp(k, "blocksize") == 0 ) {
+   blocksize = atoi(v);
   } else if ( strcmp(k, "meta") == 0 ) {
    streams_set_flag(stream, ROAR_FLAG_META);
   } else if ( strcmp(k, "sync") == 0 ) {
@@ -250,6 +252,9 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
 
  if ( blocks != -1 )
   roar_vio_ctl(&(ss->vio), ROAR_VIO_CTL_SET_DBLOCKS, &blocks);
+
+ if ( blocksize != -1 )
+  roar_vio_ctl(&(ss->vio), ROAR_VIO_CTL_SET_DBLKSIZE, &blocksize);
 
  ROAR_DBG("add_output(*): ss->driver_id=%i", ss->driver_id);
 
