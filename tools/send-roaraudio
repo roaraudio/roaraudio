@@ -6,6 +6,7 @@ REMOTEDIR='.'
 CONFIGURE=true
 BUILD=true
 TEST=true
+PORT=''
 
 while [ "$1" != '' ]
 do
@@ -22,12 +23,20 @@ do
   '--test='*)
    TEST=`echo $1 | cut -d= -f2`
   ;;
+  '--port='*)
+   PORT=`echo $1 | cut -d= -f2`
+  ;;
   *)
     REMOTEHOST="$1"
   ;;
  esac
  shift
 done
+
+if [ "$PORT" != '' ]
+then
+ REMOTEHOST="-p $PORT $REMOTEHOST"
+fi
 
 $CONFIGURE || BUILD=false
 $BUILD     || TEST=false
@@ -41,7 +50,7 @@ cvs co roaraudio
 cd ..
 
 {
- echo '#1/bin/sh'
+ echo '#!/bin/sh'
  echo
 
  echo 'MAKE=`which gmake make 2> /dev/null | grep ^/ | head -n 1`'
