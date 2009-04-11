@@ -215,9 +215,8 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
 
   } else if ( strcmp(k, "cleanmeta") == 0 ) {
    streams_set_flag(stream, ROAR_FLAG_CLEANMETA);
-
-  /* ignore this for the moment ... */
   } else if ( strcmp(k, "autoconf") == 0 ) {
+   streams_set_flag(stream, ROAR_FLAG_AUTOCONF);
   } else {
    ROAR_ERR("add_output(*): unknown option '%s'", k);
    streams_delete(stream);
