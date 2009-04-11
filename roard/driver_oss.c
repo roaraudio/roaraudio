@@ -232,7 +232,26 @@ int driver_oss_config_device(struct driver_oss * self) {
  if ( self->blocks < 1 )
   self->blocks    =    4;
 
- tmp  = 11;
+ switch (self->blocksize) {
+  case 1<< 4: tmp =  4; break;
+  case 1<< 5: tmp =  5; break;
+  case 1<< 6: tmp =  6; break;
+  case 1<< 7: tmp =  7; break;
+  case 1<< 8: tmp =  8; break;
+  case 1<< 9: tmp =  9; break;
+  case 1<<10: tmp = 10; break;
+  case 1<<11: tmp = 11; break;
+  case 1<<12: tmp = 12; break;
+  case 1<<13: tmp = 13; break;
+  case 1<<14: tmp = 14; break;
+  case 1<<15: tmp = 15; break;
+  case 1<<16: tmp = 16; break;
+  default: tmp = 11;
+    ROAR_WARN("driver_oss_config_device(*): blocksize of %i byte is not a valid value. trying 2KB", self->blocksize);
+   break;
+ }
+
+ ROAR_WARN("driver_oss_config_device(*): blocksize=%i(N=%i), blocks=%i", self->blocksize, tmp, self->blocks);
 
  tmp |= self->blocks << 16;
  if ( ioctl(fh, SNDCTL_DSP_SETFRAGMENT, &tmp) == -1 ) {
@@ -329,7 +348,7 @@ int driver_oss_ctl(struct roar_vio_calls * vio, int cmd, void * data) {
  struct driver_oss * self = vio->inst;
  int d;
 
- ROAR_WARN("driver_oss_ctl(vio=%p, cmd=%i, data=%p) = ?", vio, cmd, data);
+ ROAR_WARN("driver_oss_ctl(vio=%p, cmd=0x%.8x, data=%p) = ?", vio, cmd, data);
 
  if ( vio == NULL )
   return -1;
