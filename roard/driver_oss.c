@@ -34,6 +34,7 @@ struct driver_oss {
  int need_reopen;
  int need_config;
  struct roar_stream_server * stream;
+ int ssid;
 };
 
 #define _get(vio,obj) (((struct driver_oss*)((vio)->inst))->obj)
@@ -220,9 +221,14 @@ int driver_oss_config_device(struct driver_oss * self) {
   return -1;
  }
 
- if ( tmp < info->rate * 0.98 || tmp > info->rate * 1.02 ) {
-  ROAR_ERR("driver_oss_open(*): sample rate out of acceptable accuracy");
-  return -1;
+ if ( tmp != info->rate ) {
+  ROAR_WARN("driver_oss_config_device(*): Device does not support requested sample rate: req=%iHz, sug=%iHz",
+                    info->rate, tmp);
+
+  if ( tmp < info->rate * 0.98 || tmp > info->rate * 1.02 ) {
+   ROAR_ERR("driver_oss_open(*): sample rate out of acceptable accuracy");
+   return -1;
+  }
  }
 
  // latency things:
@@ -278,7 +284,8 @@ int driver_oss_open(struct roar_vio_calls * inst, char * device, struct roar_aud
  memset(self, 0, sizeof(struct driver_oss));
  memcpy(&(self->info), info, sizeof(struct roar_audio_info));
 
- self->fh = fh;
+ self->ssid = -1;
+ self->fh   = fh;
 
  if ( device != NULL )
   self->device = strdup(device);
@@ -382,6 +389,9 @@ int driver_oss_ctl(struct roar_vio_calls * vio, int cmd, void * data) {
      return -1;
 
     *(uint_least32_t *)data = self->blocksize;
+   break;
+  case ROAR_VIO_CTL_GET_SSTREAMID:
+    self->ssid = *(int *)data;
    break;
   case ROAR_VIO_CTL_SET_SSTREAM:
     self->stream = data;
