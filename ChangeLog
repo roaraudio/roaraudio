@@ -4,6 +4,7 @@ v. 0.2beta3 - ?
 	* updated manpages
 	* also build libroar{,dsp}.a
 	* Changed VIO CTLs in a binary inkompatible way
+	* added support for autoconf flag to OSS driver
 
 v. 0.2beta2 - Fri Mar 27 2009 21:20
 	* added (dummy) flags autoconf and cleanmeta
