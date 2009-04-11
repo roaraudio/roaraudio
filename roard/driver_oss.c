@@ -93,9 +93,17 @@ int driver_oss_config_device(struct driver_oss * self) {
  struct roar_audio_info * info = &(self->info);
  int tmp, ctmp;
  char * es;
+ int autoconfig         = 0;
+ int need_update_server = 0;
 
  if ( fh == -1 )
   return -1;
+
+ if ( self->ssid != -1 ) {
+  autoconfig = streams_get_flag(self->ssid, ROAR_FLAG_AUTOCONF);
+ }
+
+ ROAR_WARN("driver_oss_config_device(self=%p): ssid=%i, autoconfig=%i", self, self->ssid, autoconfig);
 
 #ifdef SNDCTL_DSP_CHANNELS
  tmp = info->channels;
@@ -106,8 +114,13 @@ int driver_oss_config_device(struct driver_oss * self) {
  }
 
  if ( tmp != info->channels ) {
+  if ( autoconfig ) {
+   need_update_server = 1;
+   self->info.channels = tmp;
+  } else {
    ROAR_ERR("driver_oss_open(*): can not set requested numer of channels, OSS suggested %i channels, to use this restart with -oO channels=%i or set codec manuelly via -oO channels=num", tmp, tmp);
-  return -1;
+   return -1;
+  }
  }
 #else
  switch (info->channels) {
@@ -185,33 +198,60 @@ int driver_oss_config_device(struct driver_oss * self) {
  }
 
  if ( tmp != ctmp ) {
-  es = NULL;
-  switch (tmp) {
-   case AFMT_S8    : es = "bits=8,codec=pcm";       break;
-   case AFMT_U8    : es = "bits=8,codec=pcm_u_le";  break;
-   case AFMT_S16_LE: es = "bits=16,codec=pcm_s_le"; break;
-   case AFMT_S16_BE: es = "bits=16,codec=pcm_s_be"; break;
-   case AFMT_U16_LE: es = "bits=16,codec=pcm_u_le"; break;
-   case AFMT_U16_BE: es = "bits=16,codec=pcm_u_be"; break;
+  if ( autoconfig ) {
+   need_update_server = 1;
+   switch (tmp) {
+    case AFMT_S8    : self->info.bits =  8; self->info.codec = ROAR_CODEC_PCM;      break;
+    case AFMT_U8    : self->info.bits =  8; self->info.codec = ROAR_CODEC_PCM_U_LE; break;
+    case AFMT_S16_LE: self->info.bits = 16; self->info.codec = ROAR_CODEC_PCM_S_LE; break;
+    case AFMT_S16_BE: self->info.bits = 16; self->info.codec = ROAR_CODEC_PCM_S_BE; break;
+    case AFMT_U16_LE: self->info.bits = 16; self->info.codec = ROAR_CODEC_PCM_U_LE; break;
+    case AFMT_U16_BE: self->info.bits = 16; self->info.codec = ROAR_CODEC_PCM_U_BE; break;
 #ifdef AFMT_S32_LE
-   case AFMT_S32_LE: es = "bits=32,codec=pcm_s_le"; break;
+    case AFMT_S32_LE: self->info.bits = 32; self->info.codec = ROAR_CODEC_PCM_S_LE; break;
 #endif
 #ifdef AFMT_S32_BE
-   case AFMT_S32_BE: es = "bits=32,codec=pcm_s_be"; break;
+    case AFMT_S32_BE: self->info.bits = 32; self->info.codec = ROAR_CODEC_PCM_S_BE; break;
 #endif
-   case AFMT_A_LAW : es = "codec=alaw";             break;
-   case AFMT_MU_LAW: es = "codec=mulaw";            break;
+    case AFMT_A_LAW : self->info.bits =  8; self->info.codec = ROAR_CODEC_ALAW;     break;
+    case AFMT_MU_LAW: self->info.bits =  8; self->info.codec = ROAR_CODEC_MULAW;    break;
 #ifdef AFMT_VORBIS
-   case AFMT_VORBIS: es = "codec=ogg_vorbis";       break;
+    case AFMT_VORBIS: self->info.codec = ROAR_CODEC_OGG_VORBIS;                     break;
 #endif
-  }
-
-  if ( es != NULL ) {
-   ROAR_ERR("driver_oss_open(*): can not set requested codec, OSS retruned another codec than requested, to use this restart with -oO %s or set codec manuelly via -oO codec=somecodec", es);
+    default:
+      ROAR_WARN("driver_oss_config_device(*): Auto config failed: unknown OSS Codec %i", tmp);
+      ROAR_ERR("driver_oss_config_device(*): can not set requested codec, set codec manuelly via -oO codec=somecodec");
+     break;
+   }
   } else {
-   ROAR_ERR("driver_oss_open(*): can not set requested codec, set codec manuelly via -oO codec=somecodec");
+   es = NULL;
+   switch (tmp) {
+    case AFMT_S8    : es = "bits=8,codec=pcm";       break;
+    case AFMT_U8    : es = "bits=8,codec=pcm_u_le";  break;
+    case AFMT_S16_LE: es = "bits=16,codec=pcm_s_le"; break;
+    case AFMT_S16_BE: es = "bits=16,codec=pcm_s_be"; break;
+    case AFMT_U16_LE: es = "bits=16,codec=pcm_u_le"; break;
+    case AFMT_U16_BE: es = "bits=16,codec=pcm_u_be"; break;
+#ifdef AFMT_S32_LE
+    case AFMT_S32_LE: es = "bits=32,codec=pcm_s_le"; break;
+#endif
+#ifdef AFMT_S32_BE
+    case AFMT_S32_BE: es = "bits=32,codec=pcm_s_be"; break;
+#endif
+    case AFMT_A_LAW : es = "codec=alaw";             break;
+    case AFMT_MU_LAW: es = "codec=mulaw";            break;
+#ifdef AFMT_VORBIS
+    case AFMT_VORBIS: es = "codec=ogg_vorbis";       break;
+#endif
+   }
+
+   if ( es != NULL ) {
+    ROAR_ERR("driver_oss_open(*): can not set requested codec, OSS retruned another codec than requested, to use this restart with -oO %s or set codec manuelly via -oO codec=somecodec", es);
+   } else {
+    ROAR_ERR("driver_oss_open(*): can not set requested codec, set codec manuelly via -oO codec=somecodec");
+   }
+   return -1;
   }
-  return -1;
  }
 
  tmp = info->rate;
@@ -222,12 +262,17 @@ int driver_oss_config_device(struct driver_oss * self) {
  }
 
  if ( tmp != info->rate ) {
-  ROAR_WARN("driver_oss_config_device(*): Device does not support requested sample rate: req=%iHz, sug=%iHz",
-                    info->rate, tmp);
+  if ( autoconfig ) {
+   need_update_server = 1;
+   self->info.rate = tmp;
+  } else {
+   ROAR_WARN("driver_oss_config_device(*): Device does not support requested sample rate: req=%iHz, sug=%iHz",
+                     info->rate, tmp);
 
-  if ( tmp < info->rate * 0.98 || tmp > info->rate * 1.02 ) {
-   ROAR_ERR("driver_oss_open(*): sample rate out of acceptable accuracy");
-   return -1;
+   if ( tmp < info->rate * 0.98 || tmp > info->rate * 1.02 ) {
+    ROAR_ERR("driver_oss_open(*): sample rate out of acceptable accuracy");
+    return -1;
+   }
   }
  }
 
@@ -266,6 +311,19 @@ int driver_oss_config_device(struct driver_oss * self) {
   ROAR_WARN("driver_oss_ctl(*): Can not set fragment size, sorry :(");
  }
 #endif
+
+ if ( need_update_server ) {
+  if ( self->stream == NULL ) {
+   streams_get(self->ssid, &(self->stream));
+  }
+
+  if ( self->stream == NULL ) {
+   ROAR_ERR("driver_oss_config_device(*): Auto config failed: can not set new values for stream: no stream object known");
+   return -1;
+  }
+
+  memcpy(&(ROAR_STREAM(self->stream)->info), info, sizeof(struct roar_audio_info));
+ }
 
  self->need_config = 0;
 
@@ -390,7 +448,7 @@ int driver_oss_ctl(struct roar_vio_calls * vio, int cmd, void * data) {
 
     *(uint_least32_t *)data = self->blocksize;
    break;
-  case ROAR_VIO_CTL_GET_SSTREAMID:
+  case ROAR_VIO_CTL_SET_SSTREAMID:
     self->ssid = *(int *)data;
    break;
   case ROAR_VIO_CTL_SET_SSTREAM:
