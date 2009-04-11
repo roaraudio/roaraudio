@@ -76,6 +76,7 @@ MINIMAL=false
 
 TARGET_WIN32=false
 TARGET_MICROCONTROLLER=false
+TARGET_CYGWIN=false
 
 EXEC_HELPER=''
 
@@ -464,6 +465,12 @@ test_tool_defmake () {
 
 exec 3> config.h 4> Makefile.conf
 
+echo "$SYSNAME" | if grep CYGWIN > /dev/null
+then
+ TARGET_CYGWIN=true
+# echo "cygwin detected"
+fi
+
 if [ "$SYSNAME" = 'Darwin' ]
 then
  echo "Adding $SYSNAME shared lib arguments..."
@@ -487,6 +494,10 @@ then
 elif $TARGET_WIN32
 then
  echo "Adding win32 build arguments..."
+ fPIC=false
+elif $TARGET_CYGWIN
+then
+ echo "Adding cygwin build arguments..."
  fPIC=false
 fi
 
@@ -931,7 +942,7 @@ fi
 
 echo -n 'checking for square root func... '
 
-echo "$SYSNAME" | if grep CYGWIN > /dev/null
+if $TARGET_CYGWIN
 then
  echo 'sqrt() (cygwin)'
 elif [ "$SYSNAME" = 'FreeBSD' ]
@@ -1283,7 +1294,7 @@ rm -f $TF_C $TF_E
 mv config.h include/roaraudio/
 echo 'config.h created and moved into include/roaraudio/'
 
-echo "$SYSNAME" | if grep CYGWIN > /dev/null
+if $TARGET_CYGWIN
 then
  rm -f $TF_E.exe
  echo 'patching Makefiles for cygwin...'
