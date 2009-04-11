@@ -33,6 +33,7 @@ struct driver_oss {
  struct roar_audio_info info;
  int need_reopen;
  int need_config;
+ struct roar_stream_server * stream;
 };
 
 #define _get(vio,obj) (((struct driver_oss*)((vio)->inst))->obj)
@@ -381,7 +382,9 @@ int driver_oss_ctl(struct roar_vio_calls * vio, int cmd, void * data) {
      return -1;
 
     *(uint_least32_t *)data = self->blocksize;
-    return 0;
+   break;
+  case ROAR_VIO_CTL_SET_SSTREAM:
+    self->stream = data;
    break;
   default:
    return -1;
