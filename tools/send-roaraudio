@@ -8,6 +8,8 @@ BUILD=true
 TEST=true
 PORT=''
 
+SSH_OPTS=''
+
 while [ "$1" != '' ]
 do
  case "$1" in
@@ -35,8 +37,10 @@ done
 
 if [ "$PORT" != '' ]
 then
- REMOTEHOST="-p $PORT $REMOTEHOST"
+ SSH_OPTS="-p $PORT $SSH_OPTS"
 fi
+
+SSH_OPTS="$SSH_OPTS $REMOTEHOST"
 
 $CONFIGURE || BUILD=false
 $BUILD     || TEST=false
@@ -66,7 +70,7 @@ cd ..
 } > $LOCALDIR/setup
 chmod +rx $LOCALDIR/setup
 
-tar -czf - $LOCALDIR | ssh $REMOTEHOST "cd $REMOTEDIR && rm -rf $LOCALDIR && tar -xvzf - && cd $LOCALDIR && ./setup"
+tar -czf - $LOCALDIR | ssh $SSH_OPTS "cd $REMOTEDIR && rm -rf $LOCALDIR && tar -xvzf - && cd $LOCALDIR && ./setup"
 
 rm -rf $LOCALDIR
 
