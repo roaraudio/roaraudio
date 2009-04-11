@@ -251,7 +251,7 @@ int driver_oss_config_device(struct driver_oss * self) {
    break;
  }
 
- ROAR_WARN("driver_oss_config_device(*): blocksize=%i(N=%i), blocks=%i", self->blocksize, tmp, self->blocks);
+ ROAR_DBG("driver_oss_config_device(*): blocksize=%i(N=%i), blocks=%i", self->blocksize, tmp, self->blocks);
 
  tmp |= self->blocks << 16;
  if ( ioctl(fh, SNDCTL_DSP_SETFRAGMENT, &tmp) == -1 ) {
@@ -348,7 +348,7 @@ int driver_oss_ctl(struct roar_vio_calls * vio, int cmd, void * data) {
  struct driver_oss * self = vio->inst;
  int d;
 
- ROAR_WARN("driver_oss_ctl(vio=%p, cmd=0x%.8x, data=%p) = ?", vio, cmd, data);
+ ROAR_DBG("driver_oss_ctl(vio=%p, cmd=0x%.8x, data=%p) = ?", vio, cmd, data);
 
  if ( vio == NULL )
   return -1;
