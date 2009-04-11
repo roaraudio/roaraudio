@@ -25,13 +25,43 @@
 #include "roard.h"
 #if defined(ROAR_HAVE_OSS_BSD) || defined(ROAR_HAVE_OSS)
 
-#define er() close(fh); return -1
+struct driver_oss {
+ char * device;
+ int fh;
+ int blocks;
+ int blocksize;
+ struct roar_audio_info info;
+};
 
-int driver_oss_open(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh) {
- int tmp;
- int ctmp;
- char * es;
- uint32_t tmp32;
+#define _get(vio,obj) (((struct driver_oss*)((vio)->inst))->obj)
+
+ssize_t driver_oss_write    (struct roar_vio_calls * vio, void *buf, size_t count);
+int     driver_oss_nonblock (struct roar_vio_calls * vio, int state);
+int     driver_oss_close_vio(struct roar_vio_calls * vio);
+
+int driver_oss_init_vio(struct roar_vio_calls * vio, struct driver_oss * inst) {
+ if ( vio == NULL )
+  return -1;
+
+ memset(vio, 0, sizeof(struct roar_vio_calls));
+
+ vio->write    = driver_oss_write;
+ vio->nonblock = driver_oss_nonblock;
+ vio->sync     = driver_oss_sync;
+ vio->ctl      = driver_oss_ctl;
+ vio->close    = driver_oss_close_vio;
+
+ vio->inst     = (void*) inst;
+
+ return 0;
+}
+
+int driver_oss_open_device(struct driver_oss * self) {
+ int    fh     = self->fh;
+ char * device = self->device;
+
+ if ( fh != -1 )
+  return 0;
 
 #ifdef ROAR_DEFAULT_OSS_DEV
  if ( device == NULL )
@@ -39,47 +69,51 @@ int driver_oss_open(struct roar_vio_calls * inst, char * device, struct roar_aud
 #endif
 
  if ( device == NULL ) {
-  ROAR_ERR("driver_oss_open(*): no default device found, you need to specify one manuelly");
+  ROAR_ERR("driver_oss_open_device(*): no default device found, you need to specify one manuelly");
   return -1;
  }
 
- roar_vio_init_calls(inst);
- inst->sync = driver_oss_sync;
- inst->ctl  = driver_oss_ctl;
-
- if (  fh == -1 ) {
-  if ( (fh = open(device, O_WRONLY, 0644)) == -1 ) {
-   ROAR_ERR("driver_oss_open(*): Can not open OSS device: %s: %s", device, strerror(errno));
-   return -1;
-  }
+ if ( (fh = open(device, O_WRONLY, 0644)) == -1 ) {
+  ROAR_ERR("driver_oss_open_device(*): Can not open OSS device: %s: %s", device, strerror(errno));
+  return -1;
  }
 
- roar_vio_set_fh(inst, fh);
+ self->fh = fh;
 
+ return 0;
+}
 
+int driver_oss_config_device(struct driver_oss * self) {
+ int                      fh   =   self->fh;
+ struct roar_audio_info * info = &(self->info);
+ int tmp, ctmp;
+ char * es;
+
+ if ( fh == -1 )
+  return -1;
 
 #ifdef SNDCTL_DSP_CHANNELS
  tmp = info->channels;
 
  if ( ioctl(fh, SNDCTL_DSP_CHANNELS, &tmp) == -1 ) {
   ROAR_ERR("driver_oss_open(*): can not set number of channels");
-  er();
+  return -1;
  }
 
  if ( tmp != info->channels ) {
    ROAR_ERR("driver_oss_open(*): can not set requested numer of channels, OSS suggested %i channels, to use this restart with -oO channels=%i or set codec manuelly via -oO channels=num", tmp, tmp);
-  er();
+  return -1;
  }
 #else
  switch (info->channels) {
   case  1: tmp = 0; break;
   case  2: tmp = 1; break;
-  default: er();
+  default: return -1;
  }
 
  if ( ioctl(fh, SNDCTL_DSP_STEREO, &tmp) == -1 ) {
   ROAR_ERR("driver_oss_open(*): can not set number of channels");
-  er();
+  return -1;
  }
 #endif
 
@@ -92,7 +126,7 @@ int driver_oss_open(struct roar_vio_calls * inst, char * device, struct roar_aud
 #ifdef AFMT_S32_LE
      case 32: tmp = AFMT_S32_LE; break;
 #endif
-     default: er();
+     default: return -1;
     }
    break;
   case ROAR_CODEC_PCM_S_BE:
@@ -103,21 +137,21 @@ int driver_oss_open(struct roar_vio_calls * inst, char * device, struct roar_aud
 #ifdef AFMT_S32_BE
      case 32: tmp = AFMT_S32_BE; break;
 #endif
-     default: er();
+     default: return -1;
     }
    break;
   case ROAR_CODEC_PCM_U_LE:
     switch (info->bits) {
      case  8: tmp = AFMT_U8;     break;
      case 16: tmp = AFMT_U16_LE; break;
-     default: er();
+     default: return -1;
     }
    break;
   case ROAR_CODEC_PCM_U_BE:
     switch (info->bits) {
      case  8: tmp = AFMT_U8;     break;
      case 16: tmp = AFMT_U16_BE; break;
-     default: er();
+     default: return -1;
     }
   case ROAR_CODEC_ALAW:
     tmp = AFMT_A_LAW;
@@ -131,7 +165,7 @@ int driver_oss_open(struct roar_vio_calls * inst, char * device, struct roar_aud
    break;
 #endif
   default:
-    er();
+    return -1;
    break;
  }
 
@@ -142,7 +176,7 @@ int driver_oss_open(struct roar_vio_calls * inst, char * device, struct roar_aud
  if ( ioctl(fh, SNDCTL_DSP_SAMPLESIZE, &tmp) == -1 ) {
 #endif
   ROAR_ERR("driver_oss_open(*): can not set sample format");
-  er();
+  return -1;
  }
 
  if ( tmp != ctmp ) {
@@ -172,21 +206,56 @@ int driver_oss_open(struct roar_vio_calls * inst, char * device, struct roar_aud
   } else {
    ROAR_ERR("driver_oss_open(*): can not set requested codec, set codec manuelly via -oO codec=somecodec");
   }
-  er();
+  return -1;
  }
 
  tmp = info->rate;
 
  if ( ioctl(fh, SNDCTL_DSP_SPEED, &tmp) == -1 ) {
   ROAR_ERR("driver_oss_open(*): can not set sample rate");
-  er();
+  return -1;
  }
 
  if ( tmp < info->rate * 0.98 || tmp > info->rate * 1.02 ) {
   ROAR_ERR("driver_oss_open(*): sample rate out of acceptable accuracy");
+  return -1;
+ }
+
+ return 0;
+}
+
+#define er() close(self->fh); if ( self->device ) free(self->device); free(self); return -1
+int driver_oss_open(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh) {
+ struct driver_oss * self = NULL;
+ uint32_t tmp32;
+
+ if ( (self = malloc(sizeof(struct driver_oss))) == NULL ) {
+  ROAR_ERR("driver_oss_open(*): Can not malloc() instance data: %s", strerror(errno));
+  return -1;
+ }
+
+ memset(self, 0, sizeof(struct driver_oss));
+ memcpy(&(self->info), info, sizeof(struct roar_audio_info));
+
+ self->fh = fh;
+
+ if ( device != NULL )
+  self->device = strdup(device);
+
+ if ( driver_oss_init_vio(inst, self) == -1 ) {
+  ROAR_ERR("driver_oss_open(*): Can not init vio interface");
   er();
  }
 
+ if ( driver_oss_open_device(self) == -1 ) {
+  ROAR_ERR("driver_oss_open(*): Can not open audio device");
+  er();
+ }
+
+ if ( driver_oss_config_device(self) == -1 ) {
+  ROAR_ERR("driver_oss_open(*): Can not configure audio device");
+  er();
+ }
 
  tmp32 = 4;
  driver_oss_ctl(inst, ROAR_VIO_CTL_SET_DBLOCKS, &tmp32);
@@ -195,14 +264,37 @@ int driver_oss_open(struct roar_vio_calls * inst, char * device, struct roar_aud
 
  return 0;
 }
+#undef er
 
 int driver_oss_close(DRIVER_USERDATA_T   inst) {
  return roar_vio_close((struct roar_vio_calls *)inst);
 }
 
+int     driver_oss_close_vio(struct roar_vio_calls * vio) {
+ close(_get(vio,fh));
+
+ if ( _get(vio,device) != NULL )
+  free(_get(vio,device));
+
+ free(vio->inst);
+ return 0;
+}
+
+int     driver_oss_nonblock(struct roar_vio_calls * vio, int state) {
+ if ( roar_socket_nonblock(_get(vio,fh), state) == -1 )
+  return -1;
+
+ if ( state == ROAR_SOCKET_NONBLOCK )
+  return 0;
+
+ roar_vio_sync(vio);
+
+ return 0;
+}
+
 int driver_oss_sync(struct roar_vio_calls * vio) {
 #ifdef SNDCTL_DSP_SYNC
- return ioctl(roar_vio_get_fh(vio), SNDCTL_DSP_SYNC, NULL);
+ return ioctl(_get(vio,fh), SNDCTL_DSP_SYNC, NULL);
 #else
  return 0;
 #endif
@@ -217,7 +309,7 @@ int driver_oss_ctl(struct roar_vio_calls * vio, int cmd, void * data) {
  switch (cmd) {
   case ROAR_VIO_CTL_GET_DELAY:
 #ifdef SNDCTL_DSP_GETODELAY
-    if ( ioctl(roar_vio_get_fh(vio), SNDCTL_DSP_GETODELAY, &d) == -1 )
+    if ( ioctl(_get(vio,fh), SNDCTL_DSP_GETODELAY, &d) == -1 )
      return -1;
 
     ROAR_DBG("driver_oss_ctl(*): delay=%i byte", d);
@@ -230,7 +322,7 @@ int driver_oss_ctl(struct roar_vio_calls * vio, int cmd, void * data) {
   case ROAR_VIO_CTL_SET_DBLOCKS:
 #ifdef SNDCTL_DSP_SETFRAGMENT
     d = (*(uint_least32_t *)data) << 16 | 11; // (*data) fragements of 2048 Bytes.
-    if ( ioctl(roar_vio_get_fh(vio), SNDCTL_DSP_SETFRAGMENT, &d) == -1 ) {
+    if ( ioctl(_get(vio,fh), SNDCTL_DSP_SETFRAGMENT, &d) == -1 ) {
      ROAR_WARN("driver_oss_ctl(*): Can not set fragment size, sorry :(");
     }
 #else
@@ -246,6 +338,10 @@ int driver_oss_ctl(struct roar_vio_calls * vio, int cmd, void * data) {
  }
 
  return 0;
+}
+
+ssize_t driver_oss_write   (struct roar_vio_calls * vio, void *buf, size_t count) {
+ return write(_get(vio,fh), buf, count);
 }
 
 #endif
