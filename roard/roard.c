@@ -250,6 +250,9 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
   return -1;
  }
 
+ roar_vio_ctl(&(ss->vio), ROAR_VIO_CTL_SET_SSTREAMID, &stream); // ignore errors here
+ roar_vio_ctl(&(ss->vio), ROAR_VIO_CTL_SET_SSTREAM,   s); // ignore errors here
+
  if ( blocks != -1 )
   roar_vio_ctl(&(ss->vio), ROAR_VIO_CTL_SET_DBLOCKS, &blocks);
 
