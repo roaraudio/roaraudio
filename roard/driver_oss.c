@@ -103,13 +103,13 @@ int driver_oss_config_device(struct driver_oss * self) {
   autoconfig = streams_get_flag(self->ssid, ROAR_FLAG_AUTOCONF);
  }
 
- ROAR_WARN("driver_oss_config_device(self=%p): ssid=%i, autoconfig=%i", self, self->ssid, autoconfig);
+ ROAR_DBG("driver_oss_config_device(self=%p): ssid=%i, autoconfig=%i", self, self->ssid, autoconfig);
 
 #ifdef SNDCTL_DSP_CHANNELS
  tmp = info->channels;
 
  if ( ioctl(fh, SNDCTL_DSP_CHANNELS, &tmp) == -1 ) {
-  ROAR_ERR("driver_oss_open(*): can not set number of channels");
+  ROAR_ERR("driver_oss_config_device(*): can not set number of channels");
   return -1;
  }
 
@@ -118,7 +118,7 @@ int driver_oss_config_device(struct driver_oss * self) {
    need_update_server = 1;
    self->info.channels = tmp;
   } else {
-   ROAR_ERR("driver_oss_open(*): can not set requested numer of channels, OSS suggested %i channels, to use this restart with -oO channels=%i or set codec manuelly via -oO channels=num", tmp, tmp);
+   ROAR_ERR("driver_oss_config_device(*): can not set requested numer of channels, OSS suggested %i channels, to use this restart with -oO channels=%i or set codec manuelly via -oO channels=num", tmp, tmp);
    return -1;
   }
  }
@@ -130,7 +130,7 @@ int driver_oss_config_device(struct driver_oss * self) {
  }
 
  if ( ioctl(fh, SNDCTL_DSP_STEREO, &tmp) == -1 ) {
-  ROAR_ERR("driver_oss_open(*): can not set number of channels");
+  ROAR_ERR("driver_oss_config_device(*): can not set number of channels");
   return -1;
  }
 #endif
@@ -193,7 +193,7 @@ int driver_oss_config_device(struct driver_oss * self) {
 #else
  if ( ioctl(fh, SNDCTL_DSP_SAMPLESIZE, &tmp) == -1 ) {
 #endif
-  ROAR_ERR("driver_oss_open(*): can not set sample format");
+  ROAR_ERR("driver_oss_config_device(*): can not set sample format");
   return -1;
  }
 
@@ -246,9 +246,9 @@ int driver_oss_config_device(struct driver_oss * self) {
    }
 
    if ( es != NULL ) {
-    ROAR_ERR("driver_oss_open(*): can not set requested codec, OSS retruned another codec than requested, to use this restart with -oO %s or set codec manuelly via -oO codec=somecodec", es);
+    ROAR_ERR("driver_oss_config_device(*): can not set requested codec, OSS retruned another codec than requested, to use this restart with -oO %s or set codec manuelly via -oO codec=somecodec", es);
    } else {
-    ROAR_ERR("driver_oss_open(*): can not set requested codec, set codec manuelly via -oO codec=somecodec");
+    ROAR_ERR("driver_oss_config_device(*): can not set requested codec, set codec manuelly via -oO codec=somecodec");
    }
    return -1;
   }
@@ -257,7 +257,7 @@ int driver_oss_config_device(struct driver_oss * self) {
  tmp = info->rate;
 
  if ( ioctl(fh, SNDCTL_DSP_SPEED, &tmp) == -1 ) {
-  ROAR_ERR("driver_oss_open(*): can not set sample rate");
+  ROAR_ERR("driver_oss_config_device(*): can not set sample rate");
   return -1;
  }
 
@@ -270,7 +270,7 @@ int driver_oss_config_device(struct driver_oss * self) {
                      info->rate, tmp);
 
    if ( tmp < info->rate * 0.98 || tmp > info->rate * 1.02 ) {
-    ROAR_ERR("driver_oss_open(*): sample rate out of acceptable accuracy");
+    ROAR_ERR("driver_oss_config_device(*): sample rate out of acceptable accuracy");
     return -1;
    }
   }
