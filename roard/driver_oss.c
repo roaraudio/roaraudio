@@ -31,6 +31,8 @@ struct driver_oss {
  int blocks;
  int blocksize;
  struct roar_audio_info info;
+ int need_reopen;
+ int need_config;
 };
 
 #define _get(vio,obj) (((struct driver_oss*)((vio)->inst))->obj)
@@ -221,6 +223,25 @@ int driver_oss_config_device(struct driver_oss * self) {
   return -1;
  }
 
+ // latency things:
+#ifdef SNDCTL_DSP_SETFRAGMENT
+
+ // defaults
+ if ( self->blocksize < 1 )
+  self->blocksize = 2048;
+ if ( self->blocks < 1 )
+  self->blocks    =    4;
+
+ tmp  = 11;
+
+ tmp |= self->blocks << 16;
+ if ( ioctl(fh, SNDCTL_DSP_SETFRAGMENT, &tmp) == -1 ) {
+  ROAR_WARN("driver_oss_ctl(*): Can not set fragment size, sorry :(");
+ }
+#endif
+
+ self->need_config = 0;
+
  return 0;
 }
 
@@ -252,10 +273,14 @@ int driver_oss_open(struct roar_vio_calls * inst, char * device, struct roar_aud
   er();
  }
 
+ self->need_config = 1;
+
+/*
  if ( driver_oss_config_device(self) == -1 ) {
   ROAR_ERR("driver_oss_open(*): Can not configure audio device");
   er();
  }
+*/
 
  tmp32 = 4;
  driver_oss_ctl(inst, ROAR_VIO_CTL_SET_DBLOCKS, &tmp32);
@@ -301,7 +326,10 @@ int driver_oss_sync(struct roar_vio_calls * vio) {
 }
 
 int driver_oss_ctl(struct roar_vio_calls * vio, int cmd, void * data) {
+ struct driver_oss * self = vio->inst;
  int d;
+
+ ROAR_WARN("driver_oss_ctl(vio=%p, cmd=%i, data=%p) = ?", vio, cmd, data);
 
  if ( vio == NULL )
   return -1;
@@ -321,16 +349,31 @@ int driver_oss_ctl(struct roar_vio_calls * vio, int cmd, void * data) {
    break;
   case ROAR_VIO_CTL_SET_DBLOCKS:
 #ifdef SNDCTL_DSP_SETFRAGMENT
-    d = (*(uint_least32_t *)data) << 16 | 11; // (*data) fragements of 2048 Bytes.
-    if ( ioctl(_get(vio,fh), SNDCTL_DSP_SETFRAGMENT, &d) == -1 ) {
-     ROAR_WARN("driver_oss_ctl(*): Can not set fragment size, sorry :(");
+    if ( !self->need_config ) {
+     ROAR_WARN("driver_oss_ctl(*): possible late ROAR_VIO_CTL_SET_DBLOCKS, setting anyway.");
     }
+
+    self->blocks    = *(uint_least32_t *)data;
+#else
+    return -1;
+#endif
+   break;
+  case ROAR_VIO_CTL_SET_DBLKSIZE:
+#ifdef SNDCTL_DSP_SETFRAGMENT
+    if ( !self->need_config ) {
+     ROAR_WARN("driver_oss_ctl(*): possible late ROAR_VIO_CTL_SET_DBLKSIZE, setting anyway.");
+    }
+
+    self->blocksize = *(uint_least32_t *)data;
 #else
     return -1;
 #endif
    break;
   case ROAR_VIO_CTL_GET_DBLKSIZE:
-    *(uint_least32_t *)data = 2048;
+    if ( !self->blocksize )
+     return -1;
+
+    *(uint_least32_t *)data = self->blocksize;
     return 0;
    break;
   default:
@@ -341,6 +384,12 @@ int driver_oss_ctl(struct roar_vio_calls * vio, int cmd, void * data) {
 }
 
 ssize_t driver_oss_write   (struct roar_vio_calls * vio, void *buf, size_t count) {
+ if ( _get(vio,need_config) ) {
+  if ( driver_oss_config_device(vio->inst) == -1 ) {
+   return -1;
+  }
+ }
+
  return write(_get(vio,fh), buf, count);
 }
 
