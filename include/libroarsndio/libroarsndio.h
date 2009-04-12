@@ -41,6 +41,13 @@
 #include "sndiosym.h"
 #endif
 
+#if !defined(ROAR_HAVE_LIBSNDIO) || defined(ROAR_USE_OWN_SNDIO_HDL)
+#ifdef sio_hdl
+#undef sio_hdl
+#endif
+#define sio_hdl roar_sio_hdl
+#endif
+
 struct roar_sio_hdl {
  char           * device;
  int              fh;

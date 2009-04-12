@@ -60,8 +60,6 @@ struct pollfd;
 
 #define SIO_BPS(bits) (((bits)/8) + ((bits) % 8 ? 1 : 0))
 
-#define sio_hdl roar_sio_hdl
-
 struct sio_par {
  unsigned bits;          /* bits per sample */
  unsigned bps;           /* bytes per sample */
