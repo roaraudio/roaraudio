@@ -80,6 +80,7 @@ struct sio_cap;
 struct sio_hdl {
  char           * device;
  int              fh;
+ struct roar_audio_info info;
  struct sio_par   para;
  void           (*on_move)(void * arg, int delta);
  void           * on_move_arg;
