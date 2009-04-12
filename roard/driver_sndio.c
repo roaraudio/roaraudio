@@ -95,6 +95,8 @@ int     driver_sndio_open_device  (struct driver_sndio * self) {
   return -1;
  }
 
+ self->need_config = 1;
+
  return 0;
 }
 
@@ -138,13 +140,49 @@ int     driver_sndio_config_device(struct driver_sndio * self) {
  return -1;
 }
 
-int     driver_sndio_reopen_device(struct driver_sndio * self);
-ssize_t driver_sndio_write        (struct roar_vio_calls * vio, void *buf, size_t count);
-int     driver_sndio_sync         (struct roar_vio_calls * vio);
+int     driver_sndio_reopen_device(struct driver_sndio * self) {
+ return -1;
+}
+
+ssize_t driver_sndio_write        (struct roar_vio_calls * vio, void *buf, size_t count) {
+ struct driver_sndio * self = vio->inst;
+
+ if ( self->need_config ) {
+  if ( driver_sndio_config_device(vio->inst) == -1 ) {
+   return -1;
+  }
+ }
+
+ return sio_write(self->handle, buf, count);
+}
+
+int     driver_sndio_sync         (struct roar_vio_calls * vio) {
+ return -1;
+}
+
+#define data(x) x: if ( data == NULL ) return -1;
+#define no_data(x) x: if ( data != NULL ) return -1;
 
 int     driver_sndio_ctl          (struct roar_vio_calls * vio, int cmd, void * data) {
+ struct driver_sndio * self = vio->inst;
+
  switch (cmd) {
-  default: return -1;
+  case data(ROAR_VIO_CTL_SET_SSTREAMID)
+    self->ssid = *(int *)data;
+   break;
+  case data(ROAR_VIO_CTL_SET_SSTREAM)
+    self->stream = data;
+   break;
+  case data(ROAR_VIO_CTL_GET_AUINFO)
+    memcpy(data, &(self->info), sizeof(struct roar_audio_info));
+   break;
+  case data(ROAR_VIO_CTL_SET_AUINFO)
+    memcpy(&(self->info), data, sizeof(struct roar_audio_info));
+    return driver_sndio_reopen_device(self);
+   break;
+  default:
+    return -1;
+   break;
  }
 
  return 0;
