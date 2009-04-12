@@ -214,14 +214,26 @@ int driver_oss_config_device(struct driver_oss * self) {
 #ifdef AFMT_S32_BE
     case AFMT_S32_BE: self->info.bits = 32; self->info.codec = ROAR_CODEC_PCM_S_BE; break;
 #endif
+/*
     case AFMT_A_LAW : self->info.bits =  8; self->info.codec = ROAR_CODEC_ALAW;     break;
     case AFMT_MU_LAW: self->info.bits =  8; self->info.codec = ROAR_CODEC_MULAW;    break;
 #ifdef AFMT_VORBIS
     case AFMT_VORBIS: self->info.codec = ROAR_CODEC_OGG_VORBIS;                     break;
 #endif
+*/
+    case AFMT_A_LAW:
+    case AFMT_MU_LAW:
+#ifdef AFMT_VORBIS
+    case AFMT_VORBIS:
+#endif
+      ROAR_WARN("driver_oss_config_device(*): Auto config failed: OSS Codec %i needs a codecfilter!", tmp);
+      ROAR_ERR("driver_oss_config_device(*): can not set requested codec, set codec manuelly via -oO codec=somecodec");
+      return -1;
+     break;
     default:
       ROAR_WARN("driver_oss_config_device(*): Auto config failed: unknown OSS Codec %i", tmp);
       ROAR_ERR("driver_oss_config_device(*): can not set requested codec, set codec manuelly via -oO codec=somecodec");
+      return -1;
      break;
    }
   } else {
