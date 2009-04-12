@@ -52,6 +52,8 @@
 struct roar_sio_hdl {
  char           * device;
  int              fh;
+ struct roar_connection con;
+ struct roar_stream     stream;
  struct roar_audio_info info;
  struct sio_par   para;
  void           (*on_move)(void * arg, int delta);
