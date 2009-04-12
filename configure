@@ -996,7 +996,9 @@ fi
 
 echo -n 'checking for select()... '
 cat <<EOF > $TF_C
+#ifndef NO_SYS_SELECT_H
 #include <sys/select.h>
+#endif
 #include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -1020,7 +1022,12 @@ EOF
 if $CCTF 2> /dev/null;
 then
  echo '#define ROAR_HAVE_SELECT' >&3
- echo yes
+ echo '#define ROAR_HAVE_H_SYS_SELECT' >&3
+ echo yes, POSIX.1-2001
+elif $CCTF -DNO_SYS_SELECT_H 2> /dev/null;
+then
+ echo '#define ROAR_HAVE_SELECT' >&3
+ echo yes, old style
 else
  echo no
 fi

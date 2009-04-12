@@ -33,7 +33,7 @@
 #include <signal.h>
 #endif
 
-#ifdef ROAR_HAVE_SELECT
+#if defined(ROAR_HAVE_SELECT) && defined(ROAR_HAVE_H_SYS_SELECT)
 #include <sys/select.h>
 #endif
 
