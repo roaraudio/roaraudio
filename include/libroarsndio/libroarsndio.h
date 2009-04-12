@@ -41,6 +41,17 @@
 #include "sndiosym.h"
 #endif
 
+struct roar_sio_hdl {
+ char           * device;
+ int              fh;
+ struct roar_audio_info info;
+ struct sio_par   para;
+ void           (*on_move)(void * arg, int delta);
+ void           * on_move_arg;
+ void           (*on_vol )(void * arg, unsigned vol);
+ void           * on_vol_arg;
+};
+
 #endif
 
 //ll

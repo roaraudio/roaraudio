@@ -60,6 +60,8 @@ struct pollfd;
 
 #define SIO_BPS(bits) (((bits)/8) + ((bits) % 8 ? 1 : 0))
 
+#define sio_hdl roar_sio_hdl
+
 struct sio_par {
  unsigned bits;          /* bits per sample */
  unsigned bps;           /* bytes per sample */
@@ -76,17 +78,6 @@ struct sio_par {
 };
 
 struct sio_cap;
-
-struct sio_hdl {
- char           * device;
- int              fh;
- struct roar_audio_info info;
- struct sio_par   para;
- void           (*on_move)(void * arg, int delta);
- void           * on_move_arg;
- void           (*on_vol )(void * arg, unsigned vol);
- void           * on_vol_arg;
-};
 
 struct sio_hdl * sio_open(char * name, unsigned mode, int nbio_flag);
 void   sio_close  (struct sio_hdl * hdl);
