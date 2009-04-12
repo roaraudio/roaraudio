@@ -26,10 +26,24 @@
 #define _DRIVER_SNDIO_H_
 
 struct driver_sndio {
+ char * device;
  struct sio_hdl * handle;
+ struct roar_audio_info info;
+ int need_reopen;
+ int need_config;
+ struct roar_stream_server * stream;
+ int ssid;
 };
 
-int driver_sndio_open(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh);
+int     driver_sndio_open         (struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh);
+int     driver_sndio_close_vio    (struct roar_vio_calls * vio);
+int     driver_sndio_open_device  (struct driver_sndio * self) {
+int     driver_sndio_config_device(struct driver_sndio * self) {
+int     driver_sndio_reopen_device(struct driver_sndio * self);
+ssize_t driver_sndio_write        (struct roar_vio_calls * vio, void *buf, size_t count);
+int     driver_sndio_sync         (struct roar_vio_calls * vio);
+int     driver_sndio_ctl          (struct roar_vio_calls * vio, int cmd, void * data);
+
 
 #endif
 
