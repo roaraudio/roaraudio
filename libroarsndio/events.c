@@ -1,4 +1,4 @@
-//libroarsndio.c:
+//events.c:
 
 /*
  *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2009
@@ -31,5 +31,18 @@
  */
 
 #include "libroarsndio.h"
+
+int    sio_nfds   (struct sio_hdl * hdl) {
+ return 0;
+}
+
+int    sio_pollfd (struct sio_hdl * hdl, struct pollfd * pfd, int events) {
+ return 0;
+}
+
+int    sio_revents(struct sio_hdl * hdl, struct pollfd * pfd) {
+ return 0;
+}
+
 
 //ll
