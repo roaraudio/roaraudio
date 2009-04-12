@@ -25,10 +25,27 @@
 #ifndef _DRIVER_OSS_H_
 #define _DRIVER_OSS_H_
 
+struct driver_oss {
+ char * device;
+ int fh;
+ int blocks;
+ int blocksize;
+ struct roar_audio_info info;
+ int need_reopen;
+ int need_config;
+ struct roar_stream_server * stream;
+ int ssid;
+};
+
 int driver_oss_open(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh);
 int driver_oss_close(DRIVER_USERDATA_T   inst);
 int driver_oss_sync(struct roar_vio_calls * vio);
 int driver_oss_ctl(struct roar_vio_calls * vio, int cmd, void * data);
+
+ssize_t driver_oss_write    (struct roar_vio_calls * vio, void *buf, size_t count);
+int     driver_oss_nonblock (struct roar_vio_calls * vio, int state);
+int     driver_oss_close_vio(struct roar_vio_calls * vio);
+int     driver_oss_reopen_device(struct driver_oss * self);
 
 #endif
 

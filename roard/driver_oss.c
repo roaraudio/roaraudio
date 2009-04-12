@@ -25,24 +25,8 @@
 #include "roard.h"
 #if defined(ROAR_HAVE_OSS_BSD) || defined(ROAR_HAVE_OSS)
 
-struct driver_oss {
- char * device;
- int fh;
- int blocks;
- int blocksize;
- struct roar_audio_info info;
- int need_reopen;
- int need_config;
- struct roar_stream_server * stream;
- int ssid;
-};
 
 #define _get(vio,obj) (((struct driver_oss*)((vio)->inst))->obj)
-
-ssize_t driver_oss_write    (struct roar_vio_calls * vio, void *buf, size_t count);
-int     driver_oss_nonblock (struct roar_vio_calls * vio, int state);
-int     driver_oss_close_vio(struct roar_vio_calls * vio);
-int     driver_oss_reopen_device(struct driver_oss * self);
 
 int driver_oss_init_vio(struct roar_vio_calls * vio, struct driver_oss * inst) {
  if ( vio == NULL )
