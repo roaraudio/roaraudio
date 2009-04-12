@@ -78,6 +78,7 @@ struct sio_par {
 struct sio_cap;
 
 struct sio_hdl {
+ char           * device;
  int              fh;
  struct sio_par   para;
  void           (*on_move)(void * arg, int delta);
