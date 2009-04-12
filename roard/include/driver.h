@@ -66,6 +66,11 @@
 #include "driver_shout.h"
 #endif
 
+#ifdef ROAR_HAVE_LIBSNDIO
+#include <sndio.h>
+#include "driver_sndio.h"
+#endif
+
 #if defined(ROAR_HAVE_OSS_BSD) || defined(ROAR_HAVE_OSS)
 #if defined(__OpenBSD__) || defined(__NetBSD__)
 #include <soundcard.h>
