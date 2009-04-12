@@ -487,6 +487,9 @@ int driver_oss_ctl(struct roar_vio_calls * vio, int cmd, void * data) {
 }
 
 ssize_t driver_oss_write   (struct roar_vio_calls * vio, void *buf, size_t count) {
+ if ( _get(vio,fh) == -1 )
+  return -1;
+
  if ( _get(vio,need_config) ) {
   if ( driver_oss_config_device(vio->inst) == -1 ) {
    return -1;
