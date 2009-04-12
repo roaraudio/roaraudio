@@ -30,6 +30,7 @@
  *  any patches.
  */
 
+#define ROAR_USE_OWN_SNDIO_HDL
 #include "libroarsndio.h"
 
 void   sio_initpar(struct sio_par * par) {

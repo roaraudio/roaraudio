@@ -30,6 +30,7 @@
  *  any patches.
  */
 
+#define ROAR_USE_OWN_SNDIO_HDL
 #include "libroarsndio.h"
 
 struct sio_hdl * sio_open(char * name, unsigned mode, int nbio_flag) {
