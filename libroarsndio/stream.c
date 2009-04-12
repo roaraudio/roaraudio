@@ -1,4 +1,4 @@
-//libroarsndio.c:
+//stream.c:
 
 /*
  *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2009
@@ -31,5 +31,53 @@
  */
 
 #include "libroarsndio.h"
+
+int    sio_start  (struct sio_hdl * hdl) {
+ return 0;
+}
+
+int    sio_stop   (struct sio_hdl * hdl) {
+
+ if ( hdl == NULL )
+  return 0;
+
+ if ( hdl->fh == -1 )
+  return 0;
+
+ close(hdl->fh);
+
+ hdl->fh = -1;
+
+ return 1;
+}
+
+size_t sio_read   (struct sio_hdl * hdl, void * addr, size_t nbytes) {
+ ssize_t ret;
+
+ if ( hdl == NULL )
+  return 0;
+
+ if ( hdl->fh == -1 )
+  return 0;
+
+ if ( (ret = read(hdl->fh, addr, nbytes)) < 0 )
+  return 0;
+
+ return ret;
+}
+size_t sio_write  (struct sio_hdl * hdl, void * addr, size_t nbytes) {
+ ssize_t ret;
+
+ if ( hdl == NULL )
+  return 0;
+
+ if ( hdl->fh == -1 )
+  return 0;
+
+ if ( (ret = write(hdl->fh, addr, nbytes)) < 0 )
+  return 0;
+
+ return ret;
+}
 
 //ll
