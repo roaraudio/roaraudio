@@ -32,4 +32,55 @@
 
 #include "libroarsndio.h"
 
+struct sio_hdl * sio_open(char * name, unsigned mode, int nbio_flag) {
+ struct sio_hdl * hdl = NULL;
+
+ if ( mode != SIO_PLAY ) /* currently we only support playback */
+  return NULL;
+
+ if ( (hdl = malloc(sizeof(struct sio_hdl))) == NULL )
+  return NULL;
+
+ memset(hdl, 0, sizeof(struct sio_hdl));
+
+ sio_initpar(&(hdl->para));
+
+ hdl->fh = -1;
+
+ if ( name != NULL )
+  hdl->device = strdup(name);
+
+ return hdl;
+}
+
+void   sio_close  (struct sio_hdl * hdl) {
+ if ( hdl == NULL )
+  return;
+
+ if ( hdl->fh == -1 )
+  close(hdl->fh);
+
+ free(hdl);
+}
+
+int    sio_eof    (struct sio_hdl * hdl) {
+ return 0;
+}
+
+void   sio_onmove (struct sio_hdl * hdl, void (*cb)(void * arg, int delta), void * arg) {
+ if ( hdl == NULL )
+  return;
+
+ hdl->on_move     = cb;
+ hdl->on_move_arg = arg;
+}
+
+void   sio_onvol  (struct sio_hdl * hdl, void (*cb)(void * arg, unsigned vol), void * arg) {
+ if ( hdl == NULL )
+  return;
+
+ hdl->on_vol     = cb;
+ hdl->on_vol_arg = arg;
+}
+
 //ll

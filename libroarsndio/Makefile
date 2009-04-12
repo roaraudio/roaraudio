@@ -1,7 +1,7 @@
 include ../Makefile.conf
 
 TARGETS=libroarsndio.so
-OBJS=libroarsndio.o
+OBJS=libroarsndio.o para.o stream.o events.o volume.o
 
 #DEFINES        = -DDEBUG
 INCLUDE = -I../include -I../include/libroarsndio
