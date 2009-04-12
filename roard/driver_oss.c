@@ -42,6 +42,7 @@ struct driver_oss {
 ssize_t driver_oss_write    (struct roar_vio_calls * vio, void *buf, size_t count);
 int     driver_oss_nonblock (struct roar_vio_calls * vio, int state);
 int     driver_oss_close_vio(struct roar_vio_calls * vio);
+int     driver_oss_reopen_device(struct driver_oss * self);
 
 int driver_oss_init_vio(struct roar_vio_calls * vio, struct driver_oss * inst) {
  if ( vio == NULL )
@@ -364,6 +365,21 @@ int driver_oss_open(struct roar_vio_calls * inst, char * device, struct roar_aud
 }
 #undef er
 
+int     driver_oss_reopen_device(struct driver_oss * self) {
+#ifdef SNDCTL_DSP_SYNC
+ ioctl(self->fh, SNDCTL_DSP_SYNC, NULL);
+#endif
+
+ close(self->fh);
+
+ if ( driver_oss_open_device(self) == -1 )
+  return -1;
+
+ self->need_config = 1;
+
+ return 0;
+}
+
 int driver_oss_close(DRIVER_USERDATA_T   inst) {
  return roar_vio_close((struct roar_vio_calls *)inst);
 }
@@ -455,6 +471,13 @@ int driver_oss_ctl(struct roar_vio_calls * vio, int cmd, void * data) {
    break;
   case ROAR_VIO_CTL_SET_SSTREAM:
     self->stream = data;
+   break;
+  case ROAR_VIO_CTL_GET_AUINFO:
+    memcpy(data, &(self->info), sizeof(struct roar_audio_info));
+   break;
+  case ROAR_VIO_CTL_SET_AUINFO:
+    memcpy(&(self->info), data, sizeof(struct roar_audio_info));
+    return driver_oss_reopen_device(self);
    break;
   default:
    return -1;
