@@ -32,9 +32,20 @@
 
 #include "libroarsndio.h"
 
+#define _i(x) (hdl->info.x)
 int    sio_start  (struct sio_hdl * hdl) {
- return 0;
+ if ( hdl == NULL )
+  return 0;
+
+ if ( hdl->fh != -1 )
+  return 0;
+
+ if ( (hdl->fh = roar_simple_play(_i(rate), _i(channels), _i(bits), _i(codec), hdl->device, "libroarsndio")) == -1 )
+  return 0;
+
+ return 1;
 }
+#undef _i
 
 int    sio_stop   (struct sio_hdl * hdl) {
 
