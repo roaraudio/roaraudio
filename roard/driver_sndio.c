@@ -25,8 +25,123 @@
 #include "roard.h"
 #ifdef ROAR_HAVE_LIBSNDIO
 
+int driver_sndio_init_vio(struct roar_vio_calls * vio, struct driver_sndio * inst) {
+ if ( vio == NULL )
+  return -1;
+
+ memset(vio, 0, sizeof(struct roar_vio_calls));
+
+ vio->close    = driver_sndio_close_vio;
+ vio->write    = driver_sndio_write;
+ vio->sync     = driver_sndio_sync;
+ vio->ctl      = driver_sndio_ctl;
+
+ vio->inst     = (void*) inst;
+
+ return 0;
+}
+
+#define er() if ( self->handle ) sio_close(self->handle); if ( self->device ) free(self->device); free(self); return -1
 int driver_sndio_open(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh) {
+ struct driver_sndio * self = NULL;
+
+ if ( (self = malloc(sizeof(struct driver_sndio))) == NULL ) {
+  ROAR_ERR("driver_sndio_open(*): Can not malloc() instance data: %s", strerror(errno));
+  return -1;
+ }
+
+ memset(self, 0, sizeof(struct driver_sndio));
+ memcpy(&(self->info), info, sizeof(struct roar_audio_info));
+
+ self->ssid = -1;
+
+ if ( device != NULL )
+  self->device = strdup(device);
+
+ if ( driver_sndio_init_vio(inst, self) == -1 ) {
+  ROAR_ERR("driver_sndio_open(*): Can not init vio interface");
+  er();
+ }
+
+ if ( driver_sndio_open_device(self) == -1 ) {
+  ROAR_ERR("driver_sndio_open(*): Can not open audio device");
+  er();
+ }
+
+ ROAR_DBG("driver_sndio_open(*): OSS devices opened :)");
+
+ return 0;
+}
+#undef er
+
+int     driver_sndio_close_vio    (struct roar_vio_calls * vio) {
+ struct driver_sndio * self = vio->inst;
+
+ if ( self->handle != NULL )
+  sio_close(self->handle);
+
+ if ( self->device != NULL )
+  free(self->device);
+
+ free(self);
+
+ return 0;
+}
+
+int     driver_sndio_open_device  (struct driver_sndio * self) {
+
+ if ( (self->handle = sio_open(self->device, SIO_PLAY, 0)) == NULL ) {
+  ROAR_ERR("driver_sndio_open_device(*): Can not open sndio audio device");
+  return -1;
+ }
+
+ return 0;
+}
+
+int     driver_sndio_config_device(struct driver_sndio * self) {
+ struct sio_par par;
+
+ sio_initpar(&par);
+
+ par.bits  = self->info.bits;
+ par.rate  = self->info.rate;
+ par.pchan = self->info.channels;
+
+ switch (self->info.codec) {
+  case ROAR_CODEC_PCM_S_LE:
+    par.le  = 1;
+    par.sig = 1;
+   break;
+  case ROAR_CODEC_PCM_S_BE:
+    par.le  = 0;
+    par.sig = 1;
+   break;
+  case ROAR_CODEC_PCM_U_LE:
+    par.le  = 1;
+    par.sig = 0;
+   break;
+  case ROAR_CODEC_PCM_U_BE:
+    par.le  = 0;
+    par.sig = 0;
+   break;
+  default:
+    return -1;
+   break;
+ }
+
  return -1;
+}
+
+int     driver_sndio_reopen_device(struct driver_sndio * self);
+ssize_t driver_sndio_write        (struct roar_vio_calls * vio, void *buf, size_t count);
+int     driver_sndio_sync         (struct roar_vio_calls * vio);
+
+int     driver_sndio_ctl          (struct roar_vio_calls * vio, int cmd, void * data) {
+ switch (cmd) {
+  default: return -1;
+ }
+
+ return 0;
 }
 
 #endif
