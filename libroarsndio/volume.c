@@ -1,4 +1,4 @@
-//libroarsndio.c:
+//volume.c:
 
 /*
  *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2009
@@ -31,5 +31,9 @@
  */
 
 #include "libroarsndio.h"
+
+int    sio_setvol (struct sio_hdl * hdl, unsigned vol) {
+ return 0;
+}
 
 //ll
