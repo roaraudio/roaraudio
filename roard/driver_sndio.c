@@ -129,6 +129,12 @@ int     driver_sndio_config_device(struct driver_sndio * self) {
    break;
  }
 
+ if ( sio_setpar(self->handle, &par) != 0 )
+  return -1;
+
+ if ( sio_start(self->handle) != 0 )
+  return -1;
+
  return -1;
 }
 
