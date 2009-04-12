@@ -75,6 +75,8 @@ struct sio_par {
  unsigned xrun;          /* what to do on overrun/underrun */
 };
 
+struct sio_cap;
+
 struct sio_hdl {
  int              fh;
  struct sio_par   para;
