@@ -1,6 +1,6 @@
 include Makefile.conf
 
-SUBDIRS=libroar libroardsp $(subdir_libroaresd) roard roarclients doc $(subdir_roarfish) $(subdir_libroaryiff) $(subdir_libroarpulse) $(subdir_libroararts) $(subdir_plugins_ao)
+SUBDIRS=libroar libroardsp $(subdir_libroaresd) roard roarclients doc libroarsndio $(subdir_roarfish) $(subdir_libroaryiff) $(subdir_libroarpulse) $(subdir_libroararts) $(subdir_plugins_ao)
 
 all:
 	for i in ${SUBDIRS}; do cd $$i; $(MAKE) all; cd ..; done;
