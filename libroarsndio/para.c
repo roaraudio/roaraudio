@@ -1,4 +1,4 @@
-//libroarsndio.c:
+//para.c:
 
 /*
  *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2009
@@ -31,5 +31,38 @@
  */
 
 #include "libroarsndio.h"
+
+void   sio_initpar(struct sio_par * par) {
+ if ( par == NULL )
+  return;
+
+ memset(par, 0, sizeof(struct sio_par));
+
+ par->bits  = ROAR_BITS_DEFAULT;
+ par->sig   = 1;
+ par->le    = SIO_LE_NATIVE;
+ par->msb   = 1;
+ par->rchan = 0;
+ par->pchan = ROAR_CHANNELS_DEFAULT;
+ par->rate  = ROAR_RATE_DEFAULT;
+ par->bufsz = ROAR_BITS_DEFAULT * ROAR_CHANNELS_DEFAULT * ROAR_RATE_DEFAULT / 800.0;
+ par->round = 1;
+ par->xrun  = SIO_IGNORE;
+
+ return;
+}
+
+int    sio_setpar (struct sio_hdl * hdl, struct sio_par * par) {
+ return 0;
+}
+
+int    sio_getpar (struct sio_hdl * hdl, struct sio_par * par) {
+ return 0;
+}
+
+int    sio_getcap (struct sio_hdl * hdl, struct sio_cap * cap) {
+ return 0;
+}
+
 
 //ll
