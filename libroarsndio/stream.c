@@ -89,6 +89,10 @@ size_t sio_write  (struct sio_hdl * hdl, void * addr, size_t nbytes) {
  if ( (ret = write(hdl->fh, addr, nbytes)) < 0 )
   return 0;
 
+ if ( hdl->on_move != NULL ) {
+  hdl->on_move(hdl->on_move_arg, 8*ret/(hdl->info.channels * hdl->info.bits));
+ }
+
  return ret;
 }
 
