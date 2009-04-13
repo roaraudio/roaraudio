@@ -41,7 +41,7 @@ int    sio_start  (struct sio_hdl * hdl) {
  if ( hdl->fh != -1 )
   return 0;
 
- if ( (hdl->fh = roar_simple_play(_i(rate), _i(channels), _i(bits), _i(codec), hdl->device, "libroarsndio")) == -1 )
+ if ( (hdl->fh = roar_simple_new_stream_obj(&(hdl->con), &(hdl->stream), _i(rate), _i(channels), _i(bits), _i(codec), ROAR_DIR_PLAY)) == -1 )
   return 0;
 
  return 1;

@@ -44,6 +44,11 @@ struct sio_hdl * sio_open(char * name, unsigned mode, int nbio_flag) {
 
  memset(hdl, 0, sizeof(struct sio_hdl));
 
+ if ( roar_simple_connect(&(hdl->con), name, "libroarsndio") == -1 ) {
+  free(hdl);
+  return NULL;
+ }
+
  sio_initpar(&(hdl->para));
 
  hdl->fh = -1;
@@ -60,6 +65,8 @@ void   sio_close  (struct sio_hdl * hdl) {
 
  if ( hdl->fh == -1 )
   close(hdl->fh);
+
+ roar_disconnect(&(hdl->con));
 
  free(hdl);
 }
