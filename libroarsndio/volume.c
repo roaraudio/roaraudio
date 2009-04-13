@@ -34,7 +34,29 @@
 #include "libroarsndio.h"
 
 int    sio_setvol (struct sio_hdl * hdl, unsigned vol) {
- return 0;
+ struct roar_mixer_settings mixer;
+ int i;
+
+ if ( hdl == NULL )
+  return 0;
+
+ if ( vol > SIO_MAXVOL )
+  return 0;
+
+ mixer.scale   = SIO_MAXVOL;
+ mixer.rpg_mul = 1;
+ mixer.rpg_div = 1;
+
+ for (i = 0; i < hdl->info.channels; i++)
+  mixer.mixer[i] = vol;
+
+ if ( roar_set_vol(&(hdl->con), roar_stream_get_id(&(hdl->stream)), &mixer, hdl->info.channels) == -1 )
+  return 0;
+
+ if ( hdl->on_vol != NULL )
+  hdl->on_vol(hdl->on_vol_arg, vol);
+
+ return 1;
 }
 
 //ll
