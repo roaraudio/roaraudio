@@ -54,7 +54,7 @@ void   sio_initpar(struct sio_par * par) {
 }
 
 int    sio_setpar (struct sio_hdl * hdl, struct sio_par * par) {
- if ( hdl == NULL )
+ if ( hdl == NULL || par == NULL )
   return 0;
 
  if ( par->bits == 0 || par->bits > ROAR_BITS_MAX )
@@ -107,11 +107,18 @@ int    sio_setpar (struct sio_hdl * hdl, struct sio_par * par) {
  if ( par->xrun != SIO_IGNORE )
   return 0;
 
+ memcpy(&(hdl->para), par, sizeof(struct sio_par));
+
  return 1;
 }
 
 int    sio_getpar (struct sio_hdl * hdl, struct sio_par * par) {
- return 0;
+ if ( hdl == NULL || par == NULL )
+  return 0;
+
+ memcpy(par, &(hdl->para), sizeof(struct sio_par));
+
+ return 1;
 }
 
 int    sio_getcap (struct sio_hdl * hdl, struct sio_cap * cap) {
