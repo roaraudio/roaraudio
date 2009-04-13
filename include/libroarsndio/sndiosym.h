@@ -60,6 +60,8 @@ struct pollfd;
 
 #define SIO_BPS(bits) (((bits)/8) + ((bits) % 8 ? 1 : 0))
 
+#define SIO_MAXVOL 65535
+
 struct sio_par {
  unsigned bits;          /* bits per sample */
  unsigned bps;           /* bytes per sample */
