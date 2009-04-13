@@ -35,6 +35,10 @@
 
 #include <roaraudio.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifdef ROAR_HAVE_LIBSNDIO
 #include <sndio.h>
 #else
@@ -61,6 +65,10 @@ struct roar_sio_hdl {
  void           (*on_vol )(void * arg, unsigned vol);
  void           * on_vol_arg;
 };
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

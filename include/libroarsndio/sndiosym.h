@@ -47,6 +47,14 @@ struct pollfd;
 #define SIO_IGNORE      0       /* pause during xrun */
 #define SIO_SYNC        1       /* resync after xrun */
 #define SIO_ERROR       2       /* terminate on xrun */
+#define SIO_XSTRINGS    {"ignore", "sync", "error"}
+
+#define SIO_NENC	8
+#define SIO_NCHAN	8
+#define SIO_NRATE	16
+#define SIO_NCONF	4
+
+#define SIO_ENCMAX	10
 
 #if BYTE_ORDER == BIG_ENDIAN && !defined(ROAR_TARGET_WIN32)
 #define SIO_LE_NATIVE   0
@@ -58,9 +66,13 @@ struct pollfd;
 #endif
 #endif
 
-#define SIO_BPS(bits) (((bits)/8) + ((bits) % 8 ? 1 : 0))
+#define SIO_BPS(bits) (((bits) <= 8) ? 1 : (((bits) <= 16) ? 2 : 4))
 
-#define SIO_MAXVOL 65535
+#define SIO_SUN_PATH	NULL
+#define SIO_AUCAT_PATH	NULL
+
+#define SIO_MAXVOL 127
+
 
 struct sio_par {
  unsigned bits;          /* bits per sample */
