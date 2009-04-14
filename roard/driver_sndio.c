@@ -65,7 +65,16 @@ int driver_sndio_open(struct roar_vio_calls * inst, char * device, struct roar_a
 
  if ( driver_sndio_open_device(self) == -1 ) {
   ROAR_ERR("driver_sndio_open(*): Can not open audio device");
-  er();
+  if ( self->handle )
+   sio_close(self->handle);
+
+  if ( self->device )
+   free(self->device);
+
+  free(self);
+
+  return -1;
+//  er();
  }
 
  ROAR_DBG("driver_sndio_open(*): OSS devices opened :)");
@@ -131,13 +140,19 @@ int     driver_sndio_config_device(struct driver_sndio * self) {
    break;
  }
 
- if ( sio_setpar(self->handle, &par) != 0 )
+ if ( sio_setpar(self->handle, &par) == 0 ) {
+  ROAR_ERR("driver_sndio_config_device(*): Can not set stream parameters");
   return -1;
+ }
 
- if ( sio_start(self->handle) != 0 )
+ if ( sio_start(self->handle) == 0 ) {
+  ROAR_ERR("driver_sndio_config_device(*): Can not start stream");
   return -1;
+ }
 
- return -1;
+ self->need_config = 0;
+
+ return 0;
 }
 
 int     driver_sndio_reopen_device(struct driver_sndio * self) {
