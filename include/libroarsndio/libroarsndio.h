@@ -39,7 +39,7 @@
 extern "C" {
 #endif
 
-#ifdef ROAR_HAVE_LIBSNDIO
+#if defined(ROAR_HAVE_LIBSNDIO) && !defined(_ROAR_EMUL_LIBSNDIO)
 #include <sndio.h>
 #else
 #define sio_hdl roar_sio_hdl
