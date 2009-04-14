@@ -243,6 +243,8 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
  ROAR_STREAM_SERVER(s)->codec_orgi = codec;
 
  if ( driver_openvio(&(ss->vio), &(ss->driver_id), drv, dev, &(s->info), -1) == -1 ) {
+  ss->driver_id = -1; // don't close a driver not opened...
+  memset(&(ss->vio), 0, sizeof(struct roar_vio_calls));
   streams_delete(stream);
   ROAR_DBG("add_output(drv='%s', dev='%s', opts='%s') = -1", drv, dev, opts);
   if ( prim ) alive = 0;
