@@ -33,6 +33,10 @@
 #define ROAR_USE_OWN_SNDIO_HDL
 #include "libroarsndio.h"
 
+//#ifndef DEBUG
+//#define DEBUG
+//#endif
+
 void   sio_initpar(struct sio_par * par) {
  if ( par == NULL )
   return;
@@ -54,20 +58,28 @@ void   sio_initpar(struct sio_par * par) {
 }
 
 int    sio_setpar (struct sio_hdl * hdl, struct sio_par * par) {
- if ( hdl == NULL || par == NULL )
+ if ( hdl == NULL || par == NULL ) {
+  ROAR_DBG("sio_setpar(*): Invalid handle or parameter pointer");
   return 0;
+ }
 
- if ( par->bits == 0 || par->bits > ROAR_BITS_MAX )
+ if ( par->bits == 0 || par->bits > ROAR_BITS_MAX ) {
+  ROAR_DBG("sio_setpar(*): Invalid number of bits: %i Bit", par->bits);
   return 0;
+ }
 
  if ( par->bps == 0 )
   par->bps = SIO_BPS(par->bits);
 
- if ( par->bps > ROAR_BITS_MAX/8 )
+ if ( par->bps > ROAR_BITS_MAX/8 ) {
+  ROAR_DBG("sio_setpar(*): Invalid number of bytes: %i Byte", par->bps);
   return 0;
+ }
 
- if ( SIO_BPS(par->bits) > par->bps )
+ if ( SIO_BPS(par->bits) > par->bps ) {
+  ROAR_DBG("sio_setpar(*): Number of bits/8 > number of bytes: %i/8 > %i", par->bits, par->bps);
   return 0;
+ }
 
  hdl->info.bits = par->bps * 8;
 
@@ -85,27 +97,38 @@ int    sio_setpar (struct sio_hdl * hdl, struct sio_par * par) {
     hdl->info.codec = ROAR_CODEC_PCM_S_LE;
    break;
   default:
+    ROAR_DBG("sio_setpar(*): Invalid codec: sig=%i, le=%i", par->sig, par->le);
     return 0;
  }
 
- if ( par->msb == 0 )
+ if ( par->msb == 0 ) {
+  ROAR_DBG("sio_setpar(*): LSM alignment not supported");
   return 0;
+ }
 
- if ( par->rchan != 0 ) /* not supported yet */
+ if ( par->rchan != 0 ) { /* not supported yet */
+  ROAR_DBG("sio_setpar(*): Recording not supported");
   return 0;
+ }
 
- if ( par->pchan == 0 || par->pchan > ROAR_MAX_CHANNELS )
+ if ( par->pchan == 0 || par->pchan > ROAR_MAX_CHANNELS ) {
+  ROAR_DBG("sio_setpar(*): Invalid number of playback channels: %i", par->pchan);
   return 0;
+ }
 
  hdl->info.channels = par->pchan;
 
- if ( par->rate == 0 )
+ if ( par->rate == 0 ) {
+  ROAR_DBG("sio_setpar(*): Invalid sample rate: %iHz", par->rate);
   return 0;
+ }
 
  hdl->info.rate = par->rate;
 
- if ( par->xrun != SIO_IGNORE )
+ if ( par->xrun != SIO_IGNORE ) {
+  ROAR_DBG("sio_setpar(*): Unsupported xrun mode: %i", par->xrun);
   return 0;
+ }
 
  memcpy(&(hdl->para), par, sizeof(struct sio_par));
 
