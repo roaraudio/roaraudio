@@ -24,5 +24,24 @@
 
 #include "libroardsp.h"
 
+int roardsp_swap_init   (struct roardsp_filter * filter, struct roar_stream * stream, int id) {
+ return -1;
+}
+
+int roardsp_swap_uninit (struct roardsp_filter * filter) {
+ return -1;
+}
+
+int roardsp_swap_calc162(struct roardsp_filter * filter, void * data, size_t samples) {
+ return -1;
+}
+
+int roardsp_swap_ctl    (struct roardsp_filter * filter, int cmd, void * data) {
+ return -1;
+}
+
+int roardsp_swap_reset  (struct roardsp_filter * filter, int what) {
+ return -1;
+}
 
 //ll

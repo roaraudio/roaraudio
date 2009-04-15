@@ -46,6 +46,7 @@ __BEGIN_DECLS
 #define ROARDSP_FILTER_ADD            7
 #define ROARDSP_FILTER_DOWNMIX        8
 #define ROARDSP_FILTER_DCBLOCK        9
+#define ROARDSP_FILTER_SWAP          10
 
 // filter CTLs:
 
@@ -115,6 +116,10 @@ struct roardsp_dcblock {
  int32_t dc[ROARDSP_DCBLOCK_NUMBLOCKS];
 };
 
+struct roardsp_swap {
+ int map[ROAR_MAX_CHANNELS];
+};
+
 // funcs:
 int    roardsp_filter_str2id(char * str);
 char * roardsp_filter_id2str(int id);
@@ -177,6 +182,12 @@ int roardsp_dcblock_init   (struct roardsp_filter * filter, struct roar_stream *
 int roardsp_dcblock_uninit (struct roardsp_filter * filter);
 int roardsp_dcblock_calc16 (struct roardsp_filter * filter, void * data, size_t samples);
 int roardsp_dcblock_reset  (struct roardsp_filter * filter, int what);
+
+int roardsp_swap_init   (struct roardsp_filter * filter, struct roar_stream * stream, int id);
+int roardsp_swap_uninit (struct roardsp_filter * filter);
+int roardsp_swap_calc162(struct roardsp_filter * filter, void * data, size_t samples);
+int roardsp_swap_ctl    (struct roardsp_filter * filter, int cmd, void * data);
+int roardsp_swap_reset  (struct roardsp_filter * filter, int what);
 
 // codecs:
 int roardsp_conv_alaw2pcm16 (int16_t * out, char * in, size_t len);

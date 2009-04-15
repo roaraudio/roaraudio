@@ -51,6 +51,8 @@ struct _roardsp_filterlist {
            {NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, roardsp_downmix_calc162},{NULL, NULL, NULL},{NULL, NULL, NULL}}},
  {ROARDSP_FILTER_DCBLOCK, "DCBlock", roardsp_dcblock_init, NULL, NULL, roardsp_dcblock_reset, {
            {NULL, NULL, NULL},{NULL, NULL, NULL},{roardsp_dcblock_calc16, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL}}},
+ {ROARDSP_FILTER_SWAP, "Swap", roardsp_swap_init, roardsp_swap_uninit, roardsp_swap_ctl, roardsp_swap_reset, {
+           {NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, roardsp_swap_calc162, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL}}},
  {-1, NULL, NULL, NULL, NULL, NULL, {
       // ?                  8Bit               16Bit              24Bit              32Bit
       // 0B:n     1     2   1B:n     1     2   2B:n     1     2   3B:n     1    2    4B:n     1     2
