@@ -48,15 +48,17 @@
                            "unknown" )
 */
 
-#define ROAR_FLAG_NONE           0x00
-#define ROAR_FLAG_PRIMARY        0x01
-#define ROAR_FLAG_OUTPUT         0x02
+#define ROAR_FLAG_NONE           0x0000
+#define ROAR_FLAG_PRIMARY        0x0001
+#define ROAR_FLAG_OUTPUT         0x0002
 #define ROAR_FLAG_DRIVER         ROAR_FLAG_OUTPUT
-#define ROAR_FLAG_SOURCE         0x04
-#define ROAR_FLAG_SYNC           0x08
-#define ROAR_FLAG_META           0x10
-#define ROAR_FLAG_AUTOCONF       0x20
-#define ROAR_FLAG_CLEANMETA      0x40
+#define ROAR_FLAG_SOURCE         0x0004
+#define ROAR_FLAG_SYNC           0x0008
+#define ROAR_FLAG_META           0x0010
+#define ROAR_FLAG_AUTOCONF       0x0020
+#define ROAR_FLAG_CLEANMETA      0x0040
+#define ROAR_FLAG_HWMIXER        0x0080
+#define ROAR_FLAG_PAUSE          0x0100
 //#define ROAR_FLAG_SYNC           0x08
 
 #define ROAR_SET_FLAG            0

@@ -220,6 +220,10 @@ void list_streams (struct roar_connection * con) {
      strcat(flags, "autoconf ");
     if ( info.flags & ROAR_FLAG_CLEANMETA )
      strcat(flags, "cleanmeta ");
+    if ( info.flags & ROAR_FLAG_HWMIXER )
+     strcat(flags, "hwmixer ");
+    if ( info.flags & ROAR_FLAG_PAUSE )
+     strcat(flags, "pause ");
 
     printf("Flags                 : %s\n", flags);
    }
@@ -546,6 +550,10 @@ int set_flags (struct roar_connection * con, int id, int reset, char * flags) {
    f |= ROAR_FLAG_SYNC;
   } else if ( !strcmp(c, "cleanmeta") ) {
    f |= ROAR_FLAG_CLEANMETA;
+  } else if ( !strcmp(c, "hwmixer") ) {
+   f |= ROAR_FLAG_HWMIXER;
+  } else if ( !strcmp(c, "pause") ) {
+   f |= ROAR_FLAG_PAUSE;
   } else {
    fprintf(stderr, "Error: unknown flag: %s\n", c);
    return -1;

@@ -326,6 +326,10 @@ int streams_set_flag     (int id, int flag) {
    flag -= ROAR_FLAG_SYNC;
  }
 
+ if ( flag & ROAR_FLAG_HWMIXER ) { // currently not supported -> ignored
+  flag -= ROAR_FLAG_HWMIXER;
+ }
+
  g_streams[id]->flags |= flag;
 
 #ifdef ROAR_SUPPORT_META
@@ -779,6 +783,9 @@ int streams_check  (int id) {
  if ( s->dir != ROAR_DIR_PLAY && s->dir != ROAR_DIR_BIDIR )
   return 0;
 
+ if ( streams_get_flag(id, ROAR_FLAG_PAUSE) )
+  return 0;
+
  ROAR_DBG("streams_check(id=%i): fh = %i", id, fh);
 
  req  = ROAR_OUTPUT_BUFFER_SAMPLES * s->info.channels * s->info.bits / 8; // optimal size
@@ -869,6 +876,9 @@ int streams_send_mon   (int id) {
   return 0;
 
  if ( s->dir == ROAR_DIR_OUTPUT && g_standby )
+  return 0;
+
+ if ( streams_get_flag(id, ROAR_FLAG_PAUSE) )
   return 0;
 
  ROAR_DBG("streams_send_mon(id=%i): fh = %i", id, s->fh);
@@ -971,6 +981,10 @@ int streams_send_filter(int id) {
 
  if ( s->dir != ROAR_DIR_FILTER )
   return 0;
+
+ if ( streams_get_flag(id, ROAR_FLAG_PAUSE) )
+  return 0;
+
 
  ROAR_DBG("streams_send_filter(id=%i): fh = %i", id, fh);
 
