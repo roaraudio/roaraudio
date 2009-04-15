@@ -946,7 +946,8 @@ then
 elif [ "$SYSNAME" = 'FreeBSD' ]
 then
  echo 'sqrt() (FreeBSD, fix your gcc)'
-else
+elif [ "$SYSNAME" = 'Linux' ]
+then
  echo '#include <math.h>' > $TF_C
  echo 'int main (void) { sqrtl(0); return 0; }' >> $TF_C
 
