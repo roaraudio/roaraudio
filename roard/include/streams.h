@@ -97,6 +97,7 @@ int streams_reset_flag   (int id, int flag);
 int streams_get_flag     (int id, int flag);
 
 int streams_calc_delay   (int id);
+int streams_set_mixer    (int id);
 
 int streams_ctl          (int id, int_least32_t cmd, void * data);
 

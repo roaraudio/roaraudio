@@ -327,7 +327,11 @@ int streams_set_flag     (int id, int flag) {
  }
 
  if ( flag & ROAR_FLAG_HWMIXER ) { // currently not supported -> ignored
-  flag -= ROAR_FLAG_HWMIXER;
+  g_streams[id]->flags |= flag;
+  if ( streams_set_mixer(id) == -1 ) {
+   g_streams[id]->flags -= flag;
+   return -1;
+  }
  }
 
  g_streams[id]->flags |= flag;
@@ -398,6 +402,21 @@ int streams_calc_delay    (int id) {
  ss->delay = d;
 
  return 0;
+}
+
+int streams_set_mixer    (int id) {
+ struct roar_stream_server * ss;
+
+ if ( (ss = g_streams[id]) == NULL )
+  return -1;
+
+ if ( !streams_get_flag(id, ROAR_FLAG_HWMIXER) )
+  return 0;
+
+ if ( ss->driver_id == -1 )
+  return 0;
+
+ return driver_set_volume(id, &(ss->mixer));
 }
 
 int streams_ctl          (int id, int_least32_t cmd, void * data) {
@@ -618,8 +637,10 @@ int streams_fill_mixbuffer (int id, struct roar_audio_info * info) {
    return -1;
   }
 
-  if ( change_vol(rest, info->bits, rest, 8*outlen / info->bits, info->channels, &(stream->mixer)) == -1 )
-   return -1;
+  if ( !streams_get_flag(id, ROAR_FLAG_HWMIXER) ) {
+   if ( change_vol(rest, info->bits, rest, 8*outlen / info->bits, info->channels, &(stream->mixer)) == -1 )
+    return -1;
+  }
 
   // we habe outlen bytes more...
   todo    -= outlen;

@@ -665,6 +665,9 @@ int req_on_set_vol (int client, struct roar_message * mes, char * data) {
   return -1;
  }
 
+ if ( streams_set_mixer(stream) == -1 )
+  return -1;
+
  mes->cmd     = ROAR_CMD_OK;
  mes->datalen = 0;
 

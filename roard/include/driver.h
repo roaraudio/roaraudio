@@ -110,6 +110,7 @@ int driver_pause(DRIVER_USERDATA_T   inst, int driver, int newstate);
 int driver_write(DRIVER_USERDATA_T   inst, int driver, char * buf, int len);
 int driver_read (DRIVER_USERDATA_T   inst, int driver, char * buf, int len);
 int driver_flush(DRIVER_USERDATA_T   inst, int driver);
+int driver_set_volume(int stream, struct roar_mixer_settings * mixer);
 
 #endif
 

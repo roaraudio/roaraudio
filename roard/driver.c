@@ -218,4 +218,19 @@ int driver_flush(DRIVER_USERDATA_T   inst, int driver) {
  return 0;
 }
 
+int driver_set_volume(int stream, struct roar_mixer_settings * mixer) {
+ struct roar_stream_server * ss;
+
+ if ( (ss = g_streams[stream]) == NULL )
+  return -1;
+
+ if ( !streams_get_flag(stream, ROAR_FLAG_HWMIXER) )
+  return 0;
+
+ if ( ss->driver_id == -1 )
+  return -1;
+
+ return roar_vio_ctl(&(ss->vio), ROAR_VIO_CTL_SET_VOLUME, (void*)mixer);
+}
+
 //ll
