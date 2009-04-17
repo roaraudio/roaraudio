@@ -24,10 +24,10 @@
  */
 
 #include "all.h"
-gint ctrlsocket_get_session_id(void)
-{
+gint ctrlsocket_get_session_id(void) {
 
 }
+
 OutputPlugin roar_op = {
     .description = "RoarAudio Output Plugin",         
     .init = roar_init,
@@ -60,7 +60,7 @@ OutputPlugin *get_oplugin_info(void) {
 void roar_init(void) {
  mcs_handle_t * cfgfile;
 
- cfgfile = aud_cfg_db_open();;
+ cfgfile = aud_cfg_db_open();
 
  g_inst.state = 0;
  g_inst.server = NULL;
