@@ -207,14 +207,16 @@ int roar_open(AFormat fmt, int rate, int nch) {
      bits= 32;
      break;
     case FMT_FLOAT:
-    ROAR_DBG("FMT_FLOAT");
+    ROAR_DBG("roar_open(*): FMT_FLOAT");
     break;
     case FMT_FIXED32:
-     ROAR_DBG("FMT_FIXED32");
+     ROAR_DBG("roar_open(*): FMT_FIXED32");
      break;
      
  }
-ROAR_DBG("fmt %i",fmt);
+
+ ROAR_DBG("roar_open(*): fmt %i", fmt);
+
  g_inst.bps       = nch * rate * bits / 8;
 
  roar_close();
