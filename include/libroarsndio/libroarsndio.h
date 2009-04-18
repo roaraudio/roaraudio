@@ -46,7 +46,7 @@ extern "C" {
 #include "sndiosym.h"
 #endif
 
-#if !defined(ROAR_HAVE_LIBSNDIO) || defined(ROAR_USE_OWN_SNDIO_HDL)
+#if !defined(ROAR_HAVE_LIBSNDIO) || (defined(ROAR_USE_OWN_SNDIO_HDL) && !defined(ROAR_OS_OPENBSD))
 #ifdef sio_hdl
 #undef sio_hdl
 #endif
