@@ -7,7 +7,7 @@ HAVE_ROAR=false
 while [ "$1" != '' ]
 do
  case "$1" in
-  --inst-dir)
+  --install-dir|--inst-dir)
    INSTALL_DIR="$2"
    shift;
   ;;
