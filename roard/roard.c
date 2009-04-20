@@ -128,6 +128,22 @@ int restart_server (char * server) {
 #define R_SETUID 1
 #define R_SETGID 2
 
+int init_config (void) {
+ int i;
+
+ memset(g_config, 0, sizeof(struct roard_config));
+
+ for (i = 0; i < ROAR_DIR_DIRIDS; i++) {
+  g_config->streams[i].mixer_channels = 1;
+  g_config->streams[i].mixer.rpg_mul  = 1;
+  g_config->streams[i].mixer.rpg_div  = 1;
+  g_config->streams[i].mixer.scale    = 65535;
+  g_config->streams[i].mixer.mixer[0] = g_config->streams[i].mixer.scale;
+ }
+
+ return 0;
+}
+
 int add_output (char * drv, char * dev, char * opts, int prim, int count) {
  int stream;
  struct roar_stream * s;
@@ -170,7 +186,10 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
 
  memcpy(&(s->info), g_sa, sizeof(struct roar_audio_info));
 
- s->dir        = ROAR_DIR_OUTPUT;
+ if ( streams_set_dir(stream, ROAR_DIR_OUTPUT, 1) == -1 ) {
+  streams_delete(stream);
+  return -1;
+ }
  s->pos_rel_id = -1;
 // s->info.codec = codec;
 
@@ -292,7 +311,8 @@ int main (void) {
 #ifdef ROAR_SUPPORT_LISTEN
  char user_sock[80]  = {0};
 #endif
- struct roar_audio_info sa;
+ struct roar_audio_info sa, max_sa;
+ struct roard_config config;
 #ifdef ROAR_HAVE_FORK
  int    daemon       = 0;
 #endif
@@ -362,7 +382,17 @@ int main (void) {
  sa.rate     = ROAR_RATE_DEFAULT;
  sa.codec    = ROAR_CODEC_DEFAULT;
 
- g_sa = &sa;
+ g_sa        = &sa;
+ g_max_sa    = &max_sa;
+
+ memcpy(g_max_sa, g_sa, sizeof(max_sa));
+
+ g_config = &config;
+
+ if ( init_config() == -1 ) {
+  ROAR_ERR("Can not init default config!");
+  return 1;
+ }
 
 
 #ifdef ROAR_SUPPORT_LISTEN

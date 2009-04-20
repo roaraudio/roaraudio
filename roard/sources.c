@@ -80,7 +80,12 @@ int sources_add_raw (char * driver, char * device, char * container, char * opti
 
  memcpy(&(s->info), g_sa, sizeof(struct roar_audio_info));
 
- s->dir        = ROAR_DIR_PLAY;
+ if ( streams_set_dir(stream, ROAR_DIR_PLAY, 1) == -1 ) {
+  streams_delete(stream);
+  close(fh);
+  return -1;
+ }
+
  s->pos_rel_id = -1;
 
  streams_set_fh(stream, fh);
@@ -123,7 +128,11 @@ int sources_add_wav (char * driver, char * device, char * container, char * opti
  memcpy(&(s->info.channels), buf+22, 2);
  memcpy(&(s->info.bits    ), buf+34, 2);
 
- s->dir        = ROAR_DIR_PLAY;
+ if ( streams_set_dir(stream, ROAR_DIR_PLAY, 1) == -1 ) {
+  streams_delete(stream);
+  close(fh);
+  return -1;
+ }
  s->pos_rel_id = -1;
 
  streams_set_fh(stream, fh);
@@ -153,7 +162,11 @@ int sources_add_cf (char * driver, char * device, char * container, char * optio
 
  memcpy(&(s->info), g_sa, sizeof(struct roar_audio_info));
 
- s->dir        = ROAR_DIR_PLAY;
+ if ( streams_set_dir(stream, ROAR_DIR_PLAY, 1) == -1 ) {
+  streams_delete(stream);
+  return -1;
+ }
+
  s->pos_rel_id = -1;
 
 /*
@@ -237,7 +250,12 @@ int sources_add_roar (char * driver, char * device, char * container, char * opt
 
  memcpy(&(s->info), g_sa, sizeof(struct roar_audio_info));
 
- s->dir        = ROAR_DIR_PLAY;
+ if ( streams_set_dir(stream, ROAR_DIR_PLAY, 1) == -1 ) {
+  streams_delete(stream);
+  close(fh);
+  return -1;
+ }
+
  s->pos_rel_id = -1;
  s->info.codec = codec;
 

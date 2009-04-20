@@ -102,7 +102,16 @@ int g_self_client;
 
 int g_terminate;
 
-struct roar_audio_info * g_sa;
+struct roar_audio_info * g_sa, * g_max_sa;
+
+struct roard_config {
+ uint32_t flags;
+ struct {
+  uint32_t flags;
+  struct roar_mixer_settings mixer;
+  int                        mixer_channels;
+ } streams[ROAR_DIR_DIRIDS];
+} * g_config;
 
 #endif
 

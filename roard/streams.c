@@ -206,6 +206,28 @@ int streams_get_client (int id) {
  return g_streams[id]->client;
 }
 
+int streams_set_dir    (int id, int dir, int defaults) {
+ struct roar_stream_server * ss;
+
+ if ( (ss = g_streams[id]) == NULL )
+  return -1;
+
+ ROAR_STREAM(ss)->dir = dir;
+
+ if ( defaults ) {
+  if ( dir <= 0 || dir >= ROAR_DIR_DIRIDS )
+   return -1;
+
+  if ( streams_set_flag(id, g_config->streams[dir].flags) == -1 )
+   return -1;
+
+   ss->mixer.scale   = g_config->streams[dir].mixer.scale;
+   ss->mixer.rpg_mul = g_config->streams[dir].mixer.rpg_mul;
+   ss->mixer.rpg_div = g_config->streams[dir].mixer.rpg_div;
+ }
+
+ return 0;
+}
 
 int streams_set_fh     (int id, int fh) {
  struct roar_stream_server * ss;

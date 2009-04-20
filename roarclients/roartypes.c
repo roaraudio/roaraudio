@@ -32,6 +32,7 @@ int main (void) {
   { "roar_stream_server",  sizeof(struct roar_stream_server)  },
   { "roar_sample",         sizeof(struct roar_sample)         },
   { "roar_client",         sizeof(struct roar_client)         },
+  { "roard_config",        sizeof(struct roard_config)        },
   { "roar_connection",     sizeof(struct roar_connection)     },
   { "roar_audio_info",     sizeof(struct roar_audio_info)     },
   { "roar_meta",           sizeof(struct roar_meta)           },
@@ -43,7 +44,7 @@ int main (void) {
  }, * c = types - 1;
 
  while ((++c)->name != NULL)
-  printf("%-20s = %4i Bytes = %4i Bits\n", c->name, c->len, c->len * 8);
+  printf("%-20s = %5i Bytes = %6i Bits\n", c->name, c->len, c->len * 8);
 
  return 0;
 }
