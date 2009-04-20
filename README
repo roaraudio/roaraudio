@@ -46,16 +46,25 @@ See HACKING.
 
 --- Tested platforms:
 
-OS		ARCH		COMPILER	STATUS	COMMENT
+OS		ARCH		COMPILER	M/STATUS	COMMENT
 --------------------------------------------------------------------
-Debian Etch	ix86		gcc 4.1.2	OK
-Debian Etch	x86_64		gcc 4.1.2	OK
-NetBSD 1.6.1	Alpha		gcc 2.95.3	OK	gcc too old,
-							does not support debug macros
-Darwin 9.4.0	i386		gcc 4.0.1	OK
-OpenBSD	?	x86_64		gcc ?		?
-OpenBSD	4.4	i386		gcc 3.3.5	OK
-FreeBSD 6.2	i386		gcc 3.4.6	OK
-Cygwin 1.5.25	i686		gcc 3.4.4	Client+	Client libs work, roard only party
-							Hostsystem: WinXP Home
-archlinux ?	i686		gcc 4.3.2	OK
+Debian Etch	ix86		gcc 4.1.2	s/OK
+Debian Etch	x86_64		gcc 4.1.2	s/OK
+Debian Lenny	ix86		gcc 4.3.2	s/OK
+NetBSD 1.6.1	Alpha		gcc 2.95.3	s/OK		gcc too old,
+								does not support debug macros
+NetBSD 5	x86_64		gcc 4.1.3	s/?
+Darwin 9.4.0	i386		gcc 4.0.1	s/OK
+OpenBSD	?	x86_64		gcc ?		m/?
+OpenBSD	4.4	i386		gcc 3.3.5	m/OK
+FreeBSD 6.2	i386		gcc 3.4.6	s/OK
+Cygwin 1.5.25	i686		gcc 3.4.4	s/Client+	Client libs work, roard only partly
+								Hostsystem: WinXP Home
+archlinux ?	i686		gcc 4.3.2	M/OK
+
+Status: Maintainance/testing Status:
+Maintanance:	s = your are on your own, sources.
+		m = package in work, beta package
+		M = maintained
+		S = maintained source package
+		B = maintained binary package
