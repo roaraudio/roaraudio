@@ -7,6 +7,8 @@ v. 0.2beta3 - ?
 	* added support for autoconf flag to OSS driver
 	* added driver for OpenBSD sndio interface
 	* started libroarsndio
+	* added code for plugins: audacirus, mplayer, gst10
+	* fixed some building problems
 
 v. 0.2beta2 - Fri Mar 27 2009 21:20
 	* added (dummy) flags autoconf and cleanmeta
