@@ -46,6 +46,8 @@ DEFAULT_GRP=''
 AO_INST_DIR=''
 XMMS_INST_DIR=''
 
+SNDIO_EMUL=true
+
 LIBAO=true
 XMMS=true
 
@@ -427,11 +429,13 @@ test_lib_defmake () {
   echo "#define $def"            >&3
   [ "$subdir" != '' ] && \
    echo "$subdir_var=$subdir" >&4
-  echo "lib_$lib=$LIBS" >&4
+  [ "$lib" != 'c' ] && \
+   echo "lib_$lib=$LIBS" >&4
  else
   [ "$subdir" != '' ] && \
    echo "subdir_$subdir=" >&4
-  echo "lib_$lib=" >&4
+  [ "$lib" != 'c' ] && \
+   echo "lib_$lib=" >&4
  fi
 }
 
@@ -481,6 +485,8 @@ then
  echo "Adding $SYSNAME search path arguments..."
  LDPATH="$LDPATH -L/usr/local/lib/"
  INCPATH="$INCPATH -I/usr/local/include/"
+ echo "Adding $SYSNAME build arguments..."
+ SNDIO_EMUL=false
 elif [ "$SYSNAME" = 'FreeBSD' ]
 then
  echo "Adding $SYSNAME search path arguments..."
@@ -514,14 +520,18 @@ fi
  echo "SHARED=$SHARED"
  echo "SHARED_CF=$SHARED_CF"
  $fPIC && echo 'fPIC=-fPIC'
+ echo
  echo "CC=$CC"
  echo "LDPATH=$LDPATH"
  echo "INCPATH=$INCPATH"
+ echo
  echo "PREFIX=$PREFIX"
  echo "PREFIX_BIN=$PREFIX_BIN"
  echo "PREFIX_LIB=$PREFIX_LIB"
  echo "PREFIX_INC=$PREFIX_INC"
  echo "PREFIX_MAN=$PREFIX_MAN"
+ echo
+ $SNDIO_EMUL && echo "subdir_libroarsndio=libroarsndio"
 } >&4
 
 CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
@@ -1284,9 +1294,9 @@ then
   cd xmms/
  if [ "$XMMS_INST_DIR" = '' ]
  then
-  ./configure --force-have-roar
+  ./configure --force-have-roar --pkg-config "$PKG_CONFIG"
  else
-  ./configure --force-have-roar --inst-dir "$XMMS_INST_DIR"
+  ./configure --force-have-roar --pkg-config "$PKG_CONFIG" --inst-dir "$XMMS_INST_DIR"
  fi
  cd ..
 else
