@@ -256,10 +256,15 @@ int clients_check_all (void) {
    continue;
 
   for (j = 0; j < ROAR_CLIENTS_MAX_STREAMS_PER_CLIENT; j++) {
-   //printf("D: client=%i, stream=%i, g_clients[i=%i] = %p\n", i, j, i, g_clients[i]);
+   ROAR_DBG("clients_check_all(*): D: client=%i, stream=%i, g_clients[i=%i] = %p", i, j, i, g_clients[i]);
    if ( g_clients[i] == NULL ) // streams_check() bellow can delete our client (why?)
     break;
+
+   //ROAR_WARN("clients_check_all(*): client=%i: client exists", i);
+   ROAR_DBG("clients_check_all(*): client=%i, stream=%i: id=%i", i, j, g_clients[i]->streams[j]);
+
    if ( (fh = streams_get_fh(g_clients[i]->streams[j])) != -1 ) {
+    ROAR_DBG("clients_check_all(*): client=%i, stream=%i: fh=%i", i, j, fh);
     if ( fh == -2 ) {
      streams_check(g_clients[i]->streams[j]);
     } else if ( FD_ISSET(fh, &r) ) {
