@@ -144,7 +144,7 @@ int sources_add_wav (char * driver, char * device, char * container, char * opti
 }
 #endif
 
-#define _ret(x) roar_vio_close(vio); streams_delete(stream); return (x)
+#define _ret(x) streams_delete(stream); return (x)
 
 int sources_add_cf (char * driver, char * device, char * container, char * options, int primary) {
  int  stream;
@@ -153,6 +153,10 @@ int sources_add_cf (char * driver, char * device, char * container, char * optio
  char buf[64];
  struct roar_stream    * s;
  struct roar_vio_calls * vio;
+ struct roar_vio_defaults def;
+
+ if ( roar_vio_dstr_init_defaults(&def, ROAR_VIO_DEF_TYPE_NONE, O_RDONLY, 0644) == -1 )
+  return -1;
 
  if ( (stream = streams_new()) == -1 ) {
   return -1;
@@ -177,9 +181,12 @@ int sources_add_cf (char * driver, char * device, char * container, char * optio
 
  vio = &(ROAR_STREAM_SERVER(s)->vio);
 
- if ( roar_vio_open_file(vio, device, O_RDONLY, 0644) == -1 ) {
+ //if ( roar_vio_open_file(vio, device, O_RDONLY, 0644) == -1 ) {
+ if ( roar_vio_open_dstr(vio, device, &def, 1) == -1 ) {
   _ret(-1);
  }
+
+ ROAR_DBG("sources_add_cf(*) = ?");
 
  // TODO: finy out a better way of doing auto detetion without need for seek!
  if ( options == NULL ) {
@@ -207,7 +214,9 @@ int sources_add_cf (char * driver, char * device, char * container, char * optio
 
  ROAR_STREAM_SERVER(s)->codec_orgi = codec;
 
+ ROAR_DBG("sources_add_cf(*) = ?");
  streams_set_fh(stream, -2);
+ ROAR_DBG("sources_add_cf(*) = ?");
  streams_set_socktype(stream, ROAR_SOCKET_TYPE_FILE);
 
  if ( primary )
