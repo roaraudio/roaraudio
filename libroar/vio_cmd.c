@@ -80,6 +80,7 @@ int roar_vio_open_cmd(struct roar_vio_calls * calls, struct roar_vio_calls * dst
  calls->write    = roar_vio_cmd_write;
  calls->nonblock = roar_vio_cmd_nonblock;
  calls->sync     = roar_vio_cmd_sync;
+ calls->ctl      = roar_vio_cmd_ctl;
  calls->inst     = (void*) state;
 
  ROAR_DBG("roar_vio_open_cmd(*): var setup OK");
@@ -229,6 +230,7 @@ ssize_t roar_vio_cmd_read    (struct roar_vio_calls * vio, void *buf, size_t cou
  size_t tlen = 0;
  int    nonblock = state->options & ROAR_VIO_CMD_OPTS_NONBLOCK;
  int    in, out;
+ int    eating = 1;
 
  ROAR_DBG("roar_vio_cmd_read(*) = ?");
 
@@ -246,7 +248,7 @@ ssize_t roar_vio_cmd_read    (struct roar_vio_calls * vio, void *buf, size_t cou
  in  = state->reader.in;
  out = state->reader.out;
 
- while (done < count) {
+ while (done < count || eating) {
   if ( nonblock ) {
    tv.tv_sec  =    0;
    tv.tv_usec =    1;
@@ -294,6 +296,7 @@ ssize_t roar_vio_cmd_read    (struct roar_vio_calls * vio, void *buf, size_t cou
 
    if ( out != -1 && FD_ISSET(out, wfhs) ) {
     ROAR_DBG("roar_vio_cmd_read(*): event on writer");
+    eating = 1;
 
     if ( !tlen ) {
      tp   = tbuf;
@@ -311,6 +314,8 @@ ssize_t roar_vio_cmd_read    (struct roar_vio_calls * vio, void *buf, size_t cou
      close(out);
      state->reader.out = out = -1;
     }
+   } else {
+    eating = 0;
    }
   }
 
@@ -468,6 +473,43 @@ int     roar_vio_cmd_sync    (struct roar_vio_calls * vio) {
   return -1;
 
  return ret;
+}
+
+int     roar_vio_cmd_ctl     (struct roar_vio_calls * vio, int cmd, void * data) {
+ struct roar_vio_cmd_state * state = (struct roar_vio_cmd_state *)vio->inst;
+ char buf[1];
+ int i;
+
+ ROAR_WARN("roar_vio_cmd_ctl(vio=%p, cmd=0x%.8x, data=%p) = ?", vio, cmd, data);
+
+ switch (cmd) {
+  case ROAR_VIO_CTL_GET_NEXT:
+    *(struct roar_vio_calls **)data = state->next;
+    return -1;
+   break;
+  case ROAR_VIO_CTL_GET_FH:
+    return -1;
+   break;
+  case ROAR_VIO_CTL_GET_READ_FH:
+//    if ( !state->reader.opened ) {
+     //for (i = 0; i < 128; i++)
+      roar_vio_cmd_read(vio, buf, 0);
+//    }
+    if ( state->reader.opened ) {
+     ROAR_WARN("roar_vio_cmd_ctl(vio=%p, cmd=ROAR_VIO_CTL_GET_READ_FH(0x%.8x), data=%p) = 0 // fh=%i", vio, cmd, data, state->reader.in);
+     *(int*)data = state->reader.in;
+     return 0;
+    }
+    return -1;
+   break;
+  case ROAR_VIO_CTL_GET_WRITE_FH:
+    return -1;
+   break;
+  default:
+    return -1;
+ }
+
+ return 0;
 }
 #endif
 
