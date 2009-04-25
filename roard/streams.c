@@ -1094,7 +1094,7 @@ ssize_t stream_vio_s_read (struct roar_stream_server * stream, void *buf, size_t
  if ( !stream )
   return -1;
 
- roar_vio_set_fh(&(stream->vio), ROAR_STREAM(stream)->fh);
+ //roar_vio_set_fh(&(stream->vio), ROAR_STREAM(stream)->fh);
 
  if ( ! stream->vio.read )
   return -1;
@@ -1119,8 +1119,10 @@ ssize_t stream_vio_s_write(struct roar_stream_server * stream, void *buf, size_t
  if ( !stream )
   return -1;
 
+/*
  if ( roar_vio_get_fh(&(stream->vio)) == -1 && ROAR_STREAM(stream)->fh != -1 )
   roar_vio_set_fh(&(stream->vio), ROAR_STREAM(stream)->fh);
+*/
 
 // ROAR_WARN("stream_vio_s_write(*): writing...");
 
