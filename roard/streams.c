@@ -242,7 +242,7 @@ int streams_set_fh     (int id, int fh) {
 
  ROAR_DBG("streams_set_fh(id=%i, fh=%i): driverID=%i", id, fh, ss->driver_id);
 
- if ( ss->driver_id == -1 )
+ if ( ss->driver_id == -1 && fh != -2 )
   roar_vio_set_fh(&(ss->vio), fh);
 
  if ( codecfilter_open(&(ss->codecfilter_inst), &(ss->codecfilter), NULL,
@@ -250,7 +250,21 @@ int streams_set_fh     (int id, int fh) {
   return streams_delete(id);
  }
 
- if ( fh == -1 ) { // yes, this is valid, indecats full vio!
+ if ( fh == -2 ) {
+  ROAR_DBG("streams_set_fh(id=%i, fh=%i) = ?", id, fh);
+  if ( roar_vio_ctl(&(ss->vio), ROAR_VIO_CTL_GET_READ_FH, &fh) == -1 ) {
+   fh = -2;
+  } else {
+   ROAR_DBG("streams_set_fh(id=%i, fh=%i) = ?", id, fh);
+   if ( fh < 0 ) {
+    fh = -2;
+   } else {
+    ROAR_STREAM(g_streams[id])->fh = fh;
+   }
+  }
+ }
+
+ if ( fh == -1 || fh == -2 ) { // yes, this is valid, indecats full vio!
   return 0;
  }
 
