@@ -32,6 +32,7 @@ PREFIX_BIN=''
 PREFIX_LIB=''
 PREFIX_INC=''
 PREFIX_MAN=''
+PREFIX_COMP=''
 
 CDROM_IS_DEV=true
 CDROM="none"
@@ -140,6 +141,7 @@ do
    echo '--prefix-lib DIR            - Set prefix for librarys (default: $PREFIX/libs)'
    echo '--prefix-inc DIR            - Set prefix for include files (default: $PREFIX/include)'
    echo '--prefix-man DIR            - Set prefix for manpages (default: $PREFIX/man)'
+   echo '--prefix-comp DIR           - Set prefix for compatibility librarys (default: $PREFIX_LIB/roaraudio/complibs)'
    echo
    echo '--default-rate RATE         - Set default sample rate for roard and roarclients'
    echo '--default-channels CHANNELS - Set default number of channels for roard and roarclients'
@@ -316,6 +318,10 @@ do
   ;;
   '--prefix-man')
    PREFIX_MAN="$2"
+   shift;
+  ;;
+  '--prefix-comp')
+   PREFIX_COMP="$2"
    shift;
   ;;
   '--mmcu')
@@ -503,10 +509,11 @@ then
  fPIC=false
 fi
 
-[ "$PREFIX_BIN" = '' ] && PREFIX_BIN="$PREFIX/bin/"
-[ "$PREFIX_LIB" = '' ] && PREFIX_LIB="$PREFIX/lib/"
-[ "$PREFIX_INC" = '' ] && PREFIX_INC="$PREFIX/include/"
-[ "$PREFIX_MAN" = '' ] && PREFIX_MAN="$PREFIX/share/man/"
+[ "$PREFIX_BIN"  = '' ] && PREFIX_BIN="$PREFIX/bin/"
+[ "$PREFIX_LIB"  = '' ] && PREFIX_LIB="$PREFIX/lib/"
+[ "$PREFIX_INC"  = '' ] && PREFIX_INC="$PREFIX/include/"
+[ "$PREFIX_MAN"  = '' ] && PREFIX_MAN="$PREFIX/share/man/"
+[ "$PREFIX_COMP" = '' ] && PREFIX_COMP="$PREFIX_LIB/roaraudio/complibs/"
 
 [ "$DEFAULT_GRP" = '' ] && DEFAULT_GRP='audio'
 
@@ -530,6 +537,7 @@ fi
  echo "PREFIX_LIB=$PREFIX_LIB"
  echo "PREFIX_INC=$PREFIX_INC"
  echo "PREFIX_MAN=$PREFIX_MAN"
+ echo "PREFIX_COMP=$PREFIX_COMP"
  echo
  $SNDIO_EMUL && echo "subdir_libroarsndio=libroarsndio"
 } >&4
