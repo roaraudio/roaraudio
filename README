@@ -47,7 +47,7 @@ See HACKING.
 --- Tested platforms:
 
 OS		ARCH		COMPILER	M/STATUS	COMMENT
---------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
 Debian Etch	ix86		gcc 4.1.2	s/OK
 Debian Etch	x86_64		gcc 4.1.2	s/OK
 Debian Lenny	ix86		gcc 4.3.2	s/OK
