@@ -1,41 +1,22 @@
 .\" roard.1:
 
-.TH "roarbaseclients" "1" "July 2008" "RoarAudio" "System Manager's Manual: roard"
+.TH "roarfilt" "1" "July 2008" "RoarAudio" "System Manager's Manual: roarfilt"
 
 .SH NAME
 
-roarcat, roarmon, roarfilt \- RoarAudio sound server base clients
+roarfilt \- RoarAudio sound server audio filter client
 
 .SH SYNOPSIS
-
-roarcat [OPTIONS]... [FILE]
-
-roarmon [OPTIONS]...
 
 roarfilt [OPTIONS]...
 
 .SH "DESCRIPTION"
-This are some basic clients for RoarAuido. Some more complex are listen in the \fbSEE ALSO\fR block.
-For controlling \fBroard\fR take a look at \fBroarctl\fR(1). For a simple Ogg Vorbis player
-take a look at \fBroarvorbis\fR(1) (ogg123 supportes RoarAudio via libao plugin).
-
-.TP
-\fBroarcat\fR
-Sends raw PCM audio data from a file or stdin (pipe) to the sound server.
-
-.TP
-\fBroarmon\fR
-Gets a copy of the audio data the server sends to the soundcard. This is usefull for streaming
-to a server like \fBicecast2\fR(1).
-
-.TP
-\fBroarfilt\fR
 This filters the audio data before they are send to the soundcard.
 
 .SH "GENERAL OPTIONS"
 \fBNOTE: This list is incomplete!\fR
-In addition to this list all three programs provide compatible
-options for esdcat, esdmon and esdfilt. You can just replace the "esd"
+In addition to this list this program provides compatible
+options for esdfilt. You can just replace the "esd"
 in the name with "roar" or use symlinks. This options are for compatibly
 only and should not used in new programs.
 
@@ -61,7 +42,7 @@ Set server channels.
 \fB--server SERVER\fR
 The server to connect to.
 
-.SH "ROARFILT SPECIFIC OPTIONS"
+.SH "OLD ROARFILT OPTIONS"
 .TP
 \fB--half\fR
 Half the volume.
@@ -71,20 +52,58 @@ Half the volume.
 Double the volume.
 
 .TP
-\fB--amp n\fR
+\fB--amp n\fR, \fB--mul n\fR
 Amplify volume by n.
 
 .TP
-\fB--mul n\fR
-
-.TP
 \fB--div n\fR
+Divide volume by n.
 
 .TP
 \fB--log n\fR
 Does a simple 'gamma correction'.
 This is done by:
  sample = 2^(bits-1) * log(1 + (n - 1)*sample/2^(bits-1)) / log(n).
+
+.TP
+\fB--lowpass freq\fR
+lowpass filter
+
+.SH "FILTER OPTIONS"
+
+.TP
+\fB--filter name\fR
+This adds a new filter of name \fIname\fR.
+
+.TP
+\fB--ffreq freq\fR
+This sets a frequency for the filter.
+
+.TP
+\fB--fmul mult\fR
+This sets a multiplier for the filter.
+
+.TP
+\fB--fdiv div\fR
+This sets a divider for the filter.
+
+.TP
+\fB--fn N\fR
+This sets the filter's N value.
+
+.TP
+\fB--flimit limit\fR
+This sets the filter's limit value.
+
+.TP
+\fB--fmode mode\fR
+set filter mode parameter
+This sets the filter mode. Symbolic values are currently not supported.
+
+.TP
+\fB--fq Q\fR
+This sets the filter quality.
+
 
 .SH "ENVIRONMENT VARIABLES"
 Bellow only the basic environment varibales are listend.
