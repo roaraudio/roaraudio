@@ -308,7 +308,7 @@ int     roar_vio_open_dstr_vio(struct roar_vio_calls * calls,
 
  chain[cc].type = ROAR_VIO_DSTR_OBJT_EOL;
 
- ROAR_WARN("roar_vio_open_dstr_vio(*): chain=%p", chain);
+ ROAR_DBG("roar_vio_open_dstr_vio(*): chain=%p", chain);
 
  if ( roar_vio_dstr_parse_opts(chain) == -1 ) {
   _ret(-1);
@@ -374,7 +374,7 @@ int     roar_vio_dstr_set_defaults(struct roar_vio_dstr_chain * chain, int len, 
   memset(tmp, 0, sizeof(tmp));
 
   ROAR_DBG("roar_vio_dstr_set_defaults(*): i=%i, c->type=0x%.4x(%s)", i, c->type & 0xFFFF, roar_vio_dstr_get_name(c->type));
-  ROAR_WARN("roar_vio_dstr_set_defaults(*): i=%i, c->type=0x%.4x(%s): c->def=%p, c->def->type=%i", i, c->type & 0xFFFF,
+  ROAR_DBG("roar_vio_dstr_set_defaults(*): i=%i, c->type=0x%.4x(%s): c->def=%p, c->def->type=%i", i, c->type & 0xFFFF,
                    roar_vio_dstr_get_name(c->type), c->def, c->def == NULL ? -1 : c->def->type);
 
   c->need_vio = 1;
@@ -559,7 +559,7 @@ int     roar_vio_dstr_set_defaults(struct roar_vio_dstr_chain * chain, int len, 
                     c->type & 0xFFFF, roar_vio_dstr_get_name(c->type),
                     next->def, next->def == NULL ? -1 : next->def->type);
    if ( next->def != NULL ) {
-    ROAR_WARN("roar_vio_dstr_set_defaults(*): i=%i, c->type=0x%.4x(%s): next->def->o_flags=%i", i,
+    ROAR_DBG("roar_vio_dstr_set_defaults(*): i=%i, c->type=0x%.4x(%s): next->def->o_flags=%i", i,
                      c->type & 0xFFFF, roar_vio_dstr_get_name(c->type),
                      next->def->o_flags);
    }
@@ -569,12 +569,12 @@ int     roar_vio_dstr_set_defaults(struct roar_vio_dstr_chain * chain, int len, 
   }
  }
 
- ROAR_WARN("roar_vio_dstr_set_defaults(*) = 0");
+ ROAR_DBG("roar_vio_dstr_set_defaults(*) = 0");
 
  return 0;
 }
 
-#define _ret(x) roar_vio_close(calls); ROAR_WARN("roar_vio_dstr_build_chain(*) = %i", (x)); return (x)
+#define _ret(x) roar_vio_close(calls); ROAR_DBG("roar_vio_dstr_build_chain(*) = %i", (x)); return (x)
 
 int     roar_vio_dstr_build_chain(struct roar_vio_dstr_chain * chain, struct roar_vio_calls * calls,
                                   struct roar_vio_calls * vio) {
@@ -583,7 +583,7 @@ int     roar_vio_dstr_build_chain(struct roar_vio_dstr_chain * chain, struct roa
  struct roar_vio_calls      * tc, * prev;
  int i;
 
- ROAR_WARN("roar_vio_dstr_build_chain(*) = ?");
+ ROAR_DBG("roar_vio_dstr_build_chain(*) = ?");
 
  if ( chain == NULL || calls == NULL )
   return -1;
@@ -691,7 +691,7 @@ int     roar_vio_dstr_build_chain(struct roar_vio_dstr_chain * chain, struct roa
   } // else we can skip to the next :)
  }
 
- ROAR_WARN("roar_vio_dstr_build_chain(*) = 0");
+ ROAR_DBG("roar_vio_dstr_build_chain(*) = 0");
  return 0;
 }
 

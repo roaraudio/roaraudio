@@ -198,7 +198,7 @@ int     roar_vio_socket_init_dstr_def     (struct roar_vio_defaults * def, char 
  if ( dstr == NULL )
   dstr = "";
 
- ROAR_WARN("roar_vio_socket_init_dstr_def(def=%p, dstr='%s', hint=%i, type=%i, odef=%p) = ?", def, dstr, hint, type, odef);
+ ROAR_DBG("roar_vio_socket_init_dstr_def(def=%p, dstr='%s', hint=%i, type=%i, odef=%p) = ?", def, dstr, hint, type, odef);
 
  if ( hint == -1 ) {
   if ( 0 ) { // this is needed to keep the syntx ok, compiler will throw it away

@@ -65,11 +65,11 @@ int roar_vio_proto_init_def  (struct roar_vio_defaults * def, char * dstr, int p
  if ( (ed = strstr(dstr, "/")) != NULL )
   *ed = 0;
 
- ROAR_WARN("roar_vio_proto_init_def(*): def->o_flags=%i", def->o_flags);
+ ROAR_DBG("roar_vio_proto_init_def(*): def->o_flags=%i", def->o_flags);
 
  ret = roar_vio_socket_init_dstr_def(def, dstr, -1, SOCK_STREAM, def);
 
- ROAR_WARN("roar_vio_proto_init_def(*): def->o_flags=%i", def->o_flags);
+ ROAR_DBG("roar_vio_proto_init_def(*): def->o_flags=%i", def->o_flags);
 
  if ( ed != NULL )
   *ed = '/';
@@ -86,12 +86,12 @@ int roar_vio_open_proto      (struct roar_vio_calls * calls, struct roar_vio_cal
  char * host;
  char * tmp;
 
- ROAR_WARN("roar_vio_open_proto(calls=%p, dst=%p, dstr='%s', proto=%i, odef=%p) = ?", calls, dst, dstr, proto, odef);
+ ROAR_DBG("roar_vio_open_proto(calls=%p, dst=%p, dstr='%s', proto=%i, odef=%p) = ?", calls, dst, dstr, proto, odef);
 
  if ( calls == NULL || dst == NULL || odef == NULL )
   return -1;
 
- ROAR_WARN("roar_vio_open_proto(*): odef->o_flags=%i", odef->o_flags);
+ ROAR_DBG("roar_vio_open_proto(*): odef->o_flags=%i", odef->o_flags);
  ROAR_DBG("roar_vio_open_proto(*) = ?");
 
  if ( roar_vio_open_pass(calls, dst) == -1 )
@@ -128,7 +128,7 @@ int roar_vio_open_proto      (struct roar_vio_calls * calls, struct roar_vio_cal
  }
 
  ROAR_DBG("roar_vio_open_proto(*) = ?");
- ROAR_WARN("roar_vio_open_proto(*): proto=%i, host='%s', file='%s'", proto, host, dstr);
+ ROAR_DBG("roar_vio_open_proto(*): proto=%i, host='%s', file='%s'", proto, host, dstr);
 
  switch (proto) {
   case ROAR_VIO_PROTO_P_HTTP:
@@ -157,7 +157,7 @@ int roar_vio_open_proto_http   (struct roar_vio_calls * calls, struct roar_vio_c
 
  roar_vio_printf(dst, "GET /%s HTTP/1.1\r\n", file);
  roar_vio_printf(dst, "Host: %s\r\n", host);
- roar_vio_printf(dst, "User-Agent: roar_vio_open_proto_http() $Revision: 1.5 $\r\n");
+ roar_vio_printf(dst, "User-Agent: roar_vio_open_proto_http() $Revision: 1.6 $\r\n");
  roar_vio_printf(dst, "Connection: close\r\n");
  roar_vio_printf(dst, "\r\n");
 
@@ -175,7 +175,7 @@ int roar_vio_open_proto_http   (struct roar_vio_calls * calls, struct roar_vio_c
  if ( status != 200 )
   return -1;
 
- ROAR_WARN("roar_vio_open_proto_http(*): status=%i", status);
+ ROAR_DBG("roar_vio_open_proto_http(*): status=%i", status);
 // ROAR_WARN("roar_vio_open_proto_http(*): buf='%s'", buf);
 
  if ( !strcmp((buf+len)-4, "\r\n\r\n") )
