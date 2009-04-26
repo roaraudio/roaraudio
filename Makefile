@@ -26,6 +26,7 @@ prep-install-dirs:
 install: prep-install-dirs
 	cp $(cp_v) lib/roar*     $(PREFIX_BIN)
 	cp $(cp_v) lib/lib*.so*  $(PREFIX_LIB)
+	sh -c 'cd lib; for file in $(COMP_LIB); do for i in "" .{0,1}; do ln -fs $(PREFIX_LIB)/$$file.so $(PREFIX_COMP)/`echo $$file | sed s/roar//`.so$$i; done; done'
 	sh -c 'for file in include/roar* include/lib*; do cp $(cp_v) -r $$file $(PREFIX_INC)/; done'
 	cd doc; make install; cd ..
 	if [ "$(subdir_plugins_ao)" != '' ]; then cd $(subdir_plugins_ao); make install; cd ../..; fi
