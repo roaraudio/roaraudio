@@ -142,6 +142,8 @@ int     roar_vio_ctl     (struct roar_vio_calls * vio, int cmd, void * data) {
  if ( vio == NULL )
   return -1;
 
+ ROAR_DBG("roar_vio_ctl(vio=%p, cmd=0x%.8x, data=%p): vio->ctl=%p", vio, cmd, data, vio->ctl);
+
  if ( vio->ctl == NULL )
   return -1;
 
@@ -387,10 +389,13 @@ int     roar_vio_basic_ctl     (struct roar_vio_calls * vio, int cmd, void * dat
  if ( vio == NULL || cmd == -1 )
   return -1;
 
+ ROAR_DBG("roar_vio_basic_ctl(vio=%p, cmd=0x%.8x, data=%p) = ?", vio, cmd, data);
+
  switch (cmd) {
   case ROAR_VIO_CTL_GET_FH:
   case ROAR_VIO_CTL_GET_READ_FH:
   case ROAR_VIO_CTL_GET_WRITE_FH:
+    ROAR_DBG("roar_vio_basic_ctl(vio=%p, cmd=ROAR_VIO_CTL_GET_*FH(0x%.8x), data=%p) = 0 // fh=%i", vio, cmd, data, roar_vio_get_fh(vio));
     *(int*)data = roar_vio_get_fh(vio);
     return 0;
    break;
@@ -430,6 +435,7 @@ int     roar_vio_open_pass    (struct roar_vio_calls * calls, struct roar_vio_ca
  calls->lseek    = roar_vio_pass_lseek;
  calls->nonblock = roar_vio_pass_nonblock;
  calls->sync     = roar_vio_pass_sync;
+ calls->ctl      = roar_vio_pass_ctl;
  calls->close    = roar_vio_pass_close;
 
  calls->inst     = dst;
@@ -460,6 +466,8 @@ int     roar_vio_pass_sync    (struct roar_vio_calls * vio) {
 int     roar_vio_pass_ctl     (struct roar_vio_calls * vio, int cmd, void * data) {
  if (vio == NULL || cmd == -1)
   return -1;
+
+ ROAR_DBG("roar_vio_pass_ctl(vio=%p, cmd=0x%.8x, data=%p) = ?", vio, cmd, data);
 
  switch (cmd) {
   case ROAR_VIO_CTL_GET_NEXT:

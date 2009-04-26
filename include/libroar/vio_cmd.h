@@ -87,6 +87,7 @@ ssize_t roar_vio_cmd_read    (struct roar_vio_calls * vio, void *buf, size_t cou
 ssize_t roar_vio_cmd_write   (struct roar_vio_calls * vio, void *buf, size_t count);
 int     roar_vio_cmd_nonblock(struct roar_vio_calls * vio, int state);
 int     roar_vio_cmd_sync    (struct roar_vio_calls * vio);
+int     roar_vio_cmd_ctl     (struct roar_vio_calls * vio, int cmd, void * data);
 
 /*
 // pass
