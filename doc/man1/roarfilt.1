@@ -1,0 +1,120 @@
+.\" roard.1:
+
+.TH "roarbaseclients" "1" "July 2008" "RoarAudio" "System Manager's Manual: roard"
+
+.SH NAME
+
+roarcat, roarmon, roarfilt \- RoarAudio sound server base clients
+
+.SH SYNOPSIS
+
+roarcat [OPTIONS]... [FILE]
+
+roarmon [OPTIONS]...
+
+roarfilt [OPTIONS]...
+
+.SH "DESCRIPTION"
+This are some basic clients for RoarAuido. Some more complex are listen in the \fbSEE ALSO\fR block.
+For controlling \fBroard\fR take a look at \fBroarctl\fR(1). For a simple Ogg Vorbis player
+take a look at \fBroarvorbis\fR(1) (ogg123 supportes RoarAudio via libao plugin).
+
+.TP
+\fBroarcat\fR
+Sends raw PCM audio data from a file or stdin (pipe) to the sound server.
+
+.TP
+\fBroarmon\fR
+Gets a copy of the audio data the server sends to the soundcard. This is usefull for streaming
+to a server like \fBicecast2\fR(1).
+
+.TP
+\fBroarfilt\fR
+This filters the audio data before they are send to the soundcard.
+
+.SH "GENERAL OPTIONS"
+\fBNOTE: This list is incomplete!\fR
+In addition to this list all three programs provide compatible
+options for esdcat, esdmon and esdfilt. You can just replace the "esd"
+in the name with "roar" or use symlinks. This options are for compatibly
+only and should not used in new programs.
+
+.TP
+\fB--help\fR
+Print some help text.
+
+.SH "AUDIO OPTIONS"
+.TP
+\fB--rate RATE\fR, \fB-R RATE\fR
+Set server sample rate.
+
+.TP
+\fB--bits BITS\fR, \fB-B BITS\fR
+Set server bits.
+
+.TP
+\fB--chans CHANNELS\fR, \fB-C CHANNELS\fR
+Set server channels.
+
+.SH "NETWORK OPTIONS"
+.TP
+\fB--server SERVER\fR
+The server to connect to.
+
+.SH "ROARFILT SPECIFIC OPTIONS"
+.TP
+\fB--half\fR
+Half the volume.
+
+.TP
+\fB--double\fR
+Double the volume.
+
+.TP
+\fB--amp n\fR
+Amplify volume by n.
+
+.TP
+\fB--mul n\fR
+
+.TP
+\fB--div n\fR
+
+.TP
+\fB--log n\fR
+Does a simple 'gamma correction'.
+This is done by:
+ sample = 2^(bits-1) * log(1 + (n - 1)*sample/2^(bits-1)) / log(n).
+
+.SH "ENVIRONMENT VARIABLES"
+Bellow only the basic environment varibales are listend.
+For a complete list see \fBlibroar\fR(7).
+
+.TP
+\fBHOME\fR
+The users home directory.
+
+.TP
+\fBROAR_SERVER\fR
+The address of the listening server. This may be in form of host:port for TCP/IP connections
+and /path/to/sock for UNIX Domain Sockets or any other supported format. See \fBroartips\fR(7)
+for a full list.
+This is the same as the \fB--server\fR option.
+
+.SH "BUGS"
+There are a lot of bugs...
+
+.SH "SEE ALSO"
+\fBroarctl\fR(1),
+\fBroarvorbis\fR(1),
+\fBroarfish\fR(1),
+\fBroartestclients\fR(1),
+\fBroartips\fR(7),
+\fBlibroar\fR(7),
+\fBRoarAudio\fR(7).
+
+.SH "HISTORY"
+
+For history information see \fBRoarAudio\fR(7).
+
+.\" ll

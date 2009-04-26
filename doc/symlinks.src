@@ -1,6 +1,5 @@
 roarcat				1	roarbaseclients		1
 roarmon				1	roarbaseclients		1
-roarfilt			1	roarbaseclients		1
 roarcat2sock			1	roartestclients		1
 roarcatad			1	roartestclients		1
 roarsin				1	roartestclients		1
