@@ -3,7 +3,7 @@ include ../Makefile.conf
 SLIB=libroardsp.so
 
 TARGETS=libroardsp.so libroardsp.a
-OBJS=libroardsp.o convert.o poly.o filter.o filterchain.o alaw.o mulaw.o
+OBJS=libroardsp.o convert.o midside.o poly.o filter.o filterchain.o alaw.o mulaw.o
 OLDROAR=midi.o
 FILTER=lowp.o highp.o amp.o quantify.o add.o clip.o downmix.o dcblock.o swap.o
 
