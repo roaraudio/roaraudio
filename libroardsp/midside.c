@@ -24,5 +24,29 @@
 
 #include "libroardsp.h"
 
+int roar_conv_s2ms_8      (void * out, void * in, int samples) {
+ return -1;
+}
+
+int roar_conv_s2ms_16     (void * out, void * in, int samples) {
+ return -1;
+}
+
+int roar_conv_s2ms_32     (void * out, void * in, int samples) {
+ return -1;
+}
+
+int roar_conv_ms2s_8      (void * out, void * in, int samples) {
+ return -1;
+}
+
+int roar_conv_ms2s_16     (void * out, void * in, int samples) {
+ return -1;
+}
+
+int roar_conv_ms2s_32     (void * out, void * in, int samples) {
+ return -1;
+}
+
 
 //ll
