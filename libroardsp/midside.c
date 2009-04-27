@@ -25,27 +25,105 @@
 #include "libroardsp.h"
 
 int roar_conv_s2ms_8      (void * out, void * in, int samples) {
- return -1;
+ char * ip = in;
+ char * op = out;
+ register int i;
+ register char mid;
+ register char side;
+
+ for (i = 0; i < samples; i += 2) {
+  mid     = (ip[i] + ip[i+1])/2;
+  side    = (ip[i] - ip[i+1])/2;
+  op[i  ] = mid;
+  op[i+1] = side;
+ }
+
+ return 0;
 }
 
 int roar_conv_s2ms_16     (void * out, void * in, int samples) {
- return -1;
+ int16_t * ip = in;
+ int16_t * op = out;
+ register int i;
+ register int16_t mid;
+ register int16_t side;
+
+ for (i = 0; i < samples; i += 2) {
+  mid     = (ip[i] + ip[i+1])/2;
+  side    = (ip[i] - ip[i+1])/2;
+  op[i  ] = mid;
+  op[i+1] = side;
+ }
+
+ return 0;
 }
 
 int roar_conv_s2ms_32     (void * out, void * in, int samples) {
- return -1;
+ int32_t * ip = in;
+ int32_t * op = out;
+ register int i;
+ register int32_t mid;
+ register int32_t side;
+
+ for (i = 0; i < samples; i += 2) {
+  mid     = (ip[i] + ip[i+1])/2;
+  side    = (ip[i] - ip[i+1])/2;
+  op[i  ] = mid;
+  op[i+1] = side;
+ }
+
+ return 0;
 }
 
 int roar_conv_ms2s_8      (void * out, void * in, int samples) {
- return -1;
+ char * ip = in;
+ char * op = out;
+ register int i;
+ register char mid;
+ register char side;
+
+ for (i = 0; i < samples; i += 2) {
+  mid     = ip[i];
+  side    = ip[i+1];
+  op[i  ] = mid + side;
+  op[i+1] = mid - side;
+ }
+
+ return 0;
 }
 
 int roar_conv_ms2s_16     (void * out, void * in, int samples) {
- return -1;
+ int16_t * ip = in;
+ int16_t * op = out;
+ register int i;
+ register int16_t mid;
+ register int16_t side;
+
+ for (i = 0; i < samples; i += 2) {
+  mid     = ip[i];
+  side    = ip[i+1];
+  op[i  ] = mid + side;
+  op[i+1] = mid - side;
+ }
+
+ return 0;
 }
 
 int roar_conv_ms2s_32     (void * out, void * in, int samples) {
- return -1;
+ int32_t * ip = in;
+ int32_t * op = out;
+ register int i;
+ register int32_t mid;
+ register int32_t side;
+
+ for (i = 0; i < samples; i += 2) {
+  mid     = ip[i];
+  side    = ip[i+1];
+  op[i  ] = mid + side;
+  op[i+1] = mid - side;
+ }
+
+ return 0;
 }
 
 
