@@ -30,6 +30,9 @@
 
 #define BUFSIZE 1024
 
+#define MODE_PC    1
+#define MODE_DB    2
+
 void usage (void) {
  printf("roarvumeter [OPTIONS]...\n");
 
@@ -45,7 +48,7 @@ void usage (void) {
 
 }
 
-int vumeter16bit2ch (int fh, int samples, int16_t * buf) {
+int vumeter16bit2ch (int fh, int samples, int16_t * buf, int mode) {
  int i;
  int samples_half = samples/2;
  double suml, sumr;
@@ -61,16 +64,24 @@ int vumeter16bit2ch (int fh, int samples, int16_t * buf) {
    sumr += (double) buf[i+1] * (double) buf[i+1];
   }
 
-  suml = sqrt(suml/samples_half)/327.68;
-  sumr = sqrt(sumr/samples_half)/327.68;
+  suml = sqrt(suml/samples_half);
+  sumr = sqrt(sumr/samples_half);
 
-  printf("L: %3i%% R: %3i%%          \e[u", (int)suml, (int)sumr);
+  switch (mode) {
+   case MODE_PC:
+     printf("L: %3i%% R: %3i%%          \e[u", (int)(suml/327.68), (int)(sumr/327.68));
+    break;
+   case MODE_DB:
+     printf("L: %6.2fdB R: %6.2fdB          \e[u", 20*log10(suml/32768), 20*log10(sumr/32768));
+    break;
+  }
+
   fflush(stdout);
  }
  return 0;
 }
 
-int vumeter (int fh, int samples, int bits, int channels) {
+int vumeter (int fh, int samples, int bits, int channels, int mode) {
  void * buf = malloc(samples*bits*2);
 
  if ( !buf )
@@ -78,7 +89,7 @@ int vumeter (int fh, int samples, int bits, int channels) {
 
  if ( bits == 16 ) {
   if ( channels == 2 ) {
-   vumeter16bit2ch(fh, samples, (int16_t *) buf);
+   vumeter16bit2ch(fh, samples, (int16_t *) buf, mode);
    free(buf);
    return 0;
   } else {
@@ -99,6 +110,7 @@ int main (int argc, char * argv[]) {
  char * k;
  int    fh;
  int    i;
+ int    mode = MODE_PC;
 
  for (i = 1; i < argc; i++) {
   k = argv[i];
@@ -113,6 +125,8 @@ int main (int argc, char * argv[]) {
    channels = atoi(argv[++i]);
   } else if ( strcmp(k, "--samples") == 0 ) {
    samples = atoi(argv[++i]);
+  } else if ( strcmp(k, "--db") == 0 ) {
+   mode = MODE_DB;
   } else if ( strcmp(k, "--help") == 0 ) {
    usage();
    return 0;
@@ -128,7 +142,7 @@ int main (int argc, char * argv[]) {
   return 1;
  }
 
- vumeter(fh, samples*channels, bits, channels);
+ vumeter(fh, samples*channels, bits, channels, mode);
 
  printf("\n"); // if the reach this then roard has quited and we should print a newline
 
