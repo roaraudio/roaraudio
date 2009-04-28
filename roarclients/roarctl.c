@@ -87,7 +87,11 @@ int ping (struct roar_connection * con, int num) {
  struct timeval         try, ans;
  struct roar_message    m;
  register int           ret;
- int i;
+ int                    i;
+ double                 cur, min = 3600*1000, max = 0, sum = 0;
+
+ if ( num == 0 )
+  return 0;
 
  for (i = 0; i < num; i++) {
   m.cmd = ROAR_CMD_NOOP;
@@ -106,11 +110,21 @@ int ping (struct roar_connection * con, int num) {
   }
   ans.tv_usec -= try.tv_usec;
 
-  printf("Pong from server: seq=%i time=%.2fms\n", i, ans.tv_usec/1000.0);
+  printf("Pong from server: seq=%i time=%.3fms\n", i, (cur = ans.tv_usec/1000.0));
+
+  sum += cur;
+  if ( min > cur )
+   min = cur;
+  if ( cur > max )
+   max = cur;
 
   if ( i != (num - 1) )
    sleep(1);
  }
+
+ printf("\n--- ping statistics ---\n");
+ printf("%i packets transmitted\n", i);
+ printf("rtt min/avg/max = %.3f/%.3f/%.3f ms\n", min, sum/(double)i, max);
 
  return 0;
 }
