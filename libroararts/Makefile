@@ -1,4 +1,4 @@
-TARGETS=libartsc.so
+TARGETS=libartsc.so libroarartsc.so
 OBJS=libartsc.o
 
 include ../Makefile.conf
@@ -14,5 +14,7 @@ clean:
 	rm -f ${TARGETS} *.o
 new: clean all
 
-libartsc.so: ${OBJS}
-	${CC} ${LDFLAGS} $(SHARED) -o libartsc.so ${OBJS}
+libartsc.so: libroarartsc.so
+	cp libroarartsc.so libartsc.so
+libroarartsc.so: ${OBJS}
+	${CC} ${LDFLAGS} $(SHARED) -o libroarartsc.so ${OBJS}
