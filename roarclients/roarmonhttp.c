@@ -41,7 +41,7 @@ void print_header (int codec, int rate, int channels) {
  printf("Content-type: %s\r\n", mime);
  printf("ice-audio-info: ice-samplerate=%i;ice-channels=%i\r\n", rate, channels);
  printf("icy-pub:0\r\n");
- printf("Server: RoarAudio (roarmonhttp $Revision: 1.9 $)\r\n");
+ printf("Server: RoarAudio (roarmonhttp $Revision: 1.10 $)\r\n");
  printf("\r\n");
 
  fflush(stdout);
@@ -133,7 +133,7 @@ int stream (int dest, int src) {
 }
 
 
-int parse_http (void) {
+int parse_http (int * gopher) {
  char buf[1024];
  char * qs = buf, *str;
  ssize_t len;
@@ -146,19 +146,30 @@ int parse_http (void) {
 
  if ( strncmp(buf, "GET /", 5) ) {
   if ( strncmp(buf, "SOURCE /", 8) ) {
-   return -1;
+   if ( buf[0] != '/' ) {
+    return -1;
+   } else {
+    *gopher = 1;
+   }
   } else {
    dir = ROAR_DIR_PLAY;
    qs += 3; 
   }
  }
 
- qs += 5;
+ if ( !*gopher ) {
+  qs += 5;
 
- if ( (str = strstr(qs, " ")) == NULL )
-  return -1;
+  if ( (str = strstr(qs, " ")) == NULL )
+   return -1;
 
- *str = 0;
+  *str = 0;
+ } else {
+  if ( (str = strstr(qs, "\r")) != NULL )
+   *str = 0;
+  if ( (str = strstr(qs, "\n")) != NULL )
+   *str = 0;
+ }
 
  for (; *qs != '?'; qs++)
   if ( !*qs )
@@ -167,7 +178,8 @@ int parse_http (void) {
  if ( *qs == '?' )
   qs++;
 
- printf("HTTP/1.0 200 OK\r\n");
+ if ( !*gopher )
+  printf("HTTP/1.0 200 OK\r\n");
 // printf("QS: %s\r\n", qs);
 
  fflush(stdout);
@@ -188,12 +200,13 @@ int main (int argc, char * argv[]) {
  char * c, * k, * v;
  char * sp0 = NULL, * sp1 = NULL;
  int dir = ROAR_DIR_MONITOR;
+ int gopher = 0;
 
  alarm(0); // reset alarm timers from httpd 
 
  if ( argc > 1 )
   if ( ! strcmp(argv[1], "--inetd") )
-   if ( (dir = parse_http()) == -1 )
+   if ( (dir = parse_http(&gopher)) == -1 )
     return 1;
 
  c = strtok_r(getenv("QUERY_STRING"), "&", &sp0);
@@ -224,7 +237,8 @@ int main (int argc, char * argv[]) {
   return 1;
  }
 
- print_header(codec, rate, channels);
+ if ( !gopher )
+  print_header(codec, rate, channels);
 
 /*
  while((i = read(fh, buf, BUFSIZE)))
