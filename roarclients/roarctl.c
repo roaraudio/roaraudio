@@ -25,6 +25,8 @@
 #include <roaraudio.h>
 #include <pwd.h>
 #include <grp.h>
+#include <sys/time.h>
+#include <time.h>
 
 int g_verbose = 0;
 
@@ -45,6 +47,7 @@ void usage (void) {
  printf(
         "  help                    - Show this help\n"
         "  sleep TIME              - Sleeps for TIME seconds\n"
+        "  ping  NUM               - Do NUM pings using NOOP commands\n"
         "\n"
         "  standby, off            - Go into standby mode\n"
         "  resume, on              - Go into active mode\n"
@@ -78,6 +81,38 @@ void usage (void) {
         "  liststreams             - Gets Informations about streams\n"
         "  allinfo                 - Get all infos\n"
        );
+}
+
+int ping (struct roar_connection * con, int num) {
+ struct timeval         try, ans;
+ struct roar_message    m;
+ register int           ret;
+ int i;
+
+ for (i = 0; i < num; i++) {
+  m.cmd = ROAR_CMD_NOOP;
+  m.datalen = 0;
+
+  gettimeofday(&try, NULL);
+  ret = roar_req(con, &m, NULL);
+  gettimeofday(&ans, NULL);
+
+  if ( ret == -1 )
+   return -1;
+
+  while (ans.tv_sec > try.tv_sec) {
+   ans.tv_sec--;
+   ans.tv_usec += 1000000;
+  }
+  ans.tv_usec -= try.tv_usec;
+
+  printf("Pong from server: seq=%i time=%.2fms\n", i, ans.tv_usec/1000.0);
+
+  if ( i != (num - 1) )
+   sleep(1);
+ }
+
+ return 0;
 }
 
 void server_oinfo (struct roar_connection * con) {
@@ -619,6 +654,11 @@ int main (int argc, char * argv[]) {
 
   } else if ( !strcmp(k, "sleep") ) {
    sleep(atoi(argv[++i]));
+
+  } else if ( !strcmp(k, "ping") ) {
+   if ( ping(&con, atoi(argv[++i])) == -1 ) {
+    fprintf(stderr, "Error: can not ping\n");
+   }
 
   } else if ( !strcmp(k, "standby") || !strcmp(k, "off") ) {
    if ( roar_set_standby(&con, ROAR_STANDBY_ACTIVE) == -1 ) {
