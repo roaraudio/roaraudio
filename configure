@@ -651,6 +651,7 @@ test_lib_defmake ROAR_HAVE_IPX           %            IPX           c          -
 test_lib_defmake ROAR_HAVE_IPV4          %            IPv4          c          -- sys/types.h sys/socket.h 'netinet/in.h'
 test_lib_defmake ROAR_HAVE_OSS           %            OSS           c          -- sys/ioctl.h sys/soundcard.h
 test_lib_defmake ROAR_HAVE_OSS_BSD       %            BSDOSS        c          -- sys/ioctl.h soundcard.h
+test_lib_defmake ROAR_HAVE_LIBSENDFILE   %            sendfile      sendfile   -- sys/sendfile.h
 test_lib_defmake ROAR_HAVE_LIBWSOCK32    %            WinSockP0     wsock32    -- winsock2.h
 test_lib_defmake ROAR_HAVE_LIBWS2_32     %            WinSockP1     ws2_32     -- winsock2.h
 
