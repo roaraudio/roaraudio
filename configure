@@ -653,6 +653,7 @@ test_lib_defmake ROAR_HAVE_IPV4          %            IPv4          c          -
 test_lib_defmake ROAR_HAVE_OSS           %            OSS           c          -- sys/ioctl.h sys/soundcard.h
 test_lib_defmake ROAR_HAVE_OSS_BSD       %            BSDOSS        c          -- sys/ioctl.h soundcard.h
 test_lib_defmake ROAR_HAVE_LIBSENDFILE   %            sendfile      sendfile   -- sys/sendfile.h
+test_lib_defmake ROAR_HAVE_LIBSOCKET     %            libsocket     socket     -- sys/socket.h
 test_lib_defmake ROAR_HAVE_LIBWSOCK32    %            WinSockP0     wsock32    -- winsock2.h
 test_lib_defmake ROAR_HAVE_LIBWS2_32     %            WinSockP1     ws2_32     -- winsock2.h
 
@@ -1061,7 +1062,14 @@ echo -n 'checking for shutdown()... '
 echo '#include <sys/socket.h>'     >  $TF_C
 echo 'int main (void) { shutdown(0, 0); return 0; }'  >> $TF_C
 
-if $CCTF 2> /dev/null;
+if [ "$SYSNAME" = 'SunOS' ]
+then
+ _l='-lsocket'
+else
+ _l=''
+fi
+
+if $CCTF $_l 2> /dev/null;
 then
  echo '#define ROAR_HAVE_SHUTDOWN'     >&3
  echo '#define ROAR_SHUTDOWN shutdown' >&3
