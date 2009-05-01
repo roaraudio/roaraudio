@@ -6,7 +6,6 @@ Things we should do:
  * (*.*) add a lot other things
  * (1.1) add RAUM support
  * (1.0) replace OpenBSD's aucat
- * (0.2) add esd* like options to roarclients
  * (0.3) add support to to roard to auto select a sync stream
 
 Things it would be nice to have:
