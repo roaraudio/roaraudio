@@ -976,6 +976,8 @@ then
  else
   echo 'sqrt()'
  fi
+else
+ echo 'sqrt()'
 fi
 
 echo -n 'checking for inline funcs... '
