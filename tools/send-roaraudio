@@ -70,7 +70,7 @@ cd ..
 } > $LOCALDIR/setup
 chmod +rx $LOCALDIR/setup
 
-tar -czf - $LOCALDIR | ssh $SSH_OPTS "cd $REMOTEDIR && rm -rf $LOCALDIR && tar -xvzf - && cd $LOCALDIR && ./setup"
+tar -czf - $LOCALDIR | ssh $SSH_OPTS "cd $REMOTEDIR && rm -rf $LOCALDIR && gunzip | tar -xvf - && cd $LOCALDIR && ./setup"
 
 rm -rf $LOCALDIR
 
