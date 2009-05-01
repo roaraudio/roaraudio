@@ -73,7 +73,7 @@ int main (int argc, char * argv[]) {
    channels = 1;
   } else if ( !strcmp(k, "--codec") ) {
    codec = roar_str2codec(argv[++i]);
-  } else if ( !strcmp(k, "--help") ) {
+  } else if ( !strcmp(k, "--help") || !strcmp(k, "-h") ) {
    usage();
    return 0;
   } else if ( in == -1 ) {

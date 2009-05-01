@@ -163,7 +163,7 @@ int main (int argc, char * argv[]) {
  for (i = 1; i < argc; i++) {
   k = argv[i];
 
-  if ( strcmp(k, "--server") == 0 ) {
+  if ( strcmp(k, "--server") == 0 || strcmp(k, "-s") == 0 ) {
    server = argv[++i];
   } else if ( strcmp(k, "--rate") == 0 || strcmp(k, "-R") == 0 || strcmp(k, "-r") == 0 ) {
    rate = atoi(argv[++i]);
@@ -222,7 +222,7 @@ int main (int argc, char * argv[]) {
   } else if ( strcmp(k, "--fmode") == 0 ) {
    tmp = atoi(argv[++i]);
    roardsp_filter_ctl(filter, ROARDSP_FCTL_MODE, &tmp);
-  } else if ( strcmp(k, "--help") == 0 ) {
+  } else if ( strcmp(k, "--help") == 0 || strcmp(k, "-h") == 0 ) {
    usage();
    return 0;
   } else {

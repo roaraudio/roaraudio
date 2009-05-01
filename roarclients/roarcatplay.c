@@ -58,7 +58,7 @@ int main (int argc, char * argv[]) {
  for (i = 1; i < argc; i++) {
   k = argv[i];
 
-  if ( strcmp(k, "--server") == 0 ) {
+  if ( strcmp(k, "--server") == 0 || strcmp(k, "-s") == 0 ) {
    server = argv[++i];
   } else if ( strcmp(k, "--simple") == 0 ) {
    mode = MODE_SIMPLE;
@@ -68,7 +68,7 @@ int main (int argc, char * argv[]) {
    bg = 1;
   } else if ( strcmp(k, "--verbose") == 0 || strcmp(k, "-v") == 0 ) {
    verbose++;
-  } else if ( strcmp(k, "--help") == 0 ) {
+  } else if ( strcmp(k, "--help") == 0 || strcmp(k, "-h") == 0 ) {
    usage();
    return 0;
   } else if ( file == NULL ) {
