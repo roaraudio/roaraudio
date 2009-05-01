@@ -276,7 +276,7 @@ int roar_socket_dup_udp_local_end (int fh) {
 
 #define _SCMR_CONTROLLEN (sizeof(struct cmsghdr) + sizeof(int))
 int roar_socket_send_fh (int sock, int fh, char * mes, size_t len) {
-#if !defined(ROAR_TARGET_WIN32) && !defined(ROAR_TARGET_MICROCONTROLLER)
+#if !defined(ROAR_TARGET_WIN32) && !defined(ROAR_TARGET_MICROCONTROLLER) && !defined(ROAR_OS_SUNOS)
  struct iovec     iov[1];
  struct msghdr    msg;
  char             cmptr_buf[_SCMR_CONTROLLEN];
@@ -317,7 +317,7 @@ int roar_socket_send_fh (int sock, int fh, char * mes, size_t len) {
 }
 
 int roar_socket_recv_fh (int sock,         char * mes, size_t * len) {
-#if !defined(ROAR_TARGET_WIN32) && !defined(ROAR_TARGET_MICROCONTROLLER)
+#if !defined(ROAR_TARGET_WIN32) && !defined(ROAR_TARGET_MICROCONTROLLER) && !defined(ROAR_OS_SUNOS)
  struct iovec     iov[1];
  struct msghdr    msg;
  char             cmptr_buf[_SCMR_CONTROLLEN];
