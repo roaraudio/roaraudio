@@ -1,4 +1,4 @@
-v. 0.2beta3 - ?
+v. 0.2beta3 - Fri May 01 2009 15:15
 	* added esdfilt options to roarfilt, esdplay options to roarcatplay
 	* added short options to roarcat/mon/filt as stated in the manpage
 	* updated manpages
