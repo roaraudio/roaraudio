@@ -188,6 +188,9 @@ int     roar_vio_socket_init_dstr_def     (struct roar_vio_defaults * def, char 
 #if defined(ROAR_HAVE_IPV4) || defined(ROAR_HAVE_IPV6)
  int    port;
 #endif
+#if defined(ROAR_HAVE_IPV4)
+ int ret;
+#endif
 
  if ( def == NULL )
   return -1;
@@ -280,7 +283,11 @@ int     roar_vio_socket_init_dstr_def     (struct roar_vio_defaults * def, char 
      if ( (port = roar_vio_socket_get_port(dstr, AF_INET, type)) == -1 )
       return -1;
 
-     return roar_vio_socket_init_inet4_def(def, host, port, type);
+     ret = roar_vio_socket_init_inet4_def(def, host, port, type);
+
+     *(dstr-1) = ':';
+
+     return ret;
     } else {
      if ( roar_vio_socket_conv_def(odef, AF_INET) == -1 )
       return -1;
@@ -538,7 +545,7 @@ int     roar_vio_socket_init_decnet_def   (struct roar_vio_defaults * def, char 
 int     roar_vio_socket_init_inet4host_def(struct roar_vio_defaults * def) {
 #if defined(ROAR_HAVE_IPV4) && defined(_CAN_OPERATE)
  struct hostent     * he;
- char               * ed;
+ char               * ed, * pd;
 
  if ( def == NULL )
   return -1;
@@ -549,12 +556,17 @@ int     roar_vio_socket_init_inet4host_def(struct roar_vio_defaults * def) {
  if ( (ed = strstr(def->d.socket.host, "/")) != NULL )
   *ed = 0;
 
+ if ( (pd = strstr(def->d.socket.host, ":")) != NULL )
+  *pd = 0;
+
  if ( (he = gethostbyname(def->d.socket.host)) == NULL ) {
   ROAR_ERR("roar_vio_socket_init_inet4host_def(*): Can\'t resolve host name '%s'",
                     def->d.socket.host);
   if ( ed != NULL ) *ed = '/';
   return -1;
  }
+
+ if ( pd != NULL ) *pd = ':';
 
  if ( ed != NULL ) *ed = '/';
 

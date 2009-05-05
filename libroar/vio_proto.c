@@ -74,6 +74,8 @@ int roar_vio_proto_init_def  (struct roar_vio_defaults * def, char * dstr, int p
  if ( ed != NULL )
   *ed = '/';
 
+ ROAR_DBG("roar_vio_proto_init_def(*): dstr='%s'", dstr);
+
  return ret;
 #else
  return -1;
@@ -139,6 +141,7 @@ int roar_vio_open_proto      (struct roar_vio_calls * calls, struct roar_vio_cal
    break;
  }
 
+ ROAR_DBG("roar_vio_open_proto(*) = -1 // no matching protocol");
  return -1;
 #else
  return -1;
@@ -152,28 +155,45 @@ int roar_vio_open_proto_http   (struct roar_vio_calls * calls, struct roar_vio_c
  int  status;
  int  len;
 
+ ROAR_DBG("roar_vio_open_proto_http(calls=%p, dst=%p, host='%s', file='%s') = ?", calls, dst, host, file);
+
  if ( calls == NULL || dst == NULL || host == NULL || file == NULL )
   return -1;
 
+ ROAR_DBG("roar_vio_open_proto_http(calls=%p, dst=%p, host='%s', file='%s') = ?", calls, dst, host, file);
+
  roar_vio_printf(dst, "GET /%s HTTP/1.1\r\n", file);
  roar_vio_printf(dst, "Host: %s\r\n", host);
- roar_vio_printf(dst, "User-Agent: roar_vio_open_proto_http() $Revision: 1.6 $\r\n");
+ roar_vio_printf(dst, "User-Agent: roar_vio_open_proto_http() $Revision: 1.7 $\r\n");
  roar_vio_printf(dst, "Connection: close\r\n");
  roar_vio_printf(dst, "\r\n");
 
+ ROAR_DBG("roar_vio_open_proto_http(*) = ?");
+
  roar_vio_sync(dst);
 
- if ( (len = roar_vio_read(dst, buf, 1023)) < 1 )
-  return -1;
+ ROAR_DBG("roar_vio_open_proto_http(*) = ?");
 
- buf[len] = 0;
-
- if ( sscanf(buf, "%79s %i %79s\n", b0, &status, b1) != 3 ) {
+ if ( (len = roar_vio_read(dst, buf, 1023)) < 1 ) {
+  ROAR_DBG("roar_vio_open_proto_http(*) = -1");
   return -1;
  }
 
- if ( status != 200 )
+ buf[len] = 0;
+
+ ROAR_DBG("roar_vio_open_proto_http(*) = ?");
+
+ if ( sscanf(buf, "%79s %i %79s\n", b0, &status, b1) != 3 ) {
+  ROAR_DBG("roar_vio_open_proto_http(*) = -1");
   return -1;
+ }
+
+ ROAR_DBG("roar_vio_open_proto_http(*) = ?");
+
+ if ( status != 200 ) {
+  ROAR_DBG("roar_vio_open_proto_http(*) = -1 // status=%i", status);
+  return -1;
+ }
 
  ROAR_DBG("roar_vio_open_proto_http(*): status=%i", status);
 // ROAR_WARN("roar_vio_open_proto_http(*): buf='%s'", buf);
