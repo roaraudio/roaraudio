@@ -1,5 +1,6 @@
 v. 0.2rc1 - ?
 	* Started to port to OpenSolaris
+	* fixed bug in default based sockets, make HTTP VIO from non default port work
 
 v. 0.2beta3 - Fri May 01 2009 15:15
 	* added esdfilt options to roarfilt, esdplay options to roarcatplay
