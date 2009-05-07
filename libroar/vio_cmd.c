@@ -180,7 +180,7 @@ int roar_vio_cmd_fork(struct roar_vio_cmd_child * child) {
     if ( dup2(in[1], ROAR_STDOUT) == -1 )
      _exit(1);
 
-    execlp("/bin/sh", "/bin/sh", "-c", child->cmd, NULL);
+    execlp("/bin/sh", "/bin/sh", "-c", child->cmd, (char*)NULL);
 
     _exit(1);
    break;

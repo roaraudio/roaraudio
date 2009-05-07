@@ -670,7 +670,7 @@ int roar_socket_open_fork  (int mode, char * host, int port) {
 
   snprintf(fhstr, 7, "%i", socks[1]);
 
-  execlp("roard", "roard", "--no-listen", "--client-fh", fhstr, NULL);
+  execlp("roard", "roard", "--no-listen", "--client-fh", fhstr, (char*)NULL);
 
   // we are still alive?
   ROAR_ERR("roar_socket_open_fork(*): alive after exec(), that's bad!");
@@ -1020,7 +1020,7 @@ int roar_socket_open_ssh    (int mode, int fh, char * host, int port, char * use
   dup2(socks[1], 0);
   dup2(socks[1], 1);
 
-  execlp("sh", "sh", "-c", cmd, NULL);
+  execlp("sh", "sh", "-c", cmd, (char*)NULL);
 
   // we are still alive?
   ROAR_ERR("roar_socket_open_ssh(*): alive after exec(), that's bad!");
