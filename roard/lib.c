@@ -82,7 +82,7 @@ int lib_run_bg(char * cmd, int infh, int outfh, int errfh, int * closefh, int le
 
  // OK, now we should have set up all our fh properbly, exec our command:
 
- execl("/bin/sh", "sh", "-c", cmd, NULL);
+ execl("/bin/sh", "sh", "-c", cmd, (char*)NULL);
 
  // still alive? BAD!
  ROAR_ERR("lib_run_bg(*): We are still alive! BAD!");
