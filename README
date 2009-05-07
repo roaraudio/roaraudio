@@ -58,6 +58,7 @@ NetBSD 5		x86_64		gcc 4.1.3	s/?
 Darwin 9.4.0		i386		gcc 4.0.1	s/OK
 OpenBSD	?		x86_64		gcc ?		m/?
 OpenBSD	4.4		i386		gcc 3.3.5	m/OK
+OpenBSD	4.5		i386		gcc 3.3.5	m/OK
 FreeBSD 6.2		i386		gcc 3.4.6	s/OK
 OpenSolaris 5.11	i386		gcc 3.4.3	s/OK
 Cygwin 1.5.25		i686		gcc 3.4.4	s/Client+	Client libs work, roard only partly
