@@ -41,7 +41,7 @@ int YPlayAudioCDTrack(YConnection *con, int track_number) {
  if ( con == NULL )
   return -1;
 
- rcon.fh = con->fd;
+ roar_connect_fh(&rcon, con->fd);
 
  if ( ! _g_roaryiff_cdrom.is_open ) {
   if ( roar_cdrom_open(&rcon, _g_roaryiff_cdrom.cdrom, NULL) == -1 )
@@ -57,7 +57,7 @@ int YStopAudioCD(YConnection *con) {
  if ( con == NULL )
   return -1;
 
- rcon.fh = con->fd;
+ roar_connect_fh(&rcon, con->fd);
 
  if ( _g_roaryiff_cdrom.is_playing ) {
   roar_cdrom_stop(_g_roaryiff_cdrom.cdrom);

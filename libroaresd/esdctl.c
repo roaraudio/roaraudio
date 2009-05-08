@@ -53,7 +53,7 @@ int esd_unlock( int esd ) {
 int esd_standby( int esd ) {
  struct roar_connection con;
 
- con.fh = esd;
+ roar_connect_fh(&con, esd);
 
  return roar_set_standby(&con, ROAR_STANDBY_ACTIVE);
 }
@@ -61,7 +61,7 @@ int esd_standby( int esd ) {
 int esd_resume( int esd ) {
  struct roar_connection con;
 
- con.fh = esd;
+ roar_connect_fh(&con, esd);
 
  return roar_set_standby(&con, ROAR_STANDBY_INACTIVE);
 }
@@ -147,7 +147,7 @@ esd_server_info_t *esd_get_server_info( int esd ) {
 
  r->version = 0; // seems to be static
 
- con.fh    = esd;
+ roar_connect_fh(&con, esd);
  m.cmd     = ROAR_CMD_SERVER_OINFO;
  m.datalen = 0;
 
@@ -200,7 +200,7 @@ esd_info_t *esd_get_all_info( int esd ) {
  int channels;
  esd_player_info_t * new_player, * cur = NULL; // = NULL to avoid gcc warning
 
- con->fh = esd;
+ roar_connect_fh(con, esd);
 
  r = malloc(sizeof(esd_info_t));
 
@@ -333,7 +333,7 @@ int esd_set_stream_pan( int esd, int stream_id,
  struct roar_connection con;
  struct roar_mixer_settings mixer;
 
- con.fh = esd;
+ roar_connect_fh(&con, esd);
 
  mixer.mixer[0] = left_scale  == 256 ? 65535 : left_scale  * 256;
  mixer.mixer[1] = right_scale == 256 ? 65535 : right_scale * 256;

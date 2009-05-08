@@ -33,7 +33,7 @@ int YGetNextEvent (YConnection *con, YEvent *event, Boolean block) {
  if ( con == NULL || event == NULL )
   return -1;
 
- rcon.fh = con->fd;
+ roar_connect_fh(&rcon, con->fd);
 
  if ( con->prev_generated_yid != YIDNULL ) {
   if ( roar_get_stream(&rcon, &s, ROARYIFF_YID2ROAR(con->prev_generated_yid)) == -1 ) {

@@ -202,6 +202,8 @@ ssize_t roar_file_play_full  (struct roar_connection * con, char * file, int exe
  int rate = ROAR_RATE_DEFAULT, channels = ROAR_CHANNELS_DEFAULT, bits = ROAR_BITS_DEFAULT;
  struct roar_stream localstream[1];
 
+ // FIXME: check error cases
+
  if ( !s )
   s = localstream;
 
@@ -254,9 +256,12 @@ ssize_t roar_file_play_full  (struct roar_connection * con, char * file, int exe
    return -1;
   }
 
-  ROAR_SHUTDOWN(con->fh, SHUT_RD);
+  if ( (out = roar_get_connection_fh(con)) == -1 ) {
+   close(in);
+   return -1;
+  }
 
-  out = con->fh;
+  ROAR_SHUTDOWN(out, SHUT_RD);
  } else {
   if ( !(passfh && seek) ) {
    if ( (out = roar_simple_new_stream_obj(con, s, rate, channels, bits, codec, ROAR_DIR_PLAY)) == -1 ) {

@@ -38,7 +38,7 @@ YID YStartPlaySoundObject (YConnection *con, const char *path, YEventSoundPlay *
  if ( !path )
   return YIDNULL;
 
- rcon.fh = con->fd;
+ roar_connect_fh(&rcon, con->fd);
 
  // hm,... find out how to do this.
  // need to start ssize_t roar_file_play (struct roar_connection * con, char * file, int exec)
@@ -61,7 +61,7 @@ void YDestroyPlaySoundObject(YConnection *con, YID yid) {
  if ( yid == YIDNULL )
   return;
 
- rcon.fh = con->fd;
+ roar_connect_fh(&rcon, con->fd);
 
  roar_kick(&rcon, ROAR_OT_STREAM, ROARYIFF_YID2ROAR(yid));
 }

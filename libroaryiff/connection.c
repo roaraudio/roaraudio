@@ -51,7 +51,11 @@ YConnection *YOpenConnection (const char *start_arg, const char *con_arg) {
   return NULL;
  }
 
- ycon->fd = con.fh;
+ if ( (ycon->fd = roar_get_connection_fh(&con)) == -1 ) {
+  roar_disconnect(&con);
+  free(ycon);
+  return NULL;
+ }
 
  return ycon;
 }

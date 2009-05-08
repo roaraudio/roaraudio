@@ -30,7 +30,7 @@ void YShutdownServer(YConnection *con) {
  if ( !con )
   return;
 
- rcon.fh = con->fd;
+ roar_connect_fh(&rcon, con->fd);
 
  roar_exit(&rcon);
  YCloseConnection(con, 1);

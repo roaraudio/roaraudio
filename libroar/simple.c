@@ -64,6 +64,7 @@ int roar_simple_stream(int rate, int channels, int bits, int codec, char * serve
 
 int roar_simple_stream_obj  (struct roar_stream * s, int rate, int channels, int bits, int codec, char * server, int dir, char * name) {
  struct roar_connection con;
+ int ret;
 
  if ( roar_simple_connect(&con, server, name) == -1 ) {
   ROAR_DBG("roar_simple_play(*): roar_simple_connect() faild!");
@@ -86,13 +87,18 @@ int roar_simple_stream_obj  (struct roar_stream * s, int rate, int channels, int
   return -1;
  }
 
- if ( dir == ROAR_DIR_PLAY ) {
-  ROAR_SHUTDOWN(con.fh, SHUT_RD);
- } else if ( dir == ROAR_DIR_MONITOR || dir == ROAR_DIR_RECORD ) {
-  ROAR_SHUTDOWN(con.fh, SHUT_WR);
+ if ( (ret = roar_get_connection_fh(&con)) == -1 ) {
+  roar_disconnect(&con);
+  return -1;
  }
 
- return con.fh;
+ if ( dir == ROAR_DIR_PLAY ) {
+  ROAR_SHUTDOWN(ret, SHUT_RD);
+ } else if ( dir == ROAR_DIR_MONITOR || dir == ROAR_DIR_RECORD ) {
+  ROAR_SHUTDOWN(ret, SHUT_WR);
+ }
+
+ return ret;
 }
 
 int roar_simple_new_stream_attachexeced_obj (struct roar_connection * con, struct roar_stream * s, int rate, int channels, int bits, int codec, int dir) {
@@ -145,7 +151,7 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
 #endif
 
 #ifdef ROAR_HAVE_BSDSOCKETS
- if ( getsockname(con->fh, (struct sockaddr *)&socket_addr, &len) == -1 ) {
+ if ( getsockname(roar_get_connection_fh(con), (struct sockaddr *)&socket_addr, &len) == -1 ) {
   return -1;
  }
 #else
@@ -338,7 +344,8 @@ int roar_simple_close(int fh) {
 int roar_simple_get_standby (int fh) {
  struct roar_connection con;
 
- con.fh = fh;
+ if ( roar_connect_fh(&con, fh) == -1 )
+  return -1;
 
  return roar_get_standby(&con);
 }

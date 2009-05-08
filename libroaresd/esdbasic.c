@@ -44,13 +44,19 @@
 /* rate, format = (bits | channels | stream | func) */
 int esd_open_sound( const char *host ) {
  struct roar_connection con;
+ int fh;
 
  if ( roar_simple_connect(&con, (char*) host, NULL) == -1 ) {
   ROAR_DBG("esd_open_sound(*): roar_simple_connect() faild!");
   return -1;
  }
 
- return con.fh;
+ if ( (fh = roar_get_connection_fh(&con)) == -1 ) {
+  roar_disconnect(&con);
+  return -1;
+ }
+
+ return fh;
 }
 
 /* send the authorization cookie, create one if needed */
@@ -78,7 +84,7 @@ int esd_get_latency(int esd) {
  m.cmd = ROAR_CMD_NOOP;
  m.datalen = 0;
 
- con.fh = esd;
+ roar_connect_fh(&con, esd);
 
  gettimeofday(&try, NULL);
  roar_req(&con, &m, NULL);

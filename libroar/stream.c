@@ -202,6 +202,7 @@ int roar_stream_connect_to_ask (struct roar_connection * con, struct roar_stream
 
 int roar_stream_passfh  (struct roar_connection * con, struct roar_stream * s, int fh) {
  struct roar_message m;
+ int confh;
 
  m.cmd     = ROAR_CMD_PASSFH;
  m.stream  = s->id;
@@ -210,6 +211,9 @@ int roar_stream_passfh  (struct roar_connection * con, struct roar_stream * s, i
 
  ROAR_DBG("roar_stream_passfh(con={.fh=%i,...}, s={.id=%i,...}, fh=%i) = ?", con->fh, s->id, fh);
 
+ if ( (confh = roar_get_connection_fh(con)) == -1 )
+  return -1;
+
  if ( roar_send_message(con, &m, NULL) == -1 ) {
   ROAR_DBG("roar_stream_passfh(con={.fh=%i,...}, s={.id=%i,...}, fh=%i) = -1 // can not send message", con->fh, s->id, fh);
   return -1;
@@ -217,7 +221,7 @@ int roar_stream_passfh  (struct roar_connection * con, struct roar_stream * s, i
 
  ROAR_DBG("roar_stream_passfh(*): msg send");
 
- if ( roar_socket_send_fh(con->fh, fh, NULL, 0) == -1 )
+ if ( roar_socket_send_fh(confh, fh, NULL, 0) == -1 )
   return -1;
 
  ROAR_DBG("roar_stream_passfh(*): fh send");
