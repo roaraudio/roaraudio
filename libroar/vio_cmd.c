@@ -216,6 +216,78 @@ int roar_vio_cmd_wait(struct roar_vio_cmd_child * child) {
  return 0;
 }
 
+
+
+int roar_vio_open_2popen(struct roar_vio_calls * calls, char * command, int options) {
+#ifndef ROAR_WITHOUT_VIO_CMD
+ struct roar_vio_2popen_state * state;
+
+ if ( calls == NULL || command == NULL || options < 0 )
+  return -1;
+
+ if ( (state = malloc(sizeof(struct roar_vio_2popen_state))) == NULL )
+  return -1;
+
+ ROAR_DBG("roar_vio_open_2popen(*): pre reqs are OK");
+
+ // clear all
+ memset(calls, 0, sizeof(struct roar_vio_calls));
+ memset(state, 0, sizeof(struct roar_vio_cmd_state));
+
+ // init reader and writer:
+ state->child.pid = -1;
+ state->child.in  = -1;
+ state->child.out = -1;
+
+ state->child.cmd = strdup(command);
+
+ // init state
+ state->options = options;
+ state->state   = ROAR_VIO_CMD_STATE_OPEN;
+
+ // init calls
+ calls->close    = roar_vio_2popen_close;
+/*
+ calls->read     = roar_vio_2popen_read;
+ calls->write    = roar_vio_2popen_write;
+ calls->nonblock = roar_vio_2popen_nonblock;
+ calls->sync     = roar_vio_2popen_sync;
+ calls->ctl      = roar_vio_2popen_ctl;
+*/
+ calls->inst     = (void*) state;
+
+ ROAR_DBG("roar_vio_open_2popen(*): var setup OK");
+
+ if ( !(options & ROAR_VIO_CMD_OPTS_ON_DEMAND) ) {
+  if ( roar_vio_cmd_fork(&(state->child)) == -1 )
+   return roar_vio_2popen_close(calls);
+ }
+
+ return 0;
+#else
+ return -1;
+#endif
+}
+
+#ifndef ROAR_WITHOUT_VIO_CMD
+int roar_vio_2popen_close(struct roar_vio_calls * vio) {
+ struct roar_vio_2popen_state * state = (struct roar_vio_2popen_state *)vio->inst;
+
+ state->state = ROAR_VIO_CMD_STATE_CLOSING;
+
+ if ( state->child.opened )
+  roar_vio_cmd_wait(&(state->child));
+
+ if ( state->child.cmd != NULL )
+  free(state->child.cmd);
+
+ free(state);
+
+ return 0;
+}
+#endif
+
+
 // VIOs:
 
 ssize_t roar_vio_cmd_read    (struct roar_vio_calls * vio, void *buf, size_t count) {
@@ -478,7 +550,6 @@ int     roar_vio_cmd_sync    (struct roar_vio_calls * vio) {
 int     roar_vio_cmd_ctl     (struct roar_vio_calls * vio, int cmd, void * data) {
  struct roar_vio_cmd_state * state = (struct roar_vio_cmd_state *)vio->inst;
  char buf[1];
- int i;
 
  ROAR_WARN("roar_vio_cmd_ctl(vio=%p, cmd=0x%.8x, data=%p) = ?", vio, cmd, data);
 
