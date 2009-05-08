@@ -88,7 +88,7 @@ int driver_esd_pause(DRIVER_USERDATA_T   inst, int newstate) {
  return -1;
 }
 
-int driver_esd_write(struct roar_vio_calls * inst, void * buf, size_t len) {
+ssize_t driver_esd_write(struct roar_vio_calls * inst, void * buf, size_t len) {
  int * di = (int*)((struct roar_vio_calls *)inst)->inst;
 
  if ( di[1] )
@@ -97,7 +97,7 @@ int driver_esd_write(struct roar_vio_calls * inst, void * buf, size_t len) {
  return write(di[0], buf, len);
 }
 
-int driver_esd_read(struct roar_vio_calls * inst, void * buf, size_t len) {
+ssize_t driver_esd_read(struct roar_vio_calls * inst, void * buf, size_t len) {
  return read(*(int*)((struct roar_vio_calls *)inst)->inst, buf, len);
 }
 
