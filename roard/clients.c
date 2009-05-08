@@ -329,7 +329,7 @@ int clients_check     (int id) {
  if ( g_clients[id]->fh == -1 )
   return -1;
 
- con.fh = g_clients[id]->fh;
+ roar_connect_fh(&con, g_clients[id]->fh);
 
  r = roar_recv_message(&con, &m, &data);
 
