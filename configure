@@ -1009,7 +1009,8 @@ else
 fi
 
 echo -n 'checking for getpeereid()... '
-echo '#include <roaraudio.h>' > $TF_C
+echo '#include <sys/types.h>'      >  $TF_C
+echo '#include <sys/socket.h>'     >> $TF_C
 echo 'int main (void) { getpeereid(0, NULL, NULL); return 0; }'  >> $TF_C
 
 if $CCTF 2> /dev/null;
@@ -1059,7 +1060,8 @@ else
 fi
 
 echo -n 'checking for shutdown()... '
-echo '#include <sys/socket.h>'     >  $TF_C
+echo '#include <sys/types.h>'      >  $TF_C
+echo '#include <sys/socket.h>'     >> $TF_C
 echo 'int main (void) { shutdown(0, 0); return 0; }'  >> $TF_C
 
 if [ "$SYSNAME" = 'SunOS' ]
