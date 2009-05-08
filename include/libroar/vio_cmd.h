@@ -74,12 +74,21 @@ struct roar_vio_cmd_state {
  struct roar_vio_cmd_child writer;
 };
 
+struct roar_vio_2popen_state {
+ int options;
+ int state;
+
+ struct roar_vio_cmd_child child;
+};
+
 int roar_vio_open_cmd(struct roar_vio_calls * calls, struct roar_vio_calls * dst,
                       char * reader, char * writer, int options);
 int roar_vio_cmd_close(struct roar_vio_calls * vio);
 int roar_vio_cmd_fork(struct roar_vio_cmd_child * child);
 int roar_vio_cmd_wait(struct roar_vio_cmd_child * child);
 
+int roar_vio_open_2popen(struct roar_vio_calls * calls, char * command, int options);
+int roar_vio_2popen_close(struct roar_vio_calls * vio);
 // possible VIOs:
 
 // cmd:
