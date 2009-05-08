@@ -10,9 +10,32 @@ Version 0 Header:
  0                   1                   2                   3
  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1| Byte
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| Version       | Command         | Stream ID                   | 0-3
+| Version       | Command       | Stream ID                     | 0-3
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 | Stream Possition                                              | 4-7
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| Message Data Length             |XXXXXXXXXXXXXXXXXXXXXXXXXXXXX| 8-9
+| Message Data Length           |XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX| 8-9
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+---- DRAFT ----
+Version 1 Header: Byte Oriented Protocol:
+ 0                   1                   2                   3
+ 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1| Byte
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+| Version       | Command       | Flags         | Stream ID     | 0-
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+| Stream ID     | Stream POS    | Stream POS                    |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+| Stream POS    | Msg Data Len  | Msg Data Len  |XXXXXXXXXXXXXXX|
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+Flags:
+0 Stream ID field exists
+1 Stream POS field exists
+2 Message Length field exists
+3 Stream ID field is one byte long
+4 Stream POS field is one byte long and
+  does not represent abselut but increment values
+5 Message Data Length field is one byte long
+6
+7
