@@ -221,7 +221,12 @@ int     roar_vio_open_fh_socket(struct roar_vio_calls * calls, int fh) {
  if ( calls == NULL )
   return -1;
 
- return roar_vio_open_fh(calls, fh);
+ if ( roar_vio_open_fh(calls, fh) == -1 )
+  return -1;
+
+ calls->sync = roar_vio_null_sync;
+
+ return 0;
 }
 
 int     roar_vio_open_socket   (struct roar_vio_calls * calls, char * host, int port) {
