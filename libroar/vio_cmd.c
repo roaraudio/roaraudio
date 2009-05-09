@@ -493,7 +493,7 @@ ssize_t roar_vio_cmd_write   (struct roar_vio_calls * vio, void *buf, size_t cou
 
     done += ret;
    }
-   if ( in != -1 && FD_ISSET(in, wfhs) ) {
+   if ( in != -1 && FD_ISSET(in, rfhs) ) {
     if ( (ret = read(in, tbuf, ROAR_VIO_CMD_BUFSIZE)) == -1 ) { /* error case: can not read on reader -> EOF */
      close(in);
      state->writer.in = in = -1;
@@ -509,7 +509,7 @@ ssize_t roar_vio_cmd_write   (struct roar_vio_calls * vio, void *buf, size_t cou
    break;
  }
 
- return -1;
+ return done;
 }
 
 int     roar_vio_cmd_nonblock(struct roar_vio_calls * vio, int state) {
