@@ -423,6 +423,10 @@ ssize_t roar_vio_null_rw    (struct roar_vio_calls * vio, void *buf, size_t coun
  return 0;
 }
 
+int     roar_vio_null_sync    (struct roar_vio_calls * vio) {
+ return 0;
+}
+
 // pass
 int     roar_vio_open_pass    (struct roar_vio_calls * calls, struct roar_vio_calls * dst) {
  if ( calls == NULL )

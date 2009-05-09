@@ -170,6 +170,7 @@ int     roar_vio_basic_close   (struct roar_vio_calls * vio);
 // null
 // this is a read and write in one!
 ssize_t roar_vio_null_rw    (struct roar_vio_calls * vio, void *buf, size_t count);
+int     roar_vio_null_sync  (struct roar_vio_calls * vio);
 
 // pass
 
