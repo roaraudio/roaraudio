@@ -30,10 +30,22 @@
 //#define ROAR_OUTPUT_BUFFER_SAMPLES 1024
 //#define ROAR_OUTPUT_BUFFER_SAMPLES 1024
 #ifdef DEBUG
+// in case of debugging we use a big number of samples to make lager cycles
 #define ROAR_OUTPUT_BUFFER_SAMPLES 2048
 #else
 //#define ROAR_OUTPUT_BUFFER_SAMPLES 441
+
+// in normal case we use 100 cycles per sec, as we do not know the sample
+// rate at compile time we guess it's normaly the default rate.
+// on OpenBSD we need to set a lower freq, use 20 cycles per sec here as
+// it seems to work.
+// FIXME: find out what the problem is and how to fix
+#ifdef ROAR_OS_OPENBSD
+#define ROAR_OUTPUT_BUFFER_SAMPLES (ROAR_RATE_DEFAULT/20)
+#else
 #define ROAR_OUTPUT_BUFFER_SAMPLES (ROAR_RATE_DEFAULT/100)
+#endif
+
 #endif
 
 #define ROAR_OUTPUT_WRITE_SIZE     1024
