@@ -997,7 +997,9 @@ else
 fi
 
 echo -n 'checking for broken peercred... '
-echo '#include <roaraudio.h>' > $TF_C
+echo '#include <sys/types.h>'      >  $TF_C
+echo '#include <sys/socket.h>'     >> $TF_C
+echo '#include <sys/un.h>'         >> $TF_C
 echo 'int main (void) { struct ucred cred; return 0; }'  >> $TF_C
 
 if $CCTF 2> /dev/null;
