@@ -1,6 +1,16 @@
 v. 0.2rc1 - ?
 	* Started to port to OpenSolaris
 	* fixed bug in default based sockets, make HTTP VIO from non default port work
+	* got libroarsndio build under OpenBSD 4.5
+	* do not depend tests in configure on roaraudio.h: fixes some checks on *BSD
+	* renamed member 'fh' of connection struct to '__fh', this breaks
+	  all code depending on it so we see how it behaves in case
+	  we replace this with a real VIO object in near future
+	* started VIO 2popen interface
+	* fixec exec() but with sizeof(int) != sizeof(char*)
+	* do not do unnessesery calls to fdatasync() on sockets
+	* link roarvorbis against libogg and libvorbis
+	* remove need of GNU/Tar like -z on remote system from send-roaraudio
 
 v. 0.2beta3 - Fri May 01 2009 15:15
 	* added esdfilt options to roarfilt, esdplay options to roarcatplay
