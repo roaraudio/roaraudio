@@ -39,14 +39,14 @@
 extern "C" {
 #endif
 
-#if defined(ROAR_HAVE_LIBSNDIO) && !defined(_ROAR_EMUL_LIBSNDIO)
+#if defined(ROAR_HAVE_LIBSNDIO) && !defined(_ROAR_EMUL_LIBSNDIO) && !defined(ROAR_USE_OWN_SNDIO_HDL)
 #include <sndio.h>
 #else
 #define sio_hdl roar_sio_hdl
 #include "sndiosym.h"
 #endif
 
-#if !defined(ROAR_HAVE_LIBSNDIO) || (defined(ROAR_USE_OWN_SNDIO_HDL) && !defined(ROAR_OS_OPENBSD))
+#if !defined(ROAR_HAVE_LIBSNDIO) || defined(ROAR_USE_OWN_SNDIO_HDL)
 #ifdef sio_hdl
 #undef sio_hdl
 #endif

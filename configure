@@ -491,8 +491,8 @@ then
  echo "Adding $SYSNAME search path arguments..."
  LDPATH="$LDPATH -L/usr/local/lib/"
  INCPATH="$INCPATH -I/usr/local/include/"
- echo "Adding $SYSNAME build arguments..."
- SNDIO_EMUL=false
+# echo "Adding $SYSNAME build arguments..."
+# SNDIO_EMUL=false
 elif [ "$SYSNAME" = 'FreeBSD' ]
 then
  echo "Adding $SYSNAME search path arguments..."
