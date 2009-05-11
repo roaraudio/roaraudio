@@ -247,6 +247,8 @@ struct roar_mixer_settings {
  roar_intm16   mixer[ROAR_MAX_CHANNELS];
 };
 
+#define ROAR_MIXER(x) ((struct roar_mixer_settings *)x)
+
 #endif
 
 //ll
