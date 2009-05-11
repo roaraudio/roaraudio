@@ -475,6 +475,23 @@ int driver_oss_ctl(struct roar_vio_calls * vio, int cmd, void * data) {
     memcpy(&(self->info), data, sizeof(struct roar_audio_info));
     return driver_oss_reopen_device(self);
    break;
+#ifdef SNDCTL_DSP_SETPLAYVOL
+  case ROAR_VIO_CTL_SET_VOLUME:
+    switch (self->info.channels) {
+     case 1:
+       d  = ROAR_MIXER(data)->mixer[0] * 100 / ROAR_MIXER(data)->scale;
+       d |= d << 8;
+      break;
+     case 2:
+       d  =  ROAR_MIXER(data)->mixer[0] * 100 / ROAR_MIXER(data)->scale;
+       d |= (ROAR_MIXER(data)->mixer[0] * 100 / ROAR_MIXER(data)->scale) << 8;
+      break;
+     default:
+      return -1;
+    }
+    return ioctl(_get(vio,fh), SNDCTL_DSP_SETPLAYVOL, &d);
+   break;
+#endif
   default:
    return -1;
  }

@@ -180,6 +180,7 @@ int     driver_sndio_sync         (struct roar_vio_calls * vio) {
 
 int     driver_sndio_ctl          (struct roar_vio_calls * vio, int cmd, void * data) {
  struct driver_sndio * self = vio->inst;
+ unsigned d;
 
  switch (cmd) {
   case data(ROAR_VIO_CTL_SET_SSTREAMID)
@@ -194,6 +195,21 @@ int     driver_sndio_ctl          (struct roar_vio_calls * vio, int cmd, void * 
   case data(ROAR_VIO_CTL_SET_AUINFO)
     memcpy(&(self->info), data, sizeof(struct roar_audio_info));
     return driver_sndio_reopen_device(self);
+   break;
+  case ROAR_VIO_CTL_SET_VOLUME:
+    switch (self->info.channels) {
+     case 1:
+       d = ROAR_MIXER(data)->mixer[0] * SIO_MAXVOL / ROAR_MIXER(data)->scale;
+      break;
+     case 2:
+       if ( ROAR_MIXER(data)->mixer[0] != ROAR_MIXER(data)->mixer[1] )
+        return -1;
+       d = ROAR_MIXER(data)->mixer[0] * SIO_MAXVOL / ROAR_MIXER(data)->scale;
+      break;
+     default:
+      return -1;
+    }
+    return sio_setvol(self->handle, d) == 0 ? -1 : 0;
    break;
   default:
     return -1;
