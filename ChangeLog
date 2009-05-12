@@ -11,6 +11,7 @@ v. 0.2rc1 - ?
 	* do not do unnessesery calls to fdatasync() on sockets
 	* link roarvorbis against libogg and libvorbis
 	* remove need of GNU/Tar like -z on remote system from send-roaraudio
+	* added support for hwmixer flag on OSS and sndio driver
 
 v. 0.2beta3 - Fri May 01 2009 15:15
 	* added esdfilt options to roarfilt, esdplay options to roarcatplay
