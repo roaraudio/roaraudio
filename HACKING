@@ -9,9 +9,9 @@
 
 --- 1. Infos for maintainers:
 
-If you want to maintain a packet for your favorit OS please let me know!
+If you want to maintain a packet for your favorite OS please let me know!
 I would love to be in contact with the maintainers to send them infos about
-updates and maybe get feadback or things like init scripts or the like
+updates and maybe get feedback or things like init scripts or the like
 (see 2. Infos for developer).
 
 If it would make your work simpler I can put things in trunk
@@ -21,11 +21,11 @@ Also if you need any help you may contact me.
 
 Here is my recommendation on how to split the RoarAudio in pkgs:
 
-libroar               includs libroar and libroardsp
+libroar               includes libroar and libroardsp
 roaraudio-common      include roard and roarclients
-                      (at least the ones with no specal deps)
+                      (at least the ones with no special deps)
 roaraudio-tools       includes all other tools not in roaraudio-common
-                      because of specal deps (if any)
+                      because of special deps (if any)
 roaraudio-compat      includes libroaresd, libroararts, libroarpulse
                       and libroaryiff. It would be nice to ask the user
                       if he wants symlinks from libesd, libarts*, libpulse*.
@@ -40,8 +40,8 @@ anymore with DECnet enabled on a non-DECnet system. libdnet does not
 require any Kernel modules or has any non standard deps itself.
 
 In addition you should configure with --runtime-detect: this will
-let roard/libroar detect the presens of some tools at runtime and
-will reduse deps.
+let roard/libroar detect the presents of some tools at runtime and
+will reduce deps.
 
 --- 2. Infos for developer
 
@@ -53,7 +53,7 @@ they are downgraded to GPL. This may change in future.
 
 Because of that I *require* that *everything* that is contributed by
 someone I get under LGPL so I can upgrade code to LGPL if needed
-in future without asking. Code I get under a diffrent licens
+in future without asking. Code I get under a different license
 will *NOT* get into trunk nor will be hosted by me.
 
 Also add full contact infos when sending code to me, this includes:

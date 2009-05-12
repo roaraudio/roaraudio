@@ -34,13 +34,13 @@ apt-get install build-essential libssl-dev libdnet-dev libesd0-dev libao-dev lib
 --- Writing software for RoarAudio:
 
 See manpages: libroar(7) and roartut(7).
-You also sould read the examplecode in roarclients/*.c
+You also should read the example code in roarclients/*.c
 
---- Writeing patches for this packet:
+--- Writing patches for this packet:
 
 See HACKING.
 
---- Want to be a maintainer for your favorit OS?:
+--- Want to be a maintainer for your favorite OS?:
 
 See HACKING.
 
@@ -67,11 +67,11 @@ Cygwin 1.5.25		i686	gcc 3.4.4	0.2b?	s/Client+	Client libs work, roard only partl
 									Hostsystem: WinXP Home
 Tested Version:
 	Current:	Current as listed on Homepage
-	last:		Last released version (This system is on relaeas checklist)
+	last:		Last released version (This system is on release checklist)
 	*b*:		Beta
 
-Status: Maintainance/testing Status:
-Maintanance:	s = your are on your own, sources.
+Status: Maintenance/testing Status:
+Maintenance:	s = your are on your own, sources.
 		m = package in work, beta package
 		M = maintained
 		S = maintained source package
