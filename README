@@ -64,7 +64,8 @@ FreeBSD 6.2		i386	gcc 3.4.6	0.1b4	s/OK
 FreeBSD 7.1		i386	gcc 4.2.1	0.2rc1	s/OK
 OpenSolaris 5.11	i386	gcc 3.4.3	?	s/OK
 Darwin 9.4.0		i386	gcc 4.0.1	0.1b?	s/OK
-Cygwin 1.5.25		i686	gcc 3.4.4	0.2b?	s/Client+	Client libs work, roard only partly
+Cygwin 1.5.25		i686	gcc 3.4.4	0.2rc1	s/Client+	Client libs work, roard only partly
+									You need to link bins manually
 									Hostsystem: WinXP Home
 Tested Version:
 	Current:	Current as listed on Homepage
