@@ -52,6 +52,7 @@ AND VERSION					VERSION
 Debian Etch		ix86	gcc 4.1.2	current	s/OK
 Debian Etch		x86_64	gcc 4.1.2	last	s/OK
 Debian Lenny		ix86	gcc 4.3.2	0.2rc1	s/OK
+Ubuntu 9.04		ix86	gcc 4.3.3	0.2rc1	s/OK
 archlinux ?		i686	gcc 4.3.2	0.2b3	M/OK
 NetBSD 1.6.1		Alpha	gcc 2.95.3	last	s/OK		gcc too old,
 									does not support debug macros
