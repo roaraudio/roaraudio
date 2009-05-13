@@ -7,7 +7,7 @@ v. 0.2rc1 - ?
 	  all code depending on it so we see how it behaves in case
 	  we replace this with a real VIO object in near future
 	* started VIO 2popen interface
-	* fixec exec() but with sizeof(int) != sizeof(char*)
+	* fixed exec() on systems with sizeof(int) != sizeof(char*)
 	* do not do unnessesery calls to fdatasync() on sockets
 	* link roarvorbis against libogg and libvorbis
 	* remove need of GNU/Tar like -z on remote system from send-roaraudio
