@@ -397,9 +397,8 @@ test_lib () {
  echo "LIB($name) HAS COMPILER/LINKER OUTPUT:" >&5
  echo "--- BEGIN OF CHILD OUTPUT BLOCK ---" >&5
  $CCTF $LIBS >&5 2>&5;
- echo "--- END OF CHILD OUTPUT BLOCK ---" >&5
-
  R=$?
+ echo "--- END OF CHILD OUTPUT BLOCK ---" >&5
 
  if [ "$R" = '0' ]
  then
@@ -578,7 +577,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.160 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.161 $ of RoarAudio
  */
 
 EOF
