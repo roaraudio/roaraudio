@@ -50,14 +50,15 @@ then
 else
  PKG_CONFIG=''
  echo no
+ on_error;
 fi
 
 echo -n 'testing for gtk... '
 
 if [ "$PKG_CONFIG" != '' ]
 then
- GTK_LIBS=`pkg-config  gtk+-2.0 --libs 2> /dev/null`
- GTK_CFLAFS=`pkg-config --cflags gtk+-2.0 2> /dev/null`
+ GTK_LIBS=`$PKG_CONFIG  gtk+-2.0 --libs 2> /dev/null`
+ GTK_CFLAFS=`$PKG_CONFIG --cflags gtk+-2.0 2> /dev/null`
 else
  GTK_LIBS=`gtk-config gtk+-2.0 --libs 2> /dev/null`
  GTK_CFLAFS=`gtk-config gtk+-2.0 --cflags 2> /dev/null`
@@ -71,9 +72,18 @@ else
  echo yes
 fi
 
+echo -n 'testing for audacious version... '
+if $PKG_CONFIG --atleast-version=1.5.1 audacious 2> /dev/null
+then
+ echo '>= 1.5.1'
+else
+ echo 'too old'
+ on_error;
+fi
+
 echo -n 'testing for audacious... '
-XMMS_LIBS=`pkg-config audacious  --libs 2> /dev/null`
-XMMS_CFLAGS=`pkg-config audacious  --cflags 2> /dev/null`
+XMMS_LIBS=`$PKG_CONFIG audacious  --libs 2> /dev/null`
+XMMS_CFLAGS=`$PKG_CONFIG audacious  --cflags 2> /dev/null`
 
 if [ "$XMMS_LIBS" = '' -a "$XMMS_CFLAGS" = '' ]
 then
@@ -86,7 +96,7 @@ fi
 echo -n 'testing for audacious plugin dir... '
 if [ "$INSTALL_DIR" = '' ]
 then
- INSTALL_DIR="`pkg-config --variable=output_plugin_dir audacious 2> /dev/null`"
+ INSTALL_DIR="`$PKG_CONFIG --variable=output_plugin_dir audacious 2> /dev/null`"
 
  if [ "$INSTALL_DIR" = '' ]
  then
