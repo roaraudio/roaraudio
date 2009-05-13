@@ -711,12 +711,15 @@ int main (void) {
   if ( *server == '/' ) {
    if ( grp ) {
     if ( pwd ) {
-     chown(server, pwd->pw_uid, grp->gr_gid);
+     if ( chown(server, pwd->pw_uid, grp->gr_gid) == -1 )
+      return 1;
     } else {
-     chown(server, -1, grp->gr_gid);
+     if ( chown(server, -1, grp->gr_gid) == -1 )
+      return 1;
     }
     if ( getuid() == 0 )
-     chmod(server, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP);
+     if ( chmod(server, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP) == -1 )
+      return 1;
    }
   }
 #endif
