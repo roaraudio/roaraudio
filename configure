@@ -27,6 +27,8 @@ MMCU=''
 PKG_CONFIG=false
 RUNTIME_DETECT=false
 
+NEED_GNU_SOURCE=false
+
 PREFIX='/usr/local'
 PREFIX_BIN=''
 PREFIX_LIB=''
@@ -898,7 +900,7 @@ echo 'int main (void) { cookie_io_functions_t f; fopencookie(NULL, "", f); retur
 if $CCTF 2> /dev/null;
 then
  echo '#define ROAR_HAVE_FOPENCOOKIE' >&3
- echo '#define ROAR_NEED_GNU_SOURCE' >&3
+ NEED_GNU_SOURCE=true
  echo yes
 else
  echo no
@@ -1006,8 +1008,14 @@ if $CCTF 2> /dev/null;
 then
  echo working
 else
- echo '#define ROAR_BROKEN_PEERCRED' >&3
- echo broken
+ if $CCTF -D_GNU_SOURCE 2> /dev/null;
+ then
+  NEED_GNU_SOURCE=true
+  echo need to set _GNU_SOURCE
+ else
+  echo '#define ROAR_BROKEN_PEERCRED' >&3
+  echo broken
+ fi
 fi
 
 echo -n 'checking for getpeereid()... '
@@ -1287,6 +1295,9 @@ echo '#define ROAR_PROC_NET_DECNET "'"$PROC_NET_DECNET"'"' >&3
 
 echo 'checking for default audio group... '"$DEFAULT_GRP"
 echo '#define ROAR_DEFAULT_SOCKGRP "'"$DEFAULT_GRP"'"' >&3
+
+
+$NEED_GNU_SOURCE && echo '#define ROAR_NEED_GNU_SOURCE' >&3
 
 cat >&3 << EOF
 
