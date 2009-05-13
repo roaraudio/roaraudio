@@ -121,7 +121,7 @@ else
 int main (void) { return 0; }
 EOF
 
- $CC -lroar -o tests tests.c 2> /dev/null
+ $CC -o tests tests.c -lroar 2> /dev/null
  ./tests 2> /dev/null
 
  if [ "$?" = '0' ]
