@@ -86,7 +86,7 @@ fi
 echo -n 'testing for audacious plugin dir... '
 if [ "$INSTALL_DIR" = '' ]
 then
- INSTALL_DIR="."
+ INSTALL_DIR="`pkg-config --variable=output_plugin_dir audacious 2> /dev/null`"
 
  if [ "$INSTALL_DIR" = '' ]
  then
