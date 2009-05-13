@@ -362,7 +362,9 @@ CCTF="false"
 test_lib () {
  echo > $TF_C
 
- echo -n "checking for $1... "
+ name="$1"
+ echo -n "checking for $name... "
+ echo "TEST LIB: $name" >&5
  shift;
 
  LIBS=''
@@ -377,6 +379,8 @@ test_lib () {
 
  LIBS=$(echo "$LIBS" | sed 's/-l-l/-l/g; s/-l-L/-L/g;')
 
+ echo "LIB($name) IS TESTED USING LIBS: $LIBS" >&5
+
  while [ "$1" != '' ]
  do
   echo "#include <$1>" >> $TF_C
@@ -385,15 +389,25 @@ test_lib () {
 
  echo 'int main (void) { return 0; }' >> $TF_C
 
- $CCTF $LIBS 2> /dev/null;
+ echo "LIB($name) IS TESTED USING TEST CODE:" >&5
+ echo "--- BEGIN OF CODE BLOCK ---" >&5
+ cat $TF_C >&5
+ echo "--- END OF CODE BLOCK ---" >&5
+
+ echo "LIB($name) HAS COMPILER/LINKER OUTPUT:" >&5
+ echo "--- BEGIN OF CHILD OUTPUT BLOCK ---" >&5
+ $CCTF $LIBS >&5 2>&5;
+ echo "--- END OF CHILD OUTPUT BLOCK ---" >&5
 
  R=$?
 
  if [ "$R" = '0' ]
  then
   echo 'yes'
+  echo "LIB($name) WAS FOUND" >&5
  else
   echo 'no'
+  echo "LIB($name) NOT FOUND" >&5
  fi
 
  return $R
@@ -408,6 +422,8 @@ test_lib_defmake () {
  lib="$2"
  shift
 
+ echo "TEST LIB: $name" >&5
+
  [ "$subdir" = '%' ] && subdir=''
 
  if [ "$lib" != '--' ]
@@ -418,6 +434,7 @@ test_lib_defmake () {
   if [ "$_no" != '' ]
   then
     echo "checking for $name... disabled by user"
+    echo "LIB($name) IS DISABLED BY USER" >&5
    [ "$subdir" != '' ] && \
     echo "subdir_$subdir=" >&4
    echo "lib_$lib=" >&4
@@ -430,6 +447,8 @@ test_lib_defmake () {
  then
   LIBS="-l$lib"
  fi
+
+ echo "LIB($name) HAS LIBS: $LIBS" >&5
 
  if test_lib "$name" $LIBS "$@"
  then
@@ -445,6 +464,8 @@ test_lib_defmake () {
   [ "$lib" != 'c' ] && \
    echo "lib_$lib=" >&4
  fi
+ echo >&5
+ echo >&5
 }
 
 test_tool_defmake () {
@@ -454,13 +475,17 @@ test_tool_defmake () {
  shift;
  echo -n "checking for $NAME... "
 
+ echo "TEST TOOL: $NAME" >&5
+
  if $RUNTIME_DETECT
  then
   echo "$1 (runtime detect)"
- echo "#define $DEF "\""$1"\" >&3
+  echo "TOOL($NAME) WILL BE RUNTIME DETECTED" >&5
+  echo "#define $DEF "\""$1"\" >&3
  elif $MINIMAL
  then
   echo "disabled by user (minimalstic build)"
+  echo "TOOL($NAME) IS DISABLED BY USER" >&5
  else
 
   LIST=$(which "$@" 2> /dev/null | grep ^/ | head -n 1)
@@ -468,14 +493,16 @@ test_tool_defmake () {
   if [ "$LIST" = '' ]
   then
    echo 'no'
+   echo "TOOL($NAME) NOT FOUND" >&5
   else
    echo $LIST
    echo "#define $DEF "\""$LIST"\" >&3
+   echo "TOOL($NAME) IS AT $LIST" >&5
   fi
  fi
 }
 
-exec 3> config.h 4> Makefile.conf
+exec 3> config.h 4> Makefile.conf 5> config.log
 
 TARGET_CYGWIN=`echo "$SYSNAME" | if grep CYGWIN > /dev/null; then echo true; else echo false; fi`
 
@@ -546,6 +573,23 @@ fi
 
 CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 
+{
+ cat <<'EOF'
+//config.log:
+
+/*
+ * Logfile for configure script $Revision: 1.160 $ of RoarAudio
+ */
+
+EOF
+ echo '/* uname: ' $(uname -a) '*/'
+ echo '/* Date : ' $(date)  '*/'
+ echo
+
+ echo
+ echo
+} >&5
+
 cat >&3 << EOF
 //config.h:
 
@@ -614,6 +658,9 @@ test_tool_defmake ROAR_HAVE_BIN_GPG         GnuPG        gpg
 test_tool_defmake ROAR_HAVE_BIN_CHAT        chat         chat
 
 echo >&3
+echo >&5
+echo >&5
+echo >&5
 
 #                #define                 subdir       name           -lxxx      -- header
 test_lib_defmake ROAR_HAVE_LIBM          %            'Math Library' m          -- math.h
@@ -1305,6 +1352,9 @@ cat >&3 << EOF
 
 //ll
 EOF
+
+echo >&5
+echo '//ll' >&5
 
 cd plugins
 
