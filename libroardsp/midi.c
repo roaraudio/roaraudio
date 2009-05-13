@@ -96,6 +96,7 @@ int            roar_midi_notefill    (struct roar_note_octave * note) {
 
  note->freq = roar_midi_note2freq(note->note);
 
+ // TODO: fix this: freq is freq*2^octave
  if ( note->octave < 0 ) {
   note->freq /= oct;
  } else {
