@@ -1,6 +1,6 @@
 v. 0.2rc2 - ?
 	* corrected check for GNU peercred
-	* added bsic logging support to configure
+	* added basic logging support to configure
 
 v. 0.2rc1 - Wed May 13 2009 12:05
 	* Started to port to OpenSolaris
