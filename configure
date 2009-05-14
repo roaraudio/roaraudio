@@ -590,7 +590,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.162 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.163 $ of RoarAudio
  */
 
 EOF
@@ -688,7 +688,7 @@ echo >&3
 
 #                #define                 subdir       name          -lxxx      -- header
 test_lib_defmake ROAR_HAVE_ESD           libroaresd   EsounD        esd        -- esd.h
-test_lib_defmake ROAR_HAVE_LIBAO         plugins/ao   libao         ao         -- ao/ao.h ao/plugin.h
+test_lib_defmake ROAR_HAVE_LIBAO         %            libao         ao         -- ao/ao.h ao/plugin.h
 test_lib_defmake ROAR_HAVE_LIBOGG        %            libogg        ogg        -- ogg/ogg.h
 test_lib_defmake ROAR_HAVE_LIBVORBIS     %            libvorbis     vorbis     -- vorbis/codec.h
 test_lib_defmake ROAR_HAVE_LIBVORBISFILE %            libvorbisfile vorbisfile -- vorbis/vorbisfile.h
@@ -1368,6 +1368,9 @@ EOF
 echo >&5
 echo '//ll' >&5
 
+echo >&4
+echo >&4
+
 cd plugins
 
 if $LIBAO
@@ -1376,9 +1379,11 @@ then
   cd ao/
  if [ "$AO_INST_DIR" = '' ]
  then
-  ./configure --force-have-roar
+  ./configure --force-have-roar                           && \
+    echo "subdir_plugins_ao=plugins/ao" >&4
  else
-  ./configure --force-have-roar --inst-dir "$AO_INST_DIR"
+  ./configure --force-have-roar --inst-dir "$AO_INST_DIR" && \
+    echo "subdir_plugins_ao=plugins/ao" >&4
  fi
  cd ..
 else
@@ -1389,7 +1394,8 @@ if $XMMS
 then
  echo 'running xmms plugin configure...'
  cd xmms/
-  ./configure --force-have-roar --pkg-config "$PKG_CONFIG" --inst-dir "$XMMS_INST_DIR"
+  ./configure --force-have-roar --pkg-config "$PKG_CONFIG" --inst-dir "$XMMS_INST_DIR" && \
+    echo "subdir_plugins_xmms=plugins/xmms" >&4
  cd ..
 else
  echo "running xmms plugin configure... disabled by user"
@@ -1399,7 +1405,8 @@ if $AUDACIOUS
 then
  echo 'running Audacious plugin configure...'
  cd audacious/
-  ./configure --force-have-roar --pkg-config "$PKG_CONFIG" --inst-dir "$AUDACIOUS_INST_DIR"
+  ./configure --force-have-roar --pkg-config "$PKG_CONFIG" --inst-dir "$AUDACIOUS_INST_DIR" && \
+    echo "subdir_plugins_audacious=plugins/audacious" >&4
  cd ..
 else
  echo "running Audacious plugin configure... disabled by user"
