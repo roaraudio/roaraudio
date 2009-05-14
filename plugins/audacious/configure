@@ -9,6 +9,10 @@ do
    INSTALL_DIR="$2"
    shift;
   ;;
+  --pkg-config)
+   PKG_CONFIG="$2"
+   shift;
+  ;;
   --force-have-roar)
    HAVE_ROAR=true
   ;;
@@ -17,9 +21,12 @@ do
 Usage: ./configure [OPTIONS]...
 
 Options:
-  --help         - Show this help
-  --inst-dir DIR - Install dir
+  --help               - Show this help
+  --inst-dir DIR       - Install dir
+  --force-have-roar    - Force to assume libroar is ok
+  --pkg-config PKGCONF - Set filename for pkg-config
 EOF
+    exit 0
    ;;
   *)
     echo 'Unknown option. Try ./configure --help'
@@ -43,14 +50,19 @@ else
 fi
 
 echo -n "checking for pkg-config... "
-PKG_CONFIG=$(which pkg-config false 2> /dev/null | grep ^/ | head -n 1)
-if $PKG_CONFIG --help > /dev/null 2> /dev/null
+if [ "$PKG_CONFIG" = '' ]
 then
- echo $PKG_CONFIG
+ PKG_CONFIG=$(which pkg-config false 2> /dev/null | grep ^/ | head -n 1)
+ if $PKG_CONFIG --help > /dev/null 2> /dev/null
+ then
+  echo $PKG_CONFIG
+ else
+  PKG_CONFIG=''
+  echo no
+  on_error;
+ fi
 else
- PKG_CONFIG=''
- echo no
- on_error;
+  echo $PKG_CONFIG '(forced)'
 fi
 
 echo -n 'testing for gtk... '
