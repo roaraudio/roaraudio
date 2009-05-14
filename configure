@@ -48,11 +48,13 @@ DEFAULT_GRP=''
 
 AO_INST_DIR=''
 XMMS_INST_DIR=''
+AUDACIOUS_INST_DIR=''
 
 SNDIO_EMUL=true
 
 LIBAO=true
 XMMS=true
+AUDACIOUS=true
 
 DEFAULT_RATE=''
 DEFAULT_CHANNELS=''
@@ -137,6 +139,7 @@ do
    echo
    echo '--ao-install-dir DIR        - Set install dir for libao plugin'
    echo '--xmms-install-dir DIR      - Set install dir for XMMS plugin'
+   echo '--audacious-install-dir DIR - Set install dir for Audacious plugin'
    echo
    echo '--prefix DIR                - Set general prefix (default: '"$PREFIX"')'
    echo '--prefix-bin DIR            - Set prefix for binarys (default: $PREFIX/bin)'
@@ -170,6 +173,7 @@ do
    echo
    echo '--without-libao             - Disable build of libao plugin'
    echo '--without-xmms              - Disable build of XMMS plugin'
+   echo '--without-audacious         - Disable build of Audacious plugin'
    echo
    echo '--mmcu MMCU                 - Sets -mmcu compiler/linker option'
    echo '--minimal                   - Disable all optional components'
@@ -227,6 +231,10 @@ do
   ;;
   '--xmms-install-dir')
    XMMS_INST_DIR="$2"
+   shift;
+  ;;
+  '--audacious-install-dir')
+   AUDACIOUS_INST_DIR="$2"
    shift;
   ;;
   '--default-rate')
@@ -288,10 +296,14 @@ do
   '--without-xmms')
    XMMS=false
   ;;
+  '--without-audacious')
+   AUDACIOUS=false
+  ;;
   '--minimal')
    MINIMAL=true
    RUNTIME_DETECT=false
    XMMS=false
+   AUDACIOUS=false
    LIBAO=false
    PROXY=false
    MULAW=false
@@ -349,6 +361,7 @@ do
    no_lib_dnet=true
    PROXY=false
    XMMS=false
+   AUDACIOUS=false
    WITHOUT_VIO="$WITHOUT_VIO"' pipe' # hope that with buffered pipes we can remove this soon
   ;;
  esac;
@@ -577,7 +590,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.161 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.162 $ of RoarAudio
  */
 
 EOF
@@ -1375,16 +1388,21 @@ fi
 if $XMMS
 then
  echo 'running xmms plugin configure...'
-  cd xmms/
- if [ "$XMMS_INST_DIR" = '' ]
- then
-  ./configure --force-have-roar --pkg-config "$PKG_CONFIG"
- else
+ cd xmms/
   ./configure --force-have-roar --pkg-config "$PKG_CONFIG" --inst-dir "$XMMS_INST_DIR"
- fi
  cd ..
 else
  echo "running xmms plugin configure... disabled by user"
+fi
+
+if $AUDACIOUS
+then
+ echo 'running Audacious plugin configure...'
+ cd audacious/
+  ./configure --force-have-roar --pkg-config "$PKG_CONFIG" --inst-dir "$AUDACIOUS_INST_DIR"
+ cd ..
+else
+ echo "running Audacious plugin configure... disabled by user"
 fi
 
 cd ..
