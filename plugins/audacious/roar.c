@@ -301,10 +301,12 @@ int roar_get_written_time(void) {
 int roar_update_metadata(void) {
  struct roar_meta   meta;
  char empty = 0;
- char * info;
+ char * info = NULL;
  int pos;
 
+#ifdef _WITH_BROKEN_CODE
  pos     = audacious_remote_get_playlist_pos(g_inst.session);
+#endif
 
  meta.value = &empty;
  meta.key[0] = 0;
@@ -312,6 +314,7 @@ int roar_update_metadata(void) {
 
  roar_stream_meta_set(&(g_inst.con), &(g_inst.stream), ROAR_META_MODE_CLEAR, &meta);
 
+#ifdef _WITH_BROKEN_CODE
  info = audacious_remote_get_playlist_file(g_inst.session, pos);
 
  if ( info ) {
@@ -336,6 +339,7 @@ int roar_update_metadata(void) {
 
   free(info);
  }
+#endif
 
  meta.value = &empty;
  meta.type = ROAR_META_TYPE_NONE;
