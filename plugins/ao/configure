@@ -22,6 +22,7 @@ Options:
   --help         - Show this help
   --inst-dir DIR - Install dir
 EOF
+    exit 0
    ;;
   *)
     echo 'Unknown option. Try ./configure --help'
