@@ -240,7 +240,9 @@ int roar_open(AFormat fmt, int rate, int nch) {
  g_inst.written = 0;
  g_inst.pause   = 0;
 
+#ifdef _WITH_BROKEN_CODE
  roar_update_metadata();
+#endif
 
  return TRUE;
 }
@@ -299,14 +301,13 @@ int roar_get_written_time(void) {
 // META DATA:
 
 int roar_update_metadata(void) {
+#ifdef _WITH_BROKEN_CODE
  struct roar_meta   meta;
  char empty = 0;
  char * info = NULL;
  int pos;
 
-#ifdef _WITH_BROKEN_CODE
  pos     = audacious_remote_get_playlist_pos(g_inst.session);
-#endif
 
  meta.value = &empty;
  meta.key[0] = 0;
@@ -314,7 +315,6 @@ int roar_update_metadata(void) {
 
  roar_stream_meta_set(&(g_inst.con), &(g_inst.stream), ROAR_META_MODE_CLEAR, &meta);
 
-#ifdef _WITH_BROKEN_CODE
  info = audacious_remote_get_playlist_file(g_inst.session, pos);
 
  if ( info ) {
@@ -339,16 +339,17 @@ int roar_update_metadata(void) {
 
   free(info);
  }
-#endif
 
  meta.value = &empty;
  meta.type = ROAR_META_TYPE_NONE;
  roar_stream_meta_set(&(g_inst.con), &(g_inst.stream), ROAR_META_MODE_FINALIZE, &meta);
 
+#endif
  return 0;
 }
 
 int roar_chk_metadata(void) {
+#ifdef _WITH_BROKEN_CODE
  static int    old_pos = -1;
  static char * old_title = "NEW TITLE";
  int pos;
@@ -376,6 +377,7 @@ int roar_chk_metadata(void) {
   roar_update_metadata();
  }
 
+#endif
  return 0;
 }
 
