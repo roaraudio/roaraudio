@@ -24,8 +24,10 @@
  */
 
 #include "all.h"
-gint ctrlsocket_get_session_id(void) {
 
+// FIXME: This interface has been changed
+gint ctrlsocket_get_session_id(void) {
+ return -1;
 }
 
 OutputPlugin roar_op = {
