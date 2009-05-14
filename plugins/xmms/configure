@@ -26,6 +26,7 @@ Options:
   --force-have-roar    - Force to assume libroar is ok
   --pkg-config PKGCONF - Set filename for pkg-config
 EOF
+    exit 0
    ;;
   *)
     echo 'Unknown option. Try ./configure --help'
@@ -68,8 +69,8 @@ echo -n 'testing for gtk... '
 
 #if [ "$PKG_CONFIG" != '' ]
 #then
-# GTK_LIBS=`pkg-config --libs gtk+-2.0 2> /dev/null`
-# GTK_CFLAFS=`pkg-config --cflags gtk+-2.0 2> /dev/null`
+# GTK_LIBS=`$PKG_CONFIG --libs gtk+-2.0 2> /dev/null`
+# GTK_CFLAFS=`$PKG_CONFIG --cflags gtk+-2.0 2> /dev/null`
 #else
  GTK_LIBS=`gtk-config --libs 2> /dev/null`
  GTK_CFLAFS=`gtk-config --cflags 2> /dev/null`
