@@ -60,7 +60,9 @@ void roar_configure(void) {
   GtkObject *input_server_port_adj;
   GtkWidget *input_server_port;
   GtkWidget *input_server_host;
+/*
   GtkWidget *input_server_type;
+*/
   GtkWidget *label_host;
   GtkWidget *label_server;
   GtkWidget *frame_proxy;
@@ -69,7 +71,9 @@ void roar_configure(void) {
   GtkWidget *label_proxy_type;
   GtkWidget *label_proxy_addr;
   GtkWidget *input_proxy_host;
+/*
   GtkWidget *input_proxy_type;
+*/
   GtkWidget *label_frame_proxy;
   GtkWidget *label_proxy;
   GtkWidget *vbox_meta;
@@ -82,8 +86,10 @@ void roar_configure(void) {
   GtkWidget *frame_meta_title;
   GtkWidget *alignment2;
   GtkWidget *hbox_meta_title;
+/*
   GtkWidget *input_meta_send_title;
   GtkWidget *input_meta_send_filename;
+*/
   GtkWidget *label_meta_title;
   GtkWidget *label_meta;
   GtkWidget *hbox_buttons;
