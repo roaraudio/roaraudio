@@ -59,4 +59,12 @@ int    sio_setvol (struct sio_hdl * hdl, unsigned vol) {
  return 1;
 }
 
+void   sio_onvol  (struct sio_hdl * hdl, void (*cb)(void * arg, unsigned vol), void * arg) {
+ if ( hdl == NULL )
+  return;
+
+ hdl->on_vol     = cb;
+ hdl->on_vol_arg = arg;
+}
+
 //ll

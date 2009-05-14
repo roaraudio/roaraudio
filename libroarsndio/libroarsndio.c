@@ -83,12 +83,4 @@ void   sio_onmove (struct sio_hdl * hdl, void (*cb)(void * arg, int delta), void
  hdl->on_move_arg = arg;
 }
 
-void   sio_onvol  (struct sio_hdl * hdl, void (*cb)(void * arg, unsigned vol), void * arg) {
- if ( hdl == NULL )
-  return;
-
- hdl->on_vol     = cb;
- hdl->on_vol_arg = arg;
-}
-
 //ll
