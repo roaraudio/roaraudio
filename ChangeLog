@@ -1,6 +1,10 @@
 v. 0.2rc2 - ?
 	* corrected check for GNU peercred
 	* added basic logging support to configure
+	* fixed plugin configures
+	* added and fixed semi-install target on plugins
+	* call plugin configures from main configure
+	* include plugins in Makefile known to work from configure
 
 v. 0.2rc1 - Wed May 13 2009 12:05
 	* Started to port to OpenSolaris
