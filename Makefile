@@ -33,7 +33,7 @@ install: prep-install-dirs
 	sh -c 'cd lib; for file in $(COMP_LIB); do for i in "" .{0,1}; do ln -fs $(PREFIX_LIB)/$$file.so $(PREFIX_COMP)/`echo $$file | sed s/roar//`.so$$i; done; done'
 	sh -c 'for file in include/roar* include/lib*; do cp $(cp_v) -r $$file $(PREFIX_INC)/; done'
 	cd doc; make install; cd ..
-	for i in $(subdir_plugins_ao) $(subdir_plugins_xmms) $(subdir_plugins_audacious); do if [ "$$i" != '' ]; then cd $$i; make install; cd ../..; fi; done
+	for i in $(PLUGINS); do if [ "$$i" != '' ]; then cd $$i; make install; cd ../..; fi; done
 
 semi-install: prep-install-dirs
 	sh -c 'for file in lib/roar*;    do ln -fs `pwd`/$$file $(PREFIX_BIN)/; done'
@@ -41,4 +41,4 @@ semi-install: prep-install-dirs
 	sh -c 'cd lib; for file in $(COMP_LIB); do for i in "" .{0,1}; do ln -fs `pwd`/$$file.so $(PREFIX_COMP)/`echo $$file | sed s/roar//`.so$$i; done; done'
 	sh -c 'for file in include/roar* include/lib*; do ln -fs `pwd`/$$file $(PREFIX_INC)/; done'
 	cd doc; make semi-install; cd ..
-	for i in $(subdir_plugins_ao) $(subdir_plugins_xmms) $(subdir_plugins_audacious); do if [ "$$i" != '' ]; then cd $$i; make semi-install; cd ../..; fi; done
+	for i in $(PLUGINS); do if [ "$$i" != '' ]; then cd $$i; make semi-install; cd ../..; fi; done
