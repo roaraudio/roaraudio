@@ -28,8 +28,7 @@ apt-get install build-essential libssl-dev libdnet-dev libesd0-dev libao-dev lib
 
 --- Plugins:
 
- $ cd plugins/
- $ make
+Plugins should be build automaticly since 0.2rc2.
 
 --- Writing software for RoarAudio:
 
