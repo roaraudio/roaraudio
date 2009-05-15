@@ -8,7 +8,7 @@ XINE_CFLAGS=`xine-config --cflags`
 INSTALL_DIR=`xine-config --plugindir`
 
 #DEFINES=-DDEBUG
-CFLAGS  = -g -Wall -O2 $(DEFINES) $(INCLUDE) $(fPIC) $(XINE_CFLAGS)
+CFLAGS += -g -Wall -O2 $(DEFINES) $(INCLUDE) $(fPIC) $(XINE_CFLAGS)
 LDFLAGS = -g -shared -lroar $(XINE_LIBS)
 
 all: ${TARGET}
