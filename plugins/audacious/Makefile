@@ -2,11 +2,12 @@ TARGET=libroar.so
 
 OBJ=roar.o gui.o
 
+include ../../Makefile.conf
 include Makefile.conf
 
-DEFINES=-DDEBUG
-CFLAGS  = -g -Wall -O2 $(DEFINES) $(INCLUDE) $(fPIC) $(XMMS_CFLAGS) $(GTK_CFLAFS) 
-LDFLAGS = -g -shared -lroar  $(XMMS_LIBS) $(GTK_LIBS) 
+#DEFINES=-DDEBUG
+CFLAGS  = -g -Wall -O2 $(DEFINES) $(INCLUDE) $(INCPATH) $(SHARED_CF) $(fPIC) $(GTK_CFLAFS) $(XMMS_CFLAGS)
+LDFLAGS = -g $(SHARED) $(LDPATH) -lroar $(GTK_LIBS) $(XMMS_LIBS)
 
 all: ${TARGET}
 clean:
