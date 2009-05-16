@@ -32,15 +32,7 @@ EOF
 done
 
 on_error () {
- cat <<'EOF' > Makefile
-all: error
-clean: error
-new: error
-install: error
-error:
-	echo Error while configuring this plugin
-	echo rerun configure script to fix
-EOF
+ rm -f Makefile.conf
  exit 1;
 }
 
@@ -95,9 +87,10 @@ EOF
 fi
 rm -f tests tests.c
 
-echo creating Makefile...
-echo "CC=$CC" > Makefile
-echo "INSTALL_DIR=$INSTALL_DIR" >> Makefile
-cat Makefile.pre >> Makefile
+echo creating Makefile.conf...
+{
+ echo "CC=$CC"
+ echo "INSTALL_DIR=$INSTALL_DIR"
+} > Makefile
 
 #ll
