@@ -10,7 +10,7 @@ LDFLAGS = -g $(SHARED) $(LDPATH) -lroar $(GTK_LIBS) $(XMMS_LIBS)
 
 all: ${TARGET}
 clean:
-	rm -f ${TARGET} tests tests.c
+	rm -f ${TARGET} *.o tests tests.c
 new: clean all
 
 install: libroar.so
