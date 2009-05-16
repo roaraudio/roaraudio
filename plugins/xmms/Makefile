@@ -7,7 +7,7 @@ include Makefile.conf
 
 #DEFINES=-DDEBUG
 CFLAGS += -g -Wall -O2 -I../../include $(DEFINES) $(INCLUDE) $(INCPATH) $(SHARED_CF) $(fPIC) $(GTK_CFLAFS) $(XMMS_CFLAGS)
-LDFLAGS = -g $(SHARED) $(LDPATH) -lroar $(GTK_LIBS) $(XMMS_LIBS)
+LDFLAGS = -g $(SHARED) $(LDPATH) -L../../lib -lroar $(GTK_LIBS) $(XMMS_LIBS)
 
 all: ${TARGET}
 clean:
