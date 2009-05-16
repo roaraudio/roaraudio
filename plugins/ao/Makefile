@@ -1,6 +1,12 @@
 TARGET=libroar.so
+OBJ=ao_roar.o
 
+include ../../Makefile.conf
 include Makefile.conf
+
+#DEFINES=-DDEBUG
+CFLAGS += -g -Wall -O2 $(DEFINES) $(INCLUDE) $(INCPATH) $(SHARED_CF) $(fPIC) $(GTK_CFLAFS) $(XMMS_CFLAGS)
+LDFLAGS = -g $(SHARED) $(LDPATH) -lroar $(GTK_LIBS) $(XMMS_LIBS)
 
 all: ${TARGET}
 clean:
@@ -12,7 +18,7 @@ install: libroar.so
 semi-install: libroar.so
 	ln -fs `pwd`/libroar.so ${INSTALL_DIR}
 
-libroar.so: ao_roar.c
-	cc -shared -L../../lib -I../../include -lroar -fPIC -o libroar.so ao_roar.c
+libroar.so: $(OBJ)
+	$(CC) $(LDFLAGS) -o libroar.so $(OBJ)
 
 ao_roar.c:
