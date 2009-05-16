@@ -1,5 +1,7 @@
 TARGET=libroar.so
 
+include Makefile.conf
+
 all: ${TARGET}
 clean:
 	rm -f ${TARGET} tests tests.c
