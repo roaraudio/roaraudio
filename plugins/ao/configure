@@ -91,6 +91,6 @@ echo creating Makefile.conf...
 {
  echo "CC=$CC"
  echo "INSTALL_DIR=$INSTALL_DIR"
-} > Makefile
+} > Makefile.conf
 
 #ll
