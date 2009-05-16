@@ -1,5 +1,5 @@
 #
-# spec file for package: [pkg name]
+# spec file for package: roaraudio
 #
 # This file and all modifications and additions to the pristine
 # package are under the same license as the package itself.
@@ -9,12 +9,12 @@
 
 %include Solaris.inc
 
-Name:		[pkg name]
-Summary:      	[short description]
-Version:       	[pkg version]
-License:	[license type (ie. GPLv2, BSD...)]
-Url: 		[url to open source project]
-Source:	 	[url to compressed tarball]
+Name:		roaraudio
+Summary:      	RoarAudio is a cross-platform sound system for both, home and professional use.
+Version:       	0.2rc1
+License:	GPLv3, LGPLv3
+Url: 		http://roaraudio.keep-cool.org/
+Source:	 	http://roaraudio.keep-cool.org/dl/%{name}-%{version}.tar.gz
 Group:		[ips pkg classification]
 Distribution:   OpenSolaris
 Vendor:		OpenSolaris Community
