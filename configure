@@ -590,7 +590,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.164 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.165 $ of RoarAudio
  */
 
 EOF
@@ -1379,7 +1379,7 @@ then
   cd ao/
  if [ "$AO_INST_DIR" = '' ]
  then
-  ./configure --force-have-roar                           && \
+  ./configure --force-have-roar --pkg-config "$PKG_CONFIG"                           && \
     echo "subdir_plugins_ao=plugins/ao" >&4
  else
   ./configure --force-have-roar --pkg-config "$PKG_CONFIG" --inst-dir "$AO_INST_DIR" && \
