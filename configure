@@ -95,6 +95,8 @@ EXEC_HELPER=''
 ROAR_DRIVER_DEFAULT=''
 ROAR_DRIVER_CODEC=''
 
+ROARD_CFREQ='' # cycle frequens for roard, normaly 100Hz
+
 echo -n "checking for C compiler... "
 if [ "$CC" != '' ]
 then
@@ -180,6 +182,8 @@ do
    echo
    echo '--without-listen            - Disable listening sockets in roard'
    echo '                              This is the same as allways using --no-listen'
+   echo
+   echo '--roard-cfreq FREQ          - Sets the cycle frequency of roard in Hz.'
    echo
    echo '--without-libao             - Disable build of libao plugin'
    echo '--without-xmms              - Disable build of XMMS plugin'
@@ -310,6 +314,10 @@ do
   ;;
   '--without-listen')
    NO_LISTEN=true
+  ;;
+  '--roard-cfreq')
+   ROARD_CFREQ="$2"
+   shift;
   ;;
   '--without-libao')
    LIBAO=false
@@ -617,7 +625,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.166 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.167 $ of RoarAudio
  */
 
 EOF
@@ -646,6 +654,8 @@ EOF
  [ "$DEFAULT_BITS"        = '' ] || echo "#define ROAR_BITS_DEFAULT     $DEFAULT_BITS"
  [ "$ROAR_DRIVER_DEFAULT" = '' ] || echo "#define ROAR_DRIVER_DEFAULT   \"$ROAR_DRIVER_DEFAULT\""
  [ "$ROAR_DRIVER_CODEC"   = '' ] || echo "#define ROAR_DRIVER_CODEC     \"$ROAR_DRIVER_CODEC\""
+ echo
+ [ "$ROARD_CFREQ"         = '' ] || echo "#define ROAR_OUTPUT_CFREQ     $ROARD_CFREQ"
  echo
  $MINIMAL      && echo '#define ROAR_MINIMAL'
  $ALAW         && echo '#define ROAR_SUPPORT_ALAW'

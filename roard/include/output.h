@@ -35,6 +35,9 @@
 #else
 //#define ROAR_OUTPUT_BUFFER_SAMPLES 441
 
+#ifdef ROAR_OUTPUT_CFREQ
+#define ROAR_OUTPUT_BUFFER_SAMPLES (ROAR_RATE_DEFAULT/ROAR_OUTPUT_CFREQ)
+#else
 // in normal case we use 100 cycles per sec, as we do not know the sample
 // rate at compile time we guess it's normaly the default rate.
 // on OpenBSD we need to set a lower freq, use 20 cycles per sec here as
@@ -44,6 +47,7 @@
 #define ROAR_OUTPUT_BUFFER_SAMPLES (ROAR_RATE_DEFAULT/20)
 #else
 #define ROAR_OUTPUT_BUFFER_SAMPLES (ROAR_RATE_DEFAULT/100)
+#endif
 #endif
 
 #endif
