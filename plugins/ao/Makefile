@@ -6,7 +6,8 @@ include Makefile.conf
 
 #DEFINES=-DDEBUG
 CFLAGS += -g -Wall -O2 -I../../include $(DEFINES) $(INCLUDE) $(INCPATH) $(SHARED_CF) $(fPIC) $(AO_CFLAGS)
-LDFLAGS = -g $(SHARED) $(LDPATH) -L../../lib -lroar $(AO_LIBS)
+LDFLAGS = -g $(SHARED) $(LDPATH) -L../../lib
+LIBS    = -lroar $(AO_LIBS)
 
 all: ${TARGET}
 clean:
@@ -19,6 +20,6 @@ semi-install: libroar.so
 	ln -fs `pwd`/libroar.so ${INSTALL_DIR}
 
 libroar.so: $(OBJ)
-	$(CC) $(LDFLAGS) -o libroar.so $(OBJ)
+	$(CC) $(LDFLAGS) -o libroar.so $(OBJ) $(LIBS)
 
 ao_roar.c:
