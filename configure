@@ -60,6 +60,11 @@ DEFAULT_RATE=''
 DEFAULT_CHANNELS=''
 DEFAULT_BITS=''
 
+COMP_LIBS=true
+COMP_ROARD=true
+COMP_CLIENTS=true
+COMP_DOC=true
+
 ALAW=true
 MULAW=true
 ALAW_RW=true
@@ -159,6 +164,11 @@ do
    echo '--without-mulaw             - Disable support of mu-Law codec (de- and encoding)'
    echo '--without-mulaw-rw          - Disable support for writing mu-Law (saves 16KB)'
    echo '--without-proxy             - Disable support for proxys'
+   echo
+   echo '--without-comp-libs         - Disable build of librarys'
+   echo '--without-comp-roard        - Disable build of roard'
+   echo '--without-comp-clients      - Disable build of clients'
+   echo '--without-comp-doc          - Disable build of documentation'
    echo
    echo '--without-meta-data         - Disable support for Meta Data'
    echo
@@ -273,6 +283,18 @@ do
   ;;
   '--without-proxy')
    PROXY=false
+  ;;
+  '--without-comp-libs')
+   COMP_LIBS=false
+  ;;
+  '--without-comp-roard')
+   COMP_ROARD=false
+  ;;
+  '--without-comp-clients')
+   COMP_CLIENTS=false
+  ;;
+  '--without-comp-doc')
+   COMP_DOC=false
   ;;
   '--without-meta-data')
    META_DATA=false
@@ -580,6 +602,11 @@ fi
  echo "PREFIX_MAN=$PREFIX_MAN"
  echo "PREFIX_COMP=$PREFIX_COMP"
  echo
+ $COMP_LIBS     && echo "comp_libs=libroar libroardsp"
+ $COMP_ROARD    && echo "comp_roard=roard"
+ $COMP_CLIENTS  && echo "comp_clients=roarclients"
+ $COMP_DOC      && echo "comp_doc=doc"
+ echo
  $SNDIO_EMUL && echo "subdir_libroarsndio=libroarsndio"
 } >&4
 
@@ -590,7 +617,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.165 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.166 $ of RoarAudio
  */
 
 EOF
