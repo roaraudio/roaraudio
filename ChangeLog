@@ -12,6 +12,7 @@ v. 0.2rc2 - ?
 	  with classic BSD make.
 	* devided into components: libs, roard, clients, doc
 	* add toption to set roard's cycle freq
+	* moved a lot things in plugin's configure scripts to a commone one
 
 v. 0.2rc1 - Wed May 13 2009 12:05
 	* Started to port to OpenSolaris
