@@ -7,6 +7,9 @@ v. 0.2rc2 - ?
 	* include plugins in Makefile known to work from configure
 	* fixed Makefiles of plugins: added -I../../include, -L../../lib
 	* Make use of pkg-config in plugin configures
+	* corrected possition of -ls on linker commands in most Makefiles
+	* added more explicide linker commands so most things now build
+	  with classic BSD make.
 
 v. 0.2rc1 - Wed May 13 2009 12:05
 	* Started to port to OpenSolaris
