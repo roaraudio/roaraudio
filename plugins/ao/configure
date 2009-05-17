@@ -1,5 +1,7 @@
 #!/bin/sh
 
+. ../configure.inc
+
 INSTALL_DIR=/usr/lib/ao/plugins-2/
 
 HAVE_ROAR=false
