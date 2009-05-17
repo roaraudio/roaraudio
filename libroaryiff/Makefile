@@ -6,7 +6,8 @@ include ../Makefile.conf
 #DEFINES        = -DDEBUG
 INCLUDE = -I../include -I../include/libroaryiff
 CFLAGS += -g -Wall -O2 $(DEFINES) $(INCLUDE) $(INCPATH) $(SHARED_CF) $(fPIC)
-LDFLAGS = -g $(SHARED) -lroar $(LDPATH) -L../lib/
+LDFLAGS = -g $(SHARED) $(LDPATH) -L../lib/
+LIBS    = -lroar
 
 all: ${TARGETS}
 	cp $(cp_v) ${TARGETS} ../lib/
@@ -15,4 +16,4 @@ clean:
 new: clean all
 
 libroaryiff.so: ${OBJS}
-	${CC} ${LDFLAGS} -o libroaryiff.so ${OBJS}
+	${CC} ${LDFLAGS} -o libroaryiff.so ${OBJS} ${LIBS}

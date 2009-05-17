@@ -10,7 +10,8 @@ FILTER=lowp.o highp.o amp.o quantify.o add.o clip.o downmix.o dcblock.o swap.o
 #DEFINES        = -DDEBUG
 INCLUDE = -I../include -I../include/libroardsp
 CFLAGS += -g -Wall -O2 $(DEFINES) $(INCLUDE) $(INCPATH) $(SHARED_CF) $(fPIC)
-LDFLAGS = -g $(SHARED) -L../lib/ $(LDPATH) $(lib_dnet) $(lib_m) -lroar
+LDFLAGS = -g $(SHARED) -L../lib/ $(LDPATH)
+LIBS    = $(lib_dnet) $(lib_m) -lroar
 
 all: ${TARGETS}
 	rm -f ../lib/${SLIB} 2> /dev/null || true
@@ -20,6 +21,6 @@ clean:
 new: clean all
 
 libroardsp.so: ${OBJS} $(FILTER) $(OLDROAR)
-	${CC} ${LDFLAGS} -o libroardsp.so ${OBJS} $(FILTER) $(OLDROAR)
+	${CC} ${LDFLAGS} -o libroardsp.so ${OBJS} $(FILTER) $(OLDROAR) $(LIBS)
 libroardsp.a: ${OBJS} $(FILTER) $(OLDROAR)
 	${AR} cru libroardsp.a ${OBJS} $(FILTER) $(OLDROAR)

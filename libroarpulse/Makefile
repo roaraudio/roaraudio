@@ -6,7 +6,8 @@ include ../Makefile.conf
 DEFINES        = -DDEBUG
 INCLUDE = -I../include -I../include/libroarpulse
 CFLAGS += -g -Wall -O2 $(DEFINES) $(INCLUDE) $(INCPATH) $(SHARED_CF) $(fPIC)
-LDFLAGS = -g -lroar $(LDPATH) -L../lib/
+LDFLAGS = -g $(LDPATH) -L../lib/
+LIBS    = -lroar
 
 all: ${TARGETS}
 	cp $(cp_v) ${TARGETS} ../lib/
@@ -15,6 +16,6 @@ clean:
 new: clean all
 
 libroarpulse.so: ${OBJS}
-	${CC} ${LDFLAGS} $(SHARED) -o libroarpulse.so ${OBJS}
+	${CC} ${LDFLAGS} $(SHARED) -o libroarpulse.so ${OBJS} ${LIBS}
 
 libroarpulseinfo: libroarpulseinfo.o
