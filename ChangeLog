@@ -10,6 +10,8 @@ v. 0.2rc2 - ?
 	* corrected possition of -ls on linker commands in most Makefiles
 	* added more explicide linker commands so most things now build
 	  with classic BSD make.
+	* devided into components: libs, roard, clients, doc
+	* add toption to set roard's cycle freq
 
 v. 0.2rc1 - Wed May 13 2009 12:05
 	* Started to port to OpenSolaris
