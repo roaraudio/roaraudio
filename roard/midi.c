@@ -24,8 +24,12 @@
 
 #include "roard.h"
 
+#if defined(ROAR_HAVE_IO_POSIX) && !defined(ROAR_TARGET_WIN32)
+#define _HAVE_CONSOLE
+#endif
+
 int midi_init (void) {
-#ifdef ROAR_HAVE_IO_POSIX
+#ifdef _HAVE_CONSOLE
  int i;
  char * files[] = {
                    "/dev/console",
@@ -56,7 +60,7 @@ int midi_init (void) {
 }
 
 int midi_free (void) {
-#ifdef ROAR_HAVE_IO_POSIX
+#ifdef _HAVE_CONSOLE
  if ( g_console != -1 )
   close(g_console);
  return 0;
