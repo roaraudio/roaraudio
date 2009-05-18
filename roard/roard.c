@@ -396,10 +396,12 @@ int main (void) {
 
 
 #ifdef ROAR_SUPPORT_LISTEN
+#ifdef ROAR_HAVE_GETUID
  if ( getuid() != 0 && getenv("HOME") != NULL ) {
   snprintf(user_sock, 79, "%s/%s", (char*)getenv("HOME"), ROAR_DEFAULT_SOCK_USER);
   server = user_sock;
  }
+#endif
 
  if ( getenv("ROAR_SERVER") != NULL )
   server = getenv("ROAR_SERVER");
@@ -717,9 +719,11 @@ int main (void) {
      if ( chown(server, -1, grp->gr_gid) == -1 )
       return 1;
     }
+#ifdef ROAR_HAVE_GETUID
     if ( getuid() == 0 )
      if ( chmod(server, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP) == -1 )
       return 1;
+#endif
    }
   }
 #endif
@@ -749,7 +753,7 @@ int main (void) {
 
 
  // we should handle this on microcontrollers, too.
-#if !defined(ROAR_TARGET_MICROCONTROLLER)
+#if !defined(ROAR_TARGET_MICROCONTROLLER) && !defined(ROAR_TARGET_WIN32)
  signal(SIGINT,  on_sig_int);
  signal(SIGCHLD, on_sig_chld);
  signal(SIGPIPE, SIG_IGN);  // ignore broken pipes
@@ -790,8 +794,12 @@ int main (void) {
 
 
  clients_set_pid(g_self_client, getpid());
+#ifdef ROAR_HAVE_GETUID
  clients_set_uid(g_self_client, getuid());
+#endif
+#ifdef ROAR_HAVE_GETGID
  clients_set_gid(g_self_client, getgid());
+#endif
  clients_get(g_self_client, &self);
 
  if ( self == NULL ) {
@@ -806,9 +814,13 @@ int main (void) {
   close(ROAR_STDIN );
   close(ROAR_STDOUT);
   close(ROAR_STDERR);
-  setsid();
+
   if ( fork() )
    ROAR_U_EXIT(0);
+
+#ifdef ROAR_HAVE_SETSID
+  setsid();
+#endif
   clients_set_pid(g_self_client, getpid()); // reset pid as it changed
  }
 #endif
@@ -832,7 +844,9 @@ int main (void) {
    ROAR_ERR("Can not set UserID: %s", strerror(errno));
    return 3;
   }
+#ifdef ROAR_HAVE_GETUID
   clients_set_uid(g_self_client, getuid());
+#endif
  }
 #endif
 
