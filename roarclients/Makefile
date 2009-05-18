@@ -7,7 +7,7 @@ include ../Makefile.conf
 INCLUDE    = -I../include -I./include
 CFLAGS    += -g -Wall -O2 $(DEFINES) $(INCLUDE) $(INCPATH)
 LDFLAGS    = -g -L../lib/ $(LDPATH) -lroar
-LIBS       = -lroar
+LIBS       = -lroar $(lib_wsock32) $(lib_ws2_32)
 DSPLIBS    = -lroardsp -lm $(LIBS)
 SHOUTLIBS  = $(lib_shout) $(LIBS)
 VORBISLIBS = $(lib_vorbisfile) $(lib_vorbis) $(lib_ogg) $(LIBS)
