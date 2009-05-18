@@ -7,7 +7,7 @@ OBJS=libroarsndio.o para.o stream.o events.o volume.o
 INCLUDE = -I../include -I../include/libroarsndio
 CFLAGS += -g -Wall -O2 $(DEFINES) $(INCLUDE) $(INCPATH) $(SHARED_CF) $(fPIC)
 LDFLAGS = -g $(SHARED) $(LDPATH) -L../lib/
-LIBS    = -lroar
+LIBS    = -lroar $(lib_wsock32) $(lib_ws2_32)
 
 all: ${TARGETS}
 	cp $(cp_v) ${TARGETS} ../lib/
