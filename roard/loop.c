@@ -91,14 +91,18 @@ int main_loop (int driver, DRIVER_USERDATA_T driver_inst, struct roar_audio_info
   // a break
 */
 
+#ifdef ROAR_HAVE_USLEEP
   if ( g_standby || (streams < 1 && g_autostandby) ) {
    usleep((1000000 * ROAR_OUTPUT_BUFFER_SAMPLES) / sa->rate);
    ROAR_DBG("usleep(%u) = ?\n", (1000000 * ROAR_OUTPUT_BUFFER_SAMPLES) / sa->rate);
   } else {
+#endif
    clients_send_filter(sa, g_pos);
    output_buffer_flush(driver_inst, driver);
    clients_send_mon(sa, g_pos);
+#ifdef ROAR_HAVE_USLEEP
   }
+#endif
 
   midi_cb_update();
 //  output_buffer_reinit();

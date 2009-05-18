@@ -999,7 +999,9 @@ int streams_send_mon   (int id) {
   // ok, the client blocks for a moment, we try to sleep a bit an retry in the hope not to
   // make any gapes in any output because of this
 
+#ifdef ROAR_HAVE_USLEEP
   usleep(100); // 0.1ms
+#endif
 
   if ( stream_vio_s_write(ss, obuf, olen) == olen ) {
    if ( need_to_free ) free(obuf);
