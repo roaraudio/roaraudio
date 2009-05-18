@@ -8,10 +8,14 @@ include ../Makefile.conf
 
 #DEFINES        = -DDEBUG
 #DEFINES        = -DMONITOR_LATENCY
-INCLUDE = -I../include -I./include
-CFLAGS += -g -Wall -O2 $(DEFINES) $(INCLUDE) $(INCPATH)
-LDFLAGS = -g -L../lib/ $(LDPATH)
-LIBS    = -lroar -lroardsp $(lib_esd) $(lib_ossaudio) $(lib_ao) $(lib_shout) $(lib_vorbisfile) $(lib_vorbisenc) $(lib_vorbis) $(lib_celt) $(lib_fishsound) $(lib_speex) $(lib_speexdsp) $(lib_oggz) $(lib_sndfile) $(lib_m) $(lib_sndio) $(lib_ogg) $(lib_socket)
+INCLUDE   = -I../include -I./include
+CFLAGS   += -g -Wall -O2 $(DEFINES) $(INCLUDE) $(INCPATH)
+LDFLAGS   = -g -L../lib/ $(LDPATH)
+NETLIBS   = $(lib_socket) $(lib_wsock32) $(lib_ws2_32)
+DRVLIBS   = $(lib_esd) $(lib_ossaudio) $(lib_ao) $(lib_shout) $(lib_sndio)
+CODECLIBS = $(lib_vorbisfile) $(lib_vorbisenc) $(lib_vorbis) $(lib_celt) $(lib_fishsound) $(lib_speex) $(lib_speexdsp)
+CONTLIBS  = $(lib_oggz) $(lib_sndfile) $(lib_ogg)
+LIBS      = -lroar -lroardsp $(DRVLIBS) $(CODECLIBS) $(CONTLIBS) $(lib_m) $(NETLIBS)
 
 all: ${TARGETS}
 	rm -f ../lib/${TARGETS} 2> /dev/null || true
