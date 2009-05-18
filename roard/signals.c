@@ -26,7 +26,7 @@
 
 // we should add signal handling on micro controllsers here.
 
-#if !defined(ROAR_TARGET_MICROCONTROLLER)
+#if !defined(ROAR_TARGET_MICROCONTROLLER) && !defined(ROAR_TARGET_WIN32)
 
 void on_sig_int (int signum) {
  ROAR_DBG("got SIGINT");
