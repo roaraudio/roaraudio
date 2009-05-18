@@ -625,7 +625,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.167 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.168 $ of RoarAudio
  */
 
 EOF
@@ -822,6 +822,34 @@ else
  echo no
 fi
 
+echo -n 'checking for getgid()... '
+
+echo '#include <sys/types.h>' >  $TF_C
+echo '#include <unistd.h>'    >> $TF_C
+echo 'int main (void) { getgid(); return 0; }' >> $TF_C
+
+if $CCTF 2> /dev/null;
+then
+ echo '#define ROAR_HAVE_GETGID' >&3
+ echo yes
+else
+ echo no
+fi
+
+
+echo -n 'checking for getuid()... '
+
+echo '#include <sys/types.h>' >  $TF_C
+echo '#include <unistd.h>'    >> $TF_C
+echo 'int main (void) { getuid(); return 0; }' >> $TF_C
+
+if $CCTF 2> /dev/null;
+then
+ echo '#define ROAR_HAVE_GETUID' >&3
+ echo yes
+else
+ echo no
+fi
 
 echo -n 'checking for setgid()... '
 
@@ -852,6 +880,19 @@ else
  echo no
 fi
 
+echo -n 'checking for setsid()... '
+echo '#include <sys/types.h>' >  $TF_C
+echo '#include <unistd.h>'    >> $TF_C
+echo 'int main (void) { setsid(); return 0; }' >> $TF_C
+
+if $CCTF 2> /dev/null;
+then
+ echo '#define ROAR_HAVE_SETSID' >&3
+ echo yes
+else
+ echo no
+fi
+
 
 echo -n 'checking for gettimeofday()... '
 
@@ -867,6 +908,19 @@ else
  echo no
 fi
 
+echo -n 'checking for usleep()... '
+
+echo '#include <sys/types.h>' >  $TF_C
+echo '#include <unistd.h>'    >> $TF_C
+echo 'int main (void) { usleep(0); return 0; }' >> $TF_C
+
+if $CCTF 2> /dev/null;
+then
+ echo '#define ROAR_HAVE_USLEEP' >&3
+ echo yes
+else
+ echo no
+fi
 
 echo -n 'checking for basic IO calls... '
 
