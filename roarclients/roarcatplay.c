@@ -83,9 +83,17 @@ int main (int argc, char * argv[]) {
  if ( bg )
   mode = MODE_PASSIVE;
 
+#ifndef ROAR_HAVE_UNIX
+ if ( mode == MODE_PASSIVE ) {
+  fprintf(stderr, "Error: passive mode is not supported on this system.\n", k);
+  return 1;
+ }
+#endif
+
  if ( file == NULL )
   file = "/dev/stdin";
 
+#ifndef ROAR_HAVE_UNIX
  if ( mode == MODE_PASSIVE ) {
   if ( roar_simple_connect(con, server, "roarcatplay") == -1 ) {
    ROAR_ERR("Can not connect to server");
@@ -108,11 +116,14 @@ int main (int argc, char * argv[]) {
   roar_disconnect(con);
 
  } else { // MODE_SIMPLE
+#endif
   if ( roar_simple_play_file(file, server, "roarcatplay") == -1 ) {
    ROAR_ERR("Can not start playback");
    return 1;
   }
+#ifndef ROAR_HAVE_UNIX
  }
+#endif
 
  return 0;
 }
