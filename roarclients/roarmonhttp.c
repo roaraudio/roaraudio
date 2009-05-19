@@ -24,6 +24,10 @@
 
 #include <roaraudio.h>
 
+#if defined(ROAR_HAVE_SETENV) || defined(ROAR_HAVE_PUTENV)
+#define _CAN_SET_ENV
+#endif
+
 #define BUFSIZE 1024
 
 void print_header (int codec, int rate, int channels) {
@@ -41,7 +45,7 @@ void print_header (int codec, int rate, int channels) {
  printf("Content-type: %s\r\n", mime);
  printf("ice-audio-info: ice-samplerate=%i;ice-channels=%i\r\n", rate, channels);
  printf("icy-pub:0\r\n");
- printf("Server: RoarAudio (roarmonhttp $Revision: 1.11 $)\r\n");
+ printf("Server: RoarAudio (roarmonhttp $Revision: 1.12 $)\r\n");
  printf("\r\n");
 
  fflush(stdout);
@@ -132,7 +136,7 @@ int stream (int dest, int src) {
  return 0;
 }
 
-
+#ifdef _CAN_SET_ENV
 int parse_http (int * gopher) {
  char buf[1024];
  char * qs = buf, *str;
@@ -184,10 +188,22 @@ int parse_http (int * gopher) {
 
  fflush(stdout);
 
+#ifdef ROAR_HAVE_SETENV
  setenv("QUERY_STRING", qs, 1);
+#else
+ // TODO: does this leak memory?
+ if ( (str = malloc(strlen(qs) + strlen("QUERY_STRING=") + 1)) == NULL ) {
+  return -1;
+ }
+
+ sprintf(str, "QUERY_STRING=%s", qs);
+
+ putenv(str);
+#endif
 
  return dir;
 }
+#endif
 
 int main (int argc, char * argv[]) {
  int    rate     = 44100;
@@ -208,8 +224,12 @@ int main (int argc, char * argv[]) {
 
  if ( argc > 1 )
   if ( ! strcmp(argv[1], "--inetd") )
+#ifdef _CAN_SET_ENV
    if ( (dir = parse_http(&gopher)) == -1 )
     return 1;
+#else
+   return 1;
+#endif
 
  c = strtok_r(getenv("QUERY_STRING"), "&", &sp0);
 
