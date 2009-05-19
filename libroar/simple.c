@@ -334,10 +334,17 @@ int roar_simple_filter(int rate, int channels, int bits, int codec, char * serve
 
 
 int roar_simple_close(int fh) {
+#ifdef ROAR_TARGET_WIN32
+ closesocket(fh);
+ return 0;
+#else
+
 #ifdef ROAR_HAVE_IO_POSIX
  return close(fh);
 #else
  return -1;
+#endif
+
 #endif
 }
 
