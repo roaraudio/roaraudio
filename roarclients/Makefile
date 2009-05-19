@@ -12,6 +12,8 @@ DSPLIBS    = -lroardsp -lm $(LIBS)
 SHOUTLIBS  = $(lib_shout) $(LIBS)
 VORBISLIBS = $(lib_vorbisfile) $(lib_vorbis) $(lib_ogg) $(LIBS)
 
+L          = $(CC) $(LDFLAGS) -o $@ $+ $(LIBS)
+
 all: ${TARGETS} $(TOOLS)
 	cp $(cp_v) ${TARGETS} $(TOOLS) ../lib/
 clean:
