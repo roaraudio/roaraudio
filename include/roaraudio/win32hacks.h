@@ -41,6 +41,9 @@
 #define SHUT_RD SD_RECEIVE
 #define SHUT_WR SD_SEND
 
+#if !defined(ROAR_HAVE_BSDSOCKETS) && !defined(ROAR_HAVE_IPV4)
+#define ROAR_HAVE_IPV4
+#endif
 
 #define ROAR_NETWORK_READ(x,y,z)  recv((x), (y), (z), 0)
 #define ROAR_NETWORK_WRITE(x,y,z) send((x), (y), (z), 0)
