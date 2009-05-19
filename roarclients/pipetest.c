@@ -28,6 +28,7 @@
 #define BUF_MAX 1024
 
 int main (void) {
+#ifdef ROAR_HAVE_FORK
  char buf[BUF_MAX];
  struct roar_vio_calls s0, s1;
  struct roar_vio_calls * me;
@@ -59,6 +60,10 @@ int main (void) {
  sleep(1); // wait for the other child...
 
  return 0;
+#else
+ fprintf(stderr, "Error: no fork() support!\n");
+ return 1;
+#endif
 }
 
 //ll
