@@ -576,6 +576,8 @@ int roar_socket_open (int mode, int type, char * host, int port) {
  if ( type == ROAR_SOCKET_TYPE_INET || type == ROAR_SOCKET_TYPE_INET6 ) {
 #if defined(ROAR_HAVE_IPV4) || defined(ROAR_HAVE_IPV6)
 
+  roar_socket_win32_init(); // we need to do this early as gethostbyname() requires this.
+
   if ( (he = gethostbyname(host)) == NULL ) {
    ROAR_ERR("roar_socket_open(*): Can\'t resolve host name '%s'",
                      host);
