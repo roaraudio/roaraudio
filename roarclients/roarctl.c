@@ -47,7 +47,9 @@ void usage (void) {
  printf(
         "  help                    - Show this help\n"
         "  sleep TIME              - Sleeps for TIME seconds\n"
+#ifdef ROAR_HAVE_GETTIMEOFDAY
         "  ping  NUM               - Do NUM pings using NOOP commands\n"
+#endif
         "\n"
         "  standby, off            - Go into standby mode\n"
         "  resume, on              - Go into active mode\n"
@@ -83,6 +85,7 @@ void usage (void) {
        );
 }
 
+#ifdef ROAR_HAVE_GETTIMEOFDAY
 int ping (struct roar_connection * con, int num) {
  struct timeval         try, ans;
  struct roar_message    m;
@@ -128,6 +131,7 @@ int ping (struct roar_connection * con, int num) {
 
  return 0;
 }
+#endif
 
 void server_oinfo (struct roar_connection * con) {
  struct roar_stream s;
@@ -670,9 +674,14 @@ int main (int argc, char * argv[]) {
    sleep(atoi(argv[++i]));
 
   } else if ( !strcmp(k, "ping") ) {
+#ifdef ROAR_HAVE_GETTIMEOFDAY
    if ( ping(&con, atoi(argv[++i])) == -1 ) {
     fprintf(stderr, "Error: can not ping\n");
    }
+#else
+    fprintf(stderr, "Error: ping not supported.\n");
+    i++;
+#endif
 
   } else if ( !strcmp(k, "standby") || !strcmp(k, "off") ) {
    if ( roar_set_standby(&con, ROAR_STANDBY_ACTIVE) == -1 ) {
