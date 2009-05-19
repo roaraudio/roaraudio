@@ -93,7 +93,7 @@ int main (int argc, char * argv[]) {
  if ( file == NULL )
   file = "/dev/stdin";
 
-#ifndef ROAR_HAVE_UNIX
+#ifdef ROAR_HAVE_UNIX
  if ( mode == MODE_PASSIVE ) {
   if ( roar_simple_connect(con, server, "roarcatplay") == -1 ) {
    ROAR_ERR("Can not connect to server");
@@ -121,7 +121,7 @@ int main (int argc, char * argv[]) {
    ROAR_ERR("Can not start playback");
    return 1;
   }
-#ifndef ROAR_HAVE_UNIX
+#ifdef ROAR_HAVE_UNIX
  }
 #endif
 
