@@ -24,3 +24,4 @@ libroardsp.so: ${OBJS} $(FILTER) $(OLDROAR)
 	${CC} ${LDFLAGS} -o libroardsp.so ${OBJS} $(FILTER) $(OLDROAR) $(LIBS)
 libroardsp.a: ${OBJS} $(FILTER) $(OLDROAR)
 	${AR} cru libroardsp.a ${OBJS} $(FILTER) $(OLDROAR)
+	${RANLIB} libroardsp.a

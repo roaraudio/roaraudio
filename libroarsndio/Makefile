@@ -22,3 +22,4 @@ libroarsndio.so: ${OBJS}
 	${CC} ${LDFLAGS} -o libroarsndio.so ${OBJS} ${LIBS}
 libroarsndio.a: ${OBJS}
 	${AR} cru libroarsndio.a ${OBJS}
+	${RANLIB} libroarsndio.a

@@ -23,3 +23,4 @@ libroar.so: ${OBJS}
 	${CC} ${LDFLAGS} -o libroar.so ${OBJS} ${LIBS}
 libroar.a: ${OBJS}
 	${AR} cru libroar.a ${OBJS}
+	${RANLIB} libroar.a
