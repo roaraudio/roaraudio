@@ -204,6 +204,8 @@ ssize_t roar_file_play_full  (struct roar_connection * con, char * file, int exe
 
  // FIXME: check error cases
 
+ ROAR_DBG("roar_file_play_full(*) = ?");
+
  if ( !s )
   s = localstream;
 
