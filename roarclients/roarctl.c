@@ -23,8 +23,16 @@
  */
 
 #include <roaraudio.h>
+
+#if defined(ROAR_HAVE_SETGID) && defined(ROAR_HAVE_SETUID)
+#define _POSIX_USERS
+#endif
+
+#ifdef _POSIX_USERS
 #include <pwd.h>
 #include <grp.h>
+#endif
+
 #include <sys/time.h>
 #include <time.h>
 
@@ -183,8 +191,10 @@ void list_clients (struct roar_connection * con) {
  int h;
  int id[ROAR_CLIENTS_MAX];
  struct roar_client c;
+#ifdef _POSIX_USERS
  struct group  * grp = NULL;
  struct passwd * pwd = NULL;
+#endif
 
  if ( (num = roar_list_clients(con, id, ROAR_CLIENTS_MAX)) == -1 ) {
   fprintf(stderr, "Error: can not get client list\n");
@@ -200,9 +210,13 @@ void list_clients (struct roar_connection * con) {
   printf("Player name           : %s\n", c.name);
   printf("Player PID            : %i(%s)\n", c.pid, proc_name(c.pid));
   if ( c.uid != -1 ) {
+#ifdef _POSIX_USERS
    pwd = getpwuid(c.uid);
    grp = getgrgid(c.gid);
    printf("Player UID/GID        : %i(%s)/%i(%s)\n", c.uid, pwd ? pwd->pw_name : "?", c.gid, grp ? grp->gr_name : "?");
+#else
+   printf("Player UID/GID        : %i/%i\n", c.uid, c.gid);
+#endif
   }
   if ( c.execed != -1 )
    printf("Execed stream         : %i\n", c.execed);
