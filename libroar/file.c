@@ -236,6 +236,7 @@ ssize_t roar_file_play_full  (struct roar_connection * con, char * file, int exe
  seek = lseek(in, 0, SEEK_SET) == (off_t) -1 ? 0 : 1;
 
  if ( codec == -1 ) {
+  ROAR_ERR("roar_file_play_full(*): Unknown codec of file: %s", file);
   close(in);
   return -1;
  }
@@ -246,21 +247,25 @@ ssize_t roar_file_play_full  (struct roar_connection * con, char * file, int exe
 
  if ( exec ) {
   if ( roar_stream_new(s, rate, channels, bits, codec) == -1 ) {
+   ROAR_ERR("roar_file_play_full(*): Can not create new stream. This is realy BAD!");
    close(in);
    return -1;
   }
 
   if ( roar_stream_connect(con, s, ROAR_DIR_PLAY) == -1 ) {
+   ROAR_ERR("roar_file_play_full(*): Can not connect new stream to server.");
    close(in);
    return -1;
   }
 
   if ( roar_stream_exec(con, s) == -1 ) {
+   ROAR_ERR("roar_file_play_full(*): Can not exec new stream on server.");
    close(in);
    return -1;
   }
 
   if ( (out = roar_get_connection_fh(con)) == -1 ) {
+   ROAR_ERR("roar_file_play_full(*): Can not get socket of server connection for exec data transmition.");
    close(in);
    return -1;
   }
