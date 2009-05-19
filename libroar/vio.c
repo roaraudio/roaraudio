@@ -193,6 +193,10 @@ int     roar_vio_open_file     (struct roar_vio_calls * calls, char * filename, 
  if ( calls == NULL || filename == NULL )
   return -1;
 
+#ifdef ROAR_TARGET_WIN32
+ flags |= O_BINARY;
+#endif
+
  if ( (fh = open(filename, flags, mode)) == -1 )
   return -1;
 
