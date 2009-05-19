@@ -21,17 +21,29 @@ clean:
 new: clean all
 
 roarcat: roarcat.o
+	$L
 roarcatad: roarcatad.o
+	$L
 roarcat2sock: roarcat2sock.o
+	$L
 roarcatsendfile: roarcatsendfile.o
+	$L
 roarcatplay: roarcatplay.o
+	$L
 roarcatpassfh: roarcatpassfh.o
+	$L
 roarcatvio: roarcatvio.o
+	$L
 roarradio: roarradio.o
+	$L
 roarctl: roarctl.o
+	$L
 roarmon: roarmon.o
+	$L
 roarmonhttp: roarmonhttp.o
+	$L
 roarbidir: roarbidir.o
+	$L
 roarfilt: roarfilt.o
 	${CC} ${LDFLAGS} -o roarfilt roarfilt.o $(DSPLIBS)
 roarsin: roarsin.o
@@ -39,9 +51,13 @@ roarsin: roarsin.o
 roarvumeter: roarvumeter.o
 	${CC} ${LDFLAGS} -o roarvumeter roarvumeter.o $(DSPLIBS)
 roarsockconnect: roarsockconnect.o
+	$L
 roartypes: roartypes.o
+	$L
 roarsocktypes: roarsocktypes.o
+	$L
 roar-config: roar-config.o
+	$L
 roarvorbis: roarvorbis.o
 	${CC} ${LDFLAGS} -o roarvorbis roarvorbis.o $(VORBISLIBS)
 roarshout: roarshout.o
@@ -49,9 +65,13 @@ roarshout: roarshout.o
 polytest: polytest.o
 	${CC} ${LDFLAGS} -o polytest polytest.o $(DSPLIBS)
 pinentrytest: pinentrytest.o
+	$L
 zcattest: zcattest.o
+	$L
 pgptest: pgptest.o
+	$L
 pipetest: pipetest.o
+	$L
 roarfctest: roarfctest.o
 	${CC} ${LDFLAGS} -o roarfctest roarfctest.o $(DSPLIBS)
 
