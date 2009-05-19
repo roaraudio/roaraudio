@@ -41,7 +41,7 @@ void print_header (int codec, int rate, int channels) {
  printf("Content-type: %s\r\n", mime);
  printf("ice-audio-info: ice-samplerate=%i;ice-channels=%i\r\n", rate, channels);
  printf("icy-pub:0\r\n");
- printf("Server: RoarAudio (roarmonhttp $Revision: 1.10 $)\r\n");
+ printf("Server: RoarAudio (roarmonhttp $Revision: 1.11 $)\r\n");
  printf("\r\n");
 
  fflush(stdout);
@@ -202,7 +202,9 @@ int main (int argc, char * argv[]) {
  int dir = ROAR_DIR_MONITOR;
  int gopher = 0;
 
+#ifdef ROAR_HAVE_ALARM
  alarm(0); // reset alarm timers from httpd 
+#endif
 
  if ( argc > 1 )
   if ( ! strcmp(argv[1], "--inetd") )

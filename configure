@@ -644,7 +644,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.169 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.170 $ of RoarAudio
  */
 
 EOF
@@ -936,6 +936,20 @@ echo 'int main (void) { usleep(0); return 0; }' >> $TF_C
 if $CCTF 2> /dev/null;
 then
  echo '#define ROAR_HAVE_USLEEP' >&3
+ echo yes
+else
+ echo no
+fi
+
+echo -n 'checking for alarm()... '
+
+echo '#include <sys/types.h>' >  $TF_C
+echo '#include <unistd.h>'    >> $TF_C
+echo 'int main (void) { alarm(0); return 0; }' >> $TF_C
+
+if $CCTF 2> /dev/null;
+then
+ echo '#define ROAR_HAVE_ALARM' >&3
  echo yes
 else
  echo no
