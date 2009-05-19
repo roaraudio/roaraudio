@@ -216,7 +216,11 @@ ssize_t roar_file_play_full  (struct roar_connection * con, char * file, int exe
  if ( exec && passfh )
   return -1;
 
+#ifdef ROAR_TARGET_WIN32
+ if ( (in = open(file, O_RDONLY|O_BINARY, 0644)) == -1 ) {
+#else
  if ( (in = open(file, O_RDONLY, 0644)) == -1 ) {
+#endif
   return -1;
  }
 
@@ -282,12 +286,20 @@ ssize_t roar_file_play_full  (struct roar_connection * con, char * file, int exe
  }
 
  if ( !seek )
-  write(out, buf, len);
+  ROAR_NETWORK_WRITE(out, buf, len);
 
  if ( !passfh ) {
+#ifndef ROAR_TARGET_WIN32
   r = roar_file_send_raw(out, in);
 
   close(out);
+#else
+ while ((len = read(in, buf, BUFSIZE)) > 0)
+  if ( send(out, buf, len, 0) != len )
+   break;
+
+ closesocket(out);
+#endif
 
   if ( exec ) {
    // TODO: FIXME: this ma cause a memory leak in future
