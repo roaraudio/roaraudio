@@ -41,6 +41,8 @@
 #define SHUT_RD SD_RECEIVE
 #define SHUT_WR SD_SEND
 
+#define sleep(n) Sleep(1000*(n))
+
 #if !defined(ROAR_HAVE_BSDSOCKETS) && !defined(ROAR_HAVE_IPV4)
 #define ROAR_HAVE_IPV4
 #endif
@@ -52,7 +54,6 @@
 #define ROAR_NETWORK_WRITE(x,y,z) write((x), (y), (z))
 #endif
 
-#define sleep(n) Sleep(1000*(n))
 
 #endif
 
