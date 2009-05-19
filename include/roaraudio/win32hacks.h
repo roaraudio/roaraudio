@@ -52,6 +52,8 @@
 #define ROAR_NETWORK_WRITE(x,y,z) write((x), (y), (z))
 #endif
 
+#define sleep(n) Sleep(1000*(n))
+
 #endif
 
 //ll
