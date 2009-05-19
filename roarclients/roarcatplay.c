@@ -52,8 +52,10 @@ int main (int argc, char * argv[]) {
  int    mode    = MODE_SIMPLE;
  int    bg      = 0;
  int    verbose = 0;
+#ifdef ROAR_HAVE_UNIX
  struct roar_connection con[1];
  struct roar_stream     stream[1];
+#endif
 
  for (i = 1; i < argc; i++) {
   k = argv[i];
@@ -85,7 +87,7 @@ int main (int argc, char * argv[]) {
 
 #ifndef ROAR_HAVE_UNIX
  if ( mode == MODE_PASSIVE ) {
-  fprintf(stderr, "Error: passive mode is not supported on this system.\n", k);
+  fprintf(stderr, "Error: passive mode is not supported on this system.\n");
   return 1;
  }
 #endif
