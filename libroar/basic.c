@@ -64,6 +64,7 @@ int roar_connect_raw (char * server) {
  if ( server == NULL || *server == 0 ) {
   /* connect via defaults */
 
+#ifdef ROAR_HAVE_UNIX
 #ifndef ROAR_TARGET_MICROCONTROLLER
   roar_server = getenv("HOME");
 #else
@@ -89,6 +90,7 @@ int roar_connect_raw (char * server) {
 
   if ( (fh = roar_socket_connect(ROAR_DEFAULT_SOCK_GLOBAL, 0)) != -1 )
    return fh;
+#endif
 
   if ( (fh = roar_socket_connect(ROAR_DEFAULT_HOST, ROAR_DEFAULT_PORT)) != -1 )
    return fh;
