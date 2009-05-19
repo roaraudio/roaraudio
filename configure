@@ -111,6 +111,20 @@ else
  echo $CC
 fi
 
+echo -n "checking for ranlib... "
+if [ "$RANLIB" != '' ]
+then
+ echo $RANLIB
+else
+ _guess=`echo $CC | sed 's/[gp]*cc\(-.*\)*//'`
+ RANLIB=$(which ${_guess}ranlib ranlib 2> /dev/null | grep ^/ | head -n 1)
+ if [ "$RANLIB" = '' ]
+ then
+  echo 'none'
+ fi
+ echo $RANLIB
+fi
+
 echo -n "checking for pkg-config... "
 PKG_CONFIG=$(which pkg-config false 2> /dev/null | grep ^/ | head -n 1)
 if $PKG_CONFIG --help > /dev/null 2> /dev/null
@@ -214,6 +228,10 @@ do
   ;;
   '--cc')
    CC="$2"
+   shift;
+  ;;
+  '--ranlib')
+   RANLIB="$2"
    shift;
   ;;
   '--cdrom')
@@ -600,6 +618,7 @@ fi
  $fPIC && echo 'fPIC=-fPIC'
  echo
  echo "CC=$CC"
+ echo "RANLIB=$RANLIB"
  echo "LDPATH=$LDPATH"
  echo "INCPATH=$INCPATH"
  echo
@@ -625,7 +644,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.168 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.169 $ of RoarAudio
  */
 
 EOF
