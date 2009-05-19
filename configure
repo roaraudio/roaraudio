@@ -644,7 +644,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.170 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.171 $ of RoarAudio
  */
 
 EOF
@@ -827,6 +827,31 @@ else
  echo no
 fi
 
+echo -n 'checking for setenv()... '
+
+echo '#include <stdlib.h>'    > $TF_C
+echo 'int main (void) { setenv("", "", 0); return 0; }' >> $TF_C
+
+if $CCTF 2> /dev/null;
+then
+ echo '#define ROAR_HAVE_SETENV' >&3
+ echo yes
+else
+ echo no
+fi
+
+echo -n 'checking for putenv()... '
+
+echo '#include <stdlib.h>'    > $TF_C
+echo 'int main (void) { putenv(""); return 0; }' >> $TF_C
+
+if $CCTF 2> /dev/null;
+then
+ echo '#define ROAR_HAVE_PUTENV' >&3
+ echo yes
+else
+ echo no
+fi
 
 echo -n 'checking for nice()... '
 
