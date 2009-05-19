@@ -37,6 +37,20 @@
 #define MODE_LISTEN  ROAR_SOCKET_MODE_LISTEN
 #define MODE_CONNECT ROAR_SOCKET_MODE_CONNECT
 
+#ifdef ROAR_TARGET_WIN32
+void roar_socket_win32_init (void) {
+ static int inited = 0;
+ WSADATA wsadata;
+
+ if ( !inited ) {
+  WSAStartup(MAKEWORD(1,1) , &wsadata);
+  inited++;
+ }
+}
+#else
+#define roar_socket_win32_init()
+#endif
+
 int roar_socket_new_tcp (void) {
 #ifdef ROAR_HAVE_IPV4
  int fh;
@@ -46,6 +60,8 @@ int roar_socket_new_tcp (void) {
 #ifdef TCP_NODELAY
  int t   = 1;
 #endif
+
+ roar_socket_win32_init();
 
  fh = socket(PF_INET, SOCK_STREAM, 0);
 
@@ -69,6 +85,8 @@ int roar_socket_new_udp (void) {
  int opt = IPTOS_LOWDELAY;
 #endif
 
+ roar_socket_win32_init();
+
  fh = socket(PF_INET, SOCK_DGRAM, 0);
 
 #ifndef ROAR_TARGET_WIN32
@@ -86,6 +104,8 @@ int roar_socket_new_tcp6 (void) {
  int fh;
  int opt = IPTOS_LOWDELAY;
 
+ roar_socket_win32_init();
+
  fh = socket(PF_INET6, SOCK_STREAM, 0);
 
  setsockopt(fh, IPPROTO_IP, IP_TOS, &opt, sizeof(int));
@@ -100,6 +120,8 @@ int roar_socket_new_udp6 (void) {
 #ifdef ROAR_HAVE_IPV6
  int fh;
  int opt = IPTOS_LOWDELAY;
+
+ roar_socket_win32_init();
 
  fh = socket(PF_INET6, SOCK_DGRAM, 0);
 
