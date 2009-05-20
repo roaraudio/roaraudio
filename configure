@@ -598,6 +598,26 @@ then
  fPIC=false
 fi
 
+echo -n 'checking if we cross compile... '
+if $CROSS_COMPILE
+then
+ echo yes
+
+ echo -n "checking for sysname... "
+ if $TARGET_CYGWIN
+ then
+  SYSNAME=cygwin
+ elif $TARGET_WIN32
+ then
+  SYSNAME=win32
+ else
+  SYSNAME=unknown
+ fi
+ echo "$SYSNAME"
+else
+ echo no
+fi
+
 [ "$PREFIX_BIN"  = '' ] && PREFIX_BIN="$PREFIX/bin/"
 [ "$PREFIX_LIB"  = '' ] && PREFIX_LIB="$PREFIX/lib/"
 [ "$PREFIX_INC"  = '' ] && PREFIX_INC="$PREFIX/include/"
@@ -644,7 +664,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.171 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.172 $ of RoarAudio
  */
 
 EOF
