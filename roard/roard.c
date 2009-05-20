@@ -621,7 +621,7 @@ int main (void) {
 
   } else if ( strcmp(k, "--no-listen") == 0 ) {
 #ifdef ROAR_SUPPORT_LISTEN
-   *server     = 0;
+   server      = "";
    g_terminate = 1;
    g_no_listen = 1;
 #endif
