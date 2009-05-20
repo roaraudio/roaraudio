@@ -34,8 +34,17 @@
 
 #include "libroar.h"
 
+// TODO: need to check: && defined(ROAR_HAVE_TTYNAME)
+#if defined(ROAR_HAVE_FORK) && defined(ROAR_HAVE_PIPE)
+#define _CAN_POSIX
+#endif
+
+#if defined(ROAR_HAVE_BIN_PINENTRY) && defined(ROAR_SUPPORT_PASSWORD_API) && defined(_CAN_POSIX)
+#define _CAN_OPERATE
+#endif
+
 int roar_pinentry_open (struct roar_pinentry * pe, int flags, char * display, char * tty, char * term) {
-#if defined(ROAR_HAVE_BIN_PINENTRY) && defined(ROAR_SUPPORT_PASSWORD_API)
+#ifdef _CAN_OPERATE
  int in[2], out[2];
 
  if ( pe == NULL )
@@ -126,7 +135,7 @@ int roar_pinentry_simple_open(struct roar_pinentry * pe) {
 }
 
 int roar_pinentry_close(struct roar_pinentry * pe) {
-#if defined(ROAR_HAVE_BIN_PINENTRY) && defined(ROAR_SUPPORT_PASSWORD_API)
+#ifdef _CAN_OPERATE
  int status;
 
  if ( pe == NULL )
@@ -155,7 +164,7 @@ int roar_pinentry_close(struct roar_pinentry * pe) {
 }
 
 int roar_pinentry_send (struct roar_pinentry * pe, char * cmd,  char * args) {
-#if defined(ROAR_HAVE_BIN_PINENTRY) && defined(ROAR_SUPPORT_PASSWORD_API)
+#ifdef _CAN_OPERATE
  size_t len;
 
  if ( pe == NULL )
@@ -191,7 +200,7 @@ int roar_pinentry_send (struct roar_pinentry * pe, char * cmd,  char * args) {
 
 #define MAX_LINE_SIZE 2048
 int roar_pinentry_recv (struct roar_pinentry * pe, char ** line, char ** opts) {
-#if defined(ROAR_HAVE_BIN_PINENTRY) && defined(ROAR_SUPPORT_PASSWORD_API)
+#ifdef _CAN_OPERATE
  char realbuf[MAX_LINE_SIZE];
  char * tp;
 
