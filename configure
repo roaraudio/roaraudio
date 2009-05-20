@@ -664,7 +664,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.172 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.173 $ of RoarAudio
  */
 
 EOF
@@ -1368,7 +1368,7 @@ EOF
 
 if $CCTF 2> /dev/null;
 then
- $EXEC_HELPER $TF_E >&3
+ $EXEC_HELPER $TF_E >&3 2> /dev/null
  if [ "$?" = '0' ]
  then
   echo yes
@@ -1403,7 +1403,7 @@ int main (void) {
 EOF
  if $CCTF 2> /dev/null;
  then
-  $EXEC_HELPER $TF_E >&3
+  $EXEC_HELPER $TF_E >&3 2> /dev/null
  else
   echo 'error, can not compile'
   exit 1
@@ -1445,7 +1445,7 @@ int main (void) {
 EOF
  if $CCTF 2> /dev/null;
  then
-  $EXEC_HELPER $TF_E >&3
+  $EXEC_HELPER $TF_E >&3 2> /dev/null
  else
   echo 'error, can not compile'
   exit 1
