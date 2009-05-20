@@ -408,6 +408,7 @@ do
    RUNTIME_DETECT=true
    no_lib_dnet=true
    PROXY=false
+   LIBAO=false
    XMMS=false
    AUDACIOUS=false
    WITHOUT_VIO="$WITHOUT_VIO"' pipe cmd' # hope that with buffered pipes we can remove this soon
@@ -603,6 +604,25 @@ if $CROSS_COMPILE
 then
  echo yes
 
+ echo -n "checking for exec helper... "
+ if [ "$EXEC_HELPER" = '' ]
+ then
+  if $TARGET_WIN32
+  then
+   EXEC_HELPER=$(which wine 2> /dev/null | grep ^/ | head -n 1)
+   if [ "$EXEC_HELPER" = '' ]
+   then
+    echo 'none (please install wine)'
+   else
+    echo "$EXEC_HELPER"
+   fi
+  else
+   echo 'none (unknown)'
+  fi
+ else
+  echo "$EXEC_HELPER"
+ fi
+
  echo -n "checking for sysname... "
  if $TARGET_CYGWIN
  then
@@ -664,7 +684,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.174 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.175 $ of RoarAudio
  */
 
 EOF
