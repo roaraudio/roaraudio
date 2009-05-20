@@ -410,7 +410,7 @@ do
    PROXY=false
    XMMS=false
    AUDACIOUS=false
-   WITHOUT_VIO="$WITHOUT_VIO"' pipe' # hope that with buffered pipes we can remove this soon
+   WITHOUT_VIO="$WITHOUT_VIO"' pipe cmd' # hope that with buffered pipes we can remove this soon
   ;;
  esac;
 
@@ -664,7 +664,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.173 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.174 $ of RoarAudio
  */
 
 EOF
