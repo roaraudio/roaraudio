@@ -1,5 +1,7 @@
 v. 0.2rc3 - ?
-	* do a some mor testings for functions not existing on win32
+	* do a some more testings for functions not existing on win32
+	* init winsock
+	* done a lot fixes in order to get libroar and some clients work on win32
 
 v. 0.2rc2 - Sun May 17 2009 25:44
 	* corrected check for GNU peercred
