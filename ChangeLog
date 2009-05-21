@@ -1,4 +1,4 @@
-v. 0.2rc3 - ?
+v. 0.2 - ?
 	* do a some more testings for functions not existing on win32
 	* init winsock
 	* done a lot fixes in order to get libroar and some clients work on win32
