@@ -733,7 +733,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.178 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.179 $ of RoarAudio
  */
 
 EOF
@@ -919,6 +919,7 @@ fi
 #                 def                 name      call                         -- header
 test_func_defmake ROAR_HAVE_SETENV    setenv    'setenv("", "", 0)'          -- stdlib.h
 test_func_defmake ROAR_HAVE_PUTENV    putenv    'putenv("")'                 -- stdlib.h
+test_func_defmake ROAR_HAVE_STRTOK_R  strtok_r  'strtok_r("","",(char**)0)'  -- string.h
 test_func_defmake ROAR_HAVE_NICE      nice      'nice(0)'                    -- unistd.h
 test_func_defmake ROAR_HAVE_GETGID    getgid    'getgid()'                   -- sys/types.h unistd.h
 test_func_defmake ROAR_HAVE_GETUID    getuid    'getuid()'                   -- sys/types.h unistd.h

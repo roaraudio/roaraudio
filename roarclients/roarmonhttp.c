@@ -45,7 +45,7 @@ void print_header (int codec, int rate, int channels) {
  printf("Content-type: %s\r\n", mime);
  printf("ice-audio-info: ice-samplerate=%i;ice-channels=%i\r\n", rate, channels);
  printf("icy-pub:0\r\n");
- printf("Server: RoarAudio (roarmonhttp $Revision: 1.12 $)\r\n");
+ printf("Server: RoarAudio (roarmonhttp $Revision: 1.13 $)\r\n");
  printf("\r\n");
 
  fflush(stdout);
@@ -231,11 +231,23 @@ int main (int argc, char * argv[]) {
    return 1;
 #endif
 
+#ifdef ROAR_HAVE_STRTOK_R
  c = strtok_r(getenv("QUERY_STRING"), "&", &sp0);
+#else
+ c = strtok(getenv("QUERY_STRING"), "&");
+#endif
 
  while (c != NULL) {
+#ifdef ROAR_HAVE_STRTOK_R
   k = strtok_r(c,    "=", &sp1);
   v = strtok_r(NULL, "=", &sp1);
+#else
+  k = c;
+  if ( (v = strstr(c, "=")) != NULL ) {
+   *v = 0;
+   v++;
+  }
+#endif
 
   if ( !strcmp(k, "codec") ) {
    if ( (codec = roar_str2codec(v)) == -1 )
@@ -250,7 +262,11 @@ int main (int argc, char * argv[]) {
    return 1;
   }
 
+#ifdef ROAR_HAVE_STRTOK_R
   c = strtok_r(NULL, "&", &sp0);
+#else
+  c = strtok(NULL, "&");
+#endif
  }
 
 
