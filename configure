@@ -733,7 +733,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.176 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.177 $ of RoarAudio
  */
 
 EOF
@@ -916,158 +916,18 @@ else
  echo no
 fi
 
-echo -n 'checking for setenv()... '
-
-echo '#include <stdlib.h>'    > $TF_C
-echo 'int main (void) { setenv("", "", 0); return 0; }' >> $TF_C
-
-if $CCTF 2> /dev/null;
-then
- echo '#define ROAR_HAVE_SETENV' >&3
- echo yes
-else
- echo no
-fi
-
-echo -n 'checking for putenv()... '
-
-echo '#include <stdlib.h>'    > $TF_C
-echo 'int main (void) { putenv(""); return 0; }' >> $TF_C
-
-if $CCTF 2> /dev/null;
-then
- echo '#define ROAR_HAVE_PUTENV' >&3
- echo yes
-else
- echo no
-fi
-
-echo -n 'checking for nice()... '
-
-echo '#include <unistd.h>'    > $TF_C
-echo 'int main (void) { nice(0); return 0; }' >> $TF_C
-
-if $CCTF 2> /dev/null;
-then
- echo '#define ROAR_HAVE_NICE' >&3
- echo yes
-else
- echo no
-fi
-
-echo -n 'checking for getgid()... '
-
-echo '#include <sys/types.h>' >  $TF_C
-echo '#include <unistd.h>'    >> $TF_C
-echo 'int main (void) { getgid(); return 0; }' >> $TF_C
-
-if $CCTF 2> /dev/null;
-then
- echo '#define ROAR_HAVE_GETGID' >&3
- echo yes
-else
- echo no
-fi
-
-
-echo -n 'checking for getuid()... '
-
-echo '#include <sys/types.h>' >  $TF_C
-echo '#include <unistd.h>'    >> $TF_C
-echo 'int main (void) { getuid(); return 0; }' >> $TF_C
-
-if $CCTF 2> /dev/null;
-then
- echo '#define ROAR_HAVE_GETUID' >&3
- echo yes
-else
- echo no
-fi
-
-echo -n 'checking for setgid()... '
-
-echo '#include <sys/types.h>' >  $TF_C
-echo '#include <unistd.h>'    >> $TF_C
-echo 'int main (void) { setgid(0); return 0; }' >> $TF_C
-
-if $CCTF 2> /dev/null;
-then
- echo '#define ROAR_HAVE_SETGID' >&3
- echo yes
-else
- echo no
-fi
-
-
-echo -n 'checking for setuid()... '
-
-echo '#include <sys/types.h>' >  $TF_C
-echo '#include <unistd.h>'    >> $TF_C
-echo 'int main (void) { setuid(0); return 0; }' >> $TF_C
-
-if $CCTF 2> /dev/null;
-then
- echo '#define ROAR_HAVE_SETUID' >&3
- echo yes
-else
- echo no
-fi
-
-echo -n 'checking for setsid()... '
-echo '#include <sys/types.h>' >  $TF_C
-echo '#include <unistd.h>'    >> $TF_C
-echo 'int main (void) { setsid(); return 0; }' >> $TF_C
-
-if $CCTF 2> /dev/null;
-then
- echo '#define ROAR_HAVE_SETSID' >&3
- echo yes
-else
- echo no
-fi
-
-
-echo -n 'checking for gettimeofday()... '
-
-echo '#include <sys/time.h>' >  $TF_C
-echo '#include <time.h>'     >> $TF_C
-echo 'int main (void) { struct timeval tv; gettimeofday(&tv, NULL); return 0; }' >> $TF_C
-
-if $CCTF 2> /dev/null;
-then
- echo '#define ROAR_HAVE_GETTIMEOFDAY' >&3
- echo yes
-else
- echo no
-fi
-
-echo -n 'checking for usleep()... '
-
-echo '#include <sys/types.h>' >  $TF_C
-echo '#include <unistd.h>'    >> $TF_C
-echo 'int main (void) { usleep(0); return 0; }' >> $TF_C
-
-if $CCTF 2> /dev/null;
-then
- echo '#define ROAR_HAVE_USLEEP' >&3
- echo yes
-else
- echo no
-fi
-
-echo -n 'checking for alarm()... '
-
-echo '#include <sys/types.h>' >  $TF_C
-echo '#include <unistd.h>'    >> $TF_C
-echo 'int main (void) { alarm(0); return 0; }' >> $TF_C
-
-if $CCTF 2> /dev/null;
-then
- echo '#define ROAR_HAVE_ALARM' >&3
- echo yes
-else
- echo no
-fi
+#                 def                 name      call                         -- header
+test_func_defmake ROAR_HAVE_SETENV    setenv    'setenv("", "", 0)'          -- stdlib.h
+test_func_defmake ROAR_HAVE_PUTENV    putenv    'putenv("")'                 -- stdlib.h
+test_func_defmake ROAR_HAVE_NICE      nice      'nice(0)'                    -- unistd.h
+test_func_defmake ROAR_HAVE_GETGID    getgid    'getgid()'                   -- sys/types.h unistd.h
+test_func_defmake ROAR_HAVE_GETUID    getuid    'getuid()'                   -- sys/types.h unistd.h
+test_func_defmake ROAR_HAVE_SETGID    setgid    'setgid(0)'                  -- sys/types.h unistd.h
+test_func_defmake ROAR_HAVE_SETUID    setuid    'setuid(0)'                  -- sys/types.h unistd.h
+test_func_defmake ROAR_HAVE_SETSID    setsid    'setsid()'                   -- sys/types.h unistd.h
+test_func_defmake ROAR_HAVE_GETTIMEOFDAY gettimeofday 'struct timeval tv; gettimeofday(&tv, NULL)' -- sys/time.h time.h
+test_func_defmake ROAR_HAVE_USLEEP    usleep    'usleep(0)'                  -- sys/types.h unistd.h
+test_func_defmake ROAR_HAVE_ALARM     alarm     'alarm(0)'                   -- sys/types.h unistd.h
 
 echo -n 'checking for basic IO calls... '
 
@@ -1118,45 +978,9 @@ else
 fi
 
 
-echo -n 'checking for chroot()... '
-
-echo '#include <unistd.h>' > $TF_C
-echo 'int main (void) { chroot((void*)0); return 0; }' >> $TF_C
-
-if $CCTF 2> /dev/null;
-then
- echo '#define ROAR_HAVE_CHROOT' >&3
- echo yes
-else
- echo no
-fi
-
-
-echo -n 'checking for mlock()... '
-
-echo '#include <sys/mman.h>' > $TF_C
-echo 'int main (void) { mlock((void*)0, 0); return 0; }' >> $TF_C
-
-if $CCTF 2> /dev/null;
-then
- echo '#define ROAR_HAVE_MLOCK' >&3
- echo yes
-else
- echo no
-fi
-
-echo -n 'checking for mmap()... '
-
-echo '#include <sys/mman.h>' > $TF_C
-echo 'int main (void) { mmap((void*)0, 0, 0, 0, 0, 0); return 0; }' >> $TF_C
-
-if $CCTF 2> /dev/null;
-then
- echo '#define ROAR_HAVE_MMAP' >&3
- echo yes
-else
- echo no
-fi
+test_func_defmake ROAR_HAVE_CHROOT    chroot    'chroot((void*)0)'           -- unistd.h
+test_func_defmake ROAR_HAVE_MLOCK     mlock     'mlock((void*)0, 0)'         -- sys/mman.h
+test_func_defmake ROAR_HAVE_MMAP      mmap      'mmap((void*)0,0,0,0,0,0)'   -- sys/mman.h
 
 echo -n 'checking for fsync()... '
 
@@ -1218,45 +1042,9 @@ else
  echo no
 fi
 
-echo -n 'checking for pipe()... '
-
-echo '#include <unistd.h>'      > $TF_C
-echo 'int main (void) { pipe(NULL); return 0; }' >> $TF_C
-
-if $CCTF 2> /dev/null;
-then
- echo '#define ROAR_HAVE_PIPE' >&3
- echo yes
-else
- echo no
-fi
-
-echo -n 'checking for fork()... '
-
-echo '#include <unistd.h>'      > $TF_C
-echo 'int main (void) { fork(); return 0; }' >> $TF_C
-
-if $CCTF 2> /dev/null;
-then
- echo '#define ROAR_HAVE_FORK' >&3
- echo yes
-else
- echo no
-fi
-
-echo -n 'checking for wait()... '
-
-echo '#include <string.h>'        >  $TF_C
-echo '#include <sys/wait.h>'      >> $TF_C
-echo 'int main (void) { wait(NULL); return 0; }' >> $TF_C
-
-if $CCTF 2> /dev/null;
-then
- echo '#define ROAR_HAVE_WAIT' >&3
- echo yes
-else
- echo no
-fi
+test_func_defmake ROAR_HAVE_PIPE      pipe      'pipe(NULL)'                 -- unistd.h
+test_func_defmake ROAR_HAVE_FORK      fork      'fork()'                     -- unistd.h
+test_func_defmake ROAR_HAVE_WAIT      wait      'wait(NULL)'                 -- string.h sys/wait.h
 
 echo -n 'checking for square root func... '
 
@@ -1315,18 +1103,8 @@ else
  fi
 fi
 
-echo -n 'checking for getpeereid()... '
-echo '#include <sys/types.h>'      >  $TF_C
-echo '#include <sys/socket.h>'     >> $TF_C
-echo 'int main (void) { getpeereid(0, NULL, NULL); return 0; }'  >> $TF_C
 
-if $CCTF 2> /dev/null;
-then
- echo '#define ROAR_HAVE_GETPEEREID' >&3
- echo yes
-else
- echo no
-fi
+test_func_defmake ROAR_HAVE_GETPEEREID getpeereid 'getpeereid(0, NULL, NULL)' -- sys/types.h sys/socket.h
 
 echo -n 'checking for select()... '
 cat <<EOF > $TF_C
@@ -1388,30 +1166,8 @@ else
  echo no
 fi
 
-echo -n 'checking for getobjectbyname()... '
-echo '#include <netdnet/dn.h>'     >  $TF_C
-echo '#include <netdnet/dnetdb.h>' >> $TF_C
-echo 'int main (void) { getobjectbyname(NULL); return 0; }'  >> $TF_C
-
-if $CCTF 2> /dev/null;
-then
- echo '#define ROAR_HAVE_GETOBJECTBYNAME' >&3
- echo yes
-else
- echo no
-fi
-
-echo -n 'checking for getservbyname()... '
-echo '#include <netdb.h>' > $TF_C
-echo 'int main (void) { getservbyname((void*)0, (void*)0); return 0; }'  >> $TF_C
-
-if $CCTF 2> /dev/null;
-then
- echo '#define ROAR_HAVE_GETSERVBYNAME' >&3
- echo yes
-else
- echo no
-fi
+test_func_defmake ROAR_HAVE_GETOBJECTBYNAME getobjectbyname 'getobjectbyname(NULL)' -- netdnet/dn.h netdnet/dnetdb.h
+test_func_defmake ROAR_HAVE_GETSERVBYNAME   getservbyname   'getservbyname((void*)0, (void*)0)' -- netdb.h
 
 echo -n 'checking for safe 32 bit integer overflow... '
 
