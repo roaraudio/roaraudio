@@ -30,19 +30,30 @@
 
 #define ROAR_DIR_DEFAULT ROAR_DIR_PLAY
 
-#define ROAR_DIR_PLAY     1
-#define ROAR_DIR_RECORD   2
-#define ROAR_DIR_MONITOR  3
-#define ROAR_DIR_FILTER   4
+#define ROAR_DIR_PLAY        1
+#define ROAR_DIR_RECORD      2
+#define ROAR_DIR_MONITOR     3
+#define ROAR_DIR_FILTER      4
 
-#define ROAR_DIR_OUTPUT   5
+#define ROAR_DIR_OUTPUT      5
 
-#define ROAR_DIR_MIXING   6
+#define ROAR_DIR_MIXING      6
 //#define ROAR_DIR_INTERNAL 7
 
-#define ROAR_DIR_META     8
-#define ROAR_DIR_BIDIR    9
-#define ROAR_DIR_DIRIDS  10
+#define ROAR_DIR_META        8
+#define ROAR_DIR_BIDIR       9
+
+#define ROAR_DIR_THRU       10
+
+#define ROAR_DIR_MIDI_IN    11
+#define ROAR_DIR_MIDI_OUT   12
+#define ROAR_DIR_MIDI_THRU  13
+
+#define ROAR_DIR_LIGHT_IN   14
+#define ROAR_DIR_LIGHT_OUT  15
+#define ROAR_DIR_LIGHT_THRU 16
+
+#define ROAR_DIR_DIRIDS     17
 
 
 #define ROAR_CARE_NOPOS  0
