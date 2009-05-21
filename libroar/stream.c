@@ -71,11 +71,13 @@ int roar_stream_new (struct roar_stream * s, unsigned int rate,
 
  s->dir        = ROAR_DIR_DEFAULT;
 
+/*
  s->datalen    = 0;
  s->offset     = 0;
 
  s->database   = NULL;
  s->dataoff    = NULL;
+*/
 
  s->info.rate     = rate;
  s->info.channels = channels;

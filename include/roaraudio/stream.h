@@ -75,10 +75,12 @@ struct roar_stream {
 
  struct roar_audio_info info;
 
+/*
  int    datalen;
  char * database;
  int    offset;
  char * dataoff;
+*/
 };
 
 #endif

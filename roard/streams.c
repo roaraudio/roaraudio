@@ -71,10 +71,12 @@ int streams_new    (void) {
    n->id         = i;
    n->fh         = -1;
 //   n->pos_rel_id = i;
+/*
    n->database   = NULL;
    n->dataoff    = NULL;
    n->datalen    = 0;
    n->offset     = 0;
+*/
    n->pos        = 0;
 
    s->client          = -1;
