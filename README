@@ -50,7 +50,7 @@ AND VERSION					VERSION
 ---------------------------------------------------------------------------------------------------
 Debian Etch		ix86	gcc 4.1.2	current	s/OK
 Debian Etch		x86_64	gcc 4.1.2	last	s/OK
-Debian Lenny		ix86	gcc 4.3.2	0.2rc2	s/OK
+Debian Lenny		ix86	gcc 4.3.2	0.2	s/OK
 Ubuntu 9.04		ix86	gcc 4.3.3	0.2rc2	s/OK
 archlinux ?		i686	gcc 4.3.2	0.2rc2	M/OK
 NetBSD 1.6.1		Alpha	gcc 2.95.3	last	s/OK		gcc too old,
@@ -58,7 +58,7 @@ NetBSD 1.6.1		Alpha	gcc 2.95.3	last	s/OK		gcc too old,
 NetBSD 4.0		i386	gcc 4.1.2	0.2	s/OK		need to use --roard-cfreq 20
 NetBSD 5		x86_64	gcc 4.1.3	0.2b?	s/?
 OpenBSD	?		x86_64	gcc ?		0.2rc2	m/OK
-OpenBSD	4.4		i386	gcc 3.3.5	0.2b2	m/OK
+OpenBSD	4.4		i386	gcc 3.3.5	0.2	m/OK
 OpenBSD	4.5		i386	gcc 3.3.5	0.2rc2	m/OK
 FreeBSD 6.2		i386	gcc 3.4.6	0.1b4	s/OK
 FreeBSD 7.1		i386	gcc 4.2.1	0.2	s/OK
