@@ -579,7 +579,7 @@ test_func_defmake () {
  {
   while [ "$1" != '' ]
   do
-   echo "#include <$1>" >> $TF_C
+   echo "#include <$1>"
    shift;
   done
 
@@ -733,7 +733,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.177 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.178 $ of RoarAudio
  */
 
 EOF
