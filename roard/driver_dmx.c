@@ -39,6 +39,9 @@ int driver_dmx_open_vio  (struct roar_vio_calls * inst, char * device, struct ro
  }
 
  inst->write = driver_dmx_write;
+ inst->ctl   = driver_dmx_ctl;
+
+ info->codec = ROAR_CODEC_DMX512;
 
  return 0;
 }
@@ -54,6 +57,22 @@ ssize_t driver_dmx_write (struct roar_vio_calls * vio,  void *buf, size_t count)
   return -1;
 
  return write(roar_vio_get_fh(vio), buf, count);
+}
+
+int driver_dmx_ctl(struct roar_vio_calls * vio, int cmd, void * data) {
+
+ if ( vio == NULL )
+  return -1;
+
+ switch (cmd) {
+  case ROAR_VIO_CTL_SET_SSTREAM:
+    ROAR_STREAM(data)->dir = ROAR_DIR_LIGHT_OUT;
+   break;
+  default:
+   return -1;
+ }
+
+ return 0;
 }
 
 //ll
