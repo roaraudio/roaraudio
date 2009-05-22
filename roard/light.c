@@ -24,4 +24,41 @@
 
 #include "roard.h"
 
+int light_init  (unsigned int channels) {
+
+ if ( (g_light_state.state = malloc(channels)) == NULL ) {
+  return -1;
+ }
+
+ g_light_state.channels = channels;
+
+ return light_reset();
+}
+
+int light_free  (void) {
+ if ( g_light_state.state != NULL ) {
+  free(g_light_state.state);
+ }
+
+ g_light_state.channels = 0;
+
+ return 0;
+}
+
+int light_reset (void) {
+ if ( g_light_state.channels == 0 )
+  return 0;
+
+ if ( g_light_state.state == NULL )
+  return -1;
+
+ memset(g_light_state.state, 0, g_light_state.channels);
+
+ return 0;
+}
+
+int light_update(void) {
+ return 0;
+}
+
 //ll
