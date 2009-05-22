@@ -82,6 +82,7 @@ int req_on_whoami      (int client, struct roar_message * mes, char * data) {
 int req_on_new_stream  (int client, struct roar_message * mes, char * data) {
  int stream;
  struct roar_stream * s;
+ struct roar_audio_info * info;
 
  if ((stream = streams_new()) == -1 )
   return -1;
@@ -103,6 +104,18 @@ int req_on_new_stream  (int client, struct roar_message * mes, char * data) {
 
  ROAR_STREAM(s)->id = stream; // roar_stream_m2s() resets this
  ROAR_STREAM_SERVER(s)->codec_orgi = ROAR_STREAM(s)->info.codec;
+
+ switch (ROAR_STREAM(s)->dir) {
+  case ROAR_DIR_LIGHT_IN:
+  case ROAR_DIR_LIGHT_OUT:
+    info = &(ROAR_STREAM(s)->info);
+
+    info->channels = 0;
+    info->bits     = 0;
+    info->rate     = 0;
+
+   break;
+ }
 
  mes->cmd     = ROAR_CMD_OK;
  mes->stream  = stream;
