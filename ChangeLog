@@ -1,6 +1,8 @@
 v. 0.3beta0 - ?
 	* added new stream directions for MIDI and light control
 	* cleanup of client stream struct
+	* added basic light control subsystem
+	* added DMX512 driver
 
 v. 0.2 - Thu May 21 2009 21:00
 	* do a some more testings for functions not existing on win32
