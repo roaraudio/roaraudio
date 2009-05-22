@@ -441,6 +441,63 @@ int roar_stream_m2s     (struct roar_stream * s, struct roar_message * m) {
  return 0;
 }
 
+// stream direction funcs:
+/*
+#define roar_dir2str(x)   ((x) == ROAR_DIR_PLAY   ? "play"   : (x) == ROAR_DIR_MONITOR ? "monitor" : \
+                           (x) == ROAR_DIR_FILTER ? "filter" : (x) == ROAR_DIR_RECORD  ? "record"  : \
+                           (x) == ROAR_DIR_OUTPUT ? "output" : (x) == ROAR_DIR_BIDIR   ? "bidir"   : \
+                           (x) == ROAR_DIR_MIXING ? "mixing" : \
+                           "unknown")
+*/
+
+char * roar_dir2str (int dir) {
+ switch (dir) {
+  case ROAR_DIR_PLAY:
+    return "play";
+   break;
+  case ROAR_DIR_RECORD:
+    return "record";
+   break;
+  case ROAR_DIR_MONITOR:
+    return "monitor";
+   break;
+  case ROAR_DIR_FILTER:
+    return "filter";
+   break;
+  case ROAR_DIR_OUTPUT:
+    return "output";
+   break;
+  case ROAR_DIR_MIXING:
+    return "mixing";
+   break;
+  case ROAR_DIR_META:
+    return "meta";
+   break;
+  case ROAR_DIR_BIDIR:
+    return "bidir";
+   break;
+  case ROAR_DIR_THRU:
+    return "thru";
+   break;
+  case ROAR_DIR_BRIDGE:
+    return "bridge";
+   break;
+  case ROAR_DIR_MIDI_IN:
+    return "midi_in";
+   break;
+  case ROAR_DIR_MIDI_OUT:
+    return "midi_out";
+   break;
+  case ROAR_DIR_LIGHT_IN:
+    return "light_in";
+   break;
+  case ROAR_DIR_LIGHT_OUT:
+    return "light_out";
+   break;
+  default:
+    return "unknown";
+ }
+}
 
 // codec funcs:
 
