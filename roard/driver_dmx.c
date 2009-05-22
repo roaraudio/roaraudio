@@ -67,6 +67,7 @@ int driver_dmx_ctl(struct roar_vio_calls * vio, int cmd, void * data) {
  switch (cmd) {
   case ROAR_VIO_CTL_SET_SSTREAM:
     ROAR_STREAM(data)->dir = ROAR_DIR_LIGHT_OUT;
+    ROAR_STREAM_SERVER(data)->codec_orgi = ROAR_CODEC_DMX512;
    break;
   default:
    return -1;
