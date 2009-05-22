@@ -258,9 +258,13 @@ void list_streams (struct roar_connection * con) {
   }
   if ( g_verbose > 1 )
    printf("Position              : %lu S (%.3fs)\n", (unsigned long int) s.pos, (float)s.pos/(s.info.rate*s.info.channels));
-  printf("Input rate            : %i\n", s.info.rate);
-  printf("Input bits            : %i\n", s.info.bits);
-  printf("Input channels        : %i\n", s.info.channels);
+
+  if ( s.dir != ROAR_DIR_LIGHT_IN && s.dir != ROAR_DIR_LIGHT_OUT ) {
+   printf("Input rate            : %i\n", s.info.rate);
+   printf("Input bits            : %i\n", s.info.bits);
+   printf("Input channels        : %i\n", s.info.channels);
+  }
+
   printf("Input codec           : %2i (%s%s)\n", s.info.codec, roar_codec2str(s.info.codec),
                                        s.info.codec == ROAR_CODEC_DEFAULT ? " native" : "");
   if ( roar_stream_get_info(con, &s, &info) != -1 ) {
