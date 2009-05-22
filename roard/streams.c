@@ -839,11 +839,20 @@ int streams_check  (int id) {
  if ( (fh = s->fh) == -1 )
   return 0;
 
- if ( s->dir != ROAR_DIR_PLAY && s->dir != ROAR_DIR_BIDIR )
-  return 0;
-
  if ( streams_get_flag(id, ROAR_FLAG_PAUSE) )
   return 0;
+
+ switch (s->dir) {
+  case ROAR_DIR_LIGHT_IN:
+    return light_check_stream(id);
+   break;
+  case ROAR_DIR_PLAY:
+  case ROAR_DIR_BIDIR:
+   break;
+  default:
+    return 0;
+   break;
+ }
 
  ROAR_DBG("streams_check(id=%i): fh = %i", id, fh);
 
@@ -931,14 +940,26 @@ int streams_send_mon   (int id) {
   return 0;
 */
 
- if ( s->dir != ROAR_DIR_MONITOR && s->dir != ROAR_DIR_OUTPUT && s->dir != ROAR_DIR_BIDIR )
-  return 0;
-
- if ( s->dir == ROAR_DIR_OUTPUT && g_standby )
-  return 0;
 
  if ( streams_get_flag(id, ROAR_FLAG_PAUSE) )
   return 0;
+
+ switch (s->dir) {
+  case ROAR_DIR_LIGHT_OUT:
+    return light_send_stream(id);
+   break;
+  case ROAR_DIR_OUTPUT:
+    if ( g_standby )
+     return 0;
+  case ROAR_DIR_MONITOR:
+  case ROAR_DIR_BIDIR:
+   break;
+
+  default:
+    return 0;
+   break;
+ }
+
 
  ROAR_DBG("streams_send_mon(id=%i): fh = %i", id, s->fh);
 

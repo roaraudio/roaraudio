@@ -63,4 +63,12 @@ int light_update(void) {
  return 0;
 }
 
+int light_check_stream  (int id) {
+ return 0;
+}
+
+int light_send_stream   (int id) {
+ return 0;
+}
+
 //ll
