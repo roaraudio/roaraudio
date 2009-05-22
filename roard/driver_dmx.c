@@ -26,11 +26,13 @@
 
 int driver_dmx_open_vio  (struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh) {
 
- if ( device == NULL ) {
-  return -1;
- }
-
  if ( fh == -1 ) {
+  if ( device == NULL )
+   device = getenv("DMX");
+
+  if ( device == NULL )
+   device = "/dev/dmx";
+
   if ( roar_vio_open_file(inst, device, O_WRONLY, 0644) == -1 )
    return -1;
  } else {
