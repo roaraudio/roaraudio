@@ -299,8 +299,11 @@ void list_streams (struct roar_connection * con) {
     printf("Flags                 : %s\n", flags);
    }
   }
-  display_mixer(con, id[i]);
-  show_meta_all(con, id[i]);
+
+  if ( s.dir != ROAR_DIR_THRU ) {
+   display_mixer(con, id[i]);
+   show_meta_all(con, id[i]);
+  }
  }
 
 }
