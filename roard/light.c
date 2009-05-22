@@ -64,10 +64,61 @@ int light_update(void) {
 }
 
 int light_check_stream  (int id) {
+ int len;
+ struct roar_stream        *   s;
+ struct roar_stream_server *  ss;
+
+ if ( g_streams[id] == NULL )
+  return -1;
+
+ ROAR_DBG("light_check_stream(id=%i) = ?", id);
+
+ s = ROAR_STREAM(ss = g_streams[id]);
+
  return 0;
 }
 
 int light_send_stream   (int id) {
+ int chans;
+ struct roar_stream        *   s;
+ struct roar_stream_server *  ss;
+ char buf[512];
+
+ if ( g_streams[id] == NULL )
+  return -1;
+
+ ROAR_DBG("light_check_stream(id=%i) = ?", id);
+
+ s = ROAR_STREAM(ss = g_streams[id]);
+
+ switch (s->info.codec) {
+  case ROAR_CODEC_DMX512:
+    chans = g_light_state.channels;
+
+    if ( chans > 512 )
+     chans = 512;
+
+    if ( stream_vio_s_write(ss, g_light_state.state, chans) != chans ) {
+     streams_delete(id);
+     return -1;
+    }
+
+    if ( chans < 512 ) {
+     chans = 512 - chans;
+     memset(buf, 0, chans);
+     if ( stream_vio_s_write(ss, g_light_state.state, chans) != chans ) {
+      streams_delete(id);
+      return -1;
+     }
+    }
+
+    return 0;
+   break;
+  default:
+    streams_delete(id);
+    return -1;
+ }
+
  return 0;
 }
 
