@@ -36,6 +36,9 @@ void usage (void) {
         "  --bits  -B  BITS      - Set bits per sample\n"
         "  --chans -C  CHANNELS  - Set number of channels\n"
         "  --codec     CODEC     - Set the codec\n"
+        "  --wave                - Use Wave Audio (PCM) as input\n"
+        "  --midi                - Use MIDI Audio as input\n"
+        "  --light               - Use light control input\n"
         "  --help                - Show this help\n"
        );
 
@@ -46,6 +49,7 @@ int main (int argc, char * argv[]) {
  int    bits     = ROAR_BITS_DEFAULT;
  int    channels = ROAR_CHANNELS_DEFAULT;
  int    codec    = ROAR_CODEC_DEFAULT;
+ int    dir      = ROAR_DIR_PLAY;
  char * server   = NULL;
  char * k;
  int    fh;
@@ -73,6 +77,14 @@ int main (int argc, char * argv[]) {
    channels = 1;
   } else if ( !strcmp(k, "--codec") ) {
    codec = roar_str2codec(argv[++i]);
+
+  } else if ( !strcmp(k, "--wave") ) {
+   dir   = ROAR_DIR_PLAY;
+  } else if ( !strcmp(k, "--midi") ) {
+   dir   = ROAR_DIR_MIDI_IN;
+  } else if ( !strcmp(k, "--light") ) {
+   dir   = ROAR_DIR_LIGHT_IN;
+
   } else if ( !strcmp(k, "--help") || !strcmp(k, "-h") ) {
    usage();
    return 0;
@@ -88,7 +100,7 @@ int main (int argc, char * argv[]) {
   }
  }
 
- if ( (fh = roar_simple_play(rate, channels, bits, codec, server, name)) == -1 ) {
+ if ( (fh = roar_simple_stream(rate, channels, bits, codec, server, dir, name)) == -1 ) {
   fprintf(stderr, "Error: can not start playback\n");
   return 1;
  }

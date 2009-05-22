@@ -36,6 +36,10 @@ void usage (void) {
         "  --bits  -B BITS      - Set bits per sample\n"
         "  --chans -C CHANNELS  - Set number of channels\n"
         "  --codec    CODEC     - Set the codec\n"
+        "  --wave               - Output Wave Audio (PCM)\n"
+        "  --midi               - Output MIDI Audio\n"
+        "  --light              - Output light control\n"
+        "  --thru               - Output copy of other stream\n"
         "  --help               - Show this help\n"
        );
 
@@ -46,6 +50,7 @@ int main (int argc, char * argv[]) {
  int    bits     = ROAR_BITS_DEFAULT;
  int    channels = ROAR_CHANNELS_DEFAULT;
  int    codec    = ROAR_CODEC_DEFAULT;
+ int    dir      = ROAR_DIR_MONITOR;
  char * server   = NULL;
  char * k;
  int    fh;
@@ -72,6 +77,16 @@ int main (int argc, char * argv[]) {
    channels = 2;
   } else if ( !strcmp(k, "--codec") ) {
    codec = roar_str2codec(argv[++i]);
+
+  } else if ( !strcmp(k, "--wave") ) {
+   dir   = ROAR_DIR_MONITOR;
+  } else if ( !strcmp(k, "--midi") ) {
+   dir   = ROAR_DIR_MIDI_OUT;
+  } else if ( !strcmp(k, "--light") ) {
+   dir   = ROAR_DIR_LIGHT_OUT;
+  } else if ( !strcmp(k, "--thru") ) {
+   dir   = ROAR_DIR_THRU;
+
   } else if ( !strcmp(k, "--help") || !strcmp(k, "-h") ) {
    usage();
    return 0;
@@ -90,7 +105,7 @@ int main (int argc, char * argv[]) {
  if ( out == -1 )
   out = ROAR_STDOUT;
 
- if ( (fh = roar_simple_monitor(rate, channels, bits, codec, server, "roarmon")) == -1 ) {
+ if ( (fh = roar_simple_stream(rate, channels, bits, codec, server, dir, "roarmon")) == -1 ) {
   fprintf(stderr, "Error: can not start monitoring\n");
   return 1;
  }
