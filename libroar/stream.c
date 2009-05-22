@@ -542,6 +542,7 @@ struct {
 
  // MIDI:
  {ROAR_CODEC_MIDI_FILE,   "midi_file"  },
+ {ROAR_CODEC_MIDI,        "midi"       },
 
  // XIPH:
  {ROAR_CODEC_OGG_VORBIS,  "ogg_vorbis" },
@@ -575,6 +576,9 @@ struct {
  {ROAR_CODEC_META_RALB_LE,  "meta_ralb_le" },
  {ROAR_CODEC_META_RALB_BE,  "meta_ralb_be" },
  {ROAR_CODEC_META_RALB_PDP, "meta_ralb_pdp"},
+
+ // light control:
+ {ROAR_CODEC_DMX512,      "dmx512"     },
 
  {-1, NULL}
 };

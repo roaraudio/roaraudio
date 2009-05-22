@@ -85,7 +85,7 @@
  |||||\-----> unsigned? (or other flags)
  ||||\------> META: text(0) or binary(1)
  |||\-------> META(0)/CONTAINER(1)
- ||\--------> (0)
+ ||\--------> Specal codecs(0)
  |\---------> second set(1)
  \----------> (0)
 
@@ -105,6 +105,25 @@
       0011 0x53 -> OpenPGP bin
       0100 0x54 -> OpenPGP asc
       0101 0x55 -> TAR
+
+ Bits:
+ 76543210
+ |||||||\---\ byte-
+ ||||||\----/ order
+ |||||\-----> unsigned? (or other flags)
+ ||||\------> (0)
+ |||\-------> MIDI(0)/Light(1)
+ ||\--------> MIDI and Light(1)
+ |\---------> second set(1)
+ \----------> (0)
+
+ MIDI 0x60:
+  76543210
+      0000 -> MIDI
+
+ Light 0x70:
+  76543210
+      0000 -> DMX512
 
 */
 
@@ -177,6 +196,10 @@
 #define ROAR_CODEC_CONT_OPGPBIN 0x53
 #define ROAR_CODEC_CONT_OPGPASC 0x54
 #define ROAR_CODEC_CONT_TAR     0x55
+
+
+#define ROAR_CODEC_MIDI         0x60
+#define ROAR_CODEC_DMX512       0x70
 
 #if BYTE_ORDER == BIG_ENDIAN
 
