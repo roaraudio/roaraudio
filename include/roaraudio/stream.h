@@ -45,15 +45,15 @@
 
 #define ROAR_DIR_THRU       10
 
-#define ROAR_DIR_MIDI_IN    11
-#define ROAR_DIR_MIDI_OUT   12
-#define ROAR_DIR_MIDI_THRU  13
+#define ROAR_DIR_BRIDGE     11
+
+#define ROAR_DIR_MIDI_IN    12
+#define ROAR_DIR_MIDI_OUT   13
 
 #define ROAR_DIR_LIGHT_IN   14
 #define ROAR_DIR_LIGHT_OUT  15
-#define ROAR_DIR_LIGHT_THRU 16
 
-#define ROAR_DIR_DIRIDS     17
+#define ROAR_DIR_DIRIDS     16
 
 
 #define ROAR_CARE_NOPOS  0
