@@ -26,6 +26,8 @@
 
 int light_init  (unsigned int channels) {
 
+ g_light_state.channels = 0;
+
  if ( (g_light_state.state = malloc(channels)) == NULL ) {
   return -1;
  }

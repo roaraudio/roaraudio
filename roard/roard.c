@@ -338,6 +338,7 @@ int main (void) {
  char * o_opts    = NULL;
  int    o_prim    = 0;
  int    o_count   = 0;
+ int    light_channels = 512;
  char * sock_grp  = ROAR_DEFAULT_SOCKGRP;
  char * sock_user = NULL;
 #ifdef ROAR_SUPPORT_LISTEN
@@ -660,8 +661,13 @@ int main (void) {
 
  ROAR_DBG("Server config: rate=%i, bits=%i, chans=%i", sa.rate, sa.bits, sa.channels);
 
- if ( midi_init() == -1 )
+ if ( midi_init() == -1 ) {
   ROAR_ERR("Can not initialize MIDI subsystem");
+ }
+
+ if ( light_init(light_channels) == -1 ) {
+  ROAR_ERR("Can not initialize light control subsystem");
+ }
 
 #ifdef ROAR_SUPPORT_LISTEN
  if ( *server != 0 ) {
@@ -891,6 +897,7 @@ void clean_quit_prep (void) {
  clients_free();
  midi_cb_stop(); // stop console beep
  midi_free();
+ light_free();
 }
 
 void clean_quit (void) {
