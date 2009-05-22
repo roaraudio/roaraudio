@@ -268,8 +268,11 @@ void list_streams (struct roar_connection * con) {
   printf("Input codec           : %2i (%s%s)\n", s.info.codec, roar_codec2str(s.info.codec),
                                        s.info.codec == ROAR_CODEC_DEFAULT ? " native" : "");
   if ( roar_stream_get_info(con, &s, &info) != -1 ) {
-   printf("Input codec (streamed): %2i (%s%s)\n", info.codec, roar_codec2str(info.codec),
-                                      info.codec == ROAR_CODEC_DEFAULT ? " native" : "");
+   if ( info.codec != s.info.codec ) {
+    printf("Input codec (streamed): %2i (%s%s)\n", info.codec, roar_codec2str(info.codec),
+                                       info.codec == ROAR_CODEC_DEFAULT ? " native" : "");
+   }
+
    if ( g_verbose ) {
     printf("Input block size      : %i Byte\n", info.block_size);
     printf("Underruns pre/post    : %i/%i\n",   info.pre_underruns, info.post_underruns);
