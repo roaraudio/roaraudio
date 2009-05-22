@@ -82,6 +82,10 @@ struct roar_stream_info {
 int roar_stream_connect (struct roar_connection * con, struct roar_stream * s, int dir);
 
 int roar_stream_new     (struct roar_stream * s, unsigned int rate, unsigned int channels, unsigned int bits, unsigned int codec);
+
+int roar_stream_set_rel_id(struct roar_stream * s, int id);
+int roar_stream_get_rel_id(struct roar_stream * s);
+
 int roar_stream_new_by_id(struct roar_stream * s, int id);
 int roar_stream_new_empty(struct roar_stream * s);
 

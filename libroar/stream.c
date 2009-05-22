@@ -63,10 +63,12 @@ int roar_stream_connect (struct roar_connection * con, struct roar_stream * s, i
 int roar_stream_new (struct roar_stream * s, unsigned int rate,
                      unsigned int channels, unsigned int bits, unsigned int codec) {
 
+ if ( s == NULL )
+  return -1;
 
  s->fh         = -1;
  s->id         = -1;
- s->pos        = 0;
+ s->pos        =  0;
  s->pos_rel_id = -1;
 
  s->dir        = ROAR_DIR_DEFAULT;
@@ -88,6 +90,22 @@ int roar_stream_new (struct roar_stream * s, unsigned int rate,
   return -1;
 
  return 0;
+}
+
+int roar_stream_set_rel_id(struct roar_stream * s, int id) {
+ if ( s == NULL )
+  return -1;
+
+ s->pos_rel_id = id;
+
+ return 0;
+}
+
+int roar_stream_get_rel_id(struct roar_stream * s) {
+ if ( s == NULL )
+  return -1;
+
+ return s->pos_rel_id;
 }
 
 int roar_stream_new_by_id(struct roar_stream * s, int id) {
