@@ -48,6 +48,7 @@ struct roar_driver g_driver[] = {
 #ifdef ROAR_HAVE_LIBSNDIO
  {"sndio", "OpenBSD sndio", "/dev/audio, /tmp/aucat-<uid>/default", NULL, NULL, NULL, NULL, NULL, NULL, driver_sndio_open},
 #endif
+ {"dmx", "DMX512 driver", "/dev/dmx", NULL, NULL, NULL, NULL, NULL, NULL, driver_dmx_open_vio},
  {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL} // end of list
                                 };
 
