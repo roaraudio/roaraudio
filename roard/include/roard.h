@@ -73,6 +73,7 @@
 #include "sample.h"
 #include "meta.h"
 #include "midi.h"
+#include "light.h"
 #include "lib.h"
 
 
