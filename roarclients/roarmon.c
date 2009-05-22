@@ -40,6 +40,7 @@ void usage (void) {
         "  --midi               - Output MIDI Audio\n"
         "  --light              - Output light control\n"
         "  --thru               - Output copy of other stream\n"
+        "  --rel-id ID          - Set ID of relative stream\n"
         "  --help               - Show this help\n"
        );
 
@@ -51,12 +52,15 @@ int main (int argc, char * argv[]) {
  int    channels = ROAR_CHANNELS_DEFAULT;
  int    codec    = ROAR_CODEC_DEFAULT;
  int    dir      = ROAR_DIR_MONITOR;
+ int    rel_id   = -1;
  char * server   = NULL;
  char * k;
  int    fh;
  int    i;
  int    out = -1;
  char buf[BUFSIZE];
+ struct roar_connection con;
+ struct roar_stream     s;
 
  for (i = 1; i < argc; i++) {
   k = argv[i];
@@ -86,6 +90,8 @@ int main (int argc, char * argv[]) {
    dir   = ROAR_DIR_LIGHT_OUT;
   } else if ( !strcmp(k, "--thru") ) {
    dir   = ROAR_DIR_THRU;
+  } else if ( !strcmp(k, "--rel-id") ) {
+   rel_id = atoi(argv[++i]);
 
   } else if ( !strcmp(k, "--help") || !strcmp(k, "-h") ) {
    usage();
@@ -105,10 +111,44 @@ int main (int argc, char * argv[]) {
  if ( out == -1 )
   out = ROAR_STDOUT;
 
- if ( (fh = roar_simple_stream(rate, channels, bits, codec, server, dir, "roarmon")) == -1 ) {
-  fprintf(stderr, "Error: can not start monitoring\n");
-  return 1;
+ if ( roar_simple_connect(&con, server, "roarmon") == -1 ) {
+  fprintf(stderr, "Error: can not connect to server\n");
+  return 10;
  }
+
+ if ( roar_stream_new(&s, rate, channels, bits, codec) == -1 ) {
+  fprintf(stderr, "Error: can not create stream\n");
+  roar_disconnect(&con);
+  return 20;
+ }
+
+ if ( rel_id != -1 ) {
+  if ( roar_stream_set_rel_id(&s, rel_id) ) {
+   fprintf(stderr, "Error: can not set id or realative stream\n");
+   roar_disconnect(&con);
+   return 21;
+  }
+ }
+
+ if ( roar_stream_connect(&con, &s, dir) == -1 ) {
+  fprintf(stderr, "Error: can not connect stream to server\n");
+  roar_disconnect(&con);
+  return 11;
+ }
+
+ if ( roar_stream_exec(&con, &s) == -1 ) {
+  fprintf(stderr, "Error: can not exec stream\n");
+  roar_disconnect(&con);
+  return 12;
+ }
+
+ if ( (fh = roar_get_connection_fh(&con)) == -1 ) {
+  fprintf(stderr, "Error: can not get stream fh\n");
+  roar_disconnect(&con);
+  return 13;
+ }
+
+ ROAR_SHUTDOWN(fh, SHUT_WR);
 
  while((i = read(fh, buf, BUFSIZE)))
   if (write(out, buf, i) != i)
