@@ -27,6 +27,17 @@
 
 #include <roaraudio.h>
 
+struct {
+ unsigned int    channels;
+ unsigned char * state;
+} g_light_state;
+
+int light_init  (unsigned int channels);
+int light_free  (void);
+
+int light_update(void);
+int light_reset (void);
+
 #endif
 
 //ll
