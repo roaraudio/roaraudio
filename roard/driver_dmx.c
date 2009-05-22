@@ -55,10 +55,10 @@ ssize_t driver_dmx_write (struct roar_vio_calls * vio,  void *buf, size_t count)
  if ( count != 512 )
   return -1;
 
- if ( lseek(roar_vio_get_fh(vio), 0, SEEK_SET) == (off_t)-1 )
+ if ( roar_vio_basic_lseek(vio, 0, SEEK_SET) == (off_t)-1 )
   return -1;
 
- return write(roar_vio_get_fh(vio), buf, count);
+ return roar_vio_basic_write(vio, buf, count);
 }
 
 int driver_dmx_ctl(struct roar_vio_calls * vio, int cmd, void * data) {
