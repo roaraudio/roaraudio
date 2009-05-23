@@ -291,10 +291,10 @@ int midi_add_buf       (int id, struct roar_buffer * buf) {
   return -1;
 
  ROAR_WARN("midi_add_buf(id=%i, buf=%p) = ?", id, buf);
- ROAR_WARN("midi_add_buf(*): MIDI Message of Type 0x%.2x", mes->type);
+ ROAR_WARN("midi_add_buf(*): MIDI Message of Type 0x%.2X", mes->type);
  ROAR_WARN("midi_add_buf(*): Channel: %i", mes->channel);
- ROAR_WARN("midi_add_buf(*): flags=0x%.2x", mes->flags);
- ROAR_WARN("midi_add_buf(*): kk=0x%.2x, vv=0x%.2x", mes->kk, mes->vv);
+ ROAR_WARN("midi_add_buf(*): flags=0x%.2X", mes->flags);
+ ROAR_WARN("midi_add_buf(*): kk=0x%.2X, vv=0x%.2X", mes->kk, mes->vv);
 
  if ( g_midi_mess.buf == NULL ) {
   g_midi_mess.buf = buf;
