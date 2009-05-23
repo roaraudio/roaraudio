@@ -53,6 +53,10 @@ int midi_update(void) {
  return midi_cb_update();
 }
 
+int midi_reinit(void) {
+ return 0;
+}
+
 // STREAMS:
 
 int midi_check_stream  (int id) {

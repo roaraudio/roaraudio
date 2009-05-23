@@ -92,6 +92,7 @@ int midi_init (void);
 int midi_free (void);
 
 int midi_update(void);
+int midi_reinit(void);
 
 int midi_check_stream  (int id);
 int midi_send_stream   (int id);

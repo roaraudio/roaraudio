@@ -73,6 +73,8 @@ int main_loop (int driver, DRIVER_USERDATA_T driver_inst, struct roar_audio_info
    term  = 1;
   }
 
+  midi_update();
+
   ROAR_DBG("main_loop(*): mixing clients...");
   if ( g_standby ) {
    // while in standby we still neet to get the buffers to free input buffer space.
@@ -104,7 +106,8 @@ int main_loop (int driver, DRIVER_USERDATA_T driver_inst, struct roar_audio_info
   }
 #endif
 
-  midi_update();
+  midi_reinit();
+
 //  output_buffer_reinit();
 
   g_pos = ROAR_MATH_OVERFLOW_ADD(g_pos, ROAR_OUTPUT_BUFFER_SAMPLES*g_sa->channels);
