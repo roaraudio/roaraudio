@@ -201,28 +201,28 @@ int midi_cb_init (void) {
                    NULL
                   };
 
- g_console          = -1;
- g_midi_cb_stream   = -1;
- g_midi_cb_stoptime =  0;
- g_midi_cb_playing  =  0;
+ g_midi_cb.console  = -1;
+ g_midi_cb.stream   = -1;
+ g_midi_cb.stoptime =  0;
+ g_midi_cb.playing  =  0;
 
  for (i = 0; files[i] != NULL; i++) {
-  if ( (g_console = open(files[i], O_WRONLY|O_NOCTTY, 0)) != -1 )
+  if ( (g_midi_cb.console = open(files[i], O_WRONLY|O_NOCTTY, 0)) != -1 )
    break;
  }
 
- if ( g_console == -1 )
+ if ( g_midi_cb.console == -1 )
   return -1;
 
- if ( (g_midi_cb_stream = streams_new()) == -1 ) {
+ if ( (g_midi_cb.stream = streams_new()) == -1 ) {
   ROAR_WARN("Error while initializing MIDI subsystem component CB");
   midi_cb_free();
   return -1;
  }
 
- midi_vio_set_dummy(g_midi_cb_stream);
+ midi_vio_set_dummy(g_midi_cb.stream);
 
- streams_get(g_midi_cb_stream, &ss);
+ streams_get(g_midi_cb.stream, &ss);
  s = ROAR_STREAM(ss);
 
  memcpy(&(s->info), g_sa, sizeof(struct roar_audio_info));
@@ -236,22 +236,22 @@ int midi_cb_init (void) {
  s->info.rate     = 1193180;
  s->info.bits     =  8;
 
- if ( streams_set_dir(g_midi_cb_stream, ROAR_DIR_BRIDGE, 1) == -1 ) {
+ if ( streams_set_dir(g_midi_cb.stream, ROAR_DIR_BRIDGE, 1) == -1 ) {
   ROAR_WARN("Error while initializing MIDI subsystem component CB");
   midi_cb_free();
   return -1;
  }
 
- streams_set_name(g_midi_cb_stream, "Console speaker bridge");
+ streams_set_name(g_midi_cb.stream, "Console speaker bridge");
 
- streams_set_flag(g_midi_cb_stream, ROAR_FLAG_OUTPUT);
- streams_set_flag(g_midi_cb_stream, ROAR_FLAG_PRIMARY);
- streams_set_flag(g_midi_cb_stream, ROAR_FLAG_HWMIXER);
+ streams_set_flag(g_midi_cb.stream, ROAR_FLAG_OUTPUT);
+ streams_set_flag(g_midi_cb.stream, ROAR_FLAG_PRIMARY);
+ streams_set_flag(g_midi_cb.stream, ROAR_FLAG_HWMIXER);
 
  return 0;
 #else
- g_console          = -1;
- g_midi_cb_stream   = -1;
+ g_midi_cb.console  = -1;
+ g_midi_cb.stream   = -1;
 
  return -1;
 #endif
@@ -262,11 +262,11 @@ int midi_cb_free (void) {
 
  midi_cb_stop();
 
- if ( g_midi_cb_stream != -1 )
-  streams_delete(g_midi_cb_stream);
+ if ( g_midi_cb.stream != -1 )
+  streams_delete(g_midi_cb.stream);
 
- if ( g_console != -1 )
-  close(g_console);
+ if ( g_midi_cb.console != -1 )
+  close(g_midi_cb.console);
 
  return 0;
 #else
@@ -281,21 +281,21 @@ int midi_cb_play(float t, float freq, int override) {
 #define MIDI_CB_NOOVERRIDE 0
 #define MIDI_CB_OVERRIDE   1
 */
- if ( g_midi_cb_playing && override != MIDI_CB_OVERRIDE )
+ if ( g_midi_cb.playing && override != MIDI_CB_OVERRIDE )
   return -1;
 
- g_midi_cb_stoptime = ROAR_MATH_OVERFLOW_ADD(g_pos, samples_per_sec*t);
+ g_midi_cb.stoptime = ROAR_MATH_OVERFLOW_ADD(g_pos, samples_per_sec*t);
  midi_cb_start(freq);
- g_midi_cb_playing = 1;
+ g_midi_cb.playing = 1;
 
  return 0;
 }
 
 int midi_cb_update (void) {
- if ( !g_midi_cb_playing )
+ if ( !g_midi_cb.playing )
   return 0;
 
- if ( g_midi_cb_stoptime <= g_pos )
+ if ( g_midi_cb.stoptime <= g_pos )
   midi_cb_stop();
 
  return 0;
@@ -304,10 +304,10 @@ int midi_cb_update (void) {
 int midi_cb_start(float freq) {
 // On linux this uses ioctl KIOCSOUND
 #ifdef __linux__
- if ( g_console == -1 )
+ if ( g_midi_cb.console == -1 )
   return -1;
 
- if ( ioctl(g_console, KIOCSOUND, freq == 0 ? 0 : (int)(1193180.0/freq)) == -1 )
+ if ( ioctl(g_midi_cb.console, KIOCSOUND, freq == 0 ? 0 : (int)(1193180.0/freq)) == -1 )
   return -1;
 
  return 0;
@@ -318,7 +318,7 @@ int midi_cb_start(float freq) {
 
 int midi_cb_stop (void) {
 #ifdef __linux__
- g_midi_cb_playing = 0;
+ g_midi_cb.playing = 0;
  return midi_cb_start(0);
 #else
  return -1;

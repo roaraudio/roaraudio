@@ -74,11 +74,12 @@ struct midi_message {
 };
 
 
-int g_console;
-int g_midi_cb_stream;
-
-uint32_t g_midi_cb_stoptime;
-int      g_midi_cb_playing;
+struct {
+ int      console;
+ int      stream;
+ uint32_t stoptime;
+ int      playing;
+} g_midi_cb;
 
 struct {
  int stream;
