@@ -43,7 +43,10 @@ int g_midi_cb_stream;
 uint32_t g_midi_cb_stoptime;
 int      g_midi_cb_playing;
 
-int g_midi_clock_stream;
+struct {
+ int stream;
+ uint_least32_t bph; // beats per hour
+} g_midi_clock;
 
 int midi_init (void);
 int midi_free (void);

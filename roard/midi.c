@@ -47,8 +47,8 @@ int midi_free (void) {
 
 int midi_update(void) {
 
- if ( g_midi_clock_stream != -1 )
-  midi_check_bridge(g_midi_clock_stream);
+ if ( g_midi_clock.stream != -1 )
+  midi_check_bridge(g_midi_clock.stream);
 
  return midi_cb_update();
 }
@@ -109,19 +109,19 @@ int midi_clock_init (void) {
  struct roar_stream * s;
  struct roar_stream_server * ss;
 
- if ( (g_midi_clock_stream = streams_new()) == -1 ) {
+ if ( (g_midi_clock.stream = streams_new()) == -1 ) {
   ROAR_WARN("Error while initializing MIDI subsystem component clock");
   return -1;
  }
 
- midi_vio_set_dummy(g_midi_clock_stream);
+ midi_vio_set_dummy(g_midi_clock.stream);
 
- streams_get(g_midi_clock_stream, &ss);
+ streams_get(g_midi_clock.stream, &ss);
  s = ROAR_STREAM(ss);
 
  memcpy(&(s->info), g_sa, sizeof(struct roar_audio_info));
 
- s->pos_rel_id    =  g_midi_clock_stream;
+ s->pos_rel_id    =  g_midi_clock.stream;
 
  s->info.codec    =  ROAR_CODEC_MIDI;
  ss->codec_orgi   =  ROAR_CODEC_MIDI;
@@ -130,15 +130,15 @@ int midi_clock_init (void) {
  s->info.rate     = MIDI_RATE;
  s->info.bits     =  8;
 
- if ( streams_set_dir(g_midi_clock_stream, ROAR_DIR_BRIDGE, 1) == -1 ) {
+ if ( streams_set_dir(g_midi_clock.stream, ROAR_DIR_BRIDGE, 1) == -1 ) {
   ROAR_WARN("Error while initializing MIDI subsystem component clock");
   return -1;
  }
 
- streams_set_name(g_midi_clock_stream, "MIDI Clock");
+ streams_set_name(g_midi_clock.stream, "MIDI Clock");
 
- streams_set_flag(g_midi_clock_stream, ROAR_FLAG_PRIMARY);
- streams_set_flag(g_midi_clock_stream, ROAR_FLAG_SYNC);
+ streams_set_flag(g_midi_clock.stream, ROAR_FLAG_PRIMARY);
+ streams_set_flag(g_midi_clock.stream, ROAR_FLAG_SYNC);
 
  return 0;
 }
