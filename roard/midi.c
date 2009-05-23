@@ -56,6 +56,12 @@ int midi_update(void) {
 }
 
 int midi_reinit(void) {
+
+ if ( g_midi_mess.buf != NULL )
+  roar_buffer_free(g_midi_mess.buf);
+
+ g_midi_mess.buf = NULL;
+
  return 0;
 }
 
