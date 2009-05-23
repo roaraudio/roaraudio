@@ -100,6 +100,15 @@ int midi_send_stream   (int id) {
 
 // bridges:
 int midi_check_bridge  (int id) {
+
+ ROAR_WARN("midi_check_bridge(id=%i) = ?", id);
+
+ if ( id == g_midi_clock.stream ) {
+  midi_clock_tick();
+
+  return 0;
+ }
+
  return -1;
 }
 
@@ -139,6 +148,39 @@ int midi_clock_init (void) {
 
  streams_set_flag(g_midi_clock.stream, ROAR_FLAG_PRIMARY);
  streams_set_flag(g_midi_clock.stream, ROAR_FLAG_SYNC);
+
+ midi_clock_set_bph(3600); // one tick per sec
+
+ return 0;
+}
+
+int midi_clock_set_bph (uint_least32_t bph) {
+ uint_least32_t sph = g_sa->rate/2 * 75 * g_sa->channels; // samples per houre
+
+ g_midi_clock.bph  = bph;
+
+ g_midi_clock.spt  = sph/bph;
+
+ g_midi_clock.nt   = ROAR_MATH_OVERFLOW_ADD(g_pos, g_midi_clock.spt);
+
+ return 0;
+}
+
+int midi_clock_tick (void) {
+ unsigned int diff;
+
+ while ( g_pos >= g_midi_clock.nt ) {
+  diff = g_pos - g_midi_clock.nt;
+  ROAR_WARN("midi_clock_tick(void): g_pos is %u samples (%5.2f%%) ahead of nt.", diff, (float)diff/g_midi_clock.spt);
+
+  g_midi_clock.nt   = ROAR_MATH_OVERFLOW_ADD(g_midi_clock.nt, g_midi_clock.spt);
+
+  if ( streams_get_flag(g_midi_clock.stream, ROAR_FLAG_SYNC) ) {
+   ROAR_WARN("midi_clock_tick(void): TICK! (nt=%lu)", g_midi_clock.nt);
+  } else {
+   ROAR_WARN("midi_clock_tick(void): silent tick. (nt=%lu)", g_midi_clock.nt);
+  }
+ }
 
  return 0;
 }
