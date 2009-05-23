@@ -56,6 +56,7 @@
 #define MIDI_TYPE_RAW_NOPASS    0x20
 
 #define MIDI_MES_BUFSIZE        4
+#define MIDI_READ_SIZE          256 /* this should be big enoth in both cfreq=20..100Hz mode */
 
 #define MIDI_MFLAG_FREE_DP     (1<<0)
 
@@ -88,17 +89,25 @@ struct {
  uint32_t       nt;  // time of next tick
 } g_midi_clock;
 
+
+// general midi interface:
 int midi_init (void);
 int midi_free (void);
 
 int midi_update(void);
 int midi_reinit(void);
 
+// streams:
 int midi_check_stream  (int id);
 int midi_send_stream   (int id);
 
+int midi_conv_midi2mes (int id);
+int midi_conv_mes2midi (int id);
+
+// bridges:
 int midi_check_bridge  (int id);
 
+// clock:
 int midi_clock_init (void);
 int midi_clock_set_bph (uint_least32_t bph);
 int midi_clock_tick (void);
