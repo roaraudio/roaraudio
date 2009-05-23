@@ -40,6 +40,8 @@ int main (void) {
   { "roar_stack",          sizeof(struct roar_stack)          },
   { "roar_vio_defaults",   sizeof(struct roar_vio_defaults)   },
   { "roar_vio_dstr_chain", sizeof(struct roar_vio_dstr_chain) },
+  { "midi_message",        sizeof(struct midi_message)        },
+  { "roar_note_octave",    sizeof(struct roar_note_octave)    },
   { NULL, 0 }
  }, * c = types - 1;
 
