@@ -95,6 +95,7 @@ int midi_check_stream  (int id) {
 
  if ( (len = stream_vio_s_read(ss, buf, MIDI_READ_SIZE)) < 1 ) {
   streams_delete(id);
+  roar_buffer_free(b);
   return -1;
  }
 
