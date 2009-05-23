@@ -564,6 +564,7 @@ int midi_cb_init (void) {
  streams_set_flag(g_midi_cb.stream, ROAR_FLAG_OUTPUT);
  streams_set_flag(g_midi_cb.stream, ROAR_FLAG_PRIMARY);
  streams_set_flag(g_midi_cb.stream, ROAR_FLAG_HWMIXER);
+ streams_set_flag(g_midi_cb.stream, ROAR_FLAG_MUTE);
 
  return 0;
 #else
