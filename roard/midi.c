@@ -282,8 +282,19 @@ int midi_new_bufmes    (struct roar_buffer ** buf, struct midi_message ** mes) {
 }
 
 int midi_add_buf       (int id, struct roar_buffer * buf) {
+ struct midi_message * mes;
+
  if ( id == -1 || buf == NULL )
   return -1;
+
+ if ( roar_buffer_get_data(buf, &mes) == -1 )
+  return -1;
+
+ ROAR_WARN("midi_add_buf(id=%i, buf=%p) = ?", id, buf);
+ ROAR_WARN("midi_add_buf(*): MIDI Message of Type 0x%.2x", mes->type);
+ ROAR_WARN("midi_add_buf(*): Channel: %i", mes->channel);
+ ROAR_WARN("midi_add_buf(*): flags=0x%.2x", mes->flags);
+ ROAR_WARN("midi_add_buf(*): kk=0x%.2x, vv=0x%.2x", mes->kk, mes->vv);
 
  if ( g_midi_mess.buf == NULL ) {
   g_midi_mess.buf = buf;
