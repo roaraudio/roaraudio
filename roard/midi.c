@@ -182,11 +182,7 @@ int midi_conv_midi2mes (int id) {
    printf("%.2x=", *data);
    if ( *data & 0x80 ) {
     if ( buf != NULL ) {
-     if ( g_midi_mess.buf == NULL ) {
-      g_midi_mess.buf = buf;
-     } else {
-      roar_buffer_add(g_midi_mess.buf, buf);
-     }
+     midi_add_buf(id, buf);
      buf = NULL;
     }
 
@@ -245,12 +241,7 @@ int midi_conv_midi2mes (int id) {
    roar_buffer_free(buf);
    buf = NULL;
   } else if ( buf != NULL ) {
-   if ( g_midi_mess.buf == NULL ) {
-    g_midi_mess.buf = buf;
-   } else {
-    roar_buffer_add(g_midi_mess.buf, buf);
-   }
-
+   midi_add_buf(id, buf);
    buf = NULL;
   }
  }
@@ -280,6 +271,19 @@ int midi_new_bufmes    (struct roar_buffer ** buf, struct midi_message ** mes) {
  memset((void*)*mes, 0, sizeof(struct midi_message));
 
  (*mes)->type = MIDI_TYPE_NONE;
+
+ return 0;
+}
+
+int midi_add_buf       (int id, struct roar_buffer * buf) {
+ if ( id == -1 || buf == NULL )
+  return -1;
+
+ if ( g_midi_mess.buf == NULL ) {
+  g_midi_mess.buf = buf;
+ } else {
+  roar_buffer_add(g_midi_mess.buf, buf);
+ }
 
  return 0;
 }
