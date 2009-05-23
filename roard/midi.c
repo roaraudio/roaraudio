@@ -181,12 +181,51 @@ int midi_conv_midi2mes (int id) {
   while (have && alive) {
    printf("%.2x=", *data);
    if ( *data & 0x80 ) {
+    if ( buf != NULL ) {
+     if ( g_midi_mess.buf == NULL ) {
+      g_midi_mess.buf = buf;
+     } else {
+      roar_buffer_add(g_midi_mess.buf, buf);
+     }
+     buf = NULL;
+    }
+
     need = 0;
     printf("S\n");
     if ( midi_new_bufmes(&buf, &mes) == -1 ) {
      alive = 0;
      continue;
     }
+
+    if (*data == MIDI_TYPE_CLOCK_TICK || *data == MIDI_TYPE_CLOCK_START || *data == MIDI_TYPE_CLOCK_STOP ) {
+     mes->type = *data;
+    } else {
+     mes->type    = *data & 0xF0;
+     mes->channel = *data & 0x0F;
+     switch (*data & 0xF0) {
+      case MIDI_TYPE_NOTE_ON:
+      case MIDI_TYPE_NOTE_OFF:
+        need = 2;
+       break;
+      case MIDI_TYPE_PA:
+        need = 2;
+       break;
+      case MIDI_TYPE_CONTROLER:
+        need = 2;
+       break;
+      case MIDI_TYPE_PROGRAM:
+        need = 1;
+       break;
+      case MIDI_TYPE_MA:
+        need = 1;
+       break;
+      case MIDI_TYPE_PB:
+      case MIDI_TYPE_SYSEX:
+        need = 1;
+       break;
+     }
+    }
+
    } else {
     printf("D\n");
     if ( need )
@@ -196,7 +235,9 @@ int midi_conv_midi2mes (int id) {
    have--;
   }
 
-  if ( !have ) {
+  if ( need ) {
+   ROAR_ERR("midi_conv_midi2mes(*): FIXME: BUG!!! Need to restore buffer here with corrected length");
+  } else if ( !have ) {
    roar_buffer_next(&(ss->buffer));
   }
 
