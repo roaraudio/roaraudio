@@ -35,11 +35,15 @@
 #define MIDI_CB_NOOVERRIDE 0
 #define MIDI_CB_OVERRIDE   1
 
+#define MIDI_RATE    31250
+
 int g_console;
 int g_midi_cb_stream;
 
 uint32_t g_midi_cb_stoptime;
-int g_midi_cb_playing;
+int      g_midi_cb_playing;
+
+int g_midi_clock_stream;
 
 int midi_init (void);
 int midi_free (void);
@@ -49,6 +53,10 @@ int midi_update(void);
 int midi_check_stream  (int id);
 int midi_send_stream   (int id);
 
+int midi_check_bridge  (int id);
+
+int midi_clock_init (void);
+
 // cb = console beep
 int midi_cb_init(void);
 int midi_cb_free(void);
@@ -56,6 +64,10 @@ int midi_cb_play(float t, float freq, int override);
 int midi_cb_update (void);
 int midi_cb_start(float freq);
 int midi_cb_stop (void);
+
+// dummys:
+int     midi_vio_set_dummy(int stream);
+int     midi_vio_ok(struct roar_vio_calls * vio, ...);
 
 #endif
 

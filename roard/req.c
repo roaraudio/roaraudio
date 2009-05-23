@@ -117,6 +117,16 @@ int req_on_new_stream  (int client, struct roar_message * mes, char * data) {
     info->rate     = 0;
 
    break;
+  case ROAR_DIR_MIDI_IN:
+  case ROAR_DIR_MIDI_OUT:
+    info = &(ROAR_STREAM(s)->info);
+
+    info->channels = 16;
+    info->bits     =  8;
+    info->rate     = MIDI_RATE;
+
+   break;
+
   case ROAR_DIR_THRU:
 
     if ( ROAR_STREAM(s)->pos_rel_id == -1 || ROAR_STREAM(s)->pos_rel_id == stream ) {

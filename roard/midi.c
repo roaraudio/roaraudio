@@ -34,13 +34,22 @@ int midi_init (void) {
   ROAR_WARN("Can not initialize MIDI subsystem component CB");
  }
 
+ if ( midi_clock_init() == -1 ) {
+  ROAR_WARN("Can not initialize MIDI subsystem component clock");
+ }
+
  return 0;
 }
+
 int midi_free (void) {
  return midi_cb_free();
 }
 
 int midi_update(void) {
+
+ if ( g_midi_clock_stream != -1 )
+  midi_check_bridge(g_midi_clock_stream);
+
  return midi_cb_update();
 }
 
@@ -56,6 +65,9 @@ int midi_check_stream  (int id) {
  ROAR_DBG("midi_check_stream(id=%i) = ?", id);
 
  s = ROAR_STREAM(ss = g_streams[id]);
+
+ if ( s->dir == ROAR_DIR_BRIDGE )
+  return midi_check_bridge(id);
 
  switch (s->info.codec) {
   default:
@@ -82,6 +94,51 @@ int midi_send_stream   (int id) {
     streams_delete(id);
     return -1;
  }
+
+ return 0;
+}
+
+// bridges:
+int midi_check_bridge  (int id) {
+ return -1;
+}
+
+// clock:
+
+int midi_clock_init (void) {
+ struct roar_stream * s;
+ struct roar_stream_server * ss;
+
+ if ( (g_midi_clock_stream = streams_new()) == -1 ) {
+  ROAR_WARN("Error while initializing MIDI subsystem component clock");
+  return -1;
+ }
+
+ midi_vio_set_dummy(g_midi_clock_stream);
+
+ streams_get(g_midi_clock_stream, &ss);
+ s = ROAR_STREAM(ss);
+
+ memcpy(&(s->info), g_sa, sizeof(struct roar_audio_info));
+
+ s->pos_rel_id    =  g_midi_clock_stream;
+
+ s->info.codec    =  ROAR_CODEC_MIDI;
+ ss->codec_orgi   =  ROAR_CODEC_MIDI;
+
+ s->info.channels =  0;
+ s->info.rate     = MIDI_RATE;
+ s->info.bits     =  8;
+
+ if ( streams_set_dir(g_midi_clock_stream, ROAR_DIR_BRIDGE, 1) == -1 ) {
+  ROAR_WARN("Error while initializing MIDI subsystem component clock");
+  return -1;
+ }
+
+ streams_set_name(g_midi_clock_stream, "MIDI Clock");
+
+ streams_set_flag(g_midi_clock_stream, ROAR_FLAG_PRIMARY);
+ streams_set_flag(g_midi_clock_stream, ROAR_FLAG_SYNC);
 
  return 0;
 }
@@ -120,6 +177,8 @@ int midi_cb_init (void) {
   midi_cb_free();
   return -1;
  }
+
+ midi_vio_set_dummy(g_midi_cb_stream);
 
  streams_get(g_midi_cb_stream, &ss);
  s = ROAR_STREAM(ss);
@@ -222,6 +281,27 @@ int midi_cb_stop (void) {
 #else
  return -1;
 #endif
+}
+
+// VIO:
+
+int     midi_vio_set_dummy(int stream) {
+ struct roar_stream_server * ss;
+
+ if ( streams_get(stream, &ss) == -1 )
+  return -1;
+
+ ss->vio.read     = NULL;
+ ss->vio.write    = NULL;
+ ss->vio.lseek    = NULL;
+ ss->vio.nonblock = midi_vio_ok;
+ ss->vio.sync     = midi_vio_ok;
+ ss->vio.ctl      = NULL;
+ ss->vio.close    = midi_vio_ok;
+}
+
+int     midi_vio_ok(struct roar_vio_calls * vio, ...) {
+ return 0;
 }
 
 //ll
