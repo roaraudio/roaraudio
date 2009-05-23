@@ -126,12 +126,23 @@ int streams_delete (int id) {
  struct roar_stream_server * s;
  int prim;
  int no_vio_close = 0;
+ int i;
 
  if ( (s = g_streams[id]) == NULL )
   return 0;
 
  ROAR_DBG("streams_delete(id=%i) = ?", id);
  ROAR_DBG("streams_delete(id=%i): g_streams[id]->id=%i", id, ROAR_STREAM(s)->id);
+
+ for (i = 0; i < ROAR_STREAMS_MAX; i++) {
+  if ( g_streams[i] != NULL && ROAR_STREAM(g_streams[i])->pos_rel_id == id ) {
+   if ( ROAR_STREAM(g_streams[i])->dir == ROAR_DIR_THRU ) {
+    streams_delete(i);
+   } else {
+    ROAR_STREAM(g_streams[i])->pos_rel_id = -1;
+   }
+  }
+ }
 
 #ifdef ROAR_SUPPORT_META
  // delete meta data form other meta streams if needed
