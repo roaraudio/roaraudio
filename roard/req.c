@@ -130,6 +130,8 @@ int req_on_new_stream  (int client, struct roar_message * mes, char * data) {
   case ROAR_DIR_THRU:
 
     if ( ROAR_STREAM(s)->pos_rel_id == -1 || ROAR_STREAM(s)->pos_rel_id == stream ) {
+     ROAR_STREAM(s)->pos_rel_id = -1; // force this here as it will try to delete itself while deleting
+                                      // in case rel_id == stream
      streams_delete(stream);
      return -1;
     }
