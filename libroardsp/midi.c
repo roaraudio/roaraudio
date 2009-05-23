@@ -85,6 +85,30 @@ float          roar_midi_note2freq   (uint16_t note) {
  return -1;
 }
 
+int            roar_midi_note_from_midiid(struct roar_note_octave * note, unsigned char midiid) {
+ int oct;
+
+ if ( note == NULL || midiid > 127 )
+  return -1;
+
+ memset(note, 0, sizeof(struct roar_note_octave));
+
+ note->octave = ((int) midiid/12) - 5;
+ note->note   = roar_midi_midi2note((midiid % 12) + 60);
+
+ oct = 1 << abs(note->octave);
+
+ note->freq = roar_midi_note2freq(note->note);
+
+ if ( note->octave < 0 ) {
+  note->freq /= oct;
+ } else {
+  note->freq *= oct;
+ }
+
+ return 0;
+}
+
 int            roar_midi_find_octave (char * note);
 int            roar_midi_add_octave  (struct roar_note_octave * note) {
  note->name[0] = 0;

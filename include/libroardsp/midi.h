@@ -76,6 +76,8 @@ float          roar_midi_note2freq   (uint16_t note);
 
 //int            roar_midi_free_no     (struct roar_note_octave * note);
 
+int            roar_midi_note_from_midiid(struct roar_note_octave * note, unsigned char midiid);
+
 int            roar_midi_find_octave (char * note);
 int            roar_midi_add_octave  (struct roar_note_octave * note);
 int            roar_midi_notefill    (struct roar_note_octave * note);
