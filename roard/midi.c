@@ -244,6 +244,9 @@ int midi_conv_midi2mes (int id) {
     switch (mes->type) {
       case MIDI_TYPE_NOTE_ON:
       case MIDI_TYPE_NOTE_OFF:
+       if ( need == 2 ) {
+        roar_midi_note_from_midiid(&(mes->d.note), *data);
+       }
       case MIDI_TYPE_PA:
       case MIDI_TYPE_CONTROLER:
         if ( need == 2 ) {
