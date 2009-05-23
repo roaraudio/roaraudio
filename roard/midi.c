@@ -241,18 +241,21 @@ int midi_conv_midi2mes (int id) {
     switch (mes->type) {
       case MIDI_TYPE_NOTE_ON:
       case MIDI_TYPE_NOTE_OFF:
+      case MIDI_TYPE_PA:
+      case MIDI_TYPE_CONTROLER:
         if ( need == 2 ) {
          mes->kk = *data;
         } else {
          mes->vv = *data;
         }
        break;
-      case MIDI_TYPE_PA:
-      case MIDI_TYPE_CONTROLER:
       case MIDI_TYPE_PROGRAM:
       case MIDI_TYPE_MA:
+        mes->vv = *data;
+       break;
       case MIDI_TYPE_PB:
       case MIDI_TYPE_SYSEX:
+        ROAR_WARN("midi_conv_midi2mes(id=%i): Message of Type 0x%.2X (PB or SysEx) not yet supported", id, mes->type);
        break;
     }
 
