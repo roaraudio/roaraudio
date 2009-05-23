@@ -298,7 +298,7 @@ int midi_add_buf       (int id, struct roar_buffer * buf) {
  if ( id == -1 || buf == NULL )
   return -1;
 
- if ( roar_buffer_get_data(buf, &mes) == -1 )
+ if ( roar_buffer_get_data(buf, (void**)&mes) == -1 )
   return -1;
 
  ROAR_WARN("midi_add_buf(id=%i, buf=%p) = ?", id, buf);
