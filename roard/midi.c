@@ -166,7 +166,7 @@ int midi_conv_midi2mes (int id) {
  struct roar_stream_server *  ss;
  struct roar_buffer        * buf = NULL;
  struct midi_message       * mes = NULL;
- size_t need = 0, have = 0;
+ size_t need = 0, have = 0, last_have = 0, old_have = 0;
  int alive = 1;
 
  if ( g_streams[id] == NULL )
@@ -186,6 +186,7 @@ int midi_conv_midi2mes (int id) {
    alive = 0;
    continue;
   }
+  old_have = have;
 
   while (have && alive) {
    if ( *data & 0x80 ) {
@@ -193,6 +194,8 @@ int midi_conv_midi2mes (int id) {
      midi_add_buf(id, buf);
      buf = NULL;
     }
+
+    last_have = have;
 
     need = 0;
     if ( midi_new_bufmes(&buf, &mes) == -1 ) {
@@ -267,7 +270,9 @@ int midi_conv_midi2mes (int id) {
   }
 
   if ( need ) {
-   ROAR_ERR("midi_conv_midi2mes(*): FIXME: BUG!!! Need to restore buffer here with corrected length");
+   if ( roar_buffer_set_offset(ss->buffer, old_have - last_have) == -1 ) {
+    ROAR_ERR("midi_conv_midi2mes(*): FIXME: BUG!!! Need to restore buffer here with corrected length");
+   }
   } else if ( !have ) {
    roar_buffer_next(&(ss->buffer));
   }
