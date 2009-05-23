@@ -834,6 +834,7 @@ int stream_unshift_buffer (int id, struct roar_buffer *  buf) {
 
 int streams_check  (int id) {
  int fh;
+ int i;
  ssize_t req, realreq, done;
  struct roar_stream        *   s;
  struct roar_stream_server *  ss;
@@ -895,6 +896,17 @@ int streams_check  (int id) {
     done += req;
   }
   req = done;
+
+  roar_buffer_get_data(b, (void **)&buf);
+  for (i = 0; i < ROAR_STREAMS_MAX; i++) {
+   if ( g_streams[i] != NULL && ROAR_STREAM(g_streams[i])->pos_rel_id == id ) {
+    if ( ROAR_STREAM(g_streams[i])->dir == ROAR_DIR_THRU ) {
+     if ( stream_vio_write(i, buf, req) != req ) {
+      streams_delete(i);
+     }
+    }
+   }
+  }
  } else {
   req = codecfilter_read(ss->codecfilter_inst, ss->codecfilter, buf, req);
  }
