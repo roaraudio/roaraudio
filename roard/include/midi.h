@@ -40,9 +40,13 @@ int g_console;
 uint32_t g_midi_cb_stoptime;
 int g_midi_cb_playing;
 
-
 int midi_init (void);
 int midi_free (void);
+
+int midi_update(void);
+
+int midi_check_stream  (int id);
+int midi_send_stream   (int id);
 
 // cb = console beep
 int midi_cb_play(float t, float freq, int override);
