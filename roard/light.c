@@ -110,6 +110,7 @@ int light_send_stream   (int id) {
  struct roar_stream        *   s;
  struct roar_stream_server *  ss;
  char buf[512];
+ register char * bufptr;
 
  if ( g_streams[id] == NULL )
   return -1;
@@ -125,18 +126,17 @@ int light_send_stream   (int id) {
     if ( chans > 512 )
      chans = 512;
 
-    if ( stream_vio_s_write(ss, g_light_state.state, chans) != chans ) {
-     streams_delete(id);
-     return -1;
+    if ( chans == 512 ) {
+     bufptr = g_light_state.state;
+    } else {
+     memset(buf, 0, 512);
+     memcpy(buf, g_light_state.state, chans);
+     bufptr = buf;
     }
 
-    if ( chans < 512 ) {
-     chans = 512 - chans;
-     memset(buf, 0, chans);
-     if ( stream_vio_s_write(ss, g_light_state.state, chans) != chans ) {
-      streams_delete(id);
-      return -1;
-     }
+    if ( stream_vio_s_write(ss, bufptr, 512) != 512 ) {
+     streams_delete(id);
+     return -1;
     }
 
     return 0;
