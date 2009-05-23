@@ -257,14 +257,14 @@ int midi_new_bufmes    (struct roar_buffer ** buf, struct midi_message ** mes) {
  if ( buf == NULL || mes == NULL )
   return -1;
 
- *buf = *mes = NULL;
+ *buf = (void*)(*mes = NULL);
 
  if ( roar_buffer_new(buf, sizeof(struct midi_message)) == -1 )
   return -1;
 
  if ( roar_buffer_get_data(*buf, (void**)mes) == -1 ) {
   roar_buffer_free(*buf);
-  *buf = *mes = NULL;
+  *buf = (void*)(*mes = NULL);
   return -1;
  }
 
