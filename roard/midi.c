@@ -230,6 +230,17 @@ int midi_conv_midi2mes (int id) {
 
    } else {
     printf("D\n");
+
+    if ( mes == NULL ) {
+     ROAR_WARN("midi_conv_midi2mes(id=%i): Lost sync.", id);
+     data++;
+     have--;
+     continue;
+    }
+
+    switch (mes->type) {
+    }
+
     if ( need )
      need--;
    }
