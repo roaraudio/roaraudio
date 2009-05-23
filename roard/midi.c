@@ -603,22 +603,26 @@ int midi_cb_play(float t, float freq, int override) {
 
  g_midi_cb.stoptime = ROAR_MATH_OVERFLOW_ADD(g_pos, samples_per_sec*t);
  midi_cb_start(freq);
- g_midi_cb.playing = 1;
 
  return 0;
 }
 
 int midi_cb_update (void) {
-/*
- if ( midi_cb_readbuf() == -1 )
-  return -1;
-*/
+
+ if ( !streams_get_flag(g_midi_cb.stream, ROAR_FLAG_MUTE) ) {
+  if ( midi_cb_readbuf() == -1 )
+   return -1;
+ } else if ( g_midi_cb.playing ) {
+  midi_cb_stop();
+ }
 
  if ( !g_midi_cb.playing )
   return 0;
 
+/*
  if ( g_midi_cb.stoptime <= g_pos )
   midi_cb_stop();
+*/
 
  ROAR_DBG("midi_cb_update(void) = ?");
 
@@ -634,6 +638,8 @@ int midi_cb_start(float freq) {
  if ( ioctl(g_midi_cb.console, KIOCSOUND, freq == 0 ? 0 : (int)(1193180.0/freq)) == -1 )
   return -1;
 
+ g_midi_cb.playing = 1;
+
  return 0;
 #else
  return -1;
@@ -642,8 +648,12 @@ int midi_cb_start(float freq) {
 
 int midi_cb_stop (void) {
 #ifdef __linux__
+ int ret;
+
+ ret = midi_cb_start(0);
  g_midi_cb.playing = 0;
- return midi_cb_start(0);
+
+ return ret;
 #else
  return -1;
 #endif
