@@ -26,22 +26,23 @@
 
 struct {
  uint16_t id;
+ unsigned char midiid;
  float freq;
  char * name;
 } _libroar_notes[] = {
- {ROAR_MIDI_NOTE_C , 261.625565, "C"},
- {ROAR_MIDI_NOTE_Cs, 277.182631, "C#"},
- {ROAR_MIDI_NOTE_D , 293.664768, "D"},
- {ROAR_MIDI_NOTE_Ds, 311.126984, "D#"},
- {ROAR_MIDI_NOTE_E , 329.627557, "E"},
- {ROAR_MIDI_NOTE_F , 349.228231, "F"},
- {ROAR_MIDI_NOTE_Fs, 369.994423, "F#"},
- {ROAR_MIDI_NOTE_G , 391.995436, "G"},
- {ROAR_MIDI_NOTE_Gs, 415.304698, "G#"},
- {ROAR_MIDI_NOTE_A , 440.000000, "A"},
- {ROAR_MIDI_NOTE_As, 466.163762, "A#"},
- {ROAR_MIDI_NOTE_B , 493.883301, "B"},
- {0, 0, NULL}
+ {ROAR_MIDI_NOTE_C , 60, 261.625565, "C" },
+ {ROAR_MIDI_NOTE_Cs, 61, 277.182631, "C#"},
+ {ROAR_MIDI_NOTE_D , 62, 293.664768, "D" },
+ {ROAR_MIDI_NOTE_Ds, 63, 311.126984, "D#"},
+ {ROAR_MIDI_NOTE_E , 64, 329.627557, "E" },
+ {ROAR_MIDI_NOTE_F , 65, 349.228231, "F" },
+ {ROAR_MIDI_NOTE_Fs, 66, 369.994423, "F#"},
+ {ROAR_MIDI_NOTE_G , 67, 391.995436, "G" },
+ {ROAR_MIDI_NOTE_Gs, 68, 415.304698, "G#"},
+ {ROAR_MIDI_NOTE_A , 69, 440.000000, "A" },
+ {ROAR_MIDI_NOTE_As, 70, 466.163762, "A#"},
+ {ROAR_MIDI_NOTE_B , 71, 493.883301, "B" },
+ {0, 0, 0, NULL}
 };
 
 char         * roar_midi_note2name   (uint16_t note) {
@@ -59,6 +60,16 @@ uint16_t   roar_midi_name2note   (char * note) {
 
  for (i = 0; _libroar_notes[i].name != NULL; i++)
   if ( strcasecmp(_libroar_notes[i].name, note) == 0 )
+   return _libroar_notes[i].id;
+
+ return ROAR_MIDI_NOTE_NONE;
+}
+
+uint16_t       roar_midi_midi2note   (unsigned char midiid) {
+ int i;
+
+ for (i = 0; _libroar_notes[i].name != NULL; i++)
+  if ( _libroar_notes[i].midiid == midiid )
    return _libroar_notes[i].id;
 
  return ROAR_MIDI_NOTE_NONE;

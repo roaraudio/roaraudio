@@ -71,6 +71,7 @@ struct roar_midi_basic_state {
 
 char         * roar_midi_note2name   (uint16_t note);
 uint16_t       roar_midi_name2note   (char * note);
+uint16_t       roar_midi_midi2note   (unsigned char midiid);
 float          roar_midi_note2freq   (uint16_t note);
 
 //int            roar_midi_free_no     (struct roar_note_octave * note);
