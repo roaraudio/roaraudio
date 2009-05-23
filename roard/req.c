@@ -136,7 +136,7 @@ int req_on_new_stream  (int client, struct roar_message * mes, char * data) {
     info->bits     = source_info->bits;
     info->rate     = source_info->rate;
     info->codec    = source_info->codec;
-    ROAR_STREAM_SERVER(s)->codec_orgi = ROAR_STREAM_SERVER(source_info)->codec_orgi;
+    ROAR_STREAM_SERVER(s)->codec_orgi = ROAR_STREAM_SERVER(source_stream)->codec_orgi;
 
    break;
  }
