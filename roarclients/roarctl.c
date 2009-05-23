@@ -305,6 +305,8 @@ void list_streams (struct roar_connection * con) {
      strcat(flags, "hwmixer ");
     if ( info.flags & ROAR_FLAG_PAUSE )
      strcat(flags, "pause ");
+    if ( info.flags & ROAR_FLAG_MUTE )
+     strcat(flags, "mute ");
 
     printf("Flags                 : %s\n", flags);
    }
@@ -638,6 +640,8 @@ int set_flags (struct roar_connection * con, int id, int reset, char * flags) {
    f |= ROAR_FLAG_HWMIXER;
   } else if ( !strcmp(c, "pause") ) {
    f |= ROAR_FLAG_PAUSE;
+  } else if ( !strcmp(c, "mute") ) {
+   f |= ROAR_FLAG_MUTE;
   } else {
    fprintf(stderr, "Error: unknown flag: %s\n", c);
    return -1;
