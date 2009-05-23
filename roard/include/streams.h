@@ -71,6 +71,7 @@ struct roar_stream_server {
  struct roardsp_filterchain fc;
  int flags;
  uint_least32_t delay;
+ char * name;
 } * g_streams[ROAR_STREAMS_MAX];
 
 int streams_init   (void);
@@ -97,6 +98,9 @@ int streams_set_sync     (int id, int sync);
 int streams_set_flag     (int id, int flag);
 int streams_reset_flag   (int id, int flag);
 int streams_get_flag     (int id, int flag);
+
+int streams_set_name     (int id, char * name);
+char * streams_get_name  (int id);
 
 int streams_calc_delay   (int id);
 int streams_set_mixer    (int id);

@@ -235,6 +235,7 @@ void list_streams (struct roar_connection * con) {
  struct roar_stream s;
  struct roar_stream_info info;
  char flags[1024];
+ char name[1024];
 
 
  if ( (num = roar_list_streams(con, id, ROAR_STREAMS_MAX)) == -1 ) {
@@ -249,6 +250,10 @@ void list_streams (struct roar_connection * con) {
    continue;
   }
   printf("Stream direction      : %s\n", roar_dir2str(s.dir));
+
+  if ( roar_stream_get_name(con, &s, name, 1024) == 0 )
+   printf("Stream name           : %s\n", name);
+
   if ( s.pos_rel_id == -1 ) {
    printf("Relativ position id   : none (stream not synchronized)\n");
   } else if ( s.pos_rel_id == id[i] ) {

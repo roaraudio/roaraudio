@@ -337,7 +337,7 @@ int roar_stream_get_info (struct roar_connection * con, struct roar_stream * s, 
  m.pos     = 0;
 
  data[0] = 0; // Version and reserved
- data[1] = 1; // stream
+ data[1] = ROAR_STREAM_PARA_INFO; // stream
 
  for (i = 0; i < m.datalen/2; i++) {
   data[i] = ROAR_HOST2NET16(data[i]);
@@ -367,6 +367,64 @@ int roar_stream_get_info (struct roar_connection * con, struct roar_stream * s, 
  info->codec          = data[5];
  info->flags          = data[6];
  info->delay          = data[7]*1000;
+
+ return 0;
+}
+
+int roar_stream_get_name (struct roar_connection * con, struct roar_stream * s, char * name, size_t len) {
+ struct roar_message m;
+ uint16_t * data = (uint16_t *) m.data;
+
+ if ( con == NULL || s == NULL || name == NULL || len == 0 )
+  return -1;
+
+ name[0] = 0; // just in case...
+
+ m.cmd     = ROAR_CMD_GET_STREAM_PARA;
+ m.stream  = s->id;
+ m.datalen = 4;
+ m.pos     = 0;
+
+ data[0] = 0; // Version and reserved
+ data[1] = ROAR_STREAM_PARA_NAME; // stream
+
+ data[0] = ROAR_HOST2NET16(data[0]);
+ data[1] = ROAR_HOST2NET16(data[1]);
+
+ ROAR_DBG("roar_stream_get_name(*) = ?");
+
+ if ( roar_req(con, &m, NULL) == -1 )
+  return -1;
+
+ ROAR_DBG("roar_stream_get_name(*) = ?");
+
+ if ( m.cmd != ROAR_CMD_OK )
+  return -1;
+
+ ROAR_DBG("roar_stream_get_name(*) = ?");
+
+ if ( m.datalen < 4 )
+  return -1;
+
+ data[0] = ROAR_NET2HOST16(data[0]);
+ data[1] = ROAR_NET2HOST16(data[1]);
+
+ ROAR_DBG("roar_stream_get_name(*) = ?");
+
+ if ( data[0] != 0 || data[1] != ROAR_STREAM_PARA_NAME )
+  return -1;
+
+ m.datalen -= 4;
+
+ len--;
+
+ if ( len > m.datalen )
+  len = m.datalen;
+
+ strncpy(name, ((char*)m.data)+4, len);
+ name[len] = 0;
+
+ ROAR_DBG("roar_stream_get_name(*) = 0");
 
  return 0;
 }

@@ -79,6 +79,8 @@ int streams_new    (void) {
 */
    n->pos        = 0;
 
+   s->name            = NULL;
+
    s->client          = -1;
    s->socktype        = ROAR_SOCKET_TYPE_UNKNOWN;
    s->buffer          = NULL;
@@ -188,6 +190,9 @@ int streams_delete (int id) {
   roar_vio_close(&(s->vio));
 
  prim = s->primary;
+
+ if ( s->name != NULL )
+  free(s->name);
 
  free(s);
 
@@ -418,6 +423,29 @@ int streams_get_flag     (int id, int flag) {
 
  return g_streams[id]->flags & flag ? 1 : 0;
 }
+
+int streams_set_name     (int id, char * name) {
+ char * str;
+
+ if ( g_streams[id] == NULL )
+  return -1;
+
+ if ( (str = strdup(name)) == NULL )
+  return -1;
+
+ if ( g_streams[id]->name != NULL )
+  free(g_streams[id]->name);
+
+ g_streams[id]->name = str;
+}
+
+char * streams_get_name  (int id) {
+ if ( g_streams[id] == NULL )
+  return NULL;
+
+ return g_streams[id]->name;
+}
+
 
 int streams_calc_delay    (int id) {
  struct roar_stream_server * ss;

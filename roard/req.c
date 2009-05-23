@@ -507,6 +507,7 @@ int req_on_get_stream_para (int client, struct roar_message * mes, char * data) 
  struct roar_audio_info * audio_info;
  uint16_t * d = (uint16_t *) mes->data;
  int i;
+ char * str;
 
  if ( mes->datalen != 4 )
   return -1;
@@ -515,42 +516,67 @@ int req_on_get_stream_para (int client, struct roar_message * mes, char * data) 
   d[i] = ROAR_NET2HOST16(d[i]);
  }
 
- if ( streams_get(mes->stream, &ss) == -1 ) {
-  ROAR_WARN("req_on_get_stream_para(*): request on non existing (or other error?) stream %i", mes->stream);
-  return -1;
- }
-
- if ( streams_calc_delay(mes->stream) == -1 ) {
-  ROAR_WARN("req_on_get_stream_para(*): can not calc delay for stream %i", mes->stream);
- }
-
- s = ROAR_STREAM(ss);
-
- audio_info = &(s->info);
-
- if ( d[0] != 0 || d[1] != 1 ) {
+ if ( d[0] != 0 ) {
   ROAR_WARN("req_on_get_stream_para(*): unsupported command version: %i, %i", d[0], d[1]);
   return -1;
  }
 
- mes->datalen = 2*8;
+ switch (d[1]) {
+  case ROAR_STREAM_PARA_INFO:
+    if ( streams_get(mes->stream, &ss) == -1 ) {
+     ROAR_WARN("req_on_get_stream_para(*): request on non existing (or other error?) stream %i", mes->stream);
+     return -1;
+    }
 
- d[2] = ROAR_OUTPUT_CALC_OUTBUFSIZE(audio_info);
- d[3] = ss->pre_underruns;
- d[4] = ss->post_underruns;
- d[5] = ss->codec_orgi;
- d[6] = ss->flags | (ss->primary ? ROAR_FLAG_PRIMARY : 0) | (ss->driver_id != -1 ? ROAR_FLAG_OUTPUT : 0);
- d[7] = ss->delay/1000;
+    if ( streams_calc_delay(mes->stream) == -1 ) {
+     ROAR_WARN("req_on_get_stream_para(*): can not calc delay for stream %i", mes->stream);
+    }
 
- ROAR_DBG("req_on_get_stream_para(*): ss->driver_id=%i", ss->driver_id);
+    s = ROAR_STREAM(ss);
 
- ROAR_DBG("req_on_get_stream_para(*): delay=%i, send delay=%i", ss->delay, d[7]);
+    audio_info = &(s->info);
 
- for (i = 0; i < mes->datalen/2; i++) {
-  d[i] = ROAR_HOST2NET16(d[i]);
+    mes->datalen = 2*8;
+
+    d[2] = ROAR_OUTPUT_CALC_OUTBUFSIZE(audio_info);
+    d[3] = ss->pre_underruns;
+    d[4] = ss->post_underruns;
+    d[5] = ss->codec_orgi;
+    d[6] = ss->flags | (ss->primary ? ROAR_FLAG_PRIMARY : 0) | (ss->driver_id != -1 ? ROAR_FLAG_OUTPUT : 0);
+    d[7] = ss->delay/1000;
+
+    ROAR_DBG("req_on_get_stream_para(*): ss->driver_id=%i", ss->driver_id);
+
+    ROAR_DBG("req_on_get_stream_para(*): delay=%i, send delay=%i", ss->delay, d[7]);
+
+    for (i = 0; i < mes->datalen/2; i++) {
+     d[i] = ROAR_HOST2NET16(d[i]);
+    }
+
+    mes->pos = s->pos;
+   break;
+
+  case ROAR_STREAM_PARA_NAME:
+   str = streams_get_name(mes->stream);
+
+   if ( str == NULL )
+    return -1;
+
+    mes->datalen = 4 + strlen(str);
+
+    if ( mes->datalen > LIBROAR_BUFFER_MSGDATA )
+     return -1;
+
+    strncpy(((char*)&(mes->data))+4, str, mes->datalen);
+
+    d[0] = ROAR_HOST2NET16(d[0]);
+    d[1] = ROAR_HOST2NET16(d[1]);
+   break;
+
+  default:
+    ROAR_WARN("req_on_get_stream_para(*): unsupported command: %i", d[1]);
+    return -1;
  }
-
- mes->pos = s->pos;
 
  mes->cmd = ROAR_CMD_OK;
  return 0;
@@ -567,7 +593,7 @@ int req_on_set_stream_para (int client, struct roar_message * mes, char * data) 
   d[i] = ROAR_NET2HOST16(d[i]);
  }
 
- if ( d[0] != 0 || d[1] != 2 ) {
+ if ( d[0] != 0 || d[1] != ROAR_STREAM_PARA_FLAGS ) {
   ROAR_WARN("req_on_set_stream_para(*): unsupported command version: %i, %i", d[0], d[1]);
   return -1;
  }
