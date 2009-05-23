@@ -437,6 +437,8 @@ int streams_set_name     (int id, char * name) {
   free(g_streams[id]->name);
 
  g_streams[id]->name = str;
+
+ return 0;
 }
 
 char * streams_get_name  (int id) {
@@ -886,6 +888,9 @@ int streams_check  (int id) {
   case ROAR_DIR_LIGHT_IN:
     return light_check_stream(id);
    break;
+  case ROAR_DIR_MIDI_IN:
+    return midi_check_stream(id);
+   break;
   case ROAR_DIR_PLAY:
   case ROAR_DIR_BIDIR:
    break;
@@ -998,6 +1003,9 @@ int streams_send_mon   (int id) {
  switch (s->dir) {
   case ROAR_DIR_LIGHT_OUT:
     return light_send_stream(id);
+   break;
+  case ROAR_DIR_MIDI_OUT:
+    return midi_send_stream(id);
    break;
   case ROAR_DIR_OUTPUT:
     if ( g_standby )

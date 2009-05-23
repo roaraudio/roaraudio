@@ -44,6 +44,16 @@ int midi_update(void) {
  return midi_cb_update();
 }
 
+// STREAMS:
+
+int midi_check_stream  (int id) {
+ return -1;
+}
+int midi_send_stream   (int id) {
+ return -1;
+}
+
+// CB:
 
 int midi_cb_init (void) {
 #ifdef _HAVE_CONSOLE
