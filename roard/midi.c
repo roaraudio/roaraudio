@@ -239,6 +239,21 @@ int midi_conv_midi2mes (int id) {
     }
 
     switch (mes->type) {
+      case MIDI_TYPE_NOTE_ON:
+      case MIDI_TYPE_NOTE_OFF:
+        if ( need == 2 ) {
+         mes->kk = *data;
+        } else {
+         mes->vv = *data;
+        }
+       break;
+      case MIDI_TYPE_PA:
+      case MIDI_TYPE_CONTROLER:
+      case MIDI_TYPE_PROGRAM:
+      case MIDI_TYPE_MA:
+      case MIDI_TYPE_PB:
+      case MIDI_TYPE_SYSEX:
+       break;
     }
 
     if ( need )
