@@ -294,10 +294,12 @@ int     midi_vio_set_dummy(int stream) {
  ss->vio.read     = NULL;
  ss->vio.write    = NULL;
  ss->vio.lseek    = NULL;
- ss->vio.nonblock = midi_vio_ok;
- ss->vio.sync     = midi_vio_ok;
+ ss->vio.nonblock = (int (*)(struct roar_vio_calls * vio, int state))midi_vio_ok;
+ ss->vio.sync     = (int (*)(struct roar_vio_calls * vio))midi_vio_ok;
  ss->vio.ctl      = NULL;
- ss->vio.close    = midi_vio_ok;
+ ss->vio.close    = (int (*)(struct roar_vio_calls * vio))midi_vio_ok;
+
+ return 0;
 }
 
 int     midi_vio_ok(struct roar_vio_calls * vio, ...) {
