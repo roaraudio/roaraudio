@@ -47,10 +47,43 @@ int midi_update(void) {
 // STREAMS:
 
 int midi_check_stream  (int id) {
- return -1;
+ struct roar_stream        *   s;
+ struct roar_stream_server *  ss;
+
+ if ( g_streams[id] == NULL )
+  return -1;
+
+ ROAR_DBG("midi_check_stream(id=%i) = ?", id);
+
+ s = ROAR_STREAM(ss = g_streams[id]);
+
+ switch (s->info.codec) {
+  default:
+    streams_delete(id);
+    return -1;
+ }
+
+ return 0;
 }
+
 int midi_send_stream   (int id) {
- return -1;
+ struct roar_stream        *   s;
+ struct roar_stream_server *  ss;
+
+ if ( g_streams[id] == NULL )
+  return -1;
+
+ ROAR_DBG("midi_send_stream(id=%i) = ?", id);
+
+ s = ROAR_STREAM(ss = g_streams[id]);
+
+ switch (s->info.codec) {
+  default:
+    streams_delete(id);
+    return -1;
+ }
+
+ return 0;
 }
 
 // CB:
