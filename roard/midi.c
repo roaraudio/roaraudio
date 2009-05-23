@@ -185,7 +185,6 @@ int midi_conv_midi2mes (int id) {
   }
 
   while (have && alive) {
-   printf("%.2x=", *data);
    if ( *data & 0x80 ) {
     if ( buf != NULL ) {
      midi_add_buf(id, buf);
@@ -193,7 +192,6 @@ int midi_conv_midi2mes (int id) {
     }
 
     need = 0;
-    printf("S\n");
     if ( midi_new_bufmes(&buf, &mes) == -1 ) {
      alive = 0;
      continue;
@@ -229,7 +227,6 @@ int midi_conv_midi2mes (int id) {
     }
 
    } else {
-    printf("D\n");
 
     if ( mes == NULL ) {
      ROAR_WARN("midi_conv_midi2mes(id=%i): Lost sync.", id);
