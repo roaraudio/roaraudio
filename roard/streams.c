@@ -112,7 +112,7 @@ int streams_new    (void) {
    s->driver_id = -1;
    s->flags     =  ROAR_FLAG_NONE;
 
-   roardsp_fchain_init(&(s->fc));
+   //roardsp_fchain_init(&(s->fc));
 
    g_streams[i] = s;
    ROAR_DBG("streams_new(void): n->id=%i", n->id);
@@ -168,7 +168,7 @@ int streams_delete (int id) {
   no_vio_close =  1;
  }
 
- roardsp_fchain_uninit(&(s->fc));
+ //roardsp_fchain_uninit(&(s->fc));
 
  if ( s->client != -1 ) {
   ROAR_DBG("streams_delete(id=%i): Stream is owned by client %i", id, g_streams[id]->client);

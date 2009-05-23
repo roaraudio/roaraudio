@@ -68,7 +68,7 @@ struct roar_stream_server {
  struct roar_vio_calls vio;
  int primary;
  int driver_id;
- struct roardsp_filterchain fc;
+// struct roardsp_filterchain fc;
  int flags;
  uint_least32_t delay;
  char * name;
