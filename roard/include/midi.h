@@ -125,6 +125,7 @@ int midi_cb_play(float t, float freq, int override);
 int midi_cb_update (void);
 int midi_cb_start(float freq);
 int midi_cb_stop (void);
+int midi_cb_readbuf(void);
 
 // dummys:
 int     midi_vio_set_dummy(int stream);

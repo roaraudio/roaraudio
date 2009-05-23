@@ -609,11 +609,18 @@ int midi_cb_play(float t, float freq, int override) {
 }
 
 int midi_cb_update (void) {
+/*
+ if ( midi_cb_readbuf() == -1 )
+  return -1;
+*/
+
  if ( !g_midi_cb.playing )
   return 0;
 
  if ( g_midi_cb.stoptime <= g_pos )
   midi_cb_stop();
+
+ ROAR_DBG("midi_cb_update(void) = ?");
 
  return 0;
 }
@@ -640,6 +647,35 @@ int midi_cb_stop (void) {
 #else
  return -1;
 #endif
+}
+
+int midi_cb_readbuf(void) {
+ struct roar_buffer        * buf = g_midi_mess.buf;
+ struct midi_message       * mes = NULL;
+
+ ROAR_DBG("midi_cb_readbuf(void) = ?");
+
+ while (buf != NULL) {
+  ROAR_DBG("midi_cb_readbuf(void): buf=%p", buf);
+
+  if ( roar_buffer_get_data(buf, (void**)&mes) == -1 ) {
+   return -1;
+  }
+
+  switch (mes->type) {
+   case MIDI_TYPE_NOTE_ON:
+     midi_cb_start(mes->d.note.freq);
+    break;
+   case MIDI_TYPE_NOTE_OFF:
+     midi_cb_stop();
+    break;
+  }
+
+  if ( roar_buffer_get_next(buf, &buf) == -1 )
+   buf = NULL;
+ }
+
+ return 0;
 }
 
 // VIO:
