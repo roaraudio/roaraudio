@@ -259,7 +259,9 @@ void list_streams (struct roar_connection * con) {
   if ( g_verbose > 1 )
    printf("Position              : %lu S (%.3fs)\n", (unsigned long int) s.pos, (float)s.pos/(s.info.rate*s.info.channels));
 
-  if ( s.dir != ROAR_DIR_LIGHT_IN && s.dir != ROAR_DIR_LIGHT_OUT ) {
+  if ( s.dir != ROAR_DIR_LIGHT_IN && s.dir != ROAR_DIR_LIGHT_OUT &&
+       s.info.rate                && s.info.bits                 && s.info.channels
+     ) {
    printf("Input rate            : %i\n", s.info.rate);
    printf("Input bits            : %i\n", s.info.bits);
    printf("Input channels        : %i\n", s.info.channels);
