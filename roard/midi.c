@@ -403,6 +403,8 @@ int midi_clock_set_bph (uint_least32_t bph) {
 }
 
 int midi_clock_tick (void) {
+ struct roar_buffer  * buf;
+ struct midi_message * mes;
  unsigned int diff;
 
  while ( g_pos >= g_midi_clock.nt ) {
@@ -413,6 +415,17 @@ int midi_clock_tick (void) {
 
   if ( streams_get_flag(g_midi_clock.stream, ROAR_FLAG_SYNC) ) {
    ROAR_DBG("midi_clock_tick(void): TICK! (nt=%lu)", g_midi_clock.nt);
+   if ( midi_new_bufmes(&buf, &mes) == -1 ) {
+    ROAR_ERR("midi_clock_tick(void): Can not create Clock-Tick-Message");
+   }
+
+   mes->type = MIDI_TYPE_CLOCK_TICK;
+
+   if ( midi_add_buf(g_midi_clock.stream, buf) == -1 ) {
+    ROAR_ERR("midi_clock_tick(void): Can not add Clock-Tick-Message");
+    roar_buffer_free(buf);
+    return -1;
+   }
   } else {
    ROAR_DBG("midi_clock_tick(void): silent tick. (nt=%lu)", g_midi_clock.nt);
   }
