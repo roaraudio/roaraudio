@@ -43,7 +43,7 @@
 #define MIDI_TYPE_PA            0xA0
 #define MIDI_TYPE_CONTROLER     0xB0
 #define MIDI_TYPE_PROGRAM       0xC0
-#define MIDI_TYPE_MA            0xA0
+#define MIDI_TYPE_MA            0xD0
 #define MIDI_TYPE_PB            0xE0
 #define MIDI_TYPE_SYSEX         0xF0
 #define MIDI_TYPE_CLOCK_TICK    0xF8
