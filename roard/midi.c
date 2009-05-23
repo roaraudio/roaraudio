@@ -149,6 +149,9 @@ int midi_send_stream   (int id) {
  s = ROAR_STREAM(ss = g_streams[id]);
 
  switch (s->info.codec) {
+  case ROAR_CODEC_MIDI:
+    return midi_conv_mes2midi(id);
+   break;
   default:
     streams_delete(id);
     return -1;
@@ -281,9 +284,69 @@ int midi_conv_midi2mes (int id) {
  return 0;
 }
 
+#define _nb  len++; *(d++)
 int midi_conv_mes2midi (int id) {
- return -1;
+ struct roar_stream        *   s;
+ struct roar_stream_server *  ss;
+ struct roar_buffer        * buf = g_midi_mess.buf;
+ struct midi_message       * mes = NULL;
+ unsigned char               data[3];
+ unsigned char             * d;
+ int                         len;
+
+ if ( g_streams[id] == NULL )
+  return -1;
+
+ ROAR_DBG("midi_conv_mes2midi(id=%i) = ?", id);
+
+ s = ROAR_STREAM(ss = g_streams[id]);
+
+ while (buf != NULL) {
+  if ( roar_buffer_get_data(buf, (void**)&mes) == -1 ) {
+   return -1;
+  }
+
+  if (mes->type == MIDI_TYPE_CLOCK_TICK || mes->type == MIDI_TYPE_CLOCK_START || mes->type == MIDI_TYPE_CLOCK_STOP ) {
+   if ( stream_vio_s_write(ss, &(mes->type), 1) != 1 ) {
+    streams_delete(id);
+    return -1;
+   }
+  } else {
+   len = 0;
+   d   = data;
+
+   _nb = (mes->type & 0xF0) | (mes->channel & 0x0F);
+
+   switch (mes->type) {
+    case MIDI_TYPE_NOTE_ON:
+    case MIDI_TYPE_NOTE_OFF:
+    case MIDI_TYPE_PA:
+    case MIDI_TYPE_CONTROLER:
+      _nb = mes->kk;
+      _nb = mes->vv;
+     break;
+    case MIDI_TYPE_PROGRAM:
+    case MIDI_TYPE_MA:
+      _nb = mes->vv;
+     break;
+    case MIDI_TYPE_PB:
+    case MIDI_TYPE_SYSEX:
+     break;
+   }
+
+   if ( stream_vio_s_write(ss, data, len) != len ) {
+    streams_delete(id);
+    return -1;
+   }
+  }
+
+  if ( roar_buffer_get_next(buf, &buf) == -1 )
+   buf = NULL;
+ }
+
+ return 0;
 }
+#undef _nb
 
 int midi_new_bufmes    (struct roar_buffer ** buf, struct midi_message ** mes) {
  if ( buf == NULL || mes == NULL )
