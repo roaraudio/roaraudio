@@ -38,6 +38,8 @@ int midi_init (void) {
   ROAR_WARN("Can not initialize MIDI subsystem component clock");
  }
 
+ g_midi_mess.buf = NULL;
+
  return 0;
 }
 
@@ -150,11 +152,95 @@ int midi_send_stream   (int id) {
 }
 
 int midi_conv_midi2mes (int id) {
- return -1;
+ unsigned char * data;
+ struct roar_stream        *   s;
+ struct roar_stream_server *  ss;
+ struct roar_buffer        * buf = NULL;
+ struct midi_message       * mes = NULL;
+ size_t need = 0, have = 0;
+ int alive = 1;
+
+ if ( g_streams[id] == NULL )
+  return -1;
+
+ ROAR_DBG("midi_conv_midi2mes(id=%i) = ?", id);
+
+ s = ROAR_STREAM(ss = g_streams[id]);
+
+ while (ss->buffer != NULL && alive) {
+  if ( roar_buffer_get_data(ss->buffer, (void**)&data) == -1 ) {
+   alive = 0;
+   continue;
+  }
+
+  if ( roar_buffer_get_len(ss->buffer, &have) == -1 ) {
+   alive = 0;
+   continue;
+  }
+
+  while (have && alive) {
+   printf("%.2x=", *data);
+   if ( *data & 0x80 ) {
+    need = 0;
+    printf("S\n");
+    if ( midi_new_bufmes(&buf, &mes) == -1 ) {
+     alive = 0;
+     continue;
+    }
+   } else {
+    printf("D\n");
+    if ( need )
+     need--;
+   }
+   data++;
+   have--;
+  }
+
+  if ( !have ) {
+   roar_buffer_next(&(ss->buffer));
+  }
+
+  if ( need && buf != NULL ) {
+   roar_buffer_free(buf);
+   buf = NULL;
+  } else if ( buf != NULL ) {
+   if ( g_midi_mess.buf == NULL ) {
+    g_midi_mess.buf = buf;
+   } else {
+    roar_buffer_add(g_midi_mess.buf, buf);
+   }
+
+   buf = NULL;
+  }
+ }
+
+ return 0;
 }
 
 int midi_conv_mes2midi (int id) {
  return -1;
+}
+
+int midi_new_bufmes    (struct roar_buffer ** buf, struct midi_message ** mes) {
+ if ( buf == NULL || mes == NULL )
+  return -1;
+
+ *buf = *mes = NULL;
+
+ if ( roar_buffer_new(buf, sizeof(struct midi_message)) == -1 )
+  return -1;
+
+ if ( roar_buffer_get_data(*buf, (void**)mes) == -1 ) {
+  roar_buffer_free(*buf);
+  *buf = *mes = NULL;
+  return -1;
+ }
+
+ memset((void*)*mes, 0, sizeof(struct midi_message));
+
+ (*mes)->type = MIDI_TYPE_NONE;
+
+ return 0;
 }
 
 // bridges:
