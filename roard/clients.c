@@ -239,7 +239,7 @@ int clients_check_all (void) {
    if ( FD_ISSET(fh, &r) ) {
     if ( g_clients[i]->execed == -1 ) {
      clients_check(i);
-     if ( g_clients[i]->execed != -1 ) {
+     if ( g_clients[i] != NULL && g_clients[i]->execed != -1 ) {
       FD_CLR(fh, &r);
      }
 /*
