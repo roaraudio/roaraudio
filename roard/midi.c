@@ -65,6 +65,7 @@ int midi_check_stream  (int id) {
  struct roar_buffer        *   b;
  char                      * buf;
  ssize_t                     len;
+ int                           i;
 
  if ( g_streams[id] == NULL )
   return -1;
@@ -99,11 +100,21 @@ int midi_check_stream  (int id) {
 
  roar_buffer_set_len(b, len);
 
-  if ( stream_add_buffer(id, b) == -1 ) {
-   roar_buffer_free(b);
-   streams_delete(id);
-   return -1;
+ if ( stream_add_buffer(id, b) == -1 ) {
+  roar_buffer_free(b);
+  streams_delete(id);
+  return -1;
+ }
+
+ for (i = 0; i < ROAR_STREAMS_MAX; i++) {
+  if ( g_streams[i] != NULL && ROAR_STREAM(g_streams[i])->pos_rel_id == id ) {
+   if ( ROAR_STREAM(g_streams[i])->dir == ROAR_DIR_THRU ) {
+    if ( stream_vio_write(i, buf, len) != len ) {
+     streams_delete(i);
+    }
+   }
   }
+ }
 
  switch (s->info.codec) {
   case ROAR_CODEC_MIDI:
