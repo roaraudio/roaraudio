@@ -37,6 +37,43 @@
 
 #define MIDI_RATE    31250
 
+// standard MIDI commands:
+#define MIDI_TYPE_NOTE_ON       0x80
+#define MIDI_TYPE_NOTE_OFF      0x90
+#define MIDI_TYPE_PA            0xA0
+#define MIDI_TYPE_CONTROLER     0xB0
+#define MIDI_TYPE_PROGRAM       0xC0
+#define MIDI_TYPE_MA            0xA0
+#define MIDI_TYPE_PB            0xE0
+#define MIDI_TYPE_SYSEX         0xF0
+#define MIDI_TYPE_CLOCK_TICK    0xF8
+#define MIDI_TYPE_CLOCK_START   0xFA
+#define MIDI_TYPE_CLOCK_STOP    0xFC
+
+// RoarAudio MIDI Commands:
+#define MIDI_TYPE_NONE          0x00
+#define MIDI_TYPE_RAW_PASS      0x10
+#define MIDI_TYPE_RAW_NOPASS    0x20
+
+#define MIDI_MES_BUFSIZE        4
+
+#define MIDI_MFLAG_FREE_DP     (1<<0)
+
+struct midi_message {
+ unsigned char   type;
+ unsigned char   channel;
+ unsigned char   flags;
+ unsigned char   kk;
+ unsigned char   vv;
+ size_t          datalen;
+ unsigned char * dataptr;
+ union {
+  unsigned char           ldata[MIDI_MES_BUFSIZE];
+  struct roar_note_octave note;
+ }               d;
+};
+
+
 int g_console;
 int g_midi_cb_stream;
 
@@ -46,6 +83,8 @@ int      g_midi_cb_playing;
 struct {
  int stream;
  uint_least32_t bph; // beats per hour
+ uint_least32_t spt; // samples per tick
+ uint32_t       nt;  // time of next tick
 } g_midi_clock;
 
 int midi_init (void);
@@ -59,6 +98,8 @@ int midi_send_stream   (int id);
 int midi_check_bridge  (int id);
 
 int midi_clock_init (void);
+int midi_clock_set_bph (uint_least32_t bph);
+int midi_clock_tick (void);
 
 // cb = console beep
 int midi_cb_init(void);
