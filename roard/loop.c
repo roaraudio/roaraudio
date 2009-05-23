@@ -104,7 +104,7 @@ int main_loop (int driver, DRIVER_USERDATA_T driver_inst, struct roar_audio_info
   }
 #endif
 
-  midi_cb_update();
+  midi_update();
 //  output_buffer_reinit();
 
   g_pos = ROAR_MATH_OVERFLOW_ADD(g_pos, ROAR_OUTPUT_BUFFER_SAMPLES*g_sa->channels);

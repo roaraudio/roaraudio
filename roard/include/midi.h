@@ -36,6 +36,7 @@
 #define MIDI_CB_OVERRIDE   1
 
 int g_console;
+int g_midi_cb_stream;
 
 uint32_t g_midi_cb_stoptime;
 int g_midi_cb_playing;
@@ -49,6 +50,8 @@ int midi_check_stream  (int id);
 int midi_send_stream   (int id);
 
 // cb = console beep
+int midi_cb_init(void);
+int midi_cb_free(void);
 int midi_cb_play(float t, float freq, int override);
 int midi_cb_update (void);
 int midi_cb_start(float freq);

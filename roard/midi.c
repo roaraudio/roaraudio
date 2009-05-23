@@ -29,7 +29,26 @@
 #endif
 
 int midi_init (void) {
+
+ if ( midi_cb_init() == -1 ) {
+  ROAR_WARN("Can not initialize MIDI subsystem component CB");
+ }
+
+ return 0;
+}
+int midi_free (void) {
+ return midi_cb_free();
+}
+
+int midi_update(void) {
+ return midi_cb_update();
+}
+
+
+int midi_cb_init (void) {
 #ifdef _HAVE_CONSOLE
+ struct roar_stream * s;
+ struct roar_stream_server * ss;
  int i;
  char * files[] = {
                    "/dev/console",
@@ -41,28 +60,69 @@ int midi_init (void) {
                   };
 
  g_console          = -1;
- g_midi_cb_stoptime = 0;
- g_midi_cb_playing  = 0;
+ g_midi_cb_stream   = -1;
+ g_midi_cb_stoptime =  0;
+ g_midi_cb_playing  =  0;
 
  for (i = 0; files[i] != NULL; i++) {
   if ( (g_console = open(files[i], O_WRONLY|O_NOCTTY, 0)) != -1 )
    break;
  }
 
- if ( g_console != -1 ) {
-  return 0;
- } else {
+ if ( g_console == -1 )
+  return -1;
+
+ if ( (g_midi_cb_stream = streams_new()) == -1 ) {
+  ROAR_WARN("Error while initializing MIDI subsystem component CB");
+  midi_cb_free();
   return -1;
  }
+
+ streams_get(g_midi_cb_stream, &ss);
+ s = ROAR_STREAM(ss);
+
+ memcpy(&(s->info), g_sa, sizeof(struct roar_audio_info));
+
+ s->pos_rel_id    = -1;
+
+ s->info.codec    =  0;
+ ss->codec_orgi   =  0;
+
+ s->info.channels =  1;
+ s->info.rate     = 1193180;
+ s->info.bits     =  8;
+
+ if ( streams_set_dir(g_midi_cb_stream, ROAR_DIR_BRIDGE, 1) == -1 ) {
+  ROAR_WARN("Error while initializing MIDI subsystem component CB");
+  midi_cb_free();
+  return -1;
+ }
+
+ streams_set_name(g_midi_cb_stream, "Console speaker bridge");
+
+ streams_set_flag(g_midi_cb_stream, ROAR_FLAG_OUTPUT);
+ streams_set_flag(g_midi_cb_stream, ROAR_FLAG_PRIMARY);
+
+ return 0;
 #else
+ g_console          = -1;
+ g_midi_cb_stream   = -1;
+
  return -1;
 #endif
 }
 
-int midi_free (void) {
+int midi_cb_free (void) {
 #ifdef _HAVE_CONSOLE
+
+ midi_cb_stop();
+
+ if ( g_midi_cb_stream != -1 )
+  streams_delete(g_midi_cb_stream);
+
  if ( g_console != -1 )
   close(g_console);
+
  return 0;
 #else
  return -1;
