@@ -796,7 +796,8 @@ int streams_get_mixbuffers (void *** bufferlist, struct roar_audio_info * info, 
    ROAR_DBG("streams_get_mixbuffers(*):  bufs[have] = %p", bufs[have]);
    ROAR_DBG("streams_get_mixbuffers(*): *bufs[have] = 0x%08x...", *(uint32_t*)bufs[have]);
 
-   have++; // we have a new stream!
+   if ( !streams_get_flag(i, ROAR_FLAG_MUTE) )
+    have++; // we have a new stream!
   }
  }
 
