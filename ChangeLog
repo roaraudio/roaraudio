@@ -3,6 +3,8 @@ v. 0.3beta0 - ?
 	* cleanup of client stream struct
 	* added basic light control subsystem
 	* added DMX512 driver
+	* wrote basic MIDI subsystem
+	* added flag 'mute'
 
 v. 0.2 - Thu May 21 2009 21:00
 	* do a some more testings for functions not existing on win32
