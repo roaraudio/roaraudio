@@ -473,7 +473,15 @@ int midi_clock_set_bph (uint_least32_t bph) {
 int midi_clock_tick (void) {
  struct roar_buffer  * buf;
  struct midi_message * mes;
+ struct roar_stream_server * ss;
  unsigned int diff;
+
+ if ( streams_get(g_midi_clock.stream, &ss) == -1 ) {
+  ROAR_ERR("midi_clock_tick(void): Something very BAD happend: can not get stream object of my own stream!");
+  g_midi_clock.stream = -1;
+  ROAR_WARN("midi_clock_tick(void): Disabled MIDI Clock");
+  return -1;
+ }
 
  while ( g_pos >= g_midi_clock.nt ) {
   diff = g_pos - g_midi_clock.nt;
@@ -494,6 +502,8 @@ int midi_clock_tick (void) {
     roar_buffer_free(buf);
     return -1;
    }
+
+   ROAR_STREAM(ss)->pos = ROAR_MATH_OVERFLOW_ADD(ROAR_STREAM(ss)->pos, 1);
   } else {
    ROAR_DBG("midi_clock_tick(void): silent tick. (nt=%lu)", g_midi_clock.nt);
   }
