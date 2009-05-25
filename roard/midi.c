@@ -361,6 +361,9 @@ int midi_conv_mes2midi (int id) {
     case MIDI_TYPE_PB:
     case MIDI_TYPE_SYSEX:
      break;
+    case MIDI_TYPE_CLOCK_TICK:
+      s->pos = ROAR_MATH_OVERFLOW_ADD(s->pos, 1);
+     break;
    }
 
    if ( stream_vio_s_write(ss, data, len) != len ) {
