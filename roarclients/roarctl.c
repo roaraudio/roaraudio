@@ -261,8 +261,14 @@ void list_streams (struct roar_connection * con) {
   } else {
    printf("Relativ position id   : %i (synchronized)\n", s.pos_rel_id);
   }
-  if ( g_verbose > 1 )
-   printf("Position              : %lu S (%.3fs)\n", (unsigned long int) s.pos, (float)s.pos/(s.info.rate*s.info.channels));
+  if ( g_verbose > 1 ) {
+   if ( s.info.rate && s.info.channels ) {
+    printf("Position              : %lu S (%.3fs)\n", (unsigned long int) s.pos,
+                                    (float)s.pos/(s.info.rate*s.info.channels));
+   } else {
+    printf("Position              : %lu S\n", (unsigned long int) s.pos);
+   }
+  }
 
   if ( s.dir != ROAR_DIR_LIGHT_IN && s.dir != ROAR_DIR_LIGHT_OUT &&
        s.info.rate                && s.info.bits                 && s.info.channels
@@ -281,7 +287,9 @@ void list_streams (struct roar_connection * con) {
    }
 
    if ( g_verbose ) {
-    printf("Input block size      : %i Byte\n", info.block_size);
+    if ( info.block_size )
+     printf("Input block size      : %i Byte\n", info.block_size);
+
     printf("Underruns pre/post    : %i/%i\n",   info.pre_underruns, info.post_underruns);
     if ( g_verbose > 1 )
      printf("Stream delay          : %ims\n",   (int)info.delay/1000);
