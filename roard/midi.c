@@ -690,6 +690,10 @@ int midi_cb_readbuf(void) {
    case MIDI_TYPE_NOTE_OFF:
      midi_cb_stop();
     break;
+   case MIDI_TYPE_CONTROLER:
+     if ( mes->kk == 123 ) /* all note off */
+      midi_cb_stop();
+    break;
   }
 
   if ( roar_buffer_get_next(buf, &buf) == -1 )
