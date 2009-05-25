@@ -271,6 +271,23 @@ int midi_conv_midi2mes (int id) {
 
     if ( need )
      need--;
+
+    if ( !need ) {
+     switch (mes->type) {
+      case MIDI_TYPE_CONTROLER:
+       switch (mes->kk) {
+        case MIDI_CCE_MAIN_VOL:
+         if ( 516 * mes->vv > 65100 ) { // max volume
+          ss->mixer.mixer[mes->channel] = 65535;
+         } else {
+          ss->mixer.mixer[mes->channel] = 516 * mes->vv;
+         }
+         break;
+       }
+      break;
+     }
+    }
+
    }
    data++;
    have--;
