@@ -80,14 +80,21 @@ int main (int argc, char * argv[]) {
   } else if ( !strcmp(k, "-m") ) {
    channels = 2;
   } else if ( !strcmp(k, "--codec") ) {
-   codec = roar_str2codec(argv[++i]);
+   if ( (codec = roar_str2codec(argv[++i])) == -1 ) {
+    fprintf(stderr, "Error: Unknown codec: %s\n", argv[i]);
+    return 1;
+   }
 
   } else if ( !strcmp(k, "--wave") ) {
    dir   = ROAR_DIR_MONITOR;
   } else if ( !strcmp(k, "--midi") ) {
    dir   = ROAR_DIR_MIDI_OUT;
+   if ( codec == ROAR_CODEC_DEFAULT )
+    codec = ROAR_CODEC_MIDI;
   } else if ( !strcmp(k, "--light") ) {
    dir   = ROAR_DIR_LIGHT_OUT;
+   if ( codec == ROAR_CODEC_DEFAULT )
+    codec = ROAR_CODEC_DMX512;
   } else if ( !strcmp(k, "--thru") ) {
    dir   = ROAR_DIR_THRU;
   } else if ( !strcmp(k, "--rel-id") ) {

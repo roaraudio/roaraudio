@@ -76,14 +76,21 @@ int main (int argc, char * argv[]) {
   } else if ( !strcmp(k, "-m") ) {
    channels = 1;
   } else if ( !strcmp(k, "--codec") ) {
-   codec = roar_str2codec(argv[++i]);
+   if ( (codec = roar_str2codec(argv[++i])) == -1 ) {
+    fprintf(stderr, "Error: Unknown codec: %s\n", argv[i]);
+    return 1;
+   }
 
   } else if ( !strcmp(k, "--wave") ) {
    dir   = ROAR_DIR_PLAY;
   } else if ( !strcmp(k, "--midi") ) {
    dir   = ROAR_DIR_MIDI_IN;
+   if ( codec == ROAR_CODEC_DEFAULT )
+    codec = ROAR_CODEC_MIDI;
   } else if ( !strcmp(k, "--light") ) {
    dir   = ROAR_DIR_LIGHT_IN;
+   if ( codec == ROAR_CODEC_DEFAULT )
+    codec = ROAR_CODEC_DMX512;
 
   } else if ( !strcmp(k, "--help") || !strcmp(k, "-h") ) {
    usage();
