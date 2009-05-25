@@ -351,10 +351,19 @@ int midi_conv_mes2midi (int id) {
    _nb = (mes->type & 0xF0) | (mes->channel & 0x0F);
 
    switch (mes->type) {
+    case MIDI_TYPE_CONTROLER:
+      switch (mes->kk) {
+       case MIDI_CCE_MAIN_VOL:
+         if ( 516 * mes->vv > 65100 ) { // max volume
+          ss->mixer.mixer[mes->channel] = 65535;
+         } else {
+          ss->mixer.mixer[mes->channel] = 516 * mes->vv;
+         }
+        break;
+      }
     case MIDI_TYPE_NOTE_ON:
     case MIDI_TYPE_NOTE_OFF:
     case MIDI_TYPE_PA:
-    case MIDI_TYPE_CONTROLER:
       _nb = mes->kk;
       _nb = mes->vv;
      break;
