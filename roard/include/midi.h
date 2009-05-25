@@ -55,6 +55,14 @@
 #define MIDI_TYPE_RAW_PASS      0x10
 #define MIDI_TYPE_RAW_NOPASS    0x20
 
+// controller events:
+#define MIDI_CCE_MAIN_VOL        7
+#define MIDI_CCE_BALANCE         8
+#define MIDI_CCE_PANORAMA       10
+#define MIDI_CCE_LOCAL_CONTR   122
+#define MIDI_CCE_ALL_NOTE_OFF  123
+
+
 #define MIDI_MES_BUFSIZE        4
 #define MIDI_READ_SIZE          256 /* this should be big enoth in both cfreq=20..100Hz mode */
 
