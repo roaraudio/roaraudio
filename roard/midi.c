@@ -205,6 +205,10 @@ int midi_conv_midi2mes (int id) {
 
     if (*data == MIDI_TYPE_CLOCK_TICK || *data == MIDI_TYPE_CLOCK_START || *data == MIDI_TYPE_CLOCK_STOP ) {
      mes->type = *data;
+
+     if ( *data == MIDI_TYPE_CLOCK_TICK ) {
+      s->pos = ROAR_MATH_OVERFLOW_ADD(s->pos, 1);
+     }
     } else {
      mes->type    = *data & 0xF0;
      mes->channel = *data & 0x0F;
