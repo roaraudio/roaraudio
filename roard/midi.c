@@ -340,6 +340,10 @@ int midi_conv_mes2midi (int id) {
     streams_delete(id);
     return -1;
    }
+
+   if ( mes->type == MIDI_TYPE_CLOCK_TICK ) {
+    s->pos = ROAR_MATH_OVERFLOW_ADD(s->pos, 1);
+   }
   } else {
    len = 0;
    d   = data;
@@ -360,9 +364,6 @@ int midi_conv_mes2midi (int id) {
      break;
     case MIDI_TYPE_PB:
     case MIDI_TYPE_SYSEX:
-     break;
-    case MIDI_TYPE_CLOCK_TICK:
-      s->pos = ROAR_MATH_OVERFLOW_ADD(s->pos, 1);
      break;
    }
 
