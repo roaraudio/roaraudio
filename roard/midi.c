@@ -712,7 +712,7 @@ int midi_cb_readbuf(void) {
      midi_cb_stop();
     break;
    case MIDI_TYPE_CONTROLER:
-     if ( mes->kk == 123 ) /* all note off */
+     if ( mes->kk == MIDI_CCE_ALL_NOTE_OFF ) /* all note off */
       midi_cb_stop();
     break;
   }
