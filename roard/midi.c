@@ -322,6 +322,7 @@ int midi_conv_mes2midi (int id) {
  unsigned char               data[3];
  unsigned char             * d;
  int                         len;
+ int                         send_clock;
 
  if ( g_streams[id] == NULL )
   return -1;
@@ -330,15 +331,19 @@ int midi_conv_mes2midi (int id) {
 
  s = ROAR_STREAM(ss = g_streams[id]);
 
+ send_clock = streams_get_flag(id, ROAR_FLAG_SYNC);
+
  while (buf != NULL) {
   if ( roar_buffer_get_data(buf, (void**)&mes) == -1 ) {
    return -1;
   }
 
   if (mes->type == MIDI_TYPE_CLOCK_TICK || mes->type == MIDI_TYPE_CLOCK_START || mes->type == MIDI_TYPE_CLOCK_STOP ) {
-   if ( stream_vio_s_write(ss, &(mes->type), 1) != 1 ) {
-    streams_delete(id);
-    return -1;
+   if ( send_clock )
+    if ( stream_vio_s_write(ss, &(mes->type), 1) != 1 ) {
+     streams_delete(id);
+     return -1;
+    }
    }
 
    if ( mes->type == MIDI_TYPE_CLOCK_TICK ) {
