@@ -236,14 +236,19 @@ int streams_set_dir    (int id, int dir, int defaults) {
   if ( dir <= 0 || dir >= ROAR_DIR_DIRIDS )
    return -1;
 
-  if ( streams_set_flag(id, g_config->streams[dir].flags) == -1 )
+  ROAR_DBG("streams_set_dir(*): g_config->streams[dir=%i].flags = 0x%0.4x", dir, g_config->streams[dir].flags);
+
+  if ( streams_set_flag(id, g_config->streams[dir].flags) == -1 ) {
+   ROAR_DBG("streams_set_dir(*) = -1 // can not set stream flags");
    return -1;
+  }
 
    ss->mixer.scale   = g_config->streams[dir].mixer.scale;
    ss->mixer.rpg_mul = g_config->streams[dir].mixer.rpg_mul;
    ss->mixer.rpg_div = g_config->streams[dir].mixer.rpg_div;
  }
 
+ ROAR_DBG("streams_set_dir(*) = 0");
  return 0;
 }
 
