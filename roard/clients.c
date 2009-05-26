@@ -428,8 +428,10 @@ int clients_send_filter(struct roar_audio_info * sa, uint32_t pos) {
 int client_stream_exec   (int client, int stream) {
  int i;
 
- if ( g_clients[client] == NULL )
+ if ( g_clients[client] == NULL ) {
+  ROAR_WARN("client_stream_exec(client=%i, stream=%i) = -1 // client does not exist", client, stream);
   return -1;
+ }
 
  for (i = 0; i < ROAR_CLIENTS_MAX_STREAMS_PER_CLIENT; i++) {
   if ( g_clients[client]->streams[i] == stream ) {
@@ -440,6 +442,7 @@ int client_stream_exec   (int client, int stream) {
   }
  }
 
+ ROAR_WARN("client_stream_exec(client=%i, stream=%i) = -1 // client does not own stream", client, stream);
  return -1;
 }
 
