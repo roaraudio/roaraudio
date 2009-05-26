@@ -339,7 +339,7 @@ int midi_conv_mes2midi (int id) {
   }
 
   if (mes->type == MIDI_TYPE_CLOCK_TICK || mes->type == MIDI_TYPE_CLOCK_START || mes->type == MIDI_TYPE_CLOCK_STOP ) {
-   if ( send_clock )
+   if ( send_clock ) {
     if ( stream_vio_s_write(ss, &(mes->type), 1) != 1 ) {
      streams_delete(id);
      return -1;
