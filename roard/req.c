@@ -114,12 +114,10 @@ int req_on_new_stream  (int client, struct roar_message * mes, char * data) {
 
  ROAR_DBG("req_on_new_stream(client=%i, ...): setting direction stream...", client);
  // int streams_set_dir    (int id, int dir, int defaults)
-/*
  if ( streams_set_dir(stream, ROAR_STREAM(s)->dir, 1) == -1 ) {
   streams_delete(stream);
   return -1;
  }
-*/
 
  ROAR_DBG("req_on_new_stream(client=%i, ...): setting up direction specific stream settings...", client);
  switch (ROAR_STREAM(s)->dir) {
