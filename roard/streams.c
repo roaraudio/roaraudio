@@ -295,8 +295,14 @@ int streams_set_fh     (int id, int fh) {
 
  dir = ROAR_STREAM(ss)->dir;
 
- if ( dir == ROAR_DIR_MONITOR || dir == ROAR_DIR_RECORD || dir == ROAR_DIR_OUTPUT ) {
-  ROAR_SHUTDOWN(fh, SHUT_RD);
+ switch (dir) {
+  case ROAR_DIR_MONITOR:
+  case ROAR_DIR_RECORD:
+  case ROAR_DIR_OUTPUT:
+  case ROAR_DIR_MIDI_OUT:
+  case ROAR_DIR_LIGHT_OUT:
+    ROAR_SHUTDOWN(fh, SHUT_RD);
+   break;
  }
 
  if ( dir == ROAR_DIR_FILTER ) {
