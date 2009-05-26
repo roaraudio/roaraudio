@@ -86,33 +86,42 @@ int req_on_new_stream  (int client, struct roar_message * mes, char * data) {
  struct roar_audio_info * info;
  struct roar_audio_info * source_info;
 
+ ROAR_DBG("req_on_new_stream(client=%i, ...): creating stream...", client);
  if ((stream = streams_new()) == -1 )
   return -1;
 
+ ROAR_DBG("req_on_new_stream(client=%i, ...): getting stream...", client);
  if ( streams_get(stream, (struct roar_stream_server **)&s) == -1 ) {
   streams_delete(stream);
   return -1;
  }
 
+ ROAR_DBG("req_on_new_stream(client=%i, ...): set client of stream...", client);
  if ( client_stream_add(client, stream) == -1 ) {
   streams_delete(stream);
   return -1;
  }
 
+ ROAR_DBG("req_on_new_stream(client=%i, ...): loading stream from message...", client);
  if ( roar_stream_m2s(s, mes) == -1 ) {
   streams_delete(stream);
   return -1;
  }
 
+ ROAR_DBG("req_on_new_stream(client=%i, ...): setting id and codec of stream...", client);
  ROAR_STREAM(s)->id = stream; // roar_stream_m2s() resets this
  ROAR_STREAM_SERVER(s)->codec_orgi = ROAR_STREAM(s)->info.codec;
 
+ ROAR_DBG("req_on_new_stream(client=%i, ...): setting direction stream...", client);
  // int streams_set_dir    (int id, int dir, int defaults)
+/*
  if ( streams_set_dir(stream, ROAR_STREAM(s)->dir, 1) == -1 ) {
   streams_delete(stream);
   return -1;
  }
+*/
 
+ ROAR_DBG("req_on_new_stream(client=%i, ...): setting up direction specific stream settings...", client);
  switch (ROAR_STREAM(s)->dir) {
   case ROAR_DIR_LIGHT_IN:
   case ROAR_DIR_LIGHT_OUT:
@@ -159,6 +168,8 @@ int req_on_new_stream  (int client, struct roar_message * mes, char * data) {
    break;
  }
 
+ ROAR_DBG("req_on_new_stream(client=%i, ...): returning (OK)...", client);
+
  mes->cmd     = ROAR_CMD_OK;
  mes->stream  = stream;
  mes->datalen = 0;
@@ -169,9 +180,12 @@ int req_on_new_stream  (int client, struct roar_message * mes, char * data) {
 int req_on_exec_stream (int client, struct roar_message * mes, char * data) {
  int r;
 
+ ROAR_DBG("req_on_exec_stream(client=%i, mes={stream=%i,...},...): execing stream", client, mes->stream);
+
  if ( (r = client_stream_exec(client, mes->stream)) == -1 )
   return -1;
 
+ ROAR_DBG("req_on_exec_stream(client=%i, mes={stream=%i,...},...): returning (OK)...", client, mes->stream);
  mes->cmd     = ROAR_CMD_OK;
  mes->datalen = 0;
 
