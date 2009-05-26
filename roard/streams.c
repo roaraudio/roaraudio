@@ -93,6 +93,7 @@ int streams_new    (void) {
    s->delay           =  0;
    s->codec_orgi      = -1;
    s->primary         =  0;
+   s->ready           =  0;
 
    s->mixer.scale     = 65535;
    s->mixer.rpg_mul   = 1;
@@ -254,14 +255,15 @@ int streams_set_dir    (int id, int dir, int defaults) {
 
 int streams_set_fh     (int id, int fh) {
  struct roar_stream_server * ss;
+ struct roar_stream        * s;
  int dir;
 
- if ( (ss = g_streams[id]) == NULL )
+ if ( (s = ROAR_STREAM(ss = g_streams[id])) == NULL )
   return -1;
 
- ROAR_DBG("streams_set_fh(id=%i): g_streams[id]->id=%i", id, ROAR_STREAM(ss)->id);
+ ROAR_DBG("streams_set_fh(id=%i): g_streams[id]->id=%i", id, s->id);
 
- ROAR_STREAM(g_streams[id])->fh = fh;
+ s->fh = fh;
 
  ROAR_DBG("streams_set_fh(id=%i, fh=%i): driverID=%i", id, fh, ss->driver_id);
 
@@ -269,8 +271,8 @@ int streams_set_fh     (int id, int fh) {
   roar_vio_set_fh(&(ss->vio), fh);
 
  if ( codecfilter_open(&(ss->codecfilter_inst), &(ss->codecfilter), NULL,
-                  ROAR_STREAM(ss)->info.codec, ss) == -1 ) {
-  return streams_delete(id);
+                  s->info.codec, ss) == -1 ) {
+  return streams_delete(id); // TODO: FIXME: is this correct? shoudn't we return -1 in any case here?
  }
 
  if ( fh == -2 ) {
@@ -282,12 +284,13 @@ int streams_set_fh     (int id, int fh) {
    if ( fh < 0 ) {
     fh = -2;
    } else {
-    ROAR_STREAM(g_streams[id])->fh = fh;
+    s->fh = fh;
    }
   }
  }
 
  if ( fh == -1 || fh == -2 ) { // yes, this is valid, indecats full vio!
+  ss->ready = 1;
   return 0;
  }
 
@@ -306,9 +309,14 @@ int streams_set_fh     (int id, int fh) {
  }
 
  if ( dir == ROAR_DIR_FILTER ) {
+  ss->ready = 1;
   return 0;
  } else {
-  return roar_socket_nonblock(fh, ROAR_SOCKET_NONBLOCK);
+  if ( roar_socket_nonblock(fh, ROAR_SOCKET_NONBLOCK) == -1 )
+   return -1;
+
+  ss->ready = 1;
+  return 0;
  }
 }
 

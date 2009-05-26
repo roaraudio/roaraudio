@@ -72,6 +72,7 @@ struct roar_stream_server {
  int flags;
  uint_least32_t delay;
  char * name;
+ int ready;
 } * g_streams[ROAR_STREAMS_MAX];
 
 int streams_init   (void);
