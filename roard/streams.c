@@ -381,8 +381,17 @@ int streams_set_flag     (int id, int flag) {
  }
 
  if ( flag & ROAR_FLAG_SYNC ) {
-  if ( streams_set_sync(id, 1) == -1 )
-   flag -= ROAR_FLAG_SYNC;
+  switch (ROAR_STREAM(g_streams[id])->dir) {
+   // for this stream types the flag is used in the subsystem:
+   case ROAR_DIR_BRIDGE:
+   case ROAR_DIR_MIDI_OUT:
+    break;
+
+   // normal behavor (vio blocking):
+   default:
+     if ( streams_set_sync(id, 1) == -1 )
+      flag -= ROAR_FLAG_SYNC;
+  }
  }
 
  if ( flag & ROAR_FLAG_HWMIXER ) { // currently not supported -> ignored
