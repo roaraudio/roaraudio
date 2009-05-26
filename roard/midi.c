@@ -524,7 +524,7 @@ int midi_clock_tick (void) {
 
  while ( g_pos >= g_midi_clock.nt ) {
   diff = g_pos - g_midi_clock.nt;
-  ROAR_DBG("midi_clock_tick(void): g_pos is %u samples (%5.2f%%) ahead of nt.", diff, (float)diff/g_midi_clock.spt);
+  ROAR_DBG("midi_clock_tick(void): g_pos is %u samples (%5.2f%%) after of nt.", diff, (float)diff/g_midi_clock.spt);
 
   g_midi_clock.nt   = ROAR_MATH_OVERFLOW_ADD(g_midi_clock.nt, g_midi_clock.spt);
 
