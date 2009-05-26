@@ -1025,6 +1025,8 @@ int streams_send_mon   (int id) {
   return 0;
 */
 
+ if ( !ss->ready )
+  return 0;
 
  if ( streams_get_flag(id, ROAR_FLAG_PAUSE) )
   return 0;
