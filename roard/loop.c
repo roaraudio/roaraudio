@@ -73,6 +73,7 @@ int main_loop (int driver, DRIVER_USERDATA_T driver_inst, struct roar_audio_info
    term  = 1;
   }
 
+  ROAR_DBG("main_loop(*): updating midi subsystem...");
   midi_update();
 
   ROAR_DBG("main_loop(*): mixing clients...");
@@ -92,6 +93,9 @@ int main_loop (int driver, DRIVER_USERDATA_T driver_inst, struct roar_audio_info
   // while in standby we still need to write out our buffer to not run in an endless loop without
   // a break
 */
+
+
+  ROAR_DBG("main_loop(*): sending output data...");
 
 #ifdef ROAR_HAVE_USLEEP
   if ( g_standby || (streams < 1 && g_autostandby) ) {
