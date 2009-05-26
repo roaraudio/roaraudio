@@ -141,6 +141,8 @@ int init_config (void) {
   g_config->streams[i].mixer.mixer[0] = g_config->streams[i].mixer.scale;
  }
 
+ g_config->streams[ROAR_DIR_MIDI_OUT].flags = ROAR_FLAG_SYNC;
+
  return 0;
 }
 
