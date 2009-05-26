@@ -107,6 +107,12 @@ int req_on_new_stream  (int client, struct roar_message * mes, char * data) {
  ROAR_STREAM(s)->id = stream; // roar_stream_m2s() resets this
  ROAR_STREAM_SERVER(s)->codec_orgi = ROAR_STREAM(s)->info.codec;
 
+ // int streams_set_dir    (int id, int dir, int defaults)
+ if ( streams_set_dir(stream, ROAR_STREAM(s)->dir, 1) == -1 ) {
+  streams_delete(stream);
+  return -1;
+ }
+
  switch (ROAR_STREAM(s)->dir) {
   case ROAR_DIR_LIGHT_IN:
   case ROAR_DIR_LIGHT_OUT:
@@ -122,7 +128,7 @@ int req_on_new_stream  (int client, struct roar_message * mes, char * data) {
     info = &(ROAR_STREAM(s)->info);
 
     info->channels = 16;
-    info->bits     =  8;
+    info->bits     =  0;
     info->rate     = MIDI_RATE;
 
    break;
