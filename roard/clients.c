@@ -398,6 +398,7 @@ int clients_send_mon  (struct roar_audio_info * sa, uint32_t pos) {
   } 
  }
 
+ // TODO: FIXME: should this really be -1?
  return -1;
 }
 
