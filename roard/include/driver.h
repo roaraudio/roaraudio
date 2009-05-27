@@ -83,10 +83,14 @@
 #include "driver_oss.h"
 #endif
 
+#define DRV_FLAG_NONE           0x00
+#define DRV_FLAG_FHSEC          0x01
+
 struct roar_driver {
  char * name;
  char * desc;
  char * devices;
+ unsigned int flags;
  int (*open )(DRIVER_USERDATA_T * inst, char * device, struct roar_audio_info * info);
  int (*close)(DRIVER_USERDATA_T   inst);
  int (*pause)(DRIVER_USERDATA_T   inst, int newstate);
