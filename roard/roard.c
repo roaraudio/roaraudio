@@ -157,6 +157,7 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
  int codec;
  int sync = 0;
  int32_t blocks = -1, blocksize = -1;
+ int dir = OAR_DIR_OUTPUT;
 
  ROAR_DBG("add_output(drv='%s', dev='%s', opts='%s') = ?", drv, dev, opts);
 
@@ -188,10 +189,6 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
 
  memcpy(&(s->info), g_sa, sizeof(struct roar_audio_info));
 
- if ( streams_set_dir(stream, ROAR_DIR_OUTPUT, 1) == -1 ) {
-  streams_delete(stream);
-  return -1;
- }
  s->pos_rel_id = -1;
 // s->info.codec = codec;
 
@@ -227,6 +224,23 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
    blocks = atoi(v);
   } else if ( strcmp(k, "blocksize") == 0 ) {
    blocksize = atoi(v);
+  } else if ( strcmp(k, "subsystem") == 0 ) {
+   if ( !strcasecmp(v, "wave") || !strcasecmp(v, "waveform") ) {
+    dir = OAR_DIR_OUTPUT;
+   } else if ( !strcasecmp(v, "midi") ) {
+    dir = ROAR_DIR_MIDI_OUT;
+   } else if ( !strcasecmp(v, "light") ) {
+    dir = ROAR_DIR_LIGHT_OUT;
+   } else {
+    ROAR_ERR("add_output(*): unknown subsystem '%s'", k);
+    streams_delete(stream);
+    if ( prim ) alive = 0;
+#ifdef ROAR_DRIVER_CODEC
+    if ( to_free != NULL )
+     free(to_free);
+#endif
+    return -1; 
+   }
   } else if ( strcmp(k, "meta") == 0 ) {
    streams_set_flag(stream, ROAR_FLAG_META);
   } else if ( strcmp(k, "sync") == 0 ) {
@@ -250,6 +264,11 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
   }
 
   k = strtok(NULL, ",");
+ }
+
+ if ( streams_set_dir(stream, dir, 1) == -1 ) {
+  streams_delete(stream);
+  return -1;
  }
 
 #ifdef ROAR_DRIVER_CODEC
