@@ -34,7 +34,7 @@ struct roar_driver g_driver[] = {
  { "roar", "RoarAudio driver", "localhost, remote.host.dom", DRV_FLAG_NONE, ROAR_SUBSYS_WAVEFORM,
    NULL, driver_roar_close, NULL, NULL, NULL, driver_roar_flush, driver_roar_open_vio},
 #ifdef ROAR_HAVE_IO_POSIX
- { "raw",  "RAW PCM driver", "/some/file", DRV_FLAG_FHSEC, ROAR_SUBSYS_WAVEFORM,
+ { "raw",  "RAW PCM driver", "/some/file", DRV_FLAG_FHSEC, ROAR_SUBSYS_WAVEFORM|ROAR_SUBSYS_MIDI|ROAR_SUBSYS_LIGHT,
    NULL, NULL, NULL, NULL, NULL, driver_raw_flush, driver_raw_open_vio},
 #endif
 #if defined(ROAR_HAVE_OSS_BSD) || defined(ROAR_HAVE_OSS)
