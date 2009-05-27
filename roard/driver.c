@@ -25,52 +25,66 @@
 #include "roard.h"
 
 struct roar_driver g_driver[] = {
- { "null", "null audio driver", "/dev/null", DRV_FLAG_NONE, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
+ { "null", "null audio driver", "/dev/null", DRV_FLAG_NONE, ROAR_SUBSYS_WAVEFORM,
+   NULL, NULL, NULL, NULL, NULL, NULL, NULL},
 #ifdef ROAR_HAVE_ESD
- { "esd", "EsounD audio driver", "localhost, remote.host.dom", DRV_FLAG_NONE,
+ { "esd", "EsounD audio driver", "localhost, remote.host.dom", DRV_FLAG_NONE, ROAR_SUBSYS_WAVEFORM,
    NULL, driver_esd_close, driver_esd_pause, NULL, NULL, driver_esd_flush, driver_esd_open_vio},
 #endif
- { "roar", "RoarAudio driver", "localhost, remote.host.dom", DRV_FLAG_NONE,
+ { "roar", "RoarAudio driver", "localhost, remote.host.dom", DRV_FLAG_NONE, ROAR_SUBSYS_WAVEFORM,
    NULL, driver_roar_close, NULL, NULL, NULL, driver_roar_flush, driver_roar_open_vio},
 #ifdef ROAR_HAVE_IO_POSIX
- { "raw",  "RAW PCM driver", "/some/file", DRV_FLAG_FHSEC,
+ { "raw",  "RAW PCM driver", "/some/file", DRV_FLAG_FHSEC, ROAR_SUBSYS_WAVEFORM,
    NULL, NULL, NULL, NULL, NULL, driver_raw_flush, driver_raw_open_vio},
 #endif
 #if defined(ROAR_HAVE_OSS_BSD) || defined(ROAR_HAVE_OSS)
 #ifndef ROAR_DEFAULT_OSS_DEV
 #define ROAR_DEFAULT_OSS_DEV "no default device"
 #endif
- { "oss", "Open Sound System", ROAR_DEFAULT_OSS_DEV, DRV_FLAG_NONE,
+ { "oss", "Open Sound System", ROAR_DEFAULT_OSS_DEV, DRV_FLAG_NONE, ROAR_SUBSYS_WAVEFORM,
    NULL, NULL, NULL, NULL, NULL, NULL, driver_oss_open},
 #endif
 #ifdef ROAR_HAVE_LIBAO
- { "ao", "libao audio driver", "DRIVER", DRV_FLAG_NONE,
+ { "ao", "libao audio driver", "DRIVER", DRV_FLAG_NONE, ROAR_SUBSYS_WAVEFORM,
    NULL, driver_ao_close, NULL, NULL, NULL, NULL, driver_ao_open_vio},
 #endif
 #ifdef ROAR_HAVE_LIBSHOUT
- {"shout", "libshout streaming", "http://user:pw@host:port/mount.ogg", DRV_FLAG_NONE,
+ {"shout", "libshout streaming", "http://user:pw@host:port/mount.ogg", DRV_FLAG_NONE, ROAR_SUBSYS_WAVEFORM,
   NULL, driver_shout_close, NULL, NULL, NULL, NULL, driver_shout_open_vio},
 #endif
 #ifdef ROAR_HAVE_LIBSNDIO
- {"sndio", "OpenBSD sndio", "/dev/audio, /tmp/aucat-<uid>/default", DRV_FLAG_NONE,
+ {"sndio", "OpenBSD sndio", "/dev/audio, /tmp/aucat-<uid>/default", DRV_FLAG_NONE, ROAR_SUBSYS_WAVEFORM,
   NULL, NULL, NULL, NULL, NULL, NULL, driver_sndio_open},
 #endif
- {"dmx", "DMX512 driver", "/dev/dmx", DRV_FLAG_FHSEC,
+ {"dmx", "DMX512 driver", "/dev/dmx", DRV_FLAG_FHSEC, ROAR_SUBSYS_LIGHT,
   NULL, NULL, NULL, NULL, NULL, NULL, driver_dmx_open_vio},
  {NULL, NULL, NULL, DRV_FLAG_NONE, NULL, NULL, NULL, NULL, NULL, NULL, NULL} // end of list
                                 };
 
 void print_driverlist (void) {
  int i;
+ char subsys[7] = "      ";
 
- printf("  Driver Flag - Description (devices)\n");
+ printf("  Driver Flag Subsys - Description (devices)\n");
  printf("------------------------------------------------------\n");
 
  for (i = 0; g_driver[i].name != NULL; i++) {
-  printf("  %-7s %c%c%c - %s (devices: %s)\n", g_driver[i].name,
+  strncpy(subsys, "      ", 6);
+
+  if ( g_driver[i].subsystems & ROAR_SUBSYS_WAVEFORM )
+   subsys[0] = 'W';
+  if ( g_driver[i].subsystems & ROAR_SUBSYS_MIDI )
+   subsys[1] = 'M';
+  if ( g_driver[i].subsystems & ROAR_SUBSYS_CB )
+   subsys[2] = 'C';
+  if ( g_driver[i].subsystems & ROAR_SUBSYS_LIGHT )
+   subsys[3] = 'L';
+
+  printf("  %-7s %c%c%c %6s - %s (devices: %s)\n", g_driver[i].name,
                 g_driver[i].flags & DRV_FLAG_FHSEC                                                         ? 's' : ' ',
                 g_driver[i].open     != NULL || (g_driver[i].open == NULL && g_driver[i].vio_init == NULL) ? 'S' : ' ',
                 g_driver[i].vio_init != NULL || (g_driver[i].open == NULL && g_driver[i].vio_init == NULL) ? 'V' : ' ',
+                subsys,
                 g_driver[i].desc, g_driver[i].devices);
  }
 }

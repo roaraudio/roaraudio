@@ -91,6 +91,7 @@ struct roar_driver {
  char * desc;
  char * devices;
  unsigned int flags;
+ unsigned int subsystems;
  int (*open )(DRIVER_USERDATA_T * inst, char * device, struct roar_audio_info * info);
  int (*close)(DRIVER_USERDATA_T   inst);
  int (*pause)(DRIVER_USERDATA_T   inst, int newstate);
