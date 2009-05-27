@@ -157,7 +157,7 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
  int codec;
  int sync = 0;
  int32_t blocks = -1, blocksize = -1;
- int dir = OAR_DIR_OUTPUT;
+ int dir = ROAR_DIR_OUTPUT;
 
  ROAR_DBG("add_output(drv='%s', dev='%s', opts='%s') = ?", drv, dev, opts);
 
@@ -226,7 +226,7 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
    blocksize = atoi(v);
   } else if ( strcmp(k, "subsystem") == 0 ) {
    if ( !strcasecmp(v, "wave") || !strcasecmp(v, "waveform") ) {
-    dir = OAR_DIR_OUTPUT;
+    dir = ROAR_DIR_OUTPUT;
    } else if ( !strcasecmp(v, "midi") ) {
     dir = ROAR_DIR_MIDI_OUT;
    } else if ( !strcasecmp(v, "light") ) {
