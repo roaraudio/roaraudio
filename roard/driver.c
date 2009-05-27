@@ -55,7 +55,7 @@ struct roar_driver g_driver[] = {
  {"sndio", "OpenBSD sndio", "/dev/audio, /tmp/aucat-<uid>/default", DRV_FLAG_NONE,
   NULL, NULL, NULL, NULL, NULL, NULL, driver_sndio_open},
 #endif
- {"dmx", "DMX512 driver", "/dev/dmx", DRV_FLAG_NONE,
+ {"dmx", "DMX512 driver", "/dev/dmx", DRV_FLAG_FHSEC,
   NULL, NULL, NULL, NULL, NULL, NULL, driver_dmx_open_vio},
  {NULL, NULL, NULL, DRV_FLAG_NONE, NULL, NULL, NULL, NULL, NULL, NULL, NULL} // end of list
                                 };
