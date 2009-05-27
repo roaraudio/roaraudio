@@ -57,6 +57,12 @@
 #endif
 */
 
+#define ROAR_SUBSYS_NONE          0x00
+#define ROAR_SUBSYS_WAVEFORM      0x01
+#define ROAR_SUBSYS_MIDI          0x02
+#define ROAR_SUBSYS_CB            0x04
+#define ROAR_SUBSYS_LIGHT         0x08
+
 
 //#include "buffer.h"
 #include "codecfilter.h"
