@@ -28,6 +28,9 @@ int light_init  (unsigned int channels) {
 
  g_light_state.channels = 0;
 
+ if ( channels == 0 || channels > (512*512) ) /* unrealstic values */
+  return -1;
+
  if ( (g_light_state.state = malloc(channels)) == NULL ) {
   return -1;
  }
