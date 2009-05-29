@@ -52,7 +52,7 @@ void usage (void) {
         " -C  --chans  CHANNELS - Set server channels\n"
        );
 
- printf("\nDriver Options:\n\n");
+ printf("\nDriver Options: (obsolete, do not use, Use Ouput Options)\n\n");
  printf(" -d  --driver DRV      - Set the driver (default: %s)\n", ROAR_DRIVER_DEFAULT);
  printf(" -D  --device DEV      - Set the device\n");
  printf(" -dO OPTS              - Set output options\n");
@@ -75,6 +75,13 @@ void usage (void) {
 
  printf("\nCodec Filter Options:\n\n");
  printf(" --list-cf             - List all codec filter\n"
+       );
+
+ printf("\nMIDI Options:\n\n");
+
+ printf("\nLight Control Options:\n\n");
+ printf(" --light-channels NUM  - Sets the number of channels for Light control (default: %i)\n",
+                                  LIGHT_CHANNELS_DEFAULT
        );
 
  printf("\nServer Options:\n\n");
@@ -359,7 +366,7 @@ int main (void) {
  char * o_opts    = NULL;
  int    o_prim    = 0;
  int    o_count   = 0;
- int    light_channels = 512;
+ int    light_channels = LIGHT_CHANNELS_DEFAULT;
  char * sock_grp  = ROAR_DEFAULT_SOCKGRP;
  char * sock_user = NULL;
 #ifdef ROAR_SUPPORT_LISTEN
@@ -561,6 +568,9 @@ int main (void) {
    s_opt = s_dev = s_con = NULL;
    s_drv = "cf";
    s_prim = 0;
+
+  } else if ( strcmp(k, "--light-channels") == 0 ) {
+   light_channels = atoi(argv[++i]);
 
   } else if ( strcmp(k, "-p") == 0 || strcmp(k, "--port") == 0 ) {
    // This is only usefull in INET not UNIX mode.

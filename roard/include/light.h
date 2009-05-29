@@ -27,6 +27,8 @@
 
 #include <roaraudio.h>
 
+#define LIGHT_CHANNELS_DEFAULT 512 /* one DMX Universe */
+
 struct {
  unsigned int    channels;
  unsigned char * state;
