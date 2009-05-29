@@ -68,6 +68,17 @@
 
 #define MIDI_MFLAG_FREE_DP     (1<<0)
 
+#define MIDI_INITED_MAIN        0x01
+#define MIDI_INITED_CB          0x02
+#define MIDI_INITED_CLOCK       0x04
+
+struct {
+ int init;
+ int inited;
+ int init_cb;
+ char * console_dev;
+} midi_config;
+
 struct midi_message {
  unsigned char   type;
  unsigned char   channel;
@@ -102,6 +113,8 @@ struct {
 
 
 // general midi interface:
+int midi_init_config(void);
+
 int midi_init (void);
 int midi_free (void);
 

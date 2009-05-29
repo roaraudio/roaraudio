@@ -78,6 +78,9 @@ void usage (void) {
        );
 
  printf("\nMIDI Options:\n\n");
+ printf(" --midi-no-console     - Disable console based MIDI synth\n"
+        " --midi-console DEV    - Set device for MIDI console\n"
+       );
 
  printf("\nLight Control Options:\n\n");
  printf(" --light-channels NUM  - Sets the number of channels for Light control (default: %i)\n",
@@ -423,6 +426,10 @@ int main (void) {
   return 1;
  }
 
+ if ( midi_init_config() == -1 ) {
+  ROAR_ERR("Can not init MIDI config!");
+  return 1;
+ }
 
 #ifdef ROAR_SUPPORT_LISTEN
 #ifdef ROAR_HAVE_GETUID
@@ -571,6 +578,11 @@ int main (void) {
 
   } else if ( strcmp(k, "--light-channels") == 0 ) {
    light_channels = atoi(argv[++i]);
+
+  } else if ( strcmp(k, "--midi-no-console") == 0 ) {
+   midi_config.init_cb = 0;
+  } else if ( strcmp(k, "--midi-console") == 0 ) {
+   midi_config.console_dev = argv[++i];
 
   } else if ( strcmp(k, "-p") == 0 || strcmp(k, "--port") == 0 ) {
    // This is only usefull in INET not UNIX mode.

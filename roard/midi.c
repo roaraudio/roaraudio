@@ -28,23 +28,47 @@
 #define _HAVE_CONSOLE
 #endif
 
+int midi_init_config(void) {
+ midi_config.init        = 1;
+ midi_config.inited      = 0;
+ midi_config.init_cb     = 1;
+ midi_config.console_dev = NULL;
+
+ return 0;
+}
+
 int midi_init (void) {
 
- if ( midi_cb_init() == -1 ) {
-  ROAR_WARN("Can not initialize MIDI subsystem component CB");
- }
+ midi_config.inited = 0;
 
- if ( midi_clock_init() == -1 ) {
-  ROAR_WARN("Can not initialize MIDI subsystem component clock");
+ if ( midi_config.init ) {
+  if ( midi_config.init_cb ) {
+   if ( midi_cb_init() == -1 ) {
+    ROAR_WARN("Can not initialize MIDI subsystem component CB");
+   }
+  }
+
+  if ( midi_clock_init() == -1 ) {
+   ROAR_WARN("Can not initialize MIDI subsystem component clock");
+  }
+
  }
 
  g_midi_mess.buf = NULL;
+
+ midi_config.inited |= MIDI_INITED_MAIN;
 
  return 0;
 }
 
 int midi_free (void) {
- return midi_cb_free();
+ if ( midi_reinit() == -1 )
+  return -1;
+
+ if ( midi_cb_free() == -1 )
+  return -1;
+
+ return 0;
 }
 
 int midi_update(void) {
@@ -494,6 +518,8 @@ int midi_clock_init (void) {
 
  midi_clock_set_bph(3600); // one tick per sec
 
+ midi_config.inited |= MIDI_INITED_CLOCK;
+
  return 0;
 }
 
@@ -559,6 +585,8 @@ int midi_cb_init (void) {
  struct roar_stream_server * ss;
  int i;
  char * files[] = {
+                   "/NX",
+                   "/dev/roarconsole",
                    "/dev/console",
 #ifdef __linux__
                    "/dev/tty0",
@@ -571,6 +599,10 @@ int midi_cb_init (void) {
  g_midi_cb.stream   = -1;
  g_midi_cb.stoptime =  0;
  g_midi_cb.playing  =  0;
+
+ if ( midi_config.console_dev != NULL ) {
+  files[0] = midi_config.console_dev;
+ }
 
  for (i = 0; files[i] != NULL; i++) {
   if ( (g_midi_cb.console = open(files[i], O_WRONLY|O_NOCTTY, 0)) != -1 )
@@ -614,6 +646,8 @@ int midi_cb_init (void) {
  streams_set_flag(g_midi_cb.stream, ROAR_FLAG_PRIMARY);
  streams_set_flag(g_midi_cb.stream, ROAR_FLAG_HWMIXER);
  streams_set_flag(g_midi_cb.stream, ROAR_FLAG_MUTE);
+
+ midi_config.inited |= MIDI_INITED_CB;
 
  return 0;
 #else
