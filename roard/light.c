@@ -112,8 +112,8 @@ int light_send_stream   (int id) {
  int chans;
  struct roar_stream        *   s;
  struct roar_stream_server *  ss;
- char buf[512];
- register char * bufptr;
+ unsigned char buf[512];
+ register unsigned char * bufptr;
 
  if ( g_streams[id] == NULL )
   return -1;
