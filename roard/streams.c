@@ -385,12 +385,22 @@ int streams_set_sync     (int id, int sync) {
  }
 }
 
+int streams_set_mmap (int id, int reset) {
+ int use = !reset;
+
+ if ( g_streams[id] == NULL )
+  return -1;
+
+ return roar_vio_ctl(&(g_streams[id]->vio), ROAR_VIO_CTL_SET_UMMAP, &use);
+}
+
 int streams_set_flag     (int id, int flag) {
  if ( g_streams[id] == NULL )
   return -1;
 
  if ( flag & ROAR_FLAG_MMAP )
-  flag -= ROAR_FLAG_MMAP;
+  if ( streams_set_mmap(id, 0) == -1 )
+   flag -= ROAR_FLAG_MMAP;
 
  if ( flag & ROAR_FLAG_PRIMARY ) {
   streams_set_primary(id, 1);
@@ -432,6 +442,10 @@ int streams_set_flag     (int id, int flag) {
 int streams_reset_flag   (int id, int flag) {
  if ( g_streams[id] == NULL )
   return -1;
+
+ if ( flag & ROAR_FLAG_MMAP )
+  if ( streams_set_mmap(id, 1) == -1 )
+   flag -= ROAR_FLAG_MMAP;
 
  if ( flag & ROAR_FLAG_PRIMARY ) {
   streams_set_primary(id, 0);

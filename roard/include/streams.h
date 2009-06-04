@@ -96,6 +96,7 @@ int streams_get_socktype (int id);
 int streams_set_primary  (int id, int prim);
 int streams_mark_primary (int id);
 int streams_set_sync     (int id, int sync);
+int streams_set_mmap     (int id, int reset);
 int streams_set_flag     (int id, int flag);
 int streams_reset_flag   (int id, int flag);
 int streams_get_flag     (int id, int flag);
