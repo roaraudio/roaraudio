@@ -315,6 +315,8 @@ void list_streams (struct roar_connection * con) {
      strcat(flags, "pause ");
     if ( info.flags & ROAR_FLAG_MUTE )
      strcat(flags, "mute ");
+    if ( info.flags & ROAR_FLAG_MMAP )
+     strcat(flags, "mmap ");
 
     printf("Flags                 : %s\n", flags);
    }
@@ -650,6 +652,8 @@ int set_flags (struct roar_connection * con, int id, int reset, char * flags) {
    f |= ROAR_FLAG_PAUSE;
   } else if ( !strcmp(c, "mute") ) {
    f |= ROAR_FLAG_MUTE;
+  } else if ( !strcmp(c, "mmap") ) {
+   f |= ROAR_FLAG_MMAP;
   } else {
    fprintf(stderr, "Error: unknown flag: %s\n", c);
    return -1;

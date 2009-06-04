@@ -389,6 +389,9 @@ int streams_set_flag     (int id, int flag) {
  if ( g_streams[id] == NULL )
   return -1;
 
+ if ( flag & ROAR_FLAG_MMAP )
+  flag -= ROAR_FLAG_MMAP;
+
  if ( flag & ROAR_FLAG_PRIMARY ) {
   streams_set_primary(id, 1);
   flag -= ROAR_FLAG_PRIMARY;

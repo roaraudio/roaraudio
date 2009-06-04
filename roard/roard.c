@@ -165,7 +165,7 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
  char * to_free = NULL;
 #endif
  int codec;
- int sync = 0;
+ int sync = 0, f_mmap = 0;
  int32_t blocks = -1, blocksize = -1;
  int dir = ROAR_DIR_OUTPUT;
 
@@ -234,6 +234,8 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
    blocks = atoi(v);
   } else if ( strcmp(k, "blocksize") == 0 ) {
    blocksize = atoi(v);
+  } else if ( strcmp(k, "mmap") == 0 ) {
+   f_mmap = 1;
   } else if ( strcmp(k, "subsystem") == 0 ) {
    if ( !strcasecmp(v, "wave") || !strcasecmp(v, "waveform") ) {
     dir = ROAR_DIR_OUTPUT;
@@ -326,6 +328,9 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
  } else {
   streams_reset_flag(stream, ROAR_FLAG_SYNC);
  }
+
+ if ( f_mmap )
+  streams_set_flag(stream, ROAR_FLAG_MMAP);
 
  return 0;
 }
