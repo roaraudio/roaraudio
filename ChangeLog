@@ -5,6 +5,8 @@ v. 0.3beta0 - ?
 	* added DMX512 driver
 	* wrote basic MIDI subsystem
 	* added flag 'mute'
+	* added flag 'mmap'
+	* added lib libroarmidi and libroarlight
 
 v. 0.2 - Thu May 21 2009 21:00
 	* do a some more testings for functions not existing on win32
