@@ -68,6 +68,37 @@
 #define ROAR_COLORSYSTEM_HSI           (ROAR_COLOR_TYPE_H|ROAR_COLOR_TYPE_S|ROAR_COLOR_TYPE_I)
 #define ROAR_COLORSYSTEM_CMYK          (ROAR_COLOR_TYPE_C|ROAR_COLOR_TYPE_M|ROAR_COLOR_TYPE_Y|ROAR_COLOR_TYPE_K)
 
+struct roar_color_gray {
+ unsigned char k;
+};
+
+struct roar_color_rgb {
+ unsigned char r, g, b;
+};
+
+struct roar_color_rgba {
+ unsigned char r, g, b, a;
+};
+
+struct roar_color_yuv {
+ unsigned char y, u, v;
+};
+
+struct roar_color_cmyk {
+ unsigned char c, m, y, k;
+};
+
+struct roar_color {
+ uint32_t system;
+ union {
+  struct roar_color_gray   gray;
+  struct roar_color_rgb    rgb;
+  struct roar_color_rgba   rgba;
+  struct roar_color_yuv    yuv;
+  struct roar_color_cmyk   cmyk;
+ } color;
+};
+
 #endif
 
 //ll
