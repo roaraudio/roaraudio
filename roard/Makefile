@@ -15,7 +15,7 @@ NETLIBS   = $(lib_socket) $(lib_wsock32) $(lib_ws2_32)
 DRVLIBS   = $(lib_esd) $(lib_ossaudio) $(lib_ao) $(lib_shout) $(lib_sndio)
 CODECLIBS = $(lib_vorbisfile) $(lib_vorbisenc) $(lib_vorbis) $(lib_celt) $(lib_fishsound) $(lib_speex) $(lib_speexdsp)
 CONTLIBS  = $(lib_oggz) $(lib_sndfile) $(lib_ogg)
-LIBS      = -lroar -lroardsp $(DRVLIBS) $(CODECLIBS) $(CONTLIBS) $(lib_m) $(NETLIBS)
+LIBS      = -lroarlight -lroarmidi -lroardsp -lroar $(DRVLIBS) $(CODECLIBS) $(CONTLIBS) $(lib_m) $(NETLIBS)
 
 all: ${TARGETS}
 	rm -f ../lib/${TARGETS} 2> /dev/null || true
