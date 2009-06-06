@@ -2,6 +2,34 @@
 
 export LD_LIBRARY_PATH='%%%PREFIX_COMP%%%'
 
-exec "$@"
+CMD=false
+
+while [ "$1" != '' ]
+do
+ k="$1"
+ shift;
+
+ case "$k" in
+  '--')
+   CMD="$1"
+   shift;
+   break;
+  ;;
+  '--server')
+   export ROAR_SERVER="$1"
+   shift;
+  ;;
+  '-'*)
+   echo "$0: Error: Unknown option: $k" >&2
+   exit 1
+  ;;
+  *)
+   CMD="$k"
+   break;
+  ;;
+ esac
+done
+
+exec -- "$CMD" "$@"
 
 #ll
