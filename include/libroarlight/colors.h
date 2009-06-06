@@ -99,6 +99,17 @@ struct roar_color {
  } color;
 };
 
+//#define roar_color_new_rgb(color,r,g,b) (color)->system = ROAR_COLORSYSTEM_RGB; (color)->color.rgb.r = (r); (color)->color.rgb.b = (g); (color)->color.rgb.b = (b)
+
+int roar_color_new_gray   (struct roar_color * c, unsigned char k);
+int roar_color_new_rgb    (struct roar_color * c, unsigned char r, unsigned char g, unsigned char b);
+
+int roar_color_copy       (struct roar_color * dst, struct roar_color * src);
+int roar_color_conv       (struct roar_color * c, uint32_t system);
+
+int roar_color_conv_gray  (struct roar_color * c, uint32_t system);
+int roar_color_conv_rgb   (struct roar_color * c, uint32_t system);
+
 #endif
 
 //ll
