@@ -58,6 +58,7 @@
 #define ROAR_COLOR_TYPE_U              0x00020000
 //#define ROAR_COLOR_TYPE_              0x0100
 
+#define ROAR_COLORSYSTEM_NONE          (ROAR_COLOR_TYPE_NONE)
 #define ROAR_COLORSYSTEM_GRAY          (ROAR_COLOR_TYPE_K)
 #define ROAR_COLORSYSTEM_RGB           (ROAR_COLOR_TYPE_R|ROAR_COLOR_TYPE_G|ROAR_COLOR_TYPE_B)
 #define ROAR_COLORSYSTEM_RGBA          (ROAR_COLOR_TYPE_R|ROAR_COLOR_TYPE_G|ROAR_COLOR_TYPE_B|ROAR_COLOR_TYPE_ALPHA)
@@ -101,6 +102,7 @@ struct roar_color {
 
 //#define roar_color_new_rgb(color,r,g,b) (color)->system = ROAR_COLORSYSTEM_RGB; (color)->color.rgb.r = (r); (color)->color.rgb.b = (g); (color)->color.rgb.b = (b)
 
+int roar_color_new        (struct roar_color * c);
 int roar_color_new_gray   (struct roar_color * c, unsigned char k);
 int roar_color_new_rgb    (struct roar_color * c, unsigned char r, unsigned char g, unsigned char b);
 
