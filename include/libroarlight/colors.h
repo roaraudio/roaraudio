@@ -45,11 +45,11 @@
 #define ROAR_COLOR_TYPE_K              0x00000010 /* black (Key) */
 #define ROAR_COLOR_TYPE_R              0x00000020 /* red         */
 #define ROAR_COLOR_TYPE_G              0x00000040 /* green       */
-#define ROAR_COLOR_TYPE_B              0x00000080 /* blue        */
+#define ROAR_COLOR_TYPE_B              0x00000080 /* blue or ??? */
 #define ROAR_COLOR_TYPE_H              0x00000100
 #define ROAR_COLOR_TYPE_S              0x00000200
 #define ROAR_COLOR_TYPE_V              0x00000400
-#define ROAR_COLOR_TYPE_B              0x00000800
+//#define ROAR_COLOR_TYPE_B              0x00000800
 #define ROAR_COLOR_TYPE_L              0x00001000
 #define ROAR_COLOR_TYPE_I              0x00002000
 #define ROAR_COLOR_TYPE_C              0x00004000 /* Cyan          */
