@@ -1,5 +1,17 @@
 #!/bin/sh
 
+usage() {
+ echo "Usage: $0 program ..."
+ echo "or:"
+ echo "Usage: $0 [OPTIONS] -- program ..."
+ echo "or:"
+ echo "Usage: $0 --help"
+ echo
+ echo "Options:"
+ echo " --help               - This help"
+ echo " --server SERVER      - Sets server to SERVER"
+}
+
 export LD_LIBRARY_PATH='%%%PREFIX_COMP%%%'
 
 CMD=false
@@ -19,8 +31,13 @@ do
    export ROAR_SERVER="$1"
    shift;
   ;;
+  '--help'|'-h')
+   usage;
+   exit 0;
+  ;;
   '-'*)
    echo "$0: Error: Unknown option: $k" >&2
+   usage >&2;
    exit 1
   ;;
   *)
