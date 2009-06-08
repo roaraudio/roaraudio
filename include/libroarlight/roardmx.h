@@ -37,6 +37,20 @@
 
 #include "libroarlight.h"
 
+#define ROAR_ROARDMX_VERSION        0x00
+
+#define ROAR_ROARDMX_MASK_FLAGS     0xF0
+#define ROAR_ROARDMX_MASK_TYPE      0x0F
+
+// we have a offset of one nibble, see ROAR_ROARDMX_MASK_FLAGS
+#define ROAR_ROARDMX_FLAG_PACKED    0x10
+
+#define ROAR_ROARDMX_TYPE_SSET      0x00 /* simple set */
+#define ROAR_ROARDMX_TYPE_IPO1      0x01 /* linear interploation */
+#define ROAR_ROARDMX_TYPE_IPOLIN    ROAR_ROARDMX_TYPE_IPO1
+#define ROAR_ROARDMX_TYPE_IPO4      0x02 /* poly5 interpolation (a*t^4 + b*t^3 + c*t^2 + d*t + e) */
+#define ROAR_ROARDMX_TYPE_INC8S     0x03 /* signed 8 bit increment */
+
 #endif
 
 //ll
