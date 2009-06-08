@@ -42,6 +42,8 @@
 #define ROAR_ROARDMX_MASK_FLAGS     0xF0
 #define ROAR_ROARDMX_MASK_TYPE      0x0F
 
+#define ROAR_ROARDMX_DATA_LENGTH    ((1<<(sizeof(char)*8))-1) /* 255 */
+
 // we have a offset of one nibble, see ROAR_ROARDMX_MASK_FLAGS
 #define ROAR_ROARDMX_FLAG_PACKED    0x10
 
@@ -56,7 +58,7 @@ struct roar_roardmx_message {
  unsigned char flags;
  unsigned char type;
  size_t        length;
- unsigned char data[3 /* header */ + ((1<<(sizeof(char)*8))-1) /* data */];
+ unsigned char data[3 /* header */ + ROAR_ROARDMX_DATA_LENGTH /* data */];
 };
 
 // generic things:
@@ -70,7 +72,7 @@ int roar_roardmx_message_new (struct roar_roardmx_message * mes);
 // mdium level:
 int roar_roardmx_message_set_type(struct roar_roardmx_message * mes, unsigned char   type);
 int roar_roardmx_message_get_flag(struct roar_roardmx_message * mes, unsigned char * flag);
-int roar_roardmx_message_get_type(struct roar_roardmx_message * mes, unsigned char * type);
+int roar_roardmx_message_get_type(struct roar_roardmx_message * mes, unsigned char * length);
 int roar_roardmx_message_get_len (struct roar_roardmx_message * mes, size_t        * type);
 
 
