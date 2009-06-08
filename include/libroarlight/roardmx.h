@@ -51,6 +51,39 @@
 #define ROAR_ROARDMX_TYPE_IPO4      0x02 /* poly5 interpolation (a*t^4 + b*t^3 + c*t^2 + d*t + e) */
 #define ROAR_ROARDMX_TYPE_INC8S     0x03 /* signed 8 bit increment */
 
+struct roar_roardmx_message {
+ unsigned char version;
+ unsigned char flags;
+ unsigned char type;
+ size_t        length;
+ unsigned char data[3 /* header */ + ((1<<(sizeof(char)*8))-1) /* data */];
+};
+
+// generic things:
+int roar_roardmx_message_new (struct roar_roardmx_message * mes);
+
+// low level:
+//int roar_roardmx_message_set_flag(struct roar_roardmx_message * mes, unsigned char   flag);
+//int roar_roardmx_message_set_len (struct roar_roardmx_message * mes, size_t          type);
+//int roar_roardmx_message_get_data(struct roar_roardmx_message * mes, unsigned char ** data);
+
+// mdium level:
+int roar_roardmx_message_set_type(struct roar_roardmx_message * mes, unsigned char   type);
+int roar_roardmx_message_get_flag(struct roar_roardmx_message * mes, unsigned char * flag);
+int roar_roardmx_message_get_type(struct roar_roardmx_message * mes, unsigned char * type);
+int roar_roardmx_message_get_len (struct roar_roardmx_message * mes, size_t        * type);
+
+
+// IO:
+int roar_roardmx_message_send(struct roar_roardmx_message * mes, struct roar_vio_calls * vio);
+int roar_roardmx_message_recv(struct roar_roardmx_message * mes, struct roar_vio_calls * vio);
+
+// Data/high level:
+// * SSET:
+int roar_roardmx_message_new_sset   (struct roar_roardmx_message * mes);
+int roar_roardmx_message_add_chanval(struct roar_roardmx_message * mes, uint16_t channel, unsigned char val); 
+
+
 #endif
 
 //ll
