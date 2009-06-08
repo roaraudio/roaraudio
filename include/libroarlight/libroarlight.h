@@ -38,6 +38,7 @@
 #include <roaraudio.h>
 
 #include "colors.h"
+#include "roardmx.h"
 
 #endif
 
