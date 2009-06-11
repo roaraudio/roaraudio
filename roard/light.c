@@ -69,8 +69,11 @@ int light_update(void) {
 int light_check_stream  (int id) {
  struct roar_stream        *   s;
  struct roar_stream_server *  ss;
+ struct roar_roardmx_message  mes;
  char buf[512];
- int i;
+ int i, c;
+ uint16_t      channel;
+ unsigned char value;
 
  if ( g_streams[id] == NULL )
   return -1;
@@ -99,6 +102,27 @@ int light_check_stream  (int id) {
     }
 
     return 0;
+   break;
+  case ROAR_CODEC_ROARDMX:
+    if ( roar_roardmx_message_recv(&mes, &(ss->vio)) == -1 ) {
+     streams_delete(id); // because we don't know at the moment...
+     return -1;
+    }
+
+    // we ignore errors here at the moment as 0 not < -1
+    c = roar_roardmx_message_numchannels(&mes);
+
+    for (i = 0; i < c; i++) {
+     if ( roar_roardmx_message_get_chanval(&mes, &channel, &value, i) == -1 )
+      return -1;
+
+     if ( g_light_state.channels < channel ) {
+      ROAR_WARN("light_check_stream(id=%i): Writing on non extisting DMX channel %u", id, channel);
+      continue;
+     } else {
+      g_light_state.state[channel] = value;
+     }
+    }
    break;
   default:
     streams_delete(id);
