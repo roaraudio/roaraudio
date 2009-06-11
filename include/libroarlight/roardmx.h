@@ -83,7 +83,9 @@ int roar_roardmx_message_recv(struct roar_roardmx_message * mes, struct roar_vio
 // Data/high level:
 // * SSET:
 int roar_roardmx_message_new_sset   (struct roar_roardmx_message * mes);
-int roar_roardmx_message_add_chanval(struct roar_roardmx_message * mes, uint16_t channel, unsigned char val); 
+int roar_roardmx_message_add_chanval(struct roar_roardmx_message * mes, uint16_t   channel, unsigned char   val);
+int roar_roardmx_message_get_chanval(struct roar_roardmx_message * mes, uint16_t * channel, unsigned char * val, int index);
+int roar_roardmx_message_numchannels(struct roar_roardmx_message * mes);
 
 
 #endif

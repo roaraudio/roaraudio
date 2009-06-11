@@ -149,5 +149,7 @@ int roar_roardmx_message_add_chanval(struct roar_roardmx_message * mes, uint16_t
  return 0;
 }
 
+int roar_roardmx_message_get_chanval(struct roar_roardmx_message * mes, uint16_t * channel, unsigned char * val, int index);
+int roar_roardmx_message_numchannels(struct roar_roardmx_message * mes);
 
 //ll
