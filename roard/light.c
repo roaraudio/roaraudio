@@ -165,6 +165,9 @@ int light_send_stream   (int id) {
  struct roar_stream_server *  ss;
  unsigned char buf[512];
  register unsigned char * bufptr;
+ struct roar_roardmx_message  mes;
+ int i;
+ int have_message = 0;
 
  if ( g_streams[id] == NULL )
   return -1;
@@ -193,6 +196,33 @@ int light_send_stream   (int id) {
      return -1;
     }
 
+    return 0;
+   break;
+  case ROAR_CODEC_ROARDMX:
+    for (i = 0; i < g_light_state.channels; i++) {
+     if ( g_light_state.changes[i] ) {
+      if ( !have_message )
+       if ( roar_roardmx_message_new_sset(&mes) == -1 )
+        return -1;
+
+      have_message = 2;
+
+      if ( roar_roardmx_message_add_chanval(&mes, i, g_light_state.state[i]) == -1 ) {
+       if ( roar_roardmx_message_send(&mes, &(ss->vio)) == -1 )
+        return -1;
+
+       if ( roar_roardmx_message_new_sset(&mes) == -1 )
+        return -1;
+
+       have_message = 1;
+      }
+     }
+    }
+
+    if ( have_message == 2 ) {
+     if ( roar_roardmx_message_send(&mes, &(ss->vio)) == -1 )
+      return -1;
+    }
     return 0;
    break;
   default:
