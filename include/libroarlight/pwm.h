@@ -39,8 +39,14 @@
 
 struct roar_lpwm_state {
  int bits;
+ int fill;
+ int value;
  uint64_t s;
 };
+
+int roar_light_pwm_new (struct roar_lpwm_state * state, int bits );
+int roar_light_pwm_set (struct roar_lpwm_state * state, int value);
+int roar_light_pwm_send(struct roar_lpwm_state * state, struct roar_vio_calls * vio, size_t len);
 
 #endif
 
