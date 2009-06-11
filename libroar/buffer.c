@@ -125,18 +125,32 @@ int roar_buffer_delete   (struct roar_buffer * buf, struct roar_buffer ** next) 
 }
 
 int roar_buffer_add      (struct roar_buffer * buf, struct roar_buffer *  next) {
+ unsigned int deep = 0;
+
  if ( buf == NULL )
   return -1;
 
  ROAR_DBG("buffer_add(buf=%p, next=%p) = ?", buf, next);
 
+ if ( buf == next ) {
+  ROAR_ERR("buffer_add(*): both pointer are of the same destination, This is a error in the application");
+  return -1;
+ }
+
  while ( buf->next != NULL ) {
   ROAR_DBG("buffer_add(*): buf=%p, next=%p (len=%i)", buf, buf->next, buf->user_len);
 //  ROAR_DBG("buffer_add(): buf=%p, buf->next=%p", buf, buf->next);
   buf = buf->next;
+  deep++;
+
+  if ( buf == next ) {
+   ROAR_ERR("buffer_add(*): Can not add buffer: loop detected at deep %u. This is a error in the application", deep);
+  }
  }
 
  buf->next = next;
+
+ ROAR_DBG("buffer_add(*): adding buffer at deep %u", deep);
 
  return 0;
 }
