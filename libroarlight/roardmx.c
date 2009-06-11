@@ -80,7 +80,22 @@ int roar_roardmx_message_get_len (struct roar_roardmx_message * mes, size_t     
 
 
 // IO:
-int roar_roardmx_message_send(struct roar_roardmx_message * mes, struct roar_vio_calls * vio);
+int roar_roardmx_message_send(struct roar_roardmx_message * mes, struct roar_vio_calls * vio) {
+ BCHK(mes);
+ BCHK(vio);
+
+ if ( mes->length > ROAR_ROARDMX_DATA_LENGTH ) // this is very fatal!
+  return -1;
+
+ mes->data[0] =  mes->version;
+ mes->data[1] = (mes->flags & ROAR_ROARDMX_MASK_FLAGS) |
+                (mes->type  & ROAR_ROARDMX_MASK_TYPE ) ;
+
+ mes->data[2] = mes->length;
+
+ return roar_vio_write(vio, mes->data, mes->length + 3);
+}
+
 int roar_roardmx_message_recv(struct roar_roardmx_message * mes, struct roar_vio_calls * vio);
 
 // Data/high level:
