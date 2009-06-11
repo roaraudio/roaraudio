@@ -124,6 +124,7 @@
  Light 0x70:
   76543210
       0000 -> DMX512
+      0001 -> RoarDMX
 
 */
 
@@ -200,6 +201,7 @@
 
 #define ROAR_CODEC_MIDI         0x60
 #define ROAR_CODEC_DMX512       0x70
+#define ROAR_CODEC_ROARDMX      0x71
 
 #if BYTE_ORDER == BIG_ENDIAN
 
