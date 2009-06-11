@@ -131,14 +131,14 @@ int roar_roardmx_message_new_sset   (struct roar_roardmx_message * mes) {
 }
 
 int roar_roardmx_message_add_chanval(struct roar_roardmx_message * mes, uint16_t channel, unsigned char val) {
- uint16_t * chan;
+ register uint16_t * chan;
 
  BCHK(mes);
 
  if ( (mes->length + 3) > ROAR_ROARDMX_DATA_LENGTH ) // message would be to long
   return -1;
 
- chan = (uint16_t *) ((unsigned char*)&(mes->data[mes->length])+3);
+ chan = (uint16_t *) &(mes->data[mes->length + 3]);
 
  *chan = ROAR_HOST2NET16(channel);
 
@@ -149,7 +149,52 @@ int roar_roardmx_message_add_chanval(struct roar_roardmx_message * mes, uint16_t
  return 0;
 }
 
-int roar_roardmx_message_get_chanval(struct roar_roardmx_message * mes, uint16_t * channel, unsigned char * val, int index);
-int roar_roardmx_message_numchannels(struct roar_roardmx_message * mes);
+int roar_roardmx_message_get_chanval(struct roar_roardmx_message * mes, uint16_t * channel, unsigned char * val, int index) {
+ register uint16_t * chan;
+
+ BCHK(mes);
+
+ if ( index < 0 )
+  return -1;
+
+ if ( mes->version != 0 )
+  return -1;
+
+ switch (mes->type) {
+  case ROAR_ROARDMX_TYPE_SSET:
+  case ROAR_ROARDMX_TYPE_INC8S:
+    if ( index >= (ROAR_ROARDMX_DATA_LENGTH/3) )
+     return -1;
+
+    *val     = mes->data[3 * index + 2 + 3];
+    chan     = (uint16_t *) &(mes->data[3 + 3 * index]);
+    *channel = ROAR_NET2HOST16(*chan);
+   break;
+ }
+
+ return -1;
+}
+
+int roar_roardmx_message_numchannels(struct roar_roardmx_message * mes) {
+ BCHK(mes);
+
+ if ( mes->version != 0 )
+  return -1;
+
+ switch (mes->type) {
+  case ROAR_ROARDMX_TYPE_SSET:
+  case ROAR_ROARDMX_TYPE_INC8S:
+    return mes->length /  3;
+   break;
+  case ROAR_ROARDMX_TYPE_IPO1:
+    return mes->length /  6;
+   break;
+  case ROAR_ROARDMX_TYPE_IPO4:
+    return mes->length / 12;
+   break;
+ }
+
+ return -1;
+}
 
 //ll
