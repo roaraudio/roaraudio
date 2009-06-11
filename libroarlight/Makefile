@@ -3,7 +3,7 @@ include ../Makefile.conf
 SLIB=libroarlight.so
 
 TARGETS=libroarlight.so libroarlight.a
-OBJS=libroarlight.o colors.o roardmx.o
+OBJS=libroarlight.o colors.o roardmx.o pwm.o
 
 #DEFINES        = -DDEBUG
 INCLUDE = -I../include -I../include/libroarlight

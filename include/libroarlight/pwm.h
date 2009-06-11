@@ -1,4 +1,4 @@
-//libroarlight.h:
+//pwm.h:
 
 /*
  *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2009
@@ -32,14 +32,15 @@
  *  them with any software that uses libesd, libartsc or libpulse*.
  */
 
-#ifndef _LIBROARLIGHT_H_
-#define _LIBROARLIGHT_H_
+#ifndef _LIBROARLIGHT_PWM_H_
+#define _LIBROARLIGHT_PWM_H_
 
-#include <roaraudio.h>
+#include "libroarlight.h"
 
-#include "colors.h"
-#include "roardmx.h"
-#include "pwm.h"
+struct roar_lpwm_state {
+ int bits;
+ uint64_t s;
+};
 
 #endif
 
