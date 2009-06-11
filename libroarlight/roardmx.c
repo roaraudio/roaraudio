@@ -117,11 +117,11 @@ int roar_roardmx_message_add_chanval(struct roar_roardmx_message * mes, uint16_t
  if ( (mes->length + 3) > ROAR_ROARDMX_DATA_LENGTH ) // message would be to long
   return -1;
 
- chan = (uint16_t *) &(mes->data[mes->length]);
+ chan = (uint16_t *) ((unsigned char*)&(mes->data[mes->length])+3);
 
  *chan = ROAR_HOST2NET16(channel);
 
- mes->data[mes->length + 2] = val;
+ mes->data[mes->length + 2 + 3] = val;
 
  mes->length += 3;
 
