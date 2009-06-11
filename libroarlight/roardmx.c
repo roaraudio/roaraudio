@@ -93,10 +93,31 @@ int roar_roardmx_message_send(struct roar_roardmx_message * mes, struct roar_vio
 
  mes->data[2] = mes->length;
 
- return roar_vio_write(vio, mes->data, mes->length + 3);
+ return roar_vio_write(vio, mes->data, mes->length + 3) == (mes->length + 3) ? 0 : -1;
 }
 
-int roar_roardmx_message_recv(struct roar_roardmx_message * mes, struct roar_vio_calls * vio);
+int roar_roardmx_message_recv(struct roar_roardmx_message * mes, struct roar_vio_calls * vio) {
+ BCHK(mes);
+ BCHK(vio);
+
+ if ( roar_vio_read(vio, mes->data, 3) != 3 )
+  return -1;
+
+ mes->version = mes->data[0];
+
+ if ( mes->version != 0 )
+  return -1;
+
+ mes->flags  = mes->data[1] & ROAR_ROARDMX_MASK_FLAGS;
+ mes->type   = mes->data[1] & ROAR_ROARDMX_MASK_TYPE;
+
+ mes->length = mes->data[3];
+
+ if ( roar_vio_read(vio, &(mes->data[3]), mes->length) != mes->length )
+  return -1;
+
+ return 0;
+}
 
 // Data/high level:
 // * SSET:
