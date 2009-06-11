@@ -100,6 +100,9 @@ int roar_roardmx_message_recv(struct roar_roardmx_message * mes, struct roar_vio
  BCHK(mes);
  BCHK(vio);
 
+ if ( roar_roardmx_message_new(mes) == -1 )
+  return -1;
+
  if ( roar_vio_read(vio, mes->data, 3) != 3 )
   return -1;
 
@@ -111,7 +114,7 @@ int roar_roardmx_message_recv(struct roar_roardmx_message * mes, struct roar_vio
  mes->flags  = mes->data[1] & ROAR_ROARDMX_MASK_FLAGS;
  mes->type   = mes->data[1] & ROAR_ROARDMX_MASK_TYPE;
 
- mes->length = mes->data[3];
+ mes->length = mes->data[2];
 
  if ( roar_vio_read(vio, &(mes->data[3]), mes->length) != mes->length )
   return -1;
@@ -169,6 +172,7 @@ int roar_roardmx_message_get_chanval(struct roar_roardmx_message * mes, uint16_t
     *val     = mes->data[3 * index + 2 + 3];
     chan     = (uint16_t *) &(mes->data[3 + 3 * index]);
     *channel = ROAR_NET2HOST16(*chan);
+    return 0;
    break;
  }
 
