@@ -637,6 +637,7 @@ struct {
 
  // light control:
  {ROAR_CODEC_DMX512,      "dmx512"     },
+ {ROAR_CODEC_ROARDMX,     "roardmx"    },
 
  {-1, NULL}
 };
