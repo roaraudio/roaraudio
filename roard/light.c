@@ -111,7 +111,11 @@ int light_check_stream  (int id) {
      return -1;
     }
 
-    memcpy(g_light_state.state, buf, g_light_state.channels < 512 ? g_light_state.channels : 512);
+    for (i = 0; i < (g_light_state.channels < 512 ? g_light_state.channels : 512); i++) {
+     g_light_state.changes[i] |= g_light_state.state[i] ^ buf[i];
+     g_light_state.state[i]    =                          buf[i];
+    }
+//    memcpy(g_light_state.state, buf, g_light_state.channels < 512 ? g_light_state.channels : 512);
 
     for (i = 0; i < ROAR_STREAMS_MAX; i++) {
      if ( g_streams[i] != NULL && ROAR_STREAM(g_streams[i])->pos_rel_id == id ) {
@@ -142,7 +146,8 @@ int light_check_stream  (int id) {
       ROAR_WARN("light_check_stream(id=%i): Writing on non extisting DMX channel %u", id, channel);
       continue;
      } else {
-      g_light_state.state[channel] = value;
+      g_light_state.state[channel]   = value;
+      g_light_state.changes[channel] = 0xFF; // the channel changed
      }
     }
    break;
