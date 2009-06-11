@@ -35,6 +35,11 @@ int light_init  (unsigned int channels) {
   return -1;
  }
 
+ if ( (g_light_state.changes = malloc(channels)) == NULL ) {
+  free(g_light_state.state);
+  return -1;
+ }
+
  g_light_state.channels = channels;
 
  return light_reset();
@@ -43,6 +48,10 @@ int light_init  (unsigned int channels) {
 int light_free  (void) {
  if ( g_light_state.state != NULL ) {
   free(g_light_state.state);
+ }
+
+ if ( g_light_state.changes != NULL ) {
+  free(g_light_state.changes);
  }
 
  g_light_state.channels = 0;
@@ -57,7 +66,20 @@ int light_reset (void) {
  if ( g_light_state.state == NULL )
   return -1;
 
- memset(g_light_state.state, 0, g_light_state.channels);
+ if ( g_light_state.changes == NULL )
+  return -1;
+
+ memset(g_light_state.state,   0, g_light_state.channels);
+ memset(g_light_state.changes, 0, g_light_state.channels);
+
+ return 0;
+}
+
+int light_reinit(void) {
+ if ( g_light_state.changes == NULL )
+  return -1;
+
+ memset(g_light_state.changes, 0, g_light_state.channels);
 
  return 0;
 }

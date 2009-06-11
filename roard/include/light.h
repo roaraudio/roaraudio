@@ -32,6 +32,7 @@
 struct {
  unsigned int    channels;
  unsigned char * state;
+ unsigned char * changes;
 } g_light_state;
 
 int light_init  (unsigned int channels);
@@ -39,6 +40,7 @@ int light_free  (void);
 
 int light_update(void);
 int light_reset (void);
+int light_reinit(void);
 
 int light_check_stream  (int id);
 int light_send_stream   (int id);

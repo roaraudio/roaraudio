@@ -111,6 +111,7 @@ int main_loop (int driver, DRIVER_USERDATA_T driver_inst, struct roar_audio_info
 #endif
 
   midi_reinit();
+  light_reinit();
 
 //  output_buffer_reinit();
 
