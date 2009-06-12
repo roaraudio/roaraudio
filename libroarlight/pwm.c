@@ -24,4 +24,85 @@
 
 #include "libroarlight.h"
 
+uint16_t _g_roar_lpwm16[] = {
+    0x0000, 0x0001, 0x0101, 0x0111,  0x1111, 0x1115, 0x1515, 0x1555,
+    0x5555, 0x5557, 0x5757, 0x5777,  0x7777, 0x777F, 0x7F7F, 0x7FFF,
+    0xFFFF
+                            };
+
+int roar_light_pwm_new (struct roar_lpwm_state * state, int bits ) {
+ if ( state == NULL )
+  return -1;
+
+ if ( bits < 1 || bits > 32 )
+  return -1;
+
+ state->bits = bits;
+
+ return roar_light_pwm_set(state, 0);
+}
+
+int roar_light_pwm_set (struct roar_lpwm_state * state, int value) {
+ if ( state == NULL )
+  return -1;
+
+ if ( value < 0 || value > state->bits )
+  return -1;
+
+ state->value = value;
+
+ return 0;
+}
+
+int roar_light_pwm_send(struct roar_lpwm_state * state, struct roar_vio_calls * vio, size_t len) {
+ char          * buf;
+ int16_t       * buf16;
+ size_t          todo = len;
+ uint64_t        s;
+
+ if ( state == NULL )
+  return -1;
+
+ if ( vio == NULL )
+  return -1;
+
+ if ( state->bits != 16 )
+  return -1;
+
+ if ( (buf = malloc(len)) == NULL )
+  return -1;
+
+ buf16 = (int16_t *) buf;
+
+ while (todo > 1) {
+  if ( state->fill < 16 ) {
+   s          = _g_roar_lpwm16[state->value];
+   s        <<= state->fill;
+   state->s  |= s;
+  }
+
+  *buf16 = state->s & 0xFFFF;
+  state->s    >>= 16;
+  state->fill  -= 16;
+
+  buf16++;
+  todo -= 2;
+ }
+
+ if ( todo ) {
+  buf[len-1]    = state->s & 0xFF;
+  state->s    >>= 8;
+  state->fill  -= 8;
+ }
+
+ if ( roar_vio_write(vio, buf, len) != len ) {
+  free(buf);
+  return -1;
+ }
+
+ free(buf);
+
+ return 0;
+}
+
 //ll
