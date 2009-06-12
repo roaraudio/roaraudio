@@ -98,6 +98,13 @@ int roar_light_pwm_send(struct roar_lpwm_state * state, struct roar_vio_calls * 
  }
 
  if ( todo ) {
+  if ( state->fill < 8 ) {
+   s             = _g_roar_lpwm16[state->value];
+   s           <<= state->fill;
+   state->s     |= s;
+   state->fill  += 16;
+  }
+
   buf[len-1]    = state->s & 0xFF;
   state->s    >>= 8;
   state->fill  -= 8;
