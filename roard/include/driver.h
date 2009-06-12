@@ -56,6 +56,7 @@
 #include "driver_roar.h"
 #include "driver_raw.h"
 #include "driver_dmx.h"
+#include "driver_pwmled.h"
 
 #ifdef ROAR_HAVE_LIBAO
 #include <ao/ao.h>

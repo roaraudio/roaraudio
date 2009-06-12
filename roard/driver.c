@@ -58,6 +58,8 @@ struct roar_driver g_driver[] = {
 #endif
  {"dmx", "DMX512 driver", "/dev/dmx", DRV_FLAG_FHSEC, ROAR_SUBSYS_LIGHT,
   NULL, NULL, NULL, NULL, NULL, NULL, driver_dmx_open_vio},
+ {"pwmled", "PWM LED driver", "/dev/ttyS0", DRV_FLAG_FHSEC, ROAR_SUBSYS_LIGHT,
+  NULL, NULL, NULL, NULL, NULL, NULL, driver_pwmled_open_vio},
  {NULL, NULL, NULL, DRV_FLAG_NONE, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL} // end of list
                                 };
 
