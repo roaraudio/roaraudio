@@ -26,29 +26,32 @@
 
 int driver_pwmled_open_vio  (struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh) {
  struct roar_vio_defaults def;
- struct roar_vio_calls    * calls = malloc(sizeof(struct roar_vio_calls));
+ struct driver_pwmled * self = malloc(sizeof(struct driver_pwmled));
 
- if ( calls == NULL )
+ if ( self == NULL )
   return -1;
 
  if ( fh == -1 ) {
   if ( device == NULL )
    device = "/dev/ttyS0";
 
-  if ( roar_vio_dstr_init_defaults(&def, ROAR_VIO_DEF_TYPE_NONE, O_WRONLY, 0644) == -1 )
-   return -1;
-
-  if ( roar_vio_open_dstr(calls, device, &def, 1) == -1 ) {
-   free(calls);
+  if ( roar_vio_dstr_init_defaults(&def, ROAR_VIO_DEF_TYPE_NONE, O_WRONLY, 0644) == -1 ) {
+   free(self);
    return -1;
   }
 
-  inst->inst = calls;
+  if ( roar_vio_open_dstr(&(self->vio), device, &def, 1) == -1 ) {
+   free(self);
+   return -1;
+  }
+
+  inst->inst = self;
  } else {
 /*
   if ( roar_vio_open_fh(inst, fh) == -1 )
    return -1;
 */
+  free(self);
   return -1;
  }
 
@@ -66,7 +69,7 @@ int driver_pwmled_open_vio  (struct roar_vio_calls * inst, char * device, struct
 }
 
 int     driver_pwmled_close (struct roar_vio_calls * vio) {
- int ret = roar_vio_close(vio->inst);
+ int ret = roar_vio_close(&(((struct driver_pwmled*)(vio->inst))->vio));
 
  if ( vio->inst != NULL )
   free(vio->inst);
@@ -76,7 +79,7 @@ int     driver_pwmled_close (struct roar_vio_calls * vio) {
 
 // TODO: this function should be optimized.
 ssize_t driver_pwmled_write (struct roar_vio_calls * vio,  void *buf, size_t count) {
- struct roar_lpwm_state state;
+ struct driver_pwmled * self = vio->inst;
 
  if ( vio == NULL || buf == NULL )
   return -1;
@@ -84,13 +87,13 @@ ssize_t driver_pwmled_write (struct roar_vio_calls * vio,  void *buf, size_t cou
  if ( count != 512 )
   return -1;
 
- if ( roar_light_pwm_new(&state, 16) == -1 )
+ if ( roar_light_pwm_new(&(self->state), 16) == -1 )
   return -1;
 
- if ( roar_light_pwm_set(&state, ((unsigned char*)buf)[0] / 16) == -1 )
+ if ( roar_light_pwm_set(&(self->state), ((unsigned char*)buf)[0] / 16) == -1 )
   return -1;
 
- return roar_light_pwm_send(&state, vio->inst, 1) == 0 ? count : -1;
+ return roar_light_pwm_send(&(self->state), &(self->vio), 1) == 0 ? count : -1;
 }
 
 int driver_pwmled_ctl(struct roar_vio_calls * vio, int cmd, void * data) {
