@@ -60,6 +60,8 @@ int roar_light_pwm_send(struct roar_lpwm_state * state, struct roar_vio_calls * 
  size_t          todo = len;
  uint64_t        s;
 
+ ROAR_DBG("roar_light_pwm_send(state=%p, vio=%p, len=%u) = ?", state, vio, len);
+
  if ( state == NULL )
   return -1;
 
@@ -69,16 +71,22 @@ int roar_light_pwm_send(struct roar_lpwm_state * state, struct roar_vio_calls * 
  if ( state->bits != 16 )
   return -1;
 
+ if ( len == 0 )
+  return 0;
+
  if ( (buf = malloc(len)) == NULL )
   return -1;
 
  buf16 = (int16_t *) buf;
 
  while (todo > 1) {
+  ROAR_DBG("roar_light_pwm_send(*): loop: todo=%u, fill=%i", todo, state->fill);
+
   if ( state->fill < 16 ) {
-   s          = _g_roar_lpwm16[state->value];
-   s        <<= state->fill;
-   state->s  |= s;
+   s             = _g_roar_lpwm16[state->value];
+   s           <<= state->fill;
+   state->s     |= s;
+   state->fill  += 16;
   }
 
   *buf16 = state->s & 0xFFFF;
@@ -95,7 +103,7 @@ int roar_light_pwm_send(struct roar_lpwm_state * state, struct roar_vio_calls * 
   state->fill  -= 8;
  }
 
- if ( roar_vio_write(vio, buf, len) != len ) {
+ if ( roar_vio_basic_write(vio, buf, len) != len ) {
   free(buf);
   return -1;
  }
