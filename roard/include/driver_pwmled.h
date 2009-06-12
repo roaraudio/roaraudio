@@ -28,6 +28,7 @@
 int driver_pwmled_open_vio  (struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh);
 ssize_t driver_pwmled_write (struct roar_vio_calls * vio,  void *buf, size_t count);
 int     driver_pwmled_ctl   (struct roar_vio_calls * vio,  int cmd, void * data);
+int     driver_pwmled_close (struct roar_vio_calls * vio);
 
 #endif
 

@@ -25,25 +25,53 @@
 #include "roard.h"
 
 int driver_pwmled_open_vio  (struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh) {
+ struct roar_vio_defaults def;
+ struct roar_vio_calls    * calls = malloc(sizeof(struct roar_vio_calls));
+
+ if ( calls == NULL )
+  return -1;
 
  if ( fh == -1 ) {
   if ( device == NULL )
    device = "/dev/ttyS0";
 
-  if ( roar_vio_open_file(inst, device, O_WRONLY, 0644) == -1 )
+  if ( roar_vio_dstr_init_defaults(&def, ROAR_VIO_DEF_TYPE_NONE, O_WRONLY, 0644) == -1 )
    return -1;
+
+  if ( roar_vio_open_dstr(calls, device, &def, 1) == -1 ) {
+   free(calls);
+   return -1;
+  }
+
+  inst->inst = calls;
  } else {
+/*
   if ( roar_vio_open_fh(inst, fh) == -1 )
    return -1;
+*/
+  return -1;
  }
 
- inst->write = driver_pwmled_write;
- inst->ctl   = driver_pwmled_ctl;
+ inst->read     = NULL;
+ inst->write    = driver_pwmled_write;
+ inst->lseek    = NULL;
  inst->nonblock = NULL;
+ inst->sync     = NULL;
+ inst->ctl      = driver_pwmled_ctl;
+ inst->close    = driver_pwmled_close;
 
  info->codec = ROAR_CODEC_DMX512;
 
  return 0;
+}
+
+int     driver_pwmled_close (struct roar_vio_calls * vio) {
+ int ret = roar_vio_close(vio->inst);
+
+ if ( vio->inst != NULL )
+  free(vio->inst);
+
+ return ret;
 }
 
 // TODO: this function should be optimized.
@@ -62,7 +90,7 @@ ssize_t driver_pwmled_write (struct roar_vio_calls * vio,  void *buf, size_t cou
  if ( roar_light_pwm_set(&state, ((unsigned char*)buf)[0] / 16) == -1 )
   return -1;
 
- return roar_light_pwm_send(&state, vio, 8) == 0 ? count : -1;
+ return roar_light_pwm_send(&state, vio->inst, 1) == 0 ? count : -1;
 }
 
 int driver_pwmled_ctl(struct roar_vio_calls * vio, int cmd, void * data) {
