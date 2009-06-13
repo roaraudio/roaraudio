@@ -118,6 +118,9 @@ int driver_pwmled_ctl(struct roar_vio_calls * vio, int cmd, void * data) {
     ROAR_STREAM_SERVER(data)->codec_orgi = ROAR_CODEC_DMX512;
    break;
   case ROAR_VIO_CTL_SET_DMXSCHAN:
+    if ( *(uint16_t*)data > 511 )
+     return -1;
+
     self->channel = *(uint16_t*)data;
    break;
   default:
