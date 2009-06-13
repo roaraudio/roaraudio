@@ -28,6 +28,8 @@
 struct driver_pwmled {
  struct roar_vio_calls  vio;
  struct roar_lpwm_state state;
+ unsigned int           rate;    // bit/s
+ uint16_t               channel; // DMX Channel
 };
 
 int driver_pwmled_open_vio  (struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh);
