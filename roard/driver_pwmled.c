@@ -65,6 +65,14 @@ int driver_pwmled_open_vio  (struct roar_vio_calls * inst, char * device, struct
 
  info->codec = ROAR_CODEC_DMX512;
 
+ if ( info->rate == g_sa->rate ) {
+  self->rate = 9600;
+ } else {
+  self->rate = info->rate;
+ }
+
+ self->channel = 0;
+
  if ( roar_light_pwm_new(&(self->state), 16) == -1 ) {
   free(self);
   return -1;
@@ -92,10 +100,11 @@ ssize_t driver_pwmled_write (struct roar_vio_calls * vio,  void *buf, size_t cou
  if ( count != 512 )
   return -1;
 
- if ( roar_light_pwm_set(&(self->state), ((unsigned char*)buf)[0] / 16) == -1 )
+ if ( roar_light_pwm_set(&(self->state), ((unsigned char*)buf)[channel] / 16) == -1 )
   return -1;
 
- return roar_light_pwm_send(&(self->state), &(self->vio), 1) == 0 ? count : -1;
+                                                                    // bit per word, bit per byte
+ return roar_light_pwm_send(&(self->state), &(self->vio), self->rate/11/8/100) == 0 ? count : -1;
 }
 
 int driver_pwmled_ctl(struct roar_vio_calls * vio, int cmd, void * data) {
