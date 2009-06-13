@@ -117,6 +117,9 @@ int driver_pwmled_ctl(struct roar_vio_calls * vio, int cmd, void * data) {
     ROAR_STREAM(data)->dir = ROAR_DIR_LIGHT_OUT;
     ROAR_STREAM_SERVER(data)->codec_orgi = ROAR_CODEC_DMX512;
    break;
+  case ROAR_VIO_CTL_SET_DMXSCHAN:
+    self->channel = *(uint16_t*)data;
+   break;
   default:
    return -1;
  }
