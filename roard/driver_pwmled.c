@@ -100,7 +100,7 @@ ssize_t driver_pwmled_write (struct roar_vio_calls * vio,  void *buf, size_t cou
  if ( count != 512 )
   return -1;
 
- if ( roar_light_pwm_set(&(self->state), ((unsigned char*)buf)[channel] / 16) == -1 )
+ if ( roar_light_pwm_set(&(self->state), ((unsigned char*)buf)[self->channel] / 16) == -1 )
   return -1;
 
                                                                     // bit per word, bit per byte
