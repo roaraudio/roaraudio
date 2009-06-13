@@ -168,6 +168,11 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
  int sync = 0, f_mmap = 0;
  int32_t blocks = -1, blocksize = -1;
  int dir = ROAR_DIR_OUTPUT;
+ int error = 0;
+ // DMX:
+ int32_t channel  = -1;
+ int32_t universe = -1;
+ uint16_t tu16;
 
  ROAR_DBG("add_output(drv='%s', dev='%s', opts='%s') = ?", drv, dev, opts);
 
@@ -222,13 +227,7 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
   } else if ( strcmp(k, "codec") == 0 ) {
    if ( (codec = roar_str2codec(v)) == -1 ) {
     ROAR_ERR("add_output(*): unknown codec '%s'", v);
-    streams_delete(stream);
-    if ( prim ) alive = 0;
-#ifdef ROAR_DRIVER_CODEC
-    if ( to_free != NULL )
-     free(to_free);
-#endif
-    return -1;
+    error++;
    }
   } else if ( strcmp(k, "blocks") == 0 ) {
    blocks = atoi(v);
@@ -245,14 +244,25 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
     dir = ROAR_DIR_LIGHT_OUT;
    } else {
     ROAR_ERR("add_output(*): unknown subsystem '%s'", k);
-    streams_delete(stream);
-    if ( prim ) alive = 0;
-#ifdef ROAR_DRIVER_CODEC
-    if ( to_free != NULL )
-     free(to_free);
-#endif
-    return -1; 
+    error++;
    }
+  // DMX:
+  } else if ( strcmp(k, "channel") == 0 ) {
+   channel  = atoi(v);
+   if ( channel < 0 || channel > 65535 ) {
+    ROAR_ERR("add_output(*): Invalide channel (not within 0..65535): %i", channel);
+    channel = -1;
+    error++;
+   }
+  } else if ( strcmp(k, "universe") == 0 ) {
+   universe = atoi(v);
+   if ( universe < 0 || universe > 255 ) {
+    ROAR_ERR("add_output(*): Invalide universe (not within 0..255): %i", universe);
+    universe = -1;
+    error++;
+   }
+
+
   } else if ( strcmp(k, "meta") == 0 ) {
    streams_set_flag(stream, ROAR_FLAG_META);
   } else if ( strcmp(k, "sync") == 0 ) {
@@ -266,6 +276,10 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
    streams_set_flag(stream, ROAR_FLAG_AUTOCONF);
   } else {
    ROAR_ERR("add_output(*): unknown option '%s'", k);
+   error++;
+  }
+
+  if ( error ) {
    streams_delete(stream);
    if ( prim ) alive = 0;
 #ifdef ROAR_DRIVER_CODEC
@@ -311,6 +325,16 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
 
  if ( blocksize != -1 )
   roar_vio_ctl(&(ss->vio), ROAR_VIO_CTL_SET_DBLKSIZE, &blocksize);
+
+ // TODO: we shoudld *really* check for errors here...
+ if ( channel != -1 ) {
+  tu16 = channel;
+  roar_vio_ctl(&(ss->vio), ROAR_VIO_CTL_SET_DMXSCHAN, &tu16);
+ }
+ if ( universe != -1 ) {
+  tu16 = universe;
+  roar_vio_ctl(&(ss->vio), ROAR_VIO_CTL_SET_DMXUNIV, &tu16);
+ }
 
  ROAR_DBG("add_output(*): ss->driver_id=%i", ss->driver_id);
 
