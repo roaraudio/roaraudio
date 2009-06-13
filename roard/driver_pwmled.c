@@ -108,6 +108,7 @@ ssize_t driver_pwmled_write (struct roar_vio_calls * vio,  void *buf, size_t cou
 }
 
 int driver_pwmled_ctl(struct roar_vio_calls * vio, int cmd, void * data) {
+ struct driver_pwmled * self = vio->inst;
 
  if ( vio == NULL )
   return -1;
