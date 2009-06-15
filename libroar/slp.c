@@ -1,7 +1,7 @@
 //slp.c:
 
 /*
- *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008
+ *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2009
  *
  *  This file is part of libroar a part of RoarAudio,
  *  a cross-platform sound system for both, home and professional use.
@@ -33,5 +33,18 @@
  */
 
 #include "libroar.h"
+
+char * roar_slp_find_roard   (void) {
+ static char addr[80];
+
+ if ( roar_slp_find_roard_r(addr, 80) == -1 )
+  return NULL;
+
+ return addr;
+}
+
+int    roar_slp_find_roard_r (char * addr, size_t len) {
+ return -1;
+}
 
 //ll
