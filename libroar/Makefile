@@ -4,7 +4,7 @@ SLIB=libroar.so
 
 TARGETS=libroar.so libroar.a
 VIO=vio.o vio_cmd.o vio_ops.o vio_magic.o vio_pipe.o vio_socket.o vio_bio.o vio_stack.o vio_proto.o vio_dstr.o vio_select.o
-OBJS=libroar.o basic.o stream.o simple.o auth.o socket.o ctl.o buffer.o meta.o file.o acl.o cdrom.o pinentry.o sshaskpass.o $(VIO) stack.o
+OBJS=libroar.o basic.o stream.o simple.o auth.o socket.o ctl.o buffer.o meta.o file.o acl.o cdrom.o pinentry.o sshaskpass.o $(VIO) stack.o slp.o
 
 #DEFINES        = -DDEBUG
 INCLUDE = -I../include -I../include/libroar
