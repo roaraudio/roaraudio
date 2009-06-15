@@ -99,8 +99,8 @@ int roar_connect_raw (char * server) {
   if ( stat(ROAR_PROC_NET_DECNET, &decnet_stat) == 0 ) {
    if ( roar_socket_get_local_nodename() ) {
     snprintf(user_sock, 79, "%s::%s", roar_socket_get_local_nodename(), ROAR_DEFAULT_OBJECT);
-    if ( roar_socket_connect(user_sock, ROAR_DEFAULT_NUM) == -1 )
-     return -1;
+    if ( (fh = roar_socket_connect(user_sock, ROAR_DEFAULT_NUM)) != -1 )
+     return fh;
    }
   }
 #endif
