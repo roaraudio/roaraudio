@@ -61,13 +61,11 @@ struct roar_slp_cookie {
  int                      matchcount;
 };
 
-/*
 SLPBoolean roar_slp_url_callback(SLPHandle        hslp,
                                  const char     * srvurl,
                                  unsigned short   lifetime,
                                  SLPError         errcode,
                                  void           * cookie);
-*/
 
 int roar_slp_search          (struct roar_slp_cookie * cookie, char * type);
 int roar_slp_cookie_init     (struct roar_slp_cookie * cookie, struct roar_slp_search * search);
