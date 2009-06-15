@@ -95,7 +95,6 @@ int roar_connect_raw (char * server) {
   if ( (fh = roar_socket_connect(ROAR_DEFAULT_HOST, ROAR_DEFAULT_PORT)) != -1 )
    return fh;
 
-/*
 #ifdef ROAR_HAVE_LIBDNET
   if ( stat(ROAR_PROC_NET_DECNET, &decnet_stat) == 0 ) {
    if ( roar_socket_get_local_nodename() ) {
@@ -105,10 +104,13 @@ int roar_connect_raw (char * server) {
    }
   }
 #endif
-*/
 
 #ifdef ROAR_HAVE_LIBSLP
- return roar_connect_raw(roar_slp_find_roard());
+ if ( (server = roar_slp_find_roard()) != NULL ) {
+  return roar_connect_raw(server);
+ } else {
+  return -1;
+ }
 #endif
 
  } else {
