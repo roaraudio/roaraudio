@@ -392,6 +392,12 @@ int register_slp (int unreg, char * sockname) {
  }
 
  if (!unreg) {
+  snprintf(attr, sizeof(attr), "(wave-rate=%i),(wave-channels=%i),(wave-bits=%i),"
+                               "(light-channels=%i)",
+           g_sa->rate, g_sa->channels, g_sa->bits,
+           g_light_state.channels
+          );
+
   /* Register a service with SLP */
   err = SLPReg(hslp,
                addr,
