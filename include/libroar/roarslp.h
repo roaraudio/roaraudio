@@ -38,6 +38,7 @@
 #include "libroar.h"
 
 #define ROAR_SLP_MAX_MATCHES       8
+#define ROAR_SLP_MAX_URL_LEN       256
 
 #ifndef ROAR_HAVE_LIBSLP
 #define SLPHandle  void *
@@ -52,7 +53,7 @@ struct roar_slp_search {
 };
 
 struct roar_slp_match {
- char * url;
+ char url[ROAR_SLP_MAX_URL_LEN];
 };
 
 struct roar_slp_cookie {
