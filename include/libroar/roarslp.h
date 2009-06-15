@@ -1,7 +1,7 @@
 //slp.h:
 
 /*
- *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008
+ *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2009
  *
  *  This file is part of libroar a part of RoarAudio,
  *  a cross-platform sound system for both, home and professional use.
@@ -36,6 +36,44 @@
 #define _LIBROARSLP_H_
 
 #include "libroar.h"
+
+#define ROAR_SLP_MAX_MATCHES       8
+
+#ifndef ROAR_HAVE_LIBSLP
+#define SLPHandle  void *
+#define SLPError   int
+#define SLPBoolean int
+#define SLP_FALSE  0
+#define SLP_TRUE   1
+#endif
+
+struct roar_slp_search {
+ char dummy[8];
+};
+
+struct roar_slp_match {
+ char * url;
+};
+
+struct roar_slp_cookie {
+ struct roar_slp_search * search;
+ struct roar_slp_match    match[ROAR_SLP_MAX_MATCHES];
+ int                      matchcount;
+};
+
+/*
+SLPBoolean roar_slp_url_callback(SLPHandle        hslp,
+                                 const char     * srvurl,
+                                 unsigned short   lifetime,
+                                 SLPError         errcode,
+                                 void           * cookie);
+*/
+
+int roar_slp_search          (struct roar_slp_cookie * cookie, char * type);
+int roar_slp_cookie_init     (struct roar_slp_cookie * cookie, struct roar_slp_search * search);
+
+char * roar_slp_find_roard   (void);
+int    roar_slp_find_roard_r (char * addr, size_t len);
 
 #endif
 
