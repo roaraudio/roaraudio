@@ -57,6 +57,7 @@ struct roar_slp_match {
 };
 
 struct roar_slp_cookie {
+ SLPError                 callbackerr;
  struct roar_slp_search * search;
  struct roar_slp_match    match[ROAR_SLP_MAX_MATCHES];
  int                      matchcount;
