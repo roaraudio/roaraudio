@@ -41,7 +41,7 @@ SLPBoolean roar_slp_url_callback(SLPHandle        hslp,
                                  void           * cookie) {
  struct roar_slp_cookie * self = cookie;
 
- ROAR_WARN("roar_slp_url_callback(*) = ?");
+ ROAR_DBG("roar_slp_url_callback(*) = ?");
 
  if (errcode == SLP_OK || errcode == SLP_LAST_CALL) {
   self->callbackerr = SLP_OK;
@@ -73,7 +73,7 @@ int roar_slp_search          (struct roar_slp_cookie * cookie, char * type) {
  SLPError err;
  SLPHandle hslp;
 
- ROAR_WARN("roar_slp_search(cookie=%p, type='%s') = ?", cookie, type);
+ ROAR_DBG("roar_slp_search(cookie=%p, type='%s') = ?", cookie, type);
 
  if ( cookie->search != NULL ) /* currently only non-search filter mode supported */
   return -1;
@@ -83,7 +83,7 @@ int roar_slp_search          (struct roar_slp_cookie * cookie, char * type) {
   return -1;
  }
 
- ROAR_WARN("roar_slp_search(*) = ?");
+ ROAR_DBG("roar_slp_search(*) = ?");
 
  err = SLPFindSrvs(hslp,
                    type,
@@ -92,7 +92,7 @@ int roar_slp_search          (struct roar_slp_cookie * cookie, char * type) {
                    roar_slp_url_callback,
                    cookie);
 
- ROAR_WARN("roar_slp_search(*) = ?");
+ ROAR_DBG("roar_slp_search(*) = ?");
 
   /* err may contain an error code that occurred as the slp library    */
   /* _prepared_ to make the call.                                     */
@@ -107,12 +107,12 @@ int roar_slp_search          (struct roar_slp_cookie * cookie, char * type) {
   return -1;
  }
 
- ROAR_WARN("roar_slp_search(*) = ?");
+ ROAR_DBG("roar_slp_search(*) = ?");
 
  /* Now that we're done using slp, close the slp handle */
  //SLPClose(hslp);
 
- ROAR_WARN("roar_slp_search(*) = ?");
+ ROAR_DBG("roar_slp_search(*) = ?");
 
  return 0;
 #else
@@ -145,39 +145,39 @@ int    roar_slp_find_roard_r (char * addr, size_t len) {
  struct roar_slp_cookie cookie;
  int offset = 0;
 
- ROAR_WARN("roar_slp_find_roard_r(addr=%p, len=%i) = ?", addr, len);
+ ROAR_DBG("roar_slp_find_roard_r(addr=%p, len=%i) = ?", addr, len);
 
  if ( addr == NULL || len == 0 )
   return -1;
 
  *addr = 0; // just in case...
 
- ROAR_WARN("roar_slp_find_roard_r(*) = ?");
+ ROAR_DBG("roar_slp_find_roard_r(*) = ?");
 
  if ( roar_slp_cookie_init(&cookie, NULL) == -1 )
   return -1;
 
- ROAR_WARN("roar_slp_find_roard_r(*) = ?");
+ ROAR_DBG("roar_slp_find_roard_r(*) = ?");
 
  if ( roar_slp_search(&cookie, "service:mixer.fellig:roar") == -1 )
   return -1;
 
- ROAR_WARN("roar_slp_find_roard_r(*) = ?");
+ ROAR_DBG("roar_slp_find_roard_r(*) = ?");
 
  if ( cookie.matchcount == 0 )
   return -1;
 
- ROAR_WARN("roar_slp_find_roard_r(*) = ?");
+ ROAR_DBG("roar_slp_find_roard_r(*) = ?");
 
  if ( !strncmp(cookie.match[0].url, "service:mixer.fellig:roar://", 28) )
   offset = 28;
 
- ROAR_WARN("roar_slp_find_roard_r(*): url='%s'", cookie.match[0].url);
+ ROAR_DBG("roar_slp_find_roard_r(*): url='%s'", cookie.match[0].url);
 
  strncpy(addr, &(cookie.match[0].url[offset]), len);
  addr[len-1] = 0; // also just in case.
 
- ROAR_WARN("roar_slp_find_roard_r(*): addr='%s'", addr);
+ ROAR_DBG("roar_slp_find_roard_r(*): addr='%s'", addr);
 
  return 0;
 }
