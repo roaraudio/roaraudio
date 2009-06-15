@@ -51,6 +51,10 @@
 #include <time.h>
 #endif
 
+#ifdef ROAR_HAVE_LIBSLP
+#include <slp.h>
+#endif
+
 /*
 #ifdef __linux__
 #include <linux/unistd.h>

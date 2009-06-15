@@ -104,6 +104,9 @@ void usage (void) {
         " -p  --port            - TCP Port to bind to\n"
         " -b  --bind            - IP/Hostname to bind to\n"
         "     --sock            - Filename for UNIX Domain Socket\n"
+#ifdef ROAR_HAVE_LIBSLP
+        "     --slp             - Enable OpenSLP support\n"
+#endif
         " -G  GROUP             - Sets the group for the UNIX Domain Socket, (default: %s)\n"
         "                         You need the permittions to change the GID\n"
         " -U  USER              - Sets the user for the UNIX Domain Socket, (default: do not set)\n"
@@ -359,6 +362,73 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
  return 0;
 }
 
+
+// SLP:
+void register_slp_callback(SLPHandle hslp, SLPError errcode, void * cookie) {
+ /* return the error code in the cookie */
+ *(SLPError*)cookie = errcode;
+}
+
+int register_slp (int unreg, char * sockname) {
+#ifdef ROAR_HAVE_LIBSLP
+ static int regged = 0;
+ static char * sn = NULL;
+ SLPError err;
+ SLPError callbackerr;
+ SLPHandle hslp;
+ char addr[1024];
+ char attr[1024] = "";
+
+ if ( sockname != NULL )
+  sn = sockname;
+
+ snprintf(addr, sizeof(addr), "service:mixer.fellig:roar://%s", sockname);
+
+ err = SLPOpen("en", SLP_FALSE, &hslp);
+
+ if (err != SLP_OK) {
+  ROAR_ERR("Error opening slp handle: Error #%i", err);
+  return -1;
+ }
+
+ if (!unreg) {
+  /* Register a service with SLP */
+  err = SLPReg(hslp,
+               addr,
+               SLP_LIFETIME_MAXIMUM,
+               0,
+               attr,
+               SLP_TRUE,
+               register_slp_callback,
+               &callbackerr);
+
+  /* err may contain an error code that occurred as the slp library    */
+  /* _prepared_ to make the call.                                     */
+  if ( (err != SLP_OK) || (callbackerr != SLP_OK) ) {
+   ROAR_ERR("Error registering service with slp: Error #%i", err);
+   return -1;
+  }
+
+  /* callbackerr may contain an error code (that was assigned through */
+  /* the callback cookie) that occurred as slp packets were sent on    */
+  /* the wire */
+  if (callbackerr != SLP_OK) {
+   ROAR_ERR("Error registering service with slp: Error #%i", callbackerr);
+   return -1;
+  }
+ } else if ( unreg && regged ) {
+ }
+
+ SLPClose(hslp);
+ return 0;
+#else
+ return -1;
+#endif
+}
+
+
+// MAIN:
+
 #ifdef ROAR_HAVE_MAIN_ARGS
 int main (int argc, char * argv[]) {
 #else
@@ -403,6 +473,9 @@ int main (void) {
  char * sock_user = NULL;
 #ifdef ROAR_SUPPORT_LISTEN
  int    sock_type = ROAR_SOCKET_TYPE_UNKNOWN;
+#endif
+#ifdef ROAR_HAVE_LIBSLP
+ int    reg_slp   = 0;
 #endif
 #ifdef ROAR_HAVE_CHROOT
  char * chrootdir = NULL;
@@ -687,6 +760,14 @@ int main (void) {
 #endif
 #endif
 
+  } else if ( strcmp(k, "--slp") == 0 ) {
+#ifdef ROAR_HAVE_LIBSLP
+   reg_slp = 1;
+#else
+    ROAR_ERR("No OpenSLP support compiled in!");
+    return 1;
+#endif
+
   } else if ( strcmp(k, "-G") == 0 ) {
    sock_grp  = argv[++i];
   } else if ( strcmp(k, "-U") == 0 ) {
@@ -928,6 +1009,11 @@ int main (void) {
  }
 #endif
 
+ // Register with OpenSLP:
+ if ( reg_slp ) {
+  register_slp(0, server);
+ }
+
  // start main loop...
  main_loop(drvid, drvinst, &sa, sysclocksync);
 
@@ -940,6 +1026,8 @@ int main (void) {
 }
 
 void cleanup_listen_socket (int terminate) {
+ // Deregister from SLP:
+ register_slp(1, NULL);
 
 #ifdef ROAR_SUPPORT_LISTEN
  if ( g_listen_socket != -1 ) {
