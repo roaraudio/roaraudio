@@ -79,6 +79,10 @@
 #include <openssl/evp.h>
 #endif
 
+#ifdef ROAR_HAVE_LIBSLP
+#include <slp.h>
+#endif
+
 #include "error.h"
 #include "stack.h"
 #include "buffer.h"
@@ -106,6 +110,7 @@
 #include "acl.h"
 #include "pinentry.h"
 #include "sshaskpass.h"
+#include "slp.h"
 
 #endif
 
