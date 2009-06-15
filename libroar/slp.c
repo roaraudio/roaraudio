@@ -34,6 +34,67 @@
 
 #include "libroar.h"
 
+SLPBoolean roar_slp_url_callback(SLPHandle        hslp,
+                                 const char     * srvurl,
+                                 unsigned short   lifetime,
+                                 SLPError         errcode,
+                                 void           * cookie);
+
+int roar_slp_search          (struct roar_slp_cookie * cookie, char * type) {
+#ifdef ROAR_HAVE_LIBSLP
+ SLPError err;
+ SLPError callbackerr;
+ SLPHandle hslp;
+
+ if ( cookie->search != NULL ) /* currently only non-search filter mode supported */
+  return -1;
+
+ err = SLPOpen("en", SLP_FALSE, &hslp);
+ if (err != SLP_OK) {
+  return -1;
+ }
+
+ err = SLPFindSrvs(hslp,
+                   type,
+                   0,                    /* use configured scopes */
+                   0,                    /* no attr filter        */
+                   roar_slp_url_callback,
+                   &callbackerr);
+
+  /* err may contain an error code that occurred as the slp library    */
+  /* _prepared_ to make the call.                                     */
+  if(err != SLP_OK) {
+   return -1;
+  }
+
+ /* callbackerr may contain an error code (that was assigned through */
+ /* the callback cookie) that occurred as slp packets were sent on    */
+ /* the wire */
+ if (callbackerr != SLP_OK) {
+  return -1;
+ }
+
+ /* Now that we're done using slp, close the slp handle */
+ SLPClose(hslp);
+
+ return -1;
+#else
+ return -1;
+#endif
+}
+
+int roar_slp_cookie_init     (struct roar_slp_cookie * cookie, struct roar_slp_search * search) {
+ if ( cookie == NULL )
+  return -1;
+
+ memset(cookie, 0, sizeof(struct roar_slp_cookie));
+
+ cookie->search = search;
+
+ return 0;
+}
+
+
 char * roar_slp_find_roard   (void) {
  static char addr[80];
 
@@ -44,7 +105,26 @@ char * roar_slp_find_roard   (void) {
 }
 
 int    roar_slp_find_roard_r (char * addr, size_t len) {
- return -1;
+ struct roar_slp_cookie cookie;
+
+ if ( addr == NULL || len == 0 )
+  return -1;
+
+ *addr = 0; // just in case...
+
+ if ( roar_slp_cookie_init(&cookie, NULL) == -1 )
+  return -1;
+
+ if ( roar_slp_search(&cookie, "service:mixer.fellig:roar") == -1 )
+  return -1;
+
+ if ( cookie.matchcount == 0 )
+  return -1;
+
+ strncpy(addr, cookie.match[0].url, len);
+ addr[len-1] = 0; // also just in case.
+
+ return 0;
 }
 
 //ll
