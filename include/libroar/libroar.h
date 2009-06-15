@@ -110,7 +110,7 @@
 #include "acl.h"
 #include "pinentry.h"
 #include "sshaskpass.h"
-#include "slp.h"
+#include "roarslp.h"
 
 #endif
 

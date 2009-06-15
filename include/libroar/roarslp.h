@@ -1,4 +1,4 @@
-//slp.h:
+//roarslp.h:
 
 /*
  *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2009
