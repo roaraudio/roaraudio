@@ -38,7 +38,27 @@ SLPBoolean roar_slp_url_callback(SLPHandle        hslp,
                                  const char     * srvurl,
                                  unsigned short   lifetime,
                                  SLPError         errcode,
-                                 void           * cookie);
+                                 void           * cookie) {
+ struct roar_slp_cookie * self = cookie;
+
+ if (errcode == SLP_OK || errcode == SLP_LAST_CALL) {
+  *(SLPError*)cookie = SLP_OK;
+
+  if ( self->matchcount == ROAR_SLP_MAX_MATCHES )
+   return SLP_FALSE;
+
+  strncpy(self->match[self->matchcount++].url, srvurl, ROAR_SLP_MAX_URL_LEN);
+
+  self->match[self->matchcount].url[ROAR_SLP_MAX_URL_LEN-1] = 0;
+ } else {
+  *(SLPError*)cookie = errcode;
+ }
+
+ /* return SLP_TRUE because we want to be called again */
+ /* if more services were found                        */
+
+ return SLP_TRUE;
+}
 
 int roar_slp_search          (struct roar_slp_cookie * cookie, char * type) {
 #ifdef ROAR_HAVE_LIBSLP
