@@ -41,18 +41,26 @@ SLPBoolean roar_slp_url_callback(SLPHandle        hslp,
                                  void           * cookie) {
  struct roar_slp_cookie * self = cookie;
 
+ ROAR_WARN("roar_slp_url_callback(*) = ?");
+
  if (errcode == SLP_OK || errcode == SLP_LAST_CALL) {
-  *(SLPError*)cookie = SLP_OK;
+  self->callbackerr = SLP_OK;
+
+  if ( srvurl == NULL ) /* hu? */
+   return SLP_TRUE;
 
   if ( self->matchcount == ROAR_SLP_MAX_MATCHES )
    return SLP_FALSE;
 
-  strncpy(self->match[self->matchcount++].url, srvurl, ROAR_SLP_MAX_URL_LEN);
+  strncpy(self->match[self->matchcount].url, srvurl, ROAR_SLP_MAX_URL_LEN);
 
   self->match[self->matchcount].url[ROAR_SLP_MAX_URL_LEN-1] = 0;
+
+  self->matchcount++;
  } else {
-  *(SLPError*)cookie = errcode;
+  self->callbackerr = errcode;
  }
+
 
  /* return SLP_TRUE because we want to be called again */
  /* if more services were found                        */
@@ -63,8 +71,9 @@ SLPBoolean roar_slp_url_callback(SLPHandle        hslp,
 int roar_slp_search          (struct roar_slp_cookie * cookie, char * type) {
 #ifdef ROAR_HAVE_LIBSLP
  SLPError err;
- SLPError callbackerr;
  SLPHandle hslp;
+
+ ROAR_WARN("roar_slp_search(cookie=%p, type='%s') = ?", cookie, type);
 
  if ( cookie->search != NULL ) /* currently only non-search filter mode supported */
   return -1;
@@ -74,30 +83,38 @@ int roar_slp_search          (struct roar_slp_cookie * cookie, char * type) {
   return -1;
  }
 
+ ROAR_WARN("roar_slp_search(*) = ?");
+
  err = SLPFindSrvs(hslp,
                    type,
                    0,                    /* use configured scopes */
                    0,                    /* no attr filter        */
                    roar_slp_url_callback,
-                   &callbackerr);
+                   cookie);
+
+ ROAR_WARN("roar_slp_search(*) = ?");
 
   /* err may contain an error code that occurred as the slp library    */
   /* _prepared_ to make the call.                                     */
-  if(err != SLP_OK) {
+  if (err != SLP_OK) {
    return -1;
   }
 
  /* callbackerr may contain an error code (that was assigned through */
  /* the callback cookie) that occurred as slp packets were sent on    */
  /* the wire */
- if (callbackerr != SLP_OK) {
+ if (cookie->callbackerr != SLP_OK) {
   return -1;
  }
 
- /* Now that we're done using slp, close the slp handle */
- SLPClose(hslp);
+ ROAR_WARN("roar_slp_search(*) = ?");
 
- return -1;
+ /* Now that we're done using slp, close the slp handle */
+ //SLPClose(hslp);
+
+ ROAR_WARN("roar_slp_search(*) = ?");
+
+ return 0;
 #else
  return -1;
 #endif
@@ -126,23 +143,41 @@ char * roar_slp_find_roard   (void) {
 
 int    roar_slp_find_roard_r (char * addr, size_t len) {
  struct roar_slp_cookie cookie;
+ int offset = 0;
+
+ ROAR_WARN("roar_slp_find_roard_r(addr=%p, len=%i) = ?", addr, len);
 
  if ( addr == NULL || len == 0 )
   return -1;
 
  *addr = 0; // just in case...
 
+ ROAR_WARN("roar_slp_find_roard_r(*) = ?");
+
  if ( roar_slp_cookie_init(&cookie, NULL) == -1 )
   return -1;
+
+ ROAR_WARN("roar_slp_find_roard_r(*) = ?");
 
  if ( roar_slp_search(&cookie, "service:mixer.fellig:roar") == -1 )
   return -1;
 
+ ROAR_WARN("roar_slp_find_roard_r(*) = ?");
+
  if ( cookie.matchcount == 0 )
   return -1;
 
- strncpy(addr, cookie.match[0].url, len);
+ ROAR_WARN("roar_slp_find_roard_r(*) = ?");
+
+ if ( !strncmp(cookie.match[0].url, "service:mixer.fellig:roar://", 28) )
+  offset = 28;
+
+ ROAR_WARN("roar_slp_find_roard_r(*): url='%s'", cookie.match[0].url);
+
+ strncpy(addr, &(cookie.match[0].url[offset]), len);
  addr[len-1] = 0; // also just in case.
+
+ ROAR_WARN("roar_slp_find_roard_r(*): addr='%s'", addr);
 
  return 0;
 }
