@@ -382,7 +382,7 @@ int register_slp (int unreg, char * sockname) {
  if ( sockname != NULL )
   sn = sockname;
 
- snprintf(addr, sizeof(addr), "service:mixer.fellig:roar://%s", sockname);
+ snprintf(addr, sizeof(addr), "service:mixer.fellig:roar://%s", sn);
 
  err = SLPOpen("en", SLP_FALSE, &hslp);
 
@@ -401,22 +401,28 @@ int register_slp (int unreg, char * sockname) {
                SLP_TRUE,
                register_slp_callback,
                &callbackerr);
-
-  /* err may contain an error code that occurred as the slp library    */
-  /* _prepared_ to make the call.                                     */
-  if ( (err != SLP_OK) || (callbackerr != SLP_OK) ) {
-   ROAR_ERR("Error registering service with slp: Error #%i", err);
-   return -1;
-  }
-
-  /* callbackerr may contain an error code (that was assigned through */
-  /* the callback cookie) that occurred as slp packets were sent on    */
-  /* the wire */
-  if (callbackerr != SLP_OK) {
-   ROAR_ERR("Error registering service with slp: Error #%i", callbackerr);
-   return -1;
-  }
+  regged = 1;
  } else if ( unreg && regged ) {
+  err = SLPDereg(hslp, addr, register_slp_callback, &callbackerr);
+  regged = 0;
+ } else {
+  SLPClose(hslp);
+  return -1;
+ }
+
+ /* err may contain an error code that occurred as the slp library    */
+ /* _prepared_ to make the call.                                     */
+ if ( err != SLP_OK ) {
+  ROAR_ERR("Error (de)registering service with slp: Error #%i", err);
+  return -1;
+ }
+
+ /* callbackerr may contain an error code (that was assigned through */
+ /* the callback cookie) that occurred as slp packets were sent on    */
+ /* the wire */
+ if (callbackerr != SLP_OK) {
+  ROAR_ERR("Error (de)registering service with slp: Error #%i", callbackerr);
+  return -1;
  }
 
  SLPClose(hslp);
