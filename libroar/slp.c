@@ -56,6 +56,9 @@ SLPBoolean roar_slp_url_callback(SLPHandle        hslp,
 
   self->match[self->matchcount].url[ROAR_SLP_MAX_URL_LEN-1] = 0;
 
+  self->match[self->matchcount].tod  = time(NULL);
+  self->match[self->matchcount].tod += lifetime;
+
   self->matchcount++;
  } else {
   self->callbackerr = errcode;
@@ -142,8 +145,10 @@ char * roar_slp_find_roard   (void) {
 }
 
 int    roar_slp_find_roard_r (char * addr, size_t len) {
- struct roar_slp_cookie cookie;
- int offset = 0;
+ static struct roar_slp_match    cache  = {"", 0};
+        struct roar_slp_cookie   cookie;
+ int                             offset = 0;
+ char                          * url;
 
  ROAR_DBG("roar_slp_find_roard_r(addr=%p, len=%i) = ?", addr, len);
 
@@ -152,29 +157,40 @@ int    roar_slp_find_roard_r (char * addr, size_t len) {
 
  *addr = 0; // just in case...
 
- ROAR_DBG("roar_slp_find_roard_r(*) = ?");
+ if ( cache.tod < time(NULL) ) {
+  ROAR_WARN("roar_slp_find_roard_r(*): cache too old, searching for a new server...");
+  ROAR_DBG("roar_slp_find_roard_r(*) = ?");
 
- if ( roar_slp_cookie_init(&cookie, NULL) == -1 )
-  return -1;
+  if ( roar_slp_cookie_init(&cookie, NULL) == -1 )
+   return -1;
 
- ROAR_DBG("roar_slp_find_roard_r(*) = ?");
+  ROAR_DBG("roar_slp_find_roard_r(*) = ?");
 
- if ( roar_slp_search(&cookie, "service:mixer.fellig:roar") == -1 )
-  return -1;
+  if ( roar_slp_search(&cookie, "service:mixer.fellig:roar") == -1 )
+   return -1;
 
- ROAR_DBG("roar_slp_find_roard_r(*) = ?");
+  ROAR_DBG("roar_slp_find_roard_r(*) = ?");
 
- if ( cookie.matchcount == 0 )
-  return -1;
+  if ( cookie.matchcount == 0 )
+   return -1;
 
- ROAR_DBG("roar_slp_find_roard_r(*) = ?");
+  ROAR_DBG("roar_slp_find_roard_r(*) = ?");
 
- if ( !strncmp(cookie.match[0].url, "service:mixer.fellig:roar://", 28) )
+  url = cookie.match[0].url;
+
+  ROAR_WARN("roar_slp_find_roard_r(*): found new server, caching it");
+  memcpy(&cache, &(cookie.match[0]), sizeof(cache));
+ } else {
+  ROAR_WARN("roar_slp_find_roard_r(*): cache within TTL, no need to search for server, using cache.");
+  url = cache.url;
+ }
+
+ if ( !strncmp(url, "service:mixer.fellig:roar://", 28) )
   offset = 28;
 
  ROAR_DBG("roar_slp_find_roard_r(*): url='%s'", cookie.match[0].url);
 
- strncpy(addr, &(cookie.match[0].url[offset]), len);
+ strncpy(addr, &(url[offset]), len);
  addr[len-1] = 0; // also just in case.
 
  ROAR_DBG("roar_slp_find_roard_r(*): addr='%s'", addr);
