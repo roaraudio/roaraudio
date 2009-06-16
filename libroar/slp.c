@@ -158,10 +158,12 @@ int    roar_slp_find_roard_r (char * addr, size_t len, int nocache) {
  *addr = 0; // just in case...
 
  if ( nocache || cache.tod < time(NULL) ) {
+#ifdef DEBUG
   if ( nocache ) {
-   ROAR_WARN("roar_slp_find_roard_r(*): forced ignoring of cache, doing a new lookup.");
+   ROAR_DBG("roar_slp_find_roard_r(*): forced ignoring of cache, doing a new lookup.");
   }
-  ROAR_WARN("roar_slp_find_roard_r(*): cache too old, searching for a new server...");
+#endif
+  ROAR_DBG("roar_slp_find_roard_r(*): cache too old, searching for a new server...");
   ROAR_DBG("roar_slp_find_roard_r(*) = ?");
 
   if ( roar_slp_cookie_init(&cookie, NULL) == -1 )
@@ -181,10 +183,10 @@ int    roar_slp_find_roard_r (char * addr, size_t len, int nocache) {
 
   url = cookie.match[0].url;
 
-  ROAR_WARN("roar_slp_find_roard_r(*): found new server, caching it");
+  ROAR_DBG("roar_slp_find_roard_r(*): found new server, caching it");
   memcpy(&cache, &(cookie.match[0]), sizeof(cache));
  } else {
-  ROAR_WARN("roar_slp_find_roard_r(*): cache within TTL, no need to search for server, using cache.");
+  ROAR_DBG("roar_slp_find_roard_r(*): cache within TTL, no need to search for server, using cache.");
   url = cache.url;
  }
 
