@@ -53,7 +53,8 @@ struct roar_slp_search {
 };
 
 struct roar_slp_match {
- char url[ROAR_SLP_MAX_URL_LEN];
+ char   url[ROAR_SLP_MAX_URL_LEN];
+ time_t tod; // Time Of Dead (found+TTL)
 };
 
 struct roar_slp_cookie {
