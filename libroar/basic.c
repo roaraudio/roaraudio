@@ -106,12 +106,19 @@ int roar_connect_raw (char * server) {
 #endif
 
 #ifdef ROAR_HAVE_LIBSLP
- if ( (server = roar_slp_find_roard()) != NULL ) {
-  return roar_connect_raw(server);
- } else {
-  return -1;
- }
+ if ( (server = roar_slp_find_roard(0)) != NULL )
+  if ( (fh = roar_connect_raw(server)) != -1 )
+   return fh;
+
+ /* in case we can not connect to the server given this may be a cache problem,
+    we do a new lookup with the cache disabled in this case                     */
+ ROAR_WARN("roar_connect_raw(*): Can not connect to SLP located server, disabling cache");
+ if ( (server = roar_slp_find_roard(1)) != NULL )
+  if ( (fh = roar_connect_raw(server)) != -1 )
+   return fh;
 #endif
+
+ return -1;
 
  } else {
   /* connect via (char*)server */

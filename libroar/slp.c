@@ -135,16 +135,16 @@ int roar_slp_cookie_init     (struct roar_slp_cookie * cookie, struct roar_slp_s
 }
 
 
-char * roar_slp_find_roard   (void) {
+char * roar_slp_find_roard   (int nocache) {
  static char addr[80];
 
- if ( roar_slp_find_roard_r(addr, 80) == -1 )
+ if ( roar_slp_find_roard_r(addr, 80, nocache) == -1 )
   return NULL;
 
  return addr;
 }
 
-int    roar_slp_find_roard_r (char * addr, size_t len) {
+int    roar_slp_find_roard_r (char * addr, size_t len, int nocache) {
  static struct roar_slp_match    cache  = {"", 0};
         struct roar_slp_cookie   cookie;
  int                             offset = 0;
@@ -157,7 +157,10 @@ int    roar_slp_find_roard_r (char * addr, size_t len) {
 
  *addr = 0; // just in case...
 
- if ( cache.tod < time(NULL) ) {
+ if ( nocache || cache.tod < time(NULL) ) {
+  if ( nocache ) {
+   ROAR_WARN("roar_slp_find_roard_r(*): forced ignoring of cache, doing a new lookup.");
+  }
   ROAR_WARN("roar_slp_find_roard_r(*): cache too old, searching for a new server...");
   ROAR_DBG("roar_slp_find_roard_r(*) = ?");
 

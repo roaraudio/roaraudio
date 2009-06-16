@@ -73,8 +73,8 @@ SLPBoolean roar_slp_url_callback(SLPHandle        hslp,
 int roar_slp_search          (struct roar_slp_cookie * cookie, char * type);
 int roar_slp_cookie_init     (struct roar_slp_cookie * cookie, struct roar_slp_search * search);
 
-char * roar_slp_find_roard   (void);
-int    roar_slp_find_roard_r (char * addr, size_t len);
+char * roar_slp_find_roard   (int nocache);
+int    roar_slp_find_roard_r (char * addr, size_t len, int nocache);
 
 #endif
 
