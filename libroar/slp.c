@@ -171,7 +171,7 @@ int    roar_slp_find_roard_r (char * addr, size_t len, int nocache) {
 
   ROAR_DBG("roar_slp_find_roard_r(*) = ?");
 
-  if ( roar_slp_search(&cookie, "service:mixer.fellig:roar") == -1 )
+  if ( roar_slp_search(&cookie, ROAR_SLP_URL_TYPE) == -1 )
    return -1;
 
   ROAR_DBG("roar_slp_find_roard_r(*) = ?");
@@ -190,7 +190,7 @@ int    roar_slp_find_roard_r (char * addr, size_t len, int nocache) {
   url = cache.url;
  }
 
- if ( !strncmp(url, "service:mixer.fellig:roar://", 28) )
+ if ( !strncmp(url, ROAR_SLP_URL_TYPE "://", ROAR_SLP_URL_TYPE_LEN + 3) )
   offset = 28;
 
  ROAR_DBG("roar_slp_find_roard_r(*): url='%s'", cookie.match[0].url);

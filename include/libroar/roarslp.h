@@ -39,6 +39,8 @@
 
 #define ROAR_SLP_MAX_MATCHES       8
 #define ROAR_SLP_MAX_URL_LEN       256
+#define ROAR_SLP_URL_TYPE          "service:mixer.fellig:roar"
+#define ROAR_SLP_URL_TYPE_LEN      25
 
 #ifndef ROAR_HAVE_LIBSLP
 #define SLPHandle  void *
