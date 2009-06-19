@@ -43,6 +43,7 @@ void usage (void) {
         " --setgid              - GroupID to the audio group as specified via -G\n"
         " --setuid              - UserID to the audio user as specified via -U\n"
         " --sysclocksync        - calculate exact sample rate using the system clock\n"
+        " --location  LOC       - Set lion readable location of server\n"
        );
 
  printf("\nAudio Options:\n\n");
@@ -155,6 +156,8 @@ int init_config (void) {
  }
 
  g_config->streams[ROAR_DIR_MIDI_OUT].flags = ROAR_FLAG_SYNC;
+
+ g_config->location = "***default***";
 
  return 0;
 }
@@ -378,6 +381,7 @@ int register_slp (int unreg, char * sockname) {
  SLPHandle hslp;
  char addr[1024];
  char attr[1024] = "";
+ char * location;
 
  if ( sockname != NULL )
   sn = sockname;
@@ -392,10 +396,18 @@ int register_slp (int unreg, char * sockname) {
  }
 
  if (!unreg) {
+
+  if ( SLPEscape(g_config->location, &location, SLP_FALSE) != SLP_OK ) {
+   ROAR_ERR("Error using SLPEscape() on server location, really bad!");
+   SLPClose(hslp);
+   return -1;
+  }
+
   snprintf(attr, sizeof(attr), "(wave-rate=%i),(wave-channels=%i),(wave-bits=%i),"
-                               "(light-channels=%i)",
+                               "(light-channels=%i),(location=%s)",
            g_sa->rate, g_sa->channels, g_sa->bits,
-           g_light_state.channels
+           g_light_state.channels,
+           location
           );
 
   /* Register a service with SLP */
@@ -630,6 +642,8 @@ int main (void) {
 #else
    ROAR_ERR("--setuid not supported");
 #endif
+  } else if ( strcmp(k, "--location") == 0 ) {
+   g_config->location = argv[++i];
 
   } else if ( strcmp(k, "--list-cf") == 0 ) {
    print_codecfilterlist();

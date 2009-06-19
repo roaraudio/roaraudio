@@ -123,6 +123,7 @@ struct roard_config {
   struct roar_mixer_settings mixer;
   int                        mixer_channels;
  } streams[ROAR_DIR_DIRIDS];
+ char * location;
 } * g_config;
 
 #endif
