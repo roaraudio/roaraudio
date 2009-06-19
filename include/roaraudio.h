@@ -159,6 +159,9 @@ __BEGIN_DECLS
 //#define ROAR_DEFAULT_SOCKGRP     "audio"
 
 #define ROAR_LIBS                "-lroar"
+#define ROAR_LIBS_DSP            "-lroardsp "   ROAR_LIBS
+#define ROAR_LIBS_MIDI           "-lroarmidi "  ROAR_LIBS_DSP
+#define ROAR_LIBS_LIGHT          "-lroarlight " ROAR_LIBS
 #define ROAR_CFLAGS              ""
 
 //some basic macros:
