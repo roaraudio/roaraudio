@@ -39,6 +39,7 @@ SLPBoolean roar_slp_url_callback(SLPHandle        hslp,
                                  unsigned short   lifetime,
                                  SLPError         errcode,
                                  void           * cookie) {
+#ifdef ROAR_HAVE_LIBSLP
  struct roar_slp_cookie * self = cookie;
 
  ROAR_DBG("roar_slp_url_callback(*) = ?");
@@ -69,6 +70,9 @@ SLPBoolean roar_slp_url_callback(SLPHandle        hslp,
  /* if more services were found                        */
 
  return SLP_TRUE;
+#else
+ return SLP_FALSE;
+#endif
 }
 
 int roar_slp_search          (struct roar_slp_cookie * cookie, char * type) {
