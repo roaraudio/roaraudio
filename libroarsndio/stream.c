@@ -35,14 +35,23 @@
 
 #define _i(x) (hdl->info.x)
 int    sio_start  (struct sio_hdl * hdl) {
+ int fh;
+
  if ( hdl == NULL )
   return 0;
 
- if ( hdl->fh != -1 )
+ if ( hdl->stream_opened )
   return 0;
 
- if ( (hdl->fh = roar_simple_new_stream_obj(&(hdl->con), &(hdl->stream), _i(rate), _i(channels), _i(bits), _i(codec), ROAR_DIR_PLAY)) == -1 )
+ if ( (fh = roar_simple_new_stream_obj(&(hdl->con), &(hdl->stream), _i(rate), _i(channels), _i(bits), _i(codec), ROAR_DIR_PLAY)) == -1 )
   return 0;
+
+ if ( roar_vio_open_fh_socket(&(hdl->svio), fh) == -1 ) {
+  close(fh);
+  return 0;
+ }
+
+ hdl->stream_opened = 1;
 
  return 1;
 }
@@ -53,12 +62,12 @@ int    sio_stop   (struct sio_hdl * hdl) {
  if ( hdl == NULL )
   return 0;
 
- if ( hdl->fh == -1 )
+ if ( !hdl->stream_opened )
   return 0;
 
- close(hdl->fh);
+ roar_vio_close(&(hdl->svio));
 
- hdl->fh = -1;
+ hdl->stream_opened = -1;
 
  return 1;
 }
@@ -69,10 +78,10 @@ size_t sio_read   (struct sio_hdl * hdl, void * addr, size_t nbytes) {
  if ( hdl == NULL )
   return 0;
 
- if ( hdl->fh == -1 )
+ if ( !hdl->stream_opened )
   return 0;
 
- if ( (ret = read(hdl->fh, addr, nbytes)) < 0 )
+ if ( (ret = roar_vio_read(&(hdl->svio), addr, nbytes)) < 0 )
   return 0;
 
  return ret;
@@ -83,10 +92,10 @@ size_t sio_write  (struct sio_hdl * hdl, void * addr, size_t nbytes) {
  if ( hdl == NULL )
   return 0;
 
- if ( hdl->fh == -1 )
+ if ( !hdl->stream_opened )
   return 0;
 
- if ( (ret = write(hdl->fh, addr, nbytes)) < 0 )
+ if ( (ret = roar_vio_write(&(hdl->svio), addr, nbytes)) < 0 )
   return 0;
 
  if ( hdl->on_move != NULL ) {

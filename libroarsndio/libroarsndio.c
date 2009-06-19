@@ -51,7 +51,7 @@ struct sio_hdl * sio_open(char * name, unsigned mode, int nbio_flag) {
 
  sio_initpar(&(hdl->para));
 
- hdl->fh = -1;
+ hdl->stream_opened = 0;
 
  if ( name != NULL )
   hdl->device = strdup(name);
@@ -63,8 +63,7 @@ void   sio_close  (struct sio_hdl * hdl) {
  if ( hdl == NULL )
   return;
 
- if ( hdl->fh == -1 )
-  close(hdl->fh);
+ sio_stop(hdl);
 
  roar_disconnect(&(hdl->con));
 
