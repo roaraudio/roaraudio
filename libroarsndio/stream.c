@@ -37,6 +37,8 @@
 int    sio_start  (struct sio_hdl * hdl) {
  int fh;
 
+ // TODO: FIXME: use full VIO support here, not fh->vio!
+
  if ( hdl == NULL )
   return 0;
 
