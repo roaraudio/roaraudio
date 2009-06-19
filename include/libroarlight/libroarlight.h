@@ -36,6 +36,7 @@
 #define _LIBROARLIGHT_H_
 
 #include <roaraudio.h>
+#include <libroardsp/libroardsp.h>
 
 #include "colors.h"
 #include "roardmx.h"
