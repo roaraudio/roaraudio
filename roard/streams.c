@@ -625,6 +625,11 @@ int streams_fill_mixbuffer (int id, struct roar_audio_info * info) {
  // calc todo_in
  todo_in = ROAR_OUTPUT_CALC_OUTBUFSIZE(stream_info);
 
+ if ( todo_in == 0 ) {
+  ROAR_WARN("streams_fill_mixbuffer(id=%i, info=%p{...}): todo_in == 0, this should not happen!", id, info);
+  return -1;
+ }
+
  // calc mul and div:
  mul = todo    / todo_in;
  div = todo_in / todo;
