@@ -24,11 +24,26 @@
 
 #include <roaraudio.h>
 
+struct {
+ char * name;
+ char * cflags;
+ char * libs;
+} flags[] = {
+ {"roar",      ROAR_CFLAGS, ROAR_LIBS      }, // NOTE: libroar *MUST* be the first entry
+ {"roardsp",   ROAR_CFLAGS, ROAR_LIBS_DSP  },
+ {"roarmidi",  ROAR_CFLAGS, ROAR_LIBS_MIDI },
+ {"roarlight", ROAR_CFLAGS, ROAR_LIBS_LIGHT},
+ {NULL, NULL, NULL}
+}, * flags_ptr = NULL;
+
 int main (int argc, char * argv[]) {
- int i;
+ int i, h;
+ int cflags = 0;
+ int libs   = 0;
+ char buf[1024] = {0};
 
  if ( argc == 1 ) {
-  printf("Usage: roar-config [--version] [--libs] [--cflags]\n");
+  printf("Usage: roar-config [--version] [--libs] [--cflags] [lib]\n");
   return 0;
  }
 
@@ -36,14 +51,35 @@ int main (int argc, char * argv[]) {
   if ( !strcmp(argv[i], "--version") ) {
    printf("unknown\n");
   } else if ( !strcmp(argv[i], "--libs") ) {
-   printf("%s\n", ROAR_LIBS);
+   libs   = 1;
   } else if ( !strcmp(argv[i], "--cflags") ) {
-   printf("%s\n", ROAR_CFLAGS);
+   cflags = 1;
+  } else if ( flags_ptr == NULL ) {
+   for (h = 0; flags[h].name != NULL; h++) {
+    if ( !strcasecmp(argv[i], flags[h].name) )
+     flags_ptr = &(flags[h]);
+   }
+
+   if ( flags_ptr == NULL ) {
+    ROAR_ERR("Unknown lib: %s", argv[i]);
+    return 2;
+   }
   } else {
    fprintf(stderr, "Unknown option: %s\n", argv[i]);
    return 1;
   }
  }
+
+ if ( flags_ptr == NULL )
+  flags_ptr = &(flags[0]);
+
+ if ( cflags )
+  strcat(buf, flags_ptr->cflags);
+
+ if ( libs )
+  strcat(buf, flags_ptr->libs);
+
+ puts(buf);
 
  return 0;
 }
