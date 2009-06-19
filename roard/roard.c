@@ -1036,9 +1036,11 @@ int main (void) {
 #endif
 
  // Register with OpenSLP:
+#ifdef ROAR_HAVE_LIBSLP
  if ( reg_slp ) {
   register_slp(0, server);
  }
+#endif
 
  // start main loop...
  main_loop(drvid, drvinst, &sa, sysclocksync);
@@ -1053,7 +1055,9 @@ int main (void) {
 
 void cleanup_listen_socket (int terminate) {
  // Deregister from SLP:
+#ifdef ROAR_HAVE_LIBSLP
  register_slp(1, NULL);
+#endif
 
 #ifdef ROAR_SUPPORT_LISTEN
  if ( g_listen_socket != -1 ) {
