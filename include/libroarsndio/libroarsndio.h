@@ -56,6 +56,7 @@ extern "C" {
 struct roar_sio_hdl {
  char           * device;
  int              fh;
+ struct roar_vio_calls  svio;
  struct roar_connection con;
  struct roar_stream     stream;
  struct roar_audio_info info;
