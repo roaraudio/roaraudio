@@ -48,6 +48,8 @@ int    sio_start  (struct sio_hdl * hdl) {
  if ( (fh = roar_simple_new_stream_obj(&(hdl->con), &(hdl->stream), _i(rate), _i(channels), _i(bits), _i(codec), ROAR_DIR_PLAY)) == -1 )
   return 0;
 
+ ROAR_DBG("sio_start(hdl=%p): rate=%i, channels=%i, bits=%i, codec=%i", hdl, _i(rate), _i(channels), _i(bits), _i(codec));
+
  if ( roar_vio_open_fh_socket(&(hdl->svio), fh) == -1 ) {
   close(fh);
   return 0;
