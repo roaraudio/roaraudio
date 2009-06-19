@@ -33,6 +33,7 @@ __BEGIN_DECLS
 #include "poly.h"
 #include "convert.h"
 #include "midside.h"
+#include "point.h"
 
 // defines
 #define ROARDSP_MAX_FILTERS_PER_CHAIN 8
