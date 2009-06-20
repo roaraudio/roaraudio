@@ -741,13 +741,21 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.182 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.183 $ of RoarAudio
  */
 
 EOF
  echo '/* uname: ' $(uname -a) '*/'
  echo '/* Date : ' $(date)  '*/'
  echo
+
+ echo
+ echo
+
+ for i in CC RANLIB PKG_CONFIG SYSNAME TARGET_CYGWIN
+ do
+  eval echo "BASICCONF\($i\): \$$i";
+ done
 
  echo
  echo
