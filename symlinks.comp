@@ -1,0 +1,5 @@
+libartsc.so	libartsc.so.0
+libroaresd.so	libesd.so.0
+libpulse.so	libpulse-simple.so.0
+libpulse.so	libpulse.so.0
+libroaryiff.so	libY2.so.14
