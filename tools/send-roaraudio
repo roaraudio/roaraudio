@@ -14,7 +14,7 @@ while [ "$1" != '' ]
 do
  case "$1" in
   '--remote-dir='*)
-    REMOTEDIR=`echo "$1" | cut -d= -f2`
+   REMOTEDIR=`echo "$1" | cut -d= -f2`
   ;;
   '--build='*)
    BUILD=`echo $1 | cut -d= -f2`
