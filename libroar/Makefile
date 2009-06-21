@@ -10,7 +10,8 @@ OBJS=libroar.o basic.o stream.o simple.o auth.o socket.o ctl.o buffer.o meta.o f
 INCLUDE = -I../include -I../include/libroar
 CFLAGS += -g -Wall -O2 $(DEFINES) $(INCLUDE) $(INCPATH) $(SHARED_CF) $(fPIC)
 LDFLAGS = -g $(SHARED) $(LDPATH)
-LIBS    = $(lib_slp) $(lib_dnet) $(lib_wsock32) $(lib_ws2_32) $(lib_ssl) $(lib_sendfile)
+NETLIBS = $(lib_dnet) $(lib_wsock32) $(lib_ws2_32)
+LIBS    = $(lib_slp) $(lib_ssl) $(lib_sendfile) $(NETLIBS)
 
 all: ${TARGETS}
 	rm -f ../lib/${SLIB} 2> /dev/null || true

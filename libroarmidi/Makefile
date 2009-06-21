@@ -9,7 +9,8 @@ OBJS=libroarmidi.o
 INCLUDE = -I../include -I../include/libroarmidi
 CFLAGS += -g -Wall -O2 $(DEFINES) $(INCLUDE) $(INCPATH) $(SHARED_CF) $(fPIC)
 LDFLAGS = -g $(SHARED) -L../lib/ $(LDPATH)
-LIBS    = -lroardsp -lroar $(lib_dnet) $(lib_m)
+NETLIBS = $(lib_dnet) $(lib_wsock32) $(lib_ws2_32)
+LIBS    = -lroardsp -lroar $(lib_m) $(NETLIBS)
 
 all: ${TARGETS}
 	rm -f ../lib/${SLIB} 2> /dev/null || true

@@ -9,7 +9,8 @@ OBJS=libroarlight.o colors.o roardmx.o pwm.o
 INCLUDE = -I../include -I../include/libroarlight
 CFLAGS += -g -Wall -O2 $(DEFINES) $(INCLUDE) $(INCPATH) $(SHARED_CF) $(fPIC)
 LDFLAGS = -g $(SHARED) -L../lib/ $(LDPATH)
-LIBS    = -lroar $(lib_dnet) $(lib_m)
+NETLIBS = $(lib_dnet) $(lib_wsock32) $(lib_ws2_32)
+LIBS    = -lroar $(lib_dnet) $(lib_m) $(NETLIBS)
 
 all: ${TARGETS}
 	rm -f ../lib/${SLIB} 2> /dev/null || true
