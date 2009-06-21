@@ -37,6 +37,11 @@
 
 #include "libroarlight.h"
 
+struct roar_laser_point {
+ struct roar_point point;
+ struct roar_color color;
+};
+
 #endif
 
 //ll
