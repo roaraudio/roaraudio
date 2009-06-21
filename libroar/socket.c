@@ -607,6 +607,7 @@ int roar_socket_open (int mode, int type, char * host, int port) {
     return -1;
    }
   // hey! we have a socket...
+  ROAR_DBG("roar_socket_open(*) = ? // we have a socket :)");
 #else
   return -1;
 #endif
@@ -661,7 +662,7 @@ int roar_socket_open (int mode, int type, char * host, int port) {
  }
 
  if ( mode == MODE_LISTEN ) {
-#ifdef ROAR_HAVE_BSDSOCKETS
+#if defined(ROAR_HAVE_BSDSOCKETS) || defined(ROAR_TARGET_WIN32)
   if ( listen(fh, ROAR_SOCKET_QUEUE_LEN) == -1 ) {
    close(fh);
    return -1;
