@@ -576,6 +576,8 @@ int roar_socket_open (int mode, int type, char * host, int port) {
  if ( type == ROAR_SOCKET_TYPE_INET || type == ROAR_SOCKET_TYPE_INET6 ) {
 #if defined(ROAR_HAVE_IPV4) || defined(ROAR_HAVE_IPV6)
 
+  ROAR_DBG("roar_socket_open(*) = ?");
+
   roar_socket_win32_init(); // we need to do this early as gethostbyname() requires this.
 
   if ( (he = gethostbyname(host)) == NULL ) {
@@ -590,7 +592,14 @@ int roar_socket_open (int mode, int type, char * host, int port) {
    socket_addr.in.sin_family = AF_INET;
    socket_addr.in.sin_port   = ROAR_HOST2NET16(port);
 
-   fh = roar_socket_new_tcp();
+  fh = roar_socket_new_tcp();
+
+  if ( fh == -1 ) {
+   ROAR_ERR("roar_socket_open(*): Can\'t create TCP socket: %s", strerror(errno));
+   return -1;
+  }
+
+  ROAR_DBG("roar_socket_open(*) = ?");
 
    if ( mode_func(fh, (struct sockaddr *)&socket_addr.in, sizeof(struct sockaddr_in)) == -1 ) {
     ROAR_DBG("roar_socket_open(*): Can not connect/bind: %s", strerror(errno));
