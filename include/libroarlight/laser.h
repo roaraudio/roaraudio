@@ -42,6 +42,12 @@ struct roar_laser_point {
  struct roar_color color;
 };
 
+struct roar_laser_frame {
+ uint_least32_t            pps;
+ size_t                    points;
+ struct roar_laser_point * data;
+};
+
 #endif
 
 //ll
