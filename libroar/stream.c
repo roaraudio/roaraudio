@@ -229,13 +229,13 @@ int roar_stream_passfh  (struct roar_connection * con, struct roar_stream * s, i
  m.pos     = 0;
  m.datalen = 0;
 
- ROAR_DBG("roar_stream_passfh(con={.fh=%i,...}, s={.id=%i,...}, fh=%i) = ?", con->fh, s->id, fh);
+ ROAR_DBG("roar_stream_passfh(con=%p{...}, s={.id=%i,...}, fh=%i) = ?", con, s->id, fh);
 
  if ( (confh = roar_get_connection_fh(con)) == -1 )
   return -1;
 
  if ( roar_send_message(con, &m, NULL) == -1 ) {
-  ROAR_DBG("roar_stream_passfh(con={.fh=%i,...}, s={.id=%i,...}, fh=%i) = -1 // can not send message", con->fh, s->id, fh);
+  ROAR_DBG("roar_stream_passfh(con=%p{...}, s={.id=%i,...}, fh=%i) = -1 // can not send message", con, s->id, fh);
   return -1;
  }
 
