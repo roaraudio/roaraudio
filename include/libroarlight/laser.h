@@ -1,4 +1,4 @@
-//libroarlight.h:
+//laser.h:
 
 /*
  *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2009
@@ -32,16 +32,10 @@
  *  them with any software that uses libesd, libartsc or libpulse*.
  */
 
-#ifndef _LIBROARLIGHT_H_
-#define _LIBROARLIGHT_H_
+#ifndef _LIBROARLIGHT_LASER_H_
+#define _LIBROARLIGHT_LASER_H_
 
-#include <roaraudio.h>
-#include <libroardsp/libroardsp.h>
-
-#include "colors.h"
-#include "roardmx.h"
-#include "pwm.h"
-#include "laser.h"
+#include "libroarlight.h"
 
 #endif
 
