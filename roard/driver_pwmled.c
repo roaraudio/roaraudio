@@ -93,6 +93,7 @@ int     driver_pwmled_close (struct roar_vio_calls * vio) {
 // TODO: this function should be optimized.
 ssize_t driver_pwmled_write (struct roar_vio_calls * vio,  void *buf, size_t count) {
  struct driver_pwmled * self = vio->inst;
+ int value;
 
  if ( vio == NULL || buf == NULL )
   return -1;
@@ -100,11 +101,17 @@ ssize_t driver_pwmled_write (struct roar_vio_calls * vio,  void *buf, size_t cou
  if ( count != 512 )
   return -1;
 
- if ( roar_light_pwm_set(&(self->state), ((unsigned char*)buf)[self->channel] / 16) == -1 )
+ value = ((unsigned char*)buf)[self->channel] / 15;
+
+ if ( roar_light_pwm_set(&(self->state), value) == -1 )
   return -1;
 
-                                                                    // bit per word, bit per byte
- return roar_light_pwm_send(&(self->state), &(self->vio), self->rate/11/8/100) == 0 ? count : -1;
+ if ( value ) {
+                                                                     // bit per word, bit per byte
+  return roar_light_pwm_send(&(self->state), &(self->vio), self->rate/11/8/100) == 0 ? count : -1;
+ }
+
+ return count;
 }
 
 int driver_pwmled_ctl(struct roar_vio_calls * vio, int cmd, void * data) {
