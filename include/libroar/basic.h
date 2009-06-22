@@ -62,7 +62,8 @@ int roar_connect_raw (char * server);
 
 int roar_connect    (struct roar_connection * con, char * server);
 int roar_connect_fh (struct roar_connection * con, int fh);
-int roar_get_connection_fh (struct roar_connection * con);
+int roar_get_connection_fh  (struct roar_connection * con);
+int roar_get_connection_vio (struct roar_connection * con, struct roar_vio_calls * vio);
 int roar_disconnect (struct roar_connection * con);
 
 int roar_identify   (struct roar_connection * con, char * name);

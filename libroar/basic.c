@@ -211,7 +211,17 @@ int roar_connect_fh (struct roar_connection * con, int fh) {
 }
 
 int roar_get_connection_fh (struct roar_connection * con) {
+ if ( con == NULL )
+  return -1;
+
  return con->__fh;
+}
+
+int roar_get_connection_vio (struct roar_connection * con, struct roar_vio_calls * vio) {
+ if ( con == NULL || vio == NULL )
+  return -1;
+
+ return roar_vio_open_fh_socket(vio, roar_get_connection_fh(con));
 }
 
 int roar_disconnect (struct roar_connection * con) {
