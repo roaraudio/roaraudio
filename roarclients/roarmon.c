@@ -1,7 +1,7 @@
 //roarcat.c:
 
 /*
- *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008
+ *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008, 2009
  *
  *  This file is part of roarclients a part of RoarAudio,
  *  a cross-platform sound system for both, home and professional use.
@@ -55,12 +55,18 @@ int main (int argc, char * argv[]) {
  int    rel_id   = -1;
  char * server   = NULL;
  char * k;
- int    fh;
  int    i;
- int    out = -1;
- char buf[BUFSIZE];
- struct roar_connection con;
- struct roar_stream     s;
+ struct roar_connection    con;
+ struct roar_stream        s;
+ struct roar_vio_calls     file, stream;
+ struct roar_vio_defaults  def;
+ int file_opened = 0;
+
+ if ( roar_vio_open_fh(&file, ROAR_STDOUT) == -1 )
+  return 1;
+
+ if ( roar_vio_dstr_init_defaults(&def, ROAR_VIO_DEF_TYPE_NONE, O_CREAT|O_TRUNC|O_WRONLY, 0644) == -1 )
+  return 1;
 
  for (i = 1; i < argc; i++) {
   k = argv[i];
@@ -103,8 +109,9 @@ int main (int argc, char * argv[]) {
   } else if ( !strcmp(k, "--help") || !strcmp(k, "-h") ) {
    usage();
    return 0;
-  } else if ( out == -1 ) {
-   if ( (out = open(k, O_CREAT|O_TRUNC|O_WRONLY, 0644)) == -1 ) {
+  } else if ( !file_opened ) {
+   file_opened = 1;
+   if ( roar_vio_open_dstr(&file, k, &def, 1) == -1 ) {
     fprintf(stderr, "Error: can not open file: %s: %s\n", k, strerror(errno));
     return 1;
    }
@@ -114,9 +121,6 @@ int main (int argc, char * argv[]) {
    return 1;
   }
  }
-
- if ( out == -1 )
-  out = ROAR_STDOUT;
 
  if ( roar_simple_connect(&con, server, "roarmon") == -1 ) {
   fprintf(stderr, "Error: can not connect to server\n");
@@ -149,19 +153,19 @@ int main (int argc, char * argv[]) {
   return 12;
  }
 
- if ( (fh = roar_get_connection_fh(&con)) == -1 ) {
-  fprintf(stderr, "Error: can not get stream fh\n");
+ if ( roar_get_connection_vio(&con, &stream) == -1 ) {
+  fprintf(stderr, "Error: can not get stream vio\n");
   roar_disconnect(&con);
   return 13;
  }
 
- ROAR_SHUTDOWN(fh, SHUT_WR);
+// TODO: FIXME:
+// ROAR_SHUTDOWN(fh, SHUT_WR); // we need to have something do do shutdowns here...
 
- while((i = read(fh, buf, BUFSIZE)))
-  if (write(out, buf, i) != i)
-   break;
+ roar_vio_copy_data(&file, &stream);
 
- roar_simple_close(fh);
+ roar_vio_close(&stream);
+ roar_vio_close(&file);
 
  return 0;
 }
