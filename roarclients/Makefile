@@ -1,4 +1,4 @@
-TARGETS=roarcat roarcatad roarcat2sock roarcatsendfile roarcatplay roarcatpassfh roarbidir roarctl roarmon roarsockconnect roartypes roarvorbis roarvumeter roarfilt roarsin roar-config polytest roarsocktypes roarshout roarradio roarfctest roarmonhttp pinentrytest zcattest pgptest roarcatvio pipetest
+TARGETS=roarcat roarcatad roarcat2sock roarcatsendfile roarcatplay roarcatpassfh roarbidir roarctl roarlight roarmon roarsockconnect roartypes roarvorbis roarvumeter roarfilt roarsin roar-config polytest roarsocktypes roarshout roarradio roarfctest roarmonhttp pinentrytest zcattest pgptest roarcatvio pipetest
 TOOLS=roarify
 
 include ../Makefile.conf
@@ -7,8 +7,10 @@ include ../Makefile.conf
 INCLUDE    = -I../include -I./include
 CFLAGS    += -g -Wall -O2 $(DEFINES) $(INCLUDE) $(INCPATH)
 LDFLAGS    = -g -L../lib/ $(LDPATH) -lroar
-LIBS       = -lroar $(lib_wsock32) $(lib_ws2_32)
-DSPLIBS    = -lroardsp -lm $(LIBS)
+NETLIBS    = $(lib_wsock32) $(lib_ws2_32)
+LIBS       = -lroar $(NETLIBS)
+DSPLIBS    = -lroardsp   -lm $(LIBS)
+LIGHTLIBS  = -lroarlight -lm $(LIBS)
 SHOUTLIBS  = $(lib_shout) $(LIBS)
 VORBISLIBS = $(lib_vorbisfile) $(lib_vorbis) $(lib_ogg) $(LIBS)
 
@@ -64,6 +66,8 @@ roarshout: roarshout.o
 	${CC} ${LDFLAGS} -o roarshout roarshout.o $(SHOUTLIBS)
 polytest: polytest.o
 	${CC} ${LDFLAGS} -o polytest polytest.o $(DSPLIBS)
+roarlight: roarlight.o
+	${CC} ${LDFLAGS} -o roarlight roarlight.o $(LIGHTLIBS)
 pinentrytest: pinentrytest.o
 	$L
 zcattest: zcattest.o
