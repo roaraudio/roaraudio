@@ -22,6 +22,7 @@ CROSS_COMPILE=false
 SYSNAME='unknown'
 SHARED='-shared'
 SHARED_CF=''
+SHARED_SUFFIX='.so'
 fPIC=true
 MMCU=''
 PKG_CONFIG=false
@@ -650,10 +651,12 @@ elif $TARGET_WIN32
 then
  echo "Adding win32 build arguments..."
  fPIC=false
+ SHARED_SUFFIX='.dll'
 elif $TARGET_CYGWIN
 then
  echo "Adding cygwin build arguments..."
  fPIC=false
+ SHARED_SUFFIX='.dll'
 fi
 
 echo -n 'checking if we cross compile... '
@@ -712,6 +715,7 @@ fi
 {
  echo "SHARED=$SHARED"
  echo "SHARED_CF=$SHARED_CF"
+ echo "SHARED_SUFFIX=$SHARED_SUFFIX"
  $fPIC && echo 'fPIC=-fPIC'
  echo
  echo "CC=$CC"
@@ -741,7 +745,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.183 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.184 $ of RoarAudio
  */
 
 EOF
