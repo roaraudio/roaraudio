@@ -1,8 +1,8 @@
 include ../Makefile.conf
 
-SLIB=libroarlight.so
+SLIB=libroarlight$(SHARED_SUFFIX)
 
-TARGETS=libroarlight.so libroarlight.a
+TARGETS=$(SLIB) libroarlight.a
 OBJS=libroarlight.o colors.o roardmx.o pwm.o
 
 #DEFINES        = -DDEBUG
@@ -19,8 +19,8 @@ clean:
 	rm -f ${TARGETS} *.o
 new: clean all
 
-libroarlight.so: ${OBJS}
-	${CC} ${LDFLAGS} -o libroarlight.so ${OBJS} $(LIBS)
+$(SLIB): ${OBJS}
+	${CC} ${LDFLAGS} -o $(SLIB) ${OBJS} $(LIBS)
 libroarlight.a: ${OBJS}
 	${AR} cru libroarlight.a ${OBJS}
 	${RANLIB} libroarlight.a

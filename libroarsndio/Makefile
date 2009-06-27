@@ -1,6 +1,6 @@
 include ../Makefile.conf
 
-SLIB=libroarsndio.so
+SLIB=libroarsndio$(SHARED_SUFFIX)
 
 TARGETS=$(SLIB) libroarsndio.a
 OBJS=libroarsndio.o para.o stream.o events.o volume.o
@@ -18,8 +18,8 @@ clean:
 	rm -f ${TARGETS} *.o
 new: clean all
 
-libroarsndio.so: ${OBJS}
-	${CC} ${LDFLAGS} -o libroarsndio.so ${OBJS} ${LIBS}
+$(SLIB): ${OBJS}
+	${CC} ${LDFLAGS} -o $(SLIB) ${OBJS} ${LIBS}
 libroarsndio.a: ${OBJS}
 	${AR} cru libroarsndio.a ${OBJS}
 	${RANLIB} libroarsndio.a

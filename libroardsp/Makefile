@@ -1,8 +1,8 @@
 include ../Makefile.conf
 
-SLIB=libroardsp.so
+SLIB=libroardsp$(SHARED_SUFFIX)
 
-TARGETS=libroardsp.so libroardsp.a
+TARGETS=$(SLIB) libroardsp.a
 OBJS=libroardsp.o convert.o midside.o poly.o filter.o filterchain.o alaw.o mulaw.o
 OLDROAR=midi.o
 FILTER=lowp.o highp.o amp.o quantify.o add.o clip.o downmix.o dcblock.o swap.o
@@ -20,8 +20,8 @@ clean:
 	rm -f ${TARGETS} *.o
 new: clean all
 
-libroardsp.so: ${OBJS} $(FILTER) $(OLDROAR)
-	${CC} ${LDFLAGS} -o libroardsp.so ${OBJS} $(FILTER) $(OLDROAR) $(LIBS)
+$(SLIB): ${OBJS} $(FILTER) $(OLDROAR)
+	${CC} ${LDFLAGS} -o $(SLIB) ${OBJS} $(FILTER) $(OLDROAR) $(LIBS)
 libroardsp.a: ${OBJS} $(FILTER) $(OLDROAR)
 	${AR} cru libroardsp.a ${OBJS} $(FILTER) $(OLDROAR)
 	${RANLIB} libroardsp.a

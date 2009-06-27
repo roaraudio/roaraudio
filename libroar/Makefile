@@ -1,8 +1,8 @@
 include ../Makefile.conf
 
-SLIB=libroar.so
+SLIB=libroar$(SHARED_SUFFIX)
 
-TARGETS=libroar.so libroar.a
+TARGETS=$(SLIB) libroar.a
 VIO=vio.o vio_cmd.o vio_ops.o vio_magic.o vio_pipe.o vio_socket.o vio_bio.o vio_stack.o vio_proto.o vio_dstr.o vio_select.o
 OBJS=libroar.o basic.o stream.o simple.o auth.o socket.o ctl.o buffer.o meta.o file.o acl.o cdrom.o pinentry.o sshaskpass.o $(VIO) stack.o slp.o
 
@@ -20,8 +20,8 @@ clean:
 	rm -f ${TARGETS} *.o
 new: clean all
 
-libroar.so: ${OBJS}
-	${CC} ${LDFLAGS} -o libroar.so ${OBJS} ${LIBS}
+$(SLIB): ${OBJS}
+	${CC} ${LDFLAGS} -o $(SLIB) ${OBJS} ${LIBS}
 libroar.a: ${OBJS}
 	${AR} cru libroar.a ${OBJS}
 	${RANLIB} libroar.a

@@ -1,8 +1,8 @@
 include ../Makefile.conf
 
-SLIB=libroarmidi.so
+SLIB=libroarmidi$(SHARED_SUFFIX)
 
-TARGETS=libroarmidi.so libroarmidi.a
+TARGETS=$(SLIB) libroarmidi.a
 OBJS=libroarmidi.o
 
 #DEFINES        = -DDEBUG
@@ -19,8 +19,8 @@ clean:
 	rm -f ${TARGETS} *.o
 new: clean all
 
-libroarmidi.so: ${OBJS}
-	${CC} ${LDFLAGS} -o libroarmidi.so ${OBJS} $(LIBS)
+$(SLIB): ${OBJS}
+	${CC} ${LDFLAGS} -o $(SLIB) ${OBJS} $(LIBS)
 libroarmidi.a: ${OBJS}
 	${AR} cru libroarmidi.a ${OBJS}
 	${RANLIB} libroarmidi.a
