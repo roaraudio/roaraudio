@@ -35,7 +35,9 @@
 
 #define _i(x) (hdl->info.x)
 int    sio_start  (struct sio_hdl * hdl) {
+#ifndef ROAR_TARGET_WIN32
  int fh;
+#endif
 
  // TODO: FIXME: use full VIO support here, not fh->vio!
 
@@ -45,6 +47,7 @@ int    sio_start  (struct sio_hdl * hdl) {
  if ( hdl->stream_opened )
   return 0;
 
+#ifndef ROAR_TARGET_WIN32
  if ( (fh = roar_simple_new_stream_obj(&(hdl->con), &(hdl->stream), _i(rate), _i(channels), _i(bits), _i(codec), ROAR_DIR_PLAY)) == -1 )
   return 0;
 
@@ -54,6 +57,14 @@ int    sio_start  (struct sio_hdl * hdl) {
   close(fh);
   return 0;
  }
+#else
+ if ( roar_stream_new_by_id(&(hdl->stream), -1) == -1 )
+  return 0;
+
+ if (roar_vio_simple_stream(&(hdl->svio),  _i(rate), _i(channels), _i(bits), _i(codec), NULL, ROAR_DIR_PLAY, "libroarsndio(win32)") == -1 ) {
+  return 0;
+ }
+#endif
 
  hdl->stream_opened = 1;
 
