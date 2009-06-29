@@ -67,6 +67,7 @@
 #define ROAR_VIO_CTL_GET_UMMAP         (ROAR_VIO_CTL_GENERIC|ROAR_VIO_CTL_GET|0x0130) /* Use mmap(), int as bool */
 #define ROAR_VIO_CTL_SET_UMMAP         (ROAR_VIO_CTL_GENERIC|ROAR_VIO_CTL_SET|0x0130) /* ** */
 #define ROAR_VIO_CTL_GET_SHUTDOWN      (ROAR_VIO_CTL_GENERIC|0x0140) /* shutdown(), need specs */
+#define ROAR_VIO_CTL_SET_NOSYNC        (ROAR_VIO_CTL_GENERIC|0x0150) /* delete call of vio sync() from object */
 
 // stream:
 #define ROAR_VIO_CTL_SET_STREAM    (ROAR_VIO_CTL_STREAM|ROAR_VIO_CTL_CLIENT|ROAR_VIO_CTL_SET) /* normal streams */

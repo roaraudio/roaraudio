@@ -417,6 +417,10 @@ int     roar_vio_basic_ctl     (struct roar_vio_calls * vio, int cmd, void * dat
     *(int*)data = roar_vio_get_fh(vio);
     return 0;
    break;
+  case ROAR_VIO_CTL_SET_NOSYNC:
+    vio->sync = NULL;
+    return 0;
+   break;
  }
 
  return -1;
