@@ -130,6 +130,7 @@ int light_check_stream  (int id) {
     return 0;
    break;
   case ROAR_CODEC_ROARDMX:
+    ROAR_DBG("light_check_stream(id=%i): Codec: RoarDMX", id);
     if ( roar_roardmx_message_recv(&mes, &(ss->vio)) == -1 ) {
      streams_delete(id); // because we don't know at the moment...
      return -1;
@@ -137,6 +138,7 @@ int light_check_stream  (int id) {
 
     // we ignore errors here at the moment as 0 not < -1
     c = roar_roardmx_message_numchannels(&mes);
+    ROAR_DBG("light_check_stream(id=%i): Number of subframes: %u", id, c);
 
     for (i = 0; i < c; i++) {
      if ( roar_roardmx_message_get_chanval(&mes, &channel, &value, i) == -1 )
