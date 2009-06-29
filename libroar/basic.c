@@ -318,8 +318,6 @@ int roar_vsend_message(struct roar_vio_calls * vio, struct roar_message * mes, c
   }
  }
 
- roar_vio_sync(vio); // we need to do this becasue of ssl/compressed links
-
  roar_errno = ROAR_ERROR_NONE;
 
  ROAR_DBG("roar_send_message(*) = 0");
@@ -428,6 +426,8 @@ int roar_vreq         (struct roar_vio_calls * vio, struct roar_message * mes, c
 
  if ( data )
   free(*data);
+
+ roar_vio_sync(vio); // we need to do this becasue of ssl/compressed links
 
  return roar_vrecv_message(vio, mes, data);
 }
