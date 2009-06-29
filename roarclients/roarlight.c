@@ -79,7 +79,7 @@ int cmd_set (CONVAR, char * arg) {
 
  if ( (fh = roar_simple_new_stream(con,
                                    ROAR_RATE_DEFAULT, ROAR_CHANNELS_DEFAULT, ROAR_BITS_DEFAULT,
-                                   ROAR_CODEC_ROARDMX, ROAR_DIR_PLAY
+                                   ROAR_CODEC_ROARDMX, ROAR_DIR_LIGHT_IN
                                   )) == -1 )
   return -1;
 
