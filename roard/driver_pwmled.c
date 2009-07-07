@@ -106,6 +106,8 @@ ssize_t driver_pwmled_write (struct roar_vio_calls * vio,  void *buf, size_t cou
  if ( roar_light_pwm_set(&(self->state), value) == -1 )
   return -1;
 
+// ROAR_WARN("driver_pwmled_write(*): value=%i", value);
+
  if ( value ) {
                                                                      // bit per word, bit per byte
   return roar_light_pwm_send(&(self->state), &(self->vio), self->rate/11/8/100) == 0 ? count : -1;
