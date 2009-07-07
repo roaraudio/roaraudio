@@ -160,31 +160,6 @@ int     roar_vio_close    (struct roar_vio_calls * vio) {
  return vio->close(vio);
 }
 
-int     roar_vio_putc    (struct roar_vio_calls * vio, char c) {
- return roar_vio_write(vio, &c, 1);
-}
-
-int     roar_vio_getc    (struct roar_vio_calls * vio) {
- unsigned char c;
-
- if ( roar_vio_read(vio, &c, 1) != 1 )
-  return EOF;
-
- return c;
-}
-
-int     roar_vio_printf(struct roar_vio_calls * vio, const char *format, ...) {
- va_list ap;
- int ret;
- char buf[8192];
-
- va_start(ap, format);
- ret = vsnprintf(buf, 8192, format, ap);
- va_end(ap);
-
- return roar_vio_write(vio, buf, ret);
-}
-
 // converters:
 int     roar_vio_open_file     (struct roar_vio_calls * calls, char * filename, int flags, mode_t mode) {
 #ifdef _CAN_OPERATE

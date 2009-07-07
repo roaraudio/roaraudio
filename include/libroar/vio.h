@@ -70,14 +70,6 @@ int     roar_vio_sync    (struct roar_vio_calls * vio);
 int     roar_vio_ctl     (struct roar_vio_calls * vio, int cmd, void * data);
 int     roar_vio_close   (struct roar_vio_calls * vio);
 
-// some alias functions:
-#define roar_vio_puts(vio,s) roar_vio_write((vio), (s), strlen((s)))
-//#define roar_vio_putc(vio,c) roar_vio_write((vio), &(c), 1)
-int     roar_vio_putc    (struct roar_vio_calls * vio, char c);
-int     roar_vio_getc    (struct roar_vio_calls * vio);
-
-int     roar_vio_printf  (struct roar_vio_calls * vio, const char *format, ...);
-
 // converters:
 int     roar_vio_open_file     (struct roar_vio_calls * calls, char * filename, int flags, mode_t mode);
 int     roar_vio_open_fh       (struct roar_vio_calls * calls, int fh);

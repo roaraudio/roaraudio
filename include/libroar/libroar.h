@@ -90,6 +90,7 @@
 #include "vio.h"
 #include "vio_cmd.h"
 #include "vio_ops.h"
+#include "vio_string.h"
 #include "vio_magic.h"
 #include "vio_bio.h"
 #include "vio_stdio.h"
