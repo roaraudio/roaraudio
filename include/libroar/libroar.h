@@ -92,6 +92,7 @@
 #include "vio_ops.h"
 #include "vio_magic.h"
 #include "vio_bio.h"
+#include "vio_stdio.h"
 #include "vio_stack.h"
 #include "vio_pipe.h"
 #include "vio_socket.h"

@@ -89,23 +89,6 @@ int     roar_vio_open_socket_listen(struct roar_vio_calls * calls, int type, cha
 int     roar_vio_simple_stream (struct roar_vio_calls * calls, int rate, int channels, int bits, int codec,
                                                                char * server, int dir, char * name);
 
-int     roar_vio_open_stdio    (struct roar_vio_calls * calls, FILE * dst);
-
-FILE *  roar_vio_to_stdio      (struct roar_vio_calls * calls, int flags);
-#if defined(ROAR_HAVE_FOPENCOOKIE) || defined(ROAR_HAVE_FUNOPEN)
-int roar_vio_to_stdio_close (void *__cookie);
-#endif
-#if defined(ROAR_HAVE_FOPENCOOKIE)
-__ssize_t roar_vio_to_stdio_read (void *__cookie, char *__buf, size_t __nbytes);
-__ssize_t roar_vio_to_stdio_write (void *__cookie, __const char *__buf, size_t __n);
-int roar_vio_to_stdio_lseek (void *__cookie, _IO_off64_t *__pos, int __w);
-#elif defined(ROAR_HAVE_FUNOPEN)
-int roar_vio_to_stdio_read(void *__cookie, char *__buf, int __nbytes);
-int roar_vio_to_stdio_write(void *__cookie, const char *__buf, int __n);
-fpos_t roar_vio_to_stdio_lseek(void *__cookie, fpos_t __pos, int __w);
-#endif
-
-
 // possible VIOs:
 
 // basic
@@ -148,14 +131,6 @@ int     roar_vio_open_re (struct roar_vio_calls * calls, struct roar_vio_calls *
 ssize_t roar_vio_re_read (struct roar_vio_calls * vio, void *buf, size_t count);
 ssize_t roar_vio_re_write(struct roar_vio_calls * vio, void *buf, size_t count);
 off_t   roar_vio_re_lseek(struct roar_vio_calls * vio, off_t offset, int whence);
-
-// stdio
-ssize_t roar_vio_stdio_read    (struct roar_vio_calls * vio, void *buf, size_t count);
-ssize_t roar_vio_stdio_write   (struct roar_vio_calls * vio, void *buf, size_t count);
-off_t   roar_vio_stdio_lseek   (struct roar_vio_calls * vio, off_t offset, int whence);
-int     roar_vio_stdio_sync    (struct roar_vio_calls * vio);
-int     roar_vio_stdio_ctl     (struct roar_vio_calls * vio, int cmd, void * data);
-int     roar_vio_stdio_close   (struct roar_vio_calls * vio);
 
 #endif
 
