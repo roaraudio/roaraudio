@@ -37,64 +37,6 @@
 
 #include "libroar.h"
 
-// CTLs:
-/*
- * 0xAAAABBBB
- * AAAA:
- *   0x0001 -> Basic stream calls
- *   0x0002 -> Driver calls
- *
- * BBBB:
- *   0x0XXX -> Client
- *   0x1XXX -> Server 
- */
-
-#define ROAR_VIO_CTL_GET                  0x1
-#define ROAR_VIO_CTL_SET                  0x2
-#define ROAR_VIO_CTL_CLIENT            0x0000
-#define ROAR_VIO_CTL_SERVER            0x1000
-#define ROAR_VIO_CTL_GENERIC     (0x0000<<16)
-#define ROAR_VIO_CTL_STREAM      (0x0001<<16)
-#define ROAR_VIO_CTL_DRIVER      (0x0002<<16)
-
-// basic calls:
-#define ROAR_VIO_CTL_GET_NEXT          (ROAR_VIO_CTL_GENERIC|ROAR_VIO_CTL_GET|0x0100)
-#define ROAR_VIO_CTL_SET_NEXT          (ROAR_VIO_CTL_GENERIC|ROAR_VIO_CTL_SET|0x0100)
-#define ROAR_VIO_CTL_GET_FH            (ROAR_VIO_CTL_GENERIC|0x0110)
-#define ROAR_VIO_CTL_GET_READ_FH       (ROAR_VIO_CTL_GENERIC|0x0111)
-#define ROAR_VIO_CTL_GET_WRITE_FH      (ROAR_VIO_CTL_GENERIC|0x0112)
-#define ROAR_VIO_CTL_SELECT            (ROAR_VIO_CTL_GENERIC|0x0120)
-#define ROAR_VIO_CTL_GET_UMMAP         (ROAR_VIO_CTL_GENERIC|ROAR_VIO_CTL_GET|0x0130) /* Use mmap(), int as bool */
-#define ROAR_VIO_CTL_SET_UMMAP         (ROAR_VIO_CTL_GENERIC|ROAR_VIO_CTL_SET|0x0130) /* ** */
-#define ROAR_VIO_CTL_GET_SHUTDOWN      (ROAR_VIO_CTL_GENERIC|0x0140) /* shutdown(), need specs */
-#define ROAR_VIO_CTL_SET_NOSYNC        (ROAR_VIO_CTL_GENERIC|0x0150) /* delete call of vio sync() from object */
-
-// stream:
-#define ROAR_VIO_CTL_SET_STREAM    (ROAR_VIO_CTL_STREAM|ROAR_VIO_CTL_CLIENT|ROAR_VIO_CTL_SET) /* normal streams */
-#define ROAR_VIO_CTL_GET_STREAM    (ROAR_VIO_CTL_STREAM|ROAR_VIO_CTL_CLIENT|ROAR_VIO_CTL_GET)
-#define ROAR_VIO_CTL_SET_DMXSCHAN  (ROAR_VIO_CTL_STREAM|ROAR_VIO_CTL_CLIENT|ROAR_VIO_CTL_SET|0x10) /* simple DMX Channel */
-#define ROAR_VIO_CTL_GET_DMXSCHAN  (ROAR_VIO_CTL_STREAM|ROAR_VIO_CTL_CLIENT|ROAR_VIO_CTL_GET|0x10)
-#define ROAR_VIO_CTL_SET_DMXUNIV   (ROAR_VIO_CTL_STREAM|ROAR_VIO_CTL_CLIENT|ROAR_VIO_CTL_SET|0x20) /* DMX Universe */
-#define ROAR_VIO_CTL_GET_DMXUNIV   (ROAR_VIO_CTL_STREAM|ROAR_VIO_CTL_CLIENT|ROAR_VIO_CTL_GET|0x20)
-
-#define ROAR_VIO_CTL_SET_SSTREAM   (ROAR_VIO_CTL_STREAM|ROAR_VIO_CTL_SERVER|ROAR_VIO_CTL_SET) /* server streams */
-#define ROAR_VIO_CTL_GET_SSTREAM   (ROAR_VIO_CTL_STREAM|ROAR_VIO_CTL_SERVER|ROAR_VIO_CTL_GET)
-#define ROAR_VIO_CTL_SET_SSTREAMID (ROAR_VIO_CTL_STREAM|ROAR_VIO_CTL_SERVER|ROAR_VIO_CTL_SET|0x10) /* server streams */
-#define ROAR_VIO_CTL_GET_SSTREAMID (ROAR_VIO_CTL_STREAM|ROAR_VIO_CTL_SERVER|ROAR_VIO_CTL_GET|0x10)
-
-#define ROAR_VIO_CTL_SET_AUINFO    (ROAR_VIO_CTL_STREAM|ROAR_VIO_CTL_SET|0x2000) /* set a struct roar_audio_info */
-#define ROAR_VIO_CTL_GET_AUINFO    (ROAR_VIO_CTL_STREAM|ROAR_VIO_CTL_GET|0x2000) /* get a struct roar_audio_info */
-
-#define ROAR_VIO_CTL_GET_DELAY     (ROAR_VIO_CTL_STREAM|ROAR_VIO_CTL_GET|0x010) /* return in bytes as the vio interface */
-                                              /* does not know anything about streams */
-
-#define ROAR_VIO_CTL_GET_DBLOCKS   (ROAR_VIO_CTL_DRIVER|0x0001) /* get Driver Blocks */
-#define ROAR_VIO_CTL_SET_DBLOCKS   (ROAR_VIO_CTL_DRIVER|0x0002) /* set Driver Blocks */
-#define ROAR_VIO_CTL_GET_DBLKSIZE  (ROAR_VIO_CTL_DRIVER|0x0003) /* get Driver Blocks size (in byte) */
-#define ROAR_VIO_CTL_SET_DBLKSIZE  (ROAR_VIO_CTL_DRIVER|0x0004) /* set Driver Blocks size (in byte) */
-#define ROAR_VIO_CTL_GET_VOLUME    (ROAR_VIO_CTL_DRIVER|ROAR_VIO_CTL_GET|0x10)
-#define ROAR_VIO_CTL_SET_VOLUME    (ROAR_VIO_CTL_DRIVER|ROAR_VIO_CTL_SET|0x10)
-
 // sys io:
 
 struct roar_vio_calls {

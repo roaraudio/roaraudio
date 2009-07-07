@@ -86,6 +86,7 @@
 #include "error.h"
 #include "stack.h"
 #include "buffer.h"
+#include "vio_ctl.h"
 #include "vio.h"
 #include "vio_cmd.h"
 #include "vio_ops.h"
