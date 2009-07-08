@@ -203,7 +203,7 @@ int roar_buffer_shift_out (struct roar_buffer ** buf, void * data, size_t * len)
 
  *len = 0;
 
- while (todo) {
+ while (todo && cur != NULL) {
   ROAR_DBG("roar_buffer_shift_out(*): todo=%u, cur=%p", (unsigned int) todo, cur);
 
   if ( roar_buffer_get_len(cur, &cl) == -1 )
