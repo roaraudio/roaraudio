@@ -111,6 +111,7 @@ int streams_ctl          (int id, int_least32_t cmd, void * data);
 
 int stream_add_buffer     (int id, struct roar_buffer *  buf);
 //int stream_get_buffer     (int id, struct roar_buffer ** buf);
+int stream_shift_out_buffer   (int id, void * data, size_t * len);
 int stream_shift_buffer   (int id, struct roar_buffer ** buf);
 int stream_unshift_buffer (int id, struct roar_buffer *  buf);
 
@@ -121,6 +122,7 @@ int streams_send_filter(int id);
 int streams_get_mixbuffers   (void *** bufferlist, struct roar_audio_info * info, unsigned int pos);
 int streams_get_outputbuffer (int id, void ** buffer, size_t size);
 int streams_fill_mixbuffer   (int id, struct roar_audio_info * info);
+int streams_fill_mixbuffer2  (int id, struct roar_audio_info * info);
 
 ssize_t stream_vio_read (int stream, void *buf, size_t count);
 ssize_t stream_vio_write(int stream, void *buf, size_t count);

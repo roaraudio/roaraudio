@@ -820,6 +820,88 @@ int streams_fill_mixbuffer (int id, struct roar_audio_info * info) {
  return 0;
 }
 
+int streams_fill_mixbuffer2 (int id, struct roar_audio_info * info) {
+ size_t   outlen = ROAR_OUTPUT_CALC_OUTBUFSIZE(info);
+ void   * outdata;
+ size_t   inlen;
+ size_t   inlen_got;
+ void   * indata = NULL;
+ int      is_the_same = 0;
+ struct roar_audio_info    * stream_info;
+ struct roar_stream        * s;
+ struct roar_stream_server * ss;
+
+ if ( (s = ROAR_STREAM(ss = g_streams[id])) == NULL )
+  return -1;
+
+ // set up stream_info
+ stream_info = &(s->info);
+
+ // calc todo_in
+ inlen = ROAR_OUTPUT_CALC_OUTBUFSIZE(stream_info);
+
+ if ( inlen == 0 ) {
+  ROAR_WARN("streams_fill_mixbuffer2(id=%i, info=%p{...}): inlen == 0, this should not happen!", id, info);
+  return -1;
+ }
+
+ if ( streams_get_outputbuffer(id, &outdata, outlen) == -1 ) {
+  return -1;
+ }
+
+ if ( outdata == NULL ) {
+  return -1;
+ }
+
+ ROAR_DBG("streams_fill_mixbuffer2(*): outdata=%p, len=%i->%i (in->out)", outdata, inlen, outlen);
+
+ is_the_same = stream_info->rate     == info->rate     && stream_info->bits  == info->bits &&
+               stream_info->channels == info->channels && stream_info->codec == info->codec;
+
+ ROAR_DBG("streams_fill_mixbuffer2(*): is_the_same=%i", is_the_same);
+
+ if ( inlen > outlen ) {
+  // this is not supported at the moment
+  memset(outdata, 0, outlen);
+  return -1;
+ } else {
+  indata = outdata;
+ }
+
+ inlen_got = inlen;
+
+ if ( stream_shift_out_buffer(id, indata, &inlen_got) == -1 ) {
+  if ( ss->is_new ) {
+   ss->pre_underruns++;
+  } else {
+   ROAR_WARN("streams_fill_mixbuffer2(id=%i info=...): underrun in stream", id);
+   ss->post_underruns++;
+  }
+  memset(outdata, 0, outlen);
+  return 0;
+ }
+
+ if ( ss->is_new ) {
+  ROAR_WARN("streams_fill_mixbuffer2(id=%i info=...): stream state: new->old", id);
+ }
+
+ ss->is_new = 0;
+
+ if ( is_the_same ) {
+  if ( indata != outdata )
+   memcpy(outdata, indata, inlen);
+
+  if ( inlen < outlen )
+   memset(outdata+inlen, 0, outlen-inlen);
+
+  return 0;
+ } else {
+  memset(outdata, 0, outlen);
+ }
+
+ return -1;
+}
+
 
 int streams_get_mixbuffers (void *** bufferlist, struct roar_audio_info * info, unsigned int pos) {
  static void * bufs[ROAR_STREAMS_MAX+1];
@@ -836,7 +918,7 @@ int streams_get_mixbuffers (void *** bufferlist, struct roar_audio_info * info, 
     ROAR_ERR("streams_get_mixbuffer(*): Ignoring stream for this round.");
     continue;
    }
-   if ( streams_fill_mixbuffer(i, info) == -1 ) {
+   if ( streams_fill_mixbuffer2(i, info) == -1 ) {
     ROAR_ERR("streams_get_mixbuffer(*): Can not fill output buffer for stream %i, this should not happen", i);
     continue;
    }
@@ -875,6 +957,16 @@ int stream_add_buffer  (int id, struct roar_buffer * buf) {
 
  ROAR_DBG("stream_add_buffer(id=%i, buf=%p) = ?", id, buf);
  return roar_buffer_add(g_streams[id]->buffer, buf);
+}
+
+int stream_shift_out_buffer   (int id, void * data, size_t * len) {
+ if ( g_streams[id] == NULL )
+  return -1;
+
+ if ( g_streams[id]->buffer == NULL )
+  return -1;
+
+ return roar_buffer_shift_out(&(g_streams[id]->buffer), data, len);
 }
 
 int stream_shift_buffer   (int id, struct roar_buffer ** buf) {
