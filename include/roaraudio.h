@@ -158,7 +158,27 @@ __BEGIN_DECLS
 // now handled by condiguere
 //#define ROAR_DEFAULT_SOCKGRP     "audio"
 
-#define ROAR_LIBS                "-lroar"
+#if defined(ROAR_HAVE_LIBWSOCK32) && defined(ROAR_HAVE_LIBWS2_32)
+#define ROAR_LIBS_WIN32          " -lwsock32 -lws2_32"
+#else
+#define ROAR_LIBS_WIN32          ""
+#endif
+
+#ifdef ROAR_HAVE_LIBSOCKET
+#define ROAR_LIBS_LIBSOCKET      " -lsocket"
+#else
+#define ROAR_LIBS_LIBSOCKET      ""
+#endif
+
+#ifdef ROAR_HAVE_LIBSENDFILE
+#define ROAR_LIBS_LIBSENDFILE    " -lsendfile"
+#else
+#define ROAR_LIBS_LIBSENDFILE    ""
+#endif
+
+#define ROAR_LIBS_NET_LIBS       ROAR_LIBS_LIBSOCKET ROAR_LIBS_WIN32
+
+#define ROAR_LIBS                "-lroar"       ROAR_LIBS_LIBSENDFILE ROAR_LIBS_NET_LIBS
 #define ROAR_LIBS_DSP            "-lroardsp "   ROAR_LIBS
 #define ROAR_LIBS_MIDI           "-lroarmidi "  ROAR_LIBS_DSP
 #define ROAR_LIBS_LIGHT          "-lroarlight " ROAR_LIBS
