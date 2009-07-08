@@ -55,6 +55,9 @@ int main (int argc, char * argv[]) {
   } else if ( !strcmp(argv[i], "--cflags") ) {
    cflags = 1;
   } else if ( flags_ptr == NULL ) {
+   if ( !strncmp(argv[i], "lib", 3) )
+    argv[i] += 3;
+
    for (h = 0; flags[h].name != NULL; h++) {
     if ( !strcasecmp(argv[i], flags[h].name) )
      flags_ptr = &(flags[h]);
