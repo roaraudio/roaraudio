@@ -896,10 +896,14 @@ int streams_fill_mixbuffer2 (int id, struct roar_audio_info * info) {
 
   return 0;
  } else {
-  memset(outdata, 0, outlen);
+  if ( roar_conv(outdata, indata, 8*inlen / stream_info->bits, stream_info, info) == -1 ) {
+   return -1;
+  }
+
+//  memset(outdata, 0, outlen);
  }
 
- return -1;
+ return 0;
 }
 
 
