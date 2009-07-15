@@ -115,6 +115,19 @@
 #include "sshaskpass.h"
 #include "roarslp.h"
 
+// some basic macros:
+#define ROAR_MAX2(a,b) ((a) > (b) ? (a) : (b))
+#define ROAR_MIN2(a,b) ((a) < (b) ? (a) : (b))
+
+#define ROAR_MAX3(a,b,c) ROAR_MAX2(ROAR_MAX2(a,b),c)
+#define ROAR_MIN3(a,b,c) ROAR_MIN2(ROAR_MIN2(a,b),c)
+
+#define ROAR_MAX4(a,b,c,d) ROAR_MAX2(ROAR_MAX2(a,b),ROAR_MAX2(c,d))
+#define ROAR_MIN4(a,b,c,d) ROAR_MIN2(ROAR_MIN2(a,b),ROAR_MIN2(c,d))
+
+#define ROAR_MAX ROAR_MAX2
+#define ROAR_MIN ROAR_MIN2
+
 #endif
 
 //ll
