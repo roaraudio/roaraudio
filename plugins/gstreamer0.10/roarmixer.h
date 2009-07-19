@@ -38,15 +38,41 @@
 
 G_BEGIN_DECLS
 
+#define GST_ROAR_MIXER_ELEMENT(obj)              (G_TYPE_CHECK_INSTANCE_CAST((obj),GST_TYPE_ROAR_MIXER_ELEMENT,GstRoarMixerElement))
+#define GST_ROAR_MIXER_ELEMENT_CLASS(klass)      (G_TYPE_CHECK_CLASS_CAST((klass),GST_TYPE_ROAR_MIXER_ELEMENT,GstRoarMixerElementClass))
+#define GST_IS_ROAR_MIXER_ELEMENT(obj)           (G_TYPE_CHECK_INSTANCE_TYPE((obj),GST_TYPE_ROAR_MIXER_ELEMENT))
+#define GST_IS_ROAR_MIXER_ELEMENT_CLASS(klass)   (G_TYPE_CHECK_CLASS_TYPE((klass),GST_TYPE_ROAR_MIXER_ELEMENT))
+#define GST_TYPE_ROAR_MIXER_ELEMENT              (gst_roar_mixer_element_get_type())
+
+
+typedef struct _GstRoarMixerElement GstRoarMixerElement;
+typedef struct _GstRoarMixerElementClass GstRoarMixerElementClass;
+typedef struct _GstRoarMixer GstRoarMixer;
+
+struct _GstRoarMixerElement {
+  GstElement            parent;
+
+  GstRoarMixer           *mixer;
+};
+
+struct _GstRoarMixerElementClass {
+  GstElementClass       parent;
+};
+
+
+GType           gst_roar_mixer_element_get_type          (void);
+
 typedef enum {
   GST_ROAR_MIXER_CAPTURE = 1<<0,
   GST_ROAR_MIXER_PLAYBACK = 1<<1,
   GST_ROAR_MIXER_ALL = GST_ROAR_MIXER_CAPTURE | GST_ROAR_MIXER_PLAYBACK
 } GstRoarMixerDirection;
 
-typedef struct _GstRoarMixer GstRoarMixer;
 
 #define GST_ROAR_MIXER(obj)              ((GstRoarMixer*)(obj))
+
+#define GST_TYPE_ROARMIXER \
+  (gst_roarmixer_get_type())
 
 struct _GstRoarMixer {
   GList *               tracklist;      /* list of available tracks */
@@ -73,6 +99,8 @@ typedef struct _GstRoarMixerTrackClass {
   GstMixerTrackClass parent;
 } GstRoarMixerTrackClass;
 
+GType gst_roarmixer_get_type(void);
+gboolean gst_roarmixer_factory_init (GstPlugin *plugin);
 
 GstRoarMixer*    gst_roarmixer_new                (const gchar *device,
                                                  GstRoarMixerDirection dir);
@@ -91,6 +119,88 @@ void            gst_roarmixer_set_record         (GstRoarMixer * mixer,
 void            gst_roarmixer_set_mute           (GstRoarMixer * mixer,
                                                  GstMixerTrack * track,
                                                  gboolean mute);
+
+#define GST_IMPLEMENT_ROAR_MIXER_METHODS(Type, interface_as_function)            \
+static gboolean                                                                 \
+interface_as_function ## _supported (Type *this, GType iface_type)              \
+{                                                                               \
+  g_assert (iface_type == GST_TYPE_MIXER);                                      \
+                                                                                \
+  return (this->mixer != NULL);                                                 \
+}                                                                               \
+                                                                                \
+static const GList*                                                             \
+interface_as_function ## _list_tracks (GstMixer * mixer)                        \
+{                                                                               \
+  Type *this = (Type*) mixer;                                                   \
+                                                                                \
+  g_return_val_if_fail (this != NULL, NULL);                                    \
+  g_return_val_if_fail (this->mixer != NULL, NULL);                             \
+                                                                                \
+  return gst_roarmixer_list_tracks (this->mixer);                                \
+}                                                                               \
+                                                                                \
+static void                                                                     \
+interface_as_function ## _set_volume (GstMixer * mixer, GstMixerTrack * track,  \
+    gint * volumes)                                                             \
+{                                                                               \
+  Type *this = (Type*) mixer;                                                   \
+                                                                                \
+  g_return_if_fail (this != NULL);                                              \
+  g_return_if_fail (this->mixer != NULL);                                       \
+                                                                                \
+  gst_roarmixer_set_volume (this->mixer, track, volumes);                        \
+}                                                                               \
+                                                                                \
+static void                                                                     \
+interface_as_function ## _get_volume (GstMixer * mixer, GstMixerTrack * track,  \
+    gint * volumes)                                                             \
+{                                                                               \
+  Type *this = (Type*) mixer;                                                   \
+                                                                                \
+  g_return_if_fail (this != NULL);                                              \
+  g_return_if_fail (this->mixer != NULL);                                       \
+                                                                                \
+  gst_roarmixer_get_volume (this->mixer, track, volumes);                        \
+}                                                                               \
+                                                                                \
+static void                                                                     \
+interface_as_function ## _set_record (GstMixer * mixer, GstMixerTrack * track,  \
+    gboolean record)                                                            \
+{                                                                               \
+  Type *this = (Type*) mixer;                                                   \
+                                                                                \
+  g_return_if_fail (this != NULL);                                              \
+  g_return_if_fail (this->mixer != NULL);                                       \
+                                                                                \
+  gst_roarmixer_set_record (this->mixer, track, record);                         \
+}                                                                               \
+                                                                                \
+static void                                                                     \
+interface_as_function ## _set_mute (GstMixer * mixer, GstMixerTrack * track,    \
+    gboolean mute)                                                              \
+{                                                                               \
+  Type *this = (Type*) mixer;                                                   \
+                                                                                \
+  g_return_if_fail (this != NULL);                                              \
+  g_return_if_fail (this->mixer != NULL);                                       \
+                                                                                \
+  gst_roarmixer_set_mute (this->mixer, track, mute);                             \
+}                                                                               \
+                                                                                \
+static void                                                                     \
+interface_as_function ## _interface_init (GstMixerClass * klass)                \
+{                                                                               \
+  GST_MIXER_TYPE (klass) = GST_MIXER_HARDWARE;                                  \
+                                                                                \
+  /* set up the interface hooks */                                              \
+  klass->list_tracks = interface_as_function ## _list_tracks;                   \
+  klass->set_volume = interface_as_function ## _set_volume;                     \
+  klass->get_volume = interface_as_function ## _get_volume;                     \
+  klass->set_mute = interface_as_function ## _set_mute;                         \
+  klass->set_record = interface_as_function ## _set_record;                     \
+}
+
 
 G_END_DECLS
 

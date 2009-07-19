@@ -25,6 +25,7 @@
 #include "config.h"
 #endif
 #include "roarsink.h"
+#include "roarmixer.h"
 
 //#include "gst/gst-i18n-plugin.h"
 
@@ -32,6 +33,8 @@ static gboolean
 plugin_init (GstPlugin * plugin)
 {
   if (!gst_roarsink_factory_init (plugin))
+    return FALSE;
+  if (!gst_roarmixer_factory_init (plugin))
     return FALSE;
 
 //  GST_DEBUG_CATEGORY_INIT (roar_debug, "roar", 0, "RoarAudio elements");
