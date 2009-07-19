@@ -141,7 +141,7 @@ static void gst_roarsink_class_init (GstRoarSinkClass * klass) {
 
 static void gst_roarsink_init (GstRoarSink * roarsink, GstRoarSinkClass * klass) {
   memset(&(roarsink->con), 0, sizeof(roarsink->con));
-  roarsink->con.fh = -1;
+  roar_connect_fh(&(roarsink->con), -1);
   roarsink->fd     = -1;
   roarsink->host   = NULL;
 }
@@ -162,7 +162,7 @@ static GstCaps * gst_roarsink_getcaps (GstBaseSink * bsink) {
   roarsink = GST_ROARSINK(bsink);
 
   /* no fd, we're done with the template caps */
-  if (roarsink->con.fh < 0 || roarsink->cur_caps == NULL) {
+  if (roar_get_connection_fh(&(roarsink->con)) < 0 || roarsink->cur_caps == NULL) {
     GST_LOG_OBJECT(roarsink, "getcaps called, returning template caps");
     return NULL;
   }
@@ -281,7 +281,7 @@ cannot_open:
 static gboolean gst_roarsink_unprepare (GstAudioSink * asink) {
   GstRoarSink *roarsink = GST_ROARSINK(asink);
 
-  if ((roarsink->fd == -1) && (roarsink->con.fh == -1))
+  if ((roarsink->fd == -1) && (roar_get_connection_fh(&(roarsink->con)) == -1))
     return TRUE;
 
   close(roarsink->fd);
