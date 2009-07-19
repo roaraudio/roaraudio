@@ -263,7 +263,34 @@ const GList*    gst_roarmixer_list_tracks        (GstRoarMixer * mixer) {
 void            gst_roarmixer_set_volume         (GstRoarMixer * mixer,
                                                  GstMixerTrack * track,
                                                  gint * volumes) {
+
+ GstRoarMixerTrack *roartrack = GST_ROARMIXER_TRACK(track);
+ int channels;
+ struct roar_mixer_settings m;
+ gint i;
+
+
+ g_return_if_fail(gst_roarmixer_contains_track(mixer, roartrack));
+
+ if ( roar_get_vol(&(mixer->con), roartrack->stream_id, &m, &channels) == -1 ) {
+  ROAR_WARN("gst_roarmixer_get_volume(*): can not get mixer infos for stream %i", roartrack->stream_id);
+  return;
+ }
+
+ if ( channels != track->num_channels ) {
+  ROAR_WARN("gst_roarmixer_get_volume(*): numer of channels for stream %i mismatch", roartrack->stream_id);
+
+  if ( track->num_channels < channels )
+   channels = track->num_channels;
+ }
+
+ for (i = 0; i < channels; i++) {
+  m.mixer[i] = volumes[i];
+ }
+
+ roar_set_vol(&(mixer->con), roartrack->stream_id, &m, channels);
 }
+
 void            gst_roarmixer_get_volume         (GstRoarMixer * mixer,
                                                  GstMixerTrack * track,
                                                  gint * volumes) {
