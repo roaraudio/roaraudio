@@ -27,21 +27,76 @@
 #include "roarmixer.h"
 
 GstRoarMixer*    gst_roarmixer_new                (const gchar *device,
-                                                 GstRoarMixerDirection dir);
-void            gst_roarmixer_free               (GstRoarMixer *mixer);
+                                                 GstRoarMixerDirection dir) {
+  GstRoarMixer *ret = NULL;
 
-const GList*    gst_roarmixer_list_tracks        (GstRoarMixer * mixer);
+  g_return_val_if_fail(device != NULL, NULL);
+
+  ret = g_new0(GstRoarMixer, 1);
+
+  ret->device = g_strdup(device);
+  ret->dir    = dir;
+
+/*
+  if (!gst_ossmixer_open (ret))
+    goto error;
+*/
+
+  if ( roar_simple_connect(&(ret->con), NULL, "gstroarmixer") == -1 )
+   goto error;
+
+  return ret;
+
+error:
+  if (ret)
+    gst_roarmixer_free (ret);
+
+  return NULL;
+}
+
+void            gst_roarmixer_free               (GstRoarMixer *mixer) {
+  g_return_if_fail(mixer != NULL);
+
+  if (mixer->device) {
+    g_free(mixer->device);
+    mixer->device = NULL;
+  }
+
+  if (mixer->cardname) {
+    g_free(mixer->cardname);
+    mixer->cardname = NULL;
+  }
+
+  if (mixer->tracklist) {
+    g_list_foreach(mixer->tracklist, (GFunc) g_object_unref, NULL);
+    g_list_free(mixer->tracklist);
+    mixer->tracklist = NULL;
+  }
+
+  roar_disconnect(&(mixer->con));
+
+  g_free (mixer);
+}
+
+const GList*    gst_roarmixer_list_tracks        (GstRoarMixer * mixer) {
+ return (const GList *) mixer->tracklist;
+}
+
 void            gst_roarmixer_set_volume         (GstRoarMixer * mixer,
                                                  GstMixerTrack * track,
-                                                 gint * volumes);
+                                                 gint * volumes) {
+}
 void            gst_roarmixer_get_volume         (GstRoarMixer * mixer,
                                                  GstMixerTrack * track,
-                                                 gint * volumes);
+                                                 gint * volumes) {
+}
 void            gst_roarmixer_set_record         (GstRoarMixer * mixer,
                                                  GstMixerTrack * track,
-                                                 gboolean record);
+                                                 gboolean record) {
+}
 void            gst_roarmixer_set_mute           (GstRoarMixer * mixer,
                                                  GstMixerTrack * track,
-                                                 gboolean mute);
+                                                 gboolean mute) {
+}
 
 //ll
