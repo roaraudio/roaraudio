@@ -227,11 +227,9 @@ static G_GNUC_UNUSED gboolean gst_roarmixer_contains_track (GstRoarMixer * mixer
 }
 
 void            gst_roarmixer_updatestreamlist   (GstRoarMixer *mixer) {
-  gboolean record = FALSE;
-  gboolean input  = FALSE;
-  gint  master = 0;
   gint  i      = 0;
-  gint  channels = 2;
+  gint num;
+  gint id[ROAR_STREAMS_MAX];
   GstMixerTrack *track;
 
   ROAR_WARN("gst_roarmixer_updatestreamlist(mixer=%p) = ?", mixer);
@@ -241,12 +239,15 @@ void            gst_roarmixer_updatestreamlist   (GstRoarMixer *mixer) {
     return;
   }
 
-      track = gst_roarmixer_track_new (mixer, i, channels,
-          (record ? GST_MIXER_TRACK_RECORD : 0) |
-          (input ? GST_MIXER_TRACK_INPUT :
-              GST_MIXER_TRACK_OUTPUT) |
-          ((master != i) ? 0 : GST_MIXER_TRACK_MASTER));
-      mixer->tracklist = g_list_append (mixer->tracklist, track);
+  if ( (num = roar_list_streams(&(mixer->con), id, ROAR_STREAMS_MAX)) == -1 ) {
+    return;
+  }
+
+
+  for (i = 0; i < num; i++) {
+   track = gst_roarmixer_track_new(mixer, id[i]);
+   mixer->tracklist = g_list_append(mixer->tracklist, track);
+  }
 
   ROAR_WARN("gst_roarmixer_updatestreamlist(mixer=%p) = (void)", mixer);
 }
@@ -266,6 +267,29 @@ void            gst_roarmixer_set_volume         (GstRoarMixer * mixer,
 void            gst_roarmixer_get_volume         (GstRoarMixer * mixer,
                                                  GstMixerTrack * track,
                                                  gint * volumes) {
+ GstRoarMixerTrack *roartrack = GST_ROARMIXER_TRACK(track);
+ int channels;
+ struct roar_mixer_settings m;
+ gint i;
+
+
+ g_return_if_fail(gst_roarmixer_contains_track(mixer, roartrack));
+
+ if ( roar_get_vol(&(mixer->con), roartrack->stream_id, &m, &channels) == -1 ) {
+  fprintf(stderr, "Error: can not get stream mixer info\n");
+  return;
+ }
+
+ if ( channels != track->num_channels ) {
+  ROAR_WARN("gst_roarmixer_get_volume(*): numer of channels for stream %i mismatch", roartrack->stream_id);
+
+  if ( track->num_channels < channels )
+   channels = track->num_channels;
+ }
+
+ for (i = 0; i < channels; i++) {
+  volumes[i] = m.mixer[i];
+ }
 }
 void            gst_roarmixer_set_record         (GstRoarMixer * mixer,
                                                  GstMixerTrack * track,
@@ -274,6 +298,18 @@ void            gst_roarmixer_set_record         (GstRoarMixer * mixer,
 void            gst_roarmixer_set_mute           (GstRoarMixer * mixer,
                                                  GstMixerTrack * track,
                                                  gboolean mute) {
+  GstRoarMixerTrack *roartrack = GST_ROARMIXER_TRACK(track);
+  struct roar_stream s;
+
+  g_return_if_fail(gst_roarmixer_contains_track(mixer, roartrack));
+
+  roar_stream_new_by_id(&s, roartrack->stream_id);
+
+  if (mute) {
+    roar_stream_set_flags(&(mixer->con), &s, ROAR_FLAG_MUTE, ROAR_SET_FLAG);
+  } else {
+    roar_stream_set_flags(&(mixer->con), &s, ROAR_FLAG_MUTE, ROAR_RESET_FLAG);
+  }
 }
 
 // tracks:
@@ -295,25 +331,45 @@ gst_roarmixer_track_init (GstRoarMixerTrack * track)
 
 GstMixerTrack *
 gst_roarmixer_track_new (GstRoarMixer * mixer,
-    gint stream_id, gint max_chans, gint flags)
+    gint stream_id)
 {
   GstRoarMixerTrack *roartrack;
   GstMixerTrack *track;
+  struct roar_stream s;
+  gint flags = 0;
+  gchar buf[1024];
 
-  ROAR_WARN("gst_roarmixer_track_new(mixer=%p, stream_id=%i, max_chans=%i, flags=0x%.4x) = ?", mixer, stream_id, max_chans, flags);
+  ROAR_WARN("gst_roarmixer_track_new(mixer=%p, stream_id=%i) = ?", mixer, stream_id);
 
-  roartrack = g_object_new (GST_TYPE_ROARMIXER_TRACK, NULL);
+  if ( roar_get_stream(&(mixer->con), &s, stream_id) == -1 ) {
+    return NULL;
+  }
+
+  switch (s.dir) {
+   case ROAR_DIR_PLAY:
+     flags |= GST_MIXER_TRACK_OUTPUT;
+    break;
+   case ROAR_DIR_OUTPUT:
+     flags |= GST_MIXER_TRACK_MASTER;
+   case ROAR_DIR_MONITOR:
+     flags |= GST_MIXER_TRACK_OUTPUT;
+    break;
+  }
+
+  sprintf(buf, "Stream %i", stream_id);
+
+  roartrack = g_object_new(GST_TYPE_ROARMIXER_TRACK, NULL);
   ROAR_WARN("gst_roarmixer_track_new(*): roartrack=%p", roartrack);
-  track = GST_MIXER_TRACK (roartrack);
-  track->label = g_strdup ("TRACKLABLE");
-  track->num_channels = max_chans;
-  track->flags = flags;
-  track->min_volume = 0;
-  track->max_volume = 65535;
+  track               = GST_MIXER_TRACK(roartrack);
+  track->label        = g_strdup(buf);
+  track->num_channels = s.info.channels;
+  track->flags        = flags;
+  track->min_volume   = 0;
+  track->max_volume   = 65535;
   roartrack->stream_id = stream_id;
 
   /* volume */
-  ROAR_WARN("gst_roarmixer_track_new(mixer=%p, stream_id=%i, max_chans=%i, flags=0x%.4x) = %p", mixer, stream_id, max_chans, flags, track);
+  ROAR_WARN("gst_roarmixer_track_new(mixer=%p, stream_id=%i) = %p", mixer, stream_id, track);
   return track;
 }
 

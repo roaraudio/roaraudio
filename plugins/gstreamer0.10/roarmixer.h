@@ -134,7 +134,7 @@ void            gst_roarmixer_set_mute           (GstRoarMixer * mixer,
 GType           gst_roarmixer_track_get_type     (void);
 GstMixerTrack *
 gst_roarmixer_track_new (GstRoarMixer * mixer,
-    gint stream_id, gint max_chans, gint flags);
+    gint stream_id);
 
 #define GST_IMPLEMENT_ROAR_MIXER_METHODS(Type, interface_as_function)            \
 static gboolean                                                                 \
