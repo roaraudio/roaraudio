@@ -72,4 +72,4 @@ gboolean gst_roarsink_factory_init (GstPlugin *plugin);
 
 G_END_DECLS
 
-#endif /* __GST_ESDSINK_H__ */
+#endif /* __GST_ROARSINK_H__ */
