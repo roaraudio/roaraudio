@@ -151,9 +151,13 @@ gboolean gst_roarmixer_factory_init (GstPlugin * plugin) {
   return TRUE;
 }
 
+G_DEFINE_TYPE (GstRoarMixerTrack, gst_roarmixer_track, GST_TYPE_MIXER_TRACK);
+
 GstRoarMixer*    gst_roarmixer_new                (const gchar *device,
                                                  GstRoarMixerDirection dir) {
   GstRoarMixer *ret = NULL;
+
+  ROAR_WARN("gst_roarmixer_new(device='%s', dir=0x%.4x) = ?", device, dir);
 
   g_return_val_if_fail(device != NULL, NULL);
 
@@ -171,17 +175,21 @@ GstRoarMixer*    gst_roarmixer_new                (const gchar *device,
   if ( roar_simple_connect(&(ret->con), NULL, "gstroarmixer") == -1 )
    goto error;
 
+  ROAR_WARN("gst_roarmixer_new(device='%s', dir=0x%.4x) = %p", device, dir, ret);
   return ret;
 
 error:
   if (ret)
     gst_roarmixer_free (ret);
 
+  ROAR_WARN("gst_roarmixer_new(device='%s', dir=0x%.4x) = NULL // Error?", device, dir);
   return NULL;
 }
 
 void            gst_roarmixer_free               (GstRoarMixer *mixer) {
   g_return_if_fail(mixer != NULL);
+
+  ROAR_WARN("gst_roarmixer_free(mixer=%p) = ?", mixer);
 
   if (mixer->device) {
     g_free(mixer->device);
@@ -202,6 +210,8 @@ void            gst_roarmixer_free               (GstRoarMixer *mixer) {
   roar_disconnect(&(mixer->con));
 
   g_free (mixer);
+
+  ROAR_WARN("gst_roarmixer_free(mixer=%p) = (void)", mixer);
 }
 
 /* unused with G_DISABLE_* */
@@ -216,7 +226,36 @@ static G_GNUC_UNUSED gboolean gst_roarmixer_contains_track (GstRoarMixer * mixer
   return FALSE;
 }
 
+void            gst_roarmixer_updatestreamlist   (GstRoarMixer *mixer) {
+  gboolean record = FALSE;
+  gboolean input  = FALSE;
+  gint  master = 0;
+  gint  i      = 0;
+  gint  channels = 2;
+  GstMixerTrack *track;
+
+  ROAR_WARN("gst_roarmixer_updatestreamlist(mixer=%p) = ?", mixer);
+
+  if (mixer->tracklist) {
+    ROAR_WARN("gst_roarmixer_updatestreamlist(mixer=%p) = (void)", mixer);
+    return;
+  }
+
+      track = gst_roarmixer_track_new (mixer, i, channels,
+          (record ? GST_MIXER_TRACK_RECORD : 0) |
+          (input ? GST_MIXER_TRACK_INPUT :
+              GST_MIXER_TRACK_OUTPUT) |
+          ((master != i) ? 0 : GST_MIXER_TRACK_MASTER));
+      mixer->tracklist = g_list_append (mixer->tracklist, track);
+
+  ROAR_WARN("gst_roarmixer_updatestreamlist(mixer=%p) = (void)", mixer);
+}
+
 const GList*    gst_roarmixer_list_tracks        (GstRoarMixer * mixer) {
+ ROAR_WARN("gst_roarmixer_list_tracks(mixer=%p) = ?", mixer);
+
+ gst_roarmixer_updatestreamlist(mixer);
+
  return (const GList *) mixer->tracklist;
 }
 
@@ -235,6 +274,47 @@ void            gst_roarmixer_set_record         (GstRoarMixer * mixer,
 void            gst_roarmixer_set_mute           (GstRoarMixer * mixer,
                                                  GstMixerTrack * track,
                                                  gboolean mute) {
+}
+
+// tracks:
+#define MASK_BIT_IS_SET(mask, bit) \
+  (mask & (1 << bit))
+
+static void
+gst_roarmixer_track_class_init (GstRoarMixerTrackClass * klass)
+{
+  /* nop */
+}
+
+static void
+gst_roarmixer_track_init (GstRoarMixerTrack * track)
+{
+  //memset(track, 0, sizeof(*track));
+  track->stream_id = -1;
+}
+
+GstMixerTrack *
+gst_roarmixer_track_new (GstRoarMixer * mixer,
+    gint stream_id, gint max_chans, gint flags)
+{
+  GstRoarMixerTrack *roartrack;
+  GstMixerTrack *track;
+
+  ROAR_WARN("gst_roarmixer_track_new(mixer=%p, stream_id=%i, max_chans=%i, flags=0x%.4x) = ?", mixer, stream_id, max_chans, flags);
+
+  roartrack = g_object_new (GST_TYPE_ROARMIXER_TRACK, NULL);
+  ROAR_WARN("gst_roarmixer_track_new(*): roartrack=%p", roartrack);
+  track = GST_MIXER_TRACK (roartrack);
+  track->label = g_strdup ("TRACKLABLE");
+  track->num_channels = max_chans;
+  track->flags = flags;
+  track->min_volume = 0;
+  track->max_volume = 65535;
+  roartrack->stream_id = stream_id;
+
+  /* volume */
+  ROAR_WARN("gst_roarmixer_track_new(mixer=%p, stream_id=%i, max_chans=%i, flags=0x%.4x) = %p", mixer, stream_id, max_chans, flags, track);
+  return track;
 }
 
 //ll

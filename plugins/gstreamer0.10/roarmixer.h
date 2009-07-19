@@ -44,6 +44,19 @@ G_BEGIN_DECLS
 #define GST_IS_ROAR_MIXER_ELEMENT_CLASS(klass)   (G_TYPE_CHECK_CLASS_TYPE((klass),GST_TYPE_ROAR_MIXER_ELEMENT))
 #define GST_TYPE_ROAR_MIXER_ELEMENT              (gst_roar_mixer_element_get_type())
 
+#define GST_TYPE_ROARMIXER_TRACK \
+  (gst_roarmixer_track_get_type ())
+#define GST_ROARMIXER_TRACK(obj) \
+  (G_TYPE_CHECK_INSTANCE_CAST ((obj), GST_TYPE_ROARMIXER_TRACK, \
+                               GstRoarMixerTrack))
+#define GST_ROARMIXER_TRACK_CLASS(klass) \
+  (G_TYPE_CHECK_CLASS_CAST ((klass), GST_TYPE_ROARMIXER_TRACK, \
+                            GstRoarMixerTrackClass))
+#define GST_IS_ROARMIXER_TRACK(obj) \
+  (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GST_TYPE_ROARMIXER_TRACK))
+#define GST_IS_ROARMIXER_TRACK_CLASS(klass) \
+  (G_TYPE_CHECK_CLASS_TYPE ((klass), GST_TYPE_ROARMIXER_TRACK))
+
 
 typedef struct _GstRoarMixerElement GstRoarMixerElement;
 typedef struct _GstRoarMixerElementClass GstRoarMixerElementClass;
@@ -70,9 +83,6 @@ typedef enum {
 
 
 #define GST_ROAR_MIXER(obj)              ((GstRoarMixer*)(obj))
-
-#define GST_TYPE_ROARMIXER \
-  (gst_roarmixer_get_type())
 
 struct _GstRoarMixer {
   GList *               tracklist;      /* list of available tracks */
@@ -105,6 +115,7 @@ gboolean gst_roarmixer_factory_init (GstPlugin *plugin);
 GstRoarMixer*    gst_roarmixer_new                (const gchar *device,
                                                  GstRoarMixerDirection dir);
 void            gst_roarmixer_free               (GstRoarMixer *mixer);
+void            gst_roarmixer_updatestreamlist   (GstRoarMixer *mixer);
 
 const GList*    gst_roarmixer_list_tracks        (GstRoarMixer * mixer);
 void            gst_roarmixer_set_volume         (GstRoarMixer * mixer,
@@ -119,6 +130,11 @@ void            gst_roarmixer_set_record         (GstRoarMixer * mixer,
 void            gst_roarmixer_set_mute           (GstRoarMixer * mixer,
                                                  GstMixerTrack * track,
                                                  gboolean mute);
+
+GType           gst_roarmixer_track_get_type     (void);
+GstMixerTrack *
+gst_roarmixer_track_new (GstRoarMixer * mixer,
+    gint stream_id, gint max_chans, gint flags);
 
 #define GST_IMPLEMENT_ROAR_MIXER_METHODS(Type, interface_as_function)            \
 static gboolean                                                                 \
