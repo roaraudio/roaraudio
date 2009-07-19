@@ -276,7 +276,7 @@ void            gst_roarmixer_get_volume         (GstRoarMixer * mixer,
  g_return_if_fail(gst_roarmixer_contains_track(mixer, roartrack));
 
  if ( roar_get_vol(&(mixer->con), roartrack->stream_id, &m, &channels) == -1 ) {
-  fprintf(stderr, "Error: can not get stream mixer info\n");
+  ROAR_WARN("gst_roarmixer_get_volume(*): can not get mixer infos for stream %i", roartrack->stream_id);
   return;
  }
 
