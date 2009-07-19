@@ -363,14 +363,48 @@ gst_roarmixer_track_new (GstRoarMixer * mixer,
   GstRoarMixerTrack *roartrack;
   GstMixerTrack *track;
   struct roar_stream s;
+  struct roar_client c;
+  struct roar_meta   m;
   gint flags = 0;
   gchar buf[1024];
+  int num;
+  int id[ROAR_CLIENTS_MAX];
+  char * clientname = NULL;
+  char * metaname   = NULL;
+  char   streamname[1024] = {0};
+  gint i, h;
 
   ROAR_WARN("gst_roarmixer_track_new(mixer=%p, stream_id=%i) = ?", mixer, stream_id);
 
   if ( roar_get_stream(&(mixer->con), &s, stream_id) == -1 ) {
     return NULL;
   }
+
+ // TODO: find something more efficent:
+
+ if ( (num = roar_list_clients(&(mixer->con), id, ROAR_CLIENTS_MAX)) != -1 ) {
+  for (i = 0; i < num; i++) {
+   ROAR_WARN("gst_roarmixer_track_new(*): stream %i -->> client %i?", stream_id, id[i]);
+   if ( roar_get_client(&(mixer->con), &c, id[i]) != -1 ) {
+    for (h = 0; h < ROAR_CLIENTS_MAX_STREAMS_PER_CLIENT; h++) {
+     ROAR_WARN("gst_roarmixer_track_new(*): stream %i <-> %i -->> client %i?", stream_id, c.streams[h], id[i]);
+     if ( c.streams[h] == stream_id ) {
+      clientname = c.name;
+      h = ROAR_CLIENTS_MAX_STREAMS_PER_CLIENT;
+      i = num;
+     }
+    }
+   }
+  }
+ }
+
+ m.type = ROAR_META_TYPE_TITLE;
+ if ( roar_stream_meta_get(&(mixer->con), &s, &m) != -1 ) {
+  metaname = m.value;
+ }
+
+ if ( roar_stream_get_name(&(mixer->con), &s, streamname, 1024) == 0 )
+  *streamname = 0;
 
   switch (s.dir) {
    case ROAR_DIR_PLAY:
@@ -383,7 +417,12 @@ gst_roarmixer_track_new (GstRoarMixer * mixer,
     break;
   }
 
-  sprintf(buf, "Stream %i", stream_id);
+  if ( !*streamname && metaname == NULL )
+   sprintf(streamname, "[Stream %i]", stream_id);
+
+  sprintf(buf, "%s\n%s",  clientname ? clientname : "[Unknown]",
+                         *streamname ? streamname : metaname
+                         );
 
   roartrack = g_object_new(GST_TYPE_ROARMIXER_TRACK, NULL);
   ROAR_WARN("gst_roarmixer_track_new(*): roartrack=%p", roartrack);
