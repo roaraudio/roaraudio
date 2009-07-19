@@ -78,6 +78,18 @@ void            gst_roarmixer_free               (GstRoarMixer *mixer) {
   g_free (mixer);
 }
 
+/* unused with G_DISABLE_* */
+static G_GNUC_UNUSED gboolean gst_roarmixer_contains_track (GstRoarMixer * mixer,
+                                                            GstRoarMixerTrack * roartrack) {
+  const GList *item;
+
+  for (item = mixer->tracklist; item != NULL; item = item->next)
+    if (item->data == roartrack)
+      return TRUE;
+
+  return FALSE;
+}
+
 const GList*    gst_roarmixer_list_tracks        (GstRoarMixer * mixer) {
  return (const GList *) mixer->tracklist;
 }

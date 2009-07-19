@@ -60,6 +60,20 @@ struct _GstRoarMixer {
   GstRoarMixerDirection dir;
 };
 
+typedef struct _GstRoarMixerTrack {
+  GstMixerTrack parent;
+
+  struct roar_mixer_settings mixer;
+  gint          channels;
+  gchar       * name;
+  gint          stream_id;
+} GstRoarMixerTrack;
+
+typedef struct _GstRoarMixerTrackClass {
+  GstMixerTrackClass parent;
+} GstRoarMixerTrackClass;
+
+
 GstRoarMixer*    gst_roarmixer_new                (const gchar *device,
                                                  GstRoarMixerDirection dir);
 void            gst_roarmixer_free               (GstRoarMixer *mixer);
