@@ -145,7 +145,7 @@ gst_roar_mixer_element_change_state (GstElement * element,
 
 gboolean gst_roarmixer_factory_init (GstPlugin * plugin) {
   if (!gst_element_register(plugin, "roarmixer", GST_RANK_MARGINAL,
-                            GST_TYPE_ROARMIXER))
+                            GST_TYPE_ROAR_MIXER_ELEMENT))
     return FALSE;
 
   return TRUE;
@@ -161,6 +161,7 @@ GstRoarMixer*    gst_roarmixer_new                (const gchar *device,
 
   ret->device = g_strdup(device);
   ret->dir    = dir;
+  ret->cardname = g_strdup("RoarAudio Default Device");
 
 /*
   if (!gst_ossmixer_open (ret))
