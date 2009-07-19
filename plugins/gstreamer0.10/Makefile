@@ -4,7 +4,7 @@ include Makefile.conf
 SLIB=libgstroar.so
 TARGETS=$(SLIB)
 
-OBJS=gstroar.o roarsink.o
+OBJS=gstroar.o roarsink.o roarmixer.o
 
 #DEFINES        = -DDEBUG
 INCLUDE = -I. -I../include -I../include/libroar
