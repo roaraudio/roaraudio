@@ -737,6 +737,10 @@ int roar_conv2(void * out, void * in,
                size_t bufsize) {
  size_t samples;
  size_t needed_buffer;
+ void   * cin = in;
+ struct roar_audio_info cinfo;
+
+ memcpy(&cinfo, from, sizeof(cinfo));
 
  // calcumate number of input samples:
  samples = (inlen * 8) / (from->channels * from->bits);
@@ -753,7 +757,59 @@ int roar_conv2(void * out, void * in,
  if ( needed_buffer > bufsize )
   return -1;
 
- return -1;
+ if ( ROAR_CODEC_BYTE_ORDER(from->codec) != ROAR_CODEC_NATIVE_ENDIAN ) {
+  ROAR_DBG("roar_conv(*): doing bo input conv");
+  if ( roar_conv_endian(out, cin, samples,
+       ROAR_CODEC_BYTE_ORDER(from->codec), ROAR_CODEC_NATIVE_ENDIAN, from->bits) == -1 ) {
+   return -1;
+  }
+  cin = out;
+ }
+
+ if ( to->bits > from->bits ) {
+  if ( roar_conv_bits(out, cin, samples, from->bits, to->bits) == -1 )
+   return -1;
+
+  cin        = out;
+  cinfo.bits = to->bits;
+ }
+
+ if ( to->channels > from->channels ) {
+  if ( roar_conv_chans(out, cin, samples, from->channels, to->channels, cinfo.bits) == -1 )
+   return -1;
+
+  cin            = out;
+  cinfo.channels = to->channels;
+ }
+
+//--//
+
+ if ( cinfo.channels != to->channels ) {
+  if ( roar_conv_chans(out, cin, samples, cinfo.channels, to->channels, cinfo.bits) == -1 )
+   return -1;
+
+  cin            = out;
+  cinfo.channels = to->channels;
+ }
+
+ if ( cinfo.bits != to->bits ) {
+  if ( roar_conv_bits(out, cin, samples, cinfo.bits, to->bits) == -1 )
+   return -1;
+
+  cin        = out;
+  cinfo.bits = to->bits;
+ }
+
+ if ( ROAR_CODEC_BYTE_ORDER(to->codec) != ROAR_CODEC_NATIVE_ENDIAN ) {
+  ROAR_DBG("roar_conv(*): doing bo output conv");
+  if ( roar_conv_endian(out, cin, samples,
+       ROAR_CODEC_NATIVE_ENDIAN, ROAR_CODEC_BYTE_ORDER(to->codec), to->bits) == -1 ) {
+   return -1;
+  }
+  cin = out;
+ }
+
+ return 0;
 }
 
 int roar_conv_poly4_16 (int16_t * out, int16_t * in, size_t olen, size_t ilen) {
