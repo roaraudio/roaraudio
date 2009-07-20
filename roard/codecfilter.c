@@ -298,6 +298,7 @@ int codecfilter_delay(CODECFILTER_USERDATA_T   inst, int codecfilter, uint_least
 }
 
 int codecfilter_ctl  (CODECFILTER_USERDATA_T   inst, int codecfilter, int_least32_t cmd, void * data) {
+ ROAR_DBG("codecfilter_ctl(inst=%p, codecfilter=%i, cmd=0x%.8x, data=%p) = ?", inst, codecfilter, cmd, data);
  if ( codecfilter == -1 )
   return -1;
 
