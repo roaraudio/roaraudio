@@ -56,6 +56,11 @@
 
 #define ROAR_OUTPUT_CALC_OUTBUFSIZE(x)   (ROAR_OUTPUT_BUFFER_SAMPLES * (x)->channels * ((x)->bits / 8) * ((float)(x)->rate/g_sa->rate))
 #define ROAR_OUTPUT_CALC_OUTBUFSAMP(x,y) ((y) / ((x)->channels * ((x)->bits / 8)*((float)(x)->rate/g_sa->rate)))
+#define ROAR_OUTPUT_CALC_OUTBUFSIZE_MAX(x0,x1)  (ROAR_OUTPUT_BUFFER_SAMPLES                                  * \
+                                                  ROAR_MAX((x0)->channels,(x1)->channels)                    * \
+                                                 (ROAR_MAX((x0)->bits,    (x1)->bits    ) / 8)               * \
+                                                 (ROAR_MAX((float)(x0)->rate,(float)(x1)->rate)/g_sa->rate)    \
+                                                )
 
 void         * g_output_buffer;
 unsigned int   g_output_buffer_len;
