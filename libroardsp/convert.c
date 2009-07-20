@@ -782,7 +782,15 @@ int roar_conv2(void * out, void * in,
   cinfo.channels = to->channels;
  }
 
-//--//
+ if ( ROAR_CODEC_IS_SIGNED(from->codec) != ROAR_CODEC_IS_SIGNED(to->codec) ) {
+  if ( roar_conv_signedness(out, cin, samples,
+                            ROAR_CODEC_IS_SIGNED(from->codec), ROAR_CODEC_IS_SIGNED(to->codec),
+                            cinfo.bits) == -1 )
+   return -1;
+
+  cin            = out;
+  cinfo.codec    = to->codec;
+ }
 
  if ( cinfo.channels != to->channels ) {
   if ( roar_conv_chans(out, cin, samples, cinfo.channels, to->channels, cinfo.bits) == -1 )
