@@ -179,6 +179,7 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
  int32_t channel  = -1;
  int32_t universe = -1;
  uint16_t tu16;
+ float q = -32e6;
 
  ROAR_DBG("add_output(drv='%s', dev='%s', opts='%s') = ?", drv, dev, opts);
 
@@ -235,6 +236,8 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
     ROAR_ERR("add_output(*): unknown codec '%s'", v);
     error++;
    }
+  } else if ( strcmp(k, "q") == 0 ) {
+   q = atof(v);
   } else if ( strcmp(k, "blocks") == 0 ) {
    blocks = atoi(v);
   } else if ( strcmp(k, "blocksize") == 0 ) {
@@ -325,6 +328,9 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
 
  roar_vio_ctl(&(ss->vio), ROAR_VIO_CTL_SET_SSTREAMID, &stream); // ignore errors here
  roar_vio_ctl(&(ss->vio), ROAR_VIO_CTL_SET_SSTREAM,   s); // ignore errors here
+
+ if ( q > -1e6 )
+  streams_ctl(stream, ROAR_CODECFILTER_CTL_SET_Q|ROAR_STREAM_CTL_TYPE_FLOAT, &q);
 
  if ( blocks != -1 )
   roar_vio_ctl(&(ss->vio), ROAR_VIO_CTL_SET_DBLOCKS, &blocks);
