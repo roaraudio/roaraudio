@@ -46,6 +46,10 @@
 #define ROAR_STREAM_CTL_COMP_CF   0x01000000
 #define ROAR_STREAM_CTL_COMP_DRV  0x02000000
 
+#define ROAR_STREAM_CTL_TYPE_VOID   0x00010000
+#define ROAR_STREAM_CTL_TYPE_INT    0x00010000
+#define ROAR_STREAM_CTL_TYPE_FLOAT  0x00020000
+#define ROAR_STREAM_CTL_TYPE_FPI100 0x00030000 /* fix point integter int/100 */
 
 struct roar_stream_server {
  struct roar_stream _stream;
