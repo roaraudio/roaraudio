@@ -893,13 +893,6 @@ int streams_fill_mixbuffer2 (int id, struct roar_audio_info * info) {
 
   if ( inlen < outlen )
    memset(outdata+inlen, 0, outlen-inlen);
-
-  if ( !streams_get_flag(id, ROAR_FLAG_HWMIXER) ) {
-   if ( change_vol(outdata, info->bits, outdata, 8*outlen / info->bits, info->channels, &(ss->mixer)) == -1 )
-    return -1;
-  }
-
-  return 0;
  } else {
   if ( roar_conv(outdata, indata, (8*inlen_got*info->rate)/(stream_info->rate * stream_info->bits), stream_info, info) == -1 ) {
    return -1;
