@@ -91,10 +91,13 @@ int cf_vorbis_open(CODECFILTER_USERDATA_T * inst, int codec,
  } else if ( s->dir == ROAR_DIR_MONITOR || s->dir == ROAR_DIR_OUTPUT ) {
 #ifdef ROAR_HAVE_LIBVORBISENC
   // set up the encoder here
+// this is delayed to the write function
+/*
  if ( cf_vorbis_encode_start(self) == -1 ) {
   free(self);
   return -1;
  }
+*/
 #else
  free(self);
  return -1;
@@ -140,6 +143,12 @@ int cf_vorbis_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  int16_t * data = (int16_t *) buf;
 
  if ( ! self->opened ) {
+  if ( !self->encoding ) {
+   if ( cf_vorbis_encode_start(self) == -1 ) {
+    return -1;
+   }
+  }
+
   vorbis_analysis_headerout(&(self->encoder.vd), &(self->encoder.vc), &header, &header_comm, &header_code);
 
   ogg_stream_packetin(&(self->encoder.os), &header);
@@ -337,6 +346,7 @@ int cf_vorbis_encode_start  (struct codecfilter_vorbis_inst * self) {
  int types[ROAR_META_MAX_PER_STREAM];
 #endif
  int sid = ROAR_STREAM(self->stream)->id;
+ float v_base_quality = self->encoder.v_base_quality;
  char val[LIBROAR_BUFFER_MSGDATA];
 
   val[LIBROAR_BUFFER_MSGDATA-1] = 0;
@@ -344,7 +354,8 @@ int cf_vorbis_encode_start  (struct codecfilter_vorbis_inst * self) {
   memset(&(self->encoder), 0, sizeof(self->encoder));
 
   self->encoding = 1;
-  self->encoder.srn = srn + 1;;
+  self->encoder.srn = srn + 1;
+  self->encoder.v_base_quality = v_base_quality;
 
   vorbis_info_init(&(self->encoder.vi));
   vorbis_comment_init(&(self->encoder.vc));
@@ -361,9 +372,11 @@ int cf_vorbis_encode_start  (struct codecfilter_vorbis_inst * self) {
   }
 #endif
 
+  ROAR_DBG("cf_vorbis_encode_start(*): q=%f", v_base_quality);
+
   if( vorbis_encode_init_vbr(&(self->encoder.vi), (long) ROAR_STREAM(self->stream)->info.channels,
                                                   (long) ROAR_STREAM(self->stream)->info.rate,
-                                                  self->encoder.v_base_quality) != 0 ) {
+                                                  v_base_quality) != 0 ) {
    ROAR_ERR("cf_vorbis_encode_start(*): Can not vorbis_encode_init_vbr(*)!");
    vorbis_info_clear(&(self->encoder.vi)); // TODO: do we need to free vc also?
    return -1;
@@ -455,7 +468,9 @@ int cf_vorbis_ctl(CODECFILTER_USERDATA_T   inst, int cmd, void * data) {
     if ( type != ROAR_STREAM_CTL_TYPE_FLOAT )
      return -1;
 
-    self->encoder.v_base_quality = *(float*)data;
+    ROAR_DBG("cf_vorbis_ctl(*): setting quality to q=%f", *(float*)data);
+
+    self->encoder.v_base_quality = *(float*)data / 10;
 
     if ( self->encoding ) {
      ROAR_DBG("cf_vorbis_ctl(*): we are allready encoding, restart...");
@@ -470,6 +485,8 @@ int cf_vorbis_ctl(CODECFILTER_USERDATA_T   inst, int cmd, void * data) {
     return 0;
    break;
   default:
+    ROAR_DBG("cf_vorbis_ctl(*): Unknown command: cmd=0x%.8x, type=0x%.8x, pcmd=0x%.8x",
+                    cmd, type, ROAR_CODECFILTER_CTL2CMD(cmd));
     return -1;
  }
 

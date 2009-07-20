@@ -329,9 +329,6 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
  roar_vio_ctl(&(ss->vio), ROAR_VIO_CTL_SET_SSTREAMID, &stream); // ignore errors here
  roar_vio_ctl(&(ss->vio), ROAR_VIO_CTL_SET_SSTREAM,   s); // ignore errors here
 
- if ( q > -1e6 )
-  streams_ctl(stream, ROAR_CODECFILTER_CTL_SET_Q|ROAR_STREAM_CTL_TYPE_FLOAT, &q);
-
  if ( blocks != -1 )
   roar_vio_ctl(&(ss->vio), ROAR_VIO_CTL_SET_DBLOCKS, &blocks);
 
@@ -351,6 +348,11 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
  ROAR_DBG("add_output(*): ss->driver_id=%i", ss->driver_id);
 
  streams_set_fh(stream, -1); // update some internal structures
+
+ if ( q > -1e6 ) {
+  ROAR_DBG("add_output(*): setting q=%f", q);
+  streams_ctl(stream, ROAR_CODECFILTER_CTL_SET_Q|ROAR_STREAM_CTL_TYPE_FLOAT, &q);
+ }
 
  client_stream_add(g_source_client, stream);
 
