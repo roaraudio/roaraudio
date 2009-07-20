@@ -826,6 +826,9 @@ int streams_fill_mixbuffer2 (int id, struct roar_audio_info * info) {
  size_t   inlen;
  size_t   inlen_got;
  void   * indata = NULL;
+ size_t   buflen;
+ void   * bufdata = NULL;
+ struct roar_buffer * bufbuf = NULL;
  int      is_the_same = 0;
  struct roar_audio_info    * stream_info;
  struct roar_stream        * s;
@@ -839,6 +842,8 @@ int streams_fill_mixbuffer2 (int id, struct roar_audio_info * info) {
 
  // calc todo_in
  inlen = ROAR_OUTPUT_CALC_OUTBUFSIZE(stream_info);
+
+ buflen = ROAR_OUTPUT_CALC_OUTBUFSIZE_MAX(info, stream_info);
 
  if ( inlen == 0 ) {
   ROAR_WARN("streams_fill_mixbuffer2(id=%i, info=%p{...}): inlen == 0, this should not happen!", id, info);
@@ -860,12 +865,21 @@ int streams_fill_mixbuffer2 (int id, struct roar_audio_info * info) {
 
  ROAR_DBG("streams_fill_mixbuffer2(*): is_the_same=%i", is_the_same);
 
- if ( inlen > outlen ) {
+ if ( !is_the_same && buflen > outlen ) {
+/*
   // this is not supported at the moment
   memset(outdata, 0, outlen);
   return -1;
+*/
+
+  if ( roar_buffer_new(&bufbuf, buflen) == -1 )
+   return -1;
+
+  if ( roar_buffer_get_data(bufbuf, &bufdata) == -1 )
+   return -1;
  } else {
-  indata = outdata;
+  indata  = outdata;
+  bufdata = outdata;
  }
 
  inlen_got = inlen;
@@ -895,10 +909,17 @@ int streams_fill_mixbuffer2 (int id, struct roar_audio_info * info) {
    memset(outdata+inlen, 0, outlen-inlen);
  } else {
   if ( roar_conv(outdata, indata, (8*inlen_got*info->rate)/(stream_info->rate * stream_info->bits), stream_info, info) == -1 ) {
+   if ( bufbuf != NULL )
+    roar_buffer_free(bufbuf);
    return -1;
   }
 
 //  memset(outdata, 0, outlen);
+ }
+
+ if ( bufbuf != NULL ) {
+  memcpy(outdata, bufdata, outlen);
+  roar_buffer_free(bufbuf);
  }
 
  if ( !streams_get_flag(id, ROAR_FLAG_HWMIXER) ) {
