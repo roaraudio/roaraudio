@@ -731,7 +731,30 @@ int roar_conv       (void * out, void * in, int samples, struct roar_audio_info 
  return 0;
 }
 
+int roar_conv2(void * out, void * in,
+               size_t inlen,
+               struct roar_audio_info * from, struct roar_audio_info * to,
+               size_t bufsize) {
+ size_t samples;
+ size_t needed_buffer;
 
+ // calcumate number of input samples:
+ samples = (inlen * 8) / (from->channels * from->bits);
+
+ // calculate size per frame
+ needed_buffer  = ROAR_MAX(from->channels, to->channels) * ROAR_MAX(from->bits, to->bits) / 8;
+
+ needed_buffer *= samples;
+
+ if ( from->rate < to->rate )
+  needed_buffer *= (float)to->rate/(float)from->rate;
+
+ // chjeck if we have enogth RAM to convert
+ if ( needed_buffer > bufsize )
+  return -1;
+
+ return -1;
+}
 
 int roar_conv_poly4_16 (int16_t * out, int16_t * in, size_t olen, size_t ilen) {
  return roar_conv_poly4_16s(out, in, olen, ilen, (float)ilen/olen);
