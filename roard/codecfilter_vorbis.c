@@ -433,15 +433,39 @@ int cf_vorbis_encode_flushout(struct codecfilter_vorbis_inst * self) {
 
 int cf_vorbis_ctl(CODECFILTER_USERDATA_T   inst, int cmd, void * data) {
  struct codecfilter_vorbis_inst * self = (struct codecfilter_vorbis_inst *) inst;
+ int_least32_t type = cmd & ROAR_STREAM_CTL_TYPEMASK;
+
+ cmd -= type;
 
  switch (cmd) {
   case ROAR_CODECFILTER_CTL2CMD(ROAR_CODECFILTER_CTL_META_UPDATE):
+    if ( type != ROAR_STREAM_CTL_TYPE_VOID )
+     return -1;
+
     ROAR_DBG("cf_vorbis_ctl(*): stoping stream...");
     if ( cf_vorbis_encode_end(self) == -1 )
      return -1;
     ROAR_DBG("cf_vorbis_ctl(*): restarting stream...");
     if ( cf_vorbis_encode_start(self) == -1 )
      return -1;
+
+    return 0;
+   break;
+  case ROAR_CODECFILTER_CTL2CMD(ROAR_CODECFILTER_CTL_SET_Q):
+    if ( type != ROAR_STREAM_CTL_TYPE_FLOAT )
+     return -1;
+
+    self->encoder.v_base_quality = *(float*)data;
+
+    if ( self->encoding ) {
+     ROAR_DBG("cf_vorbis_ctl(*): we are allready encoding, restart...");
+     ROAR_DBG("cf_vorbis_ctl(*): stoping stream...");
+     if ( cf_vorbis_encode_end(self) == -1 )
+      return -1;
+     ROAR_DBG("cf_vorbis_ctl(*): restarting stream...");
+     if ( cf_vorbis_encode_start(self) == -1 )
+      return -1;
+    }
 
     return 0;
    break;
