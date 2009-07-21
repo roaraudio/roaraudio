@@ -28,6 +28,11 @@
 char * server = ROAR_DEFAULT_SOCK_GLOBAL; // global server address
 #endif
 
+#if defined(ROAR_HAVE_IO_POSIX) && defined(ROAR_HAVE_FS_POSIX)
+#define SUPPORT_PIDFILE
+char * pidfile = NULL;
+#endif
+
 #ifdef ROAR_HAVE_MAIN_ARGS
 void usage (void) {
  printf("Usage: roard [OPTIONS]...\n\n");
@@ -44,6 +49,9 @@ void usage (void) {
         " --setuid              - UserID to the audio user as specified via -U\n"
         " --sysclocksync        - calculate exact sample rate using the system clock\n"
         " --location  LOC       - Set lion readable location of server\n"
+#ifdef SUPPORT_PIDFILE
+        " --pidfile PIDFILE     - Write a pidfile at PIDFILE\n"
+#endif
        );
 
  printf("\nAudio Options:\n\n");
@@ -532,6 +540,9 @@ int main (void) {
 #ifdef ROAR_HAVE_LIBDNET
  char decnethost[80];
 #endif
+#ifdef SUPPORT_PIDFILE
+ struct roar_vio_calls pidfile_vio;
+#endif
 
  g_standby       =  0;
  g_autostandby   =  0;
@@ -652,6 +663,13 @@ int main (void) {
 #endif
   } else if ( strcmp(k, "--location") == 0 ) {
    g_config->location = argv[++i];
+  } else if ( strcmp(k, "--pidfile") == 0 ) {
+#ifdef SUPPORT_PIDFILE
+   pidfile = argv[++i];
+#else
+   ROAR_ERR("--pidfile not supported");
+   i++;
+#endif
 
   } else if ( strcmp(k, "--list-cf") == 0 ) {
    print_codecfilterlist();
@@ -1018,6 +1036,15 @@ int main (void) {
  }
 #endif
 
+#ifdef SUPPORT_PIDFILE
+ if ( roar_vio_open_file(&pidfile_vio, pidfile, O_WRONLY|O_CREAT, 0644) == -1 ) {
+  ROAR_ERR("Can not write pidfile: %s", pidfile);
+ } else {
+  roar_vio_printf(&pidfile_vio, "%i\n", getpid());
+  roar_vio_close(&pidfile_vio);
+ }
+#endif
+
 #ifdef ROAR_HAVE_CHROOT
  if (chrootdir) {
   if ( chroot(chrootdir) == -1 ) {
@@ -1096,6 +1123,11 @@ void clean_quit_prep (void) {
  midi_cb_stop(); // stop console beep
  midi_free();
  light_free();
+
+#ifdef SUPPORT_PIDFILE
+ if ( pidfile != NULL )
+  unlink(pidfile);
+#endif
 }
 
 void clean_quit (void) {
