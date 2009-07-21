@@ -189,7 +189,7 @@ int roar_buffer_shift_out (struct roar_buffer ** buf, void * data, size_t * len)
  void * cd;
 
  if ( len == NULL || buf == NULL || data == NULL ) {
-  ROAR_DBG("roar_buffer_shift_out(buf=%p, data=%p, len={%lu}) = -1 // Invalid input", buf, data, (unsigned long)len);
+  ROAR_DBG("roar_buffer_shift_out(buf=%p, data=%p, len={%lu}) = -1 // Invalid input", buf, data, (unsigned long)*len);
   return -1;
  }
 
