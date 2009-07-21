@@ -32,7 +32,6 @@
  *  them with any software that uses libesd, libartsc or libpulse*.
  */
 
-#define DEBUG
 #include "libroardsp.h"
 //#define free(p) {ROAR_WARN("free(%p) = ?", (p)); free((p)); ROAR_WARN("free(%p): OK", (p));}
 
@@ -747,7 +746,7 @@ int roar_conv2(void * out, void * in,
  // calcumate number of input samples:
  samples = (inlen * 8) / (from->bits);
 
- ROAR_WARN("roar_conv2(*): input samples: %i", samples);
+ ROAR_DBG("roar_conv2(*): input samples: %i", samples);
 
  // calculate size per frame
  needed_buffer  = ROAR_MAX(from->channels, to->channels) * ROAR_MAX(from->bits, to->bits) / 8;
@@ -758,7 +757,7 @@ int roar_conv2(void * out, void * in,
  if ( from->rate < to->rate )
   needed_buffer *= (float)to->rate/(float)from->rate;
 
- ROAR_WARN("roar_conv2(*): needed_buffer=%u, bufsize=%u", needed_buffer, bufsize);
+ ROAR_DBG("roar_conv2(*): needed_buffer=%u, bufsize=%u", needed_buffer, bufsize);
 
  // chjeck if we have enogth RAM to convert
  if ( needed_buffer > bufsize )
@@ -767,10 +766,10 @@ int roar_conv2(void * out, void * in,
  if ( from->rate != to->rate || from->channels != to->channels )
   need_signed = 1;
 
-  ROAR_WARN("roar_conv2(*): need_signed=%i", need_signed);
+  ROAR_DBG("roar_conv2(*): need_signed=%i", need_signed);
 
  if ( ROAR_CODEC_BYTE_ORDER(from->codec) != ROAR_CODEC_NATIVE_ENDIAN ) {
-  ROAR_WARN("roar_conv2(*): doing bo input conv");
+  ROAR_DBG("roar_conv2(*): doing bo input conv");
   if ( roar_conv_endian(out, cin, samples,
        ROAR_CODEC_BYTE_ORDER(from->codec), ROAR_CODEC_NATIVE_ENDIAN, from->bits) == -1 ) {
    return -1;
@@ -779,7 +778,7 @@ int roar_conv2(void * out, void * in,
  }
 
  if ( to->bits > from->bits ) {
-  ROAR_WARN("roar_conv2(*): bits: %i->%i", from->bits, to->bits);
+  ROAR_DBG("roar_conv2(*): bits: %i->%i", from->bits, to->bits);
   if ( roar_conv_bits(out, cin, samples, from->bits, to->bits) == -1 )
    return -1;
 
@@ -788,7 +787,7 @@ int roar_conv2(void * out, void * in,
  }
 
  if ( need_signed && ! ROAR_CODEC_IS_SIGNED(from->codec) ) {
-  ROAR_WARN("roar_conv2(*): sign: unsigned->signed");
+  ROAR_DBG("roar_conv2(*): sign: unsigned->signed");
   if ( roar_conv_signedness(out, cin, samples,
                             ROAR_CODEC_IS_SIGNED(from->codec), ROAR_CODEC_IS_SIGNED(to->codec),
                             cinfo.bits) == -1 )
@@ -799,7 +798,7 @@ int roar_conv2(void * out, void * in,
  }
 
  if ( to->channels > from->channels ) {
-  ROAR_WARN("roar_conv2(*): channels: %i->%i", from->channels, to->channels);
+  ROAR_DBG("roar_conv2(*): channels: %i->%i", from->channels, to->channels);
   if ( roar_conv_chans(out, cin, samples/from->channels, from->channels, to->channels, cinfo.bits) == -1 )
    return -1;
 
@@ -808,7 +807,7 @@ int roar_conv2(void * out, void * in,
  }
 
  if ( cinfo.channels != to->channels ) {
-  ROAR_WARN("roar_conv2(*): channels: %i->%i", cinfo.channels, to->channels);
+  ROAR_DBG("roar_conv2(*): channels: %i->%i", cinfo.channels, to->channels);
   if ( roar_conv_chans(out, cin, samples, cinfo.channels, to->channels, cinfo.bits) == -1 )
    return -1;
 
@@ -817,7 +816,7 @@ int roar_conv2(void * out, void * in,
  }
 
  if ( ROAR_CODEC_IS_SIGNED(cinfo.codec) != ROAR_CODEC_IS_SIGNED(to->codec) ) {
-  ROAR_WARN("roar_conv2(*): sign: ?(%i)->?(%i)", ROAR_CODEC_IS_SIGNED(cinfo.codec), ROAR_CODEC_IS_SIGNED(to->codec));
+  ROAR_DBG("roar_conv2(*): sign: ?(%i)->?(%i)", ROAR_CODEC_IS_SIGNED(cinfo.codec), ROAR_CODEC_IS_SIGNED(to->codec));
   if ( roar_conv_signedness(out, cin, samples,
                             ROAR_CODEC_IS_SIGNED(cinfo.codec), ROAR_CODEC_IS_SIGNED(to->codec),
                             cinfo.bits) == -1 )
@@ -828,7 +827,7 @@ int roar_conv2(void * out, void * in,
  }
 
  if ( cinfo.bits != to->bits ) {
-  ROAR_WARN("roar_conv2(*): bits: %i->%i", cinfo.bits, to->bits);
+  ROAR_DBG("roar_conv2(*): bits: %i->%i", cinfo.bits, to->bits);
   if ( roar_conv_bits(out, cin, samples, cinfo.bits, to->bits) == -1 )
    return -1;
 
@@ -837,7 +836,7 @@ int roar_conv2(void * out, void * in,
  }
 
  if ( ROAR_CODEC_BYTE_ORDER(to->codec) != ROAR_CODEC_NATIVE_ENDIAN ) {
-  ROAR_WARN("roar_conv2(*): doing bo output conv");
+  ROAR_DBG("roar_conv2(*): doing bo output conv");
   if ( roar_conv_endian(out, cin, samples,
        ROAR_CODEC_NATIVE_ENDIAN, ROAR_CODEC_BYTE_ORDER(to->codec), to->bits) == -1 ) {
    return -1;
@@ -845,7 +844,7 @@ int roar_conv2(void * out, void * in,
   cin = out;
  }
 
- ROAR_WARN("roar_conv2(*) = 0");
+ ROAR_DBG("roar_conv2(*) = 0");
  return 0;
 }
 
