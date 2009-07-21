@@ -8,6 +8,10 @@ v. 0.3beta0 - ?
 	* added flag 'mmap'
 	* added lib libroarmidi and libroarlight
 	* added OpenSLP support
+	* rewote fillmixbuer2 code
+	* added a roar_conv2() with a more clear API
+	* added support to write pidfile
+	* added support for encoding 32 bit Vorbis streams
 
 v. 0.2 - Thu May 21 2009 21:00
 	* do a some more testings for functions not existing on win32
