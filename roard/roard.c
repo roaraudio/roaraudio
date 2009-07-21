@@ -1037,11 +1037,13 @@ int main (void) {
 #endif
 
 #ifdef SUPPORT_PIDFILE
- if ( roar_vio_open_file(&pidfile_vio, pidfile, O_WRONLY|O_CREAT, 0644) == -1 ) {
-  ROAR_ERR("Can not write pidfile: %s", pidfile);
- } else {
-  roar_vio_printf(&pidfile_vio, "%i\n", getpid());
-  roar_vio_close(&pidfile_vio);
+ if ( pidfile != NULL ) {
+  if ( roar_vio_open_file(&pidfile_vio, pidfile, O_WRONLY|O_CREAT, 0644) == -1 ) {
+   ROAR_ERR("Can not write pidfile: %s", pidfile);
+  } else {
+   roar_vio_printf(&pidfile_vio, "%i\n", getpid());
+   roar_vio_close(&pidfile_vio);
+  }
  }
 #endif
 
