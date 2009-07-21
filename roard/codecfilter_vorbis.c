@@ -28,6 +28,8 @@
 
 #ifdef ROAR_HAVE_LIBVORBISFILE
 
+#define FIFAC ((float)((uint64_t)1<<(ROAR_VORBIS_BITS-1)))
+
 int _g_cf_vorbis_vfvio_return_err (void) {
  return -1;
 }
@@ -98,6 +100,7 @@ int cf_vorbis_open(CODECFILTER_USERDATA_T * inst, int codec,
   return -1;
  }
 */
+ s->info.bits  = ROAR_VORBIS_BITS;
 #else
  free(self);
  return -1;
@@ -140,7 +143,15 @@ int cf_vorbis_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  int i, c;
  int chans;
  int end;
+#if ROAR_VORBIS_BITS == 8
+ int8_t  * data = (int8_t  *) buf;
+#elif ROAR_VORBIS_BITS == 16
  int16_t * data = (int16_t *) buf;
+#elif ROAR_VORBIS_BITS == 32
+ int32_t * data = (int32_t *) buf;
+#else
+#error value of ROAR_VORBIS_BITS not supported
+#endif
 
  if ( ! self->opened ) {
   if ( !self->encoding ) {
@@ -168,21 +179,21 @@ int cf_vorbis_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  } else {
   encbuf = vorbis_analysis_buffer(&(self->encoder.vd), len /* TODO: need to lookup the menaing of this */);
   chans  = s->info.channels;
-  end    = len/(2*chans);
+  end    = len*8/(ROAR_VORBIS_BITS*chans);
 
   if ( chans == 1 ) { // use optimized code
    for (i = 0; i < end; i++)
-    encbuf[0][i] = data[i]/32768.0;
+    encbuf[0][i] = data[i]/FIFAC;
 
   } else if ( chans == 2 ) { // use optimized code
    for (i = 0; i < end; i++) {
-    encbuf[0][i] = data[2*i  ]/32768.0;
-    encbuf[1][i] = data[2*i+1]/32768.0;
+    encbuf[0][i] = data[2*i  ]/FIFAC;
+    encbuf[1][i] = data[2*i+1]/FIFAC;
    }
   } else { // use generic multi channel code
    for (i = 0; i < end; i++) {
     for (c = 0; c < chans; c++) {
-     encbuf[c][i] = data[chans*i+c]/32768.0;
+     encbuf[c][i] = data[chans*i+c]/FIFAC;
     }
    }
   }
