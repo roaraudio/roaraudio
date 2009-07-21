@@ -877,12 +877,15 @@ int streams_fill_mixbuffer2 (int id, struct roar_audio_info * info) {
 
   if ( roar_buffer_get_data(bufbuf, &bufdata) == -1 )
    return -1;
+  indata  = bufdata;
  } else {
   indata  = outdata;
   bufdata = outdata;
  }
 
  inlen_got = inlen;
+
+ ROAR_DBG("streams_fill_mixbuffer2(id=%i, info=...): inlen_got=%u", id, inlen_got);
 
  if ( stream_shift_out_buffer(id, indata, &inlen_got) == -1 ) {
   if ( ss->is_new ) {
