@@ -43,6 +43,8 @@ OSS_DEV="none"
 PROC_NET_DECNET="/proc/net/decnet"
 TTY_DEV="none"
 
+VORBIS_BITS=32
+
 FSYNC=false
 
 DEFAULT_GRP=''
@@ -199,6 +201,7 @@ do
    echo '                              This is the same as allways using --no-listen'
    echo
    echo '--roard-cfreq FREQ          - Sets the cycle frequency of roard in Hz.'
+   echo '--vorbis-bits BITS           - Sets bits per sample used by Vorbis code'
    echo
    echo '--without-libao             - Disable build of libao plugin'
    echo '--without-xmms              - Disable build of XMMS plugin'
@@ -336,6 +339,10 @@ do
   ;;
   '--roard-cfreq')
    ROARD_CFREQ="$2"
+   shift;
+  ;;
+  '--vorbis-bits')
+   VORBIS_BITS="$2"
    shift;
   ;;
   '--without-libao')
@@ -745,7 +752,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.184 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.185 $ of RoarAudio
  */
 
 EOF
@@ -784,6 +791,7 @@ EOF
  [ "$ROAR_DRIVER_CODEC"   = '' ] || echo "#define ROAR_DRIVER_CODEC     \"$ROAR_DRIVER_CODEC\""
  echo
  [ "$ROARD_CFREQ"         = '' ] || echo "#define ROAR_OUTPUT_CFREQ     $ROARD_CFREQ"
+ echo "#define ROAR_VORBIS_BITS     $VORBIS_BITS"
  echo
  $MINIMAL      && echo '#define ROAR_MINIMAL'
  $ALAW         && echo '#define ROAR_SUPPORT_ALAW'
