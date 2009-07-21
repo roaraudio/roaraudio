@@ -806,6 +806,16 @@ int roar_conv2(void * out, void * in,
   cinfo.channels = to->channels;
  }
 
+//--//
+ if ( from->rate != to->rate ) {
+  if ( roar_conv_rate(out, cin, samples, from->rate, to->rate, cinfo.bits, cinfo.channels) == -1 )
+   return -1;
+
+  cin            = out;
+  samples        = (float)samples * (float)to->rate / (float)from->rate;
+  cinfo.rate     = to->rate;
+ }
+
  if ( cinfo.channels != to->channels ) {
   ROAR_DBG("roar_conv2(*): channels: %i->%i", cinfo.channels, to->channels);
   if ( roar_conv_chans(out, cin, samples, cinfo.channels, to->channels, cinfo.bits) == -1 )
