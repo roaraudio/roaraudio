@@ -32,6 +32,7 @@
  *  them with any software that uses libesd, libartsc or libpulse*.
  */
 
+#define DEBUG
 #include "libroardsp.h"
 //#define free(p) {ROAR_WARN("free(%p) = ?", (p)); free((p)); ROAR_WARN("free(%p): OK", (p));}
 
@@ -744,12 +745,15 @@ int roar_conv2(void * out, void * in,
  memcpy(&cinfo, from, sizeof(cinfo));
 
  // calcumate number of input samples:
- samples = (inlen * 8) / (from->channels * from->bits);
+ samples = (inlen * 8) / (from->bits);
+
+ ROAR_WARN("roar_conv2(*): input samples: %i", samples);
 
  // calculate size per frame
  needed_buffer  = ROAR_MAX(from->channels, to->channels) * ROAR_MAX(from->bits, to->bits) / 8;
 
  needed_buffer *= samples;
+ needed_buffer /= from->channels;
 
  if ( from->rate < to->rate )
   needed_buffer *= (float)to->rate/(float)from->rate;
@@ -796,7 +800,7 @@ int roar_conv2(void * out, void * in,
 
  if ( to->channels > from->channels ) {
   ROAR_WARN("roar_conv2(*): channels: %i->%i", from->channels, to->channels);
-  if ( roar_conv_chans(out, cin, samples, from->channels, to->channels, cinfo.bits) == -1 )
+  if ( roar_conv_chans(out, cin, samples/from->channels, from->channels, to->channels, cinfo.bits) == -1 )
    return -1;
 
   cin            = out;
