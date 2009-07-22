@@ -43,6 +43,12 @@ void on_sig_chld (int signum) {
  signal(SIGCHLD, on_sig_chld);
 }
 
+void on_sig_usr1 (int signum) {
+ ROAR_DBG("got SIGUSR1");
+
+ cleanup_listen_socket(1);
+}
+
 #endif
 
 

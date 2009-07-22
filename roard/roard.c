@@ -1029,6 +1029,7 @@ int main (void) {
 #if !defined(ROAR_TARGET_MICROCONTROLLER) && !defined(ROAR_TARGET_WIN32)
  signal(SIGINT,  on_sig_int);
  signal(SIGCHLD, on_sig_chld);
+ signal(SIGUSR1, on_sig_usr1);
  signal(SIGPIPE, SIG_IGN);  // ignore broken pipes
 #endif
 
