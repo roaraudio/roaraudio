@@ -403,7 +403,7 @@ gst_roarmixer_track_new (GstRoarMixer * mixer,
   metaname = m.value;
  }
 
- if ( roar_stream_get_name(&(mixer->con), &s, streamname, 1024) == 0 )
+ if ( roar_stream_get_name(&(mixer->con), &s, streamname, 1024) != 0 )
   *streamname = 0;
 
   switch (s.dir) {
