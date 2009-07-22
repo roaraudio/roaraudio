@@ -24,6 +24,10 @@
 
 #include <roaraudio.h>
 
+#define P_UNKNOWN 0
+#define P_HTTP    1
+#define P_GOPHER  2
+
 void usage (void) {
  printf("roarradio [OPTIONS]... [FILE|URL]\n");
 
@@ -50,11 +54,12 @@ int main (int argc, char * argv[]) {
  int    in = -1;
  char * file = NULL;
  char * host;
- int    port = 80;
+ int    port;
  FILE * http;
  struct roar_connection con[1];
  struct roar_stream     stream[1];
  char buf0[80], buf1[80];
+ int proto = P_UNKNOWN;
 
  for (i = 1; i < argc; i++) {
   k = argv[i];
@@ -85,14 +90,17 @@ int main (int argc, char * argv[]) {
   file = "/dev/stdin";
   in   = ROAR_STDIN;
  } else {
-  if ( strncmp(file, "http://", 7) != 0 ) {
-   if ( (in = open(file, O_RDONLY, 0644)) == -1 ) {
-    ROAR_ERR("can not open file: %s: %s", file, strerror(errno));
-    return 1;
-   }
-  } else {
-   host = file+7;
+  if ( strncmp(file, "http://", 7) == 0 ) {
+   proto = P_HTTP;
+   host  = file+7;
+   port  = 80;
+  } else if ( strncmp(file, "gopher://", 9) == 0 ) {
+   proto = P_GOPHER;
+   host  = file+9;
+   port  = 70;
+  }
 
+  if ( proto == P_HTTP || proto == P_GOPHER ) {
    for (i = 0; host[i] != 0; i++) {
     if ( host[i] == ':' ) {
      port    = atoi(host+i+1); // atoi() ignores the rest after '/'
@@ -121,34 +129,55 @@ int main (int argc, char * argv[]) {
     *file = '/';
    }
 
-   if ( (http = fdopen(in, "r+")) == NULL ) {
-    ROAR_ERR("can not create FILE* object: %s", strerror(errno));
-    return 0;
+   switch (proto) {
+    case P_HTTP:
+      if ( (http = fdopen(in, "r+")) == NULL ) {
+       ROAR_ERR("can not create FILE* object: %s", strerror(errno));
+       return 0;
+      }
+
+      fprintf(http, "GET %s HTTP/1.1\r\n", file);
+      fprintf(http, "Host: %s\r\n", host);
+      fprintf(http, "User-Agent: roarradio $Revision: 1.4 $\r\n");
+      fprintf(http, "Connection: close\r\n");
+      fprintf(http, "\r\n");
+      fflush(http);
+
+      if ( fscanf(http, "%79s %i %79s\n", buf0, &port, buf1) != 3 ) {
+       ROAR_ERR("HTTP protocoll error!, no initial HTTP/1.x-line!");
+       return 1;
+      }
+      if ( port != 200 ) { // 200 = HTTP OK
+       ROAR_ERR("HTTP Error: %i - %s", port, buf1);
+       return 1;
+      }
+
+      *buf0 = 0;
+
+      while (*buf0 != '\r' && *buf0 != '\n') {
+       fgets(buf0, 80, http);
+      }
+
+      fflush(http);
+     break;
+    case P_GOPHER:
+      if ( file[0] == 0 ) {
+       file[0] = '/';
+       file[1] = 0;
+      } else if ( file[0] == '/' && file[1] != 0 && file[2] == '/' ) { // strip the type prefix
+       file += 2;
+      }
+      // TODO: do some error checks here
+      write(in, file, strlen(file));
+      write(in, "\r\n", 2);
+      ROAR_SHUTDOWN(in, SHUT_WR);
+     break;
    }
-
-   fprintf(http, "GET %s HTTP/1.1\r\n", file);
-   fprintf(http, "Host: %s\r\n", host);
-   fprintf(http, "User-Agent: roarradio $Revision: 1.3 $\r\n");
-   fprintf(http, "Connection: close\r\n");
-   fprintf(http, "\r\n");
-   fflush(http);
-
-   if ( fscanf(http, "%79s %i %79s\n", buf0, &port, buf1) != 3 ) {
-    ROAR_ERR("HTTP protocoll error!, no initial HTTP/1.x-line!");
+  } else {
+   if ( (in = open(file, O_RDONLY, 0644)) == -1 ) {
+    ROAR_ERR("can not open file: %s: %s", file, strerror(errno));
     return 1;
    }
-   if ( port != 200 ) { // 200 = HTTP OK
-    ROAR_ERR("HTTP Error: %i - %s", port, buf1);
-    return 1;
-   }
-
-   *buf0 = 0;
-
-   while (*buf0 != '\r' && *buf0 != '\n') {
-    fgets(buf0, 80, http);
-   }
-
-   fflush(http);
   }
  }
 
