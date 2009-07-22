@@ -415,12 +415,20 @@ gst_roarmixer_track_new (GstRoarMixer * mixer,
     break;
   }
 
+#if 0
   if ( !*streamname && metaname == NULL )
    sprintf(streamname, "[Stream %i]", stream_id);
 
   sprintf(buf, "%s\n%s",  clientname ? clientname : "[Unknown]",
                          *streamname ? streamname : metaname
                          );
+#else
+  if ( *streamname ) {
+   strcpy(buf, streamname);
+  } else {
+   sprintf(buf, "Stream %i/%s", stream_id, clientname);
+  }
+#endif
 
   roartrack = g_object_new(GST_TYPE_ROARMIXER_TRACK, NULL);
   ROAR_WARN("gst_roarmixer_track_new(*): roartrack=%p", roartrack);
