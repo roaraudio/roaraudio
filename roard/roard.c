@@ -316,6 +316,11 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
     error++;
    }
 
+  } else if ( strcmp(k, "name") == 0 ) {
+   if ( streams_set_name(stream, v) == -1 ) {
+    ROAR_ERR("add_output(*): Can not set Stream name");
+    error++;
+   }
 
   } else if ( strcmp(k, "meta") == 0 ) {
    streams_set_flag(stream, ROAR_FLAG_META);
