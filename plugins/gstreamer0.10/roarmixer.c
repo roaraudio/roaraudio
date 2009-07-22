@@ -116,7 +116,7 @@ gst_roar_mixer_element_change_state (GstElement * element,
   switch (transition) {
     case GST_STATE_CHANGE_NULL_TO_READY:
       if (!this->mixer) {
-        this->mixer = gst_roarmixer_new ("/dev/mixer", GST_ROAR_MIXER_ALL);
+        this->mixer = gst_roarmixer_new(NULL, GST_ROAR_MIXER_ALL);
       }
       break;
       break;
@@ -172,7 +172,7 @@ GstRoarMixer*    gst_roarmixer_new                (const gchar *device,
     goto error;
 */
 
-  if ( roar_simple_connect(&(ret->con), NULL, "gstroarmixer") == -1 )
+  if ( roar_simple_connect(&(ret->con), (char*)device, "gstroarmixer") == -1 )
    goto error;
 
   ROAR_WARN("gst_roarmixer_new(device='%s', dir=0x%.4x) = %p", device, dir, ret);
