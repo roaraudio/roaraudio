@@ -41,7 +41,10 @@ void usage (void) {
  printf(
         " --daemon              - Bring the server into background after init\n"
         " --terminate           - Terminate after last client quited\n"
+        " --start               - No op parameter (starting roard is default operation)\n"
         " --restart             - Trys to stop an old instance and start a new with new settings\n"
+        " --stop                - Stops a running roard (provide --pidfile!)\n"
+        " --shutdown            - Terminates a running roard (provide --pidfile!)\n"
         " --realtime            - Trys to get realtime priority,\n"
         "                         give multible times for being more realtime\n"
         " --chroot DIR          - chroots to the given dir\n"
@@ -134,13 +137,14 @@ void usage (void) {
 }
 #endif
 
-int restart_server (char * server) {
+int restart_server (char * server, int terminate) {
  struct roar_connection con;
+
  if ( roar_connect(&con, server) == -1 ) {
   return -1;
  }
 
- if ( roar_terminate(&con, 1) == -1 ) {
+ if ( roar_terminate(&con, terminate) == -1 ) {
   return -1;
  }
 
@@ -621,14 +625,39 @@ int main (void) {
    usage();
    return 0;
 
+  } else if ( strcmp(k, "--start") == 0 ) {
+   // this is a no op
   } else if ( strcmp(k, "--restart") == 0 ) {
 #ifdef ROAR_SUPPORT_LISTEN
-   if ( restart_server(server) == -1 ) {
+   if ( restart_server(server, 1) == -1 ) {
     ROAR_WARN("Can not terminate old server (not running at %s?), tring to continue anyway", server);
    }
 #else
    ROAR_ERR("--restart not supported");
 #endif
+  } else if ( strcmp(k, "--shutdown") == 0 ) {
+#ifdef ROAR_SUPPORT_LISTEN
+   if ( restart_server(server, 1) == -1 ) {
+    ROAR_WARN("Can not terminate old server (not running at %s?)", server);
+    return 1;
+   }
+   return 0;
+#else
+   ROAR_ERR("--shutdown not supported");
+   return 1;
+#endif
+  } else if ( strcmp(k, "--stop") == 0 ) {
+#ifdef ROAR_SUPPORT_LISTEN
+   if ( restart_server(server, 1) == -1 ) {
+    ROAR_WARN("Can not stop old server (not running at %s?)", server);
+    return 1;
+   }
+   return 0;
+#else
+   ROAR_ERR("--stop not supported");
+   return 1;
+#endif
+
 
   } else if ( strcmp(k, "--demon") == 0 || strcmp(k, "--daemon") == 0 ) {
 #ifdef ROAR_HAVE_FORK
