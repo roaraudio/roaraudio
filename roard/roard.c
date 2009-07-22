@@ -157,7 +157,7 @@ int restart_server (char * server, int terminate) {
     buf[79]  = 0;
     pid = atoi(buf);
     if ( terminate ) {
-     ok = -1;
+     ok = kill(pid, SIGUSR1);
     } else {
      ok = kill(pid, SIGINT);
     }
