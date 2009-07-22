@@ -159,8 +159,6 @@ GstRoarMixer*    gst_roarmixer_new                (const gchar *device,
 
   ROAR_WARN("gst_roarmixer_new(device='%s', dir=0x%.4x) = ?", device, dir);
 
-  g_return_val_if_fail(device != NULL, NULL);
-
   ret = g_new0(GstRoarMixer, 1);
 
   ret->device = g_strdup(device);
