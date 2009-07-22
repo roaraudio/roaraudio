@@ -139,6 +139,39 @@ void usage (void) {
 
 int restart_server (char * server, int terminate) {
  struct roar_connection con;
+#ifdef ROAR_HAVE_KILL
+ char buf[80];
+ ssize_t l;
+ struct roar_vio_calls fh;
+ pid_t pid;
+ int ok;
+
+ if ( pidfile != NULL ) {
+  if ( roar_vio_open_file(&fh, pidfile, O_RDONLY, 0644) == -1 ) {
+   ROAR_WARN("restart_server(*): Can not read pidfile: %s", pidfile);
+  } else {
+   l = roar_vio_read(&fh, buf, 80);
+   roar_vio_close(&fh);
+   if ( l > 0 ) {
+    buf[l-1] = 0;
+    buf[79]  = 0;
+    pid = atoi(buf);
+    if ( terminate ) {
+     ok = -1;
+    } else {
+     ok = kill(pid, SIGINT);
+    }
+    if ( ok == 0 ) {
+     return 0;
+    } else {
+     ROAR_WARN("restart_server(*): Can not kill roard by pidfile");
+    }
+   } else {
+    ROAR_WARN("restart_server(*): Can not find a PID in the pidfile");
+   }
+  }
+ }
+#endif
 
  if ( roar_connect(&con, server) == -1 ) {
   return -1;
@@ -648,7 +681,7 @@ int main (void) {
 #endif
   } else if ( strcmp(k, "--stop") == 0 ) {
 #ifdef ROAR_SUPPORT_LISTEN
-   if ( restart_server(server, 1) == -1 ) {
+   if ( restart_server(server, 0) == -1 ) {
     ROAR_WARN("Can not stop old server (not running at %s?)", server);
     return 1;
    }
