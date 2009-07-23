@@ -1,4 +1,4 @@
-TARGETS=roarcat roarcatad roarcat2sock roarcatsendfile roarcatplay roarcatpassfh roarbidir roarctl roarlight roarmon roarsockconnect roartypes roarvorbis roarvumeter roarfilt roarsin roar-config polytest roarsocktypes roarshout roarradio roarfctest roarmonhttp pinentrytest zcattest pgptest roarcatvio pipetest
+TARGETS=roarcat roarcatad roarcat2sock roarcatsendfile roarcatplay roarcatpassfh roarbidir roarphone roarctl roarlight roarmon roarsockconnect roartypes roarvorbis roarvumeter roarfilt roarsin roar-config polytest roarsocktypes roarshout roarradio roarfctest roarmonhttp pinentrytest zcattest pgptest roarcatvio pipetest
 TOOLS=roarify
 
 include ../Makefile.conf
@@ -46,6 +46,8 @@ roarmonhttp: roarmonhttp.o
 	$L
 roarbidir: roarbidir.o
 	$L
+roarphone: roarphone.o driver.o
+	${CC} ${LDFLAGS} -o roarphone roarphone.o driver.o $(DSPLIBS)
 roarfilt: roarfilt.o
 	${CC} ${LDFLAGS} -o roarfilt roarfilt.o $(DSPLIBS)
 roarsin: roarsin.o
