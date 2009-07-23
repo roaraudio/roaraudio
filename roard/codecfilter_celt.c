@@ -53,7 +53,8 @@ int cf_celt_open(CODECFILTER_USERDATA_T * inst, int codec,
  self->lookahead            = self->frame_size;
  self->encoder              = NULL;
  self->decoder              = NULL;
- self->opened               = 0;
+ self->opened_encoder       = 0;
+ self->opened_decoder       = 0;
  self->s_buf                = s->info.channels * self->frame_size * 2;
  self->ibuf                 = malloc(self->s_buf);
  self->obuf                 = malloc(self->s_buf);
@@ -89,6 +90,9 @@ int cf_celt_open(CODECFILTER_USERDATA_T * inst, int codec,
  if ( s->dir == ROAR_DIR_PLAY ) {
    self->decoder = celt_decoder_create(self->mode);
  } else if ( s->dir == ROAR_DIR_MONITOR || s->dir == ROAR_DIR_OUTPUT ) {
+   self->encoder = celt_encoder_create(self->mode);
+ } else if ( s->dir == ROAR_DIR_BIDIR ) {
+   self->decoder = celt_decoder_create(self->mode);
    self->encoder = celt_encoder_create(self->mode);
  } else {
   celt_mode_destroy(self->mode);
@@ -144,7 +148,7 @@ int cf_celt_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
 
 // printf("buf=%p, len=%i\n", buf, len);
 
- if ( !self->opened ) {
+ if ( !self->opened_decoder ) {
   errno = ENOSYS;
   if ( stream_vio_s_read(self->stream, magic, ROAR_CELT_MAGIC_LEN) != ROAR_CELT_MAGIC_LEN )
    return -1;
@@ -152,7 +156,7 @@ int cf_celt_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
    return -1;
 
   errno = 0;
-  self->opened = 1;
+  self->opened_decoder = 1;
  }
 
  if ( self->fi_rest ) {
@@ -220,10 +224,10 @@ int cf_celt_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  uint16_t pkglen_net, pkglen;
  unsigned char cbits[BS+2];
 
- if ( !self->opened ) {
+ if ( !self->opened_encoder ) {
   if ( stream_vio_s_write(self->stream, ROAR_CELT_MAGIC, ROAR_CELT_MAGIC_LEN) != ROAR_CELT_MAGIC_LEN )
    return -1;
-  self->opened = 1;
+  self->opened_encoder = 1;
  }
 
  if ( (self->fo_rest + len) > fs2 ) {
