@@ -55,7 +55,29 @@ int open_stream (struct roar_vio_calls * vio, char * server, struct roar_audio_i
 }
 
 int run_stream (struct roar_vio_calls * s0, struct roar_vio_calls * s1, struct roar_audio_info * info) {
- return -1;
+ size_t len;
+ char * buf;
+ ssize_t l;
+
+ len = (info->rate / 100) * info->channels * info->bits / 8;
+
+ if ( (buf = malloc(len)) == NULL )
+  return -1;
+
+ while (1) {
+  if ( (l = roar_vio_read(s0, buf, len)) <= 0 )
+   break;
+  if ( roar_vio_write(s1, buf, l) != l )
+   break;
+  if ( (l = roar_vio_read(s1, buf, len)) <= 0 )
+   break;
+  if ( roar_vio_write(s0, buf, l) != l )
+   break;
+ }
+
+ free(buf);
+
+ return 0;
 }
 
 int main (int argc, char * argv[]) {
