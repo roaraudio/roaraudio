@@ -37,6 +37,13 @@
 
 #include <roaraudio.h>
 
+struct roar_cdriver {
+ char * name;
+ int  (*open)(struct roar_vio_calls * calls, char * name, char * dev, struct roar_audio_info * info, int dir);
+};
+
+int roar_cdriver_open(struct roar_vio_calls * calls, char * name, char * dev, struct roar_audio_info * info, int dir);
+
 #endif
 
 //ll
