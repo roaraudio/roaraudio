@@ -26,6 +26,8 @@
 
 #define BUFSIZE 1024
 
+#define DRIVER  "oss"
+
 void usage (void) {
  printf("roarcat [OPTIONS]...\n");
 
@@ -42,6 +44,12 @@ void usage (void) {
 }
 
 int main (int argc, char * argv[]) {
+ struct roar_audio_info info = {.rate     = ROAR_RATE_DEFAULT,
+                                .bits     = ROAR_BITS_DEFAULT,
+                                .channels = ROAR_CHANNELS_DEFAULT,
+                                .codec    = ROAR_CODEC_DEFAULT
+                               };
+ struct roar_vio_calls driver;
  char * server   = NULL;
  char * k;
  int    i;
@@ -51,16 +59,14 @@ int main (int argc, char * argv[]) {
 
   if ( strcmp(k, "--server") == 0 ) {
    server = argv[++i];
-/*
   } else if ( strcmp(k, "--rate") == 0 ) {
-   rate = atoi(argv[++i]);
+   info.rate = atoi(argv[++i]);
   } else if ( strcmp(k, "--bits") == 0 ) {
-   bits = atoi(argv[++i]);
+   info.bits = atoi(argv[++i]);
   } else if ( strcmp(k, "--channels") == 0 || strcmp(k, "--chans") == 0 ) {
-   channels = atoi(argv[++i]);
+   info.channels = atoi(argv[++i]);
   } else if ( strcmp(k, "--codec") == 0 ) {
-   codec = roar_str2codec(argv[++i]);
-*/
+   info.codec = roar_str2codec(argv[++i]);
   } else if ( strcmp(k, "--help") == 0 ) {
    usage();
    return 0;
