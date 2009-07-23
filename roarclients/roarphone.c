@@ -46,13 +46,25 @@ void usage (void) {
 
 }
 
+int open_stream (struct roar_vio_calls * vio, char * server, struct roar_audio_info * info) {
+ return roar_vio_simple_stream(vio,
+                               info->rate, info->channels, info->bits, info->codec,
+                               server,
+                               ROAR_DIR_BIDIR,
+                               "roarphone");
+}
+
+int run_stream (struct roar_vio_calls * s0, struct roar_vio_calls * s1, struct roar_audio_info * info) {
+ return -1;
+}
+
 int main (int argc, char * argv[]) {
  struct roar_audio_info info = {.rate     = ROAR_RATE_DEFAULT,
                                 .bits     = ROAR_BITS_DEFAULT,
                                 .channels = ROAR_CHANNELS_DEFAULT,
                                 .codec    = ROAR_CODEC_DEFAULT
                                };
- struct roar_vio_calls dvio;
+ struct roar_vio_calls dvio, svio;
  char * driver   = DRIVER;
  char * device   = NULL;
  char * server   = NULL;
@@ -90,6 +102,14 @@ int main (int argc, char * argv[]) {
   return 1;
  }
 
+ if ( open_stream(&svio, server, &info) == -1 ) {
+  roar_vio_close(&dvio);
+  return 2;
+ }
+
+ run_stream(&svio, &dvio, &info);
+
+ roar_vio_close(&svio);
  roar_vio_close(&dvio);
 
  return 0;
