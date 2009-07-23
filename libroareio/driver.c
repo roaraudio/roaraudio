@@ -25,4 +25,19 @@
 #include <roaraudio.h>
 #include "driver.h"
 
+struct roar_cdriver _g_roar_cdriver[] = {
+ {NULL, NULL}
+};
+
+int roar_cdriver_open(struct roar_vio_calls * calls, char * name, char * dev, struct roar_audio_info * info, int dir) {
+ int i;
+
+ for (i = 0; _g_roar_cdriver[i].name != NULL; i++) {
+  return _g_roar_cdriver[i].open(calls, name, dev, info, dir);
+ }
+
+ return -1;
+}
+
+
 //ll
