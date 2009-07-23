@@ -39,6 +39,8 @@ void usage (void) {
         "  --bits   BITS      - Set bits per sample\n"
         "  --chans  CHANNELS  - Set number of channels\n"
         "  --codec  CODEC     - Set the codec\n"
+        "  --driver DRIVER    - Set the driver\n"
+        "  --device DEVICE    - Set the device\n"
         "  --help             - Show this help\n"
        );
 
@@ -70,6 +72,10 @@ int main (int argc, char * argv[]) {
    info.channels = atoi(argv[++i]);
   } else if ( strcmp(k, "--codec") == 0 ) {
    info.codec = roar_str2codec(argv[++i]);
+  } else if ( strcmp(k, "--driver") == 0 ) {
+   driver = argv[++i];
+  } else if ( strcmp(k, "--device") == 0 ) {
+   device = argv[++i];
   } else if ( strcmp(k, "--help") == 0 ) {
    usage();
    return 0;
