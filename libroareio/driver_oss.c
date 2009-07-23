@@ -25,8 +25,108 @@
 #include <roaraudio.h>
 #include "driver.h"
 
+#if defined(ROAR_HAVE_OSS_BSD) || defined(ROAR_HAVE_OSS)
+
+#if defined(__OpenBSD__) || defined(__NetBSD__)
+#include <soundcard.h>
+#else
+#include <sys/soundcard.h>
+#endif
+#include <sys/ioctl.h>
+
+#define _err() roar_vio_close(calls); return -1
+
 int roar_cdriver_oss(struct roar_vio_calls * calls, char * name, char * dev, struct roar_audio_info * info, int dir) {
- return -1;
+ int fh;
+ int tmp, ctmp;
+
+ if ( dev == NULL )
+  dev = ROAR_DEFAULT_OSS_DEV;
+
+ if ( dev == NULL )
+  return -1;
+
+ if ( roar_vio_open_file(calls, dev, O_RDWR, 0644) == -1 )
+  return -1;
+
+ if ( roar_vio_ctl(calls, ROAR_VIO_CTL_GET_FH, &fh) == -1 ) {
+  _err();
+ }
+
+// channels:
+#ifdef SNDCTL_DSP_CHANNELS
+ tmp = info->channels;
+
+ if ( ioctl(fh, SNDCTL_DSP_CHANNELS, &tmp) == -1 ) {
+  _err();
+ }
+
+ if ( tmp != info->channels ) {
+  _err();
+ }
+#else
+ switch (info->channels) {
+  case  1: tmp = 0; break;
+  case  2: tmp = 1; break;
+  default: _err();
+ }
+
+ if ( ioctl(fh, SNDCTL_DSP_STEREO, &tmp) == -1 ) {
+  _err();
+ }
+#endif
+
+// codec/bits:
+ if ( info->codec != ROAR_CODEC_ALAW && info->codec != ROAR_CODEC_MULAW && info->bits != 16 ) {
+  // other modes are currently not supported
+  _err();
+ }
+
+ switch (info->codec) {
+  case ROAR_CODEC_PCM_S_LE:
+   tmp = AFMT_S16_LE;
+  case ROAR_CODEC_PCM_S_BE:
+   tmp = AFMT_S16_BE;
+  case ROAR_CODEC_PCM_U_LE:
+   tmp = AFMT_U16_LE;
+  case ROAR_CODEC_PCM_U_BE:
+   tmp = AFMT_U16_BE;
+   break;
+  case ROAR_CODEC_ALAW:
+    tmp = AFMT_A_LAW;
+   break;
+  case ROAR_CODEC_MULAW:
+    tmp = AFMT_MU_LAW;
+   break;
+ }
+
+ ctmp = tmp;
+#ifdef SNDCTL_DSP_SETFMT
+ if ( ioctl(fh, SNDCTL_DSP_SETFMT, &tmp) == -1 ) {
+#else
+ if ( ioctl(fh, SNDCTL_DSP_SAMPLESIZE, &tmp) == -1 ) {
+#endif
+  _err();
+ }
+
+ if ( tmp != ctmp ) {
+  _err();
+ }
+
+// rate:
+ tmp = info->rate;
+
+ if ( ioctl(fh, SNDCTL_DSP_SPEED, &tmp) == -1 ) {
+  _err();
+ }
+
+ if ( tmp != info->rate ) {
+  _err();
+ }
+
+ return 0;
 }
+
+#endif
 
 //ll
