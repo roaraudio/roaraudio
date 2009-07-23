@@ -25,7 +25,19 @@
 #include <roaraudio.h>
 #include "driver.h"
 
+int roar_cdriver_null(struct roar_vio_calls * calls, char * name, char * dev, struct roar_audio_info * info, int dir) {
+ ROAR_DBG("roar_cdriver_null(calls=%p, name='%s', dev='%s', info=%p{...}, dir=%i(?)) = ?", calls, name, dev, info, dir);
+
+ memset(calls, 0, sizeof(struct roar_vio_calls));
+ calls->read  = roar_vio_null_rw;
+ calls->write = roar_vio_null_rw;
+
+ ROAR_DBG("roar_cdriver_null(calls=%p, name='%s', dev='%s', info=%p{...}, dir=%i(?)) = 0", calls, name, dev, info, dir);
+ return 0;
+}
+
 struct roar_cdriver _g_roar_cdriver[] = {
+ {"null", roar_cdriver_null},
  {NULL, NULL}
 };
 
@@ -38,6 +50,5 @@ int roar_cdriver_open(struct roar_vio_calls * calls, char * name, char * dev, st
 
  return -1;
 }
-
 
 //ll
