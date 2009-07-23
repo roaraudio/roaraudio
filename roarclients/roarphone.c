@@ -23,6 +23,7 @@
  */
 
 #include <roaraudio.h>
+#include "driver.h"
 
 #define BUFSIZE 1024
 
@@ -49,7 +50,9 @@ int main (int argc, char * argv[]) {
                                 .channels = ROAR_CHANNELS_DEFAULT,
                                 .codec    = ROAR_CODEC_DEFAULT
                                };
- struct roar_vio_calls driver;
+ struct roar_vio_calls dvio;
+ char * driver   = DRIVER;
+ char * device   = NULL;
  char * server   = NULL;
  char * k;
  int    i;
@@ -76,6 +79,12 @@ int main (int argc, char * argv[]) {
    return 1;
   }
  }
+
+ if ( roar_cdriver_open(&dvio, driver, device, &info, ROAR_DIR_BIDIR) == -1 ) {
+  return 1;
+ }
+
+ roar_vio_close(&dvio);
 
  return 0;
 }
