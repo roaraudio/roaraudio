@@ -50,7 +50,22 @@ int roar_cdriver_oss(struct roar_vio_calls * calls, char * name, char * dev, str
 
  ROAR_DBG("roar_cdriver_oss(*) = ?");
 
- if ( roar_vio_open_file(calls, dev, O_RDWR, 0644) == -1 )
+ switch (dir) {
+  case ROAR_DIR_PLAY:
+  case ROAR_DIR_MONITOR:
+  case ROAR_DIR_OUTPUT:
+    tmp = O_WRONLY;
+   break;
+  case ROAR_DIR_BIDIR:
+    tmp = O_RDWR;
+   break;
+  case ROAR_DIR_RECORD:
+    tmp = O_RDONLY;
+  default:
+    return -1;
+ }
+
+ if ( roar_vio_open_file(calls, dev, tmp, 0644) == -1 )
   return -1;
 
  if ( roar_vio_ctl(calls, ROAR_VIO_CTL_GET_FH, &fh) == -1 ) {
