@@ -1227,11 +1227,13 @@ int streams_send_mon   (int id) {
  struct roar_stream        *   s;
  struct roar_stream_server *  ss;
  struct roar_buffer        *  bufbuf = NULL;
+ struct roar_remove_state     removalstate;
  void  * ip;
  void  * obuf;
  int     olen;
  int     is_the_same     = 1;
  int     is_vol_eq       = 1;
+ int     antiecho        = 0;
  ssize_t ret;
 
  if ( g_streams[id] == NULL )
@@ -1282,7 +1284,10 @@ int streams_send_mon   (int id) {
   is_vol_eq = need_vol_change(g_sa->channels, &(ss->mixer)) ? 0 : 1;
  }
 
- if ( !is_the_same || !is_vol_eq ) {
+ if ( streams_get_flag(id, ROAR_FLAG_ANTIECHO) )
+  antiecho = 1;
+
+ if ( !is_the_same || !is_vol_eq || antiecho ) {
   olen = ROAR_OUTPUT_CALC_OUTBUFSIZE(&(s->info)); // we hope g_output_buffer_len
                                                   // is ROAR_OUTPUT_CALC_OUTBUFSIZE(g_sa) here
   if ( stream_outputbuffer_request(id, &bufbuf, olen) == -1 )
@@ -1299,6 +1304,11 @@ int streams_send_mon   (int id) {
  }
 
  ip = g_output_buffer;
+
+ if ( antiecho ) {
+  if ( roar_remove_init(&removalstate) == -1 )
+   _return(-1);
+ }
 
  if ( !is_vol_eq ) {
   if ( change_vol(obuf, g_sa->bits, ip, ROAR_OUTPUT_BUFFER_SAMPLES*g_sa->channels, g_sa->channels, &(ss->mixer)) == -1 ) {
