@@ -81,6 +81,8 @@ int anti_echo_speex16(int16_t * buf, int16_t * aebuf, size_t len, struct roar_au
  if (len != samples)
   return -1;
 
+ ROAR_DBG("anti_echo_speex16(*) = ?");
+
  if ( state == NULL ) {
   if ( (state = speex_echo_state_init(samples, 100*samples)) == NULL )
    return -1;
@@ -88,10 +90,14 @@ int anti_echo_speex16(int16_t * buf, int16_t * aebuf, size_t len, struct roar_au
   // todo: set sample rate.
  }
 
+ ROAR_DBG("anti_echo_speex16(*) = ?");
+
  if ( obuf == NULL ) {
   if ( (obuf = malloc(2*samples)) == NULL )
    return -1;
  }
+
+ ROAR_DBG("anti_echo_speex16(*) = ?");
 
 /*
  speex_echo_cancellation(state, buf, aebuf, obuf);
@@ -100,6 +106,8 @@ int anti_echo_speex16(int16_t * buf, int16_t * aebuf, size_t len, struct roar_au
  speex_echo_cancel(state, buf, aebuf, obuf, NULL);
 
  memcpy(buf, obuf, 2*samples);
+
+ ROAR_DBG("anti_echo_speex16(*) = 0");
 
  return 0;
 }
