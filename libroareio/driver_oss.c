@@ -120,6 +120,8 @@ int roar_cdriver_oss(struct roar_vio_calls * calls, char * name, char * dev, str
   case ROAR_CODEC_MULAW:
     tmp = AFMT_MU_LAW;
    break;
+  default:
+    _err();
  }
 
  ctmp = tmp;
