@@ -235,5 +235,20 @@ int change_vol_32bit (void * output, void * input, int samples, int channels, st
 #endif
 }
 
+int need_vol_change  (int channels, struct roar_mixer_settings * set) {
+ int i;
+
+ if ( set == NULL || channels < 1 || channels > ROAR_MAX_CHANNELS )
+  return -1;
+
+ if ( set->rpg_mul != set->rpg_div )
+  return 1;
+
+ for (i = 0; i < channels; i++)
+  if ( set->mixer[i] != set->scale )
+   return 1;
+
+ return 0;
+}
 
 //ll
