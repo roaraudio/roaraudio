@@ -39,11 +39,14 @@
 
 struct roar_remove_state {
  uint16_t a, b;
- int32_t  old;
+ uint16_t  old;
 };
 
 int roar_remove_init (struct roar_remove_state * state);
-int roar_remove      (void * inout, void * subs, int samples, int bits, struct roar_remove_state * state);
+int roar_remove      (void    * inout, void    * subs, int samples, int bits, struct roar_remove_state * state);
+int roar_remove_8    (int8_t  * inout, int8_t  * subs, int samples, struct roar_remove_state * state);
+int roar_remove_16   (int8_t  * inout, int8_t  * subs, int samples, struct roar_remove_state * state);
+int roar_remove_32   (int8_t  * inout, int8_t  * subs, int samples, struct roar_remove_state * state);
 
 #endif
 
