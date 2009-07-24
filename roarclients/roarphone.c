@@ -29,6 +29,15 @@
 
 #define DRIVER  "oss"
 
+// anti echo:
+#define AE_NONE      0
+#define AE_SIMPLE    1
+#define AE_SPEEX     2
+
+struct {
+ int antiecho;
+} g_conf;
+
 void usage (void) {
  printf("roarcat [OPTIONS]...\n");
 
@@ -54,28 +63,53 @@ int open_stream (struct roar_vio_calls * vio, char * server, struct roar_audio_i
                                "roarphone");
 }
 
-int run_stream (struct roar_vio_calls * s0, struct roar_vio_calls * s1, struct roar_audio_info * info) {
- size_t len;
- char * buf;
- ssize_t l;
+int anti_echo16(int16_t * buf, int16_t * aebuf, size_t len) {
+ size_t i;
 
- len = (info->rate / 100) * info->channels * info->bits / 8;
-
- if ( (buf = malloc(len)) == NULL )
-  return -1;
-
- while (1) {
-  if ( (l = roar_vio_read(s0, buf, len)) <= 0 )
+ switch (g_conf.antiecho) {
+  case AE_NONE:
+    return 0;
    break;
-  if ( roar_vio_write(s1, buf, l) != l )
+  case AE_SIMPLE:
+    for (i = 0; i < len; i++)
+     buf[i] -= aebuf[i];
    break;
-  if ( (l = roar_vio_read(s1, buf, len)) <= 0 )
-   break;
-  if ( roar_vio_write(s0, buf, l) != l )
+  default:
+    return -1;
    break;
  }
 
- free(buf);
+ return -1;
+}
+
+int run_stream (struct roar_vio_calls * s0, struct roar_vio_calls * s1, struct roar_audio_info * info) {
+ size_t len;
+ void * outbuf, * micbuf;
+ ssize_t outlen, miclen;
+
+ len = (info->rate / 100) * info->channels * info->bits / 8;
+
+ if ( (outbuf = malloc(2*len)) == NULL )
+  return -1;
+
+ micbuf = outbuf + len;
+
+ while (1) {
+  if ( (miclen = roar_vio_read(s0, micbuf, len)) <= 0 )
+   break;
+  if ( roar_vio_write(s1, micbuf, miclen) != miclen )
+   break;
+  if ( (outlen = roar_vio_read(s1, outbuf, len)) <= 0 )
+   break;
+
+  if ( g_conf.antiecho != AE_NONE )
+   anti_echo16(outbuf, micbuf, ROAR_MIN(miclen, outlen)/2);
+
+  if ( roar_vio_write(s0, outbuf, outlen) != outlen )
+   break;
+ }
+
+ free(outbuf);
 
  return 0;
 }
@@ -92,6 +126,10 @@ int main (int argc, char * argv[]) {
  char * server   = NULL;
  char * k;
  int    i;
+
+ memset(&g_conf, 0, sizeof(g_conf));
+
+ g_conf.antiecho = AE_SIMPLE;
 
  for (i = 1; i < argc; i++) {
   k = argv[i];
@@ -129,7 +167,7 @@ int main (int argc, char * argv[]) {
   return 2;
  }
 
- run_stream(&svio, &dvio, &info);
+ run_stream(&dvio, &svio, &info);
 
  roar_vio_close(&svio);
  roar_vio_close(&dvio);
