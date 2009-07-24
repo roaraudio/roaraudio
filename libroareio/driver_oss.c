@@ -40,11 +40,15 @@ int roar_cdriver_oss(struct roar_vio_calls * calls, char * name, char * dev, str
  int fh;
  int tmp, ctmp;
 
+ ROAR_DBG("roar_cdriver_oss(*) = ?");
+
  if ( dev == NULL )
   dev = ROAR_DEFAULT_OSS_DEV;
 
  if ( dev == NULL )
   return -1;
+
+ ROAR_DBG("roar_cdriver_oss(*) = ?");
 
  if ( roar_vio_open_file(calls, dev, O_RDWR, 0644) == -1 )
   return -1;
