@@ -1212,7 +1212,7 @@ int streams_check  (int id) {
 }
 
 
-#define _return(x) if ( need_to_free ) roar_buffer_free(bufbuf); return (x)
+#define _return(x) return (x)
 int streams_send_mon   (int id) {
 // int fh;
  struct roar_stream        *   s;
@@ -1221,7 +1221,6 @@ int streams_send_mon   (int id) {
  void  * ip;
  void  * obuf;
  int     olen;
- int     need_to_free    = 0;
  int     is_the_same     = 1;
  int     is_vol_eq       = 1;
  ssize_t ret;
@@ -1277,14 +1276,12 @@ int streams_send_mon   (int id) {
  if ( !is_the_same || !is_vol_eq ) {
   olen = ROAR_OUTPUT_CALC_OUTBUFSIZE(&(s->info)); // we hope g_output_buffer_len
                                                   // is ROAR_OUTPUT_CALC_OUTBUFSIZE(g_sa) here
-  if ( roar_buffer_new(&bufbuf, olen) == -1 )
+  if ( stream_outputbuffer_request(id, &bufbuf, olen) == -1 )
    return -1;
 
   if ( roar_buffer_get_data(bufbuf, &obuf) == -1 ) {
    _return(-1);
   }
-
-  need_to_free = 1;
 
   ROAR_DBG("streams_send_mon(id=%i): obuf=%p, olen=%i", id, obuf, olen);
  } else {
