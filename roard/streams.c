@@ -1159,6 +1159,7 @@ int streams_send_mon   (int id) {
  void  * obuf;
  int     olen;
  int     need_to_free = 0;
+ int     is_the_same  = 1;
  ssize_t ret;
 
  if ( g_streams[id] == NULL )
@@ -1202,7 +1203,10 @@ int streams_send_mon   (int id) {
  ROAR_DBG("streams_send_mon(id=%i): fh = %i", id, s->fh);
 
  if ( s->info.channels != g_sa->channels || s->info.bits  != g_sa->bits ||
-      s->info.rate     != g_sa->rate     || s->info.codec != g_sa->codec  ) {
+      s->info.rate     != g_sa->rate     || s->info.codec != g_sa->codec  )
+  is_the_same = 0;
+
+ if ( !is_the_same ) {
   olen = ROAR_OUTPUT_CALC_OUTBUFSIZE(&(s->info)); // we hope g_output_buffer_len
                                                   // is ROAR_OUTPUT_CALC_OUTBUFSIZE(g_sa) here
   if ( roar_buffer_new(&bufbuf, olen) == -1 )
@@ -1215,13 +1219,15 @@ int streams_send_mon   (int id) {
   need_to_free = 1;
 
   ROAR_DBG("streams_send_mon(id=%i): obuf=%p, olen=%i", id, obuf, olen);
-
-  if ( roar_conv(obuf, g_output_buffer, ROAR_OUTPUT_BUFFER_SAMPLES*g_sa->channels, g_sa, &(s->info)) == -1 ) {
-   _return(-1);
-  }
  } else {
   obuf = g_output_buffer;
   olen = g_output_buffer_len;
+ }
+
+ if ( !is_the_same ) {
+  if ( roar_conv(obuf, g_output_buffer, ROAR_OUTPUT_BUFFER_SAMPLES*g_sa->channels, g_sa, &(s->info)) == -1 ) {
+   _return(-1);
+  }
  }
 
  errno = 0;
