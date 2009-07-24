@@ -1156,6 +1156,7 @@ int streams_send_mon   (int id) {
  struct roar_stream        *   s;
  struct roar_stream_server *  ss;
  struct roar_buffer        *  bufbuf = NULL;
+ void  * ip;
  void  * obuf;
  int     olen;
  int     need_to_free = 0;
@@ -1224,8 +1225,10 @@ int streams_send_mon   (int id) {
   olen = g_output_buffer_len;
  }
 
+ ip = g_output_buffer;
+
  if ( !is_the_same ) {
-  if ( roar_conv(obuf, g_output_buffer, ROAR_OUTPUT_BUFFER_SAMPLES*g_sa->channels, g_sa, &(s->info)) == -1 ) {
+  if ( roar_conv(obuf, ip, ROAR_OUTPUT_BUFFER_SAMPLES*g_sa->channels, g_sa, &(s->info)) == -1 ) {
    _return(-1);
   }
  }
