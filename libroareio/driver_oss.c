@@ -103,13 +103,16 @@ int roar_cdriver_oss(struct roar_vio_calls * calls, char * name, char * dev, str
 
  switch (info->codec) {
   case ROAR_CODEC_PCM_S_LE:
-   tmp = AFMT_S16_LE;
+    tmp = AFMT_S16_LE;
+   break;
   case ROAR_CODEC_PCM_S_BE:
-   tmp = AFMT_S16_BE;
+    tmp = AFMT_S16_BE;
+   break;
   case ROAR_CODEC_PCM_U_LE:
-   tmp = AFMT_U16_LE;
+    tmp = AFMT_U16_LE;
+   break;
   case ROAR_CODEC_PCM_U_BE:
-   tmp = AFMT_U16_BE;
+    tmp = AFMT_U16_BE;
    break;
   case ROAR_CODEC_ALAW:
     tmp = AFMT_A_LAW;
