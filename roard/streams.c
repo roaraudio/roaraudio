@@ -1150,10 +1150,12 @@ int streams_check  (int id) {
 }
 
 
+#define _return(x) if ( need_to_free ) roar_buffer_free(bufbuf); return (x)
 int streams_send_mon   (int id) {
 // int fh;
  struct roar_stream        *   s;
  struct roar_stream_server *  ss;
+ struct roar_buffer        *  bufbuf = NULL;
  void  * obuf;
  int     olen;
  int     need_to_free = 0;
@@ -1203,16 +1205,19 @@ int streams_send_mon   (int id) {
       s->info.rate     != g_sa->rate     || s->info.codec != g_sa->codec  ) {
   olen = ROAR_OUTPUT_CALC_OUTBUFSIZE(&(s->info)); // we hope g_output_buffer_len
                                                   // is ROAR_OUTPUT_CALC_OUTBUFSIZE(g_sa) here
-  if ( (obuf = malloc(olen)) == NULL )
+  if ( roar_buffer_new(&bufbuf, olen) == -1 )
    return -1;
+
+  if ( roar_buffer_get_data(bufbuf, &obuf) == -1 ) {
+   _return(-1);
+  }
 
   need_to_free = 1;
 
   ROAR_DBG("streams_send_mon(id=%i): obuf=%p, olen=%i", id, obuf, olen);
 
   if ( roar_conv(obuf, g_output_buffer, ROAR_OUTPUT_BUFFER_SAMPLES*g_sa->channels, g_sa, &(s->info)) == -1 ) {
-   free(obuf);
-   return -1;
+   _return(-1);
   }
  } else {
   obuf = g_output_buffer;
@@ -1223,33 +1228,30 @@ int streams_send_mon   (int id) {
 
  if ( ss->codecfilter == -1 ) {
   ROAR_DBG("streams_send_mon(id=%i): not a CF stream", id);
-  if ( s->fh == -1 && roar_vio_get_fh(&(ss->vio)) == -1 )
-   return 0;
+  if ( s->fh == -1 && roar_vio_get_fh(&(ss->vio)) == -1 ) {
+   _return(0);
+  }
 
   if ( (ret = stream_vio_s_write(ss, obuf, olen)) == olen ) {
-   if ( need_to_free ) free(obuf);
    s->pos = ROAR_MATH_OVERFLOW_ADD(s->pos, ROAR_OUTPUT_CALC_OUTBUFSAMP(&(s->info), olen)*s->info.channels);
-   return 0;
+   _return(0);
   }
 
   if ( ret > 0 && errno == 0 ) {
    ROAR_WARN("streams_send_mon(id=%i): Overrun in stream: wrote %i of %i bytes, %i bytes missing", id, (int)ret, olen, olen-(int)ret);
-   if ( need_to_free ) free(obuf);
    s->pos = ROAR_MATH_OVERFLOW_ADD(s->pos, ROAR_OUTPUT_CALC_OUTBUFSAMP(&(s->info), ret)*s->info.channels);
-   return 0;
+   _return(0);
   }
  } else {
   errno = 0;
   if ( codecfilter_write(ss->codecfilter_inst, ss->codecfilter, obuf, olen)
             == olen ) {
-   if ( need_to_free ) free(obuf);
    s->pos = ROAR_MATH_OVERFLOW_ADD(s->pos, ROAR_OUTPUT_CALC_OUTBUFSAMP(&(s->info), olen)*s->info.channels);
-   return 0;
+   _return(0);
   } else { // we cann't retry on codec filetered streams
    if ( errno != EAGAIN ) {
-    if ( need_to_free ) free(obuf);
     streams_delete(id);
-    return -1;
+    _return(-1);
    }
   }
  }
@@ -1263,22 +1265,21 @@ int streams_send_mon   (int id) {
 #endif
 
   if ( stream_vio_s_write(ss, obuf, olen) == olen ) {
-   if ( need_to_free ) free(obuf);
    s->pos = ROAR_MATH_OVERFLOW_ADD(s->pos, ROAR_OUTPUT_CALC_OUTBUFSAMP(&(s->info), olen)*s->info.channels);
-   return 0;
+   _return(0);
   } else if ( errno == EAGAIN ) {
    ROAR_WARN("streams_send_mon(id=%i): Can not send data to client: %s", id, strerror(errno));
-   return 0;
+   _return(0);
   }
  }
 
  // ug... error... delete stream!
 
- if ( need_to_free ) free(obuf);
  streams_delete(id);
 
- return -1;
+ _return(-1);
 }
+#undef _return
 
 int streams_send_filter(int id) {
  int fh;
