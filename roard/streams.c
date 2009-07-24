@@ -1306,8 +1306,13 @@ int streams_send_mon   (int id) {
  ip = g_output_buffer;
 
  if ( antiecho ) {
-  if ( roar_remove_init(&removalstate) == -1 )
+  if ( roar_remove_init(&removalstate) == -1 ) {
    _return(-1);
+  }
+
+  if ( roar_remove_so(obuf, ip, ROAR_OUTPUT_BUFFER_SAMPLES*g_sa->channels, g_sa->bits, &removalstate) == -1 ) {
+   _return(-1);
+  }
  }
 
  if ( !is_vol_eq ) {
