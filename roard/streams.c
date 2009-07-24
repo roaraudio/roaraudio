@@ -1159,8 +1159,9 @@ int streams_send_mon   (int id) {
  void  * ip;
  void  * obuf;
  int     olen;
- int     need_to_free = 0;
- int     is_the_same  = 1;
+ int     need_to_free    = 0;
+ int     is_the_same     = 1;
+ int     is_vol_eq       = 1;
  ssize_t ret;
 
  if ( g_streams[id] == NULL )
@@ -1207,7 +1208,11 @@ int streams_send_mon   (int id) {
       s->info.rate     != g_sa->rate     || s->info.codec != g_sa->codec  )
   is_the_same = 0;
 
- if ( !is_the_same ) {
+ if ( !streams_get_flag(id, ROAR_FLAG_HWMIXER) ) {
+  is_vol_eq = need_vol_change(g_sa->channels, &(ss->mixer)) ? 0 : 1;
+ }
+
+ if ( !is_the_same || !is_vol_eq ) {
   olen = ROAR_OUTPUT_CALC_OUTBUFSIZE(&(s->info)); // we hope g_output_buffer_len
                                                   // is ROAR_OUTPUT_CALC_OUTBUFSIZE(g_sa) here
   if ( roar_buffer_new(&bufbuf, olen) == -1 )
@@ -1226,6 +1231,14 @@ int streams_send_mon   (int id) {
  }
 
  ip = g_output_buffer;
+
+ if ( !is_vol_eq ) {
+  if ( change_vol(obuf, g_sa->bits, ip, ROAR_OUTPUT_BUFFER_SAMPLES*g_sa->channels, g_sa->channels, &(ss->mixer)) == -1 ) {
+   _return(-1);
+  }
+
+  ip = obuf;
+ }
 
  if ( !is_the_same ) {
   if ( roar_conv(obuf, ip, ROAR_OUTPUT_BUFFER_SAMPLES*g_sa->channels, g_sa, &(s->info)) == -1 ) {
