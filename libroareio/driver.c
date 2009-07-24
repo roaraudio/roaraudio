@@ -38,6 +38,7 @@ int roar_cdriver_null(struct roar_vio_calls * calls, char * name, char * dev, st
 
 struct roar_cdriver _g_roar_cdriver[] = {
  {"null", roar_cdriver_null},
+ {"oss",  roar_cdriver_oss},
  {NULL, NULL}
 };
 
@@ -45,7 +46,8 @@ int roar_cdriver_open(struct roar_vio_calls * calls, char * name, char * dev, st
  int i;
 
  for (i = 0; _g_roar_cdriver[i].name != NULL; i++) {
-  return _g_roar_cdriver[i].open(calls, name, dev, info, dir);
+  if ( !strcmp(_g_roar_cdriver[i].name, name) )
+   return _g_roar_cdriver[i].open(calls, name, dev, info, dir);
  }
 
  return -1;
