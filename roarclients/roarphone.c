@@ -25,7 +25,11 @@
 #include <roaraudio.h>
 #include "driver.h"
 
-#define BUFSIZE 1024
+#ifdef ROAR_HAVE_LIBSPEEX
+#include <speex/speex_echo.h>
+#endif
+
+#define TIMEDIV  100
 
 #define DRIVER  "oss"
 
@@ -33,6 +37,7 @@
 #define AE_NONE      0
 #define AE_SIMPLE    1
 #define AE_SPEEX     2
+#define AE_ROARD     3
 
 struct {
  int antiecho;
@@ -43,14 +48,15 @@ void usage (void) {
 
  printf("\nOptions:\n\n");
 
- printf("  --server SERVER    - Set server hostname\n"
-        "  --rate   RATE      - Set sample rate\n"
-        "  --bits   BITS      - Set bits per sample\n"
-        "  --chans  CHANNELS  - Set number of channels\n"
-        "  --codec  CODEC     - Set the codec\n"
-        "  --driver DRIVER    - Set the driver\n"
-        "  --device DEVICE    - Set the device\n"
-        "  --help             - Show this help\n"
+ printf("  --server   SERVER    - Set server hostname\n"
+        "  --rate     RATE      - Set sample rate\n"
+        "  --bits     BITS      - Set bits per sample\n"
+        "  --chans    CHANNELS  - Set number of channels\n"
+        "  --codec    CODEC     - Set the codec\n"
+        "  --driver   DRIVER    - Set the driver\n"
+        "  --device   DEVICE    - Set the device\n"
+        "  --antiecho AEMODE    - Set the anti echo mode\n"
+        "  --help               - Show this help\n"
        );
 
 }
@@ -63,7 +69,43 @@ int open_stream (struct roar_vio_calls * vio, char * server, struct roar_audio_i
                                "roarphone");
 }
 
-int anti_echo16(int16_t * buf, int16_t * aebuf, size_t len) {
+#ifdef ROAR_HAVE_LIBSPEEX
+int anti_echo_speex16(int16_t * buf, int16_t * aebuf, size_t len, struct roar_audio_info * info) {
+ static SpeexEchoState * state = NULL;
+ size_t samples = info->rate / TIMEDIV;
+ static int16_t * obuf = NULL;
+
+ if ( info->channels != 1 )
+  return -1;
+
+ if (len != samples)
+  return -1;
+
+ if ( state == NULL ) {
+  if ( (state = speex_echo_state_init(samples, 100*samples)) == NULL )
+   return -1;
+
+  // todo: set sample rate.
+ }
+
+ if ( obuf == NULL ) {
+  if ( (obuf = malloc(2*samples)) == NULL )
+   return -1;
+ }
+
+/*
+ speex_echo_cancellation(state, buf, aebuf, obuf);
+*/
+
+ speex_echo_cancel(state, buf, aebuf, obuf, NULL);
+
+ memcpy(buf, obuf, 2*samples);
+
+ return 0;
+}
+#endif
+
+int anti_echo16(int16_t * buf, int16_t * aebuf, size_t len, struct roar_audio_info * info) {
  size_t i;
 
  switch (g_conf.antiecho) {
@@ -74,6 +116,11 @@ int anti_echo16(int16_t * buf, int16_t * aebuf, size_t len) {
     for (i = 0; i < len; i++)
      buf[i] -= aebuf[i];
    break;
+#ifdef ROAR_HAVE_LIBSPEEX
+  case AE_SPEEX:
+    return anti_echo_speex16(buf, aebuf, len, info);
+   break;
+#endif
   default:
     return -1;
    break;
@@ -87,7 +134,7 @@ int run_stream (struct roar_vio_calls * s0, struct roar_vio_calls * s1, struct r
  void * outbuf, * micbuf;
  ssize_t outlen, miclen;
 
- len = (info->rate / 100) * info->channels * info->bits / 8;
+ len = (info->rate / TIMEDIV) * info->channels * info->bits / 8;
 
  if ( (outbuf = malloc(2*len)) == NULL )
   return -1;
@@ -103,7 +150,7 @@ int run_stream (struct roar_vio_calls * s0, struct roar_vio_calls * s1, struct r
    break;
 
   if ( g_conf.antiecho != AE_NONE )
-   anti_echo16(outbuf, micbuf, ROAR_MIN(miclen, outlen)/2);
+   anti_echo16(outbuf, micbuf, ROAR_MIN(miclen, outlen)/2, info);
 
   if ( roar_vio_write(s0, outbuf, outlen) != outlen )
    break;
@@ -129,7 +176,7 @@ int main (int argc, char * argv[]) {
 
  memset(&g_conf, 0, sizeof(g_conf));
 
- g_conf.antiecho = AE_SIMPLE;
+ g_conf.antiecho = AE_NONE;
 
  for (i = 1; i < argc; i++) {
   k = argv[i];
@@ -148,6 +195,20 @@ int main (int argc, char * argv[]) {
    driver = argv[++i];
   } else if ( strcmp(k, "--device") == 0 ) {
    device = argv[++i];
+  } else if ( strcmp(k, "--antiecho") == 0 ) {
+   k = argv[++i];
+   if ( !strcmp(k, "none") ) {
+    g_conf.antiecho = AE_NONE;
+   } else if ( !strcmp(k, "simple") ) {
+    g_conf.antiecho = AE_SIMPLE;
+   } else if ( !strcmp(k, "speex") ) {
+    g_conf.antiecho = AE_SPEEX;
+   } else if ( !strcmp(k, "roard") ) {
+    g_conf.antiecho = AE_ROARD;
+   } else {
+    fprintf(stderr, "Error: unknown mode: %s\n", k);
+    return 1;
+   }
   } else if ( strcmp(k, "--help") == 0 ) {
    usage();
    return 0;
