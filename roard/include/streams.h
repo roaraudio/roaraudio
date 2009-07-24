@@ -77,6 +77,7 @@ struct roar_stream_server {
  uint_least32_t delay;
  char * name;
  int ready;
+ struct roar_buffer * outputbuffer;
 } * g_streams[ROAR_STREAMS_MAX];
 
 int streams_init   (void);
@@ -118,6 +119,9 @@ int stream_add_buffer     (int id, struct roar_buffer *  buf);
 int stream_shift_out_buffer   (int id, void * data, size_t * len);
 int stream_shift_buffer   (int id, struct roar_buffer ** buf);
 int stream_unshift_buffer (int id, struct roar_buffer *  buf);
+
+int stream_outputbuffer_request(int id, struct roar_buffer ** buf, size_t len);
+int stream_outputbuffer_destroy(int id);
 
 int streams_check      (int id);
 int streams_send_mon   (int id);

@@ -94,6 +94,7 @@ int streams_new    (void) {
    s->codec_orgi      = -1;
    s->primary         =  0;
    s->ready           =  0;
+   s->outputbuffer    = NULL;
 
    s->mixer.scale     = 65535;
    s->mixer.rpg_mul   = 1;
@@ -175,6 +176,8 @@ int streams_delete (int id) {
   ROAR_DBG("streams_delete(id=%i): Stream is owned by client %i", id, g_streams[id]->client);
   client_stream_delete(s->client, id);
  }
+
+ stream_outputbuffer_destroy(id);
 
  if ( s->buffer != NULL )
   roar_buffer_free(s->buffer);
@@ -1033,6 +1036,65 @@ int stream_unshift_buffer (int id, struct roar_buffer *  buf) {
  roar_buffer_add(buf, g_streams[id]->buffer);
 
  g_streams[id]->buffer = buf;
+
+ return 0;
+}
+
+int stream_outputbuffer_request(int id, struct roar_buffer ** buf, size_t len) {
+ register struct roar_stream_server *  ss;
+ size_t buflen;
+ int ret;
+
+ if ( (ss = g_streams[id]) == NULL )
+  return -1;
+
+ if ( buf != NULL ) /* just be be sure */
+  *buf = NULL;
+
+ if ( ss->outputbuffer != NULL ) {
+  if ( roar_buffer_get_len(ss->outputbuffer, &buflen) == 0 ) {
+   if ( buflen == len ) {
+    if ( buf != NULL )
+     *buf = ss->outputbuffer;
+    return 0;
+   } else if ( buflen > len ) {
+    if ( roar_buffer_set_len(ss->outputbuffer, len) == 0 ) {
+     if ( buf != NULL )
+      *buf = ss->outputbuffer;
+     return 0;
+    }
+   }
+  }
+
+  // if the buffer is not suitable:
+
+  ret = roar_buffer_free(ss->outputbuffer);
+  ss->outputbuffer = NULL;
+  if ( ret == -1 )
+   return ret;
+ }
+
+ if ( roar_buffer_new(&(ss->outputbuffer), len) == -1 )
+  return -1;
+
+ if ( buf != NULL )
+  *buf = ss->outputbuffer;
+
+ return 0;
+}
+
+int stream_outputbuffer_destroy(int id) {
+ int ret;
+ register struct roar_stream_server *  ss;
+
+ if ( (ss = g_streams[id]) == NULL )
+  return -1;
+
+ if ( ss->outputbuffer != NULL ) {
+  ret = roar_buffer_free(ss->outputbuffer);
+  ss->outputbuffer = NULL;
+  return ret;
+ }
 
  return 0;
 }
