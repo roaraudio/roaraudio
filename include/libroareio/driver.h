@@ -44,6 +44,9 @@ struct roar_cdriver {
 
 int roar_cdriver_open(struct roar_vio_calls * calls, char * name, char * dev, struct roar_audio_info * info, int dir);
 
+// driver prototypes:
+int roar_cdriver_oss(struct roar_vio_calls * calls, char * name, char * dev, struct roar_audio_info * info, int dir);
+
 #endif
 
 //ll
