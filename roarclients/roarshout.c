@@ -83,7 +83,7 @@ int main (int argc, char * argv[]) {
    rate = atoi(argv[++i]);
   } else if ( strcmp(k, "--bits") == 0 ) {
    bits = atoi(argv[++i]);
-  } else if ( strcmp(k, "--channels") == 0 ) {
+  } else if ( strcmp(k, "--channels") == 0 || strcmp(k, "--chans") == 0 ) {
    channels = atoi(argv[++i]);
   } else if ( strcmp(k, "--codec") == 0 ) {
    codec = roar_str2codec(argv[++i]);
