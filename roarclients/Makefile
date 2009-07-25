@@ -49,8 +49,8 @@ roarmonhttp: roarmonhttp.o
 	$L
 roarbidir: roarbidir.o
 	$L
-roarphone: roarphone.o $(DRVOBJS)
-	${CC} ${LDFLAGS} -o roarphone roarphone.o $(DRVOBJS) $(DSPLIBS) $(lib_speex)
+roarphone: roarphone.o transcode.o $(DRVOBJS)
+	${CC} ${LDFLAGS} -o roarphone roarphone.o transcode.o $(DRVOBJS) $(DSPLIBS) $(lib_speex)
 roarfilt: roarfilt.o
 	${CC} ${LDFLAGS} -o roarfilt roarfilt.o $(DSPLIBS)
 roarsin: roarsin.o
