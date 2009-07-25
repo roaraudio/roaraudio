@@ -42,6 +42,7 @@
 struct {
  int antiecho;
  int samples;
+ int transcode;
 } g_conf;
 
 void usage (void) {
@@ -57,6 +58,7 @@ void usage (void) {
         "  --driver   DRIVER    - Set the driver\n"
         "  --device   DEVICE    - Set the device\n"
         "  --antiecho AEMODE    - Set the anti echo mode\n"
+        "  --transcode          - Use local transcodeing\n"
         "  --help               - Show this help\n"
        );
 
@@ -176,6 +178,7 @@ int main (int argc, char * argv[]) {
                                 .channels = ROAR_CHANNELS_DEFAULT,
                                 .codec    = ROAR_CODEC_DEFAULT
                                };
+ struct roar_audio_info dinfo;
  struct roar_vio_calls dvio, svio;
  char * driver   = DRIVER;
  char * device   = NULL;
@@ -218,6 +221,8 @@ int main (int argc, char * argv[]) {
     fprintf(stderr, "Error: unknown mode: %s\n", k);
     return 1;
    }
+  } else if ( strcmp(k, "--transcode") == 0 ) {
+   g_conf.transcode = 1;
   } else if ( strcmp(k, "--help") == 0 ) {
    usage();
    return 0;
@@ -230,7 +235,27 @@ int main (int argc, char * argv[]) {
 
  g_conf.samples = info.channels * info.rate / TIMEDIV;
 
- if ( roar_cdriver_open(&dvio, driver, device, &info, ROAR_DIR_BIDIR) == -1 ) {
+ memcpy(&dinfo, &info, sizeof(dinfo));
+
+ if ( g_conf.transcode ) {
+  dinfo.bits  = 16;
+  dinfo.codec = ROAR_CODEC_DEFAULT;
+
+  switch (info.codec) {
+   case ROAR_CODEC_ALAW:
+   case ROAR_CODEC_MULAW:
+     info.bits = 8;
+    break;
+   case ROAR_CODEC_ROAR_CELT:
+     info.bits = 16;
+    break;
+   case ROAR_CODEC_ROAR_SPEEX:
+     info.bits = 16;
+    break;
+  }
+ }
+
+ if ( roar_cdriver_open(&dvio, driver, device, &dinfo, ROAR_DIR_BIDIR) == -1 ) {
   return 1;
  }
 
