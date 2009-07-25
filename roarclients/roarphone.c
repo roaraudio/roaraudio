@@ -41,6 +41,7 @@
 
 struct {
  int antiecho;
+ int samples;
 } g_conf;
 
 void usage (void) {
@@ -142,7 +143,7 @@ int run_stream (struct roar_vio_calls * s0, struct roar_vio_calls * s1, struct r
  void * outbuf, * micbuf;
  ssize_t outlen, miclen;
 
- len = (info->rate / TIMEDIV) * info->channels * info->bits / 8;
+ len = g_conf.samples * info->bits / 8;
 
  if ( (outbuf = malloc(2*len)) == NULL )
   return -1;
@@ -226,6 +227,8 @@ int main (int argc, char * argv[]) {
    return 1;
   }
  }
+
+ g_conf.samples = info.channels * info.rate / TIMEDIV;
 
  if ( roar_cdriver_open(&dvio, driver, device, &info, ROAR_DIR_BIDIR) == -1 ) {
   return 1;
