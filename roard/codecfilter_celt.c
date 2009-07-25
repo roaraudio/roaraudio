@@ -171,6 +171,8 @@ int cf_celt_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
 
   fs = ROAR_NET2HOST16(fs);
 
+//  ROAR_WARN("0:fs=%i", fs);
+
   if ( fs > self->s_buf )
    return -1;
 
@@ -190,6 +192,7 @@ int cf_celt_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
 //  printf("r < len!\n");
   if ( stream_vio_s_read(self->stream, &fs, 2) == 2 ) {
    fs = ROAR_NET2HOST16(fs);
+//  ROAR_WARN("1:fs=%i", fs);
 //   printf("next: fs=%i\n", fs);
    if ( fs > self->s_buf )
     return -1;
