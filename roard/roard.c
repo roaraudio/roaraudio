@@ -201,6 +201,7 @@ int init_config (void) {
  }
 
  g_config->streams[ROAR_DIR_MIDI_OUT].flags = ROAR_FLAG_SYNC;
+ g_config->streams[ROAR_DIR_BIDIR   ].flags = ROAR_FLAG_ANTIECHO;
 
  g_config->location = "***default***";
 
