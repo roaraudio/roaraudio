@@ -1052,6 +1052,7 @@ int stream_unshift_buffer (int id, struct roar_buffer *  buf) {
 int stream_outputbuffer_request(int id, struct roar_buffer ** buf, size_t len) {
  register struct roar_stream_server *  ss;
  size_t buflen;
+ void * bufdata;
  int ret;
 
  if ( (ss = g_streams[id]) == NULL )
@@ -1085,6 +1086,14 @@ int stream_outputbuffer_request(int id, struct roar_buffer ** buf, size_t len) {
 
  if ( roar_buffer_new(&(ss->outputbuffer), len) == -1 )
   return -1;
+
+ if ( roar_buffer_get_data(ss->outputbuffer, &bufdata) == -1 ) {
+  roar_buffer_free(ss->outputbuffer);
+  ss->outputbuffer = NULL;
+  return -1;
+ }
+
+ memset(bufdata, 0, len);
 
  if ( buf != NULL )
   *buf = ss->outputbuffer;
