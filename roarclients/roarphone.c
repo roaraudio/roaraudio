@@ -157,7 +157,7 @@ int run_stream (struct roar_vio_calls * s0, struct roar_vio_calls * s1, struct r
   if ( (outlen = roar_vio_read(s1, outbuf, len)) <= 0 )
    break;
 
-  if ( g_conf.antiecho != AE_NONE )
+  if ( g_conf.antiecho != AE_NONE && info->bits == 16 )
    anti_echo16(outbuf, micbuf, ROAR_MIN(miclen, outlen)/2, info);
 
   if ( roar_vio_write(s0, outbuf, outlen) != outlen )
