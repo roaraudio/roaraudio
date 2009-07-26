@@ -27,22 +27,86 @@
 #ifdef ROAR_HAVE_LIBCELT
 
 int roar_xcoder_celt_init       (struct roar_xcoder * state) {
- return -1;
+ struct roar_xcoder_celt * self = malloc(sizeof(struct roar_xcoder_celt));
+ struct roar_audio_info  * info = &(state->info.pcm);
+
+ if ( self == NULL )
+  return -1;
+
+ // curruntly only 16 bit mode is supported
+ if ( info->bits != 16 ) {
+  free(self);
+  return -1;
+ }
+
+ memset(self, 0, sizeof(struct roar_xcoder_celt));
+
+ state->inst = self;
+
+ self->frame_size           = 256;
+
+ self->mode                 = celt_mode_create(info->rate, info->channels, self->frame_size, NULL);
+
+ if ( self->mode == NULL ) {
+  free(self);
+  return -1;
+ }
+
+ if (state->encode) {
+  self->encoder = celt_encoder_create(self->mode);
+  if ( self->encoder == NULL ) {
+   roar_xcoder_celt_uninit(state);
+   return -1;
+  }
+ } else {
+  self->decoder = celt_decoder_create(self->mode);
+  if ( self->decoder == NULL ) {
+   roar_xcoder_celt_uninit(state);
+   return -1;
+  }
+ }
+
+ return 0;
 }
 
 int roar_xcoder_celt_uninit     (struct roar_xcoder * state) {
+ struct roar_xcoder_celt * self = state->inst;
+
+ if ( self->encoder )
+ celt_encoder_destroy(self->encoder);
+
+ if ( self->decoder )
+ celt_decoder_destroy(self->decoder);
+
+ if ( self->mode )
+  celt_mode_destroy(self->mode);
+
+ free(self);
+
  return -1;
 }
 
 int roar_xcoder_celt_packet_size(struct roar_xcoder * state, int samples) {
- return -1;
+ struct roar_xcoder_celt * self = state->inst;
+
+ return self->frame_size;
 }
 
 int roar_xcoder_celt_encode     (struct roar_xcoder * state, void * buf, size_t len) {
+ struct roar_xcoder_celt * self = state->inst;
+
+ if (!state->encode)
+  return -1;
+
  return -1;
 }
 
 int roar_xcoder_celt_decode     (struct roar_xcoder * state, void * buf, size_t len) {
+ struct roar_xcoder_celt * self = state->inst;
+
+ if (state->encode)
+  return -1;
+
  return -1;
 }
 
