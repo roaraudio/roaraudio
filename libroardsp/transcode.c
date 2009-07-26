@@ -120,6 +120,9 @@ int roar_xcoder_close      (struct roar_xcoder * state) {
 int roar_xcoder_proc_packet(struct roar_xcoder * state, void * buf, size_t len) {
  _CHECK();
 
+ if ( state->packet_len > 0 && state->packet_len != len )
+  return -1;
+
  if ( state->encode ) {
   _CHECK_BASIC(encode);
   return _FUNC(encode)(state, buf, len);
