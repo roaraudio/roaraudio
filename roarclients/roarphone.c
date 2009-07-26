@@ -23,6 +23,7 @@
  */
 
 #include <roaraudio.h>
+#include <libroardsp/libroardsp.h>
 #include "driver.h"
 
 #ifdef ROAR_HAVE_LIBSPEEX
@@ -44,6 +45,8 @@ struct {
  int samples;
  int transcode;
 } g_conf;
+
+struct roar_bixcoder transcoder[1];
 
 void usage (void) {
  printf("roarcat [OPTIONS]...\n");
@@ -155,10 +158,23 @@ int run_stream (struct roar_vio_calls * s0, struct roar_vio_calls * s1, struct r
  while (1) {
   if ( (miclen = roar_vio_read(s0, micbuf, len)) <= 0 )
    break;
-  if ( roar_vio_write(s1, micbuf, miclen) != miclen )
-   break;
-  if ( (outlen = roar_vio_read(s1, outbuf, len)) <= 0 )
-   break;
+  if ( g_conf.transcode ) {
+   if ( roar_bixcoder_write_packet(transcoder, micbuf, miclen) == -1 )
+    break;
+  } else {
+   if ( roar_vio_write(s1, micbuf, miclen) != miclen )
+    break;
+  }
+
+  if ( g_conf.transcode ) {
+   if ( roar_bixcoder_read_packet(transcoder, outbuf, len) == -1 )
+    break;
+
+   outlen = len;
+  } else {
+   if ( (outlen = roar_vio_read(s1, outbuf, len)) <= 0 )
+    break;
+  }
 
   if ( g_conf.antiecho != AE_NONE && info->bits == 16 )
    anti_echo16(outbuf, micbuf, ROAR_MIN(miclen, outlen)/2, info);
@@ -264,7 +280,21 @@ int main (int argc, char * argv[]) {
   return 2;
  }
 
+ if ( g_conf.transcode ) {
+  dinfo.codec = info.codec;
+
+  if ( roar_bixcoder_init(transcoder, &dinfo, &svio) == -1 ) {
+   roar_vio_close(&svio);
+   roar_vio_close(&dvio);
+   return 10;
+  }
+
+  g_conf.samples = roar_bixcoder_packet_size(transcoder, g_conf.samples);
+ }
+
  run_stream(&dvio, &svio, &info);
+
+ roar_bixcoder_close(transcoder);
 
  roar_vio_close(&svio);
  roar_vio_close(&dvio);
