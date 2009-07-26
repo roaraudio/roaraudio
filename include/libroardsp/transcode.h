@@ -100,6 +100,10 @@ int roar_bixcoder_read        (struct roar_bixcoder * state, void * buf, size_t 
 int roar_bixcoder_write_packet(struct roar_bixcoder * state, void * buf, size_t len);
 int roar_bixcoder_write       (struct roar_bixcoder * state, void * buf, size_t len);
 
+// dummy functions used by some de/encoders:
+int roar_xcoder_dummy_inituninit(struct roar_xcoder * state);
+int roar_xcoder_dummy_packet_size_any(struct roar_xcoder * state, int samples);
+
 #endif
 
 //ll
