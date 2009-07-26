@@ -37,6 +37,67 @@
 
 #include "libroardsp.h"
 
+#define ROAR_XCODER_STAGE_NONE        0
+#define ROAR_XCODER_STAGE_INITED      0
+#define ROAR_XCODER_STAGE_WAIT        1
+#define ROAR_XCODER_STAGE_MAGIC       2
+#define ROAR_XCODER_STAGE_OPENING     3
+#define ROAR_XCODER_STAGE_OPENED      4
+#define ROAR_XCODER_STAGE_CLOSING     5
+#define ROAR_XCODER_STAGE_CLOSED      6
+
+#define ROAR_BIXCODER_FLAGS_NONE      0x0000
+#define ROAR_BIXCODER_FLAGS_ENCODE    0x0001
+#define ROAR_BIXCODER_FLAGS_DECODE    0x0002
+
+struct roar_xcoder;
+
+struct roar_xcoder_entry {
+ int * codecs;
+ int (*init)(struct roar_xcoder * state);
+ int (*uninit)(struct roar_xcoder * state);
+ int (*packet_size)(struct roar_xcoder * state, int samples);
+ int (*proc)(struct roar_xcoder * state, void * buf, size_t len);
+};
+
+struct roar_xcoder {
+ void * inst;
+ struct roar_xcoder_entry * entry;
+ struct roar_vio_calls * backend;
+ int flags;
+ int stage;
+ ssize_t packet_len;
+ struct roar_buffer * iobuffer;
+ struct {
+  struct roar_audio_info coded;
+  struct roar_audio_info pcm;
+ } info;
+};
+
+struct roar_bixcoder {
+ struct roar_xcoder encoder, decoder;
+ int flags;
+};
+
+struct roar_transcoder {
+ struct roar_xcoder encoder, decoder;
+};
+
+int roar_xcoder_init(struct roar_xcoder * state, int encoder, struct roar_audio_info * info, struct roar_vio_calls * vio);
+int roar_xcoder_set_backend(struct roar_xcoder * state, struct roar_vio_calls * vio);
+int roar_xcoder_packet_size(struct roar_xcoder * state, int samples);
+int roar_xcoder_close      (struct roar_xcoder * state);
+int roar_xcoder_proc_packet(struct roar_xcoder * state, void * buf, size_t len);
+int roar_xcoder_proc       (struct roar_xcoder * state, void * buf, size_t len);
+
+int roar_bixcoder_init(struct roar_bixcoder * state, struct roar_audio_info * info, struct roar_vio_calls * vio);
+int roar_bixcoder_packet_size (struct roar_bixcoder * state, int samples);
+int roar_bixcoder_close       (struct roar_bixcoder * state);
+int roar_bixcoder_read_packet (struct roar_bixcoder * state, void * buf, size_t len);
+int roar_bixcoder_read        (struct roar_bixcoder * state, void * buf, size_t len);
+int roar_bixcoder_write_packet(struct roar_bixcoder * state, void * buf, size_t len);
+int roar_bixcoder_write       (struct roar_bixcoder * state, void * buf, size_t len);
+
 #endif
 
 //ll
