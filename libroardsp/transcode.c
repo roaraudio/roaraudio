@@ -24,11 +24,11 @@
 
 #include "libroardsp.h"
 
-#define _FUNC(func) (state->entry->func)
-#define _CHECK_STATE() (!(state == NULL || state->entry == NULL))
-#define _CHECK_FUNC(func) (_CHECK_STATE() && _FUNC(func) != NULL)
+#define _FUNC(func)        (state->entry->func)
+#define _CHECK_STATE()     (!(state == NULL || state->entry == NULL))
+#define _CHECK_FUNC(func)  (_CHECK_STATE() && _FUNC(func) != NULL)
 #define _CHECK_BASIC(func) if ( !_CHECK_FUNC(func) ) return -1
-#define _CHECK() if ( !_CHECK_STATE() ) return -1
+#define _CHECK()           if ( !_CHECK_STATE() ) return -1
 
 static struct roar_xcoder_entry g_xcoders[] = {
  {ROAR_CODEC_ALAW,  roar_xcoder_dummy_inituninit, roar_xcoder_dummy_inituninit, roar_xcoder_dummy_packet_size_any,
