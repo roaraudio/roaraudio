@@ -156,7 +156,21 @@ int roar_bixcoder_init(struct roar_bixcoder * state, struct roar_audio_info * in
  return 0;
 }
 
-int roar_bixcoder_packet_size (struct roar_bixcoder * state, int samples);
+int roar_bixcoder_packet_size (struct roar_bixcoder * state, int samples) {
+ int ret;
+
+ if ( state == NULL )
+  return -1;
+
+ if ( (ret = roar_xcoder_packet_size(&(state->encoder), samples)) == -1 )
+  return -1;
+
+ if ( roar_xcoder_packet_size(&(state->decoder), ret) != ret )
+  return -1;
+
+ return ret;
+}
+
 int roar_bixcoder_close       (struct roar_bixcoder * state) {
  int ret = 0;
 
