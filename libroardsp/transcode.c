@@ -136,13 +136,65 @@ int roar_xcoder_proc       (struct roar_xcoder * state, void * buf, size_t len) 
  return -1;
 }
 
-int roar_bixcoder_init(struct roar_bixcoder * state, struct roar_audio_info * info, struct roar_vio_calls * vio);
+int roar_bixcoder_init(struct roar_bixcoder * state, struct roar_audio_info * info, struct roar_vio_calls * vio) {
+ if ( state == NULL || info == NULL || vio == NULL )
+  return -1;
+
+ memset(state, 0, sizeof(struct roar_bixcoder));
+
+ if ( roar_xcoder_init(&(state->encoder), 1, info, vio) == -1 )
+  return -1;
+
+ if ( roar_xcoder_init(&(state->decoder), 0, info, vio) == -1 ) {
+  roar_xcoder_close(&(state->encoder));
+  return -1;
+ }
+
+ return 0;
+}
+
 int roar_bixcoder_packet_size (struct roar_bixcoder * state, int samples);
-int roar_bixcoder_close       (struct roar_bixcoder * state);
-int roar_bixcoder_read_packet (struct roar_bixcoder * state, void * buf, size_t len);
-int roar_bixcoder_read        (struct roar_bixcoder * state, void * buf, size_t len);
-int roar_bixcoder_write_packet(struct roar_bixcoder * state, void * buf, size_t len);
-int roar_bixcoder_write       (struct roar_bixcoder * state, void * buf, size_t len);
+int roar_bixcoder_close       (struct roar_bixcoder * state) {
+ int ret = 0;
+
+ if ( state == NULL )
+  return -1;
+
+ ret = roar_xcoder_close(&(state->encoder));
+
+ if ( roar_xcoder_close(&(state->decoder)) == -1 )
+  return -1;
+
+ return ret;
+}
+
+int roar_bixcoder_read_packet (struct roar_bixcoder * state, void * buf, size_t len) {
+ if ( state == NULL )
+  return -1;
+
+ return roar_xcoder_proc_packet(&(state->decoder), buf, len);
+}
+
+int roar_bixcoder_read        (struct roar_bixcoder * state, void * buf, size_t len) {
+ if ( state == NULL )
+  return -1;
+
+ return roar_xcoder_proc(&(state->decoder), buf, len);
+}
+
+int roar_bixcoder_write_packet(struct roar_bixcoder * state, void * buf, size_t len) {
+ if ( state == NULL )
+  return -1;
+
+ return roar_xcoder_proc_packet(&(state->encoder), buf, len);
+}
+
+int roar_bixcoder_write       (struct roar_bixcoder * state, void * buf, size_t len) {
+ if ( state == NULL )
+  return -1;
+
+ return roar_xcoder_proc(&(state->encoder), buf, len);
+}
 
 // dummy functions used by some de/encoders:
 int roar_xcoder_dummy_inituninit(struct roar_xcoder * state) {
