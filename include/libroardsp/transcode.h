@@ -53,7 +53,7 @@
 struct roar_xcoder;
 
 struct roar_xcoder_entry {
- int * codecs;
+ int codecs;
  int (*init)(struct roar_xcoder * state);
  int (*uninit)(struct roar_xcoder * state);
  int (*packet_size)(struct roar_xcoder * state, int samples);
