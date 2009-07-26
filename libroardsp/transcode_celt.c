@@ -117,6 +117,7 @@ int roar_xcoder_celt_encode     (struct roar_xcoder * state, void * buf, size_t 
  struct roar_xcoder_celt * self = state->inst;
  uint16_t * lenp = self->iobuffer;
  void     * cp   = self->iobuffer + _SIZE_LEN;
+ uint16_t   pkglen;
 
  ROAR_DBG("roar_xcoder_celt_encode(*): test if we are in encoding mode...");
 
@@ -137,7 +138,13 @@ int roar_xcoder_celt_encode     (struct roar_xcoder * state, void * buf, size_t 
   ROAR_DBG("roar_xcoder_celt_encode(*): Wrote MAGIC");
  }
 
- return -1;
+ pkglen  = celt_encode(self->encoder, (celt_int16_t *) buf, NULL, cp, self->bufferlen - _SIZE_LEN);
+ *lenp   = ROAR_HOST2NET16(pkglen);
+
+ if ( roar_vio_write(state->backend, self->iobuffer, pkglen+2) == -1 )
+  return -1;
+
+ return 0;
 }
 
 int roar_xcoder_celt_decode     (struct roar_xcoder * state, void * buf, size_t len) {
