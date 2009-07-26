@@ -126,11 +126,6 @@ int roar_xcoder_celt_encode     (struct roar_xcoder * state, void * buf, size_t 
 
  ROAR_DBG("roar_xcoder_celt_encode(*): Encoding...");
 
- if ( len != self->frame_size * _16BIT * state->info.pcm.channels )
-  return -1;
-
- ROAR_DBG("roar_xcoder_celt_encode(*): Frame size check OK");
-
  if ( state->stage == ROAR_XCODER_STAGE_INITED ) {
   if ( roar_vio_write(state->backend, ROAR_CELT_MAGIC, ROAR_CELT_MAGIC_LEN) != ROAR_CELT_MAGIC_LEN )
    return -1;
