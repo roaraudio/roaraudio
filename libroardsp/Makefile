@@ -6,6 +6,9 @@ TARGETS=$(SLIB) libroardsp.a
 OBJS=libroardsp.o convert.o midside.o poly.o filter.o filterchain.o alaw.o mulaw.o remove.o transcode.o
 OLDROAR=midi.o
 FILTER=lowp.o highp.o amp.o quantify.o add.o clip.o downmix.o dcblock.o swap.o
+TRANSCODERS=transcode_mualaw.o
+
+ALLOBJS=$(OBJS) $(FILTER) $(TRANSCODERS) $(OLDROAR)
 
 #DEFINES        = -DDEBUG
 INCLUDE = -I../include -I../include/libroardsp
@@ -20,8 +23,8 @@ clean:
 	rm -f ${TARGETS} *.o
 new: clean all
 
-$(SLIB): ${OBJS} $(FILTER) $(OLDROAR)
-	${CC} ${LDFLAGS} -o $(SLIB) ${OBJS} $(FILTER) $(OLDROAR) $(LIBS)
-libroardsp.a: ${OBJS} $(FILTER) $(OLDROAR)
-	${AR} cru libroardsp.a ${OBJS} $(FILTER) $(OLDROAR)
+$(SLIB): $(ALLOBJS)
+	${CC} ${LDFLAGS} -o $(SLIB) $(ALLOBJS) $(LIBS)
+libroardsp.a: $(ALLOBJS)
+	${AR} cru libroardsp.a $(ALLOBJS)
 	${RANLIB} libroardsp.a

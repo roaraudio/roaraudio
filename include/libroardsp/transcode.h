@@ -104,6 +104,13 @@ int roar_bixcoder_write       (struct roar_bixcoder * state, void * buf, size_t 
 int roar_xcoder_dummy_inituninit(struct roar_xcoder * state);
 int roar_xcoder_dummy_packet_size_any(struct roar_xcoder * state, int samples);
 
+// prototypes for some simple xcoders:
+int roar_xcoder_alaw_encode(struct roar_xcoder * state, void * buf, size_t len);
+int roar_xcoder_alaw_decode(struct roar_xcoder * state, void * buf, size_t len);
+
+int roar_xcoder_mulaw_encode(struct roar_xcoder * state, void * buf, size_t len);
+int roar_xcoder_mulaw_decode(struct roar_xcoder * state, void * buf, size_t len);
+
 #endif
 
 //ll
