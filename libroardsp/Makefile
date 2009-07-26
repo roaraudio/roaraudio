@@ -6,7 +6,7 @@ TARGETS=$(SLIB) libroardsp.a
 OBJS=libroardsp.o convert.o midside.o poly.o filter.o filterchain.o alaw.o mulaw.o remove.o transcode.o
 OLDROAR=midi.o
 FILTER=lowp.o highp.o amp.o quantify.o add.o clip.o downmix.o dcblock.o swap.o
-TRANSCODERS=transcode_mualaw.o
+TRANSCODERS=transcode_mualaw.o transcode_celt.o
 
 ALLOBJS=$(OBJS) $(FILTER) $(TRANSCODERS) $(OLDROAR)
 
@@ -14,7 +14,9 @@ ALLOBJS=$(OBJS) $(FILTER) $(TRANSCODERS) $(OLDROAR)
 INCLUDE = -I../include -I../include/libroardsp
 CFLAGS += -g -Wall -O2 $(DEFINES) $(INCLUDE) $(INCPATH) $(SHARED_CF) $(fPIC)
 LDFLAGS = -g $(SHARED) -L../lib/ $(LDPATH)
-LIBS    = $(lib_dnet) $(lib_m) -lroar
+
+CODECLIBS = $(lib_celt)
+LIBS      = $(lib_dnet) $(lib_m) -lroar $(CODECLIBS)
 
 all: ${TARGETS}
 	rm -f ../lib/${SLIB} 2> /dev/null || true

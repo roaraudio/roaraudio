@@ -37,6 +37,10 @@ __BEGIN_DECLS
 #include "remove.h"
 #include "transcode.h"
 
+#ifdef ROAR_HAVE_LIBCELT
+#include "transcode_celt.h"
+#endif
+
 // defines
 #define ROARDSP_MAX_FILTERS_PER_CHAIN 8
 
