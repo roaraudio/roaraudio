@@ -38,7 +38,47 @@ static struct roar_xcoder_entry g_xcoders[] = {
  {-1, NULL, NULL, NULL, NULL, NULL}
 };
 
-int roar_xcoder_init(struct roar_xcoder * state, int encoder, struct roar_audio_info * info, struct roar_vio_calls * vio);
+int roar_xcoder_init(struct roar_xcoder * state, int encoder, struct roar_audio_info * info, struct roar_vio_calls * vio) {
+ int i;
+
+ if ( state == NULL || info == NULL )
+  return -1;
+
+ memset(state, 0, sizeof(struct roar_xcoder));
+
+ for (i = 0; g_xcoders[i].codec != -1; i++) {
+  if ( g_xcoders[i].codec == info->codec ) {
+   state->entry = &(g_xcoders[i]);
+   break;
+  }
+ }
+
+ if ( state->entry == NULL )
+  return -1;
+
+ state->stage      = ROAR_XCODER_STAGE_NONE;
+ state->encode     = encoder;
+ state->packet_len = -1;
+
+ if ( roar_xcoder_set_backend(state, vio) == -1 )
+  return -1;
+
+ memcpy(&(state->info.coded), info, sizeof(struct roar_audio_info));
+ memcpy(&(state->info.pcm  ), info, sizeof(struct roar_audio_info));
+
+ state->info.pcm.codec = ROAR_CODEC_DEFAULT;
+
+ if ( _FUNC(init) == NULL )
+  return -1;
+
+ if ( _FUNC(init)(state) != 0 )
+  return -1;
+
+ state->stage      = ROAR_XCODER_STAGE_INITED;
+
+ return 0;
+}
+
 int roar_xcoder_set_backend(struct roar_xcoder * state, struct roar_vio_calls * vio) {
  _CHECK();
 
@@ -77,7 +117,18 @@ int roar_xcoder_close      (struct roar_xcoder * state) {
  return _FUNC(uninit)(state);
 }
 
-int roar_xcoder_proc_packet(struct roar_xcoder * state, void * buf, size_t len);
+int roar_xcoder_proc_packet(struct roar_xcoder * state, void * buf, size_t len) {
+ _CHECK();
+
+ if ( state->encode ) {
+  _CHECK_BASIC(encode);
+  return _FUNC(encode)(state, buf, len);
+ } else {
+  _CHECK_BASIC(decode);
+  return _FUNC(decode)(state, buf, len);
+ }
+}
+
 int roar_xcoder_proc       (struct roar_xcoder * state, void * buf, size_t len) {
  return -1;
 }
