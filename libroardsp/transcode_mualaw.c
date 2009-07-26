@@ -43,7 +43,30 @@
 
 static int provide_buffer(void ** buf, size_t len) {
  static struct roar_buffer * bufbuf = NULL;
- return -1;
+ size_t buflen;
+
+ if ( bufbuf != NULL ) {
+  if ( roar_buffer_get_len(bufbuf, &buflen) == -1 )
+   return -1;
+
+  if ( buflen >= len ) {
+   if ( roar_buffer_get_data(bufbuf, buf) == -1 )
+    return -1;
+
+   return 0;
+  } else {
+   if ( roar_buffer_free(bufbuf) == -1 )
+    return -1;
+  }
+ }
+
+ if ( roar_buffer_new(&bufbuf, len) == -1 )
+  return -1;
+
+ if ( roar_buffer_get_data(bufbuf, buf) == -1 )
+  return -1;
+
+ return 0;
 }
 
 int roar_xcoder_alaw_encode(struct roar_xcoder * state, void * buf, size_t len) {
@@ -60,9 +83,12 @@ int roar_xcoder_alaw_decode(struct roar_xcoder * state, void * buf, size_t len) 
 
  _READ();
 
+ ROAR_DBG("roar_xcoder_alaw_decode(*): Start decoding..");
+
  if ( roardsp_conv_alaw2pcm16(buf, iobuf, outbyte) == -1 )
   return -1;
 
+ ROAR_DBG("roar_xcoder_alaw_decode(*): Decoding sucessful");
  return 0;
 }
 
