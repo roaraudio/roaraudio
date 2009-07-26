@@ -26,7 +26,7 @@
 
 #ifdef ROAR_HAVE_LIBCELT
 
-#define 16BIT (16/8)
+#define _16BIT (16/8)
 
 int roar_xcoder_celt_init       (struct roar_xcoder * state) {
  struct roar_xcoder_celt * self = malloc(sizeof(struct roar_xcoder_celt));
@@ -100,10 +100,10 @@ int roar_xcoder_celt_encode     (struct roar_xcoder * state, void * buf, size_t 
  if (!state->encode)
   return -1;
 
- if ( len != self->frame_size * 16BIT * state->info.pcm.channels )
+ if ( len != self->frame_size * _16BIT * state->info.pcm.channels )
   return -1;
 
- if ( state->state == ROAR_XCODER_STAGE_INITED ) {
+ if ( state->stage == ROAR_XCODER_STAGE_INITED ) {
   if ( roar_vio_write(state->backend, ROAR_CELT_MAGIC, ROAR_CELT_MAGIC_LEN) != ROAR_CELT_MAGIC_LEN )
    return -1;
   state->stage = ROAR_XCODER_STAGE_MAGIC;
