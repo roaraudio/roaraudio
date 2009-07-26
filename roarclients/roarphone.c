@@ -289,7 +289,7 @@ int main (int argc, char * argv[]) {
    return 10;
   }
 
-  g_conf.samples = roar_bixcoder_packet_size(transcoder, g_conf.samples);
+  g_conf.samples = roar_bixcoder_packet_size(transcoder, g_conf.samples/dinfo.channels) * dinfo.channels;
  }
 
  run_stream(&dvio, &svio, &info);
