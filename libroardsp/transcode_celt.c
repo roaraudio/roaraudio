@@ -26,6 +26,25 @@
 
 #ifdef ROAR_HAVE_LIBCELT
 
+int roar_xcoder_celt_init       (struct roar_xcoder * state) {
+ return -1;
+}
+
+int roar_xcoder_celt_uninit     (struct roar_xcoder * state) {
+ return -1;
+}
+
+int roar_xcoder_celt_packet_size(struct roar_xcoder * state, int samples) {
+ return -1;
+}
+
+int roar_xcoder_celt_encode     (struct roar_xcoder * state, void * buf, size_t len) {
+ return -1;
+}
+
+int roar_xcoder_celt_decode     (struct roar_xcoder * state, void * buf, size_t len) {
+ return -1;
+}
 
 #endif
 
