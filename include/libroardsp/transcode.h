@@ -57,13 +57,15 @@ struct roar_xcoder_entry {
  int (*init)(struct roar_xcoder * state);
  int (*uninit)(struct roar_xcoder * state);
  int (*packet_size)(struct roar_xcoder * state, int samples);
- int (*proc)(struct roar_xcoder * state, void * buf, size_t len);
+ int (*encode)(struct roar_xcoder * state, void * buf, size_t len);
+ int (*decode)(struct roar_xcoder * state, void * buf, size_t len);
 };
 
 struct roar_xcoder {
  void * inst;
  struct roar_xcoder_entry * entry;
  struct roar_vio_calls * backend;
+ int encode;
  int flags;
  int stage;
  ssize_t packet_len;
