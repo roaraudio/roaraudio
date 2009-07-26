@@ -144,13 +144,42 @@ int roar_xcoder_celt_encode     (struct roar_xcoder * state, void * buf, size_t 
 
 int roar_xcoder_celt_decode     (struct roar_xcoder * state, void * buf, size_t len) {
  struct roar_xcoder_celt * self = state->inst;
+ uint16_t * lenp = self->iobuffer;
+ void     * cp   = self->iobuffer + _SIZE_LEN;
+ uint16_t   pkglen;
+ char       magic[ROAR_CELT_MAGIC_LEN];
 
  ROAR_DBG("roar_xcoder_celt_decode(*): test if we are in decoding mode...");
 
  if (state->encode)
   return -1;
 
- return -1;
+ if ( state->stage == ROAR_XCODER_STAGE_INITED ) {
+  if ( roar_vio_read(state->backend, magic, ROAR_CELT_MAGIC_LEN) != ROAR_CELT_MAGIC_LEN )
+   return -1;
+
+  if ( memcmp(magic, ROAR_CELT_MAGIC, ROAR_CELT_MAGIC_LEN) != 0 )
+   return -1;
+
+  state->stage = ROAR_XCODER_STAGE_MAGIC;
+  ROAR_DBG("roar_xcoder_celt_decode(*): Found valid Magic");
+ }
+
+ if ( roar_vio_read(state->backend, lenp, _SIZE_LEN) != _SIZE_LEN )
+  return -1;
+
+ pkglen = ROAR_NET2HOST16(*lenp);
+
+ if ( pkglen > (self->bufferlen - _SIZE_LEN) )
+  return -1;
+
+ if ( roar_vio_read(state->backend, cp, pkglen) != pkglen )
+  return -1;
+
+ if ( celt_decode(self->decoder, cp, pkglen, (celt_int16_t *) buf) < 0 )
+  return -1;
+
+ return 0;
 }
 
 #endif
