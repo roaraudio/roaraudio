@@ -35,6 +35,8 @@ static struct roar_xcoder_entry g_xcoders[] = {
                      roar_xcoder_alaw_encode,  roar_xcoder_alaw_decode},
  {ROAR_CODEC_MULAW, roar_xcoder_dummy_inituninit, roar_xcoder_dummy_inituninit, roar_xcoder_dummy_packet_size_any,
                      roar_xcoder_mulaw_encode, roar_xcoder_mulaw_decode},
+ {ROAR_CODEC_ROAR_CELT, roar_xcoder_celt_init, roar_xcoder_celt_uninit, roar_xcoder_celt_packet_size,
+                     roar_xcoder_celt_encode,  roar_xcoder_celt_decode},
  {-1, NULL, NULL, NULL, NULL, NULL}
 };
 
