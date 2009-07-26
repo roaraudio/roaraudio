@@ -44,6 +44,7 @@ struct roar_xcoder_celt {
  CELTMode * mode;
  CELTEncoder * encoder;
  CELTDecoder * decoder;
+ int frame_size;
 };
 
 int roar_xcoder_celt_init       (struct roar_xcoder * state);
