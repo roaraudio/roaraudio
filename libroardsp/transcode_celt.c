@@ -27,6 +27,7 @@
 #ifdef ROAR_HAVE_LIBCELT
 
 #define _16BIT (16/8)
+#define _SIZE_LEN 2
 
 int roar_xcoder_celt_init       (struct roar_xcoder * state) {
  struct roar_xcoder_celt * self = malloc(sizeof(struct roar_xcoder_celt));
@@ -46,6 +47,14 @@ int roar_xcoder_celt_init       (struct roar_xcoder * state) {
  state->inst = self;
 
  self->frame_size           = 256;
+
+ self->bufferlen            = info->channels * 64 + _SIZE_LEN;
+ self->iobuffer             = malloc(self->bufferlen);
+
+ if ( self->iobuffer == NULL ) {
+  free(self);
+  return -1;
+ }
 
  self->mode                 = celt_mode_create(info->rate, info->channels, self->frame_size, NULL);
 
@@ -76,6 +85,9 @@ int roar_xcoder_celt_init       (struct roar_xcoder * state) {
 int roar_xcoder_celt_uninit     (struct roar_xcoder * state) {
  struct roar_xcoder_celt * self = state->inst;
 
+ if ( self->iobuffer )
+  free(self->iobuffer);
+
  if ( self->encoder )
  celt_encoder_destroy(self->encoder);
 
@@ -103,6 +115,8 @@ int roar_xcoder_celt_packet_size(struct roar_xcoder * state, int samples) {
 
 int roar_xcoder_celt_encode     (struct roar_xcoder * state, void * buf, size_t len) {
  struct roar_xcoder_celt * self = state->inst;
+ uint16_t * lenp = self->iobuffer;
+ void     * cp   = self->iobuffer + _SIZE_LEN;
 
  ROAR_DBG("roar_xcoder_celt_encode(*): test if we are in encoding mode...");
 
