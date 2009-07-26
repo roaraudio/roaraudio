@@ -32,10 +32,10 @@
  *  them with any software that uses libesd, libartsc or libpulse*.
  */
 
-#ifndef _TRANSCODE_H_
-#define _TRANSCODE_H_
+#ifndef _LIBROARDSP_TRANSCODE_H_
+#define _LIBROARDSP_TRANSCODE_H_
 
-#include <roaraudio.h>
+#include "libroardsp.h"
 
 #endif
 

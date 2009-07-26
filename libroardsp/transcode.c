@@ -3,7 +3,7 @@
 /*
  *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2009
  *
- *  This file is part of roarclients a part of RoarAudio,
+ *  This file is part of libroardsp a part of RoarAudio,
  *  a cross-platform sound system for both, home and professional use.
  *  See README for details.
  *
@@ -11,7 +11,7 @@
  *  it under the terms of the GNU General Public License version 3
  *  as published by the Free Software Foundation.
  *
- *  RoarAudio is distributed in the hope that it will be useful,
+ *  libroardsp is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
@@ -22,8 +22,7 @@
  *
  */
 
-#include <roaraudio.h>
-#include "transcode.h"
+#include "libroardsp.h"
 
 
 //ll

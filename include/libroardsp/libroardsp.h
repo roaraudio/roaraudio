@@ -35,6 +35,7 @@ __BEGIN_DECLS
 #include "midside.h"
 #include "point.h"
 #include "remove.h"
+#include "transcode.h"
 
 // defines
 #define ROARDSP_MAX_FILTERS_PER_CHAIN 8
