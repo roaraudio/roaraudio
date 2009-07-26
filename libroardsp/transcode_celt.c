@@ -89,10 +89,10 @@ int roar_xcoder_celt_uninit     (struct roar_xcoder * state) {
   free(self->iobuffer);
 
  if ( self->encoder )
- celt_encoder_destroy(self->encoder);
+  celt_encoder_destroy(self->encoder);
 
  if ( self->decoder )
- celt_decoder_destroy(self->decoder);
+  celt_decoder_destroy(self->decoder);
 
  if ( self->mode )
   celt_mode_destroy(self->mode);

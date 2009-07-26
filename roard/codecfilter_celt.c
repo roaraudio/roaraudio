@@ -115,10 +115,10 @@ int cf_celt_close(CODECFILTER_USERDATA_T   inst) {
   return -1;
 
  if ( self->encoder )
- celt_encoder_destroy(self->encoder);
+  celt_encoder_destroy(self->encoder);
 
  if ( self->decoder )
- celt_decoder_destroy(self->decoder);
+  celt_decoder_destroy(self->decoder);
 
  if ( self->mode )
   celt_mode_destroy(self->mode);
