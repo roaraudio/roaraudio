@@ -68,6 +68,8 @@ int roar_xcoder_celt_init       (struct roar_xcoder * state) {
   }
  }
 
+ ROAR_DBG("roar_xcoder_celt_init(*) = 0");
+
  return 0;
 }
 
@@ -85,28 +87,40 @@ int roar_xcoder_celt_uninit     (struct roar_xcoder * state) {
 
  free(self);
 
- return -1;
+ ROAR_DBG("roar_xcoder_celt_uninit(*) = 0");
+
+ return 0;
 }
 
 int roar_xcoder_celt_packet_size(struct roar_xcoder * state, int samples) {
  struct roar_xcoder_celt * self = state->inst;
+ register int ret = self->frame_size * _16BIT * state->info.pcm.channels;
 
- return self->frame_size;
+ ROAR_DBG("roar_xcoder_celt_packet_size(state=%p, samples=%i) = %i", state, samples, ret);
+
+ return ret;
 }
 
 int roar_xcoder_celt_encode     (struct roar_xcoder * state, void * buf, size_t len) {
  struct roar_xcoder_celt * self = state->inst;
 
+ ROAR_DBG("roar_xcoder_celt_encode(*): test if we are in encoding mode...");
+
  if (!state->encode)
   return -1;
 
+ ROAR_DBG("roar_xcoder_celt_encode(*): Encoding...");
+
  if ( len != self->frame_size * _16BIT * state->info.pcm.channels )
   return -1;
+
+ ROAR_DBG("roar_xcoder_celt_encode(*): Frame size check OK");
 
  if ( state->stage == ROAR_XCODER_STAGE_INITED ) {
   if ( roar_vio_write(state->backend, ROAR_CELT_MAGIC, ROAR_CELT_MAGIC_LEN) != ROAR_CELT_MAGIC_LEN )
    return -1;
   state->stage = ROAR_XCODER_STAGE_MAGIC;
+  ROAR_DBG("roar_xcoder_celt_encode(*): Wrote MAGIC");
  }
 
  return -1;
@@ -114,6 +128,8 @@ int roar_xcoder_celt_encode     (struct roar_xcoder * state, void * buf, size_t 
 
 int roar_xcoder_celt_decode     (struct roar_xcoder * state, void * buf, size_t len) {
  struct roar_xcoder_celt * self = state->inst;
+
+ ROAR_DBG("roar_xcoder_celt_decode(*): test if we are in decoding mode...");
 
  if (state->encode)
   return -1;
