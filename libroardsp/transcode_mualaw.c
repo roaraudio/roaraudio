@@ -24,20 +24,66 @@
 
 #include "libroardsp.h"
 
-int roar_xcoder_alaw_encode(struct roar_xcoder * state, void * buf, size_t len) {
+#define _CHECK() if ( state == NULL || state->info.pcm.bits != 16 || buf == NULL ) return -1
+
+#define _CHECK_BUF(len) \
+                        void * iobuf; \
+                        size_t outbyte = (len)/2; \
+                        _CHECK();     \
+                        if ( (len) & 0x01 ) return -1; \
+                        if ( provide_buffer(&iobuf, outbyte) == -1 ) \
+                         return -1;
+
+#define _SEND_RETURN()  if ( roar_vio_write(state->backend, iobuf, outbyte) != outbyte ) \
+                         return -1; \
+                        return 0;
+
+#define _READ()         if ( roar_vio_read(state->backend, iobuf, outbyte) != outbyte ) \
+                         return -1;
+
+static int provide_buffer(void ** buf, size_t len) {
+ static struct roar_buffer * bufbuf = NULL;
  return -1;
+}
+
+int roar_xcoder_alaw_encode(struct roar_xcoder * state, void * buf, size_t len) {
+ _CHECK_BUF(len);
+
+ if ( roardsp_conv_pcm162alaw(iobuf, buf, outbyte) == -1 )
+  return -1;
+
+ _SEND_RETURN();
 }
 
 int roar_xcoder_alaw_decode(struct roar_xcoder * state, void * buf, size_t len) {
- return -1;
+ _CHECK_BUF(len);
+
+ _READ();
+
+ if ( roardsp_conv_alaw2pcm16(buf, iobuf, outbyte) == -1 )
+  return -1;
+
+ return 0;
 }
 
 int roar_xcoder_mulaw_encode(struct roar_xcoder * state, void * buf, size_t len) {
- return -1;
+ _CHECK_BUF(len);
+
+ if ( roardsp_conv_pcm162mulaw(iobuf, buf, outbyte) == -1 )
+  return -1;
+
+ _SEND_RETURN();
 }
 
 int roar_xcoder_mulaw_decode(struct roar_xcoder * state, void * buf, size_t len) {
- return -1;
+ _CHECK_BUF(len);
+
+ _READ();
+
+ if ( roardsp_conv_mulaw2pcm16(buf, iobuf, outbyte) == -1 )
+  return -1;
+
+ return 0;
 }
 
 //ll
