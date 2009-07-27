@@ -217,7 +217,7 @@ int cf_celt_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  return r;
 }
 
-#define BS (ROAR_STREAM(self->stream)->info.channels * 64)
+#define BS (ROAR_STREAM(self->stream)->info.channels * 32)
 int cf_celt_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  struct codecfilter_celt_inst * self = (struct codecfilter_celt_inst *) inst;
  int have = 0;

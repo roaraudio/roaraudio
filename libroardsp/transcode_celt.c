@@ -48,7 +48,7 @@ int roar_xcoder_celt_init       (struct roar_xcoder * state) {
 
  self->frame_size           = 256;
 
- self->bufferlen            = info->channels * 64 + _SIZE_LEN;
+ self->bufferlen            = info->channels * 32 + _SIZE_LEN;
  self->iobuffer             = malloc(self->bufferlen);
 
  if ( self->iobuffer == NULL ) {
