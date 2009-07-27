@@ -79,35 +79,37 @@ int main (int argc, char * argv[]) {
   }
  }
 
- if ( (rfh = roar_simple_stream(rate, channels, bits, codec, remote, ROAR_DIR_BIDIR, "roarinterconnect")) == -1 ) {
-  fprintf(stderr, "Error: can not start playback\n");
-  return 1;
+ rfh = roar_simple_stream(rate, channels, bits, codec, remote, ROAR_DIR_BIDIR, "roarinterconnect");
+
+ if ( rfh == -1 ) {
+  fprintf(stderr, "Error: can not connect to remote server\n");
+  return 10;
  }
 
  if ( roar_simple_connect(con, server, "roarinterconnect") == -1 ) {
-  ROAR_ERR("Can not connect to server");
-  return 0;
+  fprintf(stderr, "Can not connect to local server\n");
+  return 20;
  }
 
  if ( roar_stream_new(stream, rate, channels, bits, codec) == -1 ) {
   roar_disconnect(con);
-  return -1;
+  return 21;
  }
 
  if ( roar_stream_connect(con, stream, ROAR_DIR_BIDIR) == -1 ) {
   roar_disconnect(con);
-  return -1;
+  return 22;
  }
 
  if ( roar_stream_passfh(con, stream, rfh) == -1 ) {
   roar_disconnect(con);
-  return -1;
+  return 23;
  }
 
  roar_simple_close(rfh);
 
  if ( roar_stream_attach_simple(con, stream, 0) == -1 ) {
-  ROAR_ERR("Can not attach stream to server");
+  fprintf(stderr, "Can not attach remote stream to local server\n");
  }
 
  roar_disconnect(con);
