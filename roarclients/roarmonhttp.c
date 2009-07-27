@@ -45,7 +45,7 @@ void print_header (int codec, int rate, int channels) {
  printf("Content-type: %s\r\n", mime);
  printf("ice-audio-info: ice-samplerate=%i;ice-channels=%i\r\n", rate, channels);
  printf("icy-pub:0\r\n");
- printf("Server: RoarAudio (roarmonhttp $Revision: 1.13 $)\r\n");
+ printf("Server: RoarAudio (roarmonhttp $Revision: 1.14 $)\r\n");
  printf("\r\n");
 
  fflush(stdout);
@@ -214,7 +214,9 @@ int main (int argc, char * argv[]) {
  char * server   = NULL;
  int    fh;
  char * c, * k, * v;
+#ifdef ROAR_HAVE_STRTOK_R
  char * sp0 = NULL, * sp1 = NULL;
+#endif
  int dir = ROAR_DIR_MONITOR;
  int gopher = 0;
 
