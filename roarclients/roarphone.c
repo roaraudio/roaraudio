@@ -26,7 +26,13 @@
 #include <libroardsp/libroardsp.h>
 #include "driver.h"
 
-#ifdef ROAR_HAVE_LIBSPEEX
+#if defined(ROAR_HAVE_LIBSPEEX) && !defined(ROAR_HAVE_LIBSPEEXDSP)
+#define _SPEEX_API_OLD
+#elif defined(ROAR_HAVE_LIBSPEEX) && defined(ROAR_HAVE_LIBSPEEXDSP)
+#define _SPEEX_API_NEW
+#endif
+
+#ifdef _SPEEX_API_OLD
 #include <speex/speex_echo.h>
 #endif
 
@@ -75,7 +81,7 @@ int open_stream (struct roar_vio_calls * vio, char * server, struct roar_audio_i
                                "roarphone");
 }
 
-#ifdef ROAR_HAVE_LIBSPEEX
+#ifdef _SPEEX_API_OLD
 int anti_echo_speex16(int16_t * buf, int16_t * aebuf, size_t len, struct roar_audio_info * info) {
  static SpeexEchoState * state = NULL;
  size_t samples = info->rate / TIMEDIV;
@@ -130,7 +136,7 @@ int anti_echo16(int16_t * buf, int16_t * aebuf, size_t len, struct roar_audio_in
     for (i = 0; i < len; i++)
      buf[i] -= aebuf[i];
    break;
-#ifdef ROAR_HAVE_LIBSPEEX
+#ifdef _SPEEX_API_OLD
   case AE_SPEEX:
     return anti_echo_speex16(buf, aebuf, len, info);
    break;
