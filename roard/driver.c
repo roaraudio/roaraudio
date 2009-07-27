@@ -60,6 +60,8 @@ struct roar_driver g_driver[] = {
   NULL, NULL, NULL, NULL, NULL, NULL, driver_dmx_open_vio},
  {"pwmled", "PWM LED driver", "/dev/ttyS0", DRV_FLAG_FHSEC, ROAR_SUBSYS_LIGHT,
   NULL, NULL, NULL, NULL, NULL, NULL, driver_pwmled_open_vio},
+ {"sysclock", "System Clock Clock Source", "(none)", DRV_FLAG_NONE, ROAR_SUBSYS_WAVEFORM,
+  NULL, NULL, NULL, NULL, NULL, NULL, driver_sysclock_open_vio},
  {NULL, NULL, NULL, DRV_FLAG_NONE, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL} // end of list
                                 };
 
@@ -67,7 +69,7 @@ void print_driverlist (void) {
  int i;
  char subsys[7] = "      ";
 
- printf("  Driver Flag Subsys - Description (devices)\n");
+ printf("  Driver   Flag Subsys - Description (devices)\n");
  printf("------------------------------------------------------\n");
 
  for (i = 0; g_driver[i].name != NULL; i++) {
@@ -82,7 +84,7 @@ void print_driverlist (void) {
   if ( g_driver[i].subsystems & ROAR_SUBSYS_LIGHT )
    subsys[3] = 'L';
 
-  printf("  %-7s %c%c%c %6s - %s (devices: %s)\n", g_driver[i].name,
+  printf("  %-9s %c%c%c %6s - %s (devices: %s)\n", g_driver[i].name,
                 g_driver[i].flags & DRV_FLAG_FHSEC                                                         ? 's' : ' ',
                 g_driver[i].open     != NULL || (g_driver[i].open == NULL && g_driver[i].vio_init == NULL) ? 'S' : ' ',
                 g_driver[i].vio_init != NULL || (g_driver[i].open == NULL && g_driver[i].vio_init == NULL) ? 'V' : ' ',
