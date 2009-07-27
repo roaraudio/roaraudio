@@ -98,6 +98,9 @@ int main (int argc, char * argv[]) {
    proto = P_GOPHER;
    host  = file+9;
    port  = 70;
+  } else {
+   fprintf(stderr, "Error: unknown protocol: %s\n", file);
+   return 20;
   }
 
   if ( proto == P_HTTP || proto == P_GOPHER ) {
@@ -138,7 +141,7 @@ int main (int argc, char * argv[]) {
 
       fprintf(http, "GET %s HTTP/1.1\r\n", file);
       fprintf(http, "Host: %s\r\n", host);
-      fprintf(http, "User-Agent: roarradio $Revision: 1.4 $\r\n");
+      fprintf(http, "User-Agent: roarradio $Revision: 1.5 $\r\n");
       fprintf(http, "Connection: close\r\n");
       fprintf(http, "\r\n");
       fflush(http);
