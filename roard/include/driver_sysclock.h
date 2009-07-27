@@ -30,7 +30,9 @@ struct driver_sysclock {
  struct timeval lasttime;
 };
 
-int driver_sysclock_open_vio(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh);
+int     driver_sysclock_open_vio(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh);
+int     driver_sysclock_close   (struct roar_vio_calls * vio);
+ssize_t driver_sysclock_write   (struct roar_vio_calls * vio, void *buf, size_t count);
 
 #endif
 
