@@ -14,6 +14,7 @@ v. 0.3beta0 - ?
 	* added support for encoding 32 bit Vorbis streams
 	* added transcoding features in libroardsp
 	* added tool 'roarphone'
+	* added tool 'roarinterconnect'
 
 v. 0.2 - Thu May 21 2009 21:00
 	* do a some more testings for functions not existing on win32
