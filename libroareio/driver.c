@@ -38,7 +38,9 @@ int roar_cdriver_null(struct roar_vio_calls * calls, char * name, char * dev, st
 
 struct roar_cdriver _g_roar_cdriver[] = {
  {"null", roar_cdriver_null},
+#if defined(ROAR_HAVE_OSS_BSD) || defined(ROAR_HAVE_OSS)
  {"oss",  roar_cdriver_oss},
+#endif
  {NULL, NULL}
 };
 
