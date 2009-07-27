@@ -42,8 +42,10 @@ int roar_cdriver_oss(struct roar_vio_calls * calls, char * name, char * dev, str
 
  ROAR_DBG("roar_cdriver_oss(*) = ?");
 
+#ifdef ROAR_DEFAULT_OSS_DEV
  if ( dev == NULL )
   dev = ROAR_DEFAULT_OSS_DEV;
+#endif
 
  if ( dev == NULL )
   return -1;
