@@ -25,7 +25,7 @@
 #include <roaraudio.h>
 
 void usage (void) {
- printf("roarcat [OPTIONS]...\n");
+ printf("roarinterconnect [OPTIONS]...\n");
 
  printf("\nOptions:\n\n");
 
