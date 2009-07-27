@@ -26,13 +26,70 @@
 
 #ifdef ROAR_HAVE_DRIVER_SYSCLOCK
 int driver_sysclock_open_vio(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh) {
+ struct driver_sysclock * self = malloc(sizeof(struct driver_sysclock));
+
+ if ( self == NULL )
+  return -1;
 
  if ( device != NULL ) {
   return -1;
  }
 
+ memset(self, 0, sizeof(struct driver_sysclock));
+ memset(inst, 0, sizeof(struct roar_vio_calls));
+
+ inst->inst  = self;
+ inst->close = driver_sysclock_close;
+ inst->write = driver_sysclock_write;
+
+ self->bsp   = (info->bits / 8) * info->channels * info->rate;
+
+ if (!self->bsp) {
+  free(self);
+  return -1;
+ }
+
+ switch (info->codec) {
+  case ROAR_CODEC_PCM_S_LE:
+  case ROAR_CODEC_PCM_S_BE:
+  case ROAR_CODEC_PCM_S_PDP:
+  case ROAR_CODEC_PCM_U_LE:
+  case ROAR_CODEC_PCM_U_BE:
+  case ROAR_CODEC_PCM_U_PDP:
+   break;
+  case ROAR_CODEC_ALAW:
+  case ROAR_CODEC_MULAW:
+    // one byte per sample
+    self->bsp *= 8;
+    self->bsp /= info->bits;
+   break;
+  default:
+    free(self);
+    return -1;
+   break;
+ }
+
+ gettimeofday(&(self->lasttime), NULL);
+
+ return 0;
+}
+
+int     driver_sysclock_close   (struct roar_vio_calls * vio) {
+ struct driver_sysclock * self = vio->inst;
+
+ if ( self == NULL )
+  return -1;
+
+ free(self);
+
+ return 0;
+}
+
+ssize_t driver_sysclock_write   (struct roar_vio_calls * vio, void *buf, size_t count) {
+ struct driver_sysclock * self = vio->inst;
  return -1;
 }
+
 #endif
 
 //ll
