@@ -25,6 +25,11 @@
 #ifndef _DRIVER_SYSCLOCK_H_
 #define _DRIVER_SYSCLOCK_H_
 
+struct driver_sysclock {
+ int bps;
+ struct timeval lasttime;
+};
+
 int driver_sysclock_open_vio(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh);
 
 #endif
