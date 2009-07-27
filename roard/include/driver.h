@@ -57,7 +57,11 @@
 #include "driver_raw.h"
 #include "driver_dmx.h"
 #include "driver_pwmled.h"
+
+#ifdef ROAR_HAVE_GETTIMEOFDAY
+#define ROAR_HAVE_DRIVER_SYSCLOCK
 #include "driver_sysclock.h"
+#endif
 
 #ifdef ROAR_HAVE_LIBAO
 #include <ao/ao.h>

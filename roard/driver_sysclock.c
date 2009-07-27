@@ -24,6 +24,7 @@
 
 #include "roard.h"
 
+#ifdef ROAR_HAVE_DRIVER_SYSCLOCK
 int driver_sysclock_open_vio(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh) {
 
  if ( device != NULL ) {
@@ -32,5 +33,6 @@ int driver_sysclock_open_vio(struct roar_vio_calls * inst, char * device, struct
 
  return -1;
 }
+#endif
 
 //ll
