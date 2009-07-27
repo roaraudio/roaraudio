@@ -141,7 +141,7 @@ int main (int argc, char * argv[]) {
 
       fprintf(http, "GET %s HTTP/1.1\r\n", file);
       fprintf(http, "Host: %s\r\n", host);
-      fprintf(http, "User-Agent: roarradio $Revision: 1.5 $\r\n");
+      fprintf(http, "User-Agent: roarradio $Revision: 1.6 $\r\n");
       fprintf(http, "Connection: close\r\n");
       fprintf(http, "\r\n");
       fflush(http);
@@ -191,22 +191,22 @@ int main (int argc, char * argv[]) {
 
  if ( roar_simple_connect(con, server, "roarradio") == -1 ) {
   ROAR_ERR("Can not connect to server");
-  return 0;
+  return 1;
  }
 
  if ( roar_stream_new(stream, rate, channels, bits, codec) == -1 ) {
   roar_disconnect(con);
-  return -1;
+  return 1;
  }
 
  if ( roar_stream_connect(con, stream, ROAR_DIR_PLAY) == -1 ) {
   roar_disconnect(con);
-  return -1;
+  return 1;
  }
 
  if ( roar_stream_passfh(con, stream, in) == -1 ) {
   roar_disconnect(con);
-  return -1;
+  return 1;
  }
 
  close(in);
