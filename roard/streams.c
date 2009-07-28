@@ -24,6 +24,8 @@
 
 #include "roard.h"
 
+int streams_thru_num = 0;
+
 int streams_init (void) {
  int i;
 
