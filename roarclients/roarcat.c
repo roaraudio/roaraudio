@@ -66,7 +66,7 @@ int main (int argc, char * argv[]) {
  if ( roar_vio_open_fh(&file, ROAR_STDOUT) == -1 )
   return 1;
 
- if ( roar_vio_dstr_init_defaults(&def, ROAR_VIO_DEF_TYPE_NONE, O_CREAT|O_TRUNC|O_WRONLY, 0644) == -1 )
+ if ( roar_vio_dstr_init_defaults(&def, ROAR_VIO_DEF_TYPE_NONE, O_RDONLY, 0644) == -1 )
   return 1;
 
  for (i = 1; i < argc; i++) {
