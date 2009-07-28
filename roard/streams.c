@@ -1133,7 +1133,6 @@ int stream_outputbuffer_destroy(int id) {
 
 int streams_check  (int id) {
  int fh;
- int i;
  ssize_t req, realreq, done;
  struct roar_stream        *   s;
  struct roar_stream_server *  ss;
@@ -1215,15 +1214,6 @@ int streams_check  (int id) {
   req = done;
 
   roar_buffer_get_data(b, (void **)&buf);
-  for (i = 0; i < ROAR_STREAMS_MAX; i++) {
-   if ( g_streams[i] != NULL && ROAR_STREAM(g_streams[i])->pos_rel_id == id ) {
-    if ( ROAR_STREAM(g_streams[i])->dir == ROAR_DIR_THRU ) {
-     if ( stream_vio_write(i, buf, req) != req ) {
-      streams_delete(i);
-     }
-    }
-   }
-  }
  } else {
   req = codecfilter_read(ss->codecfilter_inst, ss->codecfilter, buf, req);
  }
@@ -1493,6 +1483,7 @@ ssize_t stream_vio_write(int stream, void *buf, size_t count) {
 ssize_t stream_vio_s_read (struct roar_stream_server * stream, void *buf, size_t count) {
   size_t len =  0;
  ssize_t r   = -1;
+ int     i;
 
  errno = 0;
 
@@ -1514,6 +1505,16 @@ ssize_t stream_vio_s_read (struct roar_stream_server * stream, void *buf, size_t
 
  if ( len == 0 && r == -1 )
   return -1;
+
+ for (i = 0; i < ROAR_STREAMS_MAX; i++) {
+  if ( g_streams[i] != NULL && ROAR_STREAM(g_streams[i])->pos_rel_id == ROAR_STREAM(stream)->id ) {
+   if ( ROAR_STREAM(g_streams[i])->dir == ROAR_DIR_THRU ) {
+    if ( stream_vio_write(i, buf, len) != len ) {
+     streams_delete(i);
+    }
+   }
+  }
+ }
 
  return len;
 }

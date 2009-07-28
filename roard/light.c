@@ -117,16 +117,6 @@ int light_check_stream  (int id) {
     }
 //    memcpy(g_light_state.state, buf, g_light_state.channels < 512 ? g_light_state.channels : 512);
 
-    for (i = 0; i < ROAR_STREAMS_MAX; i++) {
-     if ( g_streams[i] != NULL && ROAR_STREAM(g_streams[i])->pos_rel_id == id ) {
-      if ( ROAR_STREAM(g_streams[i])->dir == ROAR_DIR_THRU ) {
-       if ( stream_vio_write(i, buf, 512) != 512 ) {
-        streams_delete(i);
-       }
-      }
-     }
-    }
-
     return 0;
    break;
   case ROAR_CODEC_ROARDMX:
