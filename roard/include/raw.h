@@ -27,6 +27,8 @@
 
 #include <roaraudio.h>
 
+#define RAW_READ_LEN  1024
+
 int raw_check_stream  (int id);
 
 #endif
