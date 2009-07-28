@@ -40,6 +40,7 @@ void usage (void) {
         "  --midi                - Use MIDI Audio as input\n"
         "  --light               - Use light control input\n"
         "  --raw                 - Use raw input\n"
+        "  --rel-id ID          - Set ID of relative stream\n"
         "  --help                - Show this help\n"
        );
 
@@ -51,13 +52,16 @@ int main (int argc, char * argv[]) {
  int    channels = ROAR_CHANNELS_DEFAULT;
  int    codec    = ROAR_CODEC_DEFAULT;
  int    dir      = ROAR_DIR_PLAY;
+ int    rel_id   = -1;
  char * server   = NULL;
  char * k;
- int    fh;
  int    i;
- int    in = -1;
  char * name = "roarcat";
- char buf[BUFSIZE];
+ struct roar_connection    con;
+ struct roar_stream        s;
+ struct roar_vio_calls     file, stream;
+ struct roar_vio_defaults  def;
+ int file_opened = 0;
 
  for (i = 1; i < argc; i++) {
   k = argv[i];
@@ -95,11 +99,15 @@ int main (int argc, char * argv[]) {
   } else if ( !strcmp(k, "--raw") ) {
    dir   = ROAR_DIR_RAW_IN;
 
+  } else if ( !strcmp(k, "--rel-id") ) {
+   rel_id = atoi(argv[++i]);
+
   } else if ( !strcmp(k, "--help") || !strcmp(k, "-h") ) {
    usage();
    return 0;
-  } else if ( in == -1 ) {
-   if ( (in = open(k, O_RDONLY, 0644)) == -1 ) {
+  } else if ( !file_opened ) {
+   file_opened = 1;
+   if ( roar_vio_open_dstr(&file, k, &def, 1) == -1 ) {
     fprintf(stderr, "Error: can not open file: %s: %s\n", k, strerror(errno));
     return 1;
    }
@@ -110,21 +118,47 @@ int main (int argc, char * argv[]) {
   }
  }
 
- if ( (fh = roar_simple_stream(rate, channels, bits, codec, server, dir, name)) == -1 ) {
-  fprintf(stderr, "Error: can not start playback\n");
-  return 1;
+ if ( roar_simple_connect(&con, server, "roarmon") == -1 ) {
+  fprintf(stderr, "Error: can not connect to server\n");
+  return 10;
  }
 
- if ( in == -1 )
-  in = ROAR_STDIN;
+ if ( roar_stream_new(&s, rate, channels, bits, codec) == -1 ) {
+  fprintf(stderr, "Error: can not create stream\n");
+  roar_disconnect(&con);
+  return 20;
+ }
 
- while((i = read(in, buf, BUFSIZE)))
-  if (write(fh, buf, i) != i)
-   break;
+ if ( rel_id != -1 ) {
+  if ( roar_stream_set_rel_id(&s, rel_id) ) {
+   fprintf(stderr, "Error: can not set id or realative stream\n");
+   roar_disconnect(&con);
+   return 21;
+  }
+ }
 
- roar_simple_close(fh);
+ if ( roar_stream_connect(&con, &s, dir) == -1 ) {
+  fprintf(stderr, "Error: can not connect stream to server\n");
+  roar_disconnect(&con);
+  return 11;
+ }
 
- close(in);
+ if ( roar_stream_exec(&con, &s) == -1 ) {
+  fprintf(stderr, "Error: can not exec stream\n");
+  roar_disconnect(&con);
+  return 12;
+ }
+
+ if ( roar_get_connection_vio(&con, &stream) == -1 ) {
+  fprintf(stderr, "Error: can not get stream vio\n");
+  roar_disconnect(&con);
+  return 13;
+ }
+
+ roar_vio_copy_data(&stream, &file);
+
+ roar_vio_close(&stream);
+ roar_vio_close(&file);
 
  return 0;
 }
