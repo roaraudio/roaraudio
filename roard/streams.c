@@ -153,6 +153,9 @@ int streams_delete (int id) {
   }
  }
 
+ if ( ROAR_STREAM(s)->dir == ROAR_DIR_THRU )
+  streams_thru_num--;
+
 #ifdef ROAR_SUPPORT_META
  // delete meta data form other meta streams if needed
  if ( streams_get_flag(id, ROAR_FLAG_META) == 1 ) {
@@ -240,6 +243,9 @@ int streams_set_dir    (int id, int dir, int defaults) {
   return -1;
 
  ROAR_STREAM(ss)->dir = dir;
+
+ if ( dir == ROAR_DIR_THRU )
+  streams_thru_num++;
 
  if ( defaults ) {
   if ( dir <= 0 || dir >= ROAR_DIR_DIRIDS )
