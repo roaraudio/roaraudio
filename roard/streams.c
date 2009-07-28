@@ -259,6 +259,15 @@ int streams_set_dir    (int id, int dir, int defaults) {
  return 0;
 }
 
+int streams_get_dir    (int id) {
+ struct roar_stream_server * ss;
+
+ if ( (ss = g_streams[id]) == NULL )
+  return -1;
+
+ return ROAR_STREAM(ss)->dir;
+}
+
 int streams_set_fh     (int id, int fh) {
  struct roar_stream_server * ss;
  struct roar_stream        * s;
