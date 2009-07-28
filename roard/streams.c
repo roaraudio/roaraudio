@@ -140,10 +140,13 @@ int streams_delete (int id) {
 
  for (i = 0; i < ROAR_STREAMS_MAX; i++) {
   if ( g_streams[i] != NULL && ROAR_STREAM(g_streams[i])->pos_rel_id == id ) {
-   if ( ROAR_STREAM(g_streams[i])->dir == ROAR_DIR_THRU ) {
-    streams_delete(i);
-   } else {
-    ROAR_STREAM(g_streams[i])->pos_rel_id = -1;
+   switch (ROAR_STREAM(g_streams[i])->dir) {
+    case ROAR_DIR_THRU:
+    case ROAR_DIR_RAW_IN:
+      streams_delete(i);
+     break;
+    default:
+      ROAR_STREAM(g_streams[i])->pos_rel_id = -1;
    }
   }
  }
