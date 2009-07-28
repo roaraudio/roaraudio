@@ -28,7 +28,7 @@
 #include <esd.h>
 #endif
 
-#define MT_NULL    0x00
+#define MT_NONE    0x00
 #define MT_MASK    0xF0
 #define MT_ROAR    0x10
 #define MT_ESD     0x20
@@ -58,9 +58,34 @@ void usage (void) {
 }
 
 int parse_type (char * type) {
- int ret = 0;
+ int ret = MT_NONE|ST_NONE;
+ char * colon;
 
  if ( type != NULL ) {
+  while (type != NULL && *type) {
+   if ( (colon = strstr(type, ":")) != NULL ) {
+    *colon = 0;
+     colon++;
+   }
+
+   if ( !strcmp(type, "roar") ) {
+    ret -= ret & MT_MASK;
+    ret += MT_ROAR;
+   } else if ( !strcmp(type, "esd") ) {
+    ret -= ret & MT_MASK;
+    ret += MT_ESD;
+   } else if ( !strcmp(type, "bidir") ) {
+    ret -= ret & ST_MASK;
+    ret += ST_BIDIR;
+   } else if ( !strcmp(type, "filter") ) {
+    ret -= ret & ST_MASK;
+    ret += ST_FILTER;
+   } else {
+    return MT_NONE|ST_NONE;
+   }
+
+   type = colon;
+  }
  }
 
  if ( (ret & MT_MASK) == MT_NONE )
