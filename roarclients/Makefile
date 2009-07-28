@@ -48,7 +48,7 @@ roarmon: roarmon.o
 roarmonhttp: roarmonhttp.o
 	$L
 roarinterconnect: roarinterconnect.o
-	$L
+	$L $(lib_esd)
 roarbidir: roarbidir.o
 	$L
 roarphone: roarphone.o $(DRVOBJS)

@@ -24,6 +24,20 @@
 
 #include <roaraudio.h>
 
+#ifdef ROAR_HAVE_ESD
+#include <esd.h>
+#endif
+
+#define MT_NULL    0x00
+#define MT_MASK    0xF0
+#define MT_ROAR    0x10
+#define MT_ESD     0x20
+
+#define ST_NONE    0x00
+#define ST_MASK    0x0F
+#define ST_BIDIR   0x01
+#define ST_FILTER  0x02
+
 void usage (void) {
  printf("roarinterconnect [OPTIONS]...\n");
 
@@ -48,6 +62,8 @@ int main (int argc, char * argv[]) {
  int    bits     = 16;
  int    channels = 2;
  int    codec    = ROAR_CODEC_DEFAULT;
+ int    type     = MT_ROAR|ST_BIDIR;
+ int    tmp;
  char * server   = NULL;
  char * remote   = NULL;
  char * k;
@@ -79,7 +95,53 @@ int main (int argc, char * argv[]) {
   }
  }
 
- rfh = roar_simple_stream(rate, channels, bits, codec, remote, ROAR_DIR_BIDIR, "roarinterconnect");
+ switch (type & MT_MASK) {
+  case MT_ROAR:
+    switch (type & ST_MASK) {
+     case ST_BIDIR:
+       tmp = ROAR_DIR_BIDIR;
+      break;
+     case ST_FILTER:
+       tmp = ROAR_DIR_FILTER;
+      break;
+     default:
+       fprintf(stderr, "Error: unknown stream type\n");
+       return 2;
+    }
+    rfh = roar_simple_stream(rate, channels, bits, codec, remote, tmp, "roarinterconnect");
+   break;
+#ifdef ROAR_HAVE_ESD
+  case MT_ESD:
+    if ( (type & ST_MASK) != ST_FILTER ) {
+     fprintf(stderr, "Error: server type only supports stream type filter\n");
+     return 2;
+    }
+
+    tmp = ESD_STREAM|ESD_PLAY;
+
+    switch (bits) {
+     case  8: tmp |= ESD_BITS8;  break;
+     case 16: tmp |= ESD_BITS16; break;
+     default:
+       fprintf(stderr, "Error: EsounD only supports 8 and 16 bit streams\n");
+       return 2;
+    }
+
+    switch (channels) {
+     case 1: tmp |= ESD_MONO;   break;
+     case 2: tmp |= ESD_STEREO; break;
+     default:
+       fprintf(stderr, "Error: EsounD only supports mono and stereo streams\n");
+       return 2;
+    }
+
+    rfh = esd_filter_stream(tmp, rate, remote, "roarinterconnect");
+   break;
+#endif
+  default:
+    fprintf(stderr, "Error: unknown/not supported server type\n");
+    return 2;
+ }
 
  if ( rfh == -1 ) {
   fprintf(stderr, "Error: can not connect to remote server\n");
