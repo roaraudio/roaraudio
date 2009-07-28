@@ -1515,15 +1515,12 @@ ssize_t stream_vio_s_read (struct roar_stream_server * stream, void *buf, size_t
  if ( len == 0 && r == -1 )
   return -1;
 
- for (i = 0; i < ROAR_STREAMS_MAX; i++) {
-  if ( g_streams[i] != NULL && ROAR_STREAM(g_streams[i])->pos_rel_id == ROAR_STREAM(stream)->id ) {
-   if ( ROAR_STREAM(g_streams[i])->dir == ROAR_DIR_THRU ) {
-    if ( stream_vio_write(i, orig_buf, len) != len ) {
-     streams_delete(i);
-    }
-   }
-  }
- }
+ if ( streams_thru_num )
+  for (i = 0; i < ROAR_STREAMS_MAX; i++)
+   if ( g_streams[i] != NULL && ROAR_STREAM(g_streams[i])->pos_rel_id == ROAR_STREAM(stream)->id )
+    if ( ROAR_STREAM(g_streams[i])->dir == ROAR_DIR_THRU )
+     if ( stream_vio_write(i, orig_buf, len) != len )
+      streams_delete(i);
 
  return len;
 }
