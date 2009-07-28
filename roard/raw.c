@@ -50,6 +50,8 @@ int raw_check_stream  (int id) {
  }
 
  if ( (len = stream_vio_s_read(ss, data, RAW_READ_LEN)) < 1 ) {
+  // this is len=0 -> eof OR len=-1 -> error
+  streams_delete(id);
   roar_buffer_free(buf);
   return -1;
  }
