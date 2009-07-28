@@ -310,11 +310,13 @@ int streams_set_fh     (int id, int fh) {
   case ROAR_DIR_OUTPUT:
   case ROAR_DIR_MIDI_OUT:
   case ROAR_DIR_LIGHT_OUT:
+  case ROAR_DIR_RAW_OUT:
     ROAR_SHUTDOWN(fh, SHUT_RD);
    break;
  }
 
  if ( dir == ROAR_DIR_FILTER ) {
+  streams_set_flag(id, ROAR_FLAG_SYNC);
   ss->ready = 1;
   return 0;
  } else {
@@ -1128,6 +1130,7 @@ int streams_check  (int id) {
  struct roar_stream_server *  ss;
  struct roar_buffer        *   b;
  char                      * buf;
+// char                        tmp;
 
  if ( g_streams[id] == NULL )
   return -1;
@@ -1156,6 +1159,17 @@ int streams_check  (int id) {
   case ROAR_DIR_BIDIR:
    break;
   default:
+/*
+    ROAR_WARN("streams_check(id=%i): Read event on non input stream of type/dir %s", id, roar_dir2str(s->dir));
+    errno = 0;
+    req = stream_vio_s_read(ss, &tmp, 1);
+    ROAR_DBG("streams_check(id=%i): stream_vio_s_read(ss, &tmp, 1) = %li // errno=%s(%i)", id, req, strerror(errno), errno);
+    if ( req == 1 ) {
+     ROAR_ERR("streams_check(id=%i): Client violates protocol, got one byte of data on output stream, kicking stream");
+     streams_delete(id);
+     return -1;
+    }
+*/
     return 0;
    break;
  }
