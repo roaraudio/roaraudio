@@ -27,7 +27,7 @@
 #define BUFSIZE (1024*2)
 
 void usage (void) {
- printf("roarcatad [OPTIONS]...\n");
+ printf("roarcatpassfh [OPTIONS]...\n");
 
  printf("\nOptions:\n\n");
 
