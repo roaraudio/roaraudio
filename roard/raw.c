@@ -24,4 +24,8 @@
 
 #include "roard.h"
 
+int raw_check_stream  (int id) {
+ return -1;
+}
+
 //ll

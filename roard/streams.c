@@ -1146,6 +1146,9 @@ int streams_check  (int id) {
   case ROAR_DIR_MIDI_IN:
     return midi_check_stream(id);
    break;
+  case ROAR_DIR_RAW_IN:
+    return raw_check_stream(id);
+   break;
   case ROAR_DIR_PLAY:
   case ROAR_DIR_BIDIR:
    break;
