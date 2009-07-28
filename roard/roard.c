@@ -297,6 +297,8 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
     dir = ROAR_DIR_MIDI_OUT;
    } else if ( !strcasecmp(v, "light") ) {
     dir = ROAR_DIR_LIGHT_OUT;
+   } else if ( !strcasecmp(v, "raw") ) {
+    dir = ROAR_DIR_RAW_OUT;
    } else {
     ROAR_ERR("add_output(*): unknown subsystem '%s'", k);
     error++;
