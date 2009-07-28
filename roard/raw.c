@@ -25,7 +25,43 @@
 #include "roard.h"
 
 int raw_check_stream  (int id) {
- return -1;
+ struct roar_stream        *    s;
+ struct roar_stream_server *   ss;
+ struct roar_buffer        *  buf;
+ void                      * data;
+ ssize_t                     len;
+
+ if ( g_streams[id] == NULL )
+  return -1;
+
+ ROAR_DBG("raw_check_stream(id=%i) = ?", id);
+
+ s = ROAR_STREAM(ss = g_streams[id]);
+
+ if ( s->pos_rel_id == -1 )
+  return -1;
+
+ if ( roar_buffer_new(&buf, RAW_READ_LEN) == -1 )
+  return -1;
+
+ if ( roar_buffer_get_data(buf, &data) == -1 ) {
+  roar_buffer_free(buf);
+  return -1;
+ }
+
+ if ( (len = stream_vio_s_read(ss, data, RAW_READ_LEN)) < 1 ) {
+  roar_buffer_free(buf);
+  return -1;
+ }
+
+ if ( stream_vio_write(s->pos_rel_id, data, len) != len ) {
+  // we are that hard here as this is needed to ensure data integrety
+  streams_delete(s->pos_rel_id);
+ }
+
+ roar_buffer_free(buf);
+
+ return 0;
 }
 
 //ll
