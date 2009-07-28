@@ -90,6 +90,7 @@ int streams_set_client (int id, int client);
 int streams_get_client (int id);
 
 int streams_set_dir    (int id, int dir, int defaults);
+int streams_get_dir    (int id);
 
 int streams_set_fh     (int id, int fh);
 int streams_get_fh     (int id);
