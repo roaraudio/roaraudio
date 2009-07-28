@@ -15,6 +15,7 @@ v. 0.3beta0 - ?
 	* added transcoding features in libroardsp
 	* added tool 'roarphone'
 	* added tool 'roarinterconnect'
+	* added simple raw data subsystem
 
 v. 0.2 - Thu May 21 2009 21:00
 	* do a some more testings for functions not existing on win32
