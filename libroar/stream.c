@@ -570,6 +570,12 @@ char * roar_dir2str (int dir) {
   case ROAR_DIR_LIGHT_OUT:
     return "light_out";
    break;
+  case ROAR_DIR_RAW_IN:
+    return "raw_in";
+   break;
+  case ROAR_DIR_RAW_OUT:
+    return "raw_out";
+   break;
   default:
     return "unknown";
  }
