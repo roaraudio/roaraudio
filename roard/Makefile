@@ -1,6 +1,7 @@
 TARGETS=roard
 
-OBJ=roard.o driver.o mixer.o output.o signals.o loop.o clients.o streams.o network.o commands.o req.o sources.o sample.o meta.o codecfilter.o midi.o light.o lib.o
+OBJ=roard.o driver.o mixer.o output.o signals.o loop.o clients.o streams.o network.o commands.o req.o sources.o sample.o meta.o codecfilter.o lib.o
+SUBSYS=midi.o light.o raw.o
 DRV=driver_esd.o driver_ao.o driver_roar.o driver_raw.o driver_oss.o driver_shout.o driver_sndio.o driver_dmx.o driver_pwmled.o driver_sysclock.o
 CF=codecfilter_cmd.o codecfilter_vorbis.o codecfilter_celt.o codecfilter_speex.o codecfilter_wave.o codecfilter_alaw.o codecfilter_mulaw.o codecfilter_sndfile.o codecfilter_fishsound.o
 
@@ -25,5 +26,5 @@ clean:
 	rm -f ${TARGETS} *.o
 new: clean all
 
-roard: ${OBJ} ${DRV} ${CF}
-	${CC} ${LDFLAGS} -o roard ${OBJ} ${DRV} ${CF} ${LIBS}
+roard: ${OBJ} ${SUBSYS} ${DRV} ${CF}
+	${CC} ${LDFLAGS} -o roard ${OBJ} ${SUBSYS} ${DRV} ${CF} ${LIBS}
