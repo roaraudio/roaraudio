@@ -39,6 +39,7 @@ void usage (void) {
         "  --wave                - Use Wave Audio (PCM) as input\n"
         "  --midi                - Use MIDI Audio as input\n"
         "  --light               - Use light control input\n"
+        "  --raw                 - Use raw input\n"
         "  --help                - Show this help\n"
        );
 
@@ -91,6 +92,8 @@ int main (int argc, char * argv[]) {
    dir   = ROAR_DIR_LIGHT_IN;
    if ( codec == ROAR_CODEC_DEFAULT )
     codec = ROAR_CODEC_DMX512;
+  } else if ( !strcmp(k, "--raw") ) {
+   dir   = ROAR_DIR_RAW_IN;
 
   } else if ( !strcmp(k, "--help") || !strcmp(k, "-h") ) {
    usage();

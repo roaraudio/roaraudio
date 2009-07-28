@@ -39,6 +39,7 @@ void usage (void) {
         "  --wave               - Output Wave Audio (PCM)\n"
         "  --midi               - Output MIDI Audio\n"
         "  --light              - Output light control\n"
+        "  --raw                - Output raw data\n"
         "  --thru               - Output copy of other stream\n"
         "  --rel-id ID          - Set ID of relative stream\n"
         "  --help               - Show this help\n"
@@ -101,6 +102,8 @@ int main (int argc, char * argv[]) {
    dir   = ROAR_DIR_LIGHT_OUT;
    if ( codec == ROAR_CODEC_DEFAULT )
     codec = ROAR_CODEC_DMX512;
+  } else if ( !strcmp(k, "--raw") ) {
+   dir   = ROAR_DIR_RAW_OUT;
   } else if ( !strcmp(k, "--thru") ) {
    dir   = ROAR_DIR_THRU;
   } else if ( !strcmp(k, "--rel-id") ) {
