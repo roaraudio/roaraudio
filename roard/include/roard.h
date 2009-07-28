@@ -86,6 +86,7 @@
 #include "meta.h"
 #include "midi.h"
 #include "light.h"
+#include "raw.h"
 #include "lib.h"
 
 
