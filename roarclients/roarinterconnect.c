@@ -32,11 +32,13 @@
 #define MT_MASK    0xF0
 #define MT_ROAR    0x10
 #define MT_ESD     0x20
+#define MT_DEFAULT MT_ROAR
 
 #define ST_NONE    0x00
 #define ST_MASK    0x0F
 #define ST_BIDIR   0x01
 #define ST_FILTER  0x02
+// no default here as the default depend on the server type
 
 void usage (void) {
  printf("roarinterconnect [OPTIONS]...\n");
@@ -55,6 +57,28 @@ void usage (void) {
 
 }
 
+int parse_type (char * type) {
+ int ret = 0;
+
+ if ( type != NULL ) {
+ }
+
+ if ( (ret & MT_MASK) == MT_NONE )
+  ret |= MT_DEFAULT;
+
+ if ( (ret & ST_MASK) == ST_NONE ) {
+  switch (ret & MT_MASK) {
+   case MT_ROAR: ret |= ST_BIDIR;  break;
+   case MT_ESD:  ret |= ST_FILTER; break;
+   default:
+     return MT_NONE|ST_NONE; // error case
+    break;
+  }
+ }
+
+ return ret;
+}
+
 int main (int argc, char * argv[]) {
  struct roar_connection con[1];
  struct roar_stream     stream[1];
@@ -62,7 +86,7 @@ int main (int argc, char * argv[]) {
  int    bits     = 16;
  int    channels = 2;
  int    codec    = ROAR_CODEC_DEFAULT;
- int    type     = MT_ROAR|ST_BIDIR;
+ int    type     = parse_type(NULL);
  int    tmp;
  char * server   = NULL;
  char * remote   = NULL;
@@ -77,6 +101,8 @@ int main (int argc, char * argv[]) {
    server = argv[++i];
   } else if ( strcmp(k, "--remote") == 0 ) {
    remote = argv[++i];
+  } else if ( strcmp(k, "--type") == 0 ) {
+   type = parse_type(argv[++i]);
   } else if ( strcmp(k, "--rate") == 0 ) {
    rate = atoi(argv[++i]);
   } else if ( strcmp(k, "--bits") == 0 ) {
