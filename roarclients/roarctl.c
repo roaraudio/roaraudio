@@ -273,22 +273,22 @@ void list_streams (struct roar_connection * con) {
   if ( s.dir != ROAR_DIR_LIGHT_IN && s.dir != ROAR_DIR_LIGHT_OUT &&
        s.info.rate                && s.info.bits                 && s.info.channels
      ) {
-   printf("Input rate            : %i\n", s.info.rate);
-   printf("Input bits            : %i\n", s.info.bits);
-   printf("Input channels        : %i\n", s.info.channels);
+   printf("Stream sample rate    : %i\n", s.info.rate);
+   printf("Stream bits           : %i\n", s.info.bits);
+   printf("Stream channels       : %i\n", s.info.channels);
   }
 
-  printf("Input codec           : %2i (%s%s)\n", s.info.codec, roar_codec2str(s.info.codec),
+  printf("Stream codec          : %2i (%s%s)\n", s.info.codec, roar_codec2str(s.info.codec),
                                        s.info.codec == ROAR_CODEC_DEFAULT ? " native" : "");
   if ( roar_stream_get_info(con, &s, &info) != -1 ) {
    if ( info.codec != s.info.codec ) {
-    printf("Input codec (streamed): %2i (%s%s)\n", info.codec, roar_codec2str(info.codec),
+    printf("Stremed codec         : %2i (%s%s)\n", info.codec, roar_codec2str(info.codec),
                                        info.codec == ROAR_CODEC_DEFAULT ? " native" : "");
    }
 
    if ( g_verbose ) {
     if ( info.block_size )
-     printf("Input block size      : %i Byte\n", info.block_size);
+     printf("Stream block size     : %i Byte\n", info.block_size);
 
     printf("Underruns pre/post    : %i/%i\n",   info.pre_underruns, info.post_underruns);
     if ( g_verbose > 1 )
