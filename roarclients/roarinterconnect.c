@@ -186,6 +186,15 @@ int main (int argc, char * argv[]) {
        return 2;
     }
 
+    // this is only true if the esd runs on a LE system,...
+    if ( bits == 8 && codec != ROAR_CODEC_PCM_U_LE ) {
+     fprintf(stderr, "Error: EsounD only supports unsigned PCM in 8 bit mode\n");
+     return 2;
+    } else if ( bits == 16 && codec != ROAR_CODEC_DEFAULT ) {
+     fprintf(stderr, "Error: EsounD only supports signed PCM in 16 bit mode\n");
+     return 2;
+    }
+
     rfh = esd_filter_stream(tmp, rate, remote, "roarinterconnect");
    break;
 #endif
