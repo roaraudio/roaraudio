@@ -1527,6 +1527,8 @@ ssize_t stream_vio_s_read (struct roar_stream_server * stream, void *buf, size_t
 }
 
 ssize_t stream_vio_s_write(struct roar_stream_server * stream, void *buf, size_t count) {
+ int i;
+
  errno = 0;
 
  if ( !stream )
@@ -1538,6 +1540,14 @@ ssize_t stream_vio_s_write(struct roar_stream_server * stream, void *buf, size_t
 */
 
 // ROAR_WARN("stream_vio_s_write(*): writing...");
+
+ if ( streams_thru_num )
+  for (i = 0; i < ROAR_STREAMS_MAX; i++)
+   if ( g_streams[i] != NULL && ROAR_STREAM(g_streams[i])->pos_rel_id == ROAR_STREAM(stream)->id )
+    if ( ROAR_STREAM(g_streams[i])->dir == ROAR_DIR_THRU )
+     if ( g_streams[i]->ready )
+      if ( stream_vio_write(i, buf, count) != count )
+       streams_delete(i);
 
  return roar_vio_write(&(stream->vio), buf, count);
 }
