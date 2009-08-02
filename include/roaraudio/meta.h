@@ -52,7 +52,7 @@
 #define ROAR_META_TYPE_FILEURL        20
 #define ROAR_META_TYPE_SERVER         21
 #define ROAR_META_TYPE_DURATION       22
-#define ROAR_META_TYPE_WWW           ROAR_META_TYPE_HOMEPAGE
+#define ROAR_META_TYPE_WWW            ROAR_META_TYPE_HOMEPAGE
 #define ROAR_META_TYPE_WOAF           23 /* ID3: Official audio file webpage */
 #define ROAR_META_TYPE_ENCODER        24
 #define ROAR_META_TYPE_ENCODEDBY      ROAR_META_TYPE_ENCODER
