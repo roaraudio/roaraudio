@@ -333,7 +333,6 @@ int streams_set_fh     (int id, int fh) {
  }
 
  if ( dir == ROAR_DIR_FILTER ) {
-  streams_set_flag(id, ROAR_FLAG_SYNC);
   ss->ready = 1;
   return 0;
  } else {
@@ -439,6 +438,10 @@ int streams_set_flag     (int id, int flag) {
    case ROAR_DIR_MIDI_OUT:
     break;
 
+   // the fh is updated as soon as teh fh get ready:
+   case ROAR_DIR_FILTER:
+    break;
+
    // normal behavor (vio blocking):
    default:
      if ( streams_set_sync(id, 1) == -1 )
@@ -478,7 +481,13 @@ int streams_reset_flag   (int id, int flag) {
  }
 
  if ( flag & ROAR_FLAG_SYNC ) {
-  streams_set_sync(id, 0);
+  // we refuse to reset the flag on FILTER streams
+  if ( streams_get_dir(id) == ROAR_DIR_FILTER ) {
+//   flags -= ROAR_FLAG_SYNC;
+   return -1;
+  } else {
+   streams_set_sync(id, 0);
+  }
  }
 
  g_streams[id]->flags |= flag;
