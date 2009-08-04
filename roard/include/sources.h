@@ -27,6 +27,16 @@
 
 #include <roaraudio.h>
 
+struct roar_source {
+ char * name;
+ char * desc;
+ char * devices;
+ unsigned int flags;
+ unsigned int subsystems;
+ int (*old_open)(char * driver, char * device, char * container, char * options, int primary);
+ int (*new_open)(int stream   , char * device, int fh);
+};
+
 int g_source_client;
 
 int sources_init (void);
