@@ -31,6 +31,7 @@ struct roar_source g_source[] = {
 #endif
  {"cf",   "Old CF source",               "/some/file.ext", SRC_FLAG_NONE,  ROAR_SUBSYS_WAVEFORM, sources_add_cf,   NULL},
  {"roar", "Old simple RoarAudio source", "some.host",      SRC_FLAG_NONE,  ROAR_SUBSYS_WAVEFORM, sources_add_roar, NULL},
+ {"oss",  "OSS CDriver",                 "/dev/audio",     SRC_FLAG_NONE,  ROAR_SUBSYS_WAVEFORM, NULL, sources_add_cdriver},
  {NULL, NULL, NULL, SRC_FLAG_NONE, 0, NULL, NULL} // EOL
 };
 
@@ -416,6 +417,24 @@ int sources_add_roar (char * driver, char * device, char * container, char * opt
  client_stream_add(g_source_client, stream);
 
  return 0;
+}
+
+int sources_add_cdriver (int stream   , char * device, int fh, char * driver) {
+ int roar_cdriver_open(struct roar_vio_calls * calls, char * name, char * dev, struct roar_audio_info * info, int dir);
+ struct roar_stream_server * ss;
+
+ if ( fh > -1 )
+  return -1;
+
+ streams_get(stream, &ss);
+
+ if ( !strncmp(driver, "cdriver:", 8) )
+  driver += 8;
+
+ if ( roar_cdriver_open(&(ss->vio), driver, device, &(ROAR_STREAM(ss)->info), ROAR_DIR_RECORD) == -1 )
+  return -1;
+
+ return streams_set_fh(stream, -2);
 }
 
 //ll
