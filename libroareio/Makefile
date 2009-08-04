@@ -3,7 +3,8 @@ include ../Makefile.conf
 SLIB=libroareio$(SHARED_SUFFIX)
 
 TARGETS=$(SLIB) libroareio.a
-OBJS=libroareio.o
+DRIVER=driver.o driver_oss.o
+OBJS=libroareio.o $(DRIVER)
 
 #DEFINES        = -DDEBUG
 INCLUDE = -I../include -I../include/libroareio

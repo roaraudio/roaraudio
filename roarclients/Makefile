@@ -1,9 +1,6 @@
 TARGETS=roarcat roarcatad roarcat2sock roarcatsendfile roarcatplay roarcatpassfh roarbidir roarphone roarctl roarlight roarmon roarsockconnect roartypes roarvorbis roarvumeter roarfilt roarsin roar-config polytest roarsocktypes roarshout roarradio roarfctest roarmonhttp pinentrytest zcattest pgptest roarcatvio pipetest roarinterconnect
 TOOLS=roarify
 
-DRVS=driver_oss.o
-DRVOBJS=driver.o $(DRVS)
-
 include ../Makefile.conf
 
 #DEFINES        = -DDEBUG
@@ -52,8 +49,8 @@ roarinterconnect: roarinterconnect.o
 	$L $(lib_esd)
 roarbidir: roarbidir.o
 	$L
-roarphone: roarphone.o $(DRVOBJS)
-	${CC} ${LDFLAGS} -o roarphone roarphone.o $(DRVOBJS) $(DSPLIBS) $(EIOLIBS) $(lib_speex)
+roarphone: roarphone.o
+	${CC} ${LDFLAGS} -o roarphone roarphone.o $(DSPLIBS) $(EIOLIBS) $(lib_speex)
 roarfilt: roarfilt.o
 	${CC} ${LDFLAGS} -o roarfilt roarfilt.o $(DSPLIBS)
 roarsin: roarsin.o

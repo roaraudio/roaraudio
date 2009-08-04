@@ -1,7 +1,7 @@
 //roarbidir.c:
 
 /*
- *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008
+ *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2009
  *
  *  This file is part of roarclients a part of RoarAudio,
  *  a cross-platform sound system for both, home and professional use.
@@ -24,7 +24,7 @@
 
 #include <roaraudio.h>
 #include <libroardsp/libroardsp.h>
-#include "driver.h"
+#include <libroareio/libroareio.h>
 
 #if defined(ROAR_HAVE_LIBSPEEX) && !defined(ROAR_HAVE_LIBSPEEXDSP)
 #define _SPEEX_API_OLD

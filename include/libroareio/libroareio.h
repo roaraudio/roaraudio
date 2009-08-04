@@ -36,6 +36,7 @@
 #define _LIBROAREIO_H_
 
 #include <roaraudio.h>
+#include "driver.h"
 
 #endif
 
