@@ -107,7 +107,109 @@ int sources_add_new (struct roar_source * source,
                      char * driver, char * device,
                      char * container,
                      char * options, int primary) {
- return -1;
+ int  stream;
+ int  fh = -1;
+ struct roar_stream        *  s;
+ struct roar_stream_server * ss;
+ char * k, * v;
+ int error = 0;
+ int f_sync = 0, f_mmap = 0;
+ int codec;
+
+ if ( source == NULL )
+  return -1;
+
+ if ( (stream = streams_new()) == -1 ) {
+  return -1;
+ }
+
+ streams_get(stream, &ss);
+ s = ROAR_STREAM(ss);
+
+ memcpy(&(s->info), g_sa, sizeof(struct roar_audio_info));
+
+ if ( streams_set_dir(stream, ROAR_DIR_PLAY, 1) == -1 ) {
+  streams_delete(stream);
+  return -1;
+ }
+
+ s->pos_rel_id = -1;
+
+ k = strtok(options, ",");
+ while (k != NULL) {
+  if ( (v = strstr(k, "=")) != NULL ) {
+   *v++ = 0;
+  }
+
+  if ( strcmp(k, "rate") == 0 ) {
+   s->info.rate = atoi(v);
+  } else if ( strcmp(k, "channels") == 0 ) {
+   s->info.channels = atoi(v);
+  } else if ( strcmp(k, "bits") == 0 ) {
+   s->info.bits = atoi(v);
+  } else if ( strcmp(k, "codec") == 0 ) {
+   if ( (codec = roar_str2codec(v)) == -1 ) {
+    ROAR_ERR("sources_add_new(*): unknown codec '%s'", v);
+    error++;
+   }
+
+  } else if ( strcmp(k, "name") == 0 ) {
+   if ( streams_set_name(stream, v) == -1 ) {
+    ROAR_ERR("add_output(*): Can not set Stream name");
+    error++;
+   }
+
+  } else if ( strcmp(k, "mmap") == 0 ) {
+   f_mmap = 1;
+  } else if ( strcmp(k, "sync") == 0 ) {
+   f_sync = 1;
+  } else if ( strcmp(k, "primary") == 0 ) {
+   primary = 1;
+  } else if ( strcmp(k, "meta") == 0 ) {
+   streams_set_flag(stream, ROAR_FLAG_META);
+  } else if ( strcmp(k, "cleanmeta") == 0 ) {
+   streams_set_flag(stream, ROAR_FLAG_CLEANMETA);
+  } else if ( strcmp(k, "autoconf") == 0 ) {
+   streams_set_flag(stream, ROAR_FLAG_AUTOCONF);
+
+  } else {
+   ROAR_ERR("sources_add_new(*): unknown option '%s'", k);
+   error++;
+  }
+
+  if ( error ) {
+   streams_delete(stream);
+   if ( primary ) alive = 0;
+   return -1;
+  }
+
+  k = strtok(NULL, ",");
+ }
+
+ if ( primary )
+  streams_mark_primary(stream);
+
+ streams_set_flag(stream, ROAR_FLAG_SOURCE);
+ client_stream_add(g_source_client, stream);
+
+ if ( source->new_open(stream, device, fh) == -1 ) {
+  streams_delete(stream);
+  return -1;
+ }
+
+ roar_vio_ctl(&(ss->vio), ROAR_VIO_CTL_SET_SSTREAMID, &stream); // ignore errors here
+ roar_vio_ctl(&(ss->vio), ROAR_VIO_CTL_SET_SSTREAM,   s); // ignore errors here
+
+ if ( f_sync ) {
+  streams_set_flag(stream, ROAR_FLAG_SYNC);
+ } else {
+  streams_reset_flag(stream, ROAR_FLAG_SYNC);
+ }
+
+ if ( f_mmap )
+  streams_set_flag(stream, ROAR_FLAG_MMAP);
+
+ return 0;
 }
 
 #ifdef ROAR_HAVE_IO_POSIX
