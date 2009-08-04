@@ -739,7 +739,7 @@ fi
  echo "PREFIX_MAN=$PREFIX_MAN"
  echo "PREFIX_COMP=$PREFIX_COMP"
  echo
- $COMP_LIBS     && echo "comp_libs=libroar libroardsp libroarmidi libroarlight"
+ $COMP_LIBS     && echo "comp_libs=libroar libroardsp libroarmidi libroarlight libroareio"
  $COMP_ROARD    && echo "comp_roard=roard"
  $COMP_CLIENTS  && echo "comp_clients=roarclients"
  $COMP_DOC      && echo "comp_doc=doc"
@@ -754,7 +754,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.187 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.188 $ of RoarAudio
  */
 
 EOF
