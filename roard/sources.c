@@ -61,7 +61,7 @@ void print_sourcelist (void) {
    subsys[4] = 'R';
 
   printf("  %-9s %c%c%c %6s - %s (devices: %s)\n", g_source[i].name,
-                g_source[i].flags & DRV_FLAG_FHSEC      ? 's' : ' ',
+                g_source[i].flags & SRC_FLAG_FHSEC      ? 's' : ' ',
                 g_source[i].old_open != NULL            ? 'S' : ' ',
                 g_source[i].new_open != NULL            ? 'N' : ' ',
                 subsys,
@@ -200,7 +200,7 @@ int sources_add_new (struct roar_source * source,
  s->info.codec = codec;
  ROAR_STREAM_SERVER(s)->codec_orgi = codec;
 
- if ( source->new_open(stream, device, fh) == -1 ) {
+ if ( source->new_open(stream, device, fh, driver) == -1 ) {
   streams_delete(stream);
   return -1;
  }
@@ -220,7 +220,7 @@ int sources_add_new (struct roar_source * source,
  return 0;
 }
 
-int sources_add_raw  (int stream   , char * device, int fh) {
+int sources_add_raw  (int stream   , char * device, int fh, char * driver) {
  struct roar_stream_server * ss;
 
  if ( fh > -1 )

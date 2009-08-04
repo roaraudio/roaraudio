@@ -37,7 +37,7 @@ struct roar_source {
  unsigned int flags;
  unsigned int subsystems;
  int (*old_open)(char * driver, char * device, char * container, char * options, int primary);
- int (*new_open)(int stream   , char * device, int fh);
+ int (*new_open)(int stream   , char * device, int fh, char * driver);
 };
 
 int g_source_client;
@@ -56,10 +56,12 @@ int sources_add_new (struct roar_source * source,
                      char * container,
                      char * options, int primary);
 
-int sources_add_raw  (int stream   , char * device, int fh);
+int sources_add_raw  (int stream   , char * device, int fh, char * driver);
 int sources_add_wav  (char * driver, char * device, char * container, char * options, int primary);
 int sources_add_cf   (char * driver, char * device, char * container, char * options, int primary);
 int sources_add_roar (char * driver, char * device, char * container, char * options, int primary);
+
+int sources_add_cdriver (int stream   , char * device, int fh, char * driver);
 
 #endif
 
