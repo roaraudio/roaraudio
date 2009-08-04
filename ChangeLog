@@ -18,6 +18,7 @@ v. 0.3beta0 - ?
 	* added simple raw data subsystem
 	* added working support for THRU streams
 	* changed names of parameters in roarctl
+	* added lib libroareio - Extended IO for RoarAudio
 
 v. 0.2 - Thu May 21 2009 21:00
 	* do a some more testings for functions not existing on win32
