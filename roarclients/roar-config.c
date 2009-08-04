@@ -33,6 +33,7 @@ struct {
  {"roardsp",   ROAR_CFLAGS, ROAR_LIBS_DSP  },
  {"roarmidi",  ROAR_CFLAGS, ROAR_LIBS_MIDI },
  {"roarlight", ROAR_CFLAGS, ROAR_LIBS_LIGHT},
+ {"roareio",   ROAR_CFLAGS, ROAR_LIBS_EIO  },
  {NULL, NULL, NULL}
 }, * flags_ptr = NULL;
 
