@@ -25,8 +25,10 @@
 #include "roard.h"
 
 struct roar_source g_source[] = {
+#ifdef ROAR_HAVE_IO_POSIX
  {"raw",  "Old raw source",              "/some/file",     SRC_FLAG_NONE, ROAR_SUBSYS_WAVEFORM, sources_add_raw,  NULL},
  {"wav",  "Old RIFF/WAVE source",        "/some/file.wav", SRC_FLAG_NONE, ROAR_SUBSYS_WAVEFORM, sources_add_wav,  NULL},
+#endif
  {"cf",   "Old CF source",               "/some/file.ext", SRC_FLAG_NONE, ROAR_SUBSYS_WAVEFORM, sources_add_cf,   NULL},
  {"roar", "Old simple RoarAudio source", "some.host",      SRC_FLAG_NONE, ROAR_SUBSYS_WAVEFORM, sources_add_roar, NULL},
  {NULL, NULL, NULL, SRC_FLAG_NONE, 0, NULL, NULL} // EOL
