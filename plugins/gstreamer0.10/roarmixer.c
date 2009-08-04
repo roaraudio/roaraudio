@@ -217,6 +217,9 @@ static G_GNUC_UNUSED gboolean gst_roarmixer_contains_track (GstRoarMixer * mixer
                                                             GstRoarMixerTrack * roartrack) {
   const GList *item;
 
+  if ( mixer == NULL || mixer->tracklist == NULL )
+   return FALSE;
+
   for (item = mixer->tracklist; item != NULL; item = item->next)
     if (item->data == roartrack)
       return TRUE;
@@ -230,12 +233,21 @@ void            gst_roarmixer_updatestreamlist   (GstRoarMixer *mixer) {
   gint id[ROAR_STREAMS_MAX];
   GstMixerTrack *track;
 
-  ROAR_WARN("gst_roarmixer_updatestreamlist(mixer=%p) = ?", mixer);
+  ROAR_WARN("gst_roarmixer_updatestreamlist(mixer=%p) = ? // ########################", mixer);
+  ROAR_WARN("gst_roarmixer_updatestreamlist(mixer=%p): tracklist=%p", mixer, mixer->tracklist);
 
   if (mixer->tracklist) {
     ROAR_WARN("gst_roarmixer_updatestreamlist(mixer=%p) = (void)", mixer);
     return;
   }
+
+  if (mixer->tracklist) {
+    g_list_foreach(mixer->tracklist, (GFunc) g_object_unref, NULL);
+    g_list_free(mixer->tracklist);
+    mixer->tracklist = NULL;
+  }
+
+  ROAR_WARN("gst_roarmixer_updatestreamlist(mixer=%p): tracklist=%p", mixer, mixer->tracklist);
 
   if ( (num = roar_list_streams(&(mixer->con), id, ROAR_STREAMS_MAX)) == -1 ) {
     return;
@@ -244,10 +256,17 @@ void            gst_roarmixer_updatestreamlist   (GstRoarMixer *mixer) {
 
   for (i = 0; i < num; i++) {
    track = gst_roarmixer_track_new(mixer, id[i]);
+   ROAR_WARN("gst_roarmixer_updatestreamlist(mixer=%p): track=%p", mixer, track);
+
+   if ( track == NULL )
+    continue;
+
    mixer->tracklist = g_list_append(mixer->tracklist, track);
   }
 
-  ROAR_WARN("gst_roarmixer_updatestreamlist(mixer=%p) = (void)", mixer);
+  ROAR_WARN("gst_roarmixer_updatestreamlist(mixer=%p): tracklist=%p", mixer, mixer->tracklist);
+
+  ROAR_WARN("gst_roarmixer_updatestreamlist(mixer=%p) = (void) // ###################", mixer);
 }
 
 const GList*    gst_roarmixer_list_tracks        (GstRoarMixer * mixer) {
@@ -255,13 +274,13 @@ const GList*    gst_roarmixer_list_tracks        (GstRoarMixer * mixer) {
 
  gst_roarmixer_updatestreamlist(mixer);
 
+ ROAR_WARN("gst_roarmixer_list_tracks(mixer=%p) = %p", mixer, mixer->tracklist);
  return (const GList *) mixer->tracklist;
 }
 
 void            gst_roarmixer_set_volume         (GstRoarMixer * mixer,
                                                  GstMixerTrack * track,
                                                  gint * volumes) {
-
  GstRoarMixerTrack *roartrack = GST_ROARMIXER_TRACK(track);
  int channels;
  struct roar_mixer_settings m;
@@ -352,6 +371,7 @@ gst_roarmixer_track_init (GstRoarMixerTrack * track)
 {
   //memset(track, 0, sizeof(*track));
   track->stream_id = -1;
+  ROAR_WARN("gst_roarmixer_track_init(track=%p) = (void)", track);
 }
 
 GstMixerTrack *
@@ -382,10 +402,10 @@ gst_roarmixer_track_new (GstRoarMixer * mixer,
 
  if ( (num = roar_list_clients(&(mixer->con), id, ROAR_CLIENTS_MAX)) != -1 ) {
   for (i = 0; i < num; i++) {
-   ROAR_WARN("gst_roarmixer_track_new(*): stream %i -->> client %i?", stream_id, id[i]);
+   ROAR_DBG("gst_roarmixer_track_new(*): stream %i -->> client %i?", stream_id, id[i]);
    if ( roar_get_client(&(mixer->con), &c, id[i]) != -1 ) {
     for (h = 0; h < ROAR_CLIENTS_MAX_STREAMS_PER_CLIENT; h++) {
-     ROAR_WARN("gst_roarmixer_track_new(*): stream %i <-> %i -->> client %i?", stream_id, c.streams[h], id[i]);
+     ROAR_DBG("gst_roarmixer_track_new(*): stream %i <-> %i -->> client %i?", stream_id, c.streams[h], id[i]);
      if ( c.streams[h] == stream_id ) {
       clientname = c.name;
       h = ROAR_CLIENTS_MAX_STREAMS_PER_CLIENT;
