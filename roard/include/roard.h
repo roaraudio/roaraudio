@@ -28,6 +28,7 @@
 // need to include this first as we need the config
 #include <roaraudio.h>
 #include <libroarlight/libroarlight.h>
+#include <libroareio/libroareio.h>
 
 
 #ifndef ROAR_TARGET_MICROCONTROLLER

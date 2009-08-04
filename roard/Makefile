@@ -17,7 +17,7 @@ DRVLIBS   = $(lib_esd) $(lib_ossaudio) $(lib_ao) $(lib_shout) $(lib_sndio)
 CODECLIBS = $(lib_vorbisfile) $(lib_vorbisenc) $(lib_vorbis) $(lib_celt) $(lib_fishsound) $(lib_speex) $(lib_speexdsp)
 CONTLIBS  = $(lib_oggz) $(lib_sndfile) $(lib_ogg)
 PROTOLIBS = $(lib_slp)
-LIBS      = -lroarlight -lroarmidi -lroardsp -lroar $(DRVLIBS) $(CODECLIBS) $(CONTLIBS) $(PROTOLIBS) $(lib_m) $(NETLIBS)
+LIBS      = -lroarlight -lroarmidi -lroardsp -lroareio -lroar $(DRVLIBS) $(CODECLIBS) $(CONTLIBS) $(PROTOLIBS) $(lib_m) $(NETLIBS)
 
 all: ${TARGETS}
 	rm -f ../lib/${TARGETS} 2> /dev/null || true
