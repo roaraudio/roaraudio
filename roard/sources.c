@@ -25,12 +25,12 @@
 #include "roard.h"
 
 struct roar_source g_source[] = {
+ {"raw",  "Raw source",                  "/some/file",     SRC_FLAG_FHSEC, ROAR_SUBSYS_WAVEFORM, NULL,  sources_add_raw},
 #ifdef ROAR_HAVE_IO_POSIX
- {"raw",  "Old raw source",              "/some/file",     SRC_FLAG_NONE, ROAR_SUBSYS_WAVEFORM, sources_add_raw,  NULL},
- {"wav",  "Old RIFF/WAVE source",        "/some/file.wav", SRC_FLAG_NONE, ROAR_SUBSYS_WAVEFORM, sources_add_wav,  NULL},
+ {"wav",  "Old RIFF/WAVE source",        "/some/file.wav", SRC_FLAG_NONE,  ROAR_SUBSYS_WAVEFORM, sources_add_wav,  NULL},
 #endif
- {"cf",   "Old CF source",               "/some/file.ext", SRC_FLAG_NONE, ROAR_SUBSYS_WAVEFORM, sources_add_cf,   NULL},
- {"roar", "Old simple RoarAudio source", "some.host",      SRC_FLAG_NONE, ROAR_SUBSYS_WAVEFORM, sources_add_roar, NULL},
+ {"cf",   "Old CF source",               "/some/file.ext", SRC_FLAG_NONE,  ROAR_SUBSYS_WAVEFORM, sources_add_cf,   NULL},
+ {"roar", "Old simple RoarAudio source", "some.host",      SRC_FLAG_NONE,  ROAR_SUBSYS_WAVEFORM, sources_add_roar, NULL},
  {NULL, NULL, NULL, SRC_FLAG_NONE, 0, NULL, NULL} // EOL
 };
 
@@ -128,6 +128,8 @@ int sources_add_new (struct roar_source * source,
 
  memcpy(&(s->info), g_sa, sizeof(struct roar_audio_info));
 
+ codec = s->info.codec;
+
  if ( streams_set_dir(stream, ROAR_DIR_PLAY, 1) == -1 ) {
   streams_delete(stream);
   return -1;
@@ -192,6 +194,12 @@ int sources_add_new (struct roar_source * source,
  streams_set_flag(stream, ROAR_FLAG_SOURCE);
  client_stream_add(g_source_client, stream);
 
+ if ( codec == ROAR_CODEC_ALAW || codec == ROAR_CODEC_MULAW )
+  s->info.bits = 8; // needed to open OSS driver, will be overriden by codecfilter
+
+ s->info.codec = codec;
+ ROAR_STREAM_SERVER(s)->codec_orgi = codec;
+
  if ( source->new_open(stream, device, fh) == -1 ) {
   streams_delete(stream);
   return -1;
@@ -212,43 +220,19 @@ int sources_add_new (struct roar_source * source,
  return 0;
 }
 
-#ifdef ROAR_HAVE_IO_POSIX
-int sources_add_raw (char * driver, char * device, char * container, char * options, int primary) {
- int stream;
- int fh;
- struct roar_stream * s;
+int sources_add_raw  (int stream   , char * device, int fh) {
+ struct roar_stream_server * ss;
 
- ROAR_WARN("sources_add_raw(*): The raw source is obsolete, use source 'cf' (default)!");
+ if ( fh > -1 )
+  return streams_set_fh(stream, fh);
 
- if ( (fh = open(device, O_RDONLY, 0644)) == -1 ) {
+ streams_get(stream, &ss);
+
+ if ( roar_vio_open_file(&(ss->vio), device, O_RDONLY, 0644) == -1 )
   return -1;
- }
 
- if ( (stream = streams_new()) == -1 ) {
-  close(fh);
-  return -1;
- }
-
- streams_get(stream, (struct roar_stream_server **)&s);
-
- memcpy(&(s->info), g_sa, sizeof(struct roar_audio_info));
-
- if ( streams_set_dir(stream, ROAR_DIR_PLAY, 1) == -1 ) {
-  streams_delete(stream);
-  close(fh);
-  return -1;
- }
-
- s->pos_rel_id = -1;
-
- streams_set_fh(stream, fh);
-
- streams_set_flag(stream, ROAR_FLAG_SOURCE);
- client_stream_add(g_source_client, stream);
-
- return 0;
+ return streams_set_fh(stream, -2);
 }
-#endif
 
 #ifdef ROAR_HAVE_IO_POSIX
 int sources_add_wav (char * driver, char * device, char * container, char * options, int primary) {
