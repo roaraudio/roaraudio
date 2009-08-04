@@ -27,6 +27,9 @@
 
 #include <roaraudio.h>
 
+#define SRC_FLAG_NONE           0x00
+#define SRC_FLAG_FHSEC          0x01
+
 struct roar_source {
  char * name;
  char * desc;
