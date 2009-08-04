@@ -84,19 +84,22 @@ int sources_free (void) {
 }
 
 int sources_add (char * driver, char * device, char * container, char * options, int primary) {
- if (0) {
-#ifdef ROAR_HAVE_IO_POSIX
- } else if ( strcmp(driver, "raw") == 0 ) {
-  return sources_add_raw(driver, device, container, options, primary);
- } else if ( strcmp(driver, "wav") == 0 ) {
-  return sources_add_wav(driver, device, container, options, primary);
-#endif
- } else if ( strcmp(driver, "cf") == 0 ) {
-  return sources_add_cf(driver, device, container, options, primary);
- } else if ( strcmp(driver, "roar") == 0 ) {
-  return sources_add_roar(driver, device, container, options, primary);
+ int i;
+
+ for (i = 0; g_source[i].name != NULL; i++) {
+  if ( !strcmp(g_source[i].name, driver) ) {
+   if ( g_source[i].new_open != NULL ) {
+    // TODO: add code to open driver here...
+   } else if ( g_source[i].old_open != NULL ) {
+    return g_source[i].old_open(driver, device, container, options, primary);
+   } else {
+    ROAR_ERR("sources_add(driver='%s', ...): Found source but did not find any open rutine", driver);
+    return -1;
+   }
+  }
  }
 
+ ROAR_ERR("sources_add(driver='%s', ...): Source not found", driver);
  return -1;
 }
 
