@@ -80,6 +80,9 @@ struct xmms_roar_out {
  int                 session;
  int                 pause;
  struct {
+  int l, r;
+ } mixer;
+ struct {
   int                server_type;
   int                port;
   int              * proxy_type;

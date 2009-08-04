@@ -56,6 +56,8 @@ void roar_init(void) {
  g_inst.state = 0;
  g_inst.server = NULL;
  g_inst.session = ctrlsocket_get_session_id();
+ g_inst.mixer.l = -1;
+ g_inst.mixer.r = -1;
 
  xmms_cfg_read_string(cfgfile, "ROAR", "server", &g_inst.server);
 
@@ -163,6 +165,7 @@ int roar_open(AFormat fmt, int rate, int nch) {
  g_inst.pause   = 0;
 
  roar_update_metadata();
+ roar_set_volume(g_inst.mixer.l, g_inst.mixer.r);
 
  return TRUE;
 }
@@ -325,8 +328,15 @@ void roar_set_volume(int l, int r) {
  if ( !(g_inst.state & STATE_CONNECTED) )
   return;
 
+ if ( l == -1 ) l = 100;
+ if ( r == -1 ) r = 100;
+
+ g_inst.mixer.l = l;
+ g_inst.mixer.r = r;
+
  mixer.mixer[0] = l * 655.35;
  mixer.mixer[1] = r * 655.35;
+ mixer.scale    = 65535;
 
  roar_set_vol(&(g_inst.con), g_inst.stream.id, &mixer, 2);
 }
