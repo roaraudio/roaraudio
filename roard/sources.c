@@ -24,6 +24,14 @@
 
 #include "roard.h"
 
+struct roar_source g_sources[] = {
+ {"raw",  "Old raw source",              "/some/file",     SRC_FLAG_NONE, ROAR_SUBSYS_WAVEFORM, sources_add_raw,  NULL},
+ {"wav",  "Old RIFF/WAVE source",        "/some/file.wav", SRC_FLAG_NONE, ROAR_SUBSYS_WAVEFORM, sources_add_wav,  NULL},
+ {"cf",   "Old CF source",               "/some/file.ext", SRC_FLAG_NONE, ROAR_SUBSYS_WAVEFORM, sources_add_cf,   NULL},
+ {"roar", "Old simple RoarAudio source", "some.host",      SRC_FLAG_NONE, ROAR_SUBSYS_WAVEFORM, sources_add_roar, NULL},
+ {NULL, NULL, NULL, SRC_FLAG_NONE, 0, NULL, NULL} // EOL
+};
+
 int sources_init (void) {
  g_source_client = -1;
  return 0;
