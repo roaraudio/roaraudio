@@ -14,6 +14,7 @@ NETLIBS    = $(lib_wsock32) $(lib_ws2_32)
 LIBS       = -lroar $(NETLIBS)
 DSPLIBS    = -lroardsp   -lm $(LIBS)
 LIGHTLIBS  = -lroarlight -lm $(LIBS)
+EIOLIBS    = -lroareio       $(LIBS)
 SHOUTLIBS  = $(lib_shout) $(LIBS)
 VORBISLIBS = $(lib_vorbisfile) $(lib_vorbis) $(lib_ogg) $(LIBS)
 
@@ -52,7 +53,7 @@ roarinterconnect: roarinterconnect.o
 roarbidir: roarbidir.o
 	$L
 roarphone: roarphone.o $(DRVOBJS)
-	${CC} ${LDFLAGS} -o roarphone roarphone.o $(DRVOBJS) $(DSPLIBS) $(lib_speex)
+	${CC} ${LDFLAGS} -o roarphone roarphone.o $(DRVOBJS) $(DSPLIBS) $(EIOLIBS) $(lib_speex)
 roarfilt: roarfilt.o
 	${CC} ${LDFLAGS} -o roarfilt roarfilt.o $(DSPLIBS)
 roarsin: roarsin.o
