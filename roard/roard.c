@@ -84,6 +84,7 @@ void usage (void) {
         " -sN                   - Adds another source\n"
         " -sP                   - Make souce as primary\n"
        );
+ printf(" --list-sources        - List all sources\n");
 
  printf("\nCodec Filter Options:\n\n");
  printf(" --list-cf             - List all codec filter\n"
@@ -800,6 +801,9 @@ int main (void) {
    s_opt = s_dev = s_con = NULL;
    s_drv = "cf";
    s_prim = 0;
+  } else if ( strcmp(k, "--list-sources") == 0 ) {
+   print_sourcelist();
+   return 0;
 
   } else if ( strcmp(k, "--light-channels") == 0 ) {
    light_channels = atoi(argv[++i]);

@@ -47,6 +47,8 @@ int sources_free (void);
 
 int sources_set_client (int client);
 
+void print_sourcelist (void);
+
 int sources_add (char * driver, char * device, char * container, char * options, int primary);
 
 int sources_add_raw  (char * driver, char * device, char * container, char * options, int primary);

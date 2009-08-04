@@ -24,7 +24,7 @@
 
 #include "roard.h"
 
-struct roar_source g_sources[] = {
+struct roar_source g_source[] = {
  {"raw",  "Old raw source",              "/some/file",     SRC_FLAG_NONE, ROAR_SUBSYS_WAVEFORM, sources_add_raw,  NULL},
  {"wav",  "Old RIFF/WAVE source",        "/some/file.wav", SRC_FLAG_NONE, ROAR_SUBSYS_WAVEFORM, sources_add_wav,  NULL},
  {"cf",   "Old CF source",               "/some/file.ext", SRC_FLAG_NONE, ROAR_SUBSYS_WAVEFORM, sources_add_cf,   NULL},
@@ -36,6 +36,37 @@ int sources_init (void) {
  g_source_client = -1;
  return 0;
 }
+
+void print_sourcelist (void) {
+ int i;
+ char subsys[7] = "      ";
+
+ printf("  Source   Flag Subsys - Description (devices)\n");
+ printf("------------------------------------------------------\n");
+
+ for (i = 0; g_source[i].name != NULL; i++) {
+  strncpy(subsys, "      ", 6);
+
+  if ( g_source[i].subsystems & ROAR_SUBSYS_WAVEFORM )
+   subsys[0] = 'W';
+  if ( g_source[i].subsystems & ROAR_SUBSYS_MIDI )
+   subsys[1] = 'M';
+  if ( g_source[i].subsystems & ROAR_SUBSYS_CB )
+   subsys[2] = 'C';
+  if ( g_source[i].subsystems & ROAR_SUBSYS_LIGHT )
+   subsys[3] = 'L';
+  if ( g_source[i].subsystems & ROAR_SUBSYS_RAW )
+   subsys[4] = 'R';
+
+  printf("  %-9s %c%c%c %6s - %s (devices: %s)\n", g_source[i].name,
+                g_source[i].flags & DRV_FLAG_FHSEC      ? 's' : ' ',
+                g_source[i].old_open != NULL            ? 'S' : ' ',
+                g_source[i].new_open != NULL            ? 'N' : ' ',
+                subsys,
+                g_source[i].desc, g_source[i].devices);
+ }
+}
+
 
 int sources_set_client (int client) {
  if ( client >= 0 ) {
