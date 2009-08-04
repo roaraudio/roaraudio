@@ -32,8 +32,8 @@
  *  them with any software that uses libesd, libartsc or libpulse*.
  */
 
-#ifndef _DRIVER_H_
-#define _DRIVER_H_
+#ifndef _LIBROAREIO_DRIVER_H_
+#define _LIBROAREIO_DRIVER_H_
 
 #include <roaraudio.h>
 
