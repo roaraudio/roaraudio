@@ -89,7 +89,7 @@ int sources_add (char * driver, char * device, char * container, char * options,
  for (i = 0; g_source[i].name != NULL; i++) {
   if ( !strcmp(g_source[i].name, driver) ) {
    if ( g_source[i].new_open != NULL ) {
-    // TODO: add code to open driver here...
+    return sources_add_new(&(g_source[i]), driver, device, container, options, primary);
    } else if ( g_source[i].old_open != NULL ) {
     return g_source[i].old_open(driver, device, container, options, primary);
    } else {
@@ -100,6 +100,13 @@ int sources_add (char * driver, char * device, char * container, char * options,
  }
 
  ROAR_ERR("sources_add(driver='%s', ...): Source not found", driver);
+ return -1;
+}
+
+int sources_add_new (struct roar_source * source,
+                     char * driver, char * device,
+                     char * container,
+                     char * options, int primary) {
  return -1;
 }
 

@@ -51,6 +51,11 @@ void print_sourcelist (void);
 
 int sources_add (char * driver, char * device, char * container, char * options, int primary);
 
+int sources_add_new (struct roar_source * source,
+                     char * driver, char * device,
+                     char * container,
+                     char * options, int primary);
+
 int sources_add_raw  (char * driver, char * device, char * container, char * options, int primary);
 int sources_add_wav  (char * driver, char * device, char * container, char * options, int primary);
 int sources_add_cf   (char * driver, char * device, char * container, char * options, int primary);
