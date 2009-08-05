@@ -63,9 +63,12 @@ int roar_cdriver_oss(struct roar_vio_calls * calls, char * name, char * dev, str
    break;
   case ROAR_DIR_RECORD:
     tmp = O_RDONLY;
+   break;
   default:
     return -1;
  }
+
+ ROAR_DBG("roar_cdriver_oss(*) = ?");
 
  if ( roar_vio_open_file(calls, dev, tmp, 0644) == -1 )
   return -1;
