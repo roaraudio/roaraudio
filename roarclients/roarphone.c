@@ -46,12 +46,16 @@
 #define AE_SPEEX     2
 #define AE_ROARD     3
 
+#define DTX_F        25
+
 struct {
  int antiecho;
  int samples;
  int transcode;
  int64_t dtx_threshold;
 } g_conf;
+
+int dtx_counter = 0;
 
 struct roar_bixcoder transcoder[1];
 
@@ -158,8 +162,15 @@ int anti_echo16(int16_t * buf, int16_t * aebuf, size_t len, struct roar_audio_in
 int zero_if_noise16 (int16_t * data, size_t samples) {
  int64_t rms = roar_rms2_1_16(data, samples);
 
- if ( rms < g_conf.dtx_threshold )
-  memset(data, 0, samples*2);
+ if ( rms < g_conf.dtx_threshold ) {
+  if ( dtx_counter ) {
+   dtx_counter--;
+  } else {
+   memset(data, 0, samples*2);
+  }
+ } else {
+  dtx_counter = DTX_F;
+ }
 
  return 0;
 }
