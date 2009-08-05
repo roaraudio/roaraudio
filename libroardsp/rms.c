@@ -24,5 +24,41 @@
 
 #include "libroardsp.h"
 
+int64_t roar_rms2_1_8  (int8_t  * data, size_t samples) {
+ register int64_t s = 0;
+ register size_t  i;
+
+ for (i = 0; i < samples; i++)
+  s += data[i] * data[i];
+
+ s /= samples;
+
+ return s;
+}
+
+int64_t roar_rms2_1_16 (int16_t * data, size_t samples) {
+ register int64_t s = 0;
+ register size_t  i;
+
+ for (i = 0; i < samples; i++)
+  s += data[i] * data[i];
+
+ s /= samples;
+
+ return s;
+}
+
+int64_t roar_rms2_1_32 (int32_t * data, size_t samples) {
+ register int64_t s = 0;
+ register size_t  i;
+
+ for (i = 0; i < samples; i++)
+  s += data[i] * data[i];
+
+ s /= samples;
+
+ return s;
+}
+
 
 //ll
