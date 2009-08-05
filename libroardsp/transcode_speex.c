@@ -68,8 +68,11 @@ int roar_xcoder_speex_init       (struct roar_xcoder * state) {
   }
   tmp = 8;
   speex_encoder_ctl(self->xcoder, SPEEX_SET_QUALITY,       &tmp);
+/*
+// TODO: foind out if this works
   tmp = info->rate;
   speex_encoder_ctl(self->xcoder, SPEEX_SET_SAMPLING_RATE, &tmp);
+*/
   speex_encoder_ctl(self->xcoder, SPEEX_GET_FRAME_SIZE,    &(self->frame_size));
  } else {
   self->xcoder = NULL;
