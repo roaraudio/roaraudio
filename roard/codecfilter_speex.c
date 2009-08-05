@@ -141,7 +141,7 @@ int cf_speex_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
   if ( stream_vio_s_read(self->stream, &ui, 2) != 2 )
    return 0;
 
-  mode = ntohs(ui);
+  mode = ROAR_NET2HOST16(ui);
 
   if ( mode == ROAR_SPEEX_MODE_NB ) {
    self->decoder = speex_decoder_init(&speex_nb_mode);
@@ -213,7 +213,7 @@ int cf_speex_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
   if ( stream_vio_s_read(self->stream, &ui, 2) != 2 )
    return -1;
 
-  ui = ntohs(ui);
+  ui = ROAR_NET2HOST16(ui);
 
   if ( ui > ROAR_SPEEX_MAX_CC )
    return 0;
