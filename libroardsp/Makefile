@@ -15,7 +15,7 @@ INCLUDE = -I../include -I../include/libroardsp
 CFLAGS += -g -Wall -O2 $(DEFINES) $(INCLUDE) $(INCPATH) $(SHARED_CF) $(fPIC)
 LDFLAGS = -g $(SHARED) -L../lib/ $(LDPATH)
 
-CODECLIBS = $(lib_celt)
+CODECLIBS = $(lib_celt) $(lib_speex)
 NETLIBS   = $(lib_dnet) $(lib_wsock32) $(lib_ws2_32)
 LIBS      = $(lib_dnet) $(lib_m) -lroar $(CODECLIBS) $(NETLIBS)
 
