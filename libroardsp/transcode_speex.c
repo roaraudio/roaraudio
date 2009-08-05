@@ -101,7 +101,45 @@ int roar_xcoder_speex_packet_size(struct roar_xcoder * state, int samples) {
 }
 
 int roar_xcoder_speex_encode     (struct roar_xcoder * state, void * buf, size_t len) {
- return -1;
+ struct roar_xcoder_speex * self = state->inst;
+ uint16_t tmp_net;
+ int pkg_len;
+
+ if (!state->encode)
+  return -1;
+
+ ROAR_DBG("roar_xcoder_speex_encode(*): Encoding...");
+
+ if ( state->stage == ROAR_XCODER_STAGE_INITED ) {
+  if ( roar_vio_write(state->backend, ROAR_SPEEX_MAGIC, ROAR_SPEEX_MAGIC_LEN) != ROAR_SPEEX_MAGIC_LEN )
+   return -1;
+  state->stage = ROAR_XCODER_STAGE_MAGIC;
+  ROAR_DBG("roar_xcoder_speex_encode(*): Wrote MAGIC");
+
+  state->stage = ROAR_XCODER_STAGE_OPENING;
+
+  tmp_net = ROAR_HOST2NET16(self->mode);
+  if ( roar_vio_write(state->backend, &tmp_net, 2) != 2 )
+   return -1;
+
+  state->stage = ROAR_XCODER_STAGE_OPENED;
+ }
+
+ speex_bits_reset(&(self->bits));
+
+ speex_encode_int(self->xcoder, (spx_int16_t *) buf, &(self->bits));
+
+ pkg_len = speex_bits_write(&(self->bits), self->cc, ROAR_SPEEX_MAX_CC);
+
+ tmp_net = ROAR_HOST2NET16(pkg_len);
+
+ if ( roar_vio_write(state->backend, &tmp_net, 2) != 2 )
+  return -1;
+
+ if ( roar_vio_write(state->backend, self->cc, pkg_len) != pkg_len )
+   return -1;
+
+ return 0;
 }
 
 int roar_xcoder_speex_decode     (struct roar_xcoder * state, void * buf, size_t len) {
