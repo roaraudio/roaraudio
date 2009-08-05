@@ -135,12 +135,16 @@ int anti_echo16(int16_t * buf, int16_t * aebuf, size_t len, struct roar_audio_in
   case AE_SIMPLE:
     for (i = 0; i < len; i++)
      buf[i] -= aebuf[i];
+    return 0;
    break;
 #ifdef _SPEEX_API_OLD
   case AE_SPEEX:
     return anti_echo_speex16(buf, aebuf, len, info);
    break;
 #endif
+  case AE_ROARD:
+    return 0;
+   break;
   default:
     return -1;
    break;
@@ -210,7 +214,7 @@ int main (int argc, char * argv[]) {
 
  memset(&g_conf, 0, sizeof(g_conf));
 
- g_conf.antiecho = AE_NONE;
+ g_conf.antiecho = AE_ROARD;
 
  for (i = 1; i < argc; i++) {
   k = argv[i];
@@ -253,6 +257,10 @@ int main (int argc, char * argv[]) {
    usage();
    return 1;
   }
+ }
+
+ if ( g_conf.antiecho == AE_SPEEX ) {
+  ROAR_WARN("Speex Antiecho is obsolete and may be removed in future versions. Use --antiecho roard");
  }
 
  g_conf.samples = info.channels * info.rate / TIMEDIV;
