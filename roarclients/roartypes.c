@@ -28,6 +28,8 @@
 int main (void) {
  struct { char * name; int len; } types[] = {
   { "roar_buffer",         sizeof(struct roar_buffer)         },
+  { "roar_stack",          sizeof(struct roar_stack)          },
+  { "roar_message",        sizeof(struct roar_message)        },
   { "roar_stream",         sizeof(struct roar_stream)         },
   { "roar_stream_server",  sizeof(struct roar_stream_server)  },
   { "roar_sample",         sizeof(struct roar_sample)         },
