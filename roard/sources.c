@@ -431,6 +431,8 @@ int sources_add_cdriver (int stream   , char * device, int fh, char * driver) {
  if ( !strncmp(driver, "cdriver:", 8) )
   driver += 8;
 
+ ROAR_DBG("sources_add_cdriver(stream=%i, device='%s', fh=%i, driver='%s') = ?", stream, device, fh, driver);
+
  if ( roar_cdriver_open(&(ss->vio), driver, device, &(ROAR_STREAM(ss)->info), ROAR_DIR_RECORD) == -1 )
   return -1;
 
