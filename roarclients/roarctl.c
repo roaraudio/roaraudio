@@ -319,6 +319,8 @@ void list_streams (struct roar_connection * con) {
      strcat(flags, "mmap ");
     if ( info.flags & ROAR_FLAG_ANTIECHO )
      strcat(flags, "antiecho ");
+    if ( info.flags & ROAR_FLAG_VIRTUAL )
+     strcat(flags, "virtual ");
 
     printf("Flags                 : %s\n", flags);
    }
