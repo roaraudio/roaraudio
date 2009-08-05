@@ -158,7 +158,9 @@ int run_stream (struct roar_vio_calls * s0, struct roar_vio_calls * s1, struct r
  void * outbuf, * micbuf;
  ssize_t outlen, miclen;
 
+ ROAR_DBG("run_stream(*): g_conf.samples = %i, info->bits = %i", g_conf.samples, info->bits);
  len = g_conf.samples * info->bits / 8;
+ ROAR_DBG("run_stream(*): len=%lu", (unsigned long) len);
 
  if ( (outbuf = malloc(2*len)) == NULL )
   return -1;
@@ -177,6 +179,7 @@ int run_stream (struct roar_vio_calls * s0, struct roar_vio_calls * s1, struct r
   }
 
   if ( g_conf.transcode ) {
+   ROAR_DBG("run_stream(*): outbuf=%p, len=%lu", outbuf, (unsigned long) len);
    if ( roar_bixcoder_read_packet(transcoder, outbuf, len) == -1 )
     break;
 
@@ -289,10 +292,12 @@ int main (int argc, char * argv[]) {
   return 1;
  }
 
+ ROAR_DBG("main(*): CALL open_stream(&svio, server, &info)");
  if ( open_stream(&svio, server, &info) == -1 ) {
   roar_vio_close(&dvio);
   return 2;
  }
+ ROAR_DBG("main(*): RET");
 
  if ( g_conf.transcode ) {
   dinfo.codec = info.codec;
@@ -306,7 +311,9 @@ int main (int argc, char * argv[]) {
   g_conf.samples = 8 * roar_bixcoder_packet_size(transcoder, -1) / dinfo.bits;
  }
 
+ ROAR_DBG("main(*): CALL run_stream(&dvio, &svio, &info);");
  run_stream(&dvio, &svio, &info);
+ ROAR_DBG("main(*): RET");
 
  roar_bixcoder_close(transcoder);
 
