@@ -226,6 +226,7 @@ int stream_meta_finalize(int id) {
   }
 
   // ask the codec filter to update meta data:
+  ROAR_DBG("stream_meta_finalize(id=%i): Asking stream %i to update meta data", id, co);
   streams_ctl(co, ROAR_CODECFILTER_CTL_META_UPDATE, NULL); // ignore errors...
  }
 
