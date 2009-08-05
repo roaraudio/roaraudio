@@ -62,8 +62,10 @@ int roar_xcoder_speex_init       (struct roar_xcoder * state) {
    case ROAR_SPEEX_MODE_UWB: self->xcoder = speex_encoder_init(&speex_uwb_mode); break;
   }
   tmp = 8;
-  speex_encoder_ctl(self->xcoder, SPEEX_SET_QUALITY,    &tmp);
-  speex_encoder_ctl(self->xcoder, SPEEX_GET_FRAME_SIZE, &(self->frame_size));
+  speex_encoder_ctl(self->xcoder, SPEEX_SET_QUALITY,       &tmp);
+  tmp = info->rate;
+  speex_encoder_ctl(self->xcoder, SPEEX_SET_SAMPLING_RATE, &tmp);
+  speex_encoder_ctl(self->xcoder, SPEEX_GET_FRAME_SIZE,    &(self->frame_size));
  } else {
   self->xcoder = NULL;
  }
@@ -177,6 +179,8 @@ int roar_xcoder_speex_decode     (struct roar_xcoder * state, void * buf, size_t
 
   tmp=1;
   speex_decoder_ctl(self->xcoder, SPEEX_SET_ENH, &tmp);
+  tmp = state->info.pcm.rate;
+  speex_encoder_ctl(self->xcoder, SPEEX_SET_SAMPLING_RATE, &tmp);
   speex_decoder_ctl(self->xcoder, SPEEX_GET_FRAME_SIZE, &(self->frame_size));
 
   state->stage = ROAR_XCODER_STAGE_OPENED;
