@@ -68,11 +68,8 @@ int roar_xcoder_speex_init       (struct roar_xcoder * state) {
   }
   tmp = 8;
   speex_encoder_ctl(self->xcoder, SPEEX_SET_QUALITY,       &tmp);
-/*
-// TODO: foind out if this works
   tmp = info->rate;
   speex_encoder_ctl(self->xcoder, SPEEX_SET_SAMPLING_RATE, &tmp);
-*/
   speex_encoder_ctl(self->xcoder, SPEEX_GET_FRAME_SIZE,    &(self->frame_size));
  } else {
   self->xcoder = NULL;
@@ -200,11 +197,8 @@ int roar_xcoder_speex_decode     (struct roar_xcoder * state, void * buf, size_t
 
   tmp=1;
   speex_decoder_ctl(self->xcoder, SPEEX_SET_ENH, &tmp);
-/*
-// FIXME: why does this make the decoder segfaul?
   tmp = state->info.pcm.rate;
-  speex_encoder_ctl(self->xcoder, SPEEX_SET_SAMPLING_RATE, &tmp);
-*/
+  speex_decoder_ctl(self->xcoder, SPEEX_SET_SAMPLING_RATE, &tmp);
   speex_decoder_ctl(self->xcoder, SPEEX_GET_FRAME_SIZE, &(self->frame_size));
 
   ROAR_DBG("roar_xcoder_speex_decode(state=%p, buf=%p, len=%lu): self->stereo = %i", state, buf, (unsigned long)len, self->stereo);
