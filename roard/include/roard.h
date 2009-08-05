@@ -70,6 +70,12 @@
 #define ROAR_SUBSYS_LIGHT         0x08
 #define ROAR_SUBSYS_RAW           0x10
 
+// some usefull macros:
+#define _8BIT  1
+#define _16BIT 2
+#define _24BIT 3
+#define _32BIT 4
+#define _64BIT 8
 
 //#include "buffer.h"
 #include "codecfilter.h"
