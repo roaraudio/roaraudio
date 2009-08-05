@@ -128,6 +128,8 @@ int roar_xcoder_close      (struct roar_xcoder * state) {
 int roar_xcoder_proc_packet(struct roar_xcoder * state, void * buf, size_t len) {
  _CHECK();
 
+ ROAR_DBG("roar_xcoder_proc_packet(state=%p, buf=%p, len=%lu) = ?", state, buf, (unsigned long)len);
+
  if ( state->backend == NULL )
   return -1;
 
@@ -167,15 +169,23 @@ int roar_bixcoder_init(struct roar_bixcoder * state, struct roar_audio_info * in
 int roar_bixcoder_packet_size (struct roar_bixcoder * state, int samples) {
  int ret;
 
+ ROAR_DBG("roar_bixcoder_packet_size(state=%p, samples=%i) = ?", state, samples);
+
  if ( state == NULL )
   return -1;
 
  if ( (ret = roar_xcoder_packet_size(&(state->encoder), samples)) == -1 )
   return -1;
 
+ ROAR_DBG("roar_bixcoder_packet_size(state=%p, samples=%i): ret=%i", state, samples, ret);
+
+// TODO: we need a lot hope here...
+/*
  if ( roar_xcoder_packet_size(&(state->decoder), ret) != ret )
   return -1;
+*/
 
+ ROAR_DBG("roar_bixcoder_packet_size(state=%p, samples=%i) = %i", state, samples, ret);
  return ret;
 }
 
@@ -194,6 +204,9 @@ int roar_bixcoder_close       (struct roar_bixcoder * state) {
 }
 
 int roar_bixcoder_read_packet (struct roar_bixcoder * state, void * buf, size_t len) {
+
+ ROAR_DBG("roar_bixcoder_read_packet(state=%p, buf=%p, len=%lu) = ?", state, buf, (unsigned long)len);
+
  if ( state == NULL )
   return -1;
 
