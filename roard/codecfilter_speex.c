@@ -290,7 +290,7 @@ int cf_speex_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
   speex_encoder_ctl(self->encoder, SPEEX_SET_QUALITY,    &tmp);
   speex_encoder_ctl(self->encoder, SPEEX_GET_FRAME_SIZE, &(self->frame_size));
 
-  fs2 = self->frame_size * 2;
+  fs2 = self->frame_size * _FS;
 
   if ( !self->cd ) {
    self->cd = malloc(fs2);
@@ -305,7 +305,7 @@ int cf_speex_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
   }
  }
 
- fs2 = self->frame_size * 2;
+ fs2 = self->frame_size * _FS;
 
  if ( self->fo_rest ) { // ignore the rest for the moment
   if ( (self->fo_rest + len) > fs2 ) {
@@ -313,6 +313,9 @@ int cf_speex_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
    memcpy(self->o_rest + self->fo_rest, buf, need_extra);
 
    speex_bits_reset(&(self->bits));
+
+   if ( self->stereo )
+    speex_encode_stereo_int((spx_int16_t *) self->o_rest, self->frame_size, &(self->bits));
 
    speex_encode_int(self->encoder, (spx_int16_t *) self->o_rest, &(self->bits));
 
@@ -340,6 +343,9 @@ int cf_speex_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
 //  ROAR_WARN("cf_speex_write(*): Block info: len=%i, fs2=%i", len, fs2);
 
   speex_bits_reset(&(self->bits));
+
+  if ( self->stereo )
+   speex_encode_stereo_int((spx_int16_t *) buf, self->frame_size, &(self->bits));
 
   speex_encode_int(self->encoder, (spx_int16_t *) buf, &(self->bits));
 
