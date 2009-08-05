@@ -1,7 +1,7 @@
 //roarcatvio.c:
 
 /*
- *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008
+ *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008, 2009
  *
  *  This file is part of roarclients a part of RoarAudio,
  *  a cross-platform sound system for both, home and professional use.
@@ -49,7 +49,7 @@ int main (int argc, char * argv[]) {
  char * server   = NULL;
  char * k;
  int    i;
- char * name = "roarcat";
+ char * name = "roarcatvio";
  struct roar_vio_calls file, stream;
  struct roar_vio_defaults def;
  int file_opened = 0;

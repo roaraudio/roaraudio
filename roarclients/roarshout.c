@@ -30,7 +30,7 @@
 #define BUFSIZE 2048
 
 void usage (void) {
- printf("roarmon [OPTIONS]... [address [port [password [mountpoint]]]\n");
+ printf("roarshout [OPTIONS]... [address [port [password [mountpoint]]]\n");
 
  printf("\nRoarAudio Options:\n\n");
 

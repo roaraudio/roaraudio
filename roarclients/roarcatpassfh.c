@@ -1,7 +1,7 @@
 //roarcatpassfh.c:
 
 /*
- *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008
+ *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008, 2009
  *
  *  This file is part of roarclients a part of RoarAudio,
  *  a cross-platform sound system for both, home and professional use.
@@ -77,7 +77,7 @@ int main (int argc, char * argv[]) {
   }
  }
 
- if ( roar_simple_connect(&con, server, "roarcatad") == -1 ) {
+ if ( roar_simple_connect(&con, server, "roarcatpassfh") == -1 ) {
   ROAR_DBG("roar_simple_play(*): roar_simple_connect() faild!");
   return 1;
  }

@@ -1,4 +1,4 @@
-//roarbidir.c:
+//roarphone.c:
 
 /*
  *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2009
@@ -55,7 +55,7 @@ struct {
 struct roar_bixcoder transcoder[1];
 
 void usage (void) {
- printf("roarcat [OPTIONS]...\n");
+ printf("roarphone [OPTIONS]...\n");
 
  printf("\nOptions:\n\n");
 

@@ -1,7 +1,7 @@
-//roarcat.c:
+//roarcatsendfile.c:
 
 /*
- *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008
+ *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008, 2009
  *
  *  This file is part of roarclients a part of RoarAudio,
  *  a cross-platform sound system for both, home and professional use.
@@ -80,7 +80,7 @@ int main (int argc, char * argv[]) {
   }
  }
 
- if ( (fh = roar_simple_play(rate, channels, bits, codec, server, "roarcat")) == -1 ) {
+ if ( (fh = roar_simple_play(rate, channels, bits, codec, server, "roarcatsendfile")) == -1 ) {
   fprintf(stderr, "Error: can not start playback\n");
   return 1;
  }
