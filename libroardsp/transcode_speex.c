@@ -29,6 +29,26 @@
 #define _16BIT (16/8)
 #define _SIZE_LEN 2
 
+int roar_xcoder_speex_init       (struct roar_xcoder * state) {
+ return -1;
+}
+
+int roar_xcoder_speex_uninit     (struct roar_xcoder * state) {
+ return -1;
+}
+
+int roar_xcoder_speex_packet_size(struct roar_xcoder * state, int samples) {
+ return -1;
+}
+
+int roar_xcoder_speex_encode     (struct roar_xcoder * state, void * buf, size_t len) {
+ return -1;
+}
+
+int roar_xcoder_speex_decode     (struct roar_xcoder * state, void * buf, size_t len) {
+ return -1;
+}
+
 #endif
 
 //ll
