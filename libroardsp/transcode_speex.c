@@ -43,10 +43,13 @@ int roar_xcoder_speex_init       (struct roar_xcoder * state) {
   return -1;
  }
 
- // curruntly only mono mode is supported
- if ( info->channels != 1 ) {
-  free(self);
-  return -1;
+ // only mono/stereo mode is supported
+ switch (info->channels) {
+  case 1: self->stereo = 0; break;
+  case 2: self->stereo = 1; break;
+  default:
+    free(self);
+    return -1;
  }
 
  memset(self, 0, sizeof(struct roar_xcoder_speex));
@@ -100,7 +103,7 @@ int roar_xcoder_speex_packet_size(struct roar_xcoder * state, int samples) {
   if (state->stage != ROAR_XCODER_STAGE_OPENED)
    return -1;
 
- return _16BIT * self->frame_size;
+ return _16BIT * self->frame_size * (self->stereo ? 2 : 1);
 }
 
 int roar_xcoder_speex_encode     (struct roar_xcoder * state, void * buf, size_t len) {
@@ -130,6 +133,9 @@ int roar_xcoder_speex_encode     (struct roar_xcoder * state, void * buf, size_t
 
  speex_bits_reset(&(self->bits));
 
+ if ( self->stereo )
+  speex_encode_stereo_int((spx_int16_t *) buf, self->frame_size, &(self->bits));
+
  speex_encode_int(self->xcoder, (spx_int16_t *) buf, &(self->bits));
 
  pkg_len = speex_bits_write(&(self->bits), self->cc, ROAR_SPEEX_MAX_CC);
@@ -145,12 +151,15 @@ int roar_xcoder_speex_encode     (struct roar_xcoder * state, void * buf, size_t
  return 0;
 }
 
+// TODO: move all the init thingys into a seperate function
 int roar_xcoder_speex_decode     (struct roar_xcoder * state, void * buf, size_t len) {
  struct roar_xcoder_speex * self = state->inst;
  char magic[ROAR_SPEEX_MAGIC_LEN];
  uint16_t tmp_net;
  int pkg_len;
  int tmp;
+ SpeexStereoState stereo = SPEEX_STEREO_STATE_INIT;
+ SpeexCallback callback;
 
  if ( state->stage == ROAR_XCODER_STAGE_INITED ) {
   if ( roar_vio_read(state->backend, magic, ROAR_SPEEX_MAGIC_LEN) != ROAR_SPEEX_MAGIC_LEN )
@@ -183,6 +192,16 @@ int roar_xcoder_speex_decode     (struct roar_xcoder * state, void * buf, size_t
   speex_encoder_ctl(self->xcoder, SPEEX_SET_SAMPLING_RATE, &tmp);
   speex_decoder_ctl(self->xcoder, SPEEX_GET_FRAME_SIZE, &(self->frame_size));
 
+  if ( self->stereo ) {
+   memcpy(&(self->stereo_state), &stereo, sizeof(self->stereo_state));
+
+   callback.callback_id = SPEEX_INBAND_STEREO;
+   callback.func = speex_std_stereo_request_handler;
+   callback.data = &(self->stereo_state);
+
+   speex_decoder_ctl(self->xcoder, SPEEX_SET_HANDLER, &callback);
+  }
+
   state->stage = ROAR_XCODER_STAGE_OPENED;
  }
 
@@ -200,6 +219,10 @@ int roar_xcoder_speex_decode     (struct roar_xcoder * state, void * buf, size_t
  speex_bits_read_from(&(self->bits), self->cc, pkg_len);
 
  speex_decode_int(self->xcoder, &(self->bits), buf);
+
+ if ( self->stereo ) {
+  speex_decode_stereo_int(buf, self->frame_size, &(self->stereo_state));
+ }
 
  return 0;
 }
