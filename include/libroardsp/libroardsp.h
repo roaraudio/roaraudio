@@ -40,6 +40,9 @@ __BEGIN_DECLS
 #ifdef ROAR_HAVE_LIBCELT
 #include "transcode_celt.h"
 #endif
+#ifdef ROAR_HAVE_LIBSPEEX
+#include "transcode_speex.h"
+#endif
 
 // defines
 #define ROARDSP_MAX_FILTERS_PER_CHAIN 8
