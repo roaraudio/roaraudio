@@ -50,6 +50,7 @@ struct {
  int antiecho;
  int samples;
  int transcode;
+ int64_t dtx_threshold;
 } g_conf;
 
 struct roar_bixcoder transcoder[1];
@@ -67,6 +68,7 @@ void usage (void) {
         "  --driver   DRIVER    - Set the driver\n"
         "  --device   DEVICE    - Set the device\n"
         "  --antiecho AEMODE    - Set the anti echo mode\n"
+        "  --threshold DTXTHRES - Set the DTX threshold, disabled by default\n"
         "  --transcode          - Use local transcodeing\n"
         "  --help               - Show this help\n"
        );
@@ -153,6 +155,15 @@ int anti_echo16(int16_t * buf, int16_t * aebuf, size_t len, struct roar_audio_in
  return -1;
 }
 
+int zero_if_noise16 (int16_t * data, size_t samples) {
+ int64_t rms = roar_rms2_1_16(data, samples);
+
+ if ( rms < g_conf.dtx_threshold )
+  memset(data, 0, samples*2);
+
+ return 0;
+}
+
 int run_stream (struct roar_vio_calls * s0, struct roar_vio_calls * s1, struct roar_audio_info * info) {
  size_t len;
  void * outbuf, * micbuf;
@@ -170,6 +181,11 @@ int run_stream (struct roar_vio_calls * s0, struct roar_vio_calls * s1, struct r
  while (1) {
   if ( (miclen = roar_vio_read(s0, micbuf, len)) <= 0 )
    break;
+
+  if ( g_conf.dtx_threshold > 0 )
+   if ( info->bits == 16 )
+    zero_if_noise16(micbuf, miclen/2);
+
   if ( g_conf.transcode ) {
    if ( roar_bixcoder_write_packet(transcoder, micbuf, miclen) == -1 )
     break;
@@ -217,7 +233,8 @@ int main (int argc, char * argv[]) {
 
  memset(&g_conf, 0, sizeof(g_conf));
 
- g_conf.antiecho = AE_ROARD;
+ g_conf.antiecho      = AE_ROARD;
+ g_conf.dtx_threshold = -1;
 
  for (i = 1; i < argc; i++) {
   k = argv[i];
@@ -250,6 +267,12 @@ int main (int argc, char * argv[]) {
     fprintf(stderr, "Error: unknown mode: %s\n", k);
     return 1;
    }
+  } else if ( strcmp(k, "--threshold") == 0 ) {
+   g_conf.dtx_threshold = atol(argv[++i]);
+
+   // use threshold^2 or threshold < 0 for not using DTX
+   if ( g_conf.dtx_threshold > 0 )
+    g_conf.dtx_threshold *= g_conf.dtx_threshold;
   } else if ( strcmp(k, "--transcode") == 0 ) {
    g_conf.transcode = 1;
   } else if ( strcmp(k, "--help") == 0 ) {
