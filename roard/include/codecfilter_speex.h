@@ -28,11 +28,15 @@
 #include <roaraudio.h>
 #include <speex/speex.h>
 #include <speex/speex_stereo.h>
+#include <speex/speex_callbacks.h>
 
 struct codecfilter_speex_inst {
  void * encoder;
  void * decoder;
  SpeexBits bits;
+ SpeexStereoState stereo_state;
+ SpeexCallback    stereo_callback;
+ int              stereo;
  struct roar_stream_server * stream;
  int frame_size;
  void     * cd; /* current data */
