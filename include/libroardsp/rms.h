@@ -37,6 +37,10 @@
 
 #include "libroardsp.h"
 
+int64_t roar_rms2_1_8  (int8_t  * data, size_t samples);
+int64_t roar_rms2_1_16 (int16_t * data, size_t samples);
+int64_t roar_rms2_1_32 (int32_t * data, size_t samples);
+
 #endif
 
 //ll
