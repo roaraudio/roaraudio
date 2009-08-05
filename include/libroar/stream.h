@@ -67,6 +67,7 @@ char * roar_dir2str (int dir);
 #define ROAR_FLAG_MUTE           0x0200
 #define ROAR_FLAG_MMAP           0x0400
 #define ROAR_FLAG_ANTIECHO       0x0800
+#define ROAR_FLAG_VIRTUAL        0x1000
 //#define ROAR_FLAG_SYNC           0x08
 
 #define ROAR_SET_FLAG            0
