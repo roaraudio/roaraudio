@@ -93,9 +93,10 @@ int roar_xcoder_speex_uninit     (struct roar_xcoder * state) {
 
 int roar_xcoder_speex_packet_size(struct roar_xcoder * state, int samples) {
  struct roar_xcoder_speex * self = state->inst;
- if (!state->encode) {
-  return -1;
- }
+
+ if (!state->encode)
+  if (state->stage != ROAR_XCODER_STAGE_OPENED)
+   return -1;
 
  return _16BIT * self->frame_size;
 }
@@ -143,7 +144,60 @@ int roar_xcoder_speex_encode     (struct roar_xcoder * state, void * buf, size_t
 }
 
 int roar_xcoder_speex_decode     (struct roar_xcoder * state, void * buf, size_t len) {
- return -1;
+ struct roar_xcoder_speex * self = state->inst;
+ char magic[ROAR_SPEEX_MAGIC_LEN];
+ uint16_t tmp_net;
+ int pkg_len;
+ int tmp;
+
+ if ( state->stage == ROAR_XCODER_STAGE_INITED ) {
+  if ( roar_vio_read(state->backend, magic, ROAR_SPEEX_MAGIC_LEN) != ROAR_SPEEX_MAGIC_LEN )
+   return -1;
+
+  if ( memcmp(magic, ROAR_SPEEX_MAGIC, ROAR_SPEEX_MAGIC_LEN) != 0 )
+   return -1;
+
+  state->stage = ROAR_XCODER_STAGE_MAGIC;
+
+  if ( roar_vio_read(state->backend, &tmp_net, 2) != 2 )
+   return -1;
+
+  self->mode = ROAR_NET2HOST16(tmp_net);
+
+  state->stage = ROAR_XCODER_STAGE_OPENING;
+
+  switch (self->mode) {
+   case ROAR_SPEEX_MODE_NB:  self->xcoder = speex_decoder_init(&speex_nb_mode);  break;
+   case ROAR_SPEEX_MODE_WB:  self->xcoder = speex_decoder_init(&speex_wb_mode);  break;
+   case ROAR_SPEEX_MODE_UWB: self->xcoder = speex_decoder_init(&speex_uwb_mode); break;
+   default:
+     return -1;
+    break;
+  }
+
+  tmp=1;
+  speex_decoder_ctl(self->xcoder, SPEEX_SET_ENH, &tmp);
+  speex_decoder_ctl(self->xcoder, SPEEX_GET_FRAME_SIZE, &(self->frame_size));
+
+  state->stage = ROAR_XCODER_STAGE_OPENED;
+ }
+
+ if ( roar_vio_read(state->backend, &tmp_net, 2) != 2 )
+  return -1;
+
+ pkg_len = ROAR_NET2HOST16(tmp_net);
+
+ if ( pkg_len > ROAR_SPEEX_MAX_CC )
+  return -1;
+
+ if ( roar_vio_read(state->backend, self->cc, pkg_len) != pkg_len )
+  return -1;
+
+ speex_bits_read_from(&(self->bits), self->cc, pkg_len);
+
+ speex_decode_int(self->xcoder, &(self->bits), buf);
+
+ return 0;
 }
 
 #endif
