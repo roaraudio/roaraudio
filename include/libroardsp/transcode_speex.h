@@ -41,11 +41,12 @@
 #include <speex/speex_stereo.h>
 
 struct roar_xcoder_speex {
+ SpeexBits   bits;
+ void      * xcoder;
+ uint16_t    mode;
+ int         stereo;
  int frame_size;
-/*
- void * iobuffer;
- size_t bufferlen;
-*/
+ char       cc[ROAR_SPEEX_MAX_CC]; /* buffer for read() and write() */
 };
 
 int roar_xcoder_speex_init       (struct roar_xcoder * state);
