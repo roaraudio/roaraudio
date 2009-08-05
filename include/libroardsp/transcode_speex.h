@@ -39,9 +39,11 @@
 
 #include <speex/speex.h>
 #include <speex/speex_stereo.h>
+#include <speex/speex_callbacks.h>
 
 struct roar_xcoder_speex {
  SpeexBits   bits;
+ SpeexStereoState stereo_state;
  void      * xcoder;
  uint16_t    mode;
  int         stereo;
