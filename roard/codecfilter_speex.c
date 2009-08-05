@@ -37,6 +37,8 @@
  }
 */
 
+#define _FS (_16BIT * (self->stereo ? 2 : 1))
+
 int cf_speex_open(CODECFILTER_USERDATA_T * inst, int codec,
                                             struct roar_stream_server * info,
                                             struct roar_codecfilter   * filter) {
@@ -47,6 +49,24 @@ int cf_speex_open(CODECFILTER_USERDATA_T * inst, int codec,
 
  if (!self)
   return -1;
+
+ s->info.codec    = ROAR_CODEC_DEFAULT;
+ s->info.bits     = 16; // speex hardcoded
+
+ switch (s->info.channels) {
+  case 1: self->stereo = 0; break;
+  case 2: self->stereo = 1; break;
+  default:
+    free(self);
+    return -1;
+ }
+
+ // do as much to preper the startup of stereo encoder as possible
+ if ( self->stereo ) {
+  self->stereo_callback.callback_id = SPEEX_INBAND_STEREO;
+  self->stereo_callback.func        = speex_std_stereo_request_handler;
+  self->stereo_callback.data       = &(self->stereo_state);
+ }
 
  self->encoder = NULL;
  self->decoder = NULL;
@@ -61,10 +81,6 @@ int cf_speex_open(CODECFILTER_USERDATA_T * inst, int codec,
  self->fo_rest = 0;
 
  speex_bits_init(&(self->bits));
-
- s->info.codec    = ROAR_CODEC_DEFAULT;
- s->info.bits     = 16; // speex hardcoded
- s->info.channels =  1; // only mono support at the moment
 
  *inst = (void*) self;
 
@@ -105,10 +121,11 @@ int cf_speex_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  int mode;
  uint16_t ui;
  int tmp;
- int still_todo = len / 2 /* 16 bit */;
+ int still_todo = len / _FS;
  int ret = 0;
- int fs2; // = self->frame_size * 2;
+ int fs2; // = self->frame_size * _16BIT * channels;
  char magic[ROAR_SPEEX_MAGIC_LEN];
+ SpeexStereoState stereo = SPEEX_STEREO_STATE_INIT;
 
  ROAR_DBG("cf_speex_read(inst=%p, buf=%p, len=%i) = ?", inst, buf, len);
 
@@ -139,9 +156,15 @@ int cf_speex_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
   tmp=1;
   speex_decoder_ctl(self->decoder, SPEEX_SET_ENH, &tmp);
 
+  if ( self->stereo ) {
+   memcpy(&(self->stereo_state), &stereo, sizeof(self->stereo_state));
+   speex_decoder_ctl(self->decoder, SPEEX_SET_HANDLER, &(self->stereo_callback));
+  }
+
+
   speex_decoder_ctl(self->decoder, SPEEX_GET_FRAME_SIZE, &(self->frame_size));
 
-  fs2 = self->frame_size * 2;
+  fs2 = self->frame_size * _FS;
 
   ROAR_DBG("cf_speex_read(*): frame_size=%i (%i bytes)", self->frame_size, fs2);
 
@@ -157,7 +180,7 @@ int cf_speex_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
     return 0;
   }
  }
- fs2 = self->frame_size * 2;
+ fs2 = self->frame_size * _FS;
 
  ROAR_DBG("cf_speex_read(*): Have a working decoder!");
 
@@ -166,10 +189,10 @@ int cf_speex_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
 
 
  if ( self->fi_rest ) {
-  if ( self->fi_rest > (still_todo*2) ) {
+  if ( self->fi_rest > (still_todo*_FS) ) {
    ROAR_DBG("cf_speex_read(*): using data from input rest buffer: len=%i (no need to read new data)", self->fi_rest);
-   still_todo *= 2; // we will set this to zero one way or another,
-                    // so we don't need to care about soring a 'warong' value here.
+   still_todo *= _FS; // we will set this to zero one way or another,
+                         // so we don't need to care about soring a 'wrong' value here.
    memcpy(buf, self->i_rest, still_todo);
    memmove(self->i_rest, self->i_rest + still_todo, self->fi_rest - still_todo);
    self->fi_rest -= still_todo;
@@ -179,7 +202,7 @@ int cf_speex_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
    ROAR_DBG("cf_speex_read(*): using data from input rest buffer: len=%i", self->fi_rest);
    memcpy(buf, self->i_rest, self->fi_rest);
    buf += self->fi_rest;
-   still_todo -= self->fi_rest/2;
+   still_todo -= self->fi_rest/_FS;
    ret += self->fi_rest;
    self->fi_rest = 0;
   }
@@ -202,12 +225,16 @@ int cf_speex_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
 
   speex_decode_int(self->decoder, &(self->bits), self->cd);
 
+  if ( self->stereo) {
+   speex_decode_stereo_int(self->cd, self->frame_size, &(self->stereo_state));
+  }
+
   if ( self->frame_size > still_todo ) {
-   memcpy(buf, self->cd, still_todo*2);
-   ret += still_todo*2;
-   self->fi_rest = (self->frame_size - still_todo)*2;
-   ROAR_DBG("cf_speex_read(*): self->fi_rest=%i, off=%i", self->fi_rest, still_todo*2);
-   memcpy(self->i_rest, (self->cd)+(still_todo*2), self->fi_rest);
+   memcpy(buf, self->cd, still_todo*_FS);
+   ret += still_todo*_FS;
+   self->fi_rest = (self->frame_size - still_todo)*_FS;
+   ROAR_DBG("cf_speex_read(*): self->fi_rest=%i, off=%i", self->fi_rest, still_todo*_FS);
+   memcpy(self->i_rest, (self->cd)+(still_todo*_FS), self->fi_rest);
    still_todo = 0;
   } else {
    memcpy(buf, self->cd, fs2);
@@ -218,7 +245,7 @@ int cf_speex_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  }
 
  if ( still_todo ) {
-  ROAR_DBG("cf_speex_read(*): could not read all reqquested data, returning %i byte less", still_todo*2);
+  ROAR_DBG("cf_speex_read(*): could not read all reqquested data, returning %i byte less", still_todo*_FS);
  }
 
  ROAR_DBG("cf_speex_read(*) = %i", ret);
