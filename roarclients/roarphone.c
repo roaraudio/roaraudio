@@ -48,6 +48,10 @@
 
 #define DTX_F        25
 
+#define CON_NONE     0x00
+#define CON_CON      0x01
+#define CON_STREAM   0x02
+
 struct {
  int antiecho;
  int samples;
@@ -56,6 +60,13 @@ struct {
 } g_conf;
 
 int dtx_counter = 0;
+
+struct {
+ int state;
+ struct roar_connection con;
+ struct roar_stream     stream;
+ struct roar_vio_calls * svio;
+} g_cons;
 
 struct roar_bixcoder transcoder[1];
 
@@ -80,11 +91,29 @@ void usage (void) {
 }
 
 int open_stream (struct roar_vio_calls * vio, char * server, struct roar_audio_info * info) {
- return roar_vio_simple_stream(vio,
-                               info->rate, info->channels, info->bits, info->codec,
-                               server,
-                               ROAR_DIR_BIDIR,
-                               "roarphone");
+ int fh;
+
+ g_cons.svio = vio;
+
+ if ( !(g_cons.state & CON_CON) )
+  if ( roar_simple_connect(&(g_cons.con), server, "roarphone") == -1 )
+   return -1;
+
+ g_cons.state |= CON_CON;
+
+ // TODO: find out if this can be done more nicely by using VIOs
+
+ if ( (fh = roar_simple_new_stream_obj(&(g_cons.con), &(g_cons.stream),
+                                       info->rate, info->channels, info->bits, info->codec,
+                                       ROAR_DIR_BIDIR
+                                      )) == -1 )
+  return -1;
+
+ roar_vio_open_fh_socket(vio, fh);
+
+ g_cons.state |= CON_STREAM;
+
+ return 0;
 }
 
 #ifdef _SPEEX_API_OLD
@@ -247,6 +276,9 @@ int main (int argc, char * argv[]) {
  g_conf.antiecho      = AE_ROARD;
  g_conf.dtx_threshold = -1;
 
+ memset(&g_cons, 0, sizeof(g_cons));
+ g_cons.state = CON_NONE;
+
  for (i = 1; i < argc; i++) {
   k = argv[i];
 
@@ -353,6 +385,8 @@ int main (int argc, char * argv[]) {
 
  roar_vio_close(&svio);
  roar_vio_close(&dvio);
+
+ roar_disconnect(&(g_cons.con));
 
  return 0;
 }
