@@ -83,6 +83,10 @@
 #define ROAR_CMD_WHOAMI        32
 
 
+// Reserved for RAUM project:
+#define ROAR_CMD_RAUM_SEEKTABLE 201
+// End of reserved block
+
 #define ROAR_CMD_EPERM        252 /* error: permition denided */
 #define ROAR_CMD_OK_STOP      253 /* used internaly in the serveer: */
                                   // ROAR_CMD_OK but do not queue the client again within the block
