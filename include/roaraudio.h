@@ -255,14 +255,15 @@ int _ROAR_MLOCK(const void *addr, size_t len);
 //#elif BYTE_ORDER == LITTLE_ENDIAN
 #else
 
-#ifdef BYTE_ORDER == LITTLE_ENDIAN
+#if BYTE_ORDER == LITTLE_ENDIAN
 #define _ROAR_MOVE_BYTE(x,p) (((x) & (0xFFUL << (8*(p)))) >> (8*(p)) << (64-8*((p)+1)))
 #define ROAR_NET2HOST64(x) ROAR_HOST2NET64(x)
 #define ROAR_HOST2NET64(x) (_ROAR_MOVE_BYTE((x), 0) | _ROAR_MOVE_BYTE((x), 1) | \
                             _ROAR_MOVE_BYTE((x), 2) | _ROAR_MOVE_BYTE((x), 3) | \
                             _ROAR_MOVE_BYTE((x), 4) | _ROAR_MOVE_BYTE((x), 5) | \
                             _ROAR_MOVE_BYTE((x), 6) | _ROAR_MOVE_BYTE((x), 7) | )
-#else /* PDP byte order */
+#else
+/* PDP byte order */
 #endif
 
 #define ROAR_NET2HOST32(x) ntohl((x))
