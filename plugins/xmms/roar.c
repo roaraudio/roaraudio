@@ -227,6 +227,7 @@ int roar_update_metadata(void) {
  struct roar_meta   meta;
  char empty = 0;
  char * info;
+ char * delm;
  int pos;
 
  pos     = xmms_remote_get_playlist_pos(g_inst.session);
@@ -254,9 +255,20 @@ int roar_update_metadata(void) {
 
  info = xmms_remote_get_playlist_title(g_inst.session, pos);
  if ( info ) {
+
+  if ( (delm = strstr(info, " - ")) != NULL ) {
+   *delm = 0;
+   meta.value  = info;
+   meta.type   = ROAR_META_TYPE_ARTIST;
+   roar_stream_meta_set(&(g_inst.con), &(g_inst.stream), ROAR_META_MODE_SET, &meta);
+
+   meta.value = delm + 3;
+  } else {
+   meta.value = info;
+  }
+
   meta.type = ROAR_META_TYPE_TITLE;
 
-  meta.value = info;
   roar_stream_meta_set(&(g_inst.con), &(g_inst.stream), ROAR_META_MODE_SET, &meta);
 
   free(info);
