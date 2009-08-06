@@ -70,24 +70,59 @@ struct {
 
 struct roar_bixcoder transcoder[1];
 
+struct {
+ struct {
+  char key[ROAR_META_MAX_NAMELEN];
+  char value[LIBROAR_BUFFER_MSGDATA];
+ } tmp;
+ char * rn;
+ char * nick;
+ char * org;
+ char * email;
+ char * hp;
+ char * loc;
+ char * thumbnail;
+} g_meta;
+
 void usage (void) {
  printf("roarphone [OPTIONS]...\n");
 
- printf("\nOptions:\n\n");
+ printf("\nServer Options:\n\n");
 
  printf("  --server   SERVER    - Set server hostname\n"
-        "  --rate     RATE      - Set sample rate\n"
+       );
+
+ printf("\nAudio Options:\n\n");
+ printf("  --rate     RATE      - Set sample rate\n"
         "  --bits     BITS      - Set bits per sample\n"
         "  --chans    CHANNELS  - Set number of channels\n"
-        "  --codec    CODEC     - Set the codec\n"
-        "  --driver   DRIVER    - Set the driver\n"
-        "  --device   DEVICE    - Set the device\n"
-        "  --antiecho AEMODE    - Set the anti echo mode\n"
-        "  --threshold DTXTHRES - Set the DTX threshold, disabled by default\n"
+       );
+
+ printf("\nCodec Options:\n\n");
+ printf("  --codec    CODEC     - Set the codec\n"
         "  --transcode          - Use local transcodeing\n"
+       );
+
+ printf("\nDriver Options:\n\n");
+ printf("  --driver   DRIVER    - Set the driver\n"
+        "  --device   DEVICE    - Set the device\n"
+       );
+
+ printf("\nGeneral Options:\n\n");
+ printf("  --antiecho AEMODE    - Set the anti echo mode\n"
+        "  --threshold DTXTHRES - Set the DTX threshold, disabled by default\n"
         "  --help               - Show this help\n"
        );
 
+ printf("\nMeta Data Options:\n\n");
+ printf("  --m-rn    REALNAME   - Sets the real name\n"
+        "  --m-nick  NICK       - Sets the nick name\n"
+        "  --m-email EMAIL      - Sets the email address\n"
+        "  --m-hp    HOMEPAGE   - Sets the homepage URL\n"
+        "  --m-thumbn THUMBNAIL - Sets a URL to a thumbnail\n"
+        "  --m-loc   LOCATION   - Sets the location (room number)\n"
+        "  --m-org ORGANIZATION - Sets the organization/company name\n"
+       );
 }
 
 int open_stream (struct roar_vio_calls * vio, char * server, struct roar_audio_info * info) {
@@ -112,6 +147,61 @@ int open_stream (struct roar_vio_calls * vio, char * server, struct roar_audio_i
  roar_vio_open_fh_socket(vio, fh);
 
  g_cons.state |= CON_STREAM;
+
+ return 0;
+}
+
+#define _SET_META(ivar,itype) if ( (ivar) != NULL ) {  \
+                              meta.value = (ivar);     \
+                              meta.type  = (itype);    \
+                              roar_stream_meta_set(&(g_cons.con), &(g_cons.stream), ROAR_META_MODE_SET, &meta); \
+                              }
+int set_meta (void) {
+ struct roar_meta   meta;
+
+ meta.value  = g_meta.tmp.value;
+ meta.key[0] = 0;
+ meta.type   = ROAR_META_TYPE_NONE;
+
+ roar_stream_meta_set(&(g_cons.con), &(g_cons.stream), ROAR_META_MODE_CLEAR, &meta);
+
+ _SET_META(g_meta.thumbnail, ROAR_META_TYPE_THUMBNAIL);
+ _SET_META(g_meta.loc,       ROAR_META_TYPE_LOCATION);
+ _SET_META(g_meta.hp,        ROAR_META_TYPE_HOMEPAGE);
+ _SET_META(g_meta.org,       ROAR_META_TYPE_ORGANIZATION);
+
+ if ( g_meta.nick != NULL ) {
+  if ( g_meta.rn  != NULL ) {
+   snprintf(g_meta.tmp.value, LIBROAR_BUFFER_MSGDATA-1, "%s (%s)", g_meta.rn, g_meta.nick);
+   g_meta.tmp.value[LIBROAR_BUFFER_MSGDATA-1] = 0;
+   _SET_META(g_meta.tmp.value, ROAR_META_TYPE_AUTHOR);
+  } else {
+   _SET_META(g_meta.nick, ROAR_META_TYPE_AUTHOR);
+  }
+ } else {
+  if ( g_meta.rn  != NULL ) {
+   _SET_META(g_meta.rn, ROAR_META_TYPE_AUTHOR);
+  }
+ }
+
+ // TODO: make this more nice...
+ if ( g_meta.email != NULL ) {
+  if ( g_meta.nick != NULL ) {
+   if ( g_meta.rn != NULL ) {
+    snprintf(g_meta.tmp.value, LIBROAR_BUFFER_MSGDATA-1, "%s (%s) <%s>", g_meta.rn, g_meta.nick, g_meta.email);
+   } else {
+    snprintf(g_meta.tmp.value, LIBROAR_BUFFER_MSGDATA-1, "%s <%s>", g_meta.nick, g_meta.email);
+   }
+  } else {
+   if ( g_meta.rn != NULL ) {
+    snprintf(g_meta.tmp.value, LIBROAR_BUFFER_MSGDATA-1, "%s <%s>", g_meta.rn, g_meta.email);
+   } else {
+    snprintf(g_meta.tmp.value, LIBROAR_BUFFER_MSGDATA-1, "<%s>", g_meta.email);
+   }
+  }
+  g_meta.tmp.value[LIBROAR_BUFFER_MSGDATA-1] = 0;
+  _SET_META(g_meta.tmp.value, ROAR_META_TYPE_CONTACT);
+ }
 
  return 0;
 }
@@ -279,6 +369,8 @@ int main (int argc, char * argv[]) {
  memset(&g_cons, 0, sizeof(g_cons));
  g_cons.state = CON_NONE;
 
+ memset(&g_meta, 0, sizeof(g_meta));
+
  for (i = 1; i < argc; i++) {
   k = argv[i];
 
@@ -318,6 +410,24 @@ int main (int argc, char * argv[]) {
     g_conf.dtx_threshold *= g_conf.dtx_threshold;
   } else if ( strcmp(k, "--transcode") == 0 ) {
    g_conf.transcode = 1;
+
+  // META DATA:
+  } else if ( strcmp(k, "--m-rn") == 0 ) {
+   g_meta.rn = argv[++i];
+  } else if ( strcmp(k, "--m-nick") == 0 ) {
+   g_meta.nick = argv[++i];
+  } else if ( strcmp(k, "--m-email") == 0 ) {
+   g_meta.email = argv[++i];
+  } else if ( strcmp(k, "--m-hp") == 0 ) {
+   g_meta.hp = argv[++i];
+  } else if ( strcmp(k, "--m-thumbn") == 0 ) {
+   g_meta.thumbnail = argv[++i];
+  } else if ( strcmp(k, "--m-loc") == 0 ) {
+   g_meta.loc = argv[++i];
+  } else if ( strcmp(k, "--m-org") == 0 ) {
+   g_meta.org = argv[++i];
+
+
   } else if ( strcmp(k, "--help") == 0 ) {
    usage();
    return 0;
@@ -364,6 +474,8 @@ int main (int argc, char * argv[]) {
   return 2;
  }
  ROAR_DBG("main(*): RET");
+
+ set_meta();
 
  if ( g_conf.transcode ) {
   dinfo.codec = info.codec;
