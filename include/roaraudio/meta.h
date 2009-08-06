@@ -31,8 +31,9 @@
 #define ROAR_META_TYPE_NONE           0
 #define ROAR_META_TYPE_TITLE          1
 #define ROAR_META_TYPE_ALBUM          2
-#define ROAR_META_TYPE_AUTOR          3
-#define ROAR_META_TYPE_ARTIST         ROAR_META_TYPE_AUTOR
+#define ROAR_META_TYPE_AUTHOR         3
+#define ROAR_META_TYPE_AUTOR          ROAR_META_TYPE_AUTHOR
+#define ROAR_META_TYPE_ARTIST         ROAR_META_TYPE_AUTHOR
 #define ROAR_META_TYPE_VERSION        4
 #define ROAR_META_TYPE_DATE           5
 #define ROAR_META_TYPE_LICENSE        6

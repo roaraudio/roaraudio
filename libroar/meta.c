@@ -47,6 +47,7 @@ struct {
  {ROAR_META_TYPE_NONE,               "NONE"           },
  {ROAR_META_TYPE_TITLE,              "TITLE"          },
  {ROAR_META_TYPE_ALBUM,              "ALBUM"          },
+ {ROAR_META_TYPE_AUTHOR,             "AUTHOR"         },
  {ROAR_META_TYPE_AUTOR,              "AUTOR"          },
  {ROAR_META_TYPE_ARTIST,             "ARTIST"         },
  {ROAR_META_TYPE_VERSION,            "VERSION"        },
