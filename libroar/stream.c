@@ -622,6 +622,7 @@ struct {
  // RAUM:
  {ROAR_CODEC_RAUM,        "raum"       },
  {ROAR_CODEC_RAUM_VORBIS, "raum_vorbis"},
+ {ROAR_CODEC_RAUM_FLAC,   "raum_flac"  },
 
  // RIFF/WAVE like:
  {ROAR_CODEC_RIFF_WAVE,   "riff_wave"  },

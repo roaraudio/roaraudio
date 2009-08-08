@@ -66,6 +66,7 @@
       **** 0x1b -> ROAR SPEEX
       **** 0x1c -> RAUM
       **** 0x1d -> RAUM Vorbis
+      **** 0x1e -> RAUM FLAC
 
  RIFF/WAVE like 0x20:
   76543210
@@ -162,6 +163,7 @@
 
 #define ROAR_CODEC_RAUM         0x1c
 #define ROAR_CODEC_RAUM_VORBIS  0x1d
+#define ROAR_CODEC_RAUM_FLAC    0x1e
 
 #define ROAR_CODEC_RIFF_WAVE    0x20
 
