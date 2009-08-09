@@ -283,10 +283,23 @@ int roar_buffer_get_meta_i32(struct roar_buffer *  buf, int32_t *  meta) {
 }
 
 int roar_buffer_set_len  (struct roar_buffer *  buf, size_t    len) {
+ size_t   totlen;
+ void   * newbuf;
+
  if ( buf == NULL )
   return -1;
 
- buf->user_len = len;
+ if ( len > buf->user_len ) {
+  totlen = buf->len - buf->user_len + len;
+  newbuf = realloc(buf->data, totlen);
+  if ( newbuf == NULL )
+   return -1;
+
+  buf->data = newbuf;
+  buf->user_len = len;
+ } else {
+  buf->user_len = len;
+ }
 
  return 0;
 }
