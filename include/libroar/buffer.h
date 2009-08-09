@@ -49,7 +49,10 @@ struct roar_buffer {
  int                  flags;
  void               * data;
  void               * user_data;
- void               * meta;
+ union {
+  void              * vp;
+  int32_t             i32;
+ }                    meta;
  struct roar_buffer * next;
 };
 
@@ -75,8 +78,10 @@ int roar_buffer_set_offset (struct roar_buffer *  buf, size_t off);
 
 int roar_buffer_shift_out (struct roar_buffer ** buf, void * data, size_t * len);
 
-int roar_buffer_set_meta (struct roar_buffer *  buf, void   *  meta);
-int roar_buffer_get_meta (struct roar_buffer *  buf, void   ** meta);
+int roar_buffer_set_meta    (struct roar_buffer *  buf, void    *  meta);
+int roar_buffer_get_meta    (struct roar_buffer *  buf, void    ** meta);
+int roar_buffer_set_meta_i32(struct roar_buffer *  buf, int32_t    meta);
+int roar_buffer_get_meta_i32(struct roar_buffer *  buf, int32_t *  meta);
 
 int roar_buffer_set_len  (struct roar_buffer *  buf, size_t    len);
 int roar_buffer_get_len  (struct roar_buffer *  buf, size_t *  len);

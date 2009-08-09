@@ -250,16 +250,34 @@ int roar_buffer_set_meta (struct roar_buffer * buf, void *  meta) {
  if ( buf == NULL )
   return -1;
 
- buf->meta = meta;
+ buf->meta.vp = meta;
 
  return 0;
 }
 
 int roar_buffer_get_meta (struct roar_buffer * buf, void ** meta) {
+ if ( buf == NULL || meta == NULL )
+  return -1;
+
+ *meta = buf->meta.vp;
+
+ return 0;
+}
+
+int roar_buffer_set_meta_i32(struct roar_buffer *  buf, int32_t    meta) {
  if ( buf == NULL )
   return -1;
 
- *meta = buf->meta;
+ buf->meta.i32 = meta;
+
+ return 0;
+}
+
+int roar_buffer_get_meta_i32(struct roar_buffer *  buf, int32_t *  meta) {
+ if ( buf == NULL || meta == NULL )
+  return -1;
+
+ *meta = buf->meta.i32;
 
  return 0;
 }
