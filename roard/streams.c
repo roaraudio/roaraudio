@@ -444,7 +444,7 @@ int streams_set_flag     (int id, int flag) {
    // normal behavor (vio blocking):
    default:
      // the fh is updated as soon as the fh get ready in case the default ask to set sync
-     if ( !g_streams[id]->ready && !(g_config->streams[ROAR_STREAM(g_streams[id])->dir]-flags & ROAR_FLAG_SYNC) ) {
+     if ( !g_streams[id]->ready && !(g_config->streams[ROAR_STREAM(g_streams[id])->dir].flags & ROAR_FLAG_SYNC) ) {
       if ( streams_set_sync(id, 1) == -1 )
        flag -= ROAR_FLAG_SYNC;
      }
