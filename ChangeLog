@@ -19,6 +19,8 @@ v. 0.3beta0 - ?
 	* added working support for THRU streams
 	* changed names of parameters in roarctl
 	* added lib libroareio - Extended IO for RoarAudio
+	* Update order of default drivers, now it is: oss, ao, esd, null
+
 
 v. 0.2 - Thu May 21 2009 21:00
 	* do a some more testings for functions not existing on win32
