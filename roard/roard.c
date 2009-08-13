@@ -219,9 +219,6 @@ int init_config (void) {
  return 0;
 }
 
-#define FOP_ADD   1
-#define FOP_DEL  -1
-
 int update_stream_flags (char * str) {
  int    dir;
  char * flags;
@@ -246,10 +243,10 @@ int update_stream_flags (char * str) {
    *(flags++) = 0;
 
   switch (*k) {
-   case '+': k++; op = FOP_ADD; break;
-   case '-': k++; op = FOP_DEL; break;
+   case '+': k++; op = ROAR_SET_FLAG;   break;
+   case '-': k++; op = ROAR_RESET_FLAG; break;
    default:
-     op = FOP_ADD;
+     op = ROAR_SET_FLAG;
   }
 
   flag = 0;
@@ -272,7 +269,7 @@ int update_stream_flags (char * str) {
 
   g_config->streams[dir].flags |= flag;
 
-  if ( op == FOP_DEL )
+  if ( op == ROAR_RESET_FLAG )
    g_config->streams[dir].flags -= flag;
  }
 
