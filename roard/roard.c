@@ -64,6 +64,14 @@ void usage (void) {
         " -C  --chans  CHANNELS - Set server channels\n"
        );
 
+ printf("\nStream Options:\n\n");
+ printf(
+        " --stream-flags D=F    - Set default flags for stream directions\n"
+        "                         D is the stream direction and F is a comma seperated\n"
+        "                         list of flags in form +flag or -flag to set or unset\n"
+        "                         a flag as default or remove it from the default\n"
+       );
+
  printf("\nDriver Options: (obsolete, do not use, Use Ouput Options)\n\n");
  printf(" -d  --driver DRV      - Set the driver (default: %s)\n", ROAR_DRIVER_DEFAULT);
  printf(" -D  --device DEV      - Set the device\n");
@@ -207,6 +215,66 @@ int init_config (void) {
  g_config->streams[ROAR_DIR_BIDIR   ].flags = ROAR_FLAG_ANTIECHO;
 
  g_config->location = "***default***";
+
+ return 0;
+}
+
+#define FOP_ADD   1
+#define FOP_DEL  -1
+
+int update_stream_flags (char * str) {
+ int    dir;
+ char * flags;
+ char * k;
+ int    op;
+ int    flag;
+
+ if ( (flags = strstr(str, "=")) == NULL )
+  return -1;
+
+ *flags = 0;
+  flags++;
+
+ if ( (dir = roar_str2dir(str)) == -1 )
+  return -1;
+
+ while (flags != NULL) {
+  k = flags;
+  flags = strstr(flags, ",");
+
+  if ( flags != NULL )
+   *(flags++) = 0;
+
+  switch (*k) {
+   case '+': k++; op = FOP_ADD; break;
+   case '-': k++; op = FOP_DEL; break;
+   default:
+     op = FOP_ADD;
+  }
+
+  flag = 0;
+
+  if ( !strcmp(k, "sync") ) {
+   flag = ROAR_FLAG_SYNC;
+  } else if ( !strcmp(k, "meta") ) {
+   flag = ROAR_FLAG_META;
+  } else if ( !strcmp(k, "cleanmeta") ) {
+   flag = ROAR_FLAG_CLEANMETA;
+  } else if ( !strcmp(k, "pause") ) {
+   flag = ROAR_FLAG_PAUSE;
+  } else if ( !strcmp(k, "mute") ) {
+   flag = ROAR_FLAG_MUTE;
+  } else if ( !strcmp(k, "antiecho") ) {
+   flag = ROAR_FLAG_ANTIECHO;
+  } else {
+   return -1;
+  }
+
+  g_config->streams[dir].flags |= flag;
+
+  if ( op == FOP_DEL )
+   g_config->streams[dir].flags -= flag;
+ }
 
  return 0;
 }
@@ -754,6 +822,12 @@ int main (void) {
    sa.bits = atoi(argv[++i]);
   } else if ( strcmp(k, "-C") == 0 || strcmp(k, "--chans") == 0 ) {
    sa.channels = atoi(argv[++i]);
+
+  } else if ( strcmp(k, "--stream-flags") == 0 ) {
+   if ( update_stream_flags(argv[++i]) == -1 ) {
+    ROAR_ERR("Can not set stream flags");
+    return 1;
+   }
 
   } else if ( strcmp(k, "-d") == 0 || strcmp(k, "--driver") == 0 ) {
    driver = argv[++i];
