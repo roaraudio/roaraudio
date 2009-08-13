@@ -754,7 +754,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.189 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.190 $ of RoarAudio
  */
 
 EOF
@@ -1200,7 +1200,7 @@ else
  echo no
 fi
 
-test_func_defmake ROAR_HAVE_GETOBJECTBYNAME getobjectbyname 'getobjectbyname(NULL)' -- netdnet/dn.h netdnet/dnetdb.h
+test_func_defmake ROAR_HAVE_GETOBJECTBYNAME getobjectbyname 'getobjectbyname(NULL)' -- stdlib.h netdnet/dn.h netdnet/dnetdb.h
 test_func_defmake ROAR_HAVE_GETSERVBYNAME   getservbyname   'getservbyname((void*)0, (void*)0)' -- netdb.h
 
 echo -n 'checking for safe 32 bit integer overflow... '
