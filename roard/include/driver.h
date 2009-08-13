@@ -30,22 +30,24 @@
 #define DRIVER_USERDATA_T void *
 
 #ifndef ROAR_DRIVER_DEFAULT
-#ifdef ROAR_HAVE_ESD
-#define ROAR_DRIVER_DEFAULT "esd"
+
+#if defined(ROAR_HAVE_OSS_BSD) || defined(ROAR_HAVE_OSS)
+#define ROAR_DRIVER_DEFAULT "oss"
 #else
 
 #ifdef ROAR_HAVE_LIBAO
 #define ROAR_DRIVER_DEFAULT "ao"
 #else
 
-#if defined(ROAR_HAVE_OSS_BSD) || defined(ROAR_HAVE_OSS)
-#define ROAR_DRIVER_DEFAULT "oss"
+#ifdef ROAR_HAVE_ESD
+#define ROAR_DRIVER_DEFAULT "esd"
 #else
 
 #define ROAR_DRIVER_DEFAULT "null"
 #endif
 #endif
 #endif
+
 #endif
 
 #ifdef ROAR_HAVE_ESD
