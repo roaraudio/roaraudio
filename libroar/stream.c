@@ -526,59 +526,47 @@ int roar_stream_m2s     (struct roar_stream * s, struct roar_message * m) {
                            "unknown")
 */
 
+struct {
+ int    dir;
+ char * name;
+} _libroar_dir[] = {
+ {ROAR_DIR_PLAY,      "play"     },
+ {ROAR_DIR_RECORD,    "record"   },
+ {ROAR_DIR_MONITOR,   "monitor"  },
+ {ROAR_DIR_FILTER,    "filter"   },
+ {ROAR_DIR_OUTPUT,    "output"   },
+ {ROAR_DIR_MIXING,    "mixing"   },
+ {ROAR_DIR_META,      "meta"     },
+ {ROAR_DIR_BIDIR,     "bidir"    },
+ {ROAR_DIR_THRU,      "thru"     },
+ {ROAR_DIR_BRIDGE,    "bridge"   },
+ {ROAR_DIR_MIDI_IN,   "midi_in"  },
+ {ROAR_DIR_MIDI_OUT,  "midi_out" },
+ {ROAR_DIR_LIGHT_IN,  "light_in" },
+ {ROAR_DIR_LIGHT_OUT, "light_out"},
+ {ROAR_DIR_RAW_IN,    "raw_in"   },
+ {ROAR_DIR_RAW_OUT,   "raw_out"  },
+ {-1,                 "unknown"  }
+};
+
 char * roar_dir2str (int dir) {
- switch (dir) {
-  case ROAR_DIR_PLAY:
-    return "play";
-   break;
-  case ROAR_DIR_RECORD:
-    return "record";
-   break;
-  case ROAR_DIR_MONITOR:
-    return "monitor";
-   break;
-  case ROAR_DIR_FILTER:
-    return "filter";
-   break;
-  case ROAR_DIR_OUTPUT:
-    return "output";
-   break;
-  case ROAR_DIR_MIXING:
-    return "mixing";
-   break;
-  case ROAR_DIR_META:
-    return "meta";
-   break;
-  case ROAR_DIR_BIDIR:
-    return "bidir";
-   break;
-  case ROAR_DIR_THRU:
-    return "thru";
-   break;
-  case ROAR_DIR_BRIDGE:
-    return "bridge";
-   break;
-  case ROAR_DIR_MIDI_IN:
-    return "midi_in";
-   break;
-  case ROAR_DIR_MIDI_OUT:
-    return "midi_out";
-   break;
-  case ROAR_DIR_LIGHT_IN:
-    return "light_in";
-   break;
-  case ROAR_DIR_LIGHT_OUT:
-    return "light_out";
-   break;
-  case ROAR_DIR_RAW_IN:
-    return "raw_in";
-   break;
-  case ROAR_DIR_RAW_OUT:
-    return "raw_out";
-   break;
-  default:
-    return "unknown";
- }
+ int i;
+
+ for (i = 0; _libroar_dir[i].dir != -1; i++)
+  if ( _libroar_dir[i].dir == dir )
+   return _libroar_dir[i].name;
+
+ return _libroar_dir[i].name;
+}
+
+int roar_str2dir (char * name) {
+ int i;
+
+ for (i = 0; _libroar_dir[i].dir != -1; i++)
+  if ( !strcmp(_libroar_dir[i].name, name) )
+   return _libroar_dir[i].dir;
+
+ return _libroar_dir[i].dir;
 }
 
 // codec funcs:

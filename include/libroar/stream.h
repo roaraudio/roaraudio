@@ -46,6 +46,7 @@
 */
 
 char * roar_dir2str (int dir);
+int    roar_str2dir (char * name);
 
 /*
 #define roar_codec2str(x) ((x) == ROAR_CODEC_PCM_S_LE  ? "pcm_s_le"  : (x) == ROAR_CODEC_PCM_S_BE  ? "pcm_s_be"  : \
