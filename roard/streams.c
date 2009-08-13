@@ -332,7 +332,10 @@ int streams_set_fh     (int id, int fh) {
    break;
  }
 
- if ( dir == ROAR_DIR_FILTER ) {
+ if ( dir >= ROAR_DIR_DIRIDS )
+  return -1;
+
+ if ( g_config->streams[dir].flags & ROAR_FLAG_SYNC ) {
   ss->ready = 1;
   return 0;
  } else {
