@@ -35,6 +35,7 @@
 
 struct sio_hdl * sio_open(char * name, unsigned mode, int nbio_flag) {
  struct sio_hdl * hdl = NULL;
+ int is_midi = 0;
 
  if ( (hdl = malloc(sizeof(struct sio_hdl))) == NULL )
   return NULL;
@@ -46,7 +47,13 @@ struct sio_hdl * sio_open(char * name, unsigned mode, int nbio_flag) {
     hdl->dir = ROAR_DIR_PLAY;
    break;
   case MIO_OUT:
+    is_midi = 1;
+    hdl->dir = ROAR_DIR_MIDI_IN;
+   break;
   case MIO_IN:
+    is_midi = 1;
+    hdl->dir = ROAR_DIR_MIDI_OUT;
+   break;
   case SIO_REC:
   case SIO_PLAY|SIO_REC:
   case MIO_OUT|MIO_IN:
@@ -66,6 +73,17 @@ struct sio_hdl * sio_open(char * name, unsigned mode, int nbio_flag) {
 
  if ( name != NULL )
   hdl->device = strdup(name);
+
+ if ( is_midi ) {
+  hdl->info.codec    = ROAR_CODEC_MIDI;
+  hdl->info.bits     = 8;
+  hdl->info.channels = 16;
+  hdl->info.rate     = 96;
+  if ( !sio_start(hdl) ) {
+   sio_close(hdl);
+   return NULL;
+  }
+ }
 
  return hdl;
 }
