@@ -280,6 +280,7 @@ int streams_set_fh     (int id, int fh) {
  struct roar_stream_server * ss;
  struct roar_stream        * s;
  int dir;
+ int nonblock = 1;
 
  if ( (s = ROAR_STREAM(ss = g_streams[id])) == NULL )
   return -1;
@@ -336,6 +337,18 @@ int streams_set_fh     (int id, int fh) {
   return -1;
 
  if ( g_config->streams[dir].flags & ROAR_FLAG_SYNC ) {
+  switch (dir) {
+   case ROAR_DIR_BRIDGE:
+   case ROAR_DIR_MIDI_OUT:
+    break;
+   default:
+     nonblock = 0;
+    break;
+  }
+ }
+
+
+ if ( !nonblock ) {
   ss->ready = 1;
   return 0;
  } else {
