@@ -65,6 +65,8 @@ struct roar_driver g_driver[] = {
  {"sysclock", "System Clock Clock Source", "(none)", DRV_FLAG_NONE, ROAR_SUBSYS_WAVEFORM,
   NULL, NULL, NULL, NULL, NULL, NULL, driver_sysclock_open_vio},
 #endif
+ {"cdriver", "RoarAudio Client driver", "driver:device", DRV_FLAG_NONE, ROAR_SUBSYS_WAVEFORM,
+  NULL, NULL, NULL, NULL, NULL, NULL, driver_cdriver_open},
  {NULL, NULL, NULL, DRV_FLAG_NONE, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL} // end of list
                                 };
 
@@ -264,6 +266,38 @@ int driver_set_volume(int stream, struct roar_mixer_settings * mixer) {
   return -1;
 
  return roar_vio_ctl(&(ss->vio), ROAR_VIO_CTL_SET_VOLUME, (void*)mixer);
+}
+
+
+int driver_cdriver_open(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh) {
+ char * driver;
+ char * delm;
+ int ret;
+
+ ROAR_DBG("driver_cdriver_open(inst=%p, device='%s', info=%p, fh=%i) = ?", inst, device, info, fh);
+
+ if (device == NULL) {
+  driver = NULL;
+  return -1;
+ } else {
+  driver = strdup(device);
+
+  if ( (delm = strstr(driver, "#")) == NULL ) {
+   device = NULL;
+  } else {
+   *delm  = 0;
+   device = strstr(device, "#") + 1;
+  }
+ }
+
+ ROAR_DBG("driver_cdriver_open(*): CALL roar_cdriver_open(inst=%p, driver='%s', device='%s', info=%p, dir=ROAR_DIR_PLAY)", inst, driver, device, info);
+ ret = roar_cdriver_open(inst, driver, device, info, ROAR_DIR_PLAY);
+ ROAR_DBG("driver_cdriver_open(*): RET %i", ret);
+
+ if ( driver != NULL )
+  free(driver);
+
+ return ret;
 }
 
 //ll
