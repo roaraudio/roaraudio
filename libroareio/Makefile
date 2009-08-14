@@ -17,7 +17,7 @@ all: ${TARGETS}
 	rm -f ../lib/${SLIB} 2> /dev/null || true
 	cp $(cp_v) ${TARGETS} ../lib/
 clean:
-	rm -f ${TARGETS} autodetected.h *.o
+	rm -f ${TARGETS} autodetected.h esdfw.a *.o
 new: clean all
 
 esdfw.a:
