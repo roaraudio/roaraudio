@@ -63,6 +63,7 @@ struct roar_sio_hdl {
  char           * device;
 // int              fh;
  int                    stream_opened;
+ int                    dir;
  struct roar_vio_calls  svio;
  struct roar_connection con;
  struct roar_stream     stream;
