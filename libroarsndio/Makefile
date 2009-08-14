@@ -3,7 +3,7 @@ include ../Makefile.conf
 SLIB=libroarsndio$(SHARED_SUFFIX)
 
 TARGETS=$(SLIB) libroarsndio.a
-OBJS=libroarsndio.o para.o stream.o events.o volume.o
+OBJS=libroarsndio.o para.o stream.o events.o volume.o midi.o
 
 #DEFINES        = -DDEBUG
 INCLUDE = -I../include -I../include/libroarsndio
