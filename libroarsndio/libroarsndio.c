@@ -54,9 +54,13 @@ struct sio_hdl * sio_open(char * name, unsigned mode, int nbio_flag) {
     is_midi = 1;
     hdl->dir = ROAR_DIR_MIDI_OUT;
    break;
+
+  // unsupported:
   case SIO_REC:
   case SIO_PLAY|SIO_REC:
   case MIO_OUT|MIO_IN:
+
+  // illigal:
   default:
     free(hdl);
     return NULL;
