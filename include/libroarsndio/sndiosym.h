@@ -43,6 +43,8 @@ struct pollfd;
 
 #define SIO_PLAY        1
 #define SIO_REC         2
+#define MIO_OUT		4
+#define MIO_IN		8
 
 #define SIO_IGNORE      0       /* pause during xrun */
 #define SIO_SYNC        1       /* resync after xrun */
@@ -118,6 +120,16 @@ int    sio_eof    (struct sio_hdl * hdl);
 
 int    sio_setvol (struct sio_hdl * hdl, unsigned vol);
 void   sio_onvol  (struct sio_hdl * hdl, void (*cb)(void * arg, unsigned vol), void * arg);
+
+// MIDI:
+struct mio_hdl * mio_open   (const char * name, unsigned mode, int nbio_flag);
+void             mio_close  (struct mio_hdl * hdl);
+size_t           mio_write  (struct mio_hdl * hdl, const void * addr, size_t nbytes);
+size_t           mio_read   (struct mio_hdl * hdl, void * addr, size_t nbytes);
+int              mio_nfds   (struct mio_hdl * hdl);
+int              mio_pollfd (struct mio_hdl * hdl, struct pollfd * pfd, int events);
+int              mio_revents(struct mio_hdl * hdl, struct pollfd * pfd);
+int              mio_eof    (struct mio_hdl * hdl);
 
 #endif
 

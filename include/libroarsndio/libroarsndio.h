@@ -51,6 +51,11 @@ extern "C" {
 #undef sio_hdl
 #endif
 #define sio_hdl roar_sio_hdl
+
+#ifdef mio_hdl
+#undef mio_hdl
+#endif
+#define mio_hdl roar_sio_hdl
 #endif
 
 struct roar_sio_hdl {
