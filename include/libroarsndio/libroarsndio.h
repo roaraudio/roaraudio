@@ -43,6 +43,7 @@ extern "C" {
 #include <sndio.h>
 #else
 #define sio_hdl roar_sio_hdl
+#define mio_hdl roar_sio_hdl
 #include "sndiosym.h"
 #endif
 
