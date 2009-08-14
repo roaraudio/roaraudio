@@ -36,13 +36,24 @@
 struct sio_hdl * sio_open(char * name, unsigned mode, int nbio_flag) {
  struct sio_hdl * hdl = NULL;
 
- if ( mode != SIO_PLAY ) /* currently we only support playback */
-  return NULL;
-
  if ( (hdl = malloc(sizeof(struct sio_hdl))) == NULL )
   return NULL;
 
  memset(hdl, 0, sizeof(struct sio_hdl));
+
+ switch (mode) {
+  case SIO_PLAY:
+    hdl->dir = ROAR_DIR_PLAY;
+   break;
+  case MIO_OUT:
+  case MIO_IN:
+  case SIO_REC:
+  case SIO_PLAY|SIO_REC:
+  case MIO_OUT|MIO_IN:
+  default:
+    free(hdl);
+    return NULL;
+ }
 
  if ( roar_simple_connect(&(hdl->con), name, "libroarsndio") == -1 ) {
   free(hdl);
