@@ -24,6 +24,11 @@
 
 #include <roaraudio.h>
 #include "driver.h"
+#include "autodetected.h"
+
+#ifdef ROAR_HAVE_AD_ESDFW
+#include "driver_esdfw.h"
+#endif
 
 int roar_cdriver_null(struct roar_vio_calls * calls, char * name, char * dev, struct roar_audio_info * info, int dir) {
  ROAR_DBG("roar_cdriver_null(calls=%p, name='%s', dev='%s', info=%p{...}, dir=%i(?)) = ?", calls, name, dev, info, dir);
@@ -41,6 +46,9 @@ struct roar_cdriver _g_roar_cdriver[] = {
 #if defined(ROAR_HAVE_OSS_BSD) || defined(ROAR_HAVE_OSS)
  {"oss",  roar_cdriver_oss},
 #endif
+#ifdef ROAR_HAVE_AD_ESDFW
+#include "driver_esdfw.c"
+#endif
  {NULL, NULL}
 };
 
@@ -48,6 +56,7 @@ int roar_cdriver_open(struct roar_vio_calls * calls, char * name, char * dev, st
  int i;
 
  for (i = 0; _g_roar_cdriver[i].name != NULL; i++) {
+  ROAR_DBG("roar_cdriver_open(*): _g_roar_cdriver[i].name='%s' <cmp> name='%s'", _g_roar_cdriver[i].name, name);
   if ( !strcmp(_g_roar_cdriver[i].name, name) )
    return _g_roar_cdriver[i].open(calls, name, dev, info, dir);
  }
