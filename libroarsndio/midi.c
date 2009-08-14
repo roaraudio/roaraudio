@@ -33,4 +33,13 @@
 #define ROAR_USE_OWN_SNDIO_HDL
 #include "libroarsndio.h"
 
+struct mio_hdl * mio_open   (const char * name, unsigned mode, int nbio_flag);
+void             mio_close  (struct mio_hdl * hdl);
+size_t           mio_write  (struct mio_hdl * hdl, const void * addr, size_t nbytes);
+size_t           mio_read   (struct mio_hdl * hdl, void * addr, size_t nbytes);
+int              mio_nfds   (struct mio_hdl * hdl);
+int              mio_pollfd (struct mio_hdl * hdl, struct pollfd * pfd, int events);
+int              mio_revents(struct mio_hdl * hdl, struct pollfd * pfd);
+int              mio_eof    (struct mio_hdl * hdl);
+
 //ll
