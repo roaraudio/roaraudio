@@ -201,7 +201,7 @@ do
    echo '                              This is the same as allways using --no-listen'
    echo
    echo '--roard-cfreq FREQ          - Sets the cycle frequency of roard in Hz.'
-   echo '--vorbis-bits BITS           - Sets bits per sample used by Vorbis code'
+   echo '--vorbis-bits BITS          - Sets bits per sample used by Vorbis code'
    echo
    echo '--without-libao             - Disable build of libao plugin'
    echo '--without-xmms              - Disable build of XMMS plugin'
@@ -754,7 +754,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.190 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.191 $ of RoarAudio
  */
 
 EOF
