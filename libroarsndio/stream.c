@@ -48,7 +48,7 @@ int    sio_start  (struct sio_hdl * hdl) {
   return 0;
 
 #ifndef ROAR_TARGET_WIN32
- if ( (fh = roar_simple_new_stream_obj(&(hdl->con), &(hdl->stream), _i(rate), _i(channels), _i(bits), _i(codec), ROAR_DIR_PLAY)) == -1 )
+ if ( (fh = roar_simple_new_stream_obj(&(hdl->con), &(hdl->stream), _i(rate), _i(channels), _i(bits), _i(codec), hdl->dir)) == -1 )
   return 0;
 
  ROAR_DBG("sio_start(hdl=%p): rate=%i, channels=%i, bits=%i, codec=%i", hdl, _i(rate), _i(channels), _i(bits), _i(codec));
@@ -61,7 +61,7 @@ int    sio_start  (struct sio_hdl * hdl) {
  if ( roar_stream_new_by_id(&(hdl->stream), -1) == -1 )
   return 0;
 
- if (roar_vio_simple_stream(&(hdl->svio),  _i(rate), _i(channels), _i(bits), _i(codec), NULL, ROAR_DIR_PLAY, "libroarsndio(win32)") == -1 ) {
+ if (roar_vio_simple_stream(&(hdl->svio),  _i(rate), _i(channels), _i(bits), _i(codec), NULL, hdl->dir, "libroarsndio(win32)") == -1 ) {
   return 0;
  }
 #endif
