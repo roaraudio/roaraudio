@@ -54,11 +54,20 @@ struct roar_cdriver _g_roar_cdriver[] = {
 
 int roar_cdriver_open(struct roar_vio_calls * calls, char * name, char * dev, struct roar_audio_info * info, int dir) {
  int i;
+ char *delm;
 
  for (i = 0; _g_roar_cdriver[i].name != NULL; i++) {
   ROAR_DBG("roar_cdriver_open(*): _g_roar_cdriver[i].name='%s' <cmp> name='%s'", _g_roar_cdriver[i].name, name);
+
   if ( !strcmp(_g_roar_cdriver[i].name, name) )
    return _g_roar_cdriver[i].open(calls, name, dev, info, dir);
+
+  if ( (delm = strstr(_g_roar_cdriver[i].name, ":")) != NULL ) {
+   ROAR_DBG("roar_cdriver_open(*): delm+1='%s' <cmp> name='%s'", delm+1, name);
+   if ( !strcmp(delm+1, name) )
+    return _g_roar_cdriver[i].open(calls, name, dev, info, dir);
+  }
+
  }
 
  return -1;
