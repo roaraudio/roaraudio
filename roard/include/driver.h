@@ -116,7 +116,8 @@ int driver_open (DRIVER_USERDATA_T * inst,
                  char * device, struct roar_audio_info * info);
 int driver_openvio(struct roar_vio_calls * calls,
                  int * driver_id, char * driver /* NOTE: this is not part of struct roar_driver's def! */,
-                 char * device, struct roar_audio_info * info, int fh);
+                 char * device, struct roar_audio_info * info, int fh,
+                 struct roar_stream_server * sstream);
 
 int driver_close(DRIVER_USERDATA_T   inst, int driver);
 int driver_closevio(struct roar_vio_calls * calls, int driver);
