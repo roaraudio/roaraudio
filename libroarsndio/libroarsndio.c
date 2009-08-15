@@ -66,6 +66,14 @@ struct sio_hdl * sio_open(char * name, unsigned mode, int nbio_flag) {
     return NULL;
  }
 
+ if ( name == NULL ) {
+  if ( is_midi ) {
+   name = getenv("MIDIDEVICE");
+  } else {
+   name = getenv("AUDIODEVICE");
+  }
+ }
+
  if ( roar_simple_connect(&(hdl->con), name, "libroarsndio") == -1 ) {
   free(hdl);
   return NULL;
