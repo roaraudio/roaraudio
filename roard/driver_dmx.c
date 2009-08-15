@@ -45,6 +45,9 @@ int driver_dmx_open_vio  (struct roar_vio_calls * inst, char * device, struct ro
 
  info->codec = ROAR_CODEC_DMX512;
 
+ if ( sstream != NULL )
+  driver_dmx_ctl(inst, ROAR_VIO_CTL_SET_SSTREAM, sstream);
+
  return 0;
 }
 

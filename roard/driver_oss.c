@@ -357,6 +357,9 @@ int driver_oss_open(struct roar_vio_calls * inst, char * device, struct roar_aud
 
  ROAR_DBG("driver_oss_open(*): OSS devices opened :)");
 
+ if ( sstream != NULL )
+  driver_oss_ctl(inst, ROAR_VIO_CTL_SET_SSTREAM, sstream);
+
  return 0;
 }
 #undef er

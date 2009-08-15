@@ -78,6 +78,9 @@ int driver_pwmled_open_vio  (struct roar_vio_calls * inst, char * device, struct
   return -1;
  }
 
+ if ( sstream != NULL )
+  driver_pwmled_ctl(inst, ROAR_VIO_CTL_SET_SSTREAM, sstream);
+
  return 0;
 }
 
