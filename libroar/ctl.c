@@ -264,6 +264,10 @@ int roar_get_vol      (struct roar_connection * con, int id, struct roar_mixer_s
  if ( info[1] > ROAR_MAX_CHANNELS )
   return -1;
 
+ mixer->scale   = 65535;
+ mixer->rpg_mul = 1;
+ mixer->rpg_div = 1;
+
  for (i = 0; i < info[1]; i++)
   mixer->mixer[i] = ROAR_NET2HOST16(info[i+2]);
 
