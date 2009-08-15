@@ -34,9 +34,50 @@
 #include "libroarsndio.h"
 
 static char * sndio_to_roar_names (char * name) {
+ char * unitoffset = NULL;
+ char * optsoffset = NULL;
+ int    unit;
 
  if ( name == NULL )
   return NULL;
+
+ if ( !strncmp(name, "sun:", 4) ) {
+  unitoffset = name + 4;
+ } else if ( !strncmp(name, "aucat:", 6) ) {
+  unitoffset = name + 6;
+ } else if ( !strncmp(name, "rmidi:", 6) ) {
+  unitoffset = name + 6;
+ } else if ( !strncmp(name, "midithru:", 9) ) {
+  unitoffset = name + 9;
+ } else {
+  return name;
+ }
+
+ if ( (optsoffset = strstr(unitoffset, ".")) != NULL ) {
+  // TODO: add some code to strip the options of the end
+  return name;
+ } else {
+  unit = atoi(unitoffset);
+  switch (unit) {
+   // use defaulst
+   case 0: return NULL; break;
+   // use UNIX user sock, TODO: need some code here...
+   case 1: return NULL; break;
+   // use UNIX global sock:
+   case 2: return ROAR_DEFAULT_SOCK_GLOBAL; break;
+   // use DECnet localnode:
+   case 3: return "::"; break;
+   // use IPv4 localhost:
+   case 4: return ROAR_DEFAULT_HOST; break;
+   // undefined:
+   case 5:
+   // use IPv6 localhost:
+   case 6:
+   // default:
+   default:
+     return name;
+  }
+ }
 
  return name;
 }
