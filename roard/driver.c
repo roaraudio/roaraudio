@@ -118,7 +118,7 @@ int driver_open (DRIVER_USERDATA_T * inst, int * driver_id, char * driver, char 
 
     memset(*inst, 0, sizeof(struct roar_vio_calls));
 
-    if ( (i = g_driver[i].vio_init(*inst, device, info, -1)) == -1 ) {
+    if ( (i = g_driver[i].vio_init(*inst, device, info, -1, NULL)) == -1 ) {
      free(*inst);
      return -1;
     }
@@ -171,7 +171,7 @@ int driver_openvio(struct roar_vio_calls * calls,
    }
 
    ROAR_DBG("driver_openvio(*): Opening VIO driver %s(%i)...", driver, i);
-   return g_driver[i].vio_init(calls, device, info, fh);
+   return g_driver[i].vio_init(calls, device, info, fh, sstream);
   }
  }
  return -1;
@@ -244,7 +244,7 @@ int driver_set_volume(int stream, struct roar_mixer_settings * mixer) {
 }
 
 
-int driver_cdriver_open(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh) {
+int driver_cdriver_open(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh, struct roar_stream_server * sstream) {
  char * driver;
  char * delm;
  int ret;

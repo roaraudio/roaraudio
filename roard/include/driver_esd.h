@@ -26,7 +26,7 @@
 #define _DRIVER_ESD_H_
 
 int driver_esd_open_sysio(DRIVER_USERDATA_T * inst,   char * device, struct roar_audio_info * info);
-int driver_esd_open_vio(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh);
+int driver_esd_open_vio(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh, struct roar_stream_server * sstream);
 int driver_esd_close(DRIVER_USERDATA_T   inst);
 int driver_esd_pause(DRIVER_USERDATA_T   inst, int newstate);
 ssize_t driver_esd_write(struct roar_vio_calls * inst, void * buf, size_t len);

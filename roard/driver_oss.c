@@ -328,7 +328,7 @@ int driver_oss_config_device(struct driver_oss * self) {
 }
 
 #define er() close(self->fh); if ( self->device ) free(self->device); free(self); return -1
-int driver_oss_open(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh) {
+int driver_oss_open(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh, struct roar_stream_server * sstream) {
  struct driver_oss * self = NULL;
 
  if ( (self = malloc(sizeof(struct driver_oss))) == NULL ) {

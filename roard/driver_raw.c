@@ -25,7 +25,7 @@
 #include "roard.h"
 
 #ifdef ROAR_HAVE_IO_POSIX
-int driver_raw_open_vio(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh) {
+int driver_raw_open_vio(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh, struct roar_stream_server * sstream) {
 
  if ( device == NULL ) {
   return -1;

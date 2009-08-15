@@ -59,7 +59,7 @@ int driver_esd_open_sysio(DRIVER_USERDATA_T * inst, char * device, struct roar_a
  return 0;
 }
 
-int driver_esd_open_vio(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh) {
+int driver_esd_open_vio(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh, struct roar_stream_server * sstream) {
 
  if ( fh != -1 )
   return -1;

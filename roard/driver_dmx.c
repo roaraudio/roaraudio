@@ -24,7 +24,7 @@
 
 #include "roard.h"
 
-int driver_dmx_open_vio  (struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh) {
+int driver_dmx_open_vio  (struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh, struct roar_stream_server * sstream) {
 
  if ( fh == -1 ) {
   if ( device == NULL )

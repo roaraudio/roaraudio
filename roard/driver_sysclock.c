@@ -25,7 +25,7 @@
 #include "roard.h"
 
 #ifdef ROAR_HAVE_DRIVER_SYSCLOCK
-int driver_sysclock_open_vio(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh) {
+int driver_sysclock_open_vio(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh, struct roar_stream_server * sstream) {
  struct driver_sysclock * self = malloc(sizeof(struct driver_sysclock));
 
  if ( self == NULL )

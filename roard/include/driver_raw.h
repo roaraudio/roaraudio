@@ -25,7 +25,7 @@
 #ifndef _DRIVER_RAW_H_
 #define _DRIVER_RAW_H_
 
-int driver_raw_open_vio(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh);
+int driver_raw_open_vio(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh, struct roar_stream_server * sstream);
 int driver_raw_close(DRIVER_USERDATA_T   inst);
 int driver_raw_pause(DRIVER_USERDATA_T   inst, int newstate);
 int driver_raw_flush(DRIVER_USERDATA_T   inst);

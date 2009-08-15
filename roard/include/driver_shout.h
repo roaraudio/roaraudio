@@ -25,7 +25,7 @@
 #ifndef _DRIVER_SHOUT_H_
 #define _DRIVER_SHOUT_H_
 
-int     driver_shout_open_vio(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh);
+int     driver_shout_open_vio(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh, struct roar_stream_server * sstream);
 int     driver_shout_close(DRIVER_USERDATA_T   inst);
 ssize_t driver_shout_write(struct roar_vio_calls * vio, void *buf, size_t count);
 

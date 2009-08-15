@@ -42,7 +42,7 @@ int driver_sndio_init_vio(struct roar_vio_calls * vio, struct driver_sndio * ins
 }
 
 #define er() if ( self->handle ) sio_close(self->handle); if ( self->device ) free(self->device); free(self); return -1
-int driver_sndio_open(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh) {
+int driver_sndio_open(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh, struct roar_stream_server * sstream) {
  struct driver_sndio * self = NULL;
 
  if ( (self = malloc(sizeof(struct driver_sndio))) == NULL ) {

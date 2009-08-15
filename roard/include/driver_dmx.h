@@ -25,7 +25,7 @@
 #ifndef _DRIVER_DMX_H_
 #define _DRIVER_DMX_H_
 
-int driver_dmx_open_vio  (struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh);
+int driver_dmx_open_vio  (struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh, struct roar_stream_server * sstream);
 ssize_t driver_dmx_write (struct roar_vio_calls * vio,  void *buf, size_t count);
 int     driver_dmx_ctl   (struct roar_vio_calls * vio,  int cmd, void * data);
 

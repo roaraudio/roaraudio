@@ -35,7 +35,7 @@ struct driver_sndio {
  int ssid;
 };
 
-int     driver_sndio_open         (struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh);
+int     driver_sndio_open         (struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh, struct roar_stream_server * sstream);
 int     driver_sndio_close_vio    (struct roar_vio_calls * vio);
 int     driver_sndio_open_device  (struct driver_sndio * self);
 int     driver_sndio_config_device(struct driver_sndio * self);

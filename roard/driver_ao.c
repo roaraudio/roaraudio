@@ -37,7 +37,7 @@ void driver_ao_uninit (void) {
   ao_shutdown();
 }
 
-int driver_ao_open_vio(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh) {
+int driver_ao_open_vio(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh, struct roar_stream_server * sstream) {
 //int driver_ao_open(DRIVER_USERDATA_T * inst, char * device, struct roar_audio_info * info) {
  ao_device        * aodevice;
  ao_sample_format     format;

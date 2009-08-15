@@ -102,7 +102,7 @@ struct roar_driver {
  unsigned int subsystems;
  int (*open )(DRIVER_USERDATA_T * inst, char * device, struct roar_audio_info * info);
  int (*close)(DRIVER_USERDATA_T   inst);
- int (*vio_init)(struct roar_vio_calls * calls, char * device, struct roar_audio_info * info, int fh);
+ int (*vio_init)(struct roar_vio_calls * calls, char * device, struct roar_audio_info * info, int fh, struct roar_stream_server * sstream);
 };
 
 void print_driverlist (void);
@@ -124,7 +124,7 @@ int driver_flush(DRIVER_USERDATA_T   inst, int driver);
 int driver_set_volume(int stream, struct roar_mixer_settings * mixer);
 
 // opening a cdriver
-int driver_cdriver_open(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh);
+int driver_cdriver_open(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh, struct roar_stream_server * sstream);
 
 #endif
 

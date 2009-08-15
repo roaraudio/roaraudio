@@ -27,7 +27,7 @@
 
 int _driver_shout_usage_counter = 0;
 
-int     driver_shout_open_vio(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh) {
+int     driver_shout_open_vio(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh, struct roar_stream_server * sstream) {
  char * s_server = NULL;
  char * s_mount  = NULL;
  char * s_user   = NULL;

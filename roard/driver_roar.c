@@ -24,7 +24,7 @@
 
 #include "roard.h"
 
-int driver_roar_open_vio(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh) {
+int driver_roar_open_vio(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh, struct roar_stream_server * sstream) {
 
  if ( fh != -1 ) { // this is a connection to a roard, no roar_simple_*() interface avalible for this case
   return -1;
