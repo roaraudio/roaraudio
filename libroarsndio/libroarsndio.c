@@ -33,6 +33,14 @@
 #define ROAR_USE_OWN_SNDIO_HDL
 #include "libroarsndio.h"
 
+static char * sndio_to_roar_names (char * name) {
+
+ if ( name == NULL )
+  return NULL;
+
+ return name;
+}
+
 struct sio_hdl * sio_open(char * name, unsigned mode, int nbio_flag) {
  struct sio_hdl * hdl = NULL;
  int is_midi = 0;
@@ -73,6 +81,8 @@ struct sio_hdl * sio_open(char * name, unsigned mode, int nbio_flag) {
    name = getenv("AUDIODEVICE");
   }
  }
+
+ name = sndio_to_roar_names(name);
 
  if ( roar_simple_connect(&(hdl->con), name, "libroarsndio") == -1 ) {
   free(hdl);
