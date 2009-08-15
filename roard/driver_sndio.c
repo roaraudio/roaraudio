@@ -41,7 +41,12 @@ int driver_sndio_init_vio(struct roar_vio_calls * vio, struct driver_sndio * ins
  return 0;
 }
 
-#define er() if ( self->handle ) sio_close(self->handle); if ( self->device ) free(self->device); free(self); return -1
+#define er() if ( self->shandle ) sio_close(self->shandle); \
+             if ( self->mhandle ) mio_close(self->mhandle); \
+             if ( self->device  ) free(self->device);       \
+             free(self);                                    \
+             return -1
+
 int driver_sndio_open(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh, struct roar_stream_server * sstream) {
  struct driver_sndio * self = NULL;
 
@@ -55,6 +60,28 @@ int driver_sndio_open(struct roar_vio_calls * inst, char * device, struct roar_a
 
  self->ssid = -1;
 
+ if ( sstream == NULL ) {
+  self->stream = NULL;
+  self->dir    = ROAR_DIR_OUTPUT;
+ } else {
+  self->stream = sstream;
+  self->dir    = ROAR_STREAM(sstream)->dir;
+
+  switch (self->dir) {
+   case ROAR_DIR_OUTPUT:
+   case ROAR_DIR_MONITOR:
+     self->dir = ROAR_DIR_OUTPUT;
+    break;
+   case ROAR_DIR_MIDI_OUT:
+     info->channels = 16;
+     info->codec    = ROAR_CODEC_MIDI;
+     info->bits     = 8;
+    break;
+   default:
+     er();
+  }
+ }
+
  if ( device != NULL )
   self->device = strdup(device);
 
@@ -65,22 +92,10 @@ int driver_sndio_open(struct roar_vio_calls * inst, char * device, struct roar_a
 
  if ( driver_sndio_open_device(self) == -1 ) {
   ROAR_ERR("driver_sndio_open(*): Can not open audio device");
-  if ( self->handle )
-   sio_close(self->handle);
-
-  if ( self->device )
-   free(self->device);
-
-  free(self);
-
-  return -1;
-//  er();
+  er();
  }
 
  ROAR_DBG("driver_sndio_open(*): sndio devices opened :)");
-
- if ( sstream != NULL )
-  driver_sndio_ctl(inst, ROAR_VIO_CTL_SET_SSTREAM, sstream);
 
  return 0;
 }
@@ -89,8 +104,11 @@ int driver_sndio_open(struct roar_vio_calls * inst, char * device, struct roar_a
 int     driver_sndio_close_vio    (struct roar_vio_calls * vio) {
  struct driver_sndio * self = vio->inst;
 
- if ( self->handle != NULL )
-  sio_close(self->handle);
+ if ( self->shandle != NULL )
+  sio_close(self->shandle);
+
+ if ( self->mhandle != NULL )
+  mio_close(self->mhandle);
 
  if ( self->device != NULL )
   free(self->device);
@@ -102,13 +120,26 @@ int     driver_sndio_close_vio    (struct roar_vio_calls * vio) {
 
 int     driver_sndio_open_device  (struct driver_sndio * self) {
 
- if ( (self->handle = sio_open(self->device, SIO_PLAY, 0)) == NULL ) {
-  ROAR_ERR("driver_sndio_open_device(*): Can not open sndio audio device");
-  return -1;
+ ROAR_DBG("driver_sndio_open_device(*) = ?");
+ switch (self->dir) {
+  case ROAR_DIR_OUTPUT:
+    if ( (self->shandle = sio_open(self->device, SIO_PLAY, 0)) == NULL ) {
+     ROAR_ERR("driver_sndio_open_device(*): Can not open sndio audio device");
+     return -1;
+    }
+   self->need_config = 1;
+   break;
+  case ROAR_DIR_MIDI_OUT:
+    if ( (self->mhandle = mio_open(self->device, MIO_OUT, 0)) == NULL ) {
+     ROAR_ERR("driver_sndio_open_device(*): Can not open sndio MIDI device");
+     return -1;
+    }
+   break;
+  default:
+    return -1;
  }
 
- self->need_config = 1;
-
+ ROAR_DBG("driver_sndio_open_device(*) = ?");
  return 0;
 }
 
@@ -143,12 +174,12 @@ int     driver_sndio_config_device(struct driver_sndio * self) {
    break;
  }
 
- if ( sio_setpar(self->handle, &par) == 0 ) {
+ if ( sio_setpar(self->shandle, &par) == 0 ) {
   ROAR_ERR("driver_sndio_config_device(*): Can not set stream parameters");
   return -1;
  }
 
- if ( sio_start(self->handle) == 0 ) {
+ if ( sio_start(self->shandle) == 0 ) {
   ROAR_ERR("driver_sndio_config_device(*): Can not start stream");
   return -1;
  }
@@ -165,13 +196,28 @@ int     driver_sndio_reopen_device(struct driver_sndio * self) {
 ssize_t driver_sndio_write        (struct roar_vio_calls * vio, void *buf, size_t count) {
  struct driver_sndio * self = vio->inst;
 
+ ROAR_DBG("driver_sndio_write(*) = ?");
+
  if ( self->need_config ) {
   if ( driver_sndio_config_device(vio->inst) == -1 ) {
    return -1;
   }
  }
 
- return sio_write(self->handle, buf, count);
+ ROAR_DBG("driver_sndio_write(*) = ?");
+
+ switch (self->dir) {
+  case ROAR_DIR_OUTPUT:
+    return sio_write(self->shandle, buf, count);
+   break;
+  case ROAR_DIR_MIDI_OUT:
+    return mio_write(self->mhandle, buf, count);
+   break;
+ }
+
+ ROAR_WARN("driver_sndio_write(*): Driver changed direction to something not supported, this should not happen");
+
+ return -1;
 }
 
 int     driver_sndio_sync         (struct roar_vio_calls * vio) {
@@ -190,6 +236,8 @@ int     driver_sndio_ctl          (struct roar_vio_calls * vio, int cmd, void * 
     self->ssid = *(int *)data;
    break;
   case data(ROAR_VIO_CTL_SET_SSTREAM)
+    // FIXME: we should do some better error handling here:
+    if ( ROAR_STREAM(data)->dir != self->dir ) return -1;
     self->stream = data;
    break;
   case data(ROAR_VIO_CTL_GET_AUINFO)
@@ -212,7 +260,7 @@ int     driver_sndio_ctl          (struct roar_vio_calls * vio, int cmd, void * 
      default:
       return -1;
     }
-    return sio_setvol(self->handle, d) == 0 ? -1 : 0;
+    return sio_setvol(self->shandle, d) == 0 ? -1 : 0;
    break;
   default:
     return -1;

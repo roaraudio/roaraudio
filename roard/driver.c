@@ -54,7 +54,7 @@ struct roar_driver g_driver[] = {
   NULL, driver_shout_close, driver_shout_open_vio},
 #endif
 #ifdef ROAR_HAVE_LIBSNDIO
- {"sndio", "OpenBSD sndio", "/dev/audio, /tmp/aucat-<uid>/default", DRV_FLAG_NONE, ROAR_SUBSYS_WAVEFORM,
+ {"sndio", "OpenBSD sndio", "/dev/audio, /tmp/aucat-<uid>/default", DRV_FLAG_NONE, ROAR_SUBSYS_WAVEFORM|ROAR_SUBSYS_MIDI,
   NULL, NULL, driver_sndio_open},
 #endif
  {"dmx", "DMX512 driver", "/dev/dmx", DRV_FLAG_FHSEC, ROAR_SUBSYS_LIGHT,

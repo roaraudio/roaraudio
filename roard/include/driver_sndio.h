@@ -26,8 +26,10 @@
 #define _DRIVER_SNDIO_H_
 
 struct driver_sndio {
+ int    dir;
  char * device;
- struct sio_hdl * handle;
+ struct sio_hdl * shandle;
+ struct mio_hdl * mhandle;
  struct roar_audio_info info;
  int need_reopen;
  int need_config;
