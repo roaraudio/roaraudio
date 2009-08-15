@@ -33,6 +33,47 @@
 #define ROAR_USE_OWN_SNDIO_HDL
 #include "libroarsndio.h"
 
+// this is void because we do not care about if this failed...
+static void send_vol_event (struct sio_hdl * hdl) {
+ int channels;
+ struct roar_mixer_settings mixer;
+ int i;
+ unsigned vol;
+
+ // in case of no event handler we do not send the event at all ;)
+ if ( hdl->on_vol == NULL )
+  return;
+
+ if ( roar_get_vol(&(hdl->con), roar_stream_get_id(&(hdl->stream)), &mixer, &channels) == -1 )
+  return;
+
+ ROAR_DBG("send_vol_event(*): channels=%i", channels);
+
+ switch (channels) {
+  case 1:
+    ROAR_DBG("send_vol_event(*): mixer.scale=%i, mixer.mixer={%i,...}", mixer.scale, mixer.mixer[0]);
+    vol  = mixer.mixer[0] * SIO_MAXVOL;
+    vol /= mixer.scale;
+    ROAR_DBG("send_vol_event(*): vol=%u", vol);
+   break;
+  case 2:
+    vol = (mixer.mixer[0] + mixer.mixer[1]) * SIO_MAXVOL / mixer.scale / 2;
+   break;
+  default:
+    vol = 0;
+    for (i = 0; i < channels; i++)
+     vol += mixer.mixer[i];
+
+    vol /= channels;
+    vol *= SIO_MAXVOL;
+    vol /= mixer.scale;
+   break;
+ }
+
+ ROAR_DBG("send_vol_event(*): vol=%u", vol);
+ hdl->on_vol(hdl->on_vol_arg, vol);
+}
+
 #define _i(x) (hdl->info.x)
 int    sio_start  (struct sio_hdl * hdl) {
 #ifndef ROAR_TARGET_WIN32
@@ -57,6 +98,8 @@ int    sio_start  (struct sio_hdl * hdl) {
   close(fh);
   return 0;
  }
+
+ send_vol_event(hdl);
 #else
  if ( roar_stream_new_by_id(&(hdl->stream), -1) == -1 )
   return 0;
@@ -64,6 +107,9 @@ int    sio_start  (struct sio_hdl * hdl) {
  if (roar_vio_simple_stream(&(hdl->svio),  _i(rate), _i(channels), _i(bits), _i(codec), NULL, hdl->dir, "libroarsndio(win32)") == -1 ) {
   return 0;
  }
+
+ // FIXME: this does not work in this case
+ //send_vol_event(hdl);
 #endif
 
  hdl->stream_opened = 1;
