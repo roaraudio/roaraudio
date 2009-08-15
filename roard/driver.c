@@ -65,7 +65,7 @@ struct roar_driver g_driver[] = {
  {"sysclock", "System Clock Clock Source", "(none)", DRV_FLAG_NONE, ROAR_SUBSYS_WAVEFORM,
   NULL, NULL, NULL, NULL, NULL, NULL, driver_sysclock_open_vio},
 #endif
- {"cdriver", "RoarAudio Client driver", "driver:device", DRV_FLAG_NONE, ROAR_SUBSYS_WAVEFORM,
+ {"cdriver", "RoarAudio Client driver", "driver#device", DRV_FLAG_NONE, ROAR_SUBSYS_WAVEFORM,
   NULL, NULL, NULL, NULL, NULL, NULL, driver_cdriver_open},
  {NULL, NULL, NULL, DRV_FLAG_NONE, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL} // end of list
                                 };
