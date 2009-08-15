@@ -77,7 +77,7 @@ int driver_sndio_open(struct roar_vio_calls * inst, char * device, struct roar_a
 //  er();
  }
 
- ROAR_DBG("driver_sndio_open(*): OSS devices opened :)");
+ ROAR_DBG("driver_sndio_open(*): sndio devices opened :)");
 
  if ( sstream != NULL )
   driver_sndio_ctl(inst, ROAR_VIO_CTL_SET_SSTREAM, sstream);
