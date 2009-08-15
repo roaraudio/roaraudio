@@ -43,8 +43,4 @@ int driver_roar_close(DRIVER_USERDATA_T   inst) {
  return roar_simple_close(roar_vio_get_fh((struct roar_vio_calls *)inst));
 }
 
-int driver_roar_flush(DRIVER_USERDATA_T   inst) {
- return 0;
-}
-
 //ll

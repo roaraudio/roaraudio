@@ -26,48 +26,48 @@
 
 struct roar_driver g_driver[] = {
  { "null", "null audio driver", "/dev/null", DRV_FLAG_NONE, ROAR_SUBSYS_WAVEFORM,
-   NULL, NULL, NULL, NULL, NULL, NULL, NULL},
+   NULL, NULL, NULL},
 #ifdef ROAR_HAVE_ESD
  { "esd", "EsounD audio driver", "localhost, remote.host.dom", DRV_FLAG_NONE, ROAR_SUBSYS_WAVEFORM,
-   NULL, driver_esd_close, driver_esd_pause, NULL, NULL, driver_esd_flush, driver_esd_open_vio},
+   NULL, driver_esd_close, driver_esd_open_vio},
 #endif
  { "roar", "RoarAudio driver", "localhost, remote.host.dom", DRV_FLAG_NONE, ROAR_SUBSYS_WAVEFORM,
-   NULL, driver_roar_close, NULL, NULL, NULL, driver_roar_flush, driver_roar_open_vio},
+   NULL, driver_roar_close, driver_roar_open_vio},
 #ifdef ROAR_HAVE_IO_POSIX
  { "raw",  "RAW PCM driver", "/some/file", DRV_FLAG_FHSEC,
    ROAR_SUBSYS_WAVEFORM|ROAR_SUBSYS_MIDI|ROAR_SUBSYS_LIGHT|ROAR_SUBSYS_RAW,
-   NULL, NULL, NULL, NULL, NULL, driver_raw_flush, driver_raw_open_vio},
+   NULL, NULL, driver_raw_open_vio},
 #endif
 #if defined(ROAR_HAVE_OSS_BSD) || defined(ROAR_HAVE_OSS)
 #ifndef ROAR_DEFAULT_OSS_DEV
 #define ROAR_DEFAULT_OSS_DEV "no default device"
 #endif
  { "oss", "Open Sound System", ROAR_DEFAULT_OSS_DEV, DRV_FLAG_NONE, ROAR_SUBSYS_WAVEFORM,
-   NULL, NULL, NULL, NULL, NULL, NULL, driver_oss_open},
+   NULL, NULL, driver_oss_open},
 #endif
 #ifdef ROAR_HAVE_LIBAO
  { "ao", "libao audio driver", "DRIVER", DRV_FLAG_NONE, ROAR_SUBSYS_WAVEFORM,
-   NULL, driver_ao_close, NULL, NULL, NULL, NULL, driver_ao_open_vio},
+   NULL, driver_ao_close, driver_ao_open_vio},
 #endif
 #ifdef ROAR_HAVE_LIBSHOUT
  {"shout", "libshout streaming", "http://user:pw@host:port/mount.ogg", DRV_FLAG_NONE, ROAR_SUBSYS_WAVEFORM,
-  NULL, driver_shout_close, NULL, NULL, NULL, NULL, driver_shout_open_vio},
+  NULL, driver_shout_close, driver_shout_open_vio},
 #endif
 #ifdef ROAR_HAVE_LIBSNDIO
  {"sndio", "OpenBSD sndio", "/dev/audio, /tmp/aucat-<uid>/default", DRV_FLAG_NONE, ROAR_SUBSYS_WAVEFORM,
-  NULL, NULL, NULL, NULL, NULL, NULL, driver_sndio_open},
+  NULL, NULL, driver_sndio_open},
 #endif
  {"dmx", "DMX512 driver", "/dev/dmx", DRV_FLAG_FHSEC, ROAR_SUBSYS_LIGHT,
-  NULL, NULL, NULL, NULL, NULL, NULL, driver_dmx_open_vio},
+  NULL, NULL, driver_dmx_open_vio},
  {"pwmled", "PWM LED driver", "/dev/ttyS0", DRV_FLAG_FHSEC, ROAR_SUBSYS_LIGHT,
-  NULL, NULL, NULL, NULL, NULL, NULL, driver_pwmled_open_vio},
+  NULL, NULL, driver_pwmled_open_vio},
 #ifdef ROAR_HAVE_DRIVER_SYSCLOCK
  {"sysclock", "System Clock Clock Source", "(none)", DRV_FLAG_NONE, ROAR_SUBSYS_WAVEFORM,
-  NULL, NULL, NULL, NULL, NULL, NULL, driver_sysclock_open_vio},
+  NULL, NULL, driver_sysclock_open_vio},
 #endif
  {"cdriver", "RoarAudio Client driver", "driver#device", DRV_FLAG_NONE, ROAR_SUBSYS_WAVEFORM,
-  NULL, NULL, NULL, NULL, NULL, NULL, driver_cdriver_open},
- {NULL, NULL, NULL, DRV_FLAG_NONE, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL} // end of list
+  NULL, NULL, driver_cdriver_open},
+ {NULL, NULL, NULL, DRV_FLAG_NONE, 0, NULL, NULL, NULL} // end of list
                                 };
 
 void print_driverlist (void) {
@@ -208,25 +208,12 @@ int driver_closevio(struct roar_vio_calls * calls, int driver) {
  return 0;
 }
 
-int driver_pause(DRIVER_USERDATA_T   inst, int driver, int newstate) {
- if ( driver == -1 )
-  return -1;
-
- if ( g_driver[driver].pause )
-  return g_driver[driver].pause(inst, newstate);
-
- return -1;
-}
-
 int driver_write(DRIVER_USERDATA_T   inst, int driver, char * buf, int len) {
  if ( driver == -1 )
   return -1;
 
  if ( g_driver[driver].vio_init != NULL )
   return roar_vio_write((struct roar_vio_calls *) inst, buf, len);
-
- if ( g_driver[driver].write )
-  return g_driver[driver].write(inst, buf, len);
 
  return 0;
 }
@@ -237,19 +224,6 @@ int driver_read (DRIVER_USERDATA_T   inst, int driver, char * buf, int len) {
 
  if ( g_driver[driver].vio_init != NULL )
   return roar_vio_read((struct roar_vio_calls *) inst, buf, len);
-
- if ( g_driver[driver].read )
-  return g_driver[driver].read(inst, buf, len);
-
- return 0;
-}
-
-int driver_flush(DRIVER_USERDATA_T   inst, int driver) {
- if ( driver == -1 )
-  return -1;
-
- if ( g_driver[driver].flush )
-  return g_driver[driver].flush(inst);
 
  return 0;
 }

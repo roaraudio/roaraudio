@@ -41,15 +41,6 @@ int driver_raw_open_vio(struct roar_vio_calls * inst, char * device, struct roar
 
  return 0;
 }
-
-int driver_raw_flush(DRIVER_USERDATA_T   inst) {
-#ifdef ROAR_FDATASYNC
- return ROAR_FDATASYNC(roar_vio_get_fh((struct roar_vio_calls *)inst));
-#else
- return 0;
-#endif
-}
-
 #endif
 
 //ll

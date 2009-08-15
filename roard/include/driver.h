@@ -102,10 +102,6 @@ struct roar_driver {
  unsigned int subsystems;
  int (*open )(DRIVER_USERDATA_T * inst, char * device, struct roar_audio_info * info);
  int (*close)(DRIVER_USERDATA_T   inst);
- int (*pause)(DRIVER_USERDATA_T   inst, int newstate);
- int (*write)(DRIVER_USERDATA_T   inst, char * buf, int len);
- int (*read )(DRIVER_USERDATA_T   inst, char * buf, int len);
- int (*flush)(DRIVER_USERDATA_T   inst);
  int (*vio_init)(struct roar_vio_calls * calls, char * device, struct roar_audio_info * info, int fh);
 };
 

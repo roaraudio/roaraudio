@@ -84,10 +84,6 @@ int driver_esd_close(DRIVER_USERDATA_T   inst) {
  return esd_close(fh);
 }
 
-int driver_esd_pause(DRIVER_USERDATA_T   inst, int newstate) {
- return -1;
-}
-
 ssize_t driver_esd_write(struct roar_vio_calls * inst, void * buf, size_t len) {
  int * di = (int*)((struct roar_vio_calls *)inst)->inst;
 
@@ -99,10 +95,6 @@ ssize_t driver_esd_write(struct roar_vio_calls * inst, void * buf, size_t len) {
 
 ssize_t driver_esd_read(struct roar_vio_calls * inst, void * buf, size_t len) {
  return read(*(int*)((struct roar_vio_calls *)inst)->inst, buf, len);
-}
-
-int driver_esd_flush(DRIVER_USERDATA_T   inst) {
- return 0;
 }
 
 int driver_esd_nonblock(struct roar_vio_calls * vio, int state) {
