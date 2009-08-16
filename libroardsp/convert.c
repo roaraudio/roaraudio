@@ -312,6 +312,9 @@ int roar_conv_chans_2to116  (void * out, void * in, int samples) {
 }
 
 int roar_conv_rate (void * out, void * in, int samples, int from, int to, int bits, int channels) {
+#ifdef ROAR_HAVE_LIBSAMPLERATE
+ return roar_conv_rate_SRC(out, in, samples, from, to, bits, channels);
+#else
  if ( bits == 8  )
   return roar_conv_rate_8(out, in, samples, from, to, channels);
 
@@ -319,6 +322,7 @@ int roar_conv_rate (void * out, void * in, int samples, int from, int to, int bi
   return roar_conv_rate_16(out, in, samples, from, to, channels);
 
  return -1;
+#endif
 }
 
 int roar_conv_rate_8  (void * out, void * in, int samples, int from, int to, int channels) {
@@ -370,7 +374,7 @@ int roar_conv_rate_162zoh(void * out, void * in, int samples, int from, int to) 
 
  ROAR_DBG("roar_conv_rate_162zoh(*): samples=%i", samples);
  samples /= 2;
- samples -= 1;
+// samples -= 1;
  ROAR_DBG("roar_conv_rate_162zoh(*): samples=%i", samples);
 
  for (i= 0; i < samples; i++) {
@@ -381,6 +385,87 @@ int roar_conv_rate_162zoh(void * out, void * in, int samples, int from, int to) 
  }
 
  return 0;
+}
+
+int roar_conv_rate_SRC   (void * out, void * in, int samples, int from, int to, int bits, int channels) {
+#ifdef ROAR_HAVE_LIBSAMPLERATE
+ double radio = (double) to / (double) from;
+ int outsamples = radio * samples;
+ float * inf  = malloc(samples*sizeof(float));
+ float * outf = malloc(outsamples*sizeof(float));
+ int i;
+ SRC_DATA srcdata;
+
+ ROAR_DBG("roar_conv_rate_SRC(*): radio=%lf, samples=%i, outsamples=%i", radio, samples, outsamples);
+
+ if ( inf == NULL ) {
+  if ( outf != NULL )
+   free(outf);
+
+  return -1;
+ }
+
+ if ( outf == NULL ) {
+  if ( inf != NULL )
+   free(inf);
+
+  return -1;
+ }
+
+ switch (bits) {
+  case  8:
+    for (i = 0; i < samples; i++)
+     inf[i] = *(((int8_t *)in)+i) / 128.0;
+   break;
+  case 16:
+    for (i = 0; i < samples; i++)
+     inf[i] = *(((int16_t*)in)+i) / 32768.0;
+   break;
+  case 32:
+    for (i = 0; i < samples; i++)
+     inf[i] = *(((int32_t*)in)+i) / 2147483648.0;
+   break;
+  default:
+    free(outf);
+    free(inf);
+    return -1;
+ }
+
+ srcdata.data_in       = inf;
+ srcdata.data_out      = outf;
+ srcdata.input_frames  = samples/channels;
+ srcdata.output_frames = outsamples/channels;
+ srcdata.src_ratio     = radio;
+
+ if ( src_simple(&srcdata, SRC_SINC_FASTEST, channels) != 0 ) {
+  free(outf);
+  free(inf);
+  return -1;
+ }
+
+ switch (bits) {
+  case  8:
+    for (i = 0; i < samples; i++)
+     *(((int8_t *)out)+i) = outf[i] * 128.0;
+   break;
+  case 16:
+    for (i = 0; i < samples; i++)
+     *(((int16_t*)out)+i) = outf[i] * 32768.0;
+   break;
+  case 32:
+    for (i = 0; i < samples; i++)
+     *(((int32_t*)out)+i) = outf[i] * 2147483648.0;
+   break;
+   // no errors here, they are handled above
+ }
+
+ free(outf);
+ free(inf);
+
+ return 0;
+#else
+ return -1;
+#endif
 }
 
 int roar_conv_signedness  (void * out, void * in, int samples, int from, int to, int bits) {
@@ -742,6 +827,14 @@ int roar_conv2(void * out, void * in,
  int    need_signed = 0;
 
  memcpy(&cinfo, from, sizeof(cinfo));
+
+/*
+ if ( in != out ) {
+  memset(out, 0xA0, bufsize);
+ } else {
+  ROAR_WARN("roar_conv2(*): in==out!");
+ }
+*/
 
  // calcumate number of input samples:
  samples = (inlen * 8) / (from->bits);

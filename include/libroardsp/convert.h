@@ -71,6 +71,7 @@ int roar_conv_rate_16    (void * out, void * in, int samples, int from, int to, 
 int roar_conv_rate_161zoh(void * out, void * in, int samples, int from, int to);
 int roar_conv_rate_162zoh(void * out, void * in, int samples, int from, int to);
 int roar_conv_rate_16nzoh(void * out, void * in, int samples, int from, int to, int channels);
+int roar_conv_rate_SRC   (void * out, void * in, int samples, int from, int to, int bits, int channels);
 
 int roar_conv_codec (void * out, void * in, int samples, int from, int to, int bits);
 

@@ -45,6 +45,10 @@ __BEGIN_DECLS
 #include "transcode_speex.h"
 #endif
 
+#ifdef ROAR_HAVE_LIBSAMPLERATE
+#include <samplerate.h>
+#endif
+
 // defines
 #define ROARDSP_MAX_FILTERS_PER_CHAIN 8
 

@@ -6,7 +6,8 @@ LIBROAR         = -lroar $(LIBROAR_NS)
 
 # libroardsp:
 DSP_CODECLIBS   = $(lib_celt) $(lib_speex)
-LIBROARDSP_NS   = $(DSP_CODECLIBS) $(LIBROAR) $(lib_m)
+DSP_AUXLIBS     = $(lib_samplerate)
+LIBROARDSP_NS   = $(DSP_CODECLIBS) $(DSP_AUXLIBS) $(LIBROAR) $(lib_m)
 LIBROARDSP      = -lroardsp $(LIBROARDSP_NS)
 
 # libroarmidi:
