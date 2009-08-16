@@ -2,12 +2,13 @@ TARGET=libroar.so
 OBJ=ao_roar.o
 
 include ../../Makefile.conf
+include ../../Makefile.inc
 include Makefile.conf
 
 #DEFINES=-DDEBUG
 CFLAGS += -g -Wall -O2 -I../../include $(DEFINES) $(INCLUDE) $(INCPATH) $(SHARED_CF) $(fPIC) $(AO_CFLAGS)
 LDFLAGS = -g $(SHARED) $(LDPATH) -L../../lib
-LIBS    = -lroar $(AO_LIBS)
+LIBS    = $(LIBROAR) $(AO_LIBS)
 
 all: ${TARGET}
 clean:
