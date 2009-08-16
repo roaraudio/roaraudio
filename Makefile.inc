@@ -1,20 +1,25 @@
 # libroar:
 NETLIBS         = $(lib_dnet) $(lib_wsock32) $(lib_ws2_32)
 AUXLIBS         = $(lib_slp) $(lib_ssl) $(lib_sendfile)
-LIBROAR         = $(AUXLIBS) $(NETLIBS)
+LIBROAR_NS      = $(AUXLIBS) $(NETLIBS)
+LIBROAR         = -lroar $(LIBROAR_NS)
 
 # libroardsp:
 DSP_CODECLIBS   = $(lib_celt) $(lib_speex)
-LIBROARDSP      = $(DSP_CODECLIBS) $(LIBROAR) $(lib_m)
+LIBROARDSP_NS   = $(DSP_CODECLIBS) $(LIBROAR) $(lib_m)
+LIBROARDSP      = -lroardsp $(LIBROARDSP_NS)
 
 # libroarmidi:
-LIBROARMIDI     = $(LIBROARDSP)
+LIBROARMIDI_NS  = $(LIBROARDSP)
+LIBROARMIDI     = -lroarmidi $(LIBROARMIDI_NS)
 
 # libroarlight:
-LIBROARLIGHT    = $(LIBROAR) $(lib_m)
+LIBROARLIGHT_NS = $(LIBROAR) $(lib_m)
+LIBROARLIGHT    = -lroarlight $(LIBROARLIGHT_NS)
 
 # libroareio:
 EIO_CDRIVERLIBS = $(lib_ossaudio)
-LIBROAREIO      = $(EIO_CDRIVERLIBS) $(LIBROAR)
+LIBROAREIO_NS   = $(EIO_CDRIVERLIBS) $(LIBROAR)
+LIBROAREIO      = -lroareio $(LIBROAREIO_NS)
 
 #ll
