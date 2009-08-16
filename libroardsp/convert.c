@@ -437,7 +437,7 @@ int roar_conv_rate_SRC   (void * out, void * in, int samples, int from, int to, 
  srcdata.output_frames = outsamples/channels;
  srcdata.src_ratio     = radio;
 
- if ( src_simple(&srcdata, SRC_SINC_FASTEST, channels) != 0 ) {
+ if ( src_simple(&srcdata, SRC_ZERO_ORDER_HOLD, channels) != 0 ) {
   free(outf);
   free(inf);
   return -1;
@@ -445,15 +445,15 @@ int roar_conv_rate_SRC   (void * out, void * in, int samples, int from, int to, 
 
  switch (bits) {
   case  8:
-    for (i = 0; i < samples; i++)
+    for (i = 0; i < outsamples; i++)
      *(((int8_t *)out)+i) = outf[i] * 128.0;
    break;
   case 16:
-    for (i = 0; i < samples; i++)
+    for (i = 0; i < outsamples; i++)
      *(((int16_t*)out)+i) = outf[i] * 32768.0;
    break;
   case 32:
-    for (i = 0; i < samples; i++)
+    for (i = 0; i < outsamples; i++)
      *(((int32_t*)out)+i) = outf[i] * 2147483648.0;
    break;
    // no errors here, they are handled above
@@ -828,11 +828,14 @@ int roar_conv2(void * out, void * in,
 
  memcpy(&cinfo, from, sizeof(cinfo));
 
+ ROAR_DBG("roar_conv2(out=%p, in=%p, inlen=%lu, from=%p{...}, to=%p{...}, bufsize=%lu", out, in, inlen, from, to, bufsize);
+
 /*
  if ( in != out ) {
   memset(out, 0xA0, bufsize);
  } else {
   ROAR_WARN("roar_conv2(*): in==out!");
+  memset(out+inlen, 0xA0, bufsize-inlen);
  }
 */
 
