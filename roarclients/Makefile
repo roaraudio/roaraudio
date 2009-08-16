@@ -2,16 +2,13 @@ TARGETS=roarcat roarcatad roarcat2sock roarcatsendfile roarcatplay roarcatpassfh
 TOOLS=roarify
 
 include ../Makefile.conf
+include ../Makefile.inc
 
 #DEFINES        = -DDEBUG
 INCLUDE    = -I../include -I./include
 CFLAGS    += -g -Wall -O2 $(DEFINES) $(INCLUDE) $(INCPATH)
-LDFLAGS    = -g -L../lib/ $(LDPATH) -lroar
-NETLIBS    = $(lib_wsock32) $(lib_ws2_32)
-LIBS       = -lroar $(NETLIBS)
-DSPLIBS    = -lroardsp   -lm $(LIBS)
-LIGHTLIBS  = -lroarlight -lm $(LIBS)
-EIOLIBS    = -lroareio       $(LIBS)
+LDFLAGS    = -g -L../lib/ $(LDPATH)
+LIBS       = $(LIBROAR)
 SHOUTLIBS  = $(lib_shout) $(LIBS)
 VORBISLIBS = $(lib_vorbisfile) $(lib_vorbis) $(lib_ogg) $(LIBS)
 
@@ -50,13 +47,13 @@ roarinterconnect: roarinterconnect.o
 roarbidir: roarbidir.o
 	$L
 roarphone: roarphone.o
-	${CC} ${LDFLAGS} -o roarphone roarphone.o $(DSPLIBS) $(EIOLIBS) $(lib_speex)
+	${CC} ${LDFLAGS} -o roarphone roarphone.o $(LIBROARDSP) $(LIBROAREIO) $(lib_speex)
 roarfilt: roarfilt.o
-	${CC} ${LDFLAGS} -o roarfilt roarfilt.o $(DSPLIBS)
+	${CC} ${LDFLAGS} -o roarfilt roarfilt.o $(LIBROARDSP)
 roarsin: roarsin.o
-	${CC} ${LDFLAGS} -o roarsin roarsin.o $(DSPLIBS)
+	${CC} ${LDFLAGS} -o roarsin roarsin.o $(LIBROARDSP)
 roarvumeter: roarvumeter.o
-	${CC} ${LDFLAGS} -o roarvumeter roarvumeter.o $(DSPLIBS)
+	${CC} ${LDFLAGS} -o roarvumeter roarvumeter.o $(LIBROARDSP)
 roarsockconnect: roarsockconnect.o
 	$L
 roartypes: roartypes.o
@@ -70,9 +67,9 @@ roarvorbis: roarvorbis.o
 roarshout: roarshout.o
 	${CC} ${LDFLAGS} -o roarshout roarshout.o $(SHOUTLIBS)
 polytest: polytest.o
-	${CC} ${LDFLAGS} -o polytest polytest.o $(DSPLIBS)
+	${CC} ${LDFLAGS} -o polytest polytest.o $(LIBROARDSP)
 roarlight: roarlight.o
-	${CC} ${LDFLAGS} -o roarlight roarlight.o $(LIGHTLIBS)
+	${CC} ${LDFLAGS} -o roarlight roarlight.o $(LIBROARLIGHT)
 pinentrytest: pinentrytest.o
 	$L
 zcattest: zcattest.o
@@ -82,7 +79,7 @@ pgptest: pgptest.o
 pipetest: pipetest.o
 	$L
 roarfctest: roarfctest.o
-	${CC} ${LDFLAGS} -o roarfctest roarfctest.o $(DSPLIBS)
+	${CC} ${LDFLAGS} -o roarfctest roarfctest.o $(LIBROARDSP)
 
 roarify.sht:
 roarify: roarify.sht
