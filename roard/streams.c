@@ -251,7 +251,7 @@ int streams_set_dir    (int id, int dir, int defaults) {
   if ( dir <= 0 || dir >= ROAR_DIR_DIRIDS )
    return -1;
 
-  ROAR_DBG("streams_set_dir(*): g_config->streams[dir=%i].flags = 0x%0.4x", dir, g_config->streams[dir].flags);
+  ROAR_DBG("streams_set_dir(*): g_config->streams[dir=%i].flags = 0x%.4x", dir, g_config->streams[dir].flags);
 
   if ( streams_set_flag(id, g_config->streams[dir].flags) == -1 ) {
    ROAR_DBG("streams_set_dir(*) = -1 // can not set stream flags");
@@ -564,7 +564,7 @@ int streams_calc_delay    (int id) {
    tmp = *t;
    tmp *= 1000000; // musec per sec
    tmp /= s->info.rate * s->info.channels * (s->info.bits/8);
-   ROAR_DBG("streams_calc_delay(id=%i): VIO delay in musec: %i", id, tmp);
+   ROAR_DBG("streams_calc_delay(id=%i): VIO delay in musec: %llu", id, tmp);
 
    d += tmp;
   }
@@ -947,6 +947,8 @@ int streams_fill_mixbuffer2 (int id, struct roar_audio_info * info) {
   return 0;
  }
 
+ ROAR_DBG("streams_fill_mixbuffer2(id=%i, info=...): inlen_got=%u", id, inlen_got);
+
  if ( ss->is_new ) {
   ROAR_WARN("streams_fill_mixbuffer2(id=%i, info=...): stream state: new->old", id);
  }
@@ -961,6 +963,7 @@ int streams_fill_mixbuffer2 (int id, struct roar_audio_info * info) {
    memset(outdata+inlen, 0, outlen-inlen);
  } else {
 //  if ( roar_conv(outdata, indata, (8*inlen_got*info->rate)/(stream_info->rate * stream_info->bits), stream_info, info) == -1 ) {
+  ROAR_DBG("streams_fill_mixbuffer2(*): CALL roar_conv2(*)...");
   if ( roar_conv2(bufdata, indata, inlen, stream_info, info, buflen) == -1 ) {
    if ( bufbuf != NULL )
     roar_buffer_free(bufbuf);
@@ -1216,8 +1219,15 @@ int streams_check  (int id) {
 
  ROAR_DBG("streams_check(id=%i): fh = %i", id, fh);
 
- req  = ROAR_OUTPUT_BUFFER_SAMPLES * s->info.channels * s->info.bits / 8; // optimal size
+/*
+ ROAR_DBG("streams_check(id=%i): ROAR_OUTPUT_BUFFER_SAMPLES=%i, s->info.channels=%i, s->info.bits=%i, s->info.rat=%i, g_sa->rate=%i", id, ROAR_OUTPUT_BUFFER_SAMPLES, s->info.channels, s->info.bits, s->info.rate, g_sa->rate);
+*/
+
+ req  = ROAR_OUTPUT_CALC_OUTBUFSIZE(&(s->info)); // optimal size
+// req  = ROAR_OUTPUT_BUFFER_SAMPLES * s->info.channels * (s->info.bits / 8) * ((float)s->info.rate/g_sa->rate);
  req += ss->need_extra; // bytes left we sould get....
+
+ ROAR_DBG("streams_check(id=%i): asking for %i bytes", id, req);
 
  if ( roar_buffer_new(&b, req) == -1 ) {
   ROAR_ERR("streams_check(*): Can not alloc buffer space!");
@@ -1228,6 +1238,7 @@ int streams_check  (int id) {
  roar_buffer_get_data(b, (void **)&buf);
 
  ROAR_DBG("streams_check(id=%i): buffer is up and ready ;)", id);
+ ROAR_DBG("streams_check(id=%i): asking for %i bytes", id, req);
 
  if ( ss->codecfilter == -1 ) {
   realreq = req;
