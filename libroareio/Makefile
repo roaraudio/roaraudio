@@ -33,5 +33,5 @@ libroareio.a: ${OBJS}
 driver.c: autodetected.h
 autodetected.h:
 	echo "/* *** */" > autodetected.h
-	[ -f driver_esdfw.h -a -f driver_esdfw.c ] && echo '#define ROAR_HAVE_AD_ESDFW' >> autodetected.h
+	[ -f driver_esdfw.h -a -f driver_esdfw.c ] && echo '#define ROAR_HAVE_AD_ESDFW' >> autodetected.h || true
 	echo "/* *** */" >> autodetected.h
