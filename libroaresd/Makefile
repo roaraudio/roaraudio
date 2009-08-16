@@ -1,4 +1,5 @@
 include ../Makefile.conf
+include ../Makefile.inc
 
 TARGETS=libroaresd.so
 OBJS=libroaresd.o esdbasic.o esdctl.o esdstream.o esdsample.o esdfile.o
@@ -7,7 +8,7 @@ OBJS=libroaresd.o esdbasic.o esdctl.o esdstream.o esdsample.o esdfile.o
 INCLUDE = -I../include -I../include/libroaresd
 CFLAGS += -g -Wall -O2 $(DEFINES) $(INCLUDE) $(INCPATH) $(SHARED_CF) $(fPIC)
 LDFLAGS = -g $(SHARED) $(LDPATH) -L../lib/
-LIBS    = -lroar
+LIBS    = $(LIBROAR)
 
 all: ${TARGETS}
 	cp $(cp_v) ${TARGETS} ../lib/
