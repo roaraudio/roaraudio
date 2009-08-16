@@ -1,4 +1,5 @@
 include ../Makefile.conf
+include ../Makefile.inc
 
 SLIB=libroareio$(SHARED_SUFFIX)
 
@@ -10,8 +11,7 @@ OBJS=libroareio.o $(DRIVER)
 INCLUDE = -I../include -I../include/libroareio
 CFLAGS += -g -Wall -O2 $(DEFINES) $(INCLUDE) $(INCPATH) $(SHARED_CF) $(fPIC)
 LDFLAGS = -g $(SHARED) -L../lib/ $(LDPATH)
-NETLIBS = $(lib_dnet) $(lib_wsock32) $(lib_ws2_32)
-LIBS    = -lroar $(NETLIBS)
+LIBS    = $(LIBROAREIO_NS)
 
 all: ${TARGETS}
 	rm -f ../lib/${SLIB} 2> /dev/null || true

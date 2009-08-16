@@ -1,4 +1,5 @@
 include ../Makefile.conf
+include ../Makefile.inc
 
 SLIB=libroarlight$(SHARED_SUFFIX)
 
@@ -9,8 +10,7 @@ OBJS=libroarlight.o colors.o roardmx.o pwm.o
 INCLUDE = -I../include -I../include/libroarlight
 CFLAGS += -g -Wall -O2 $(DEFINES) $(INCLUDE) $(INCPATH) $(SHARED_CF) $(fPIC)
 LDFLAGS = -g $(SHARED) -L../lib/ $(LDPATH)
-NETLIBS = $(lib_dnet) $(lib_wsock32) $(lib_ws2_32)
-LIBS    = -lroar $(lib_dnet) $(lib_m) $(NETLIBS)
+LIBS    = $(LIBROARLIGHT_NS)
 
 all: ${TARGETS}
 	rm -f ../lib/${SLIB} 2> /dev/null || true
