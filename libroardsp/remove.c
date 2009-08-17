@@ -49,8 +49,38 @@ int roar_remove      (void * inout, void * subs, int samples, int bits, struct r
 }
 
 int roar_remove_8    (int8_t  * inout, int8_t  * subs, int samples, struct roar_remove_state * state) {
- return -1;
+ int i;
+ register int_least16_t s;
+ register int_least16_t peak;
+
+ if ( state == NULL ) {
+  for (i = 0; i < samples; i++) {
+   s  = inout[i];
+   s -= subs[i];
+   inout[i] = s;
+  }
+ } else {
+  peak = 127;
+  for (i = 0; i < samples; i++) {
+   s  = inout[i];
+   s -= subs[i];
+   s  = s < 0 ? -s : s; // we true 32 bit, not int operation here
+   if ( s > peak )
+    peak = s;
+  }
+
+  for (i = 0; i < samples; i++) {
+   s  = -subs[i];
+   s *=  127;
+   s /=  peak;
+   s +=  inout[i];
+   inout[i] = s;
+  }
+ }
+
+ return 0;
 }
+
 int roar_remove_16   (int16_t * inout, int16_t * subs, int samples, struct roar_remove_state * state) {
  int i;
  register int32_t s;
@@ -83,8 +113,38 @@ int roar_remove_16   (int16_t * inout, int16_t * subs, int samples, struct roar_
 
  return 0;
 }
+
 int roar_remove_32   (int32_t * inout, int32_t * subs, int samples, struct roar_remove_state * state) {
- return -1;
+ int i;
+ register int64_t s;
+ register int64_t peak;
+
+ if ( state == NULL ) {
+  for (i = 0; i < samples; i++) {
+   s  = inout[i];
+   s -= subs[i];
+   inout[i] = s;
+  }
+ } else {
+  peak = 4294967295UL;
+  for (i = 0; i < samples; i++) {
+   s  = inout[i];
+   s -= subs[i];
+   s  = s < 0 ? -s : s; // we true 32 bit, not int operation here
+   if ( s > peak )
+    peak = s;
+  }
+
+  for (i = 0; i < samples; i++) {
+   s  = -subs[i];
+   s *=  4294967295UL;
+   s /=  peak;
+   s +=  inout[i];
+   inout[i] = s;
+  }
+ }
+
+ return 0;
 }
 
 int roar_remove_so   (void    * subout, void   * in, int samples, int bits, struct roar_remove_state * state) {
