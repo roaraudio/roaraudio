@@ -236,6 +236,7 @@ void list_streams (struct roar_connection * con) {
  struct roar_stream_info info;
  char flags[1024];
  char name[1024];
+ char * infotext;
 
 
  if ( (num = roar_list_streams(con, id, ROAR_STREAMS_MAX)) == -1 ) {
@@ -270,13 +271,24 @@ void list_streams (struct roar_connection * con) {
    }
   }
 
-  if ( s.dir != ROAR_DIR_LIGHT_IN && s.dir != ROAR_DIR_LIGHT_OUT &&
-       s.info.rate                && s.info.bits                 && s.info.channels
-     ) {
-   printf("Stream sample rate    : %i\n", s.info.rate);
-   printf("Stream bits           : %i\n", s.info.bits);
-   printf("Stream channels       : %i\n", s.info.channels);
+  switch (s.dir) {
+   case ROAR_DIR_MIDI_IN:
+   case ROAR_DIR_MIDI_OUT:
+     infotext = " ticks/s";
+    break;
+   case ROAR_DIR_LIGHT_IN:
+   case ROAR_DIR_LIGHT_OUT:
+     infotext = " updates/s";
+    break;
+   default:
+     infotext = " Hz";
   }
+  if ( s.info.rate )
+   printf("Stream sample rate    : %i%s\n", s.info.rate, infotext);
+  if ( s.info.bits )
+   printf("Stream bits           : %i\n", s.info.bits);
+  if ( s.info.channels )
+  printf("Stream channels       : %i\n", s.info.channels);
 
   printf("Stream codec          : %2i (%s%s)\n", s.info.codec, roar_codec2str(s.info.codec),
                                        s.info.codec == ROAR_CODEC_DEFAULT ? " native" : "");
