@@ -191,4 +191,37 @@ int roar_remove_so16 (int16_t * subout, int16_t * in, int samples, struct roar_r
  return 0;
 }
 
+int roar_remove_so32 (int32_t * subout, int32_t * in, int samples, struct roar_remove_state * state) {
+ int i;
+ register int64_t s;
+ register int64_t peak;
+
+ if ( state == NULL ) {
+  for (i = 0; i < samples; i++) {
+   s  = -subout[i];
+   s +=  in[i];
+   subout[i] = s;
+  }
+ } else {
+  peak = 4294967295UL;
+  for (i = 0; i < samples; i++) {
+   s  = -subout[i];
+   s +=  in[i];
+   s  = s < 0 ? -s : s; // we true 32 bit, not int operation here
+   if ( s > peak )
+    peak = s;
+  }
+
+  for (i = 0; i < samples; i++) {
+   s  = -subout[i];
+   s *=  4294967295UL;
+   s /=  peak;
+   s +=  in[i];
+   subout[i] = s;
+  }
+ }
+
+ return 0;
+}
+
 //ll
