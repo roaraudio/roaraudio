@@ -157,6 +157,7 @@ do
    echo '--tty DEV                   - Set default TTY'
    echo '--proc-net-decnet FILE      - Set DECnet file for DECnet support auto detecting'
    echo '                              (ignore this on non-Linux)'
+   echo '--audio-group GROUP         - Sets group of audio permitted users'
    echo
    echo '--no-LIB                    - disable library LIB'
    echo '--runtime-detect            - do as much as posible auto detecting on runtime (for distributors)'
@@ -754,7 +755,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.192 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.193 $ of RoarAudio
  */
 
 EOF
