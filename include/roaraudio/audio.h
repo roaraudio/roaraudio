@@ -243,6 +243,10 @@
 #define ROAR_RATE_DEFAULT      44100
 #endif
 
+#define ROAR_MIDI_TICKS_PER_BEAT  96
+#define ROAR_MIDI_BITS             8
+#define ROAR_MIDI_CHANNELS_DEFAULT 16
+
 #define ROAR_MAX_CHANNELS         64
 
 #define ROAR_SET_VOL_ALL           1
