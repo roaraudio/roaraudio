@@ -149,7 +149,7 @@ int main_loop (int driver, DRIVER_USERDATA_T driver_inst, struct roar_audio_info
 
 
    freq = (sysclocksync * ROAR_OUTPUT_BUFFER_SAMPLES) / (ans.tv_usec / 1e6);
-   printf("SYNC: f_conf=%iHz, f_real=%.2fHz\n", sa->rate, freq);
+   printf("SYNC: f_conf=%iHz, f_real=%.2fHz diff=%+.3f%%\n", sa->rate, freq, 100*(freq/sa->rate - 1));
 
 //   memcpy(&try, &ans, sizeof(try));
    gettimeofday(&try, NULL);
