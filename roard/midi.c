@@ -263,6 +263,10 @@ int midi_conv_midi2mes (int id) {
       case MIDI_TYPE_NOTE_OFF:
        if ( need == 2 ) {
         roar_midi_note_from_midiid(&(mes->d.note), *data);
+
+        // if velocity is zero we have a NOTE OFF event
+        if ( data[1] == 0 )
+         mes->type = MIDI_TYPE_NOTE_OFF;
        }
       case MIDI_TYPE_PA:
       case MIDI_TYPE_CONTROLER:
