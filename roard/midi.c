@@ -491,9 +491,9 @@ int midi_clock_init (void) {
  s->info.codec    =  ROAR_CODEC_MIDI;
  ss->codec_orgi   =  ROAR_CODEC_MIDI;
 
- s->info.channels =  0;
- s->info.rate     = MIDI_RATE;
- s->info.bits     =  8;
+ s->info.channels =  1; // we have only one channel, ticking on channel 0
+ s->info.rate     = ROAR_MIDI_TICKS_PER_BEAT; // one beat per sec
+ s->info.bits     = ROAR_MIDI_BITS;
 
  if ( streams_set_dir(g_midi_clock.stream, ROAR_DIR_BRIDGE, 1) == -1 ) {
   ROAR_WARN("Error while initializing MIDI subsystem component clock");
@@ -505,7 +505,7 @@ int midi_clock_init (void) {
  streams_set_flag(g_midi_clock.stream, ROAR_FLAG_PRIMARY);
  streams_set_flag(g_midi_clock.stream, ROAR_FLAG_SYNC);
 
- midi_clock_set_bph(3600); // one tick per sec
+ midi_clock_set_bph(3600); // one beat per sec
 
  midi_config.inited |= MIDI_INITED_CLOCK;
 

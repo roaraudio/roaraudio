@@ -134,9 +134,9 @@ int req_on_new_stream  (int client, struct roar_message * mes, char * data) {
   case ROAR_DIR_MIDI_OUT:
     info = &(ROAR_STREAM(s)->info);
 
-    info->channels = 16;
-    info->bits     =  0;
-    info->rate     = MIDI_RATE;
+    info->channels = ROAR_MIDI_CHANNELS_DEFAULT;
+    info->bits     = ROAR_MIDI_BITS;
+    info->rate     = 0;
 
    break;
 
