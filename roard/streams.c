@@ -1361,7 +1361,7 @@ int streams_send_mon   (int id) {
  if ( !is_the_same || !is_vol_eq || antiecho ) {
   olen = ROAR_OUTPUT_CALC_OUTBUFSIZE(&(s->info)); // we hope g_output_buffer_len
                                                   // is ROAR_OUTPUT_CALC_OUTBUFSIZE(g_sa) here
-  if ( stream_outputbuffer_request(id, &bufbuf, olen) == -1 )
+  if ( stream_outputbuffer_request(id, &bufbuf, ROAR_OUTPUT_CALC_OUTBUFSIZE_MAX(&(s->info), g_sa)) == -1 )
    return -1;
 
   if ( roar_buffer_get_data(bufbuf, &obuf) == -1 ) {
