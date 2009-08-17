@@ -491,7 +491,7 @@ int midi_clock_init (void) {
  s->info.codec    =  ROAR_CODEC_MIDI;
  ss->codec_orgi   =  ROAR_CODEC_MIDI;
 
- s->info.channels =  1; // we have only one channel, ticking on channel 0
+ s->info.channels = 1; // we have only one channel, ticking on channel 0
  s->info.rate     = ROAR_MIDI_TICKS_PER_BEAT; // one beat per sec
  s->info.bits     = ROAR_MIDI_BITS;
 
