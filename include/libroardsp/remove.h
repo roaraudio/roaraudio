@@ -49,7 +49,9 @@ int roar_remove_16   (int16_t * inout, int16_t * subs, int samples, struct roar_
 int roar_remove_32   (int32_t * inout, int32_t * subs, int samples, struct roar_remove_state * state);
 
 int roar_remove_so   (void    * subout, void    * in, int samples, int bits, struct roar_remove_state * state);
+int roar_remove_so8  (int16_t * subout, int16_t * in, int samples, struct roar_remove_state * state);
 int roar_remove_so16 (int16_t * subout, int16_t * in, int samples, struct roar_remove_state * state);
+int roar_remove_so32 (int16_t * subout, int16_t * in, int samples, struct roar_remove_state * state);
 
 #endif
 
