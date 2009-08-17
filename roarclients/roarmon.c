@@ -95,7 +95,9 @@ int main (int argc, char * argv[]) {
   } else if ( !strcmp(k, "--wave") ) {
    dir   = ROAR_DIR_MONITOR;
   } else if ( !strcmp(k, "--midi") ) {
-   dir   = ROAR_DIR_MIDI_OUT;
+   dir      = ROAR_DIR_MIDI_OUT;
+   bits     = ROAR_MIDI_BITS;
+   channels = ROAR_MIDI_CHANNELS_DEFAULT;
    if ( codec == ROAR_CODEC_DEFAULT )
     codec = ROAR_CODEC_MIDI;
   } else if ( !strcmp(k, "--light") ) {
