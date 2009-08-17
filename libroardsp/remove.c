@@ -40,7 +40,7 @@ int roar_remove      (void * inout, void * subs, int samples, int bits, struct r
   return -1;
 
  switch (bits) {
-  case 8:  return roar_remove_8 (inout, subs, samples, state); break;
+  case  8: return roar_remove_8 (inout, subs, samples, state); break;
   case 16: return roar_remove_16(inout, subs, samples, state); break;
   case 32: return roar_remove_32(inout, subs, samples, state); break;
  }
@@ -152,7 +152,9 @@ int roar_remove_so   (void    * subout, void   * in, int samples, int bits, stru
   return -1;
 
  switch (bits) {
+  case  8: return roar_remove_so8 (subout, in, samples, state); break;
   case 16: return roar_remove_so16(subout, in, samples, state); break;
+  case 32: return roar_remove_so32(subout, in, samples, state); break;
  }
 
  return -1;
