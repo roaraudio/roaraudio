@@ -985,7 +985,7 @@ int streams_fill_mixbuffer2 (int id, struct roar_audio_info * info) {
 
  if ( streams_get_flag(id, ROAR_FLAG_ANTIECHO) ) {
   // we can ignore errors here:
-  if ( stream_outputbuffer_request(id, &bufbuf, outlen) == 0 ) {
+  if ( stream_outputbuffer_request(id, &bufbuf, buflen) == 0 ) {
    if ( roar_buffer_get_data(bufbuf, &bufdata) != -1 )
     memcpy(bufdata, outdata, outlen);
   }
