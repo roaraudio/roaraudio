@@ -21,7 +21,8 @@ Also if you need any help you may contact me.
 
 Here is my recommendation on how to split the RoarAudio in pkgs:
 
-libroar               includes libroar and libroardsp
+libroar               includes libroar, libroardsp, libroarmidi,
+                      libroarlight and libroareio
 roaraudio-common      include roard and roarclients
                       (at least the ones with no special deps)
 roaraudio-tools       includes all other tools not in roaraudio-common
@@ -39,9 +40,36 @@ it with DECnet support compiled in. There will be no strange warning messages
 anymore with DECnet enabled on a non-DECnet system. libdnet does not
 require any Kernel modules or has any non standard deps itself.
 
+If you system includes libslp (normaly one of the deps of cups) please
+consider to build with libslp support.
+
 In addition you should configure with --runtime-detect: this will
 let roard/libroar detect the presents of some tools at runtime and
 will reduce deps.
+
+Please ensure that configure finds the correct audio users group.
+In case it does not detect the correct one please set it via
+--audio-group.
+
+Running roard:
+Global (system wide) roards normaly are started as root.
+Ensure it drops it's privilegs by setting --setuid/--setgid
+and maybe -U and -G.
+
+It is allways nice to use --pidfile. If you use a pidfile
+you can start and stop roard by using --start and --stop easily.
+
+You can use --chroot to chroot into an empty directory to improve security.
+roard does the chrooting after loading everything so it is perfectly safe
+to chroot into an empty directory. In case your system includes a /var/empty
+or simular directory please do the chroot.
+
+To ensure no drops consider to add one or two --realtime
+
+In case of a public (for LAN) server have some way for the user to set --location
+and use --slp for Zero Conf.
+
+For more information see roard --help.
 
 --- 2. Infos for developer
 
