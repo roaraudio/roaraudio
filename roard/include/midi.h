@@ -38,8 +38,8 @@
 #define MIDI_RATE    31250
 
 // standard MIDI commands:
-#define MIDI_TYPE_NOTE_ON       0x80
-#define MIDI_TYPE_NOTE_OFF      0x90
+#define MIDI_TYPE_NOTE_OFF      0x80
+#define MIDI_TYPE_NOTE_ON       0x90
 #define MIDI_TYPE_PA            0xA0
 #define MIDI_TYPE_CONTROLER     0xB0
 #define MIDI_TYPE_PROGRAM       0xC0
