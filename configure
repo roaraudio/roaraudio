@@ -38,10 +38,10 @@ PREFIX_MAN=''
 PREFIX_COMP=''
 
 CDROM_IS_DEV=true
-CDROM="none"
-OSS_DEV="none"
+CDROM=""
+OSS_DEV=""
 PROC_NET_DECNET="/proc/net/decnet"
-TTY_DEV="none"
+TTY_DEV=""
 
 VORBIS_BITS=32
 
@@ -155,6 +155,7 @@ do
    echo
    echo '--cdrom DEV                 - Set default CDRum device'
    echo '--tty DEV                   - Set default TTY'
+   echo '--oss-dev DEV               - Set default OSS device'
    echo '--proc-net-decnet FILE      - Set DECnet file for DECnet support auto detecting'
    echo '                              (ignore this on non-Linux)'
    echo '--audio-group GROUP         - Sets group of audio permitted users'
@@ -755,7 +756,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.193 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.194 $ of RoarAudio
  */
 
 EOF
@@ -1325,11 +1326,24 @@ else
 fi
 
 echo -n 'checking for cdrom device... '
-if [ -e "$CDROM" ]
+if [ -n "$CDROM" ]
 then
- echo "$CDROM"
- echo '#define ROAR_DEFAULT_CDROM "'"$CDROM"'"' >&3
- echo '#define ROAR_HAVE_CDROM' >&3
+ if [ "$CDROM" = '(none)' ]
+ then
+  echo "none (disabled by user)"
+ else
+  if $CROSS_COMPILE
+  then
+   echo "$CDROM (cross compile)"
+  elif [ -e "$CDROM" ]
+  then
+   echo "$CDROM (forced by user)"
+  else
+   echo "$CDROM (not existing, forced by user)"
+  fi
+  echo '#define ROAR_DEFAULT_CDROM "'"$CDROM"'"' >&3
+  echo '#define ROAR_HAVE_CDROM' >&3
+ fi
 elif $CROSS_COMPILE
 then
  echo 'none (cross compiling, use --cdrom to enable CDROM support)'
@@ -1347,10 +1361,23 @@ else
 fi
 
 echo -n 'checking for default tty device... '
-if [ -e "$TTY_DEV" ]
+if [ -n "$TTY_DEV" ]
 then
- echo "$TTY_DEV"
- echo '#define ROAR_DEFAULT_TTY "'"$TTY_DEV"'"' >&3
+ if [ "$TTY_DEV" = '(none)' ]
+ then
+  echo "none (disabled by user)"
+ else
+  if $CROSS_COMPILE
+  then
+   echo "$TTY_DEV (cross compile)"
+  elif [ -e "$TTY_DEV" ]
+  then
+   echo "$TTY_DEV (forced by user)"
+  else
+   echo "$TTY_DEV (not existing, forced by user)"
+  fi
+  echo '#define ROAR_DEFAULT_TTY "'"$TTY_DEV"'"' >&3
+ fi
 else
  TTY_DEV=$(ls /dev/tty 2> /dev/null | head -n 1);
  if [ -e "$TTY_DEV" ]
@@ -1363,10 +1390,23 @@ else
 fi
 
 echo -n 'checking for OSS device... '
-if [ -e "$OSS_DEV" ]
+if [ -n "$OSS_DEV" ]
 then
- echo "$OSS_DEV"
- echo '#define ROAR_DEFAULT_OSS_DEV "'"$OSS_DEV"'"' >&3
+ if [ "$OSS_DEV" = '(none)' ]
+ then
+  echo "none (disabled by user)"
+ else
+  if $CROSS_COMPILE
+  then
+   echo "$OSS_DEV (cross compile)"
+  elif [ -e "$TTY_DEV" ]
+  then
+   echo "$OSS_DEV (forced by user)"
+  else
+   echo "$OSS_DEV (not existing, forced by user)"
+  fi
+  echo '#define ROAR_DEFAULT_OSS_DEV "'"$OSS_DEV"'"' >&3
+ fi
 else
  OSS_DEV=$(ls /dev/dsp /dev/audio 2> /dev/null | head -n 1);
  if [ -e "$OSS_DEV" ]
