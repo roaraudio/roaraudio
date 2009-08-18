@@ -28,6 +28,7 @@
 struct driver_sysclock {
  int bps;
  struct timeval lasttime;
+ long int last_wanted;
 };
 
 int     driver_sysclock_open_vio(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh, struct roar_stream_server * sstream);
