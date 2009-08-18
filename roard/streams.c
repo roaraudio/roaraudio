@@ -24,7 +24,8 @@
 
 #include "roard.h"
 
-int streams_thru_num = 0;
+int streams_thru_num     =  0;
+int streams_recsource_id = -1;
 
 int streams_init (void) {
  int i;
@@ -139,6 +140,9 @@ int streams_delete (int id) {
 
  ROAR_DBG("streams_delete(id=%i) = ?", id);
  ROAR_DBG("streams_delete(id=%i): g_streams[id]->id=%i", id, ROAR_STREAM(s)->id);
+
+ if ( streams_get_flag(id, ROAR_FLAG_RECSOURCE) == 1 )
+  streams_reset_flag(id, ROAR_FLAG_RECSOURCE);
 
  for (i = 0; i < ROAR_STREAMS_MAX; i++) {
   if ( g_streams[i] != NULL && ROAR_STREAM(g_streams[i])->pos_rel_id == id ) {
@@ -507,6 +511,15 @@ int streams_set_flag     (int id, int flag) {
   }
  }
 
+ if ( flag & ROAR_FLAG_RECSOURCE ) {
+  if ( streams_recsource_id != -1 ) {
+   if ( streams_reset_flag(streams_recsource_id, ROAR_FLAG_RECSOURCE) == -1 )
+    return -1;
+  }
+
+  streams_recsource_id = id;
+ }
+
  g_streams[id]->flags |= flag;
 
 #ifdef ROAR_SUPPORT_META
@@ -520,6 +533,10 @@ int streams_set_flag     (int id, int flag) {
 int streams_reset_flag   (int id, int flag) {
  if ( g_streams[id] == NULL )
   return -1;
+
+ if ( flag & ROAR_FLAG_RECSOURCE )
+  if ( streams_recsource_id == id )
+   streams_recsource_id = -1;
 
  if ( flag & ROAR_FLAG_MMAP )
   if ( streams_set_mmap(id, 1) == -1 )

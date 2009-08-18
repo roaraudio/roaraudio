@@ -81,6 +81,7 @@ struct roar_stream_server {
 } * g_streams[ROAR_STREAMS_MAX];
 
 int streams_thru_num;
+int streams_recsource_id;
 
 int streams_init   (void);
 int streams_free   (void);
