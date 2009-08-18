@@ -48,10 +48,10 @@ void usage (void) {
 }
 
 int main (int argc, char * argv[]) {
- int    rate     = ROAR_RATE_DEFAULT;
- int    bits     = ROAR_BITS_DEFAULT;
- int    channels = ROAR_CHANNELS_DEFAULT;
- int    codec    = ROAR_CODEC_DEFAULT;
+ int    rate     = -1;
+ int    bits     = -1;
+ int    channels = -1;
+ int    codec    = -1;
  int    dir      = ROAR_DIR_MONITOR;
  int    rel_id   = -1;
  char * server   = NULL;
@@ -96,14 +96,8 @@ int main (int argc, char * argv[]) {
    dir   = ROAR_DIR_MONITOR;
   } else if ( !strcmp(k, "--midi") ) {
    dir      = ROAR_DIR_MIDI_OUT;
-   bits     = ROAR_MIDI_BITS;
-   channels = ROAR_MIDI_CHANNELS_DEFAULT;
-   if ( codec == ROAR_CODEC_DEFAULT )
-    codec = ROAR_CODEC_MIDI;
   } else if ( !strcmp(k, "--light") ) {
    dir   = ROAR_DIR_LIGHT_OUT;
-   if ( codec == ROAR_CODEC_DEFAULT )
-    codec = ROAR_CODEC_DMX512;
   } else if ( !strcmp(k, "--raw") ) {
    dir   = ROAR_DIR_RAW_OUT;
   } else if ( !strcmp(k, "--thru") ) {
@@ -125,6 +119,35 @@ int main (int argc, char * argv[]) {
    usage();
    return 1;
   }
+ }
+
+ switch (dir) {
+  case ROAR_DIR_MONITOR:
+    if ( rate     == -1 ) rate     = ROAR_RATE_DEFAULT;
+    if ( bits     == -1 ) bits     = ROAR_BITS_DEFAULT;
+    if ( channels == -1 ) channels = ROAR_CHANNELS_DEFAULT;
+    if ( codec    == -1 ) codec    = ROAR_CODEC_DEFAULT;
+   break;
+  case ROAR_DIR_MIDI_OUT:
+    if ( rate     == -1 ) rate     = 0;
+    if ( bits     == -1 ) bits     = ROAR_MIDI_BITS;
+    if ( channels == -1 ) channels = ROAR_MIDI_CHANNELS_DEFAULT;
+    if ( codec    == -1 ) codec    = ROAR_CODEC_MIDI;
+   break;
+  case ROAR_DIR_LIGHT_OUT:
+    if ( rate     == -1 ) rate     = 0;
+    if ( bits     == -1 ) bits     = ROAR_LIGHT_BITS;
+    if ( channels == -1 ) channels = 0;
+    if ( codec    == -1 ) codec    = ROAR_CODEC_DMX512;
+   break;
+  case ROAR_DIR_RAW_OUT:
+  case ROAR_DIR_THRU:
+  default:
+    if ( rate     == -1 ) rate     = 0;
+    if ( bits     == -1 ) bits     = 0;
+    if ( channels == -1 ) channels = 0;
+    if ( codec    == -1 ) codec    = ROAR_CODEC_DEFAULT;
+   break;
  }
 
  if ( roar_simple_connect(&con, server, "roarmon") == -1 ) {
