@@ -276,6 +276,41 @@ int streams_get_dir    (int id) {
  return ROAR_STREAM(ss)->dir;
 }
 
+int streams_get_subsys (int id) {
+ struct roar_stream_server * ss;
+
+ if ( (ss = g_streams[id]) == NULL )
+  return -1;
+
+ switch (ROAR_STREAM(ss)->dir) {
+  case ROAR_DIR_PLAY:
+  case ROAR_DIR_RECORD:
+  case ROAR_DIR_MONITOR:
+  case ROAR_DIR_FILTER:
+  case ROAR_DIR_OUTPUT:
+  case ROAR_DIR_BIDIR:
+    return ROAR_SUBSYS_WAVEFORM;
+   break;
+  case ROAR_DIR_MIDI_IN:
+  case ROAR_DIR_MIDI_OUT:
+    return ROAR_SUBSYS_MIDI;
+   break;
+  case ROAR_DIR_LIGHT_IN:
+  case ROAR_DIR_LIGHT_OUT:
+    return ROAR_SUBSYS_LIGHT;
+   break;
+  case ROAR_DIR_RAW_IN:
+  case ROAR_DIR_RAW_OUT:
+    return ROAR_SUBSYS_RAW;
+   break;
+  case ROAR_DIR_THRU:
+    return streams_get_subsys(ROAR_STREAM(ss)->pos_rel_id);
+   break;
+ }
+
+ return -1;
+}
+
 int streams_set_fh     (int id, int fh) {
  struct roar_stream_server * ss;
  struct roar_stream        * s;

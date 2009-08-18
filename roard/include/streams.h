@@ -94,6 +94,8 @@ int streams_get_client (int id);
 int streams_set_dir    (int id, int dir, int defaults);
 int streams_get_dir    (int id);
 
+int streams_get_subsys (int id);
+
 int streams_set_fh     (int id, int fh);
 int streams_get_fh     (int id);
 int streams_get        (int id, struct roar_stream_server ** stream);
