@@ -210,6 +210,7 @@ int init_config (void) {
  }
 
  g_config->streams[ROAR_DIR_PLAY    ].flags = ROAR_FLAG_META;
+ g_config->streams[ROAR_DIR_OUTPUT  ].flags = ROAR_FLAG_PASSMIXER;
  g_config->streams[ROAR_DIR_FILTER  ].flags = ROAR_FLAG_SYNC;
  g_config->streams[ROAR_DIR_MIDI_OUT].flags = ROAR_FLAG_SYNC;
  g_config->streams[ROAR_DIR_BIDIR   ].flags = ROAR_FLAG_ANTIECHO;
@@ -263,6 +264,8 @@ int update_stream_flags (char * str) {
    flag = ROAR_FLAG_MUTE;
   } else if ( !strcmp(k, "antiecho") ) {
    flag = ROAR_FLAG_ANTIECHO;
+  } else if ( !strcmp(k, "passmixer") ) {
+   flag = ROAR_FLAG_PASSMIXER;
   } else {
    return -1;
   }
@@ -404,6 +407,10 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
    streams_set_flag(stream, ROAR_FLAG_CLEANMETA);
   } else if ( strcmp(k, "autoconf") == 0 ) {
    streams_set_flag(stream, ROAR_FLAG_AUTOCONF);
+  } else if ( strcmp(k, "recsource") == 0 ) {
+   streams_set_flag(stream, ROAR_FLAG_RECSOURCE);
+  } else if ( strcmp(k, "passmixer") == 0 ) {
+   streams_set_flag(stream, ROAR_FLAG_PASSMIXER);
   } else {
    ROAR_ERR("add_output(*): unknown option '%s'", k);
    error++;
