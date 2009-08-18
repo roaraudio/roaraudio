@@ -139,6 +139,7 @@ __BEGIN_DECLS
 #include <roaraudio/sample.h>
 #include <roaraudio/meta.h>
 #include <roaraudio/acl.h>
+#include <roaraudio/misc.h>
 
 #include <libroar/libroar.h>
 
