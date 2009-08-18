@@ -28,6 +28,8 @@
 #ifndef _ROARAUDIO_MISC_H_
 #define _ROARAUDIO_MISC_H_
 
+#define ROAR_LIGHT_BITS   8
+
 #endif
 
 //ll
