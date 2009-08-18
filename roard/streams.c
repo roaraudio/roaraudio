@@ -978,7 +978,7 @@ int streams_fill_mixbuffer2 (int id, struct roar_audio_info * info) {
   roar_buffer_free(bufbuf);
  }
 
- if ( !streams_get_flag(id, ROAR_FLAG_HWMIXER) ) {
+ if ( !streams_get_flag(id, ROAR_FLAG_HWMIXER) && !streams_get_flag(id, ROAR_FLAG_PASSMIXER) ) {
   if ( change_vol(outdata, info->bits, outdata, 8*outlen / info->bits, info->channels, &(ss->mixer)) == -1 )
    return -1;
  }
