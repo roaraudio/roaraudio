@@ -614,9 +614,32 @@ int streams_calc_delay    (int id) {
 
 int streams_set_mixer    (int id) {
  struct roar_stream_server * ss;
+ struct roar_stream_server * pmss;
+ int i;
+ int subsys;
 
  if ( (ss = g_streams[id]) == NULL )
   return -1;
+
+ if ( streams_get_flag(id, ROAR_FLAG_PASSMIXER) == 1 ) {
+  if ( (subsys = streams_get_subsys(id)) == -1 )
+   return -1;
+
+  for (i = 0; i < ROAR_STREAMS_MAX; i++) {
+   if ( (pmss = g_streams[i]) != NULL ) {
+    if ( streams_get_flag(i, ROAR_FLAG_PASSMIXER) == 1 ) {
+     if ( streams_get_subsys(i) == subsys ) {
+      memcpy(&(pmss->mixer), &(ss->mixer), sizeof(struct roar_mixer_settings));
+
+      // update hwmixers and the like but do not set mixer value recrusivly.
+      streams_reset_flag(i, ROAR_FLAG_PASSMIXER);
+      streams_set_mixer(i);
+      streams_set_flag(i, ROAR_FLAG_PASSMIXER);
+     }
+    }
+   }
+  }
+ }
 
  if ( !streams_get_flag(id, ROAR_FLAG_HWMIXER) )
   return 0;
