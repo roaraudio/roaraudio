@@ -25,6 +25,7 @@
 #include "libroardsp.h"
 
 #define _CHECK_BASIC() if ( state == NULL ) return -1
+#define _CHECK_PCMOUT() _CHECK_BASIC(); if ( frames == 0 ) return 0; if ( out == NULL ) return -1
 
 int roar_synth_init(struct roar_synth_state * state, struct roar_note_octave * note, int rate) {
  _CHECK_BASIC();
@@ -53,19 +54,16 @@ int roar_synth_set_offset(struct roar_synth_state * state, size_t offset) {
 int roar_synth_set_func  (struct roar_synth_state * state, ROAR_SYNTH_FUNC_TYPE(func)) {
  _CHECK_BASIC();
 
+ if ( func == NULL )
+  return -1;
+
  state->func = func;
 
  return 0;
 }
 
 int roar_synth_pcmout_i16n(struct roar_synth_state * state, int16_t * out, size_t frames, int channels) {
- _CHECK_BASIC();
-
- if ( out == NULL )
-  return -1;
-
- if ( frames == 0 )
-  return 0;
+ _CHECK_PCMOUT();
 
  switch (channels) {
   case 1: return roar_synth_pcmout_i161(state, out, frames);
@@ -77,7 +75,21 @@ int roar_synth_pcmout_i16n(struct roar_synth_state * state, int16_t * out, size_
 }
 
 int roar_synth_pcmout_i161(struct roar_synth_state * state, int16_t * out, size_t frames) {
- _CHECK_BASIC();
+ float t_step;
+ float t_cur;
+ int i;
+
+ _CHECK_PCMOUT();
+
+ t_step = 1.0/state->rate;
+
+ t_cur  = t_step * state->pcmoffset;
+
+ for (i = 0; i < frames; i++, t_cur += t_step) {
+  out[i] = 32767.0*state->func(t_cur, state);
+ }
+
+ state->pcmoffset += frames;
 
  return -1;
 }
