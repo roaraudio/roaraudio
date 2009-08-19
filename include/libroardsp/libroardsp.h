@@ -32,6 +32,7 @@ __BEGIN_DECLS
 #include "midi.h"
 #include "synth.h"
 #include "poly.h"
+#include "fader.h"
 #include "convert.h"
 #include "midside.h"
 #include "point.h"
