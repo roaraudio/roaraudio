@@ -83,6 +83,52 @@ int roar_fader_calcpcm_i16n(struct roar_fader_state * state, int16_t * data, siz
 }
 
 int roar_fader_calcpcm_i161(struct roar_fader_state * state, int16_t * data, size_t frames) {
+ size_t start, stop, cur;
+ int i, i_s, i_e;
+ float t_cur, t_step;
+ float g_cur;
+
+ _CHECK_BASIC();
+
+ if ( state->start == -1 ) {
+  start = state->pcmoffset;
+ } else {
+  start = state->start;
+ }
+
+ if ( state->stop == -1 ) {
+  stop = state->pcmoffset + frames;
+ } else {
+  stop = state->stop;
+ }
+
+ cur = state->pcmoffset;
+
+ i_s = 0;
+ i_e = frames;
+
+ if ( start > cur )
+  i_s = start - cur;
+
+ if ( stop < (cur + frames) )
+  i_e = stop  - cur;
+
+ t_step = state->coeff/(stop - start);
+
+ if ( start < cur ) {
+  t_cur = (cur - start)*t_step;
+ } else {
+  t_cur = 0;
+ }
+
+ for (i = i_s; i < i_e; i++, cur++) {
+  t_cur  += t_step;
+  g_cur   = 0;
+  data[i] = (float)data[i] * g_cur;
+ }
+
+ state->pcmoffset = cur;
+
  return -1;
 }
 
