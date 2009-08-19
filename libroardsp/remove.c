@@ -238,7 +238,7 @@ int roar_remove_so32 (int32_t * subout, int32_t * in, int samples, struct roar_r
    subout[i] = s;
   }
  } else {
-  peak = 4294967295UL;
+  peak = 2147483647UL;
   for (i = 0; i < samples; i++) {
    s  = -subout[i];
    s +=  in[i];
@@ -249,7 +249,7 @@ int roar_remove_so32 (int32_t * subout, int32_t * in, int samples, struct roar_r
 
   for (i = 0; i < samples; i++) {
    s  = -subout[i];
-   s *=  4294967295UL;
+   s *=  2147483647UL;
    s /=  peak;
    s +=  in[i];
    subout[i] = s;
