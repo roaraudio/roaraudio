@@ -41,7 +41,7 @@
 #define ROAR_SYNTH_FUNC_CAST(name) ((ROAR_SYNTH_FUNC_TYPE()) name)
 
 // SYNF -> Synthesis Function
-#define ROAR_SYNTH_SYNF_SINE ROAR_SYNTH_FUNC_CAST(sinf)
+#define ROAR_SYNTH_SYNF_SIN  ROAR_SYNTH_FUNC_CAST(sinf)
 #define ROAR_SYNTH_SYNF_RECT ROAR_SYNTH_FUNC_CAST(roar_synth_synf_rect)
 #define ROAR_SYNTH_SYNF_SAW  ROAR_SYNTH_FUNC_CAST(roar_synth_synf_saw)
 #define ROAR_SYNTH_SYNF_TRI  ROAR_SYNTH_FUNC_CAST(roar_synth_synf_tri)
