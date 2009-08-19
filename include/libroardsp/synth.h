@@ -53,11 +53,13 @@ struct roar_synth_state {
  struct roar_note_octave * note;
  ROAR_SYNTH_FUNC_TYPE(func);
  size_t pcmoffset;
+ float volume;
 };
 
 int roar_synth_init(struct roar_synth_state * state, struct roar_note_octave * note, int rate);
 int roar_synth_set_offset(struct roar_synth_state * state, size_t offset);
 int roar_synth_set_func  (struct roar_synth_state * state, ROAR_SYNTH_FUNC_TYPE(func));
+int roar_synth_set_volume(struct roar_synth_state * state, float volume);
 
 int roar_synth_pcmout_i16n(struct roar_synth_state * state, int16_t * out, size_t frames, int channels);
 int roar_synth_pcmout_i161(struct roar_synth_state * state, int16_t * out, size_t frames);

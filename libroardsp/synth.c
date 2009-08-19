@@ -35,8 +35,9 @@ int roar_synth_init(struct roar_synth_state * state, struct roar_note_octave * n
 
  memset(state, 0, sizeof(struct roar_synth_state));
 
- state->note = note; // NULL is valid here!
- state->rate = rate;
+ state->note   = note; // NULL is valid here!
+ state->rate   = rate;
+ state->volume = 1;
 
  state->func = ROAR_SYNTH_SYNF_SINE;
 
@@ -58,6 +59,14 @@ int roar_synth_set_func  (struct roar_synth_state * state, ROAR_SYNTH_FUNC_TYPE(
   return -1;
 
  state->func = func;
+
+ return 0;
+}
+
+int roar_synth_set_volume(struct roar_synth_state * state, float volume) {
+ _CHECK_BASIC();
+
+ state->volume = volume;
 
  return 0;
 }
@@ -89,7 +98,7 @@ int roar_synth_pcmout_i161(struct roar_synth_state * state, int16_t * out, size_
  freq   = state->note->freq;
 
  for (i = 0; i < frames; i++, t_cur += t_step) {
-  out[i] = 32767.0*state->func(2.0*M_PI*freq*t_cur, state);
+  out[i] = 32767.0*state->volume*state->func(2.0*M_PI*freq*t_cur, state);
  }
 
  state->pcmoffset += frames;
