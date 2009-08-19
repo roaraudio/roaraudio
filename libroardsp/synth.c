@@ -97,5 +97,47 @@ int roar_synth_pcmout_i161(struct roar_synth_state * state, int16_t * out, size_
  return 0;
 }
 
+// basic SINFs:
+float roar_synth_synf_rect (float t, struct roar_synth_state * state) {
+ t /= 2*M_PI;
+ t -= (int)t;
+
+ if ( t < 0.5 )
+  return  1;
+ else
+  return -1;
+}
+
+float roar_synth_synf_saw  (float t, struct roar_synth_state * state) {
+ t /= 2*M_PI;
+ t -= (int)t;
+
+ return 2*t - 1;
+}
+
+float roar_synth_synf_tri  (float t, struct roar_synth_state * state) {
+ t /= 2*M_PI;
+ t -= (int)t;
+
+ if ( t < 0.5 )
+  return   4* t      - 1;
+ else
+  return  -4*(t-0.5) + 1;
+}
+
+float roar_synth_synf_trap (float t, struct roar_synth_state * state) {
+ t /= 2*M_PI;
+ t -= (int)t;
+
+ if ( t < 0.125 || t > 0.875 ) {
+  return -1;
+ } else if ( t < 0.625 && t > 0.375 ) {
+  return  1;
+ } else if ( t < 0.5 ) {
+  return  8*(t-0.375) + 1;
+ } else {
+  return -8*(t-0.625) + 1;
+ }
+}
 
 //ll

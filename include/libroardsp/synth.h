@@ -42,6 +42,10 @@
 
 // SYNF -> Synthesis Function
 #define ROAR_SYNTH_SYNF_SINE ROAR_SYNTH_FUNC_CAST(sinf)
+#define ROAR_SYNTH_SYNF_RECT ROAR_SYNTH_FUNC_CAST(roar_synth_synf_rect)
+#define ROAR_SYNTH_SYNF_SAW  ROAR_SYNTH_FUNC_CAST(roar_synth_synf_saw)
+#define ROAR_SYNTH_SYNF_TRI  ROAR_SYNTH_FUNC_CAST(roar_synth_synf_tri)
+#define ROAR_SYNTH_SYNF_TRAP ROAR_SYNTH_FUNC_CAST(roar_synth_synf_trap)
 
 struct roar_synth_state {
  int rate;
@@ -56,6 +60,12 @@ int roar_synth_set_func  (struct roar_synth_state * state, ROAR_SYNTH_FUNC_TYPE(
 
 int roar_synth_pcmout_i16n(struct roar_synth_state * state, int16_t * out, size_t frames, int channels);
 int roar_synth_pcmout_i161(struct roar_synth_state * state, int16_t * out, size_t frames);
+
+// some basic SYNFs:
+float roar_synth_synf_rect (float t, struct roar_synth_state * state);
+float roar_synth_synf_saw  (float t, struct roar_synth_state * state);
+float roar_synth_synf_tri  (float t, struct roar_synth_state * state);
+float roar_synth_synf_trap (float t, struct roar_synth_state * state);
 
 #endif
 
