@@ -4,7 +4,7 @@ include ../Makefile.inc
 SLIB=libroardsp$(SHARED_SUFFIX)
 
 TARGETS=$(SLIB) libroardsp.a
-OBJS=libroardsp.o convert.o midside.o poly.o filter.o filterchain.o alaw.o mulaw.o remove.o transcode.o rms.o
+OBJS=libroardsp.o convert.o midside.o poly.o filter.o filterchain.o alaw.o mulaw.o remove.o transcode.o rms.o synth.o
 OLDROAR=midi.o
 FILTER=lowp.o highp.o amp.o quantify.o add.o clip.o downmix.o dcblock.o swap.o
 TRANSCODERS=transcode_mualaw.o transcode_celt.o transcode_speex.o
