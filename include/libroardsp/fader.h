@@ -48,8 +48,8 @@ struct roar_fader_state {
  int   coeff;
 };
 
-int roar_fader_init(struct roar_fader_state * state, float * poly, int coeff);
-int roar_fader_set_rate(struct roar_fader_state * state, int rate);
+int roar_fader_init         (struct roar_fader_state * state, float * poly, int coeff);
+int roar_fader_set_rate     (struct roar_fader_state * state, int rate);
 int roar_fader_set_startstop(struct roar_fader_state * state, ssize_t start, ssize_t stop);
 
 int roar_fader_calcpcm_i16n(struct roar_fader_state * state, int16_t * data, size_t frames, int channels);
