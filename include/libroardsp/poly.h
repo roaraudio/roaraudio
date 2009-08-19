@@ -1,7 +1,9 @@
-//math.h:
+//poly.h:
+
+// was math.h
 
 /*
- *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008
+ *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008, 2009
  *
  *  This file is part of libroar a part of RoarAudio,
  *  a cross-platform sound system for both, home and professional use.
@@ -44,6 +46,7 @@ int roar_math_mkpoly_3x3 (float * poly, float * data);
 int roar_math_mkpoly_4x4 (float * poly, float * data);
 int roar_math_mkpoly_5x5 (float * poly, float * data);
 
+float roar_math_cvpoly     (float * poly, float t, int len);
 float roar_math_cvpoly_4x4 (float * poly, float t);
 
 #endif

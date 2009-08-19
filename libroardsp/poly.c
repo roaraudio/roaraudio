@@ -104,6 +104,26 @@ int roar_math_mkpoly_5x5 (float * poly, float * data) {
 }
 
 
+float roar_math_cvpoly     (float * poly, float t, int len) {
+ float ret = 0;
+ float ct  = 1;
+ int i;
+
+ if ( poly == NULL )
+  return 0;
+
+ switch (len) {
+  case 4: return roar_math_cvpoly_4x4(poly, t);
+ }
+
+ for (i = 0; i < len; i++) {
+  ret += poly[i] * ct;
+  ct  *= t;
+ }
+
+ return ret;
+}
+
 float roar_math_cvpoly_4x4 (float * poly, float t) {
  float ret = poly[0];
  float ct  = t;
