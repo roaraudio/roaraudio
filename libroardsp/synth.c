@@ -77,6 +77,7 @@ int roar_synth_pcmout_i16n(struct roar_synth_state * state, int16_t * out, size_
 int roar_synth_pcmout_i161(struct roar_synth_state * state, int16_t * out, size_t frames) {
  float t_step;
  float t_cur;
+ float freq;
  int i;
 
  _CHECK_PCMOUT();
@@ -85,8 +86,10 @@ int roar_synth_pcmout_i161(struct roar_synth_state * state, int16_t * out, size_
 
  t_cur  = t_step * state->pcmoffset;
 
+ freq   = state->note->freq;
+
  for (i = 0; i < frames; i++, t_cur += t_step) {
-  out[i] = 32767.0*state->func(t_cur, state);
+  out[i] = 32767.0*state->func(2.0*M_PI*freq*t_cur, state);
  }
 
  state->pcmoffset += frames;
