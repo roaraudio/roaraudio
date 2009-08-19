@@ -140,4 +140,10 @@ float roar_synth_synf_trap (float t, struct roar_synth_state * state) {
  }
 }
 
+float roar_synth_synf_s2s  (float t, struct roar_synth_state * state) {
+ float sin2 = sinf(t/1.2);
+
+ return sin2*sin2 * sin(t*1.2);
+}
+
 //ll

@@ -46,6 +46,7 @@
 #define ROAR_SYNTH_SYNF_SAW  ROAR_SYNTH_FUNC_CAST(roar_synth_synf_saw)
 #define ROAR_SYNTH_SYNF_TRI  ROAR_SYNTH_FUNC_CAST(roar_synth_synf_tri)
 #define ROAR_SYNTH_SYNF_TRAP ROAR_SYNTH_FUNC_CAST(roar_synth_synf_trap)
+#define ROAR_SYNTH_SYNF_S2S  ROAR_SYNTH_FUNC_CAST(roar_synth_synf_s2s)
 
 struct roar_synth_state {
  int rate;
@@ -66,6 +67,7 @@ float roar_synth_synf_rect (float t, struct roar_synth_state * state);
 float roar_synth_synf_saw  (float t, struct roar_synth_state * state);
 float roar_synth_synf_tri  (float t, struct roar_synth_state * state);
 float roar_synth_synf_trap (float t, struct roar_synth_state * state);
+float roar_synth_synf_s2s  (float t, struct roar_synth_state * state);
 
 #endif
 
