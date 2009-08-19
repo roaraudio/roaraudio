@@ -24,5 +24,63 @@
 
 #include "libroardsp.h"
 
+#define _CHECK_BASIC() if ( state == NULL ) return -1
+
+int roar_synth_init(struct roar_synth_state * state, struct roar_note_octave * note, int rate) {
+ _CHECK_BASIC();
+
+ if ( rate <= 0 )
+  return -1;
+
+ memset(state, 0, sizeof(struct roar_synth_state));
+
+ state->note = note; // NULL is valid here!
+ state->rate = rate;
+
+ state->func = ROAR_SYNTH_SYNF_SINE;
+
+ return 0;
+}
+
+int roar_synth_set_offset(struct roar_synth_state * state, size_t offset) {
+ _CHECK_BASIC();
+
+ state->pcmoffset = offset;
+
+ return 0;
+}
+
+int roar_synth_set_func  (struct roar_synth_state * state, ROAR_SYNTH_FUNC_TYPE(func)) {
+ _CHECK_BASIC();
+
+ state->func = func;
+
+ return 0;
+}
+
+int roar_synth_pcmout_i16n(struct roar_synth_state * state, int16_t * out, size_t frames, int channels) {
+ _CHECK_BASIC();
+
+ if ( out == NULL )
+  return -1;
+
+ if ( frames == 0 )
+  return 0;
+
+ switch (channels) {
+  case 1: return roar_synth_pcmout_i161(state, out, frames);
+  default:
+    return -1;
+ }
+
+ return 0;
+}
+
+int roar_synth_pcmout_i161(struct roar_synth_state * state, int16_t * out, size_t frames) {
+ _CHECK_BASIC();
+
+ return -1;
+}
+
 
 //ll
