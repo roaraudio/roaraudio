@@ -37,6 +37,24 @@
 
 #include "libroardsp.h"
 
+#define ROAR_FADER_MAX_COEFF 4
+
+struct roar_fader_state {
+ int rate;
+ size_t pcmoffset;
+ size_t start;
+ size_t stop;
+ float poly[ROAR_FADER_MAX_COEFF];
+ int   coeff;
+};
+
+int roar_fader_init(struct roar_fader_state * state, float * poly, int coeff);
+int roar_fader_set_rate(struct roar_fader_state * state, int rate);
+int roar_fader_set_startstop(struct roar_fader_state * state, ssize_t start, ssize_t stop);
+
+int roar_fader_calcpcm_i16n(struct roar_fader_state * state, int16_t * data, size_t frames, int channels);
+int roar_fader_calcpcm_i161(struct roar_fader_state * state, int16_t * data, size_t frames);
+
 #endif
 
 //ll
