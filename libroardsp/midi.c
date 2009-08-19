@@ -145,7 +145,7 @@ int roar_midi_gen_tone (struct roar_note_octave * note, int16_t * samples, float
 #ifdef ROAR_HAVE_LIBM
  int i, c;
  float ct;
- float step = M_PI*2*note->freq/rate;
+ float step = 1.0/rate;
  int16_t s;
  float (*op)(float x) = NULL;
 
@@ -165,12 +165,18 @@ int roar_midi_gen_tone (struct roar_note_octave * note, int16_t * samples, float
  if ( op == NULL )
   return -1;
 
+ ROAR_DBG("roar_midi_gen_tone(*): t=%f", t);
+
  for (ct = 0, i = 0; ct <= t; ct += step, i += channels) {
-  s = 32767*op(ct);
+  s = 32767*op(2.0*M_PI*note->freq*ct);
+
+//  ROAR_DBG("roar_midi_gen_tone(*): t=%f, ct=%f, i=%i", t, ct, i);
 
   for (c = 0; c < channels; c++)
    samples[i+c] = s;
  }
+
+ ROAR_DBG("roar_midi_gen_tone(*): t=%f, ct=%f, i=%i", t, ct, i);
 
  return 0;
 #else
