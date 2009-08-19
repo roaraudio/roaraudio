@@ -44,6 +44,9 @@ int roar_fader_init         (struct roar_fader_state * state, float * poly, int 
  state->rate  = -1;
  state->coeff = coeff;
 
+ state->start = -1;
+ state->stop  = -1;
+
  memcpy(&(state->poly), poly, sizeof(float)*coeff);
 
  return 0;
