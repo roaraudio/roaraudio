@@ -91,7 +91,7 @@ int roar_synth_pcmout_i161(struct roar_synth_state * state, int16_t * out, size_
 
  state->pcmoffset += frames;
 
- return -1;
+ return 0;
 }
 
 
