@@ -128,6 +128,8 @@ int midi_send_stream   (int id);
 int midi_conv_midi2mes (int id);
 int midi_conv_mes2midi (int id);
 
+int midi_conv_mes2ssynth(void);
+
 int midi_new_bufmes    (struct roar_buffer ** buf, struct midi_message ** mes);
 int midi_add_buf       (int id, struct roar_buffer * buf);
 

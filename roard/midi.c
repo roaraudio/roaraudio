@@ -76,6 +76,8 @@ int midi_update(void) {
  if ( g_midi_clock.stream != -1 )
   midi_check_bridge(g_midi_clock.stream);
 
+ midi_conv_mes2ssynth();
+
  return midi_cb_update();
 }
 
@@ -411,6 +413,10 @@ int midi_conv_mes2midi (int id) {
  return 0;
 }
 #undef _nb
+
+int midi_conv_mes2ssynth(void) {
+ return -1;
+}
 
 int midi_new_bufmes    (struct roar_buffer ** buf, struct midi_message ** mes) {
  if ( buf == NULL || mes == NULL )
