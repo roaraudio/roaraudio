@@ -140,11 +140,18 @@ int ssynth_note_set_stage(int id, int stage) {
 }
 
 int ssynth_note_on       (struct roar_note_octave * note, char vv) {
- return -1;
+ return ssynth_note_new(note, vv);
 }
 
 int ssynth_note_off      (struct roar_note_octave * note, char vv) {
- return -1;
+ int id;
+
+ if ( (id = ssynth_note_find(note)) == -1 )
+  return -1;
+
+ // add support to for keyups...
+
+ return ssynth_note_free(id);
 }
 
 int ssynth_eval_message (struct midi_message * mes) {
