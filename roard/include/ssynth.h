@@ -27,6 +27,39 @@
 
 #include <roaraudio.h>
 
+#define SSYNTH_NOTES_MAX            16
+
+#define SSYNTH_STAGE_NONE            0
+#define SSYNTH_STAGE_UNUSED          SSYNTH_STAGE_NONE
+
+#define SSYNTH_POLY_KEYDOWN          0
+#define SSYNTH_POLY_KEYUP            1
+#define SSYNTH_POLY_POLYMAX          2
+
+#define SSYNTH_POLY_COEFF            4
+
+float ssynth_polys[SSYNTH_POLY_POLYMAX][SSYNTH_POLY_COEFF];
+
+struct {
+ int enable;
+} ssynth_conf;
+
+struct {
+ int stream;
+ struct {
+  int stage;
+  char vv_down, vv_up;
+  struct roar_note_octave note;
+  struct roar_synth_state synth;
+  struct roar_fader_state fader;
+ } notes[SSYNTH_NOTES_MAX];
+} g_ssynth;
+
+int ssynth_init_config(void);
+
+int ssynth_init (void);
+int ssynth_free (void);
+
 #endif
 
 //ll
