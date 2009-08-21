@@ -47,7 +47,7 @@ int roar_fader_init         (struct roar_fader_state * state, float * poly, int 
  state->start = -1;
  state->stop  = -1;
 
- memcpy(&(state->poly), poly, sizeof(float)*coeff);
+ memcpy(state->poly, poly, sizeof(float)*coeff);
 
  return 0;
 }
@@ -113,7 +113,7 @@ int roar_fader_calcpcm_i161(struct roar_fader_state * state, int16_t * data, siz
  if ( stop < (cur + frames) )
   i_e = stop  - cur;
 
- t_step = state->coeff/(stop - start);
+ t_step = (float)(state->coeff - 1)/(float)(stop - start);
 
  if ( start < cur ) {
   t_cur = (cur - start)*t_step;
@@ -121,9 +121,12 @@ int roar_fader_calcpcm_i161(struct roar_fader_state * state, int16_t * data, siz
   t_cur = 0;
  }
 
+ ROAR_DBG("roar_fader_calcpcm_i161(*): i_s->i_e: %i->%i", i_s, i_e);
+
  for (i = i_s; i < i_e; i++, cur++) {
   t_cur  += t_step;
-  g_cur   = 0;
+  g_cur   = roar_math_cvpoly(state->poly, t_cur, state->coeff);
+//  ROAR_DBG("roar_fader_calcpcm_i161(*): i=%i, g_cur=%f", i, g_cur);
   data[i] = (float)data[i] * g_cur;
  }
 
