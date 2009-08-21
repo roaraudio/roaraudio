@@ -31,7 +31,7 @@
 int midi_init_config(void) {
  midi_config.init        = 1;
  midi_config.inited      = 0;
- midi_config.init_cb     = 1;
+ midi_config.init_cb     = 0;
  midi_config.console_dev = NULL;
 
  return 0;
