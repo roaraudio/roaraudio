@@ -31,6 +31,9 @@
 
 #define SSYNTH_STAGE_NONE            0
 #define SSYNTH_STAGE_UNUSED          SSYNTH_STAGE_NONE
+#define SSYNTH_STAGE_KEYSTROKE       1
+#define SSYNTH_STAGE_MIDSECTION      2
+#define SSYNTH_STAGE_KEYRELEASE      3
 
 #define SSYNTH_POLY_KEYDOWN          0
 #define SSYNTH_POLY_KEYUP            1
