@@ -100,6 +100,7 @@ void usage (void) {
 
  printf("\nMIDI Options:\n\n");
  printf(" --midi-no-console     - Disable console based MIDI synth\n"
+        " --midi-console-enable - Enables the console based MIDI synth\n"
         " --midi-console DEV    - Set device for MIDI console\n"
        );
 
@@ -889,8 +890,11 @@ int main (void) {
 
   } else if ( strcmp(k, "--midi-no-console") == 0 ) {
    midi_config.init_cb = 0;
+  } else if ( strcmp(k, "--midi-console-enable") == 0 ) {
+   midi_config.init_cb = 1;
   } else if ( strcmp(k, "--midi-console") == 0 ) {
    midi_config.console_dev = argv[++i];
+   midi_config.init_cb = 1;
 
   } else if ( strcmp(k, "-p") == 0 || strcmp(k, "--port") == 0 ) {
    // This is only usefull in INET not UNIX mode.
