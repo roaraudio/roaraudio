@@ -1075,11 +1075,19 @@ int streams_get_mixbuffers (void *** bufferlist, struct roar_audio_info * info, 
  static void * bufs[ROAR_STREAMS_MAX+1];
  int i;
  int have = 0;
+ int dir;
 
  for (i = 0; i < ROAR_STREAMS_MAX; i++) {
   if ( g_streams[i] != NULL ) {
-   if ( ROAR_STREAM(g_streams[i])->dir != ROAR_DIR_PLAY && ROAR_STREAM(g_streams[i])->dir != ROAR_DIR_BIDIR )
-    continue;
+   dir = streams_get_dir(i);
+
+   switch (dir) {
+    case ROAR_DIR_PLAY:
+    case ROAR_DIR_BIDIR:
+     break;
+    default:
+      continue;
+   }
 
    if ( streams_get_outputbuffer(i, &bufs[have], ROAR_OUTPUT_CALC_OUTBUFSIZE(info)) == -1 ) {
     ROAR_ERR("streams_get_mixbuffer(*): Can not alloc output buffer for stream %i, BAD!", i);
