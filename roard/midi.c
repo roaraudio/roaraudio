@@ -415,7 +415,22 @@ int midi_conv_mes2midi (int id) {
 #undef _nb
 
 int midi_conv_mes2ssynth(void) {
- return -1;
+ struct roar_buffer        * buf = g_midi_mess.buf;
+ struct midi_message       * mes = NULL;
+
+ while (buf != NULL) {
+  if ( roar_buffer_get_data(buf, (void**)&mes) == -1 ) {
+   return -1;
+  }
+
+  if ( ssynth_eval_message(mes) == -1 )
+   return -1;
+
+  if ( roar_buffer_get_next(buf, &buf) == -1 )
+   buf = NULL;
+ }
+
+ return 0;
 }
 
 int midi_new_bufmes    (struct roar_buffer ** buf, struct midi_message ** mes) {
