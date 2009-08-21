@@ -756,7 +756,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.194 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.195 $ of RoarAudio
  */
 
 EOF
@@ -1399,7 +1399,7 @@ then
   if $CROSS_COMPILE
   then
    echo "$OSS_DEV (cross compile)"
-  elif [ -e "$TTY_DEV" ]
+  elif [ -e "$OSS_DEV" ]
   then
    echo "$OSS_DEV (forced by user)"
   else
