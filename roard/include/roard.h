@@ -1,7 +1,7 @@
 //roard.h:
 
 /*
- *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008
+ *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008, 2009
  *
  *  This file is part of roard a part of RoarAudio,
  *  a cross-platform sound system for both, home and professional use.
@@ -92,6 +92,7 @@
 #include "sample.h"
 #include "meta.h"
 #include "midi.h"
+#include "ssynth.h"
 #include "light.h"
 #include "raw.h"
 #include "lib.h"
