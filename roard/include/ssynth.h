@@ -60,6 +60,10 @@ int ssynth_init_config(void);
 int ssynth_init (void);
 int ssynth_free (void);
 
+int ssynth_note_new(struct roar_note_octave * note, char vv);
+int ssynth_note_free(int id);
+int ssynth_note_find(struct roar_note_octave * note);
+
 #endif
 
 //ll
