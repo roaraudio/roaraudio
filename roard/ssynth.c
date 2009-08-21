@@ -112,6 +112,21 @@ int ssynth_note_free(int id) {
 }
 
 int ssynth_note_find(struct roar_note_octave * note) {
+ struct roar_note_octave * cn;
+ int i;
+
+ for (i = 0; i < SSYNTH_NOTES_MAX; i++) {
+  if ( g_ssynth.notes[i].stage == SSYNTH_STAGE_UNUSED )
+   continue;
+
+  cn = &(g_ssynth.notes[i].note);
+
+  if ( !(note->note == cn->note && note->octave == cn->octave) )
+   continue;
+
+  return i;
+ }
+
  return -1;
 }
 
