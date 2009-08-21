@@ -67,6 +67,8 @@ int ssynth_note_new(struct roar_note_octave * note, char vv);
 int ssynth_note_free(int id);
 int ssynth_note_find(struct roar_note_octave * note);
 
+int ssynth_note_set_stage(int id, int stage);
+
 #endif
 
 //ll
