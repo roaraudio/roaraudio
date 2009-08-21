@@ -139,7 +139,30 @@ int ssynth_note_set_stage(int id, int stage) {
  return r;
 }
 
+int ssynth_note_on       (struct roar_note_octave * note, char vv) {
+ return -1;
+}
+
+int ssynth_note_off      (struct roar_note_octave * note, char vv) {
+ return -1;
+}
+
 int ssynth_eval_message (struct midi_message * mes) {
+ if ( !ssynth_conf.enable )
+  return -1;
+
+ switch (mes->type) {
+  case MIDI_TYPE_NOTE_OFF:
+    return ssynth_note_off(&(mes->d.note), mes->vv);
+   break;
+  case MIDI_TYPE_NOTE_ON:
+    return ssynth_note_off(&(mes->d.note), mes->vv);
+   break;
+  default:
+    /* ignore all other events at the moment */
+    return 0;
+ }
+
  return -1;
 }
 
