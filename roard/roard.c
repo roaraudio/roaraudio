@@ -102,6 +102,8 @@ void usage (void) {
  printf(" --midi-no-console     - Disable console based MIDI synth\n"
         " --midi-console-enable - Enables the console based MIDI synth\n"
         " --midi-console DEV    - Set device for MIDI console\n"
+        " --ssynth-enable       - Enable simple software synth\n"
+        " --ssynth-disable      - Disable simple software synth\n"
        );
 
  printf("\nLight Control Options:\n\n");
@@ -697,6 +699,11 @@ int main (void) {
   return 1;
  }
 
+ if ( ssynth_init_config() == -1 ) {
+  ROAR_ERR("Can not init ssynth config!");
+  return 1;
+ }
+
 #ifdef ROAR_SUPPORT_LISTEN
 #ifdef ROAR_HAVE_GETUID
  if ( getuid() != 0 && getenv("HOME") != NULL ) {
@@ -896,6 +903,11 @@ int main (void) {
    midi_config.console_dev = argv[++i];
    midi_config.init_cb = 1;
 
+  } else if ( strcmp(k, "--ssynth-enable") == 0 ) {
+   ssynth_conf.enable = 1;
+  } else if ( strcmp(k, "--ssynth-disable") == 0 ) {
+   ssynth_conf.enable = 0;
+
   } else if ( strcmp(k, "-p") == 0 || strcmp(k, "--port") == 0 ) {
    // This is only usefull in INET not UNIX mode.
 #ifdef ROAR_SUPPORT_LISTEN
@@ -1026,6 +1038,10 @@ int main (void) {
 
  if ( midi_init() == -1 ) {
   ROAR_ERR("Can not initialize MIDI subsystem");
+ }
+
+ if ( ssynth_init() == -1 ) {
+  ROAR_ERR("Can not initialize ssynth subsystem");
  }
 
  if ( light_init(light_channels) == -1 ) {
@@ -1281,6 +1297,7 @@ void clean_quit_prep (void) {
  sources_free();
  streams_free();
  clients_free();
+ ssynth_free();
  midi_cb_stop(); // stop console beep
  midi_free();
  light_free();
