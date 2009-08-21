@@ -69,6 +69,8 @@ int ssynth_note_find(struct roar_note_octave * note);
 
 int ssynth_note_set_stage(int id, int stage);
 
+int ssynth_eval_message (struct midi_message * mes);
+
 #endif
 
 //ll

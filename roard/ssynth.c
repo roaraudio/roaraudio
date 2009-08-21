@@ -139,4 +139,8 @@ int ssynth_note_set_stage(int id, int stage) {
  return r;
 }
 
+int ssynth_eval_message (struct midi_message * mes) {
+ return -1;
+}
+
 //ll
