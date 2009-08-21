@@ -24,4 +24,24 @@
 
 #include "roard.h"
 
+int ssynth_init_config(void) {
+ memset(&ssynth_conf, 0, sizeof(ssynth_conf));
+
+ return 0;
+}
+
+int ssynth_init (void) {
+ if ( !ssynth_conf.enable )
+  return 0;
+
+ return -1;
+}
+
+int ssynth_free (void) {
+ if ( !ssynth_conf.enable )
+  return 0;
+
+ return -1;
+}
+
 //ll
