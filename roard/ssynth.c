@@ -89,4 +89,54 @@ int ssynth_free (void) {
  return streams_delete(g_ssynth.stream);
 }
 
+int ssynth_note_new(struct roar_note_octave * note, char vv) {
+ int i;
+
+ for (i = 0; i < SSYNTH_NOTES_MAX; i++) {
+  if ( g_ssynth.notes[i].stage == SSYNTH_STAGE_UNUSED ) {
+   // TODO: do some error checking here
+   g_ssynth.notes[i].vv_down = vv;
+   memcpy(&(g_ssynth.notes[i].note), note, sizeof(struct roar_note_octave));
+   roar_synth_init(&(g_ssynth.notes[i].synth), &(g_ssynth.notes[i].note), g_sa->rate);
+   ssynth_note_set_stage(i, SSYNTH_STAGE_KEYSTROKE);
+   return i;
+  }
+ }
+
+ return -1;
+}
+
+int ssynth_note_free(int id) {
+ g_ssynth.notes[id].stage = SSYNTH_STAGE_UNUSED;
+ return 0;
+}
+
+int ssynth_note_find(struct roar_note_octave * note) {
+ return -1;
+}
+
+int ssynth_note_set_stage(int id, int stage) {
+ int r = -1;
+
+ switch (stage) {
+  case SSYNTH_STAGE_UNUSED:
+    r = ssynth_note_free(id);
+   break;
+  case SSYNTH_STAGE_KEYSTROKE:
+    r = roar_fader_init(&(g_ssynth.notes[id].fader), ssynth_polys[SSYNTH_POLY_KEYDOWN], SSYNTH_POLY_COEFF);
+   break;
+  case SSYNTH_STAGE_MIDSECTION:
+    r = 0;
+   break;
+  case SSYNTH_STAGE_KEYRELEASE:
+    r = roar_fader_init(&(g_ssynth.notes[id].fader), ssynth_polys[SSYNTH_POLY_KEYUP], SSYNTH_POLY_COEFF);
+   break;
+ }
+
+ if ( r == 0 )
+  g_ssynth.notes[id].stage = stage;
+
+ return r;
+}
+
 //ll
