@@ -1085,6 +1085,10 @@ int streams_get_mixbuffers (void *** bufferlist, struct roar_audio_info * info, 
     case ROAR_DIR_PLAY:
     case ROAR_DIR_BIDIR:
      break;
+    case ROAR_DIR_BRIDGE:
+      if ( g_streams[i]->buffer == NULL )
+       continue;
+     break;
     default:
       continue;
    }
