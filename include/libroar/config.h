@@ -37,6 +37,10 @@
 
 #include "libroar.h"
 
+// WorkAroundS:
+#define ROAR_LIBROAR_CONFIG_WAS_NONE        0x00
+#define ROAR_LIBROAR_CONFIG_WAS_USE_EXECED  0x01
+
 struct roar_libroar_config {
  struct {
   int workarounds;
