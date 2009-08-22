@@ -52,10 +52,10 @@ struct {
  struct {
   int stage;
   char vv_down, vv_up;
-  struct roar_note_octave note;
-  struct roar_synth_state synth;
-  struct roar_fader_state fader;
-  struct roar_buffer      buf;
+  struct roar_note_octave   note;
+  struct roar_synth_state   synth;
+  struct roar_fader_state   fader;
+  struct roar_buffer      * buf;
  } notes[SSYNTH_NOTES_MAX];
 } g_ssynth;
 

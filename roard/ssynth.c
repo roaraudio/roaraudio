@@ -83,13 +83,61 @@ int ssynth_init (void) {
 }
 
 int ssynth_free (void) {
+ int i;
+
  if ( !ssynth_conf.enable )
   return 0;
+
+ for (i = 0; i < SSYNTH_NOTES_MAX; i++) {
+  if ( g_ssynth.notes[i].buf != NULL ) {
+   roar_buffer_free(g_ssynth.notes[i].buf);
+   g_ssynth.notes[i].buf = NULL;
+  }
+ }
 
  return streams_delete(g_ssynth.stream);
 }
 
 int ssynth_update (void) {
+ struct roar_stream_server * ss;
+ struct roar_stream        *  s;
+ struct roar_buffer        * buf;
+ size_t buflen;
+ size_t needlen;
+ int i;
+
+ if ( !ssynth_conf.enable )
+  return 0;
+
+ if ( streams_get(g_ssynth.stream, &ss) == -1 ) {
+  return -1;
+ }
+
+ s = ROAR_STREAM(ss);
+
+ needlen = ROAR_OUTPUT_CALC_OUTBUFSIZE(&(s->info));
+
+ for (i = 0; i < SSYNTH_NOTES_MAX; i++) {
+  if ( g_ssynth.notes[i].stage != SSYNTH_STAGE_UNUSED ) {
+   if ( g_ssynth.notes[i].buf == NULL ) {
+    if ( roar_buffer_new(&buf, needlen) == -1 )
+     continue;
+
+    g_ssynth.notes[i].buf = buf;
+   } else {
+    buf = g_ssynth.notes[i].buf;
+
+    if ( roar_buffer_get_len(buf, &buflen) == -1 )
+     continue;
+
+    if ( buflen < needlen ) {
+     if ( roar_buffer_set_len(buf, needlen) == -1 )
+      continue;
+    }
+   }
+  }
+ }
+
  return -1;
 }
 
