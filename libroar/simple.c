@@ -126,6 +126,7 @@ int roar_simple_new_stream (struct roar_connection * con, int rate, int channels
 }
 
 int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream * s, int rate, int channels, int bits, int codec, int dir) {
+ struct roar_libroar_config * config = roar_libroar_get_config();
  char file[80] = {0};
  int fh = -1, listen = -1;
  static int count = 0;
@@ -149,6 +150,12 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
 #ifdef ROAR_HAVE_UNIX
  int socks[2]; // for socketpair()
 #endif
+
+ if ( config != NULL ) {
+  if ( config->workaround.workarounds & ROAR_LIBROAR_CONFIG_WAS_USE_EXECED ) {
+   return roar_simple_new_stream_attachexeced_obj(con, s, rate, channels, bits, codec, dir);
+  }
+ }
 
 #ifdef ROAR_HAVE_BSDSOCKETS
  if ( getsockname(roar_get_connection_fh(con), (struct sockaddr *)&socket_addr, &len) == -1 ) {
