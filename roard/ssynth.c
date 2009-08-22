@@ -113,6 +113,8 @@ int ssynth_update (void) {
  if ( !ssynth_conf.enable )
   return 0;
 
+ ROAR_DBG("ssynth_update(void) = ?");
+
  if ( streams_get(g_ssynth.stream, &ss) == -1 ) {
   return -1;
  }
@@ -123,8 +125,11 @@ int ssynth_update (void) {
 
  needlen = ROAR_OUTPUT_CALC_OUTBUFSIZE(&(s->info));
 
+ ROAR_DBG("ssynth_update(void): needlen=%lu", (unsigned long)needlen);
+
  for (i = 0; i < SSYNTH_NOTES_MAX; i++) {
   if ( g_ssynth.notes[i].stage != SSYNTH_STAGE_UNUSED ) {
+   ROAR_DBG("ssynth_update(void): used note slot: %i", i);
    if ( g_ssynth.notes[i].buf == NULL ) {
     if ( roar_buffer_new(&buf, needlen) == -1 )
      continue;
@@ -152,6 +157,8 @@ int ssynth_update (void) {
   }
  }
 
+ ROAR_DBG("ssynth_update(void): found streams: %i", curin);
+
  if ( curin > 0 ) {
   if ( roar_buffer_new(&outbuf, needlen) == -1 )
    return -1;
@@ -172,12 +179,15 @@ int ssynth_update (void) {
   }
  }
 
+ ROAR_DBG("ssynth_update(void) = 0");
  return 0;
 }
 
 
 int ssynth_note_new(struct roar_note_octave * note, char vv) {
  int i;
+
+ ROAR_DBG("ssynth_note_new(note=%p, vv=%i) = ?", note, vv);
 
  for (i = 0; i < SSYNTH_NOTES_MAX; i++) {
   if ( g_ssynth.notes[i].stage == SSYNTH_STAGE_UNUSED ) {
@@ -186,10 +196,12 @@ int ssynth_note_new(struct roar_note_octave * note, char vv) {
    memcpy(&(g_ssynth.notes[i].note), note, sizeof(struct roar_note_octave));
    roar_synth_init(&(g_ssynth.notes[i].synth), &(g_ssynth.notes[i].note), g_sa->rate);
    ssynth_note_set_stage(i, SSYNTH_STAGE_KEYSTROKE);
+   ROAR_DBG("ssynth_note_new(note=%p, vv=%i) = %i", note, vv, i);
    return i;
   }
  }
 
+ ROAR_DBG("ssynth_note_new(note=%p, vv=%i) = -1", note, vv);
  return -1;
 }
 
@@ -249,11 +261,14 @@ int ssynth_note_render   (int id, void * data) {
 }
 
 int ssynth_note_on       (struct roar_note_octave * note, char vv) {
+ ROAR_DBG("ssynth_note_on(note=%p, vv=%i) = ?", note, vv);
  return ssynth_note_new(note, vv);
 }
 
 int ssynth_note_off      (struct roar_note_octave * note, char vv) {
  int id;
+
+ ROAR_DBG("ssynth_note_off(note=%p, vv=%i) = ?", note, vv);
 
  if ( (id = ssynth_note_find(note)) == -1 )
   return -1;
@@ -267,18 +282,21 @@ int ssynth_eval_message (struct midi_message * mes) {
  if ( !ssynth_conf.enable )
   return -1;
 
+ ROAR_DBG("ssynth_eval_message(mes=%p) = ?", mes);
+
  switch (mes->type) {
   case MIDI_TYPE_NOTE_OFF:
     return ssynth_note_off(&(mes->d.note), mes->vv);
    break;
   case MIDI_TYPE_NOTE_ON:
-    return ssynth_note_off(&(mes->d.note), mes->vv);
+    return ssynth_note_on(&(mes->d.note), mes->vv);
    break;
   default:
     /* ignore all other events at the moment */
     return 0;
  }
 
+ ROAR_DBG("ssynth_eval_message(mes=%p) = -1", mes);
  return -1;
 }
 
