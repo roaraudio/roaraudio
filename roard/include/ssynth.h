@@ -72,6 +72,8 @@ int ssynth_note_find(struct roar_note_octave * note);
 
 int ssynth_note_set_stage(int id, int stage);
 
+int ssynth_note_render   (int id, void * data);
+
 int ssynth_note_on       (struct roar_note_octave * note, char vv);
 int ssynth_note_off      (struct roar_note_octave * note, char vv);
 

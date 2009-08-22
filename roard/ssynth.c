@@ -145,6 +145,9 @@ int ssynth_update (void) {
    if ( roar_buffer_get_data(buf, &(indbufs[curin])) == -1 )
     continue;
 
+   if ( ssynth_note_render(i, indbufs[curin]) == -1 )
+    continue;
+
    curin++;
   }
  }
@@ -236,6 +239,13 @@ int ssynth_note_set_stage(int id, int stage) {
   g_ssynth.notes[id].stage = stage;
 
  return r;
+}
+
+int ssynth_note_render   (int id, void * data) {
+ if ( g_sa->bits != 16 )
+  return -1;
+
+ return roar_synth_pcmout_i161(&(g_ssynth.notes[id].synth), data, ROAR_OUTPUT_BUFFER_SAMPLES);
 }
 
 int ssynth_note_on       (struct roar_note_octave * note, char vv) {
