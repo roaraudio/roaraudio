@@ -77,7 +77,7 @@ int ssynth_init (void) {
  s->info.channels = 1;
  s->info.codec    = ROAR_CODEC_DEFAULT;
 
- g_ssynth.stream = sid;
+ g_ssynth.stream  = sid;
 
  return 0;
 }
