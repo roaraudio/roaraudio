@@ -102,6 +102,10 @@ int ssynth_update (void) {
  struct roar_stream_server * ss;
  struct roar_stream        *  s;
  struct roar_buffer        * buf;
+ struct roar_buffer        * outbuf;
+ void                      * outbufdata;
+ void                      * indbufs[SSYNTH_NOTES_MAX+1];
+ int                         curin = 0;
  size_t buflen;
  size_t needlen;
  int i;
@@ -112,6 +116,8 @@ int ssynth_update (void) {
  if ( streams_get(g_ssynth.stream, &ss) == -1 ) {
   return -1;
  }
+
+ memset(indbufs, 0, sizeof(indbufs));
 
  s = ROAR_STREAM(ss);
 
@@ -135,10 +141,35 @@ int ssynth_update (void) {
       continue;
     }
    }
+
+   if ( roar_buffer_get_data(buf, &(indbufs[curin])) == -1 )
+    continue;
+
+   curin++;
   }
  }
 
- return -1;
+ if ( curin > 0 ) {
+  if ( roar_buffer_new(&outbuf, needlen) == -1 )
+   return -1;
+
+  if ( roar_buffer_get_data(outbuf, &outbufdata) == -1 ) {
+   roar_buffer_free(outbuf);
+   return -1;
+  }
+
+  if ( mix_clients(outbufdata, g_sa->bits, indbufs, ROAR_OUTPUT_BUFFER_SAMPLES) == -1 ) {
+   roar_buffer_free(outbuf);
+   return -1;
+  }
+
+  if ( stream_add_buffer(g_ssynth.stream, outbuf) == -1 ) {
+   roar_buffer_free(outbuf);
+   return -1;
+  }
+ }
+
+ return 0;
 }
 
 
