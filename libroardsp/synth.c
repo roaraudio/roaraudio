@@ -87,6 +87,9 @@ int roar_synth_pcmout_i161(struct roar_synth_state * state, int16_t * out, size_
  float t_step;
  float t_cur;
  float freq;
+#ifdef DEBUG
+ float cv0, cv1;
+#endif
  int i;
 
  _CHECK_PCMOUT();
@@ -95,13 +98,25 @@ int roar_synth_pcmout_i161(struct roar_synth_state * state, int16_t * out, size_
 
  ROAR_DBG("roar_synth_pcmout_i161(*): state->pcmoffset=%lu", (unsigned long)state->pcmoffset);
 
- t_cur  = t_step * (float)state->pcmoffset;
+ t_cur  = (float)state->pcmoffset/(float)state->rate;
 
  freq   = state->note->freq;
 
+ ROAR_DBG("roar_synth_pcmout_i161(*): t_cur=%f, freq=%f", t_cur, freq);
+
+#ifdef DEBUG
+ cv0 = 2.0*M_PI*freq*t_cur;
+#endif
  for (i = 0; i < frames; i++, t_cur += t_step) {
   out[i] = 32767.0*state->volume*state->func(2.0*M_PI*freq*t_cur, state);
  }
+#ifdef DEBUG
+ cv1 = 2.0*M_PI*freq*t_cur;
+#endif
+
+#ifdef DEBUG
+ ROAR_DBG("roar_synth_pcmout_i161(*): cv0=%f, cv1=%f, cv1-cv0=%f", cv0, cv1, cv1-cv0);
+#endif
 
  state->pcmoffset += frames;
 
