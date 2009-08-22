@@ -89,6 +89,11 @@ int ssynth_free (void) {
  return streams_delete(g_ssynth.stream);
 }
 
+int ssynth_update (void) {
+ return -1;
+}
+
+
 int ssynth_note_new(struct roar_note_octave * note, char vv) {
  int i;
 

@@ -55,6 +55,7 @@ struct {
   struct roar_note_octave note;
   struct roar_synth_state synth;
   struct roar_fader_state fader;
+  struct roar_buffer      buf;
  } notes[SSYNTH_NOTES_MAX];
 } g_ssynth;
 
@@ -62,6 +63,8 @@ int ssynth_init_config(void);
 
 int ssynth_init (void);
 int ssynth_free (void);
+
+int ssynth_update (void);
 
 int ssynth_note_new(struct roar_note_octave * note, char vv);
 int ssynth_note_free(int id);
