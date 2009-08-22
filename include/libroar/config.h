@@ -37,6 +37,15 @@
 
 #include "libroar.h"
 
+struct roar_libroar_config {
+ struct {
+  int workarounds;
+ } workaround;
+};
+
+struct roar_libroar_config * roar_libroar_get_config_ptr(void);
+struct roar_libroar_config * roar_libroar_get_config(void);
+
 #endif
 
 //ll

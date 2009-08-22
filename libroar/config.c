@@ -34,4 +34,28 @@
 
 #include "libroar.h"
 
+struct roar_libroar_config * roar_libroar_get_config_ptr(void) {
+ static struct roar_libroar_config config;
+ static int inited = 0;
+
+ if ( !inited ) {
+  memset(&config, 0, sizeof(config));
+  inited++;
+ }
+
+ return &config;
+}
+
+struct roar_libroar_config * roar_libroar_get_config(void) {
+ struct roar_libroar_config * config = roar_libroar_get_config_ptr();
+ static int inited = 0;
+
+ if ( !inited ) {
+  inited++;
+ }
+
+ return config;
+}
+
+
 //ll
