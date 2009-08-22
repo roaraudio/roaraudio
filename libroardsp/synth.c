@@ -93,7 +93,9 @@ int roar_synth_pcmout_i161(struct roar_synth_state * state, int16_t * out, size_
 
  t_step = 1.0/state->rate;
 
- t_cur  = t_step * state->pcmoffset;
+ ROAR_DBG("roar_synth_pcmout_i161(*): state->pcmoffset=%lu", (unsigned long)state->pcmoffset);
+
+ t_cur  = t_step * (float)state->pcmoffset;
 
  freq   = state->note->freq;
 
@@ -102,6 +104,8 @@ int roar_synth_pcmout_i161(struct roar_synth_state * state, int16_t * out, size_
  }
 
  state->pcmoffset += frames;
+
+ ROAR_DBG("roar_synth_pcmout_i161(*): state->pcmoffset=%lu", (unsigned long)state->pcmoffset);
 
  return 0;
 }
