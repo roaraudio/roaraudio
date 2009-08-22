@@ -196,6 +196,7 @@ int ssynth_note_new(struct roar_note_octave * note, char vv) {
    memcpy(&(g_ssynth.notes[i].note), note, sizeof(struct roar_note_octave));
    roar_synth_init(&(g_ssynth.notes[i].synth), &(g_ssynth.notes[i].note), g_sa->rate);
    roar_synth_set_volume(&(g_ssynth.notes[i].synth), 0.25);
+   roar_synth_set_func(&(g_ssynth.notes[i].synth), ROAR_SYNTH_SYNF_TRAP);
    ssynth_note_set_stage(i, SSYNTH_STAGE_KEYSTROKE);
    ROAR_DBG("ssynth_note_new(note=%p, vv=%i) = %i", note, vv, i);
    return i;
