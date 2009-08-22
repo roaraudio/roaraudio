@@ -84,6 +84,7 @@
 #endif
 
 #include "error.h"
+#include "config.h"
 #include "stack.h"
 #include "buffer.h"
 #include "vio_ctl.h"
