@@ -85,6 +85,7 @@ void usage (void) {
  printf(" -oN                   - Adds another output\n");
  printf(" -oP                   - Mark output as primary\n");
 
+#ifndef ROAR_WITHOUT_DCOMP_SOURCES
  printf("\nSource Options:\n\n");
  printf(" -s  --source DRV      - Use DRV as input driver\n"
         " -S           DEV      - Use DEV as input device\n"
@@ -93,6 +94,7 @@ void usage (void) {
         " -sP                   - Make souce as primary\n"
        );
  printf(" --list-sources        - List all sources\n");
+#endif
 
  printf("\nCodec Filter Options:\n\n");
  printf(" --list-cf             - List all codec filter\n"
@@ -731,6 +733,7 @@ int main (void) {
   return 1;
  }
 
+#ifndef ROAR_WITHOUT_DCOMP_SOURCES
  if ( sources_init() == -1 ) {
   ROAR_ERR("Can not init sources!");
   return 1;
@@ -740,6 +743,7 @@ int main (void) {
   ROAR_ERR("Can not init set source client!");
   return 1;
  }
+#endif
 
 #ifdef ROAR_HAVE_MAIN_ARGS
  for (i = 1; i < argc; i++) {
@@ -872,25 +876,53 @@ int main (void) {
    o_prim = 0;
 
   } else if ( strcmp(k, "-s") == 0 || strcmp(k, "--source") == 0 ) {
+#ifndef ROAR_WITHOUT_DCOMP_SOURCES
    s_drv = argv[++i];
+#else
+   ROAR_ERR("main(*): No support for sources compiled in");
+#endif
   } else if ( strcmp(k, "-S") == 0 ) {
+#ifndef ROAR_WITHOUT_DCOMP_SOURCES
    s_dev = argv[++i];
+#else
+   ROAR_ERR("main(*): No support for sources compiled in");
+#endif
   } else if ( strcmp(k, "-sO") == 0 ) {
+#ifndef ROAR_WITHOUT_DCOMP_SOURCES
    s_opt = argv[++i];
+#else
+   ROAR_ERR("main(*): No support for sources compiled in");
+#endif
   } else if ( strcmp(k, "-sC") == 0 ) {
+#ifndef ROAR_WITHOUT_DCOMP_SOURCES
    s_con = argv[++i];
+#else
+   ROAR_ERR("main(*): No support for sources compiled in");
+#endif
   } else if ( strcmp(k, "-sP") == 0 ) {
+#ifndef ROAR_WITHOUT_DCOMP_SOURCES
    s_prim = 1;
+#else
+   ROAR_ERR("main(*): No support for sources compiled in");
+#endif
   } else if ( strcmp(k, "-sN") == 0 ) {
+#ifndef ROAR_WITHOUT_DCOMP_SOURCES
    if ( sources_add(s_drv, s_dev, s_con, s_opt, s_prim) == -1 ) {
     ROAR_ERR("main(*): adding source '%s' via '%s' failed!", s_dev, s_drv);
    }
    s_opt = s_dev = s_con = NULL;
    s_drv = "cf";
    s_prim = 0;
+#else
+   ROAR_ERR("main(*): No support for sources compiled in");
+#endif
   } else if ( strcmp(k, "--list-sources") == 0 ) {
+#ifndef ROAR_WITHOUT_DCOMP_SOURCES
    print_sourcelist();
    return 0;
+#else
+   ROAR_ERR("main(*): No support for sources compiled in");
+#endif
 
   } else if ( strcmp(k, "--light-channels") == 0 ) {
    light_channels = atoi(argv[++i]);
@@ -1026,11 +1058,13 @@ int main (void) {
  }
 #endif
 
+#ifndef ROAR_WITHOUT_DCOMP_SOURCES
  if ( s_dev != NULL ) {
   if ( sources_add(s_drv, s_dev, s_con, s_opt, s_prim) == -1 ) {
    ROAR_ERR("main(*): adding source '%s' via '%s' failed!", s_dev, s_drv);
   }
  }
+#endif
 
  add_output(o_drv, o_dev, o_opts, o_prim, o_count);
 
@@ -1294,7 +1328,9 @@ void cleanup_listen_socket (int terminate) {
 void clean_quit_prep (void) {
  cleanup_listen_socket(0);
 
+#ifndef ROAR_WITHOUT_DCOMP_SOURCES
  sources_free();
+#endif
  streams_free();
  clients_free();
  ssynth_free();

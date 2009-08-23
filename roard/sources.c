@@ -24,6 +24,8 @@
 
 #include "roard.h"
 
+#ifndef ROAR_WITHOUT_DCOMP_SOURCES
+
 struct roar_source g_source[] = {
  {"raw",  "Raw source",                  "/some/file",     SRC_FLAG_FHSEC, ROAR_SUBSYS_WAVEFORM, NULL,  sources_add_raw},
 #ifdef ROAR_HAVE_IO_POSIX
@@ -438,5 +440,7 @@ int sources_add_cdriver (int stream   , char * device, int fh, char * driver) {
 
  return streams_set_fh(stream, -2);
 }
+
+#endif
 
 //ll
