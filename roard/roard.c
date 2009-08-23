@@ -489,7 +489,7 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
   streams_ctl(stream, ROAR_CODECFILTER_CTL_SET_Q|ROAR_STREAM_CTL_TYPE_FLOAT, &q);
  }
 
- client_stream_add(g_source_client, stream);
+ client_stream_add(g_self_client, stream);
 
  if ( prim ) {
   streams_mark_primary(stream);
