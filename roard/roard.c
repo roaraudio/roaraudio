@@ -623,11 +623,13 @@ int main (void) {
  int      port    = ROAR_DEFAULT_PORT;
 #endif
  int               drvid;
+#ifndef ROAR_WITHOUT_DCOMP_SOURCES
  char * s_drv     = "cf";
  char * s_dev     = NULL;
  char * s_con     = NULL;
  char * s_opt     = NULL;
  int    s_prim    = 0;
+#endif
  char * o_drv     = getenv("ROAR_DRIVER");
  char * o_dev     = getenv("ROAR_DEVICE");
  char * o_opts    = NULL;
