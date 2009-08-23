@@ -31,8 +31,11 @@
 int midi_init_config(void) {
  midi_config.init        = 1;
  midi_config.inited      = 0;
+
+#ifndef ROAR_WITHOUT_DCOMP_CB
  midi_config.init_cb     = 0;
  midi_config.console_dev = NULL;
+#endif
 
  return 0;
 }
@@ -42,11 +45,13 @@ int midi_init (void) {
  midi_config.inited = 0;
 
  if ( midi_config.init ) {
+#ifndef ROAR_WITHOUT_DCOMP_CB
   if ( midi_config.init_cb ) {
    if ( midi_cb_init() == -1 ) {
     ROAR_WARN("Can not initialize MIDI subsystem component CB");
    }
   }
+#endif
 
   if ( midi_clock_init() == -1 ) {
    ROAR_WARN("Can not initialize MIDI subsystem component clock");
@@ -65,8 +70,10 @@ int midi_free (void) {
  if ( midi_reinit() == -1 )
   return -1;
 
+#ifndef ROAR_WITHOUT_DCOMP_CB
  if ( midi_cb_free() == -1 )
   return -1;
+#endif
 
  return 0;
 }
@@ -78,7 +85,11 @@ int midi_update(void) {
 
  midi_conv_mes2ssynth();
 
+#ifndef ROAR_WITHOUT_DCOMP_CB
  return midi_cb_update();
+#else
+ return 0;
+#endif
 }
 
 int midi_reinit(void) {
@@ -593,6 +604,7 @@ int midi_clock_tick (void) {
 
 // CB:
 
+#ifndef ROAR_WITHOUT_DCOMP_CB
 int midi_cb_init (void) {
 #ifdef _HAVE_CONSOLE
  struct roar_stream * s;
@@ -789,6 +801,7 @@ int midi_cb_readbuf(void) {
 
  return 0;
 }
+#endif
 
 // VIO:
 

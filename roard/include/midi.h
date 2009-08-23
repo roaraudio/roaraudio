@@ -32,8 +32,10 @@
 #include <linux/kd.h>
 #endif
 
+#ifndef ROAR_WITHOUT_DCOMP_CB
 #define MIDI_CB_NOOVERRIDE 0
 #define MIDI_CB_OVERRIDE   1
+#endif
 
 #define MIDI_RATE    31250
 
@@ -75,8 +77,11 @@
 struct {
  int init;
  int inited;
+
+#ifndef ROAR_WITHOUT_DCOMP_CB
  int init_cb;
  char * console_dev;
+#endif
 } midi_config;
 
 struct midi_message {
@@ -97,12 +102,14 @@ struct {
  struct roar_buffer * buf;
 } g_midi_mess;
 
+#ifndef ROAR_WITHOUT_DCOMP_CB
 struct {
  int      console;
  int      stream;
  uint32_t stoptime;
  int      playing;
 } g_midi_cb;
+#endif
 
 struct {
  int stream;
@@ -142,6 +149,7 @@ int midi_clock_set_bph (uint_least32_t bph);
 int midi_clock_tick (void);
 
 // cb = console beep
+#ifndef ROAR_WITHOUT_DCOMP_CB
 int midi_cb_init(void);
 int midi_cb_free(void);
 int midi_cb_play(float t, float freq, int override);
@@ -149,6 +157,7 @@ int midi_cb_update (void);
 int midi_cb_start(float freq);
 int midi_cb_stop (void);
 int midi_cb_readbuf(void);
+#endif
 
 // dummys:
 int     midi_vio_set_dummy(int stream);

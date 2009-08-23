@@ -930,12 +930,24 @@ int main (void) {
    light_channels = atoi(argv[++i]);
 
   } else if ( strcmp(k, "--midi-no-console") == 0 ) {
+#ifndef ROAR_WITHOUT_DCOMP_CB
    midi_config.init_cb = 0;
+#else
+   // no warning here as this is the disable option
+#endif
   } else if ( strcmp(k, "--midi-console-enable") == 0 ) {
+#ifndef ROAR_WITHOUT_DCOMP_CB
    midi_config.init_cb = 1;
+#else
+   ROAR_ERR("main(*): No support for MIDI subsystem part CB compiled in");
+#endif
   } else if ( strcmp(k, "--midi-console") == 0 ) {
+#ifndef ROAR_WITHOUT_DCOMP_CB
    midi_config.console_dev = argv[++i];
    midi_config.init_cb = 1;
+#else
+   ROAR_ERR("main(*): No support for MIDI subsystem part CB compiled in");
+#endif
 
   } else if ( strcmp(k, "--ssynth-enable") == 0 ) {
    ssynth_conf.enable = 1;
@@ -1336,7 +1348,9 @@ void clean_quit_prep (void) {
  streams_free();
  clients_free();
  ssynth_free();
+#ifndef ROAR_WITHOUT_DCOMP_CB
  midi_cb_stop(); // stop console beep
+#endif
  midi_free();
  light_free();
 
