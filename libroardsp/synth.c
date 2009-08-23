@@ -24,6 +24,10 @@
 
 #include "libroardsp.h"
 
+#if !defined(ROAR_HAVE_LIBM) && !defined(M_PI)
+#define M_PI 3.141592
+#endif
+
 #define _CHECK_BASIC() if ( state == NULL ) return -1
 #define _CHECK_PCMOUT() _CHECK_BASIC(); if ( frames == 0 ) return 0; if ( out == NULL ) return -1
 
@@ -168,10 +172,12 @@ float roar_synth_synf_trap (float t, struct roar_synth_state * state) {
  }
 }
 
+#ifdef ROAR_HAVE_LIBM
 float roar_synth_synf_s2s  (float t, struct roar_synth_state * state) {
  float sin2 = sinf(t/1.2);
 
  return sin2*sin2 * sin(t*1.2);
 }
+#endif
 
 //ll

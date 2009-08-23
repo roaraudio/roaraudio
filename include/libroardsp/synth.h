@@ -41,12 +41,16 @@
 #define ROAR_SYNTH_FUNC_CAST(name) ((ROAR_SYNTH_FUNC_TYPE()) name)
 
 // SYNF -> Synthesis Function
-#define ROAR_SYNTH_SYNF_SIN  ROAR_SYNTH_FUNC_CAST(sinf)
 #define ROAR_SYNTH_SYNF_RECT ROAR_SYNTH_FUNC_CAST(roar_synth_synf_rect)
 #define ROAR_SYNTH_SYNF_SAW  ROAR_SYNTH_FUNC_CAST(roar_synth_synf_saw)
 #define ROAR_SYNTH_SYNF_TRI  ROAR_SYNTH_FUNC_CAST(roar_synth_synf_tri)
 #define ROAR_SYNTH_SYNF_TRAP ROAR_SYNTH_FUNC_CAST(roar_synth_synf_trap)
+
+// those use sin*()
+#ifdef ROAR_HAVE_LIBM
+#define ROAR_SYNTH_SYNF_SIN  ROAR_SYNTH_FUNC_CAST(sinf)
 #define ROAR_SYNTH_SYNF_S2S  ROAR_SYNTH_FUNC_CAST(roar_synth_synf_s2s)
+#endif
 
 struct roar_synth_state {
  int rate;
@@ -69,7 +73,10 @@ float roar_synth_synf_rect (float t, struct roar_synth_state * state);
 float roar_synth_synf_saw  (float t, struct roar_synth_state * state);
 float roar_synth_synf_tri  (float t, struct roar_synth_state * state);
 float roar_synth_synf_trap (float t, struct roar_synth_state * state);
+
+#ifdef ROAR_HAVE_LIBM
 float roar_synth_synf_s2s  (float t, struct roar_synth_state * state);
+#endif
 
 #endif
 
