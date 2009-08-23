@@ -83,7 +83,9 @@ int midi_update(void) {
  if ( g_midi_clock.stream != -1 )
   midi_check_bridge(g_midi_clock.stream);
 
+#ifndef ROAR_WITHOUT_DCOMP_SSYNTH
  midi_conv_mes2ssynth();
+#endif
 
 #ifndef ROAR_WITHOUT_DCOMP_CB
  return midi_cb_update();
@@ -425,6 +427,7 @@ int midi_conv_mes2midi (int id) {
 }
 #undef _nb
 
+#ifndef ROAR_WITHOUT_DCOMP_SSYNTH
 int midi_conv_mes2ssynth(void) {
  struct roar_buffer        * buf = g_midi_mess.buf;
  struct midi_message       * mes = NULL;
@@ -443,6 +446,7 @@ int midi_conv_mes2ssynth(void) {
 
  return 0;
 }
+#endif
 
 int midi_new_bufmes    (struct roar_buffer ** buf, struct midi_message ** mes) {
  if ( buf == NULL || mes == NULL )

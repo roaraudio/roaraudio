@@ -27,6 +27,8 @@
 
 #include <roaraudio.h>
 
+#ifndef ROAR_WITHOUT_DCOMP_SSYNTH
+
 #define SSYNTH_NOTES_MAX            16
 
 #define SSYNTH_STAGE_NONE            0
@@ -78,6 +80,8 @@ int ssynth_note_on       (struct roar_note_octave * note, char vv);
 int ssynth_note_off      (struct roar_note_octave * note, char vv);
 
 int ssynth_eval_message (struct midi_message * mes);
+
+#endif
 
 #endif
 

@@ -24,6 +24,8 @@
 
 #include "roard.h"
 
+#ifndef ROAR_WITHOUT_DCOMP_SSYNTH
+
 float ssynth_polys[SSYNTH_POLY_POLYMAX][SSYNTH_POLY_COEFF] = {
        {0.300000,  0.958333, -0.550000,  0.091667},
        {0.700010, -0.083333, -0.150000,  0.033333}
@@ -301,5 +303,7 @@ int ssynth_eval_message (struct midi_message * mes) {
  ROAR_DBG("ssynth_eval_message(mes=%p) = -1", mes);
  return -1;
 }
+
+#endif
 
 //ll
