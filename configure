@@ -85,6 +85,8 @@ WITHOUT_CF=''
 
 WITHOUT_VIO=''
 
+WITHOUT_DCOMP=''
+
 HAVE_MAIN_ARGS=true
 
 MINIMAL=false
@@ -333,6 +335,9 @@ do
   '--without-vio-'*)
    WITHOUT_VIO="$WITHOUT_VIO"' '$(echo "$1" | cut -d- -f5)
   ;;
+  '--without-dcomp-'*)
+   WITHOUT_DCOMP="$WITHOUT_DCOMP"' '$(echo "$1" | cut -d- -f5)
+  ;;
   '--without-password-api')
    PASSWORD_API=false
   ;;
@@ -371,6 +376,7 @@ do
    META_DATA=false
    PASSWORD_API=false
    WITHOUT_VIO="$WITHOUT_VIO"' dstr cmd stdio'
+   WITHOUT_DCOMP="$WITHOUT_DCOMP"' sources ssynth cb'
   ;;
   '--prefix')
    PREFIX="$2"
@@ -422,6 +428,7 @@ do
    XMMS=false
    AUDACIOUS=false
    WITHOUT_VIO="$WITHOUT_VIO"' pipe cmd' # hope that with buffered pipes we can remove this soon
+   WITHOUT_DCOMP="$WITHOUT_DCOMP"' cb'
   ;;
  esac;
 
@@ -756,7 +763,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.195 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.196 $ of RoarAudio
  */
 
 EOF
@@ -822,6 +829,12 @@ EOF
  do
   i=$(echo $i | tr /a-z/ /A-Z/);
   echo '#define ROAR_WITHOUT_VIO_'$i
+ done
+
+ for i in $WITHOUT_DCOMP
+ do
+  i=$(echo $i | tr /a-z/ /A-Z/);
+  echo '#define ROAR_WITHOUT_DCOMP_'$i
  done
 
  echo
