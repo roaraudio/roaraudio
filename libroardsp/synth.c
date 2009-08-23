@@ -43,7 +43,7 @@ int roar_synth_init(struct roar_synth_state * state, struct roar_note_octave * n
  state->rate   = rate;
  state->volume = 1;
 
- state->func = ROAR_SYNTH_SYNF_SIN;
+ state->func = ROAR_SYNTH_SYNF_DEFAULT;
 
  return 0;
 }

@@ -52,6 +52,12 @@
 #define ROAR_SYNTH_SYNF_S2S  ROAR_SYNTH_FUNC_CAST(roar_synth_synf_s2s)
 #endif
 
+#ifdef ROAR_HAVE_LIBM
+#define ROAR_SYNTH_SYNF_DEFAULT ROAR_SYNTH_SYNF_SIN
+#else
+#define ROAR_SYNTH_SYNF_DEFAULT ROAR_SYNTH_SYNF_TRAP
+#endif
+
 struct roar_synth_state {
  int rate;
  struct roar_note_octave * note;
