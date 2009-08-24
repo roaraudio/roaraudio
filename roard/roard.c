@@ -110,10 +110,12 @@ void usage (void) {
 #endif
        );
 
+#ifndef ROAR_WITHOUT_DCOMP_LIGHT
  printf("\nLight Control Options:\n\n");
  printf(" --light-channels NUM  - Sets the number of channels for Light control (default: %i)\n",
                                   LIGHT_CHANNELS_DEFAULT
        );
+#endif
 
  printf("\nServer Options:\n\n");
  printf(" -t  --tcp             - Use TCP listen socket\n"
@@ -371,14 +373,20 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
   } else if ( strcmp(k, "subsystem") == 0 ) {
    if ( !strcasecmp(v, "wave") || !strcasecmp(v, "waveform") ) {
     dir = ROAR_DIR_OUTPUT;
+#ifndef ROAR_WITHOUT_DCOMP_MIDI
    } else if ( !strcasecmp(v, "midi") ) {
     dir = ROAR_DIR_MIDI_OUT;
+#endif
+#ifndef ROAR_WITHOUT_DCOMP_LIGHT
    } else if ( !strcasecmp(v, "light") ) {
     dir = ROAR_DIR_LIGHT_OUT;
+#endif
+#ifndef ROAR_WITHOUT_DCOMP_RAW
    } else if ( !strcasecmp(v, "raw") ) {
     dir = ROAR_DIR_RAW_OUT;
+#endif
    } else {
-    ROAR_ERR("add_output(*): unknown subsystem '%s'", k);
+    ROAR_ERR("add_output(*): unknown/unsupported subsystem '%s'", k);
     error++;
    }
   // DMX:
@@ -547,9 +555,14 @@ int register_slp (int unreg, char * sockname) {
   }
 
   snprintf(attr, sizeof(attr), "(wave-rate=%i),(wave-channels=%i),(wave-bits=%i),"
-                               "(light-channels=%i),(location=%s)",
+#ifndef ROAR_WITHOUT_DCOMP_LIGHT
+                               "(light-channels=%i),"
+#endif
+                               "(location=%s)",
            g_sa->rate, g_sa->channels, g_sa->bits,
+#ifndef ROAR_WITHOUT_DCOMP_LIGHT
            g_light_state.channels,
+#endif
            location
           );
 
@@ -637,7 +650,9 @@ int main (void) {
  char * o_opts    = NULL;
  int    o_prim    = 0;
  int    o_count   = 0;
+#ifndef ROAR_WITHOUT_DCOMP_LIGHT
  int    light_channels = LIGHT_CHANNELS_DEFAULT;
+#endif
  char * sock_grp  = ROAR_DEFAULT_SOCKGRP;
  char * sock_user = NULL;
 #ifdef ROAR_SUPPORT_LISTEN
@@ -931,7 +946,11 @@ int main (void) {
 #endif
 
   } else if ( strcmp(k, "--light-channels") == 0 ) {
+#ifndef ROAR_WITHOUT_DCOMP_LIGHT
    light_channels = atoi(argv[++i]);
+#else
+   ROAR_WARN("main(*): no light subsystem compiled in");
+#endif
 
   } else if ( strcmp(k, "--midi-no-console") == 0 ) {
 #ifndef ROAR_WITHOUT_DCOMP_CB
@@ -1106,9 +1125,11 @@ int main (void) {
  }
 #endif
 
+#ifndef ROAR_WITHOUT_DCOMP_LIGHT
  if ( light_init(light_channels) == -1 ) {
   ROAR_ERR("Can not initialize light control subsystem");
  }
+#endif
 
 #ifdef ROAR_SUPPORT_LISTEN
  if ( *server != 0 ) {
@@ -1368,7 +1389,9 @@ void clean_quit_prep (void) {
  midi_cb_stop(); // stop console beep
 #endif
  midi_free();
+#ifndef ROAR_WITHOUT_DCOMP_LIGHT
  light_free();
+#endif
 
 #ifdef SUPPORT_PIDFILE
  if ( pidfile != NULL )
