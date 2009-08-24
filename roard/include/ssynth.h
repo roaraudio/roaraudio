@@ -27,6 +27,11 @@
 
 #include <roaraudio.h>
 
+// we relay on the MIDI subsystem
+#if defined(ROAR_WITHOUT_DCOMP_MIDI) && !defined(ROAR_WITHOUT_DCOMP_SSYNTH)
+#define ROAR_WITHOUT_DCOMP_SSYNTH
+#endif
+
 #ifndef ROAR_WITHOUT_DCOMP_SSYNTH
 
 #define SSYNTH_NOTES_MAX            16
