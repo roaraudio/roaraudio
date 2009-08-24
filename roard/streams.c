@@ -1048,13 +1048,28 @@ int streams_check  (int id) {
 
  switch (s->dir) {
   case ROAR_DIR_LIGHT_IN:
+#ifndef ROAR_WITHOUT_DCOMP_LIGHT
     return light_check_stream(id);
+#else
+    streams_delete(id);
+    return -1;
+#endif
    break;
   case ROAR_DIR_MIDI_IN:
+#ifndef ROAR_WITHOUT_DCOMP_MIDI
     return midi_check_stream(id);
+#else
+    streams_delete(id);
+    return -1;
+#endif
    break;
   case ROAR_DIR_RAW_IN:
+#ifndef ROAR_WITHOUT_DCOMP_RAW
     return raw_check_stream(id);
+#else
+    streams_delete(id);
+    return -1;
+#endif
    break;
   case ROAR_DIR_PLAY:
   case ROAR_DIR_BIDIR:
@@ -1185,10 +1200,20 @@ int streams_send_mon   (int id) {
 
  switch (s->dir) {
   case ROAR_DIR_LIGHT_OUT:
+#ifndef ROAR_WITHOUT_DCOMP_LIGHT
     return light_send_stream(id);
+#else
+    streams_delete(id);
+    return -1;
+#endif
    break;
   case ROAR_DIR_MIDI_OUT:
+#ifndef ROAR_WITHOUT_DCOMP_MIDI
     return midi_send_stream(id);
+#else
+    streams_delete(id);
+    return -1;
+#endif
    break;
   case ROAR_DIR_OUTPUT:
     if ( g_standby )
