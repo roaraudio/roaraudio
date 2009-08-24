@@ -376,7 +376,7 @@ do
    META_DATA=false
    PASSWORD_API=false
    WITHOUT_VIO="$WITHOUT_VIO"' dstr cmd stdio'
-   WITHOUT_DCOMP="$WITHOUT_DCOMP"' sources ssynth cb'
+   WITHOUT_DCOMP="$WITHOUT_DCOMP"' sources ssynth cb midi light raw'
   ;;
   '--prefix')
    PREFIX="$2"
@@ -763,7 +763,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.196 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.197 $ of RoarAudio
  */
 
 EOF
