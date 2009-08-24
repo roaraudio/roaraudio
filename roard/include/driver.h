@@ -124,7 +124,9 @@ int driver_flush(DRIVER_USERDATA_T   inst, int driver);
 int driver_set_volume(int stream, struct roar_mixer_settings * mixer);
 
 // opening a cdriver
+#ifndef ROAR_WITHOUT_DCOMP_CDRIVER
 int driver_cdriver_open(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh, struct roar_stream_server * sstream);
+#endif
 
 #endif
 

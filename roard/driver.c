@@ -69,8 +69,10 @@ struct roar_driver g_driver[] = {
  {"sysclock", "System Clock Clock Source", "(none)", DRV_FLAG_NONE, ROAR_SUBSYS_WAVEFORM,
   NULL, NULL, driver_sysclock_open_vio},
 #endif
+#ifndef ROAR_WITHOUT_DCOMP_CDRIVER
  {"cdriver", "RoarAudio Client driver", "driver#device", DRV_FLAG_NONE, ROAR_SUBSYS_WAVEFORM,
   NULL, NULL, driver_cdriver_open},
+#endif
  {NULL, NULL, NULL, DRV_FLAG_NONE, 0, NULL, NULL, NULL} // end of list
                                 };
 
@@ -248,6 +250,7 @@ int driver_set_volume(int stream, struct roar_mixer_settings * mixer) {
 }
 
 
+#ifndef ROAR_WITHOUT_DCOMP_CDRIVER
 int driver_cdriver_open(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh, struct roar_stream_server * sstream) {
  char * driver;
  char * delm;
@@ -278,5 +281,6 @@ int driver_cdriver_open(struct roar_vio_calls * inst, char * device, struct roar
 
  return ret;
 }
+#endif
 
 //ll

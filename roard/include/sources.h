@@ -62,7 +62,9 @@ int sources_add_wav  (char * driver, char * device, char * container, char * opt
 int sources_add_cf   (char * driver, char * device, char * container, char * options, int primary);
 int sources_add_roar (char * driver, char * device, char * container, char * options, int primary);
 
+#ifndef ROAR_WITHOUT_DCOMP_CDRIVER
 int sources_add_cdriver (int stream   , char * device, int fh, char * driver);
+#endif
 #endif
 
 #endif
