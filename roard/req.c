@@ -123,24 +123,35 @@ int req_on_new_stream  (int client, struct roar_message * mes, char * data) {
  switch (ROAR_STREAM(s)->dir) {
   case ROAR_DIR_LIGHT_IN:
   case ROAR_DIR_LIGHT_OUT:
+#ifndef ROAR_WITHOUT_DCOMP_LIGHT
     info = &(ROAR_STREAM(s)->info);
 
     info->channels = 0;
     info->bits     = 0;
     info->rate     = 0;
+#else
+    streams_delete(stream);
+    return -1;
+#endif
 
    break;
   case ROAR_DIR_MIDI_IN:
   case ROAR_DIR_MIDI_OUT:
+#ifndef ROAR_WITHOUT_DCOMP_MIDI
     info = &(ROAR_STREAM(s)->info);
 
     info->channels = ROAR_MIDI_CHANNELS_DEFAULT;
     info->bits     = ROAR_MIDI_BITS;
     info->rate     = 0;
+#else
+    streams_delete(stream);
+    return -1;
+#endif
 
    break;
 
   case ROAR_DIR_RAW_IN:
+#ifndef ROAR_WITHOUT_DCOMP_RAW
     if ( ROAR_STREAM(s)->pos_rel_id == -1     ||
          ROAR_STREAM(s)->pos_rel_id == stream ||
          streams_get_dir(ROAR_STREAM(s)->pos_rel_id) != ROAR_DIR_RAW_OUT
@@ -150,6 +161,11 @@ int req_on_new_stream  (int client, struct roar_message * mes, char * data) {
      streams_delete(stream);
      return -1;
     }
+#else
+  case ROAR_DIR_RAW_OUT:
+    streams_delete(stream);
+    return -1;
+#endif
 
    break;
   case ROAR_DIR_THRU:
