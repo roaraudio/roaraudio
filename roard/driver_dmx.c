@@ -24,6 +24,8 @@
 
 #include "roard.h"
 
+#ifndef ROAR_WITHOUT_DCOMP_DMX
+
 int driver_dmx_open_vio  (struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh, struct roar_stream_server * sstream) {
 
  if ( fh == -1 ) {
@@ -80,5 +82,7 @@ int driver_dmx_ctl(struct roar_vio_calls * vio, int cmd, void * data) {
 
  return 0;
 }
+
+#endif
 
 //ll
