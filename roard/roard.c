@@ -947,6 +947,7 @@ int main (void) {
    return 0;
 #else
    ROAR_ERR("main(*): No support for sources compiled in");
+   return 1;
 #endif
 
   } else if ( strcmp(k, "--light-channels") == 0 ) {
