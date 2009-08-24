@@ -48,7 +48,7 @@ int roar_conv_bits_16to24 (void * out, void * in, int samples);
 int roar_conv_bits_16to32 (void * out, void * in, int samples);  // yes
 int roar_conv_bits_24to8  (void * out, void * in, int samples);
 int roar_conv_bits_24to16 (void * out, void * in, int samples);
-int roar_conv_bits_24to32 (void * out, void * in, int samples);
+int roar_conv_bits_24to32 (void * out, void * in, int samples);  // yes
 int roar_conv_bits_32to8  (void * out, void * in, int samples);  // yes
 int roar_conv_bits_32to16 (void * out, void * in, int samples);  // yes
 int roar_conv_bits_32to24 (void * out, void * in, int samples);

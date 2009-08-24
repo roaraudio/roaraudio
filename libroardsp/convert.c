@@ -53,6 +53,7 @@ int roar_conv_bits (void * out, void * in, int samples, int from, int to) {
   case 0x14: return roar_conv_bits_8to32( out, in, samples);
   case 0x21: return roar_conv_bits_16to8( out, in, samples);
   case 0x24: return roar_conv_bits_16to32(out, in, samples);
+  case 0x34: return roar_conv_bits_24to32(out, in, samples);
   case 0x41: return roar_conv_bits_32to8( out, in, samples);
   case 0x42: return roar_conv_bits_32to16(out, in, samples);
   default:
@@ -106,6 +107,45 @@ int roar_conv_bits_16to32 (void * out, void * in, int samples) {
  for (i = samples - 1; i >= 0; i--)
   op[i] = (int32_t) ip[i] << 16;
 
+ return 0;
+}
+
+int roar_conv_bits_24to32 (void * out, void * in, int samples) {
+ uint8_t * ip = (uint8_t*)in;
+ int32_t * op = (int32_t*)out;
+ int i;
+ union {
+  int32_t i;
+  uint8_t c[4];
+ } t;
+
+ ROAR_DBG("roar_conv_bits_24to32(out=%p, in=%p, samples=%i) = ?", out, in, samples);
+
+#if (BYTE_ORDER == BIG_ENDIAN) || (BYTE_ORDER == LITTLE_ENDIAN)
+ t.i = 0;
+#else
+  ROAR_DBG("roar_conv_bits_24to32(out=%p, in=%p, samples=%i) = -1", out, in, samples);
+  return -1;
+#endif
+
+ samples--;
+ ip += 3 * samples;
+
+ for (i = samples; i >= 0; i--) {
+#if BYTE_ORDER == BIG_ENDIAN
+  t.c[0] = *(ip--);
+  t.c[1] = *(ip--);
+  t.c[2] = *(ip--);
+#elif BYTE_ORDER == LITTLE_ENDIAN
+  t.c[2] = *(ip--);
+  t.c[3] = *(ip--);
+  t.c[1] = *(ip--);
+#endif
+  ROAR_DBG("roar_conv_bits_24to32(*): i=%i, t.i=0x%.8X", i, t.i);
+  op[i] = t.i;
+ }
+
+ ROAR_DBG("roar_conv_bits_24to32(out=%p, in=%p, samples=%i) = 0", out, in, samples);
  return 0;
 }
 
