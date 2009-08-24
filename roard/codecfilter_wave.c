@@ -24,6 +24,8 @@
 
 #include "roard.h"
 
+#ifndef ROAR_WITHOUT_CF_WAVE
+
 int cf_wave_open(CODECFILTER_USERDATA_T * inst, int codec,
                                             struct roar_stream_server * info,
                                             struct roar_codecfilter   * filter) {
@@ -147,5 +149,7 @@ int cf_wave_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
 
  return -1;
 }
+
+#endif
 
 //ll

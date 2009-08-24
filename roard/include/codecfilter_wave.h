@@ -27,6 +27,8 @@
 
 #include <roaraudio.h>
 
+#ifndef ROAR_WITHOUT_CF_WAVE
+
 struct codecfilter_wave_inst {
  struct roar_stream_server * stream;
  int opened;
@@ -41,6 +43,8 @@ int cf_wave_close(CODECFILTER_USERDATA_T   inst);
 
 int cf_wave_read(CODECFILTER_USERDATA_T   inst, char * buf, int len);
 int cf_wave_write(CODECFILTER_USERDATA_T   inst, char * buf, int len);
+
+#endif
 
 #endif
 
