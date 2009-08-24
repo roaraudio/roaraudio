@@ -114,7 +114,9 @@ int main_loop (int driver, DRIVER_USERDATA_T driver_inst, struct roar_audio_info
 #ifndef ROAR_WITHOUT_DCOMP_SSYNTH
   ssynth_update();
 #endif
+#ifndef ROAR_WITHOUT_DCOMP_LIGHT
   light_reinit();
+#endif
 
 //  output_buffer_reinit();
 

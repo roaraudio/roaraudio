@@ -27,6 +27,8 @@
 
 #include <roaraudio.h>
 
+#ifndef ROAR_WITHOUT_DCOMP_LIGHT
+
 #define LIGHT_CHANNELS_DEFAULT 512 /* one DMX Universe */
 
 struct {
@@ -44,6 +46,8 @@ int light_reinit(void);
 
 int light_check_stream  (int id);
 int light_send_stream   (int id);
+
+#endif
 
 #endif
 

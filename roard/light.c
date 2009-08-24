@@ -24,6 +24,8 @@
 
 #include "roard.h"
 
+#ifndef ROAR_WITHOUT_DCOMP_LIGHT
+
 int light_init  (unsigned int channels) {
 
  g_light_state.channels = 0;
@@ -224,5 +226,7 @@ int light_send_stream   (int id) {
 
  return 0;
 }
+
+#endif
 
 //ll
