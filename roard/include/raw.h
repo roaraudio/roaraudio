@@ -27,9 +27,13 @@
 
 #include <roaraudio.h>
 
+#ifndef ROAR_WITHOUT_DCOMP_RAW
+
 #define RAW_READ_LEN  1024
 
 int raw_check_stream  (int id);
+
+#endif
 
 #endif
 

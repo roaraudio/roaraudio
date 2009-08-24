@@ -24,6 +24,8 @@
 
 #include "roard.h"
 
+#ifndef ROAR_WITHOUT_DCOMP_RAW
+
 int raw_check_stream  (int id) {
  struct roar_stream        *    s;
  struct roar_stream_server *   ss;
@@ -65,5 +67,7 @@ int raw_check_stream  (int id) {
 
  return 0;
 }
+
+#endif
 
 //ll
