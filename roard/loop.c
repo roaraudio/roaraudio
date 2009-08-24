@@ -73,8 +73,10 @@ int main_loop (int driver, DRIVER_USERDATA_T driver_inst, struct roar_audio_info
    term  = 1;
   }
 
+#ifndef ROAR_WITHOUT_DCOMP_MIDI
   ROAR_DBG("main_loop(*): updating midi subsystem...");
   midi_update();
+#endif
 
   ROAR_DBG("main_loop(*): mixing clients...");
   if ( g_standby ) {
@@ -110,7 +112,9 @@ int main_loop (int driver, DRIVER_USERDATA_T driver_inst, struct roar_audio_info
   }
 #endif
 
+#ifndef ROAR_WITHOUT_DCOMP_MIDI
   midi_reinit();
+#endif
 #ifndef ROAR_WITHOUT_DCOMP_SSYNTH
   ssynth_update();
 #endif

@@ -24,6 +24,8 @@
 
 #include "roard.h"
 
+#ifndef ROAR_WITHOUT_DCOMP_MIDI
+
 #if defined(ROAR_HAVE_IO_POSIX) && !defined(ROAR_TARGET_WIN32)
 #define _HAVE_CONSOLE
 #endif
@@ -829,5 +831,7 @@ int     midi_vio_set_dummy(int stream) {
 int     midi_vio_ok(struct roar_vio_calls * vio, ...) {
  return 0;
 }
+
+#endif
 
 //ll

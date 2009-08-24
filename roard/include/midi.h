@@ -27,6 +27,13 @@
 
 #include <roaraudio.h>
 
+// CB has MIDI as dep
+#if defined(ROAR_WITHOUT_DCOMP_MIDI) && !defined(ROAR_WITHOUT_DCOMP_CB)
+#define ROAR_WITHOUT_DCOMP_CB
+#endif
+
+#ifndef ROAR_WITHOUT_DCOMP_MIDI
+
 #ifndef ROAR_WITHOUT_DCOMP_CB
 #ifdef __linux__
 #include <sys/ioctl.h>
@@ -162,6 +169,8 @@ int midi_cb_readbuf(void);
 // dummys:
 int     midi_vio_set_dummy(int stream);
 int     midi_vio_ok(struct roar_vio_calls * vio, ...);
+
+#endif
 
 #endif
 

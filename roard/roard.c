@@ -100,6 +100,7 @@ void usage (void) {
  printf(" --list-cf             - List all codec filter\n"
        );
 
+#ifndef ROAR_WITHOUT_DCOMP_MIDI
  printf("\nMIDI Options:\n\n");
  printf(" --midi-no-console     - Disable console based MIDI synth\n"
         " --midi-console-enable - Enables the console based MIDI synth\n"
@@ -109,6 +110,7 @@ void usage (void) {
         " --ssynth-disable      - Disable simple software synth\n"
 #endif
        );
+#endif
 
 #ifndef ROAR_WITHOUT_DCOMP_LIGHT
  printf("\nLight Control Options:\n\n");
@@ -715,10 +717,12 @@ int main (void) {
   return 1;
  }
 
+#ifndef ROAR_WITHOUT_DCOMP_MIDI
  if ( midi_init_config() == -1 ) {
   ROAR_ERR("Can not init MIDI config!");
   return 1;
  }
+#endif
 
 #ifndef ROAR_WITHOUT_DCOMP_SSYNTH
  if ( ssynth_init_config() == -1 ) {
@@ -1115,9 +1119,11 @@ int main (void) {
 
  ROAR_DBG("Server config: rate=%i, bits=%i, chans=%i", sa.rate, sa.bits, sa.channels);
 
+#ifndef ROAR_WITHOUT_DCOMP_MIDI
  if ( midi_init() == -1 ) {
   ROAR_ERR("Can not initialize MIDI subsystem");
  }
+#endif
 
 #ifndef ROAR_WITHOUT_DCOMP_SSYNTH
  if ( ssynth_init() == -1 ) {
@@ -1388,7 +1394,9 @@ void clean_quit_prep (void) {
 #ifndef ROAR_WITHOUT_DCOMP_CB
  midi_cb_stop(); // stop console beep
 #endif
+#ifndef ROAR_WITHOUT_DCOMP_MIDI
  midi_free();
+#endif
 #ifndef ROAR_WITHOUT_DCOMP_LIGHT
  light_free();
 #endif

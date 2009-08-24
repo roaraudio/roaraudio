@@ -57,7 +57,9 @@ int lib_run_bg(char * cmd, int infh, int outfh, int errfh, int * closefh, int le
 // this breaks the new driver interface
 // clients_free(); // delete all clients!, this allso delets all streams
 
+#ifndef ROAR_WITHOUT_DCOMP_MIDI
  midi_free(); // close midi devices
+#endif
 
  // close fh's we got ask to close:
 #ifdef ROAR_HAVE_IO_POSIX
