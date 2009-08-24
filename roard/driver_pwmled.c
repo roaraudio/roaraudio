@@ -24,6 +24,8 @@
 
 #include "roard.h"
 
+#ifndef ROAR_WITHOUT_DCOMP_PWMLED
+
 int driver_pwmled_open_vio  (struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh, struct roar_stream_server * sstream) {
  struct roar_vio_defaults def;
  struct driver_pwmled * self = malloc(sizeof(struct driver_pwmled));
@@ -142,5 +144,7 @@ int driver_pwmled_ctl(struct roar_vio_calls * vio, int cmd, void * data) {
 
  return 0;
 }
+
+#endif
 
 //ll

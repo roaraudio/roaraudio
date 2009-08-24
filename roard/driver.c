@@ -59,8 +59,10 @@ struct roar_driver g_driver[] = {
 #endif
  {"dmx", "DMX512 driver", "/dev/dmx", DRV_FLAG_FHSEC, ROAR_SUBSYS_LIGHT,
   NULL, NULL, driver_dmx_open_vio},
+#ifndef ROAR_WITHOUT_DCOMP_PWMLED
  {"pwmled", "PWM LED driver", "/dev/ttyS0", DRV_FLAG_FHSEC, ROAR_SUBSYS_LIGHT,
   NULL, NULL, driver_pwmled_open_vio},
+#endif
 #ifdef ROAR_HAVE_DRIVER_SYSCLOCK
  {"sysclock", "System Clock Clock Source", "(none)", DRV_FLAG_NONE, ROAR_SUBSYS_WAVEFORM,
   NULL, NULL, driver_sysclock_open_vio},
