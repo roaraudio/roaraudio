@@ -27,12 +27,12 @@
 
 #include <roaraudio.h>
 
+#ifndef ROAR_WITHOUT_DCOMP_CB
 #ifdef __linux__
 #include <sys/ioctl.h>
 #include <linux/kd.h>
 #endif
 
-#ifndef ROAR_WITHOUT_DCOMP_CB
 #define MIDI_CB_NOOVERRIDE 0
 #define MIDI_CB_OVERRIDE   1
 #endif
