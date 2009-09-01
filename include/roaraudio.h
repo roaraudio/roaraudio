@@ -143,15 +143,17 @@ __BEGIN_DECLS
 
 #include <libroar/libroar.h>
 
+// IP:
+#define ROAR_DEFAULT_PORT        16002
+
 // IPv4
-#define ROAR_DEFAULT_INET4_PORT  16002
+#define ROAR_DEFAULT_INET4_PORT  ROAR_DEFAULT_PORT
 #define ROAR_DEFAULT_INET4_HOST  "localhost"
 // aliases:
-#define ROAR_DEFAULT_PORT        ROAR_DEFAULT_INET4_PORT
 #define ROAR_DEFAULT_HOST        ROAR_DEFAULT_INET4_HOST
 
 // IPv6:
-#define ROAR_DEFAULT_INET6_PORT  16002
+#define ROAR_DEFAULT_INET6_PORT  ROAR_DEFAULT_PORT
 #define ROAR_DEFAULT_INET6_HOST  "ipv6-localhost"
 
 // UNIX Domain Sockets
