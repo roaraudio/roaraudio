@@ -29,7 +29,7 @@
 
 int net_check_listen  (void);
 
-int net_get_new_client (void);
+int net_get_new_client (int sock, int proto);
 
 #endif
 

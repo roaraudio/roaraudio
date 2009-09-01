@@ -25,12 +25,16 @@
 #include "roard.h"
 
 #ifdef ROAR_SUPPORT_LISTEN
-char * server = ROAR_DEFAULT_SOCK_GLOBAL; // global server address
+char * server[ROAR_MAX_LISTEN_SOCKETS];
 #endif
 
 #if defined(ROAR_HAVE_IO_POSIX) && defined(ROAR_HAVE_FS_POSIX)
 #define SUPPORT_PIDFILE
 char * pidfile = NULL;
+#endif
+
+#if defined(ROAR_HAVE_SETGID) || defined(ROAR_HAVE_SETUID)
+ int    setids    = 0;
 #endif
 
 #ifdef ROAR_HAVE_MAIN_ARGS
@@ -136,6 +140,8 @@ void usage (void) {
         " -p  --port            - TCP Port to bind to\n"
         " -b  --bind            - IP/Hostname to bind to\n"
         "     --sock            - Filename for UNIX Domain Socket\n"
+        "     --proto PROTO     - Use PROTO as protocol on Socket\n"
+        "     --new-sock        - Parameters for new socket follows\n"
 #ifdef ROAR_HAVE_LIBSLP
         "     --slp             - Enable OpenSLP support\n"
 #endif
@@ -230,6 +236,130 @@ int init_config (void) {
 
  return 0;
 }
+
+#ifdef ROAR_SUPPORT_LISTEN
+int init_listening (void) {
+ int i;
+
+ for (i = 0; i < ROAR_MAX_LISTEN_SOCKETS; i++) {
+  g_listen_socket[i] = -1;
+  g_listen_proto[i]  = ROAR_PROTO_ROARAUDIO;
+  server[i]          = NULL;
+ }
+
+ return 0;
+}
+
+int get_proto  (char * proto) {
+ if ( !strcasecmp(proto, "roar") ) {
+  return ROAR_PROTO_ROARAUDIO;
+ } else if ( !strcasecmp(proto, "roaraudio") ) {
+  return ROAR_PROTO_ROARAUDIO;
+ } else if ( !strcasecmp(proto, "esd") ) {
+  return ROAR_PROTO_ESOUND;
+ } else if ( !strcasecmp(proto, "esound") ) {
+  return ROAR_PROTO_ESOUND;
+ }
+
+ return -1;
+}
+
+int add_listen (char * addr, int port, int sock_type, char * user, char * group, int proto) {
+#if defined(ROAR_HAVE_SETGID) && defined(ROAR_HAVE_IO_POSIX)
+ struct group   * grp  = NULL;
+#endif
+#if defined(ROAR_HAVE_SETUID) && defined(ROAR_HAVE_IO_POSIX)
+ struct passwd  * pwd  = NULL;
+#endif
+#ifdef ROAR_HAVE_UNIX
+ char * env_roar_proxy_backup;
+#endif
+ int    sockid = -1;
+ int    sock;
+ int    i;
+
+ if ( *addr != 0 ) {
+  for (i = 0; i < ROAR_MAX_LISTEN_SOCKETS; i++) {
+   if ( g_listen_socket[i] == -1 ) {
+    sockid = i;
+    break;
+   }
+  }
+
+  if ( sockid == -1 )
+   return -1;
+
+  g_listen_proto[sockid] = proto;
+
+  ROAR_DBG("add_listen(*): proto=0x%.4x", proto);
+
+  if ( (g_listen_socket[sockid] = roar_socket_listen(sock_type, addr, port)) == -1 ) {
+#ifdef ROAR_HAVE_UNIX
+   if ( *addr == '/' ) {
+    if ( (env_roar_proxy_backup = getenv("ROAR_PROXY")) != NULL ) {
+     env_roar_proxy_backup = strdup(env_roar_proxy_backup);
+     unsetenv("ROAR_PROXY");
+    }
+    if ( (sock = roar_socket_connect(addr, port)) != -1 ) {
+     close(sock);
+     ROAR_ERR("Can not open listen socket!");
+     return 1;
+    } else {
+     unlink(addr);
+     if ( (g_listen_socket[sockid] = roar_socket_listen(sock_type, addr, port)) == -1 ) {
+      ROAR_ERR("Can not open listen socket!");
+      return 1;
+     }
+    }
+    if ( env_roar_proxy_backup != NULL ) {
+     setenv("ROAR_PROXY", env_roar_proxy_backup, 0);
+     free(env_roar_proxy_backup);
+    }
+#else
+   if (0) { // noop
+#endif
+   } else {
+    ROAR_ERR("Can not open listen socket!");
+    return 1;
+   }
+  }
+
+#if defined(ROAR_HAVE_SETGID) && defined(ROAR_HAVE_IO_POSIX)
+  if ( (grp = getgrnam(group)) == NULL ) {
+   ROAR_ERR("Can not get GID for group %s: %s", group, strerror(errno));
+  }
+#endif
+#if defined(ROAR_HAVE_SETUID) && defined(ROAR_HAVE_IO_POSIX)
+  if ( user || (setids & R_SETUID) ) {
+   if ( (pwd = getpwnam(user)) == NULL ) {
+    ROAR_ERR("Can not get UID for user %s: %s", user, strerror(errno));
+   }
+  }
+#endif
+
+#if defined(ROAR_HAVE_IO_POSIX) && defined(ROAR_HAVE_UNIX)
+  if ( *addr == '/' ) {
+   if ( grp ) {
+    if ( pwd ) {
+     if ( chown(addr, pwd->pw_uid, grp->gr_gid) == -1 )
+      return 1;
+    } else {
+     if ( chown(addr, -1, grp->gr_gid) == -1 )
+      return 1;
+    }
+#ifdef ROAR_HAVE_GETUID
+    if ( getuid() == 0 )
+     if ( chmod(addr, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP) == -1 )
+      return 1;
+#endif
+   }
+  }
+#endif
+ }
+
+ return 0;
+}
+#endif
 
 int update_stream_flags (char * str) {
  int    dir;
@@ -685,7 +815,9 @@ int main (void) {
 #endif
 // char * server = ROAR_DEFAULT_SOCK_GLOBAL;
 #ifdef ROAR_SUPPORT_LISTEN
- int      port    = ROAR_DEFAULT_PORT;
+ int    port       = ROAR_DEFAULT_PORT;
+ char * sock_addr  = NULL;
+ int    sock_proto = ROAR_PROTO_ROARAUDIO;
 #endif
  int               drvid;
 #ifndef ROAR_WITHOUT_DCOMP_SOURCES
@@ -714,12 +846,6 @@ int main (void) {
 #ifdef ROAR_HAVE_CHROOT
  char * chrootdir = NULL;
 #endif
-#if defined(ROAR_HAVE_SETGID) || defined(ROAR_HAVE_SETUID)
- int    setids    = 0;
-#endif
-#ifdef ROAR_HAVE_UNIX
- char * env_roar_proxy_backup;
-#endif
 #if defined(ROAR_HAVE_SETGID) && defined(ROAR_HAVE_IO_POSIX)
  struct group   * grp  = NULL;
 #endif
@@ -743,7 +869,6 @@ int main (void) {
  alive           =  1;
 #ifdef ROAR_SUPPORT_LISTEN
  g_no_listen     =  0;
- g_listen_socket = -1;
 #else
  g_terminate     =  1;
 #endif
@@ -765,6 +890,13 @@ int main (void) {
   return 1;
  }
 
+#ifdef ROAR_SUPPORT_LISTEN
+ if ( init_listening() == -1 ) {
+  ROAR_ERR("Can not init listening sockets!");
+  return 1;
+ }
+#endif
+
 #ifndef ROAR_WITHOUT_DCOMP_MIDI
  if ( midi_init_config() == -1 ) {
   ROAR_ERR("Can not init MIDI config!");
@@ -780,15 +912,16 @@ int main (void) {
 #endif
 
 #ifdef ROAR_SUPPORT_LISTEN
+ sock_addr = ROAR_DEFAULT_SOCK_GLOBAL;
 #ifdef ROAR_HAVE_GETUID
  if ( getuid() != 0 && getenv("HOME") != NULL ) {
   snprintf(user_sock, 79, "%s/%s", (char*)getenv("HOME"), ROAR_DEFAULT_SOCK_USER);
-  server = user_sock;
+  sock_addr = user_sock;
  }
 #endif
 
  if ( getenv("ROAR_SERVER") != NULL )
-  server = getenv("ROAR_SERVER");
+  sock_addr = getenv("ROAR_SERVER");
 #endif
 
  if ( clients_init() == -1 ) {
@@ -830,16 +963,16 @@ int main (void) {
    // this is a no op
   } else if ( strcmp(k, "--restart") == 0 ) {
 #ifdef ROAR_SUPPORT_LISTEN
-   if ( restart_server(server, 1) == -1 ) {
-    ROAR_WARN("Can not terminate old server (not running at %s?), tring to continue anyway", server);
+   if ( restart_server(sock_addr, 1) == -1 ) {
+    ROAR_WARN("Can not terminate old server (not running at %s?), tring to continue anyway", sock_addr);
    }
 #else
    ROAR_ERR("--restart not supported");
 #endif
   } else if ( strcmp(k, "--shutdown") == 0 ) {
 #ifdef ROAR_SUPPORT_LISTEN
-   if ( restart_server(server, 1) == -1 ) {
-    ROAR_WARN("Can not terminate old server (not running at %s?)", server);
+   if ( restart_server(sock_addr, 1) == -1 ) {
+    ROAR_WARN("Can not terminate old server (not running at %s?)", sock_addr);
     return 1;
    }
    return 0;
@@ -849,8 +982,8 @@ int main (void) {
 #endif
   } else if ( strcmp(k, "--stop") == 0 ) {
 #ifdef ROAR_SUPPORT_LISTEN
-   if ( restart_server(server, 0) == -1 ) {
-    ROAR_WARN("Can not stop old server (not running at %s?)", server);
+   if ( restart_server(sock_addr, 0) == -1 ) {
+    ROAR_WARN("Can not stop old server (not running at %s?)", sock_addr);
     return 1;
    }
    return 0;
@@ -1041,8 +1174,8 @@ int main (void) {
   } else if ( strcmp(k, "-p") == 0 || strcmp(k, "--port") == 0 ) {
    // This is only usefull in INET not UNIX mode.
 #ifdef ROAR_SUPPORT_LISTEN
-   if ( *server == '/' )
-    server = ROAR_DEFAULT_HOST;
+   if ( *sock_addr == '/' )
+    sock_addr = ROAR_DEFAULT_HOST;
 
    errno = 0;
    if ( (port = atoi(argv[++i])) < 1 ) {
@@ -1063,7 +1196,15 @@ int main (void) {
 #endif
   } else if ( strcmp(k, "-b") == 0 || strcmp(k, "--bind") == 0 || strcmp(k, "--sock") == 0 ) {
 #ifdef ROAR_SUPPORT_LISTEN
-   server = argv[++i];
+   sock_addr = argv[++i];
+#endif
+
+  } else if ( strcmp(k, "--proto") == 0 ) {
+#ifdef ROAR_SUPPORT_LISTEN
+   if ( (sock_proto = get_proto(argv[++i])) == -1 ) {
+    ROAR_ERR("Unknown protocol: %s", argv[i]);
+    return 1;
+   }
 #endif
 
   } else if ( strcmp(k, "-t") == 0 || strcmp(k, "--tcp") == 0 ) {
@@ -1071,22 +1212,22 @@ int main (void) {
    if ( sock_type != ROAR_SOCKET_TYPE_TCP && sock_type != ROAR_SOCKET_TYPE_TCP6 )
     sock_type = ROAR_SOCKET_TYPE_TCP;
 
-   if ( *server == '/' )
-    server = ROAR_DEFAULT_HOST;
+   if ( *sock_addr == '/' )
+    sock_addr = ROAR_DEFAULT_HOST;
 #endif
 
   } else if ( strcmp(k, "-4") == 0 ) {
 #ifdef ROAR_SUPPORT_LISTEN
    sock_type = ROAR_SOCKET_TYPE_TCP;
-   if ( *server == '/' )
-    server = ROAR_DEFAULT_HOST;
+   if ( *sock_addr == '/' )
+    sock_addr = ROAR_DEFAULT_HOST;
 #endif
   } else if ( strcmp(k, "-6") == 0 ) {
 #ifdef ROAR_SUPPORT_LISTEN
 #ifdef PF_INET6
    sock_type = ROAR_SOCKET_TYPE_TCP6;
-   if ( *server == '/' )
-    server = ROAR_DEFAULT_HOST;
+   if ( *sock_addr == '/' )
+    sock_addr = ROAR_DEFAULT_HOST;
 #else
     ROAR_ERR("No IPv6 support compiled in!");
     return 1;
@@ -1104,12 +1245,19 @@ int main (void) {
 #ifdef ROAR_HAVE_LIBDNET
     port   = ROAR_DEFAULT_NUM;
     strcpy(decnethost, ROAR_DEFAULT_LISTEN_OBJECT);
-    server = decnethost;
+    sock_addr = decnethost;
     sock_type = ROAR_SOCKET_TYPE_DECNET;
 #else
     ROAR_ERR("No DECnet support compiled in!");
     return 1;
 #endif
+#endif
+  } else if ( strcmp(k, "--new-sock") == 0 ) {
+#ifdef ROAR_SUPPORT_LISTEN
+   if ( add_listen(sock_addr, port, sock_type, sock_user, sock_grp, sock_proto) != 0 ) {
+    ROAR_ERR("Can not open listen socket!");
+    return 1;
+   }
 #endif
 
   } else if ( strcmp(k, "--slp") == 0 ) {
@@ -1127,7 +1275,7 @@ int main (void) {
 
   } else if ( strcmp(k, "--no-listen") == 0 ) {
 #ifdef ROAR_SUPPORT_LISTEN
-   server      = "";
+   sock_addr   = "";
    g_terminate = 1;
    g_no_listen = 1;
 #endif
@@ -1187,69 +1335,9 @@ int main (void) {
 #endif
 
 #ifdef ROAR_SUPPORT_LISTEN
- if ( *server != 0 ) {
-  if ( (g_listen_socket = roar_socket_listen(sock_type, server, port)) == -1 ) {
-#ifdef ROAR_HAVE_UNIX
-   if ( *server == '/' ) {
-    if ( (env_roar_proxy_backup = getenv("ROAR_PROXY")) != NULL ) {
-     env_roar_proxy_backup = strdup(env_roar_proxy_backup);
-     unsetenv("ROAR_PROXY");
-    }
-    if ( (i = roar_socket_connect(server, port)) != -1 ) {
-     close(i);
-     ROAR_ERR("Can not open listen socket!");
-     return 1;
-    } else {
-     unlink(server);
-     if ( (g_listen_socket = roar_socket_listen(sock_type, server, port)) == -1 ) {
-      ROAR_ERR("Can not open listen socket!");
-      return 1;
-     }
-    }
-    if ( env_roar_proxy_backup != NULL ) {
-     setenv("ROAR_PROXY", env_roar_proxy_backup, 0);
-     free(env_roar_proxy_backup);
-    }
-#else
-   if (0) { // noop
-#endif
-   } else {
-    ROAR_ERR("Can not open listen socket!");
-    return 1;
-   }
-  }
-
-#if defined(ROAR_HAVE_SETGID) && defined(ROAR_HAVE_IO_POSIX)
-  if ( (grp = getgrnam(sock_grp)) == NULL ) {
-   ROAR_ERR("Can not get GID for group %s: %s", sock_grp, strerror(errno));
-  }
-#endif
-#if defined(ROAR_HAVE_SETUID) && defined(ROAR_HAVE_IO_POSIX)
-  if ( sock_user || (setids & R_SETUID) ) {
-   if ( (pwd = getpwnam(sock_user)) == NULL ) {
-    ROAR_ERR("Can not get UID for user %s: %s", sock_user, strerror(errno));
-   }
-  }
-#endif
-
-#if defined(ROAR_HAVE_IO_POSIX) && defined(ROAR_HAVE_UNIX)
-  if ( *server == '/' ) {
-   if ( grp ) {
-    if ( pwd ) {
-     if ( chown(server, pwd->pw_uid, grp->gr_gid) == -1 )
-      return 1;
-    } else {
-     if ( chown(server, -1, grp->gr_gid) == -1 )
-      return 1;
-    }
-#ifdef ROAR_HAVE_GETUID
-    if ( getuid() == 0 )
-     if ( chmod(server, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP) == -1 )
-      return 1;
-#endif
-   }
-  }
-#endif
+ if ( add_listen(sock_addr, port, sock_type, sock_user, sock_grp, sock_proto) != 0 ) {
+  ROAR_ERR("Can not open listen socket!");
+  return 1;
  }
 #endif
 
@@ -1388,7 +1476,7 @@ int main (void) {
  // Register with OpenSLP:
 #ifdef ROAR_HAVE_LIBSLP
  if ( reg_slp ) {
-  register_slp(0, server);
+  register_slp(0, sock_addr);
  }
 #endif
 
@@ -1404,23 +1492,28 @@ int main (void) {
 }
 
 void cleanup_listen_socket (int terminate) {
+ int i;
+
  // Deregister from SLP:
 #ifdef ROAR_HAVE_LIBSLP
  register_slp(1, NULL);
 #endif
 
 #ifdef ROAR_SUPPORT_LISTEN
- if ( g_listen_socket != -1 ) {
+ for (i = 0; i < ROAR_MAX_LISTEN_SOCKETS; i++) {
+  if ( g_listen_socket[i] != -1 ) {
 #ifdef ROAR_HAVE_IO_POSIX
-  close(g_listen_socket);
+   close(g_listen_socket[i]);
 #endif // #else is useless because we are in void context.
 
-  g_listen_socket = -1;
+   g_listen_socket[i] = -1;
 
 #ifdef ROAR_HAVE_UNIX
-  if ( *server == '/' )
-   unlink(server);
+   if ( server[i] != NULL )
+    if ( *(server[i]) == '/' )
+     unlink(server[i]);
 #endif
+  }
  }
 
 #endif

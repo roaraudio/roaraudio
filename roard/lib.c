@@ -51,7 +51,9 @@ int lib_run_bg(char * cmd, int infh, int outfh, int errfh, int * closefh, int le
  // TODO: test for errors here.
 
 #ifdef ROAR_SUPPORT_LISTEN
- close(g_listen_socket); // listen socket.
+ for (i = 0; i < ROAR_MAX_LISTEN_SOCKETS; i++)
+  if ( g_listen_socket[i] != -1 )
+   close(g_listen_socket[i]); // listen socket.
 #endif
 
 // this breaks the new driver interface

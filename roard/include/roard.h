@@ -77,6 +77,9 @@
 #define _32BIT 4
 #define _64BIT 8
 
+// listeing code:
+#define ROAR_MAX_LISTEN_SOCKETS  8
+
 //#include "buffer.h"
 #include "codecfilter.h"
 #include "client.h"
@@ -119,7 +122,8 @@ void on_sig_chld (int signum);
 void on_sig_usr1 (int signum);
 
 #ifdef ROAR_SUPPORT_LISTEN
-int g_listen_socket;
+int g_listen_socket[ROAR_MAX_LISTEN_SOCKETS];
+int g_listen_proto[ROAR_MAX_LISTEN_SOCKETS];
 #endif
 
 int g_self_client;

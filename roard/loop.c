@@ -33,6 +33,10 @@ int main_loop (int driver, DRIVER_USERDATA_T driver_inst, struct roar_audio_info
  struct timeval         try, ans;
  float  freq;
 #endif
+#ifdef ROAR_SUPPORT_LISTEN
+ int i;
+ int have_listen;
+#endif
 #ifdef MONITOR_LATENCY
  long int ans_1last = 0, ans_2last = 0, ans_3last = 0;
 
@@ -58,7 +62,15 @@ int main_loop (int driver, DRIVER_USERDATA_T driver_inst, struct roar_audio_info
   ROAR_DBG("main_loop(*): looping...");
 
 #ifdef ROAR_SUPPORT_LISTEN
-  if ( g_listen_socket != -1 ) {
+  have_listen = 0;
+  for (i = 0; i < ROAR_MAX_LISTEN_SOCKETS; i++) {
+   if ( g_listen_socket[i] != -1 ) {
+    have_listen = 1;
+    break;
+   }
+  }
+
+  if ( have_listen ) {
    ROAR_DBG("main_loop(*): check for new clients...");
    net_check_listen();
   }
@@ -66,7 +78,7 @@ int main_loop (int driver, DRIVER_USERDATA_T driver_inst, struct roar_audio_info
 
   ROAR_DBG("main_loop(*): check for new data...");
 #ifdef ROAR_SUPPORT_LISTEN
-  if ( clients_check_all() == 0 && g_terminate && g_listen_socket == -1 ) {
+  if ( clients_check_all() == 0 && g_terminate && !have_listen ) {
 #else
   if ( clients_check_all() == 0 && g_terminate ) {
 #endif

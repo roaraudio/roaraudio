@@ -39,16 +39,36 @@ int net_check_listen  (void) {
  int r;
  fd_set sl;
  struct timeval tv;
+ int i;
+ int max_fh = -1;
 
  FD_ZERO(&sl);
- FD_SET(g_listen_socket, &sl);
+
+ for (i = 0; i < ROAR_MAX_LISTEN_SOCKETS; i++) {
+  if ( g_listen_socket[i] != -1 ) {
+   if ( g_listen_socket[i] > max_fh )
+    max_fh = g_listen_socket[i];
+
+   FD_SET(g_listen_socket[i], &sl);
+  }
+ }
+
+ if ( max_fh == -1 )
+  return 0;
 
  tv.tv_sec  = 0;
  tv.tv_usec = 1;
 
- if ((r = select(g_listen_socket + 1, &sl, NULL, NULL, &tv)) > 0) {
+ if ((r = select(max_fh + 1, &sl, NULL, NULL, &tv)) > 0) {
   ROAR_DBG("net_check_listen(void): We have a connection!");
-  return net_get_new_client();
+  for (i = 0; i < ROAR_MAX_LISTEN_SOCKETS; i++) {
+   if ( g_listen_socket[i] != -1 ) {
+    if ( FD_ISSET(g_listen_socket[i], &sl) ) {
+     if ( net_get_new_client(g_listen_socket[i], g_listen_proto[i]) == -1 )
+      return -1;
+    }
+   }
+  }
  }
 
  return r;
@@ -58,7 +78,7 @@ int net_check_listen  (void) {
 }
 
 #ifdef _CAN_OPERATE
-int net_get_new_client (void) {
+int net_get_new_client (int sock, int proto) {
  int fh;
  int client;
 #if defined(SO_PEERCRED) || defined(ROAR_HAVE_GETPEEREID)
@@ -70,7 +90,7 @@ int net_get_new_client (void) {
 #endif
  struct roar_vio_calls vio;
 
- fh = accept(g_listen_socket, NULL, NULL);
+ fh = accept(sock, NULL, NULL);
 
  ROAR_DBG("net_get_new_client(void): fh = %i", fh);
 
@@ -106,14 +126,20 @@ int net_get_new_client (void) {
  }
 #endif
 
- if ( clients_set_proto(client, ROAR_PROTO_ESOUND) == -1 )
+ ROAR_DBG("net_get_new_client(*): proto=0x%.4x", proto);
+
+ if ( clients_set_proto(client, proto) == -1 )
   return -1;
 
- if ( roar_vio_open_fh(&vio, fh) == -1 )
-  return -1;
+ switch (proto) {
+  case ROAR_PROTO_ESOUND:
+    if ( roar_vio_open_fh(&vio, fh) == -1 )
+     return -1;
 
- if ( emul_esd_exec_command(client, ESD_PROTO_CONNECT, &vio) == -1 )
-  return -1;
+    if ( emul_esd_exec_command(client, ESD_PROTO_CONNECT, &vio) == -1 )
+     return -1;
+   break;
+ }
 
 // close(fh);
 

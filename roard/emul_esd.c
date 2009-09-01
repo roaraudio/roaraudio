@@ -72,8 +72,12 @@ int emul_esd_exec_command(int client, int cmd, struct roar_vio_calls * vio) {
  int r;
  int i;
 
+ ROAR_DBG("emul_esd_exec_command(*) = ?");
+
  if ( client == -1 || cmd < ESD_PROTO_CONNECT || cmd > ESD_PROTO_MAX || vio == NULL )
   return -1;
+
+ ROAR_DBG("emul_esd_exec_command(*) = ?");
 
  for (i = 0; (cur = &(g_emul_esd_commands[i]))->cmd != -1; i++) {
   if ( cur->cmd == cmd ) {
