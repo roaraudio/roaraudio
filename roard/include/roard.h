@@ -88,6 +88,7 @@
 #include "network.h"
 #include "commands.h"
 #include "req.h"
+#include "emul_esd.h"
 #include "sources.h"
 #include "sample.h"
 #include "meta.h"

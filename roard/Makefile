@@ -4,6 +4,7 @@ OBJ=roard.o driver.o mixer.o output.o signals.o loop.o clients.o streams.o netwo
 SUBSYS=midi.o light.o raw.o
 DRV=driver_esd.o driver_ao.o driver_roar.o driver_raw.o driver_oss.o driver_shout.o driver_sndio.o driver_dmx.o driver_pwmled.o driver_sysclock.o
 CF=codecfilter_cmd.o codecfilter_vorbis.o codecfilter_celt.o codecfilter_speex.o codecfilter_wave.o codecfilter_alaw.o codecfilter_mulaw.o codecfilter_sndfile.o codecfilter_fishsound.o
+EMUL=emul_esd.o
 
 include ../Makefile.conf
 include ../Makefile.inc
@@ -26,5 +27,5 @@ clean:
 	rm -f ${TARGETS} *.o
 new: clean all
 
-roard: ${OBJ} ${SUBSYS} ${DRV} ${CF}
-	${CC} ${LDFLAGS} -o roard ${OBJ} ${SUBSYS} ${DRV} ${CF} ${LIBS}
+roard: ${OBJ} ${SUBSYS} ${DRV} ${CF} ${EMUL}
+	${CC} ${LDFLAGS} -o roard ${OBJ} ${SUBSYS} ${DRV} ${CF} ${EMUL} ${LIBS}
