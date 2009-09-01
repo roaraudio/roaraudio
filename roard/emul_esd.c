@@ -69,6 +69,8 @@ struct emul_esd_command g_emul_esd_commands[] = {
 int emul_esd_exec_command(int client, int cmd, struct roar_vio_calls * vio) {
  struct emul_esd_command * cur;
  void * data = NULL;
+ ssize_t ret;
+ size_t  done = 0;
  int r;
  int i;
 
@@ -88,10 +90,16 @@ int emul_esd_exec_command(int client, int cmd, struct roar_vio_calls * vio) {
      return -1;
     }
 
-    if ( roar_vio_read(vio, data, cur->datalen) != cur->datalen ) {
-     free(data);
-     clients_delete(client);
-     return -1;
+    while ( done < cur->datalen ) {
+     ret = roar_vio_read(vio, data+done, cur->datalen-done);
+
+     if ( ret < 1 ) {
+      free(data);
+      clients_delete(client);
+      return -1;
+     } else {
+      done += ret;
+     }
     }
    }
 
