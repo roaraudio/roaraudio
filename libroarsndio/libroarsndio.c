@@ -68,11 +68,11 @@ static char * sndio_to_roar_names (char * name) {
    // use DECnet localnode:
    case 3: return "::"; break;
    // use IPv4 localhost:
-   case 4: return ROAR_DEFAULT_HOST; break;
+   case 4: return ROAR_DEFAULT_INET4_HOST; break;
    // undefined:
    case 5:
    // use IPv6 localhost:
-   case 6:
+   case 6: return ROAR_DEFAULT_INET6_HOST; break;
    // default:
    default:
      return name;
