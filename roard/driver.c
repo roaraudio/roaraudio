@@ -31,7 +31,8 @@ struct roar_driver g_driver[] = {
  { "esd", "EsounD audio driver", "localhost, remote.host.dom", DRV_FLAG_NONE, ROAR_SUBSYS_WAVEFORM,
    NULL, driver_esd_close, driver_esd_open_vio},
 #endif
- { "roar", "RoarAudio driver", "localhost, remote.host.dom", DRV_FLAG_NONE, ROAR_SUBSYS_WAVEFORM,
+ { "roar", "RoarAudio driver", "localhost, remote.host.dom", DRV_FLAG_NONE,
+   ROAR_SUBSYS_WAVEFORM|ROAR_SUBSYS_MIDI|ROAR_SUBSYS_LIGHT,
    NULL, driver_roar_close, driver_roar_open_vio},
 #ifdef ROAR_HAVE_IO_POSIX
  { "raw",  "RAW PCM driver", "/some/file", DRV_FLAG_FHSEC,

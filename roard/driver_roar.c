@@ -25,12 +25,25 @@
 #include "roard.h"
 
 int driver_roar_open_vio(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh, struct roar_stream_server * sstream) {
+ int dir = ROAR_DIR_PLAY;
 
  if ( fh != -1 ) { // this is a connection to a roard, no roar_simple_*() interface avalible for this case
   return -1;
  }
 
- if ( (fh = roar_simple_play(info->rate, info->channels, info->bits, info->codec, device, "roard")) == -1 ) {
+ if ( sstream != NULL ) {
+  switch (ROAR_STREAM(sstream)->dir) {
+   case ROAR_DIR_OUTPUT:    dir = ROAR_DIR_PLAY;     break;
+   case ROAR_DIR_MIDI_OUT:  dir = ROAR_DIR_MIDI_IN;  break;
+   case ROAR_DIR_LIGHT_OUT: dir = ROAR_DIR_LIGHT_IN; break;
+// TODO: we need to know a real pos id for raw streams...
+//   case ROAR_DIR_RAW_OUT:   dir = ROAR_DIR_RAW_IN;   break;
+   default:
+     return -1;
+  }
+ }
+
+ if ( (fh = roar_simple_stream(info->rate, info->channels, info->bits, info->codec, device, dir, "roard")) == -1 ) {
   return -1;
  }
 
