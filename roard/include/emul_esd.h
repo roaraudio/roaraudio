@@ -28,7 +28,20 @@
 #include <roaraudio.h>
 
 #ifndef ROAR_WITHOUT_DCOMP_EMUL_ESD
+#ifdef ROAR_HAVE_ESD
 
+struct emul_esd_command {
+ int    cmd;
+ size_t datalen;
+#if !defined(ROAR_TARGET_MICROCONTROLLER) && !defined(ROAR_MINIMAL)
+ char name[COMMAND_MAX_NAMELEN];
+#else
+ char * name;
+#endif
+ int (*handler)(int client, struct emul_esd_command * cmd, char * data);
+};
+
+#endif
 #endif
 
 #endif
