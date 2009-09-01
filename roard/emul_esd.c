@@ -177,14 +177,23 @@ int emul_esd_test_byteorder(int client, void * data) {
 
 // handler:
 int emul_esd_on_connect    (int client, struct emul_esd_command * cmd, void * data, struct roar_vio_calls * vio) {
+
+ ROAR_DBG("emul_esd_on_connect(client=%i, cmd=%p, data=%p, vio=%p) = ?", client, cmd, data, vio);
+
  if ( client == -1 || data == NULL || vio == NULL )
   return -1;
+
+ ROAR_DBG("emul_esd_on_connect(client=%i, cmd=%p, data=%p, vio=%p) = ?", client, cmd, data, vio);
 
  if ( emul_esd_test_auth(client, data, vio) == -1 )
   return -1;
 
+ ROAR_DBG("emul_esd_on_connect(client=%i, cmd=%p, data=%p, vio=%p) = ?", client, cmd, data, vio);
+
  if ( emul_esd_test_byteorder(client, data+ESD_KEY_LEN) == -1 )
   return -1;
+
+ ROAR_DBG("emul_esd_on_connect(client=%i, cmd=%p, data=%p, vio=%p) = ?", client, cmd, data, vio);
 
  return 0;
 }
@@ -235,11 +244,13 @@ int emul_esd_on_stream     (int client, struct emul_esd_command * cmd, void * da
  emul_esd_int_read_buf(client, &esdformat, data);
  emul_esd_int_read_buf(client, &rate,      data+_INTSIZE);
 
+ ROAR_DBG("emul_esd_on_stream(*): esdformat=0x%.8X, rate=%i", esdformat, rate);
+
  s->info.rate = rate;
 
  switch (esdformat & ESD_MASK_BITS) {
-  case ESD_BITS8:  s->info.bits =  8; break;
-  case ESD_BITS16: s->info.bits = 16; break;
+  case ESD_BITS8:  s->info.bits =  8; s->info.codec = ROAR_CODEC_PCM_U_LE; break;
+  case ESD_BITS16: s->info.bits = 16; s->info.codec = ROAR_CODEC_DEFAULT;  break;
   default:
     streams_delete(stream);
     clients_delete(client);
@@ -256,6 +267,8 @@ int emul_esd_on_stream     (int client, struct emul_esd_command * cmd, void * da
  }
 
  ss->codec_orgi = s->info.codec;
+
+ ROAR_DBG("emul_esd_on_stream(*): s->info = {.rate=%i, .bits=%i, .channels=%i, .codec=%i}", s->info.rate, s->info.bits, s->info.channels, s->info.codec);
 
  if ( streams_set_dir(stream, dir, 1) == -1 ) {
   clients_delete(client);

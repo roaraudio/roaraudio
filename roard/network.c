@@ -68,6 +68,7 @@ int net_get_new_client (void) {
  struct ucred cred;
  socklen_t cred_len = sizeof(cred);
 #endif
+ struct roar_vio_calls vio;
 
  fh = accept(g_listen_socket, NULL, NULL);
 
@@ -104,6 +105,15 @@ int net_get_new_client (void) {
   }
  }
 #endif
+
+ if ( clients_set_proto(client, ROAR_PROTO_ESOUND) == -1 )
+  return -1;
+
+ if ( roar_vio_open_fh(&vio, fh) == -1 )
+  return -1;
+
+ if ( emul_esd_exec_command(client, ESD_PROTO_CONNECT, &vio) == -1 )
+  return -1;
 
 // close(fh);
 
