@@ -60,6 +60,8 @@ int clients_new (void) {
     *n->name = 0;
     *n->host = 0;
 
+    n->proto = ROAR_PROTO_ROARAUDIO;
+
     n->acl   = NULL;
 
     n->execed = -1;
@@ -157,6 +159,15 @@ int clients_set_gid   (int id, int    gid) {
   return -1;
 
  g_clients[id]->gid = gid;
+
+ return 0;
+}
+
+int clients_set_proto (int id, int    proto) {
+ if ( g_clients[id] == NULL )
+  return -1;
+
+ g_clients[id]->proto = proto;
 
  return 0;
 }
@@ -334,37 +345,43 @@ int clients_check     (int id) {
 
  roar_connect_fh(&con, g_clients[id]->fh);
 
- r = roar_recv_message(&con, &m, &data);
+ switch (g_clients[id]->proto) {
+  case ROAR_PROTO_ROARAUDIO:
+    r = roar_recv_message(&con, &m, &data);
 
- if ( r == -1 ) { // should we drop the client?
-  clients_delete(id);
-  return -1;
+    if ( r == -1 ) { // should we drop the client?
+     clients_delete(id);
+     return -1;
+    }
+
+    roar_debug_message_print(&m);
+
+    oldcmd = m.cmd;
+
+    if ( (r = command_exec(id, &m, data)) == -1 ) {
+     m.cmd     = ROAR_CMD_ERROR;
+     m.datalen = 0;
+     ROAR_DBG("clients_check(*): Exec of command faild!");
+    } else {
+     if ( m.cmd == oldcmd ) {
+      m.cmd     = ROAR_CMD_OK;
+      m.datalen = 0;
+     } else if ( m.cmd == ROAR_CMD_OK_STOP ) {
+      m.cmd     = ROAR_CMD_OK;
+      rv        = 1;
+     }
+    }
+
+    roar_send_message(&con, &m, NULL);
+   break;
+  default:
+    rv = -1;
  }
-
- roar_debug_message_print(&m);
-
- oldcmd = m.cmd;
-
- if ( (r = command_exec(id, &m, data)) == -1 ) {
-  m.cmd     = ROAR_CMD_ERROR;
-  m.datalen = 0;
-  ROAR_DBG("clients_check(*): Exec of command faild!");
- } else {
-  if ( m.cmd == oldcmd ) {
-   m.cmd     = ROAR_CMD_OK;
-   m.datalen = 0;
-  } else if ( m.cmd == ROAR_CMD_OK_STOP ) {
-   m.cmd     = ROAR_CMD_OK;
-   rv        = 1;
-  }
- }
-
- roar_send_message(&con, &m, NULL);
 
  if ( data )
   free(data);
 
- ROAR_DBG("clients_check(id=%i) = 0", id);
+ ROAR_DBG("clients_check(id=%i) = %i", id, rv);
  return rv;
 }
 
