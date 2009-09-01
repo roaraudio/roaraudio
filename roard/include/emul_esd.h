@@ -52,6 +52,7 @@ int emul_esd_test_byteorder(int client, void * data);
 
 int emul_esd_on_connect    (int client, struct emul_esd_command * cmd, void * data, struct roar_vio_calls * vio);
 int emul_esd_on_stream     (int client, struct emul_esd_command * cmd, void * data, struct roar_vio_calls * vio);
+int emul_esd_on_latency    (int client, struct emul_esd_command * cmd, void * data, struct roar_vio_calls * vio);
 
 #endif
 #endif

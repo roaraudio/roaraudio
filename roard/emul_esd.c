@@ -60,7 +60,7 @@ struct emul_esd_command g_emul_esd_commands[] = {
  {ESD_PROTO_STREAM_PAN,                  3 * _INTSIZE, _NAME("STREAM_PAN"),   NULL},
  {ESD_PROTO_SAMPLE_PAN,                  3 * _INTSIZE, _NAME("SAMPLE_PAN"),   NULL},
  {ESD_PROTO_STANDBY_MODE,                    _INTSIZE, _NAME("STANDBY_MODE"), NULL},
- {ESD_PROTO_LATENCY,      0                          , _NAME("LATENCY"),      NULL},
+ {ESD_PROTO_LATENCY,      0                          , _NAME("LATENCY"),      emul_esd_on_latency},
  {ESD_PROTO_MAX,          0                          , _NAME("MAX"),          NULL},
  {-1, 0, _NAME("END OF LIST"), NULL}
 };
@@ -294,6 +294,14 @@ int emul_esd_on_stream     (int client, struct emul_esd_command * cmd, void * da
  }
 
  return 0;
+}
+
+int emul_esd_on_latency    (int client, struct emul_esd_command * cmd, void * data, struct roar_vio_calls * vio) {
+ int lag = ROAR_OUTPUT_CFREQ;
+
+ lag *= 2.0 * 44100.0 / (float)g_sa->rate;
+ 
+ return emul_esd_int_write(client, lag, vio);
 }
 
 #endif
