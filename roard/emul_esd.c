@@ -99,6 +99,7 @@ int emul_esd_exec_command(int client, int cmd, struct roar_vio_calls * vio) {
     ROAR_WARN("emul_esd_exec_command(client=%i, cmd=%s(%i), vio=%p): client uses unimplemted command",
                client, cur->name, cmd, vio
              );
+    clients_delete(client);
     r = -1;
    } else {
     r = cur->handler(client, cur, data, vio);
