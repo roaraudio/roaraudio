@@ -47,7 +47,7 @@ int emul_esd_check_client  (int client, struct roar_vio_calls * vio);
 int emul_esd_int_read      (int client, int * data, struct roar_vio_calls * vio);
 int emul_esd_int_write     (int client, int   data, struct roar_vio_calls * vio);
 int emul_esd_test_auth     (int client, void * data, struct roar_vio_calls * vio);
-int emul_esd_test_byteorder(int client, void * data, struct roar_vio_calls * vio);
+int emul_esd_test_byteorder(int client, void * data);
 
 int emul_esd_on_connect    (int client, struct emul_esd_command * cmd, void * data, struct roar_vio_calls * vio);
 

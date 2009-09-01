@@ -158,14 +158,23 @@ int emul_esd_test_auth     (int client, void * data, struct roar_vio_calls * vio
  return emul_esd_int_write(client, 1, vio);
 }
 
-int emul_esd_test_byteorder(int client, void * data, struct roar_vio_calls * vio) {
+int emul_esd_test_byteorder(int client, void * data) {
  // TODO: do a real test
  return 0;
 }
 
 // handler:
 int emul_esd_on_connect    (int client, struct emul_esd_command * cmd, void * data, struct roar_vio_calls * vio) {
- return -1;
+ if ( client == -1 || data == NULL || vio == NULL )
+  return -1;
+
+ if ( emul_esd_test_auth(client, data, vio) == -1 )
+  return -1;
+
+ if ( emul_esd_test_byteorder(client, data+ESD_KEY_LEN) == -1 )
+  return -1;
+
+ return 0;
 }
 
 
