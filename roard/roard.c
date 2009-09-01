@@ -298,7 +298,6 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
 #ifdef ROAR_DRIVER_CODEC
  char * to_free = NULL;
 #endif
- int codec;
  int sync = 0, f_mmap = 0;
  int32_t blocks = -1, blocksize = -1;
  int dir = ROAR_DIR_OUTPUT;
@@ -337,12 +336,10 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
  streams_get(stream, &ss);
  s = ROAR_STREAM(ss);
 
- memcpy(&(s->info), g_sa, sizeof(struct roar_audio_info));
+ memset(&(s->info), 0xFF, sizeof(struct roar_audio_info)); // set everything to -1
 
  s->pos_rel_id = -1;
 // s->info.codec = codec;
-
- codec = s->info.codec;
 
  k = strtok(opts, ",");
  while (k != NULL) {
@@ -360,7 +357,7 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
   } else if ( strcmp(k, "bits") == 0 ) {
    s->info.bits = atoi(v);
   } else if ( strcmp(k, "codec") == 0 ) {
-   if ( (codec = roar_str2codec(v)) == -1 ) {
+   if ( (s->info.codec = roar_str2codec(v)) == -1 ) {
     ROAR_ERR("add_output(*): unknown codec '%s'", v);
     error++;
    }
@@ -446,6 +443,57 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
   k = strtok(NULL, ",");
  }
 
+ // set audio info...
+ switch (dir) {
+  case ROAR_DIR_LIGHT_OUT:
+    switch (s->info.codec) {
+     case ROAR_CODEC_DMX512:
+     case -1:
+       if ( s->info.rate == -1 )
+        s->info.rate = ROAR_OUTPUT_CFREQ;
+
+       s->info.channels =   0;
+       s->info.bits     =   8;
+       s->info.codec    = ROAR_CODEC_DMX512; // in case codec == -1
+      break;
+    }
+   break;
+  case ROAR_DIR_MIDI_OUT:
+    switch (s->info.codec) {
+     case ROAR_CODEC_MIDI:
+     case -1:
+       if ( s->info.rate == -1 )
+        s->info.rate    = ROAR_MIDI_TICKS_PER_BEAT;
+
+       s->info.channels = ROAR_MIDI_CHANNELS_DEFAULT;
+       s->info.bits     = ROAR_MIDI_BITS;
+       s->info.codec    = ROAR_CODEC_MIDI; // in case codec == -1
+      break;
+    }
+   break;
+  case ROAR_DIR_RAW_OUT:
+    if ( s->info.rate == -1 )
+     s->info.rate = 0;
+    if ( s->info.bits == -1 )
+     s->info.bits = 0;
+    if ( s->info.channels == -1 )
+     s->info.channels = 0;
+    if ( s->info.codec == -1 )
+     s->info.codec = 0;
+   break;
+ }
+
+ if ( s->info.rate == -1 )
+  s->info.rate = g_sa->rate;
+ if ( s->info.bits == -1 )
+  s->info.bits = g_sa->bits;
+ if ( s->info.channels == -1 )
+  s->info.channels = g_sa->channels;
+ if ( s->info.codec == -1 )
+  s->info.codec = g_sa->codec;
+
+ ROAR_DBG("add_output(*): s->info = {.rate=%i, .bits=%i, .channels=%i, .codec=%i}", s->info.rate, s->info.bits, s->info.channels, s->info.codec);
+
  if ( streams_set_dir(stream, dir, 1) == -1 ) {
   streams_delete(stream);
   return -1;
@@ -456,11 +504,10 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
   free(to_free);
 #endif
 
- if ( codec == ROAR_CODEC_ALAW || codec == ROAR_CODEC_MULAW )
+ if ( s->info.codec == ROAR_CODEC_ALAW || s->info.codec == ROAR_CODEC_MULAW )
   s->info.bits = 8; // needed to open OSS driver, will be overriden by codecfilter
 
- s->info.codec = codec;
- ROAR_STREAM_SERVER(s)->codec_orgi = codec;
+ ROAR_STREAM_SERVER(s)->codec_orgi = s->info.codec;
 
  if ( driver_openvio(&(ss->vio), &(ss->driver_id), drv, dev, &(s->info), -1, ss) == -1 ) {
   ss->driver_id = -1; // don't close a driver not opened...
@@ -515,6 +562,7 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
  if ( f_mmap )
   streams_set_flag(stream, ROAR_FLAG_MMAP);
 
+ ROAR_DBG("add_output(*): s->info = {.rate=%i, .bits=%i, .channels=%i, .codec=%i}", s->info.rate, s->info.bits, s->info.channels, s->info.codec);
  return 0;
 }
 
