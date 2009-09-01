@@ -119,6 +119,8 @@ int light_check_stream  (int id) {
     }
 //    memcpy(g_light_state.state, buf, g_light_state.channels < 512 ? g_light_state.channels : 512);
 
+    s->pos = ROAR_MATH_OVERFLOW_ADD(s->pos, 1);
+
     return 0;
    break;
   case ROAR_CODEC_ROARDMX:
@@ -189,6 +191,8 @@ int light_send_stream   (int id) {
      streams_delete(id);
      return -1;
     }
+
+    s->pos = ROAR_MATH_OVERFLOW_ADD(s->pos, 1);
 
     return 0;
    break;
