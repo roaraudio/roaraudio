@@ -65,6 +65,7 @@ struct emul_esd_command g_emul_esd_commands[] = {
  {-1, 0, _NAME("END OF LIST"), NULL}
 };
 
+// command handling:
 int emul_esd_exec_command(int client, int cmd, struct roar_vio_calls * vio) {
  struct emul_esd_command * cur;
  void * data = NULL;
@@ -130,6 +131,43 @@ int emul_esd_check_client(int client, struct roar_vio_calls * vio) {
 
  return emul_esd_exec_command(client, cmd, vio);
 }
+
+// porto lib:
+int emul_esd_int_read      (int client, int * data, struct roar_vio_calls * vio) {
+ _cmd_t d;
+
+ if ( data == NULL )
+  return -1;
+
+ if ( roar_vio_read(vio, &d, _INTSIZE) != _INTSIZE )
+  return -1;
+
+ *data = d;
+
+ return 0;
+}
+
+int emul_esd_int_write     (int client, int   data, struct roar_vio_calls * vio) {
+ _cmd_t d = data;
+
+ return roar_vio_write(vio, &d, _INTSIZE) == _INTSIZE ? 0 : -1;
+}
+
+int emul_esd_test_auth     (int client, void * data, struct roar_vio_calls * vio) {
+ // accept all clients for the moment.
+ return emul_esd_int_write(client, 1, vio);
+}
+
+int emul_esd_test_byteorder(int client, void * data, struct roar_vio_calls * vio) {
+ // TODO: do a real test
+ return 0;
+}
+
+// handler:
+int emul_esd_on_connect    (int client, struct emul_esd_command * cmd, void * data, struct roar_vio_calls * vio) {
+ return -1;
+}
+
 
 #endif
 #endif
