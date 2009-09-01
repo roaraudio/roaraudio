@@ -205,6 +205,7 @@ int emul_esd_on_connect    (int client, struct emul_esd_command * cmd, void * da
 int emul_esd_on_stream     (int client, struct emul_esd_command * cmd, void * data, struct roar_vio_calls * vio) {
  struct roar_stream_server * ss;
  struct roar_stream        *  s;
+ struct roar_client        *  c;
  int stream;
  int dir = -1;
  int esdformat;
@@ -221,6 +222,10 @@ int emul_esd_on_stream     (int client, struct emul_esd_command * cmd, void * da
   default:
     clients_delete(client);
     return -1;
+ }
+
+ if ( clients_get(client, &c) == -1 ) {
+  return -1;
  }
 
  ROAR_DBG("emul_esd_on_stream(client=%i, ...): creating stream...", client);
@@ -247,6 +252,9 @@ int emul_esd_on_stream     (int client, struct emul_esd_command * cmd, void * da
 
  emul_esd_int_read_buf(client, &esdformat, data);
  emul_esd_int_read_buf(client, &rate,      data+_INTSIZE);
+
+ strncpy(c->name, data + 2*_INTSIZE, ROAR_BUFFER_NAME > ESD_NAME_MAX ? ESD_NAME_MAX : ROAR_BUFFER_NAME);
+ c->name[ROAR_BUFFER_NAME-1] = 0;
 
  ROAR_DBG("emul_esd_on_stream(*): esdformat=0x%.8X, rate=%i", esdformat, rate);
 
