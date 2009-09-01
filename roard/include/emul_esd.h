@@ -38,8 +38,11 @@ struct emul_esd_command {
 #else
  char * name;
 #endif
- int (*handler)(int client, struct emul_esd_command * cmd, char * data);
+ int (*handler)(int client, struct emul_esd_command * cmd, void * data, struct roar_vio_calls * vio);
 };
+
+int emul_esd_exec_command(int client, int cmd, struct roar_vio_calls * vio);
+int emul_esd_check_client(int client, struct roar_vio_calls * vio);
 
 #endif
 #endif

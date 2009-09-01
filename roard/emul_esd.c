@@ -33,33 +33,103 @@
 #define _NAME(x) ((char*)NULL)
 #endif
 
+#define _cmd_t   int
+#define _INTSIZE sizeof(_cmd_t)
+
 struct emul_esd_command g_emul_esd_commands[] = {
- {ESD_PROTO_CONNECT,      ESD_KEY_LEN  +     sizeof(int), _NAME("CONNECT"),      NULL},
- {ESD_PROTO_LOCK,         ESD_KEY_LEN  +     sizeof(int), _NAME("LOCK"),         NULL},
- {ESD_PROTO_UNLOCK,       ESD_KEY_LEN  +     sizeof(int), _NAME("UNLOCK"),       NULL},
- {ESD_PROTO_STREAM_PLAY,  ESD_NAME_MAX + 2 * sizeof(int), _NAME("STREAM_PLAY"),  NULL},
- {ESD_PROTO_STREAM_REC,   ESD_NAME_MAX + 2 * sizeof(int), _NAME("STREAM_REC"),   NULL},
- {ESD_PROTO_STREAM_MON,   ESD_NAME_MAX + 2 * sizeof(int), _NAME("STREAM_MON"),   NULL},
- {ESD_PROTO_SAMPLE_CACHE, ESD_NAME_MAX + 3 * sizeof(int), _NAME("SAMPLE_CACHE"), NULL},
- {ESD_PROTO_SAMPLE_FREE,                     sizeof(int), _NAME("SAMPLE_FREE"),  NULL},
- {ESD_PROTO_SAMPLE_PLAY,                     sizeof(int), _NAME("SAMPLE_PLAY"),  NULL},
- {ESD_PROTO_SAMPLE_LOOP,                     sizeof(int), _NAME("SAMPLE_LOOP"),  NULL},
- {ESD_PROTO_SAMPLE_STOP,                     sizeof(int), _NAME("SAMPLE_STOP"),  NULL},
- {ESD_PROTO_SAMPLE_KILL,  0                             , _NAME("SAMPLE_KILL"),  NULL},
- {ESD_PROTO_STANDBY,      ESD_KEY_LEN +      sizeof(int), _NAME("STANDBY"),      NULL},
- {ESD_PROTO_RESUME,       ESD_KEY_LEN +      sizeof(int), _NAME("RESUME"),       NULL},
- {ESD_PROTO_SAMPLE_GETID, ESD_NAME_MAX,                   _NAME("SAMPLE_GETID"), NULL},
- {ESD_PROTO_STREAM_FILT,  ESD_NAME_MAX + 2 * sizeof(int), _NAME("STREAM_FILT"),  NULL},
- {ESD_PROTO_SERVER_INFO,                     sizeof(int), _NAME("SERVER_INFO"),  NULL},
- {ESD_PROTO_ALL_INFO,                        sizeof(int), _NAME("ALL_INFO"),     NULL},
- {ESD_PROTO_SUBSCRIBE,    0                             , _NAME("SUBSCRIBE"),    NULL},
- {ESD_PROTO_UNSUBSCRIBE,  0                             , _NAME("UNSUBSCRIBE"),  NULL},
- {ESD_PROTO_STREAM_PAN,                  3 * sizeof(int), _NAME("STREAM_PAN"),   NULL},
- {ESD_PROTO_SAMPLE_PAN,                  3 * sizeof(int), _NAME("SAMPLE_PAN"),   NULL},
- {ESD_PROTO_STANDBY_MODE,                    sizeof(int), _NAME("STANDBY_MODE"), NULL},
- {ESD_PROTO_LATENCY,      0                             , _NAME("LATENCY"),      NULL},
+ {ESD_PROTO_CONNECT,      ESD_KEY_LEN  +     _INTSIZE, _NAME("CONNECT"),      NULL},
+ {ESD_PROTO_LOCK,         ESD_KEY_LEN  +     _INTSIZE, _NAME("LOCK"),         NULL},
+ {ESD_PROTO_UNLOCK,       ESD_KEY_LEN  +     _INTSIZE, _NAME("UNLOCK"),       NULL},
+ {ESD_PROTO_STREAM_PLAY,  ESD_NAME_MAX + 2 * _INTSIZE, _NAME("STREAM_PLAY"),  NULL},
+ {ESD_PROTO_STREAM_REC,   ESD_NAME_MAX + 2 * _INTSIZE, _NAME("STREAM_REC"),   NULL},
+ {ESD_PROTO_STREAM_MON,   ESD_NAME_MAX + 2 * _INTSIZE, _NAME("STREAM_MON"),   NULL},
+ {ESD_PROTO_SAMPLE_CACHE, ESD_NAME_MAX + 3 * _INTSIZE, _NAME("SAMPLE_CACHE"), NULL},
+ {ESD_PROTO_SAMPLE_FREE,                     _INTSIZE, _NAME("SAMPLE_FREE"),  NULL},
+ {ESD_PROTO_SAMPLE_PLAY,                     _INTSIZE, _NAME("SAMPLE_PLAY"),  NULL},
+ {ESD_PROTO_SAMPLE_LOOP,                     _INTSIZE, _NAME("SAMPLE_LOOP"),  NULL},
+ {ESD_PROTO_SAMPLE_STOP,                     _INTSIZE, _NAME("SAMPLE_STOP"),  NULL},
+ {ESD_PROTO_SAMPLE_KILL,  0                          , _NAME("SAMPLE_KILL"),  NULL},
+ {ESD_PROTO_STANDBY,      ESD_KEY_LEN +      _INTSIZE, _NAME("STANDBY"),      NULL},
+ {ESD_PROTO_RESUME,       ESD_KEY_LEN +      _INTSIZE, _NAME("RESUME"),       NULL},
+ {ESD_PROTO_SAMPLE_GETID, ESD_NAME_MAX               , _NAME("SAMPLE_GETID"), NULL},
+ {ESD_PROTO_STREAM_FILT,  ESD_NAME_MAX + 2 * _INTSIZE, _NAME("STREAM_FILT"),  NULL},
+ {ESD_PROTO_SERVER_INFO,                     _INTSIZE, _NAME("SERVER_INFO"),  NULL},
+ {ESD_PROTO_ALL_INFO,                        _INTSIZE, _NAME("ALL_INFO"),     NULL},
+ {ESD_PROTO_SUBSCRIBE,    0                          , _NAME("SUBSCRIBE"),    NULL},
+ {ESD_PROTO_UNSUBSCRIBE,  0                          , _NAME("UNSUBSCRIBE"),  NULL},
+ {ESD_PROTO_STREAM_PAN,                  3 * _INTSIZE, _NAME("STREAM_PAN"),   NULL},
+ {ESD_PROTO_SAMPLE_PAN,                  3 * _INTSIZE, _NAME("SAMPLE_PAN"),   NULL},
+ {ESD_PROTO_STANDBY_MODE,                    _INTSIZE, _NAME("STANDBY_MODE"), NULL},
+ {ESD_PROTO_LATENCY,      0                          , _NAME("LATENCY"),      NULL},
+ {ESD_PROTO_MAX,          0                          , _NAME("MAX"),          NULL},
  {-1, 0, _NAME("END OF LIST"), NULL}
 };
+
+int emul_esd_exec_command(int client, int cmd, struct roar_vio_calls * vio) {
+ struct emul_esd_command * cur;
+ void * data = NULL;
+ int r;
+ int i;
+
+ if ( client == -1 || cmd < ESD_PROTO_CONNECT || cmd > ESD_PROTO_MAX || vio == NULL )
+  return -1;
+
+ for (i = 0; (cur = &(g_emul_esd_commands[i]))->cmd != -1; i++) {
+  if ( cur->cmd == cmd ) {
+   if ( cur->datalen > 0 ) {
+    if ( (data = malloc(cur->datalen)) == NULL ) {
+     // we will do a protocol error in case we do not drop the client
+     clients_delete(client);
+     return -1;
+    }
+
+    if ( roar_vio_read(vio, data, cur->datalen) != cur->datalen ) {
+     free(data);
+     clients_delete(client);
+     return -1;
+    }
+   }
+
+   if ( cur->handler == NULL ) {
+    ROAR_WARN("emul_esd_exec_command(client=%i, cmd=%s(%i), vio=%p): client uses unimplemted command",
+               client, cur->name, cmd, vio
+             );
+    r = -1;
+   } else {
+    r = cur->handler(client, cur, data, vio);
+   }
+
+   if ( data != NULL )
+    free(data);
+
+   return r;
+  }
+ }
+
+ return -1;
+}
+
+int emul_esd_check_client(int client, struct roar_vio_calls * vio) {
+ struct roar_vio_calls calls;
+ _cmd_t cmd;
+
+ if ( client == -1 )
+  return -1;
+
+ if ( vio == NULL ) {
+  vio = &calls;
+  if ( roar_vio_open_fh(vio, clients_get_fh(client)) == -1 )
+   return -1;
+ }
+
+ if ( roar_vio_read(vio, &cmd, _INTSIZE) != _INTSIZE ) {
+  // really bad protocol error
+  clients_delete(client);
+  return -1;
+ }
+
+ return emul_esd_exec_command(client, cmd, vio);
+}
 
 #endif
 #endif
