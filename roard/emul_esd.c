@@ -37,7 +37,7 @@
 #define _INTSIZE sizeof(_cmd_t)
 
 struct emul_esd_command g_emul_esd_commands[] = {
- {ESD_PROTO_CONNECT,      ESD_KEY_LEN  +     _INTSIZE, _NAME("CONNECT"),      NULL},
+ {ESD_PROTO_CONNECT,      ESD_KEY_LEN  +     _INTSIZE, _NAME("CONNECT"),      emul_esd_on_connect},
  {ESD_PROTO_LOCK,         ESD_KEY_LEN  +     _INTSIZE, _NAME("LOCK"),         NULL},
  {ESD_PROTO_UNLOCK,       ESD_KEY_LEN  +     _INTSIZE, _NAME("UNLOCK"),       NULL},
  {ESD_PROTO_STREAM_PLAY,  ESD_NAME_MAX + 2 * _INTSIZE, _NAME("STREAM_PLAY"),  NULL},
