@@ -45,8 +45,10 @@
 // FIXME: find out what the problem is and how to fix
 #ifdef ROAR_OS_OPENBSD
 #define ROAR_OUTPUT_BUFFER_SAMPLES (ROAR_RATE_DEFAULT/20)
+#define ROAR_OUTPUT_CFREQ          20
 #else
 #define ROAR_OUTPUT_BUFFER_SAMPLES (ROAR_RATE_DEFAULT/100)
+#define ROAR_OUTPUT_CFREQ          100
 #endif
 #endif
 
