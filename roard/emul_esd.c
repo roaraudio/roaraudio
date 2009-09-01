@@ -133,6 +133,18 @@ int emul_esd_check_client(int client, struct roar_vio_calls * vio) {
 }
 
 // porto lib:
+int emul_esd_int_read_buf  (int client, int * data, void * buf) {
+ _cmd_t d;
+
+ if ( data == NULL || buf == NULL )
+  return -1;
+
+ d = *(_cmd_t*)buf;
+
+ *data = d;
+
+ return 0;
+}
 int emul_esd_int_read      (int client, int * data, struct roar_vio_calls * vio) {
  _cmd_t d;
 
@@ -182,6 +194,8 @@ int emul_esd_on_stream     (int client, struct emul_esd_command * cmd, void * da
  struct roar_stream        *  s;
  int stream;
  int dir = -1;
+ int esdformat;
+ int rate;
 
  if ( client == -1 || cmd == NULL || data == NULL || vio == NULL )
   return -1;
@@ -216,6 +230,29 @@ int emul_esd_on_stream     (int client, struct emul_esd_command * cmd, void * da
   streams_delete(stream);
   clients_delete(client);
   return -1;
+ }
+
+ emul_esd_int_read_buf(client, &esdformat, data);
+ emul_esd_int_read_buf(client, &rate,      data+_INTSIZE);
+
+ s->info.rate = rate;
+
+ switch (esdformat & ESD_MASK_BITS) {
+  case ESD_BITS8:  s->info.bits =  8; break;
+  case ESD_BITS16: s->info.bits = 16; break;
+  default:
+    streams_delete(stream);
+    clients_delete(client);
+    return -1;
+ }
+
+ switch (esdformat & ESD_MASK_CHAN) {
+  case ESD_MONO:   s->info.channels = 1; break;
+  case ESD_STEREO: s->info.channels = 2; break;
+  default:
+    streams_delete(stream);
+    clients_delete(client);
+    return -1;
  }
 
  ss->codec_orgi = s->info.codec;

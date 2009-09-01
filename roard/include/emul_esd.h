@@ -44,6 +44,7 @@ struct emul_esd_command {
 int emul_esd_exec_command  (int client, int cmd, struct roar_vio_calls * vio);
 int emul_esd_check_client  (int client, struct roar_vio_calls * vio);
 
+int emul_esd_int_read_buf  (int client, int * data, void * buf);
 int emul_esd_int_read      (int client, int * data, struct roar_vio_calls * vio);
 int emul_esd_int_write     (int client, int   data, struct roar_vio_calls * vio);
 int emul_esd_test_auth     (int client, void * data, struct roar_vio_calls * vio);
