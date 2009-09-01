@@ -374,6 +374,9 @@ int clients_check     (int id) {
 
     roar_send_message(&con, &m, NULL);
    break;
+  case ROAR_PROTO_ESOUND:
+    rv = emul_esd_check_client(id, NULL);
+   break;
   default:
     rv = -1;
  }
