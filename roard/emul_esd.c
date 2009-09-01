@@ -40,9 +40,9 @@ struct emul_esd_command g_emul_esd_commands[] = {
  {ESD_PROTO_CONNECT,      ESD_KEY_LEN  +     _INTSIZE, _NAME("CONNECT"),      emul_esd_on_connect},
  {ESD_PROTO_LOCK,         ESD_KEY_LEN  +     _INTSIZE, _NAME("LOCK"),         NULL},
  {ESD_PROTO_UNLOCK,       ESD_KEY_LEN  +     _INTSIZE, _NAME("UNLOCK"),       NULL},
- {ESD_PROTO_STREAM_PLAY,  ESD_NAME_MAX + 2 * _INTSIZE, _NAME("STREAM_PLAY"),  NULL},
- {ESD_PROTO_STREAM_REC,   ESD_NAME_MAX + 2 * _INTSIZE, _NAME("STREAM_REC"),   NULL},
- {ESD_PROTO_STREAM_MON,   ESD_NAME_MAX + 2 * _INTSIZE, _NAME("STREAM_MON"),   NULL},
+ {ESD_PROTO_STREAM_PLAY,  ESD_NAME_MAX + 2 * _INTSIZE, _NAME("STREAM_PLAY"),  emul_esd_on_stream},
+ {ESD_PROTO_STREAM_REC,   ESD_NAME_MAX + 2 * _INTSIZE, _NAME("STREAM_REC"),   emul_esd_on_stream},
+ {ESD_PROTO_STREAM_MON,   ESD_NAME_MAX + 2 * _INTSIZE, _NAME("STREAM_MON"),   emul_esd_on_stream},
  {ESD_PROTO_SAMPLE_CACHE, ESD_NAME_MAX + 3 * _INTSIZE, _NAME("SAMPLE_CACHE"), NULL},
  {ESD_PROTO_SAMPLE_FREE,                     _INTSIZE, _NAME("SAMPLE_FREE"),  NULL},
  {ESD_PROTO_SAMPLE_PLAY,                     _INTSIZE, _NAME("SAMPLE_PLAY"),  NULL},
@@ -52,7 +52,7 @@ struct emul_esd_command g_emul_esd_commands[] = {
  {ESD_PROTO_STANDBY,      ESD_KEY_LEN +      _INTSIZE, _NAME("STANDBY"),      NULL},
  {ESD_PROTO_RESUME,       ESD_KEY_LEN +      _INTSIZE, _NAME("RESUME"),       NULL},
  {ESD_PROTO_SAMPLE_GETID, ESD_NAME_MAX               , _NAME("SAMPLE_GETID"), NULL},
- {ESD_PROTO_STREAM_FILT,  ESD_NAME_MAX + 2 * _INTSIZE, _NAME("STREAM_FILT"),  NULL},
+ {ESD_PROTO_STREAM_FILT,  ESD_NAME_MAX + 2 * _INTSIZE, _NAME("STREAM_FILT"),  emul_esd_on_stream},
  {ESD_PROTO_SERVER_INFO,                     _INTSIZE, _NAME("SERVER_INFO"),  NULL},
  {ESD_PROTO_ALL_INFO,                        _INTSIZE, _NAME("ALL_INFO"),     NULL},
  {ESD_PROTO_SUBSCRIBE,    0                          , _NAME("SUBSCRIBE"),    NULL},
@@ -177,6 +177,61 @@ int emul_esd_on_connect    (int client, struct emul_esd_command * cmd, void * da
  return 0;
 }
 
+int emul_esd_on_stream     (int client, struct emul_esd_command * cmd, void * data, struct roar_vio_calls * vio) {
+ struct roar_stream_server * ss;
+ struct roar_stream        *  s;
+ int stream;
+ int dir = -1;
+
+ if ( client == -1 || cmd == NULL || data == NULL || vio == NULL )
+  return -1;
+
+ switch (cmd->cmd) {
+  case ESD_PROTO_STREAM_PLAY: dir = ROAR_DIR_PLAY;    break;
+  case ESD_PROTO_STREAM_REC:  dir = ROAR_DIR_RECORD;  break;
+  case ESD_PROTO_STREAM_MON:  dir = ROAR_DIR_MONITOR; break;
+  case ESD_PROTO_STREAM_FILT: dir = ROAR_DIR_FILTER;  break;
+  default:
+    clients_delete(client);
+    return -1;
+ }
+
+ ROAR_DBG("emul_esd_on_stream(client=%i, ...): creating stream...", client);
+ if ((stream = streams_new()) == -1 ) {
+  clients_delete(client);
+  return -1;
+ }
+
+ ROAR_DBG("emul_esd_on_stream(client=%i, ...): getting stream...", client);
+ if ( streams_get(stream, &ss) == -1 ) {
+  streams_delete(stream);
+  clients_delete(client);
+  return -1;
+ }
+
+ s = ROAR_STREAM(ss);
+
+ ROAR_DBG("emul_esd_on_stream(client=%i, ...): set client of stream...", client);
+ if ( client_stream_add(client, stream) == -1 ) {
+  streams_delete(stream);
+  clients_delete(client);
+  return -1;
+ }
+
+ ss->codec_orgi = s->info.codec;
+
+ if ( streams_set_dir(stream, dir, 1) == -1 ) {
+  clients_delete(client);
+  return -1;
+ }
+
+ if ( client_stream_exec(client, stream) == -1 ) {
+  clients_delete(client);
+  return -1;
+ }
+
+ return 0;
+}
 
 #endif
 #endif
