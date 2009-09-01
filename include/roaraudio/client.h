@@ -33,6 +33,10 @@
 #define ROAR_CLIENTS_MAX 64
 #define ROAR_CLIENTS_MAX_STREAMS_PER_CLIENT 4
 
+#define ROAR_PROTO_NONE             0
+#define ROAR_PROTO_ROARAUDIO        1
+#define ROAR_PROTO_ESOUND           2
+
 struct roar_client {
  int fh; /* controll connection */
 // int last_stream; /* id of the last stream created */
@@ -44,6 +48,7 @@ struct roar_client {
  int execed;
  int streams[ROAR_CLIENTS_MAX_STREAMS_PER_CLIENT];
  struct roar_acl_target * acl;
+ int proto;
 };
 
 #endif
