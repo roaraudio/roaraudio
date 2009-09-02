@@ -427,15 +427,17 @@ int emul_esd_on_all_info   (int client, struct emul_esd_command * cmd, void * da
    if ( streams_get(i, &ss) == -1 )
     continue;
 
-   if ( streams_get_dir(i) != ROAR_DIR_PLAY )
-    continue;
+   switch (streams_get_dir(i)) {
+    case ROAR_DIR_PLAY:    format |= ESD_PLAY;    break;
+    case ROAR_DIR_MONITOR: format |= ESD_MONITOR; break;
+    case ROAR_DIR_RECORD:  format |= ESD_RECORD;  break;
+    default:               continue;              break;
+   }
 
    info = &(ROAR_STREAM(ss)->info);
 
    id = i;
    rate = info->rate;
-
-   format |= ESD_PLAY;
 
    switch (info->bits) {
     case  8: format |= ESD_BITS8;  break;
