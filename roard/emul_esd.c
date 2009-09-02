@@ -60,7 +60,7 @@ struct emul_esd_command g_emul_esd_commands[] = {
  {ESD_PROTO_RESUME,       ESD_KEY_LEN +      _INTSIZE, _NAME("RESUME"),       emul_esd_on_standby},
  {ESD_PROTO_SAMPLE_GETID, ESD_NAME_MAX               , _NAME("SAMPLE_GETID"), _NEED_SAMPLE_SUPPORT},
  {ESD_PROTO_STREAM_FILT,  ESD_NAME_MAX + 2 * _INTSIZE, _NAME("STREAM_FILT"),  emul_esd_on_stream},
- {ESD_PROTO_SERVER_INFO,                     _INTSIZE, _NAME("SERVER_INFO"),  NULL},
+ {ESD_PROTO_SERVER_INFO,                     _INTSIZE, _NAME("SERVER_INFO"),  emul_esd_on_server_info},
  {ESD_PROTO_ALL_INFO,                        _INTSIZE, _NAME("ALL_INFO"),     NULL},
  {ESD_PROTO_SUBSCRIBE,    0                          , _NAME("SUBSCRIBE"),    _UNIMPLEMNTED_IN_ESD},
  {ESD_PROTO_UNSUBSCRIBE,  0                          , _NAME("UNSUBSCRIBE"),  _UNIMPLEMNTED_IN_ESD},
@@ -374,6 +374,33 @@ int emul_esd_on_stream_pan (int client, struct emul_esd_command * cmd, void * da
  }
 
  return emul_esd_int_write(client, ok, vio);
+}
+
+int emul_esd_on_server_info(int client, struct emul_esd_command * cmd, void * data, struct roar_vio_calls * vio) {
+ int version = 0;
+ int rate    = g_sa->rate;
+ int format  = 0;
+
+ switch (g_sa->bits) {
+  case  8: format |= ESD_BITS8;  break;
+  case 16: format |= ESD_BITS16; break;
+ }
+
+ switch (g_sa->channels) {
+  case  1: format |= ESD_MONO;   break;
+  case  2: format |= ESD_STEREO; break;
+ }
+
+ if ( emul_esd_int_write(client, version, vio) == -1 )
+  return -1;
+
+ if ( emul_esd_int_write(client, rate, vio) == -1 )
+  return -1;
+
+ if ( emul_esd_int_write(client, format, vio) == -1 )
+  return -1;
+
+ return 0;
 }
 
 #endif

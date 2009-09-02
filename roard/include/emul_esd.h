@@ -58,6 +58,8 @@ int emul_esd_on_standbymode(int client, struct emul_esd_command * cmd, void * da
 
 int emul_esd_on_stream_pan (int client, struct emul_esd_command * cmd, void * data, struct roar_vio_calls * vio);
 
+int emul_esd_on_server_info(int client, struct emul_esd_command * cmd, void * data, struct roar_vio_calls * vio);
+
 #endif
 #endif
 
