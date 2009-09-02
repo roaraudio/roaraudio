@@ -194,6 +194,7 @@ int roar_stream_meta_list (struct roar_connection * con, struct roar_stream * s,
 
  m.cmd     = ROAR_CMD_LIST_META;
  m.stream  = s->id;
+ m.pos     = 0;
 
  m.data[0] = 0;
  m.datalen = 1;
