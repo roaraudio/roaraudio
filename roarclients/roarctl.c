@@ -218,6 +218,11 @@ void list_clients (struct roar_connection * con) {
    printf("Player UID/GID        : %i/%i\n", c.uid, c.gid);
 #endif
   }
+
+  if ( g_verbose && c.proto != ROAR_PROTO_NONE ) {
+   printf("Player Protocol       : %s\n", roar_proto2str(c.proto));
+  }
+
   if ( c.execed != -1 )
    printf("Execed stream         : %i\n", c.execed);
 
