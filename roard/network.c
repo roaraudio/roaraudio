@@ -132,6 +132,8 @@ int net_get_new_client (int sock, int proto) {
   return -1;
 
  switch (proto) {
+#ifndef ROAR_WITHOUT_DCOMP_EMUL_ESD
+#ifdef ROAR_HAVE_ESD
   case ROAR_PROTO_ESOUND:
     if ( roar_vio_open_fh(&vio, fh) == -1 )
      return -1;
@@ -139,6 +141,8 @@ int net_get_new_client (int sock, int proto) {
     if ( emul_esd_exec_command(client, ESD_PROTO_CONNECT, &vio) == -1 )
      return -1;
    break;
+#endif
+#endif
  }
 
 // close(fh);
