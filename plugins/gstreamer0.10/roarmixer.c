@@ -119,19 +119,18 @@ gst_roar_mixer_element_change_state (GstElement * element,
         this->mixer = gst_roarmixer_new(NULL, GST_ROAR_MIXER_ALL);
       }
       break;
-      break;
     default:
       break;
   }
 
-  ret = GST_ELEMENT_CLASS (parent_class)->change_state (element, transition);
+  ret = GST_ELEMENT_CLASS(parent_class)->change_state(element, transition);
   if (ret == GST_STATE_CHANGE_FAILURE)
     return ret;
 
   switch (transition) {
     case GST_STATE_CHANGE_READY_TO_NULL:
       if (this->mixer) {
-        gst_roarmixer_free (this->mixer);
+        gst_roarmixer_free(this->mixer);
         this->mixer = NULL;
       }
       break;
@@ -241,11 +240,13 @@ void            gst_roarmixer_updatestreamlist   (GstRoarMixer *mixer) {
     return;
   }
 
+/*
   if (mixer->tracklist) {
     g_list_foreach(mixer->tracklist, (GFunc) g_object_unref, NULL);
     g_list_free(mixer->tracklist);
     mixer->tracklist = NULL;
   }
+*/
 
   ROAR_WARN("gst_roarmixer_updatestreamlist(mixer=%p): tracklist=%p", mixer, mixer->tracklist);
 
