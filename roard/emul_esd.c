@@ -61,7 +61,7 @@ struct emul_esd_command g_emul_esd_commands[] = {
  {ESD_PROTO_SAMPLE_GETID, ESD_NAME_MAX               , _NAME("SAMPLE_GETID"), _NEED_SAMPLE_SUPPORT},
  {ESD_PROTO_STREAM_FILT,  ESD_NAME_MAX + 2 * _INTSIZE, _NAME("STREAM_FILT"),  emul_esd_on_stream},
  {ESD_PROTO_SERVER_INFO,                     _INTSIZE, _NAME("SERVER_INFO"),  emul_esd_on_server_info},
- {ESD_PROTO_ALL_INFO,                        _INTSIZE, _NAME("ALL_INFO"),     NULL},
+ {ESD_PROTO_ALL_INFO,                        _INTSIZE, _NAME("ALL_INFO"),     emul_esd_on_all_info},
  {ESD_PROTO_SUBSCRIBE,    0                          , _NAME("SUBSCRIBE"),    _UNIMPLEMNTED_IN_ESD},
  {ESD_PROTO_UNSUBSCRIBE,  0                          , _NAME("UNSUBSCRIBE"),  _UNIMPLEMNTED_IN_ESD},
  {ESD_PROTO_STREAM_PAN,                  3 * _INTSIZE, _NAME("STREAM_PAN"),   emul_esd_on_stream_pan},
@@ -399,6 +399,114 @@ int emul_esd_on_server_info(int client, struct emul_esd_command * cmd, void * da
 
  if ( emul_esd_int_write(client, format, vio) == -1 )
   return -1;
+
+ return 0;
+}
+
+int emul_esd_on_all_info   (int client, struct emul_esd_command * cmd, void * data, struct roar_vio_calls * vio) {
+ struct roar_stream_server *   ss;
+ struct roar_audio_info    * info;
+ struct roar_client        *    c;
+ char name[ESD_NAME_MAX];
+ char * sname;
+ int id, rate, left, right, format;
+ int i;
+
+ if ( emul_esd_on_server_info(client, cmd, data, vio) == -1 )
+  return -1;
+
+ for (i = 0; i < (ROAR_STREAMS_MAX+2); i++) {
+  memset(name, 0, sizeof(name));
+
+  id   = rate  = format = 0;
+  left = right = 0;
+
+  if ( i >= ROAR_STREAMS_MAX ) {
+   id = -1;
+  } else {
+   if ( streams_get(i, &ss) == -1 )
+    continue;
+
+   if ( streams_get_dir(i) != ROAR_DIR_PLAY )
+    continue;
+
+   info = &(ROAR_STREAM(ss)->info);
+
+   id = i;
+   rate = info->rate;
+
+   format |= ESD_PLAY;
+
+   switch (info->bits) {
+    case  8: format |= ESD_BITS8;  break;
+    case 16: format |= ESD_BITS16; break;
+   }
+
+   switch (info->channels) {
+    case  1:
+      if ( ss->mixer.mixer[0] == ss->mixer.scale ) {
+       left = right = 256;
+      } else {
+       left = right = ss->mixer.mixer[0] / 256;
+      }
+      format |= ESD_MONO;
+     break;
+    case  2:
+      if ( ss->mixer.mixer[0] == ss->mixer.scale ) {
+       left = 256;
+      } else {
+       left = ss->mixer.mixer[0] / 256;
+      }
+
+      if ( ss->mixer.mixer[1] == ss->mixer.scale ) {
+       right = 256;
+      } else {
+       right = ss->mixer.mixer[1] / 256;
+      }
+
+      format |= ESD_STEREO;
+     break;
+    default:
+      left = right = 0;
+   }
+
+   sname = streams_get_name(id);
+
+   if ( sname == NULL || sname[0] == 0 ) {
+    if ( clients_get(streams_get_client(id), &c) != -1 ) {
+     sname = c->name;
+    }
+   }
+
+   if ( sname == NULL || sname[0] == 0 )
+    sname = "(unknown)";
+
+   strncpy(name, sname, sizeof(name) > ROAR_BUFFER_NAME ? ROAR_BUFFER_NAME : sizeof(name));
+   name[sizeof(name)-1] = 0;
+
+  }
+
+  id = _ROAR2ESD(id);
+
+  if ( emul_esd_int_write(client, id, vio) == -1 )
+   return -1;
+  if ( roar_vio_write(vio, name, sizeof(name)) != sizeof(name) )
+   return -1;
+  if ( emul_esd_int_write(client, rate, vio) == -1 )
+   return -1;
+  if ( emul_esd_int_write(client, left, vio) == -1 )
+   return -1;
+  if ( emul_esd_int_write(client, right, vio) == -1 )
+   return -1;
+  if ( emul_esd_int_write(client, format, vio) == -1 )
+   return -1;
+
+  if ( i == ROAR_STREAMS_MAX+1) {
+   // write 'length'...
+   if ( emul_esd_int_write(client, id, vio) == -1 )
+    return -1;
+  }
+ }
 
  return 0;
 }
