@@ -374,9 +374,13 @@ int clients_check     (int id) {
 
     roar_send_message(&con, &m, NULL);
    break;
+#ifndef ROAR_WITHOUT_DCOMP_EMUL_ESD
+#ifdef ROAR_HAVE_ESD
   case ROAR_PROTO_ESOUND:
     rv = emul_esd_check_client(id, NULL);
    break;
+#endif
+#endif
   default:
     rv = -1;
  }
