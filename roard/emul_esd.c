@@ -49,8 +49,8 @@ struct emul_esd_command g_emul_esd_commands[] = {
  {ESD_PROTO_SAMPLE_LOOP,                     _INTSIZE, _NAME("SAMPLE_LOOP"),  NULL},
  {ESD_PROTO_SAMPLE_STOP,                     _INTSIZE, _NAME("SAMPLE_STOP"),  NULL},
  {ESD_PROTO_SAMPLE_KILL,  0                          , _NAME("SAMPLE_KILL"),  NULL},
- {ESD_PROTO_STANDBY,      ESD_KEY_LEN +      _INTSIZE, _NAME("STANDBY"),      NULL},
- {ESD_PROTO_RESUME,       ESD_KEY_LEN +      _INTSIZE, _NAME("RESUME"),       NULL},
+ {ESD_PROTO_STANDBY,      ESD_KEY_LEN +      _INTSIZE, _NAME("STANDBY"),      emul_esd_on_standby},
+ {ESD_PROTO_RESUME,       ESD_KEY_LEN +      _INTSIZE, _NAME("RESUME"),       emul_esd_on_standby},
  {ESD_PROTO_SAMPLE_GETID, ESD_NAME_MAX               , _NAME("SAMPLE_GETID"), NULL},
  {ESD_PROTO_STREAM_FILT,  ESD_NAME_MAX + 2 * _INTSIZE, _NAME("STREAM_FILT"),  emul_esd_on_stream},
  {ESD_PROTO_SERVER_INFO,                     _INTSIZE, _NAME("SERVER_INFO"),  NULL},
@@ -310,6 +310,25 @@ int emul_esd_on_latency    (int client, struct emul_esd_command * cmd, void * da
  lag *= 2.0 * 44100.0 / (float)g_sa->rate;
  
  return emul_esd_int_write(client, lag, vio);
+}
+
+int emul_esd_on_standby    (int client, struct emul_esd_command * cmd, void * data, struct roar_vio_calls * vio) {
+ int ok = 0;
+
+ if ( emul_esd_test_auth(client, data, vio) == -1 ) {
+  return emul_esd_int_write(client, ok, vio);
+ }
+
+ ok = 1;
+
+ if (cmd->cmd == ESD_PROTO_STANDBY) {
+  g_standby = 1;
+ } else {
+  g_standby = 0;
+ }
+
+
+ return emul_esd_int_write(client, ok, vio);
 }
 
 #endif
