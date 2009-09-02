@@ -250,20 +250,6 @@ int init_listening (void) {
  return 0;
 }
 
-int get_proto  (char * proto) {
- if ( !strcasecmp(proto, "roar") ) {
-  return ROAR_PROTO_ROARAUDIO;
- } else if ( !strcasecmp(proto, "roaraudio") ) {
-  return ROAR_PROTO_ROARAUDIO;
- } else if ( !strcasecmp(proto, "esd") ) {
-  return ROAR_PROTO_ESOUND;
- } else if ( !strcasecmp(proto, "esound") ) {
-  return ROAR_PROTO_ESOUND;
- }
-
- return -1;
-}
-
 int add_listen (char * addr, int port, int sock_type, char * user, char * group, int proto) {
 #if defined(ROAR_HAVE_SETGID) && defined(ROAR_HAVE_IO_POSIX)
  struct group   * grp  = NULL;
@@ -1201,7 +1187,7 @@ int main (void) {
 
   } else if ( strcmp(k, "--proto") == 0 ) {
 #ifdef ROAR_SUPPORT_LISTEN
-   if ( (sock_proto = get_proto(argv[++i])) == -1 ) {
+   if ( (sock_proto = roar_str2proto(argv[++i])) == -1 ) {
     ROAR_ERR("Unknown protocol: %s", argv[i]);
     return 1;
    }
