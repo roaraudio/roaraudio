@@ -59,7 +59,7 @@ struct emul_esd_command g_emul_esd_commands[] = {
  {ESD_PROTO_UNSUBSCRIBE,  0                          , _NAME("UNSUBSCRIBE"),  NULL},
  {ESD_PROTO_STREAM_PAN,                  3 * _INTSIZE, _NAME("STREAM_PAN"),   NULL},
  {ESD_PROTO_SAMPLE_PAN,                  3 * _INTSIZE, _NAME("SAMPLE_PAN"),   NULL},
- {ESD_PROTO_STANDBY_MODE,                    _INTSIZE, _NAME("STANDBY_MODE"), NULL},
+ {ESD_PROTO_STANDBY_MODE,                    _INTSIZE, _NAME("STANDBY_MODE"), emul_esd_on_standbymode},
  {ESD_PROTO_LATENCY,      0                          , _NAME("LATENCY"),      emul_esd_on_latency},
  {ESD_PROTO_MAX,          0                          , _NAME("MAX"),          NULL},
  {-1, 0, _NAME("END OF LIST"), NULL}
@@ -329,6 +329,22 @@ int emul_esd_on_standby    (int client, struct emul_esd_command * cmd, void * da
 
 
  return emul_esd_int_write(client, ok, vio);
+}
+
+int emul_esd_on_standbymode(int client, struct emul_esd_command * cmd, void * data, struct roar_vio_calls * vio) {
+ int mode = ESM_ERROR;
+
+ if ( g_standby ) {
+  if ( g_autostandby ) {
+   mode = ESM_ON_AUTOSTANDBY;
+  } else {
+   mode = ESM_ON_STANDBY;
+  }
+ } else {
+  mode = ESM_RUNNING;
+ }
+
+ return emul_esd_int_write(client, mode, vio);
 }
 
 #endif
