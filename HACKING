@@ -51,6 +51,17 @@ Please ensure that configure finds the correct audio users group.
 In case it does not detect the correct one please set it via
 --audio-group.
 
+In case you want to provide emulation of other sound systems
+they need to be install on the build system (only). This is
+because we use parts of them (mainly header files) in order
+to build the compatibility librarys and abstraction layers
+to ensure best comaptibility. They will not be required
+after the build has been done and thereof does not need to be a
+dependency of the final packet you build.
+The only expection is in case you build driver support for
+one or more of them. If you do so you of cause need to ensure
+that all needed librarys are avalible on the target system.
+
 Running roard:
 Global (system wide) roards normaly are started as root.
 Ensure it drops it's privilegs by setting --setuid/--setgid
