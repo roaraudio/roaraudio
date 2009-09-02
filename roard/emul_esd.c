@@ -40,6 +40,9 @@
 #define _UNIMPLEMNTED_IN_ESD NULL
 #define _NEED_SAMPLE_SUPPORT NULL
 
+#define _ROAR2ESD(x) ((x)+1)
+#define _ESD2ROAR(x) ((x)-1)
+
 struct emul_esd_command g_emul_esd_commands[] = {
  {ESD_PROTO_CONNECT,      ESD_KEY_LEN  +     _INTSIZE, _NAME("CONNECT"),      emul_esd_on_connect},
  {ESD_PROTO_LOCK,         ESD_KEY_LEN  +     _INTSIZE, _NAME("LOCK"),         NULL},
@@ -61,7 +64,7 @@ struct emul_esd_command g_emul_esd_commands[] = {
  {ESD_PROTO_ALL_INFO,                        _INTSIZE, _NAME("ALL_INFO"),     NULL},
  {ESD_PROTO_SUBSCRIBE,    0                          , _NAME("SUBSCRIBE"),    _UNIMPLEMNTED_IN_ESD},
  {ESD_PROTO_UNSUBSCRIBE,  0                          , _NAME("UNSUBSCRIBE"),  _UNIMPLEMNTED_IN_ESD},
- {ESD_PROTO_STREAM_PAN,                  3 * _INTSIZE, _NAME("STREAM_PAN"),   NULL},
+ {ESD_PROTO_STREAM_PAN,                  3 * _INTSIZE, _NAME("STREAM_PAN"),   emul_esd_on_stream_pan},
  {ESD_PROTO_SAMPLE_PAN,                  3 * _INTSIZE, _NAME("SAMPLE_PAN"),   _NEED_SAMPLE_SUPPORT},
  {ESD_PROTO_STANDBY_MODE,                    _INTSIZE, _NAME("STANDBY_MODE"), emul_esd_on_standbymode},
  {ESD_PROTO_LATENCY,      0                          , _NAME("LATENCY"),      emul_esd_on_latency},
@@ -349,6 +352,28 @@ int emul_esd_on_standbymode(int client, struct emul_esd_command * cmd, void * da
  }
 
  return emul_esd_int_write(client, mode, vio);
+}
+
+int emul_esd_on_stream_pan (int client, struct emul_esd_command * cmd, void * data, struct roar_vio_calls * vio) {
+ struct roar_stream_server * ss;
+ int stream;
+ int left, right;
+ int ok = 0;
+
+ emul_esd_int_read_buf(client, &stream, data + 0*_INTSIZE);
+ emul_esd_int_read_buf(client, &left,   data + 1*_INTSIZE);
+ emul_esd_int_read_buf(client, &right,  data + 2*_INTSIZE);
+
+ stream = _ESD2ROAR(stream);
+
+ if ( streams_get(stream, &ss) != -1 ) {
+  ss->mixer.mixer[0] = left  == 256 ? 65535 : left  * 256;
+  ss->mixer.mixer[1] = right == 256 ? 65535 : right * 256;
+  if ( streams_set_mixer(stream) != -1 )
+   ok = 1;
+ }
+
+ return emul_esd_int_write(client, ok, vio);
 }
 
 #endif
