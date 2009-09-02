@@ -89,12 +89,12 @@ void esd_print_server_info( esd_server_info_t *server_info ) {
 void esd_print_player_info( esd_player_info_t *player_info ) {
  char buf[80] = "";
 
- if ( player_info->format & ESD_BITS16 )
+ if ( (player_info->format & ESD_BITS16) == ESD_BITS16 )
   strcat(buf, "16 bit ");
  else
   strcat(buf, "8 bit ");
 
- if ( player_info->format & ESD_MONO )
+ if ( (player_info->format & ESD_STEREO) == ESD_STEREO )
   strcat(buf, "stereo ");
  else
   strcat(buf, "mono ");
