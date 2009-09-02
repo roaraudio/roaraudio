@@ -446,4 +446,27 @@ int roar_ctl_m2c      (struct roar_message * m, struct roar_client * c) {
  return 0;
 }
 
+int    roar_str2proto (char * proto) {
+ if ( !strcasecmp(proto, "roar") ) {
+  return ROAR_PROTO_ROARAUDIO;
+ } else if ( !strcasecmp(proto, "roaraudio") ) {
+  return ROAR_PROTO_ROARAUDIO;
+ } else if ( !strcasecmp(proto, "esd") ) {
+  return ROAR_PROTO_ESOUND;
+ } else if ( !strcasecmp(proto, "esound") ) {
+  return ROAR_PROTO_ESOUND;
+ }
+
+ return -1;
+}
+
+char * roar_proto2str (int    proto) {
+ switch (proto) {
+  case ROAR_PROTO_ROARAUDIO: return "RoarAudio"; break;
+  case ROAR_PROTO_ESOUND:    return "EsounD";    break;
+  default:
+    return "(unknown)";
+ }
+}
+
 //ll

@@ -79,6 +79,9 @@ int roar_ctl_m2ia     (struct roar_message * m, int * data, int len);
 int roar_ctl_c2m      (struct roar_message * m, struct roar_client * c);
 int roar_ctl_m2c      (struct roar_message * m, struct roar_client * c);
 
+int    roar_str2proto (char * proto);
+char * roar_proto2str (int    proto);
+
 #endif
 
 //ll
