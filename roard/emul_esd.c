@@ -36,6 +36,10 @@
 #define _cmd_t   int
 #define _INTSIZE sizeof(_cmd_t)
 
+#define _NOT_TO_IMPLEMENT    NULL
+#define _UNIMPLEMNTED_IN_ESD NULL
+#define _NEED_SAMPLE_SUPPORT NULL
+
 struct emul_esd_command g_emul_esd_commands[] = {
  {ESD_PROTO_CONNECT,      ESD_KEY_LEN  +     _INTSIZE, _NAME("CONNECT"),      emul_esd_on_connect},
  {ESD_PROTO_LOCK,         ESD_KEY_LEN  +     _INTSIZE, _NAME("LOCK"),         NULL},
@@ -43,26 +47,26 @@ struct emul_esd_command g_emul_esd_commands[] = {
  {ESD_PROTO_STREAM_PLAY,  ESD_NAME_MAX + 2 * _INTSIZE, _NAME("STREAM_PLAY"),  emul_esd_on_stream},
  {ESD_PROTO_STREAM_REC,   ESD_NAME_MAX + 2 * _INTSIZE, _NAME("STREAM_REC"),   emul_esd_on_stream},
  {ESD_PROTO_STREAM_MON,   ESD_NAME_MAX + 2 * _INTSIZE, _NAME("STREAM_MON"),   emul_esd_on_stream},
- {ESD_PROTO_SAMPLE_CACHE, ESD_NAME_MAX + 3 * _INTSIZE, _NAME("SAMPLE_CACHE"), NULL},
- {ESD_PROTO_SAMPLE_FREE,                     _INTSIZE, _NAME("SAMPLE_FREE"),  NULL},
- {ESD_PROTO_SAMPLE_PLAY,                     _INTSIZE, _NAME("SAMPLE_PLAY"),  NULL},
- {ESD_PROTO_SAMPLE_LOOP,                     _INTSIZE, _NAME("SAMPLE_LOOP"),  NULL},
- {ESD_PROTO_SAMPLE_STOP,                     _INTSIZE, _NAME("SAMPLE_STOP"),  NULL},
- {ESD_PROTO_SAMPLE_KILL,  0                          , _NAME("SAMPLE_KILL"),  NULL},
+ {ESD_PROTO_SAMPLE_CACHE, ESD_NAME_MAX + 3 * _INTSIZE, _NAME("SAMPLE_CACHE"), _NEED_SAMPLE_SUPPORT},
+ {ESD_PROTO_SAMPLE_FREE,                     _INTSIZE, _NAME("SAMPLE_FREE"),  _NEED_SAMPLE_SUPPORT},
+ {ESD_PROTO_SAMPLE_PLAY,                     _INTSIZE, _NAME("SAMPLE_PLAY"),  _NEED_SAMPLE_SUPPORT},
+ {ESD_PROTO_SAMPLE_LOOP,                     _INTSIZE, _NAME("SAMPLE_LOOP"),  _NEED_SAMPLE_SUPPORT},
+ {ESD_PROTO_SAMPLE_STOP,                     _INTSIZE, _NAME("SAMPLE_STOP"),  _NEED_SAMPLE_SUPPORT},
+ {ESD_PROTO_SAMPLE_KILL,  0                          , _NAME("SAMPLE_KILL"),  _NEED_SAMPLE_SUPPORT},
  {ESD_PROTO_STANDBY,      ESD_KEY_LEN +      _INTSIZE, _NAME("STANDBY"),      emul_esd_on_standby},
  {ESD_PROTO_RESUME,       ESD_KEY_LEN +      _INTSIZE, _NAME("RESUME"),       emul_esd_on_standby},
- {ESD_PROTO_SAMPLE_GETID, ESD_NAME_MAX               , _NAME("SAMPLE_GETID"), NULL},
+ {ESD_PROTO_SAMPLE_GETID, ESD_NAME_MAX               , _NAME("SAMPLE_GETID"), _NEED_SAMPLE_SUPPORT},
  {ESD_PROTO_STREAM_FILT,  ESD_NAME_MAX + 2 * _INTSIZE, _NAME("STREAM_FILT"),  emul_esd_on_stream},
  {ESD_PROTO_SERVER_INFO,                     _INTSIZE, _NAME("SERVER_INFO"),  NULL},
  {ESD_PROTO_ALL_INFO,                        _INTSIZE, _NAME("ALL_INFO"),     NULL},
- {ESD_PROTO_SUBSCRIBE,    0                          , _NAME("SUBSCRIBE"),    NULL},
- {ESD_PROTO_UNSUBSCRIBE,  0                          , _NAME("UNSUBSCRIBE"),  NULL},
+ {ESD_PROTO_SUBSCRIBE,    0                          , _NAME("SUBSCRIBE"),    _UNIMPLEMNTED_IN_ESD},
+ {ESD_PROTO_UNSUBSCRIBE,  0                          , _NAME("UNSUBSCRIBE"),  _UNIMPLEMNTED_IN_ESD},
  {ESD_PROTO_STREAM_PAN,                  3 * _INTSIZE, _NAME("STREAM_PAN"),   NULL},
- {ESD_PROTO_SAMPLE_PAN,                  3 * _INTSIZE, _NAME("SAMPLE_PAN"),   NULL},
+ {ESD_PROTO_SAMPLE_PAN,                  3 * _INTSIZE, _NAME("SAMPLE_PAN"),   _NEED_SAMPLE_SUPPORT},
  {ESD_PROTO_STANDBY_MODE,                    _INTSIZE, _NAME("STANDBY_MODE"), emul_esd_on_standbymode},
  {ESD_PROTO_LATENCY,      0                          , _NAME("LATENCY"),      emul_esd_on_latency},
- {ESD_PROTO_MAX,          0                          , _NAME("MAX"),          NULL},
- {-1, 0, _NAME("END OF LIST"), NULL}
+ {ESD_PROTO_MAX,          0                          , _NAME("MAX"),          _NOT_TO_IMPLEMENT},
+ {-1, 0, _NAME("END OF LIST"), _NOT_TO_IMPLEMENT}
 };
 
 // command handling:
