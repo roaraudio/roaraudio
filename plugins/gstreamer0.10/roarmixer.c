@@ -434,6 +434,7 @@ gst_roarmixer_track_new (GstRoarMixer * mixer,
    case ROAR_DIR_MONITOR:
      flags |= GST_MIXER_TRACK_OUTPUT;
     break;
+   default: return NULL;
   }
 
 #if 0
