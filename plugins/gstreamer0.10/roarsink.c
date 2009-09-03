@@ -69,11 +69,14 @@ static GstStaticPadTemplate sink_factory = GST_STATIC_PAD_TEMPLATE("sink",
         "depth = (int) 16, "
         "rate = (int) [ 1, MAX ], "
         "channels = (int) [ 1, 2 ]; "
+
         "audio/x-raw-int, "
         "signed = (boolean) { true, false }, "
         "width = (int) 8, "
         "depth = (int) 8, "
-        "rate = (int) [ 1, MAX ], " "channels = (int) [ 1, 2 ]")
+        "rate = (int) [ 1, MAX ], "
+        "channels = (int) [ 1, 2 ]"
+       )
     );
 
 static void gst_roarsink_finalize (GObject * object);
