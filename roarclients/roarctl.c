@@ -299,7 +299,7 @@ void list_streams (struct roar_connection * con) {
                                        s.info.codec == ROAR_CODEC_DEFAULT ? " native" : "");
   if ( roar_stream_get_info(con, &s, &info) != -1 ) {
    if ( info.codec != s.info.codec ) {
-    printf("Stremed codec         : %2i (%s%s)\n", info.codec, roar_codec2str(info.codec),
+    printf("Streamed codec        : %2i (%s%s)\n", info.codec, roar_codec2str(info.codec),
                                        info.codec == ROAR_CODEC_DEFAULT ? " native" : "");
    }
 
