@@ -40,6 +40,9 @@ struct roar_libroar_config * roar_libroar_get_config_ptr(void) {
 
  if ( !inited ) {
   memset(&config, 0, sizeof(config));
+
+  config.server = NULL;
+
   inited++;
  }
 
@@ -84,5 +87,13 @@ struct roar_libroar_config * roar_libroar_get_config(void) {
  return config;
 }
 
+int    roar_libroar_set_server(char * server) {
+ roar_libroar_get_config_ptr()->server = server;
+ return 0;
+}
+
+char * roar_libroar_get_server(void) {
+ return roar_libroar_get_config_ptr()->server;
+}
 
 //ll

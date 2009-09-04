@@ -51,6 +51,9 @@ int roar_connect_raw (char * server) {
 
  roar_errno = ROAR_ERROR_UNKNOWN;
 
+ if ( server == NULL )
+  server = roar_libroar_get_server();
+
  if ( server == NULL && (roar_server = getenv("ROAR_SERVER")) != NULL )
   server = roar_server;
 

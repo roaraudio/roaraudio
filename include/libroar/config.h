@@ -45,10 +45,14 @@ struct roar_libroar_config {
  struct {
   int workarounds;
  } workaround;
+ char * server;
 };
 
 struct roar_libroar_config * roar_libroar_get_config_ptr(void);
 struct roar_libroar_config * roar_libroar_get_config(void);
+
+int    roar_libroar_set_server(char * server);
+char * roar_libroar_get_server(void);
 
 #endif
 
