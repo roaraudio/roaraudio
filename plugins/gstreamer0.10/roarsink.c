@@ -59,6 +59,9 @@ enum
   PROP_HOST
 };
 
+#define _QM(x) #x
+#define  QM(x) _QM(x)
+
 static GstStaticPadTemplate sink_factory = GST_STATIC_PAD_TEMPLATE("sink",
     GST_PAD_SINK,
     GST_PAD_ALWAYS,
@@ -68,16 +71,19 @@ static GstStaticPadTemplate sink_factory = GST_STATIC_PAD_TEMPLATE("sink",
         "width = (int) 16, "
         "depth = (int) 16, "
         "rate = (int) [ 1, MAX ], "
-        "channels = (int) [ 1, 2 ]; "
+        "channels = (int) [ 1, " QM(ROAR_MAX_CHANNELS) " ]; "
 
         "audio/x-raw-int, "
         "signed = (boolean) { true, false }, "
         "width = (int) 8, "
         "depth = (int) 8, "
         "rate = (int) [ 1, MAX ], "
-        "channels = (int) [ 1, 2 ]"
+        "channels = (int) [ 1, " QM(ROAR_MAX_CHANNELS) " ]"
        )
     );
+
+#undef _QM
+#undef  QM
 
 static void gst_roarsink_finalize (GObject * object);
 
