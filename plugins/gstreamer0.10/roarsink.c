@@ -74,6 +74,7 @@ static GstStaticPadTemplate sink_factory = GST_STATIC_PAD_TEMPLATE("sink",
         "rate = (int) [ 1, MAX ], "
         "channels = (int) [ 1, " QM(ROAR_MAX_CHANNELS) " ]; "
 
+/*
         "audio/x-raw-int, "
         "endianness = (int) { BIG_ENDIAN, LITTLE_ENDIAN }, "
         "signed = (boolean) { true, false }, "
@@ -81,6 +82,7 @@ static GstStaticPadTemplate sink_factory = GST_STATIC_PAD_TEMPLATE("sink",
         "depth = (int) 32, "
         "rate = (int) [ 1, MAX ], "
         "channels = (int) [ 1, " QM(ROAR_MAX_CHANNELS) " ]; "
+*/
 
 /*
         "audio/x-raw-int, "
