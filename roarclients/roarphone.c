@@ -438,6 +438,10 @@ int main (int argc, char * argv[]) {
   }
  }
 
+ // ignore errors, maybe it will work even if this fails
+ // (btw. it will never fail without crashing the rest of the app ;)
+ roar_libroar_set_server(server);
+
  if ( g_conf.antiecho == AE_SPEEX ) {
   ROAR_WARN("Speex Antiecho is obsolete and may be removed in future versions. Use --antiecho roard");
  }

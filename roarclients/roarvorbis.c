@@ -201,6 +201,8 @@ int main (int argc, char * argv[]) {
   }
  }
 
+ roar_libroar_set_server(server);
+
  if ( file == NULL ) {
   ROAR_ERR("No filename given.");
   return 1;
