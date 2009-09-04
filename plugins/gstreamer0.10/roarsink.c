@@ -247,7 +247,7 @@ couldnt_connect:
   {
     GST_ELEMENT_ERROR(roarsink, RESOURCE, OPEN_WRITE,
         (_("Could not establish connection to sound server")),
-        ("can't open connection to esound server"));
+        ("can't open connection to RoarAudio server"));
     return FALSE;
   }
 no_server_info:
@@ -282,7 +282,7 @@ static gboolean gst_roarsink_prepare (GstAudioSink * asink, GstRingBufferSpec * 
   GST_DEBUG_OBJECT(roarsink, "prepare");
 
   
-  GST_INFO_OBJECT(roarsink, "attempting to open data connection to esound server");
+  GST_INFO_OBJECT(roarsink, "attempting to open data connection to RoarAudio server");
 
   switch (spec->type) {
    case GST_BUFTYPE_LINEAR:
@@ -332,7 +332,7 @@ static gboolean gst_roarsink_prepare (GstAudioSink * asink, GstRingBufferSpec * 
   spec->bytes_per_sample = spec->channels * bits / 8;
   memset(&(spec->silence_sample), 0, sizeof(spec->silence_sample));
 
-  GST_INFO_OBJECT(roarsink, "successfully opened connection to esound server");
+  GST_INFO_OBJECT(roarsink, "successfully opened connection to RoarAudio server");
 
   return TRUE;
 
