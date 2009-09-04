@@ -34,6 +34,23 @@
 #endif
 #include <sys/ioctl.h>
 
+#ifdef SNDCTL_DSP_SETFRAGMENT
+static void roar_cdriver_oss_try_buf_setups(int fh) {
+ int blocksizes[] = {11, 12, 13};
+ int blocks[]     = {4, 5, 6, 3, 7, 2, 8};
+ int bs, b;
+ int tmp;
+
+ for (bs = 0; bs < sizeof(blocksizes)/sizeof(int); bs++) {
+  for (b = 0; b  < sizeof(blocks)    /sizeof(int); b++ ) {
+   tmp = blocksizes[bs] | (blocks[b] << 16);
+   if ( ioctl(fh, SNDCTL_DSP_SETFRAGMENT, &tmp) == 0 )
+    return;
+  }
+ }
+}
+#endif
+
 #define _err() roar_vio_close(calls); return -1
 
 int roar_cdriver_oss(struct roar_vio_calls * calls, char * name, char * dev, struct roar_audio_info * info, int dir) {
@@ -152,6 +169,10 @@ int roar_cdriver_oss(struct roar_vio_calls * calls, char * name, char * dev, str
  if ( tmp != info->rate ) {
   _err();
  }
+
+#ifdef SNDCTL_DSP_SETFRAGMENT
+ roar_cdriver_oss_try_buf_setups(fh);
+#endif
 
  return 0;
 }
