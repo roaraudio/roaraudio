@@ -329,10 +329,8 @@ static gboolean gst_roarsink_prepare (GstAudioSink * asink, GstRingBufferSpec * 
 
   /* FIXME: this is wrong for signed ints (and the
    * audioringbuffers should do it for us anyway) */
-  spec->silence_sample[0] = 0;
-  spec->silence_sample[1] = 0;
-  spec->silence_sample[2] = 0;
-  spec->silence_sample[3] = 0;
+  spec->bytes_per_sample = spec->channels * bits / 8;
+  memset(&(spec->silence_sample), 0, sizeof(spec->silence_sample));
 
   GST_INFO_OBJECT(roarsink, "successfully opened connection to esound server");
 
