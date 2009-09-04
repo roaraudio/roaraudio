@@ -67,24 +67,24 @@ static GstStaticPadTemplate sink_factory = GST_STATIC_PAD_TEMPLATE("sink",
     GST_PAD_ALWAYS,
     GST_STATIC_CAPS(
         "audio/x-raw-int, "
-        "endianness = (int) BYTE_ORDER, "
-        "signed = (boolean) TRUE, "
+        "endianness = (int) { BIG_ENDIAN, LITTLE_ENDIAN }, "
+        "signed = (boolean) { true, false }, "
         "width = (int) 32, "
         "depth = (int) 32, "
         "rate = (int) [ 1, MAX ], "
         "channels = (int) [ 1, " QM(ROAR_MAX_CHANNELS) " ]; "
 
         "audio/x-raw-int, "
-        "endianness = (int) BYTE_ORDER, "
-        "signed = (boolean) TRUE, "
+        "endianness = (int) { BIG_ENDIAN, LITTLE_ENDIAN }, "
+        "signed = (boolean) { true, false }, "
         "width = (int) 24, "
         "depth = (int) 24, "
         "rate = (int) [ 1, MAX ], "
         "channels = (int) [ 1, " QM(ROAR_MAX_CHANNELS) " ]; "
 
         "audio/x-raw-int, "
-        "endianness = (int) BYTE_ORDER, "
-        "signed = (boolean) TRUE, "
+        "endianness = (int) { BIG_ENDIAN, LITTLE_ENDIAN }, "
+        "signed = (boolean) { true, false }, "
         "width = (int) 16, "
         "depth = (int) 16, "
         "rate = (int) [ 1, MAX ], "
@@ -266,14 +266,41 @@ static gboolean gst_roarsink_close (GstAudioSink * asink) {
 
 static gboolean gst_roarsink_prepare (GstAudioSink * asink, GstRingBufferSpec * spec) {
   GstRoarSink *roarsink = GST_ROARSINK(asink);
+  int codec = ROAR_CODEC_DEFAULT;
 
   GST_DEBUG_OBJECT(roarsink, "prepare");
 
   
   GST_INFO_OBJECT(roarsink, "attempting to open data connection to esound server");
 
+  switch (spec->type) {
+   case GST_BUFTYPE_LINEAR:
+     switch (spec->sign) {
+      case TRUE:
+        switch (spec->bigend) {
+         case TRUE:  codec = ROAR_CODEC_PCM_S_BE; break;
+         case FALSE: codec = ROAR_CODEC_PCM_S_LE; break;
+         default: return FALSE; break;
+        }
+       break;
+      case FALSE:
+        switch (spec->bigend) {
+         case TRUE:  codec = ROAR_CODEC_PCM_U_BE; break;
+         case FALSE: codec = ROAR_CODEC_PCM_U_LE; break;
+         default: return FALSE; break;
+        }
+       break;
+      default: return FALSE; break;
+     }
+    break;
+   case GST_BUFTYPE_A_LAW:  codec = ROAR_CODEC_ALAW;    break;
+   case GST_BUFTYPE_MU_LAW: codec = ROAR_CODEC_MULAW;   break;
+   default:
+     return FALSE;
+  }
+
   roarsink->fd = roar_simple_new_stream(&(roarsink->con), spec->rate, spec->channels, spec->depth,
-                                        ROAR_CODEC_DEFAULT, ROAR_DIR_PLAY);
+                                        codec, ROAR_DIR_PLAY);
 
   if ( roarsink->fd == -1 )
     goto cannot_open;
