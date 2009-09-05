@@ -354,7 +354,7 @@ int main (int argc, char * argv[]) {
                                 .codec    = ROAR_CODEC_DEFAULT
                                };
  struct roar_audio_info dinfo;
- struct roar_vio_calls dvio, svio;
+ struct roar_vio_calls dvio, svio, svio_real;
  char * driver   = DRIVER;
  char * device   = NULL;
  char * server   = NULL;
@@ -469,15 +469,23 @@ int main (int argc, char * argv[]) {
  }
 
  if ( roar_cdriver_open(&dvio, driver, device, &dinfo, ROAR_DIR_BIDIR) == -1 ) {
+  ROAR_ERR("Can not open sound card.");
   return 1;
  }
 
  ROAR_DBG("main(*): CALL open_stream(&svio, server, &info)");
- if ( open_stream(&svio, server, &info) == -1 ) {
+ if ( open_stream(&svio_real, server, &info) == -1 ) {
+  ROAR_ERR("Can not open connection to server.");
   roar_vio_close(&dvio);
   return 2;
  }
  ROAR_DBG("main(*): RET");
+
+ if ( roar_vio_open_re(&svio, &svio_real) == -1 ) {
+  ROAR_ERR("Can not open connection to server (RE VIO).");
+  roar_vio_close(&dvio);
+  return 2;
+ }
 
  set_meta();
 
