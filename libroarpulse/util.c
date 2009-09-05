@@ -56,7 +56,7 @@ char *pa_get_binary_name(char *s, size_t l) {
 
 /** Return a pointer to the filename inside a path (which is the last
  * component). */
-// sime versioss declare this as const char * f(...)
+// some versions declare this as const char * f(...)
 // and newer(?) versions as char * f(...)...
 const char *pa_path_get_filename(const char *p) {
  char * r;
