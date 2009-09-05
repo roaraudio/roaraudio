@@ -139,9 +139,9 @@ struct sio_hdl * sio_open(const char * name, unsigned mode, int nbio_flag) {
 
  if ( is_midi ) {
   hdl->info.codec    = ROAR_CODEC_MIDI;
-  hdl->info.bits     = 8;
-  hdl->info.channels = 16;
-  hdl->info.rate     = 96;
+  hdl->info.bits     = ROAR_MIDI_BITS;
+  hdl->info.channels = ROAR_MIDI_CHANNELS_DEFAULT;
+  hdl->info.rate     = ROAR_MIDI_TICKS_PER_BEAT;
   if ( !sio_start(hdl) ) {
    sio_close(hdl);
    return NULL;
