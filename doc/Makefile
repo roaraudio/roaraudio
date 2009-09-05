@@ -13,10 +13,10 @@ symlinks-html: man2html
 man2html:
 	sh -c 'for dir in man*; do (cd $$dir; mkdir ../html/$$dir 2>/dev/null; for file in *.?; do man2html -r $$file > ../html/$$dir/$$file.html; done); done'
 
-prep-install-dirs:
-	sh -c 'for dir in man*; do mkdir -p $(PREFIX_MAN)/$$dir; done'
+
+	sh -c 'for dir in man*; do mkdir -p $(DESTDIR)$(PREFIX_MAN)/$$dir; done'
 
 install: prep-install-dirs
-	sh -c 'for dir in man*; do cp $(cp_v) $$dir/*.?* $(PREFIX_MAN)/$$dir/; done'
+	sh -c 'for dir in man*; do cp $(cp_v) $$dir/*.?* $(DESTDIR)$(PREFIX_MAN)/$$dir/; done'
 semi-install: prep-install-dirs
-	sh -c 'for dir in man*; do for file in $$dir/*.?*; do ln -fs `pwd`/$$file $(PREFIX_MAN)/$$dir/; done; done'
+	sh -c 'for dir in man*; do for file in $$dir/*.?*; do ln -fs `pwd`/$$file $(DESTDIR)$(PREFIX_MAN)/$$dir/; done; done'

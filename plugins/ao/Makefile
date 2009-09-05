@@ -16,9 +16,9 @@ clean:
 new: clean all
 
 install: libroar.so
-	cp libroar.so ${INSTALL_DIR}
+	cp libroar.so ${DESTDIR}${INSTALL_DIR}
 semi-install: libroar.so
-	ln -fs `pwd`/libroar.so ${INSTALL_DIR}
+	ln -fs `pwd`/libroar.so ${DESTDIR}${INSTALL_DIR}
 
 libroar.so: $(OBJ)
 	$(CC) $(LDFLAGS) -o libroar.so $(OBJ) $(LIBS)
