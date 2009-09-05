@@ -82,7 +82,7 @@ static char * sndio_to_roar_names (char * name) {
  return name;
 }
 
-struct sio_hdl * sio_open(char * name, unsigned mode, int nbio_flag) {
+struct sio_hdl * sio_open(const char * name, unsigned mode, int nbio_flag) {
  struct sio_hdl * hdl = NULL;
  int is_midi = 0;
 
@@ -123,9 +123,9 @@ struct sio_hdl * sio_open(char * name, unsigned mode, int nbio_flag) {
   }
  }
 
- name = sndio_to_roar_names(name);
+ name = sndio_to_roar_names((char*) name);
 
- if ( roar_simple_connect(&(hdl->con), name, "libroarsndio") == -1 ) {
+ if ( roar_simple_connect(&(hdl->con), (char*) name, "libroarsndio") == -1 ) {
   free(hdl);
   return NULL;
  }

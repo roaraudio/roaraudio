@@ -93,7 +93,7 @@ struct sio_par {
 
 struct sio_cap;
 
-struct sio_hdl * sio_open(char * name, unsigned mode, int nbio_flag);
+struct sio_hdl * sio_open(const char * name, unsigned mode, int nbio_flag);
 void   sio_close  (struct sio_hdl * hdl);
 
 void   sio_initpar(struct sio_par * par);
@@ -105,8 +105,8 @@ int    sio_getcap (struct sio_hdl * hdl, struct sio_cap * cap);
 int    sio_start  (struct sio_hdl * hdl);
 int    sio_stop   (struct sio_hdl * hdl);
 
-size_t sio_read   (struct sio_hdl * hdl, void * addr, size_t nbytes);
-size_t sio_write  (struct sio_hdl * hdl, void * addr, size_t nbytes);
+size_t sio_read   (struct sio_hdl * hdl,       void * addr, size_t nbytes);
+size_t sio_write  (struct sio_hdl * hdl, const void * addr, size_t nbytes);
 
 void   sio_onmove (struct sio_hdl * hdl, void (*cb)(void * arg, int delta), void * arg);
 

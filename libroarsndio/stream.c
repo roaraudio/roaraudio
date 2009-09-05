@@ -147,7 +147,7 @@ size_t sio_read   (struct sio_hdl * hdl, void * addr, size_t nbytes) {
 
  return ret;
 }
-size_t sio_write  (struct sio_hdl * hdl, void * addr, size_t nbytes) {
+size_t sio_write  (struct sio_hdl * hdl, const void * addr, size_t nbytes) {
  ssize_t ret;
 
  if ( hdl == NULL )
@@ -156,7 +156,7 @@ size_t sio_write  (struct sio_hdl * hdl, void * addr, size_t nbytes) {
  if ( !hdl->stream_opened )
   return 0;
 
- if ( (ret = roar_vio_write(&(hdl->svio), addr, nbytes)) < 0 )
+ if ( (ret = roar_vio_write(&(hdl->svio), (void*) addr, nbytes)) < 0 )
   return 0;
 
  if ( hdl->on_move != NULL ) {
