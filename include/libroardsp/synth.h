@@ -37,8 +37,8 @@
 
 #include "libroardsp.h"
 
-#define ROAR_SYNTH_FUNC_TYPE(name) float (*name)(float t, struct roar_synth_state * state)
-#define ROAR_SYNTH_FUNC_CAST(name) ((ROAR_SYNTH_FUNC_TYPE()) name)
+#define ROAR_SYNTH_FUNC_TYPE(name)   float (*name)(float t, struct roar_synth_state * state)
+#define ROAR_SYNTH_FUNC_CAST(name) ((float (*    )(float t, struct roar_synth_state * state)) name)
 
 // SYNF -> Synthesis Function
 #define ROAR_SYNTH_SYNF_RECT ROAR_SYNTH_FUNC_CAST(roar_synth_synf_rect)
