@@ -58,7 +58,7 @@ char *pa_get_binary_name(char *s, size_t l) {
  * component). */
 // some versions declare this as const char * f(...)
 // and newer(?) versions as char * f(...)...
-const char *pa_path_get_filename(const char *p) {
+ROAR_HAVE_TYPE_PA_PATH_GET_FILENAME pa_path_get_filename(const char *p) {
  char * r;
 
  if ( (r = strrchr(p, '/')) ) {
