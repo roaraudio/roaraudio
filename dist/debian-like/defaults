@@ -12,7 +12,18 @@ ROARD_OPTS=''
 # NO     - Don't run in realtime mode
 # YES    - Run in realtime mode
 # DOUBLE - Try to run in a 'very realtime mode'
-# ROARD_REALTIME='YES'
+ROARD_REALTIME='YES'
+
+# PIDFile for roard:
+# Default is enabled at /var/run/roard.pid
+# Set to empty string to disable.
+#PIDFILE='/var/run/roard.pid'
+
+# Location of roard:
+# This is a human readable location of the roard used
+# for Zero Conf locating of a RoarAudio server on the
+# Network. To use Zero Conf enable SLP (see below).
+#ROARD_LOCATION=''
 
 # Default location for roard:
 # Set this to a remote address and disable local roard
@@ -40,6 +51,20 @@ ROARD_SOCKET='/tmp/roar'
 # Object to listen on (DECnet):
 # ROARD_OBJECT='roar'
 
+# Annouce us via OpenSLP:
+# Set to YES or NO.
+# In case of YES roarclients can autolocat this server
+# on the network.
+ROARD_SLP='NO'
+
+# --- [ EsounD Emulation ] ---
+
+# Listen socket for server side EsounD emulation::
+# NONE   - Disable EsounD emulation
+# UNIX   - Local connections only
+# TCP    - Connections via TCP/IP
+ROARD_EMUL_ESD_AF='NONE'
+
 # --- [ Audio and Devices ] ---
 
 # Samplerate, number of channels and bits per sample:
@@ -62,5 +87,12 @@ ROARD_SOCKET='/tmp/roar'
 #       if runnung in UNIX mode.
 # ROARD_USER='roard'
 # ROARD_GROUP='audio'
+
+# --- [ Security ] ---
+
+# Directory to chroot to:
+# Use empty value to disable.
+# Directory may/should be completly empty.
+#ROARD_CHROOT=''
 
 #ll
