@@ -1381,6 +1381,10 @@ int main (void) {
 
 #ifdef ROAR_HAVE_SETGID
  if ( setids & R_SETGID ) {
+  if ( (grp = getgrnam(sock_grp)) == NULL ) {
+   ROAR_ERR("Can not get GID for group %s: %s", sock_grp, strerror(errno));
+   return 1;
+  }
   if ( setgroups(0, (const gid_t *) NULL) == -1 ) {
    ROAR_ERR("Can not clear supplementary group IDs: %s", strerror(errno));
   }
@@ -1449,6 +1453,10 @@ int main (void) {
 
 #ifdef ROAR_HAVE_SETUID
  if ( setids & R_SETUID ) {
+  if ( (pwd = getpwnam(sock_user)) == NULL ) {
+   ROAR_ERR("Can not get UID for user %s: %s", sock_user, strerror(errno));
+   return 1;
+  }
   if ( !pwd || setuid(pwd->pw_uid) == -1 ) {
    ROAR_ERR("Can not set UserID: %s", strerror(errno));
    return 3;
