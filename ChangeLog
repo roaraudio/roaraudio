@@ -23,6 +23,7 @@ v. 0.3beta0 - ?
 	* cleanup of old sysio driver interface
 	* added server side EsounD emulation
 	* added multi homed support to server
+	* fixed a long outstanding bug with pa_path_get_filename()
 
 v. 0.2 - Thu May 21 2009 21:00
 	* do a some more testings for functions not existing on win32
