@@ -102,6 +102,8 @@ ROAR_DRIVER_CODEC=''
 
 ROARD_CFREQ='' # cycle frequens for roard, normaly 100Hz
 
+_CARGS="$@";
+
 echo -n "checking for C compiler... "
 if [ "$CC" != '' ]
 then
@@ -764,7 +766,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.202 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.203 $ of RoarAudio
  */
 
 EOF
@@ -775,7 +777,9 @@ EOF
  echo
  echo
 
- for i in CC RANLIB PKG_CONFIG SYSNAME TARGET_CYGWIN
+ echo "ARGS(): $_CARGS"
+
+ for i in PATH SHELL CC RANLIB PKG_CONFIG SYSNAME TARGET_CYGWIN
  do
   eval echo "BASICCONF\($i\): \$$i";
  done
