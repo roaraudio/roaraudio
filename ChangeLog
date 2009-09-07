@@ -1,3 +1,5 @@
+v. 0.3beta1 - ?
+
 v. 0.3beta0 - Sun Sep 06 2009 22:42 CEST
 	* added new stream directions for MIDI and light control
 	* cleanup of client stream struct
