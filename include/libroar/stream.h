@@ -102,6 +102,8 @@ int roar_stream_get_id (struct roar_stream * s);
 int roar_stream_set_fh (struct roar_stream * s, int fh);
 int roar_stream_get_fh (struct roar_stream * s);
 
+int roar_stream_set_dir (struct roar_stream * s, int dir);
+int roar_stream_get_dir (struct roar_stream * s);
 
 int roar_stream_exec    (struct roar_connection * con, struct roar_stream * s);
 int roar_stream_connect_to (struct roar_connection * con, struct roar_stream * s, int type, char * host, int port);

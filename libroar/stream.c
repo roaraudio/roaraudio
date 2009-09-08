@@ -157,6 +157,22 @@ int roar_stream_get_fh (struct roar_stream * s) {
  return s->fh;
 }
 
+int roar_stream_set_dir (struct roar_stream * s, int dir) {
+ if ( s == NULL )
+  return -1;
+
+ s->dir = dir;
+
+ return 0;
+}
+
+int roar_stream_get_dir (struct roar_stream * s) {
+ if ( s == NULL )
+  return -1;
+
+ return s->dir;
+}
+
 
 int roar_stream_exec    (struct roar_connection * con, struct roar_stream * s) {
  struct roar_message m;
