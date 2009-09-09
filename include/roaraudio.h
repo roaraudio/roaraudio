@@ -254,6 +254,18 @@ int _ROAR_MLOCK(const void *addr, size_t len);
 #define ROAR_NET2HOST16(x) (x)
 #define ROAR_HOST2NET16(x) (x)
 
+#define ROAR_BE2HOST64(x) (x)
+#define ROAR_HOST2BE64(x) (x)
+#define ROAR_BE2HOST32(x) (x)
+#define ROAR_HOST2BE32(x) (x)
+#define ROAR_BE2HOST16(x) (x)
+#define ROAR_HOST2BE16(x) (x)
+
+#define ROAR_LE2HOST32(x) ROAR_dn_ntohl(x)
+#define ROAR_HOST2LE32(x) ROAR_dn_htonl(x)
+#define ROAR_LE2HOST16(x) ROAR_dn_ntohs(x)
+#define ROAR_HOST2LE16(x) ROAR_dn_htons(x)
+
 #ifdef ROAR_HAVE_LIBDNET
 #define ROAR_dn_ntohs(x) ((((x)&0x0ff)<<8) | (((x)&0xff00)>>8))
 #define ROAR_dn_ntohl(x) ( ((dn_ntohs((x)&0xffff))<<16) |\
@@ -280,6 +292,18 @@ int _ROAR_MLOCK(const void *addr, size_t len);
 #define ROAR_HOST2NET32(x) htonl((x))
 #define ROAR_NET2HOST16(x) ntohs((x))
 #define ROAR_HOST2NET16(x) htons((x))
+
+#define ROAR_BE2HOST32(x) ntohl(x)
+#define ROAR_HOST2BE32(x) htonl(x)
+#define ROAR_BE2HOST16(x) ntohs(x)
+#define ROAR_HOST2BE16(x) htons(x)
+
+#define ROAR_LE2HOST64(x) (x)
+#define ROAR_HOST2LE64(x) (x)
+#define ROAR_LE2HOST32(x) (x)
+#define ROAR_HOST2LE32(x) (x)
+#define ROAR_LE2HOST16(x) (x)
+#define ROAR_HOST2LE16(x) (x)
 
 #ifdef ROAR_HAVE_LIBDNET
 #if BYTE_ORDER == LITTLE_ENDIAN
