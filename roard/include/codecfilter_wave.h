@@ -29,6 +29,12 @@
 
 #ifndef ROAR_WITHOUT_CF_WAVE
 
+// most important codec IDs:
+#define ROAR_RIFF_WAVE_CID_PCM        0x0001
+#define ROAR_RIFF_WAVE_CID_IEEE_FLOAT 0x0003
+#define ROAR_RIFF_WAVE_CID_ALAW       0x0006
+#define ROAR_RIFF_WAVE_CID_MULAW      0x0007
+
 struct codecfilter_wave_inst {
  struct roar_stream_server * stream;
  int opened;

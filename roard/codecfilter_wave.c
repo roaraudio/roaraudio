@@ -59,6 +59,9 @@ int cf_wave_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  int r = -1;
  char tbuf[44];
  struct roar_stream * s = ROAR_STREAM(self->stream);
+ uint16_t tmp16;
+ uint32_t tmp32;
+ int codec = -1;
 
  if ( self->opened ) {
   return stream_vio_s_read(self->stream, buf, len);
@@ -69,9 +72,37 @@ int cf_wave_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
 
   // TODO: write better code here!
 
-  memcpy(&(s->info.rate    ), tbuf+24, 4);
-  memcpy(&(s->info.channels), tbuf+22, 2);
-  memcpy(&(s->info.bits    ), tbuf+34, 2);
+  memcpy(&tmp32, tbuf+24, 4);
+  s->info.rate = ROAR_LE2HOST32(tmp32);
+
+  memcpy(&tmp16, tbuf+22, 2);
+  s->info.channels = ROAR_LE2HOST16(tmp16);
+
+  memcpy(&tmp16, tbuf+34, 2);
+  s->info.bits = ROAR_LE2HOST16(tmp16);
+
+  memcpy(&tmp16, tbuf+20, 2);
+
+  switch (ROAR_LE2HOST16(tmp16)) {
+   case ROAR_RIFF_WAVE_CID_PCM:
+     if ( s->info.bits == 8 ) {
+      codec = ROAR_CODEC_PCM_U_LE;
+     } else {
+      codec = ROAR_CODEC_PCM_S_LE;
+     }
+    break;
+   case ROAR_RIFF_WAVE_CID_ALAW:
+     codec = ROAR_CODEC_ALAW;
+    break;
+   case ROAR_RIFF_WAVE_CID_MULAW:
+     codec = ROAR_CODEC_MULAW;
+    break;
+   case ROAR_RIFF_WAVE_CID_IEEE_FLOAT:
+   default:
+     return -1;
+  }
+
+  s->info.codec = codec;
 
   self->opened = 1;
 
