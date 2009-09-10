@@ -97,7 +97,7 @@ int streams_get_dir    (int id);
 
 int streams_get_subsys (int id);
 
-int streams_new_virtual (int parent);
+int streams_new_virtual (int parent, struct roar_stream_server ** stream);
 
 int streams_set_fh     (int id, int fh);
 int streams_get_fh     (int id);

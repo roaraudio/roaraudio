@@ -322,7 +322,7 @@ int streams_get_subsys (int id) {
 }
 
 #define _err() streams_delete(id); return -1;
-int streams_new_virtual (int parent) {
+int streams_new_virtual (int parent, struct roar_stream_server ** stream) {
  struct roar_stream_server * parent_ss, * ss;
  struct roar_stream        * parent_s , *  s;
  int id = -1;
@@ -361,6 +361,9 @@ int streams_new_virtual (int parent) {
  if ( streams_set_flag(id, ROAR_FLAG_VIRTUAL) == -1 ) {
   _err();
  }
+
+ if ( stream == NULL )
+  *stream = ss;
 
  return id;
 }
