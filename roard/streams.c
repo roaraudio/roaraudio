@@ -321,6 +321,51 @@ int streams_get_subsys (int id) {
  return -1;
 }
 
+#define _err() streams_delete(id); return -1;
+int streams_new_virtual (int parent) {
+ struct roar_stream_server * parent_ss, * ss;
+ struct roar_stream        * parent_s , *  s;
+ int id = -1;
+ int client, dir;
+
+ if ( streams_get(parent, &parent_ss) == -1 )
+  return -1;
+
+ if ( (client = streams_get_client(parent)) == -1 )
+  return -1;
+
+ if ( (dir = streams_get_dir(parent)) == -1 )
+  return -1;
+
+ if ( (id = streams_new()) == -1 ) {
+  return -1;
+ }
+
+ if ( streams_set_client(id, client) == -1 ) {
+  _err();
+ }
+
+ if ( streams_get(id, &ss) == -1 ) {
+  _err();
+ }
+
+ if ( streams_set_dir(id, dir, 1) == -1 ) {
+  _err();
+ }
+
+ s        = ROAR_STREAM(       ss);
+ parent_s = ROAR_STREAM(parent_ss);
+
+ s->pos_rel_id = id;
+
+ if ( streams_set_flag(id, ROAR_FLAG_VIRTUAL) == -1 ) {
+  _err();
+ }
+
+ return id;
+}
+#undef _err
+
 int streams_set_fh     (int id, int fh) {
  struct roar_stream_server * ss;
  struct roar_stream        * s;
