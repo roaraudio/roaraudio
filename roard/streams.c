@@ -149,10 +149,16 @@ int streams_delete (int id) {
    switch (ROAR_STREAM(g_streams[i])->dir) {
     case ROAR_DIR_THRU:
     case ROAR_DIR_RAW_IN:
-      streams_delete(i);
+      if ( i != id )
+       streams_delete(i);
      break;
     default:
-      ROAR_STREAM(g_streams[i])->pos_rel_id = -1;
+      if ( streams_get_flag(i, ROAR_FLAG_VIRTUAL) == 1 ) {
+       if ( i != id )
+        streams_delete(i);
+      } else {
+       ROAR_STREAM(g_streams[i])->pos_rel_id = -1;
+      }
    }
   }
  }
