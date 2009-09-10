@@ -40,7 +40,7 @@ void usage (void) {
         "  --midi                - Use MIDI Audio as input\n"
         "  --light               - Use light control input\n"
         "  --raw                 - Use raw input\n"
-        "  --rel-id ID          - Set ID of relative stream\n"
+        "  --rel-id ID           - Set ID of relative stream\n"
         "  --help                - Show this help\n"
        );
 
