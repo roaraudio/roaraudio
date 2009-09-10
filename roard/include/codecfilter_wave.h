@@ -36,7 +36,8 @@
 #define ROAR_RIFF_WAVE_CID_MULAW      0x0007
 
 struct codecfilter_wave_inst {
- struct roar_stream_server * stream;
+ struct roar_stream_server *  stream;
+ struct roar_stream_server * vstream;
  int opened;
 };
 

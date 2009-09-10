@@ -36,6 +36,7 @@ int cf_wave_open(CODECFILTER_USERDATA_T * inst, int codec,
   return -1;
 
  self->stream               = info;
+ self->vstream              = NULL;
  self->opened               = 0;
 
  *inst = (CODECFILTER_USERDATA_T) self;
