@@ -78,6 +78,7 @@ struct roar_stream_server {
  char * name;
  int ready;
  struct roar_buffer * outputbuffer;
+ int state;
 } * g_streams[ROAR_STREAMS_MAX];
 
 int streams_thru_num;

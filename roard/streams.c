@@ -84,6 +84,8 @@ int streams_new    (void) {
 
    s->name            = NULL;
 
+   s->state           = ROAR_STREAMSTATE_INITING;
+
    s->client          = -1;
    s->socktype        = ROAR_SOCKET_TYPE_UNKNOWN;
    s->buffer          = NULL;
@@ -141,6 +143,12 @@ int streams_delete (int id) {
 
  ROAR_DBG("streams_delete(id=%i) = ?", id);
  ROAR_DBG("streams_delete(id=%i): g_streams[id]->id=%i", id, ROAR_STREAM(s)->id);
+
+ // in case we are allready closing it...
+ if ( s->state == ROAR_STREAMSTATE_CLOSING )
+  return 0;
+
+ s->state = ROAR_STREAMSTATE_CLOSING;
 
  if ( streams_get_flag(id, ROAR_FLAG_RECSOURCE) == 1 )
   streams_reset_flag(id, ROAR_FLAG_RECSOURCE);
