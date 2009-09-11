@@ -87,6 +87,8 @@ int clients_delete (int id) {
  int i;
  int close_client_fh = 1;
 
+ ROAR_DBG("clients_delete(id=%i) = ?", id);
+
  if ( g_clients[id] == NULL )
   return -1;
 
