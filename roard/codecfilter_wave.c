@@ -59,10 +59,13 @@ int cf_wave_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  struct codecfilter_wave_inst * self = (struct codecfilter_wave_inst *) inst;
  int r = -1;
  char tbuf[44];
- struct roar_stream * s = ROAR_STREAM(self->stream);
+ struct roar_stream * ps = ROAR_STREAM(self->stream);
+ struct roar_stream *  s;
+ struct roar_audio_info info;
  uint16_t tmp16;
  uint32_t tmp32;
  int codec = -1;
+ int vid, fh;
 
  if ( self->opened ) {
   return stream_vio_s_read(self->stream, buf, len);
@@ -72,6 +75,18 @@ int cf_wave_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
   }
 
   // TODO: write better code here!
+
+  if ( (fh = streams_get_fh(ps->id)) == -1 ) {
+   return -1;
+  }
+
+  if ( (vid = streams_new_virtual(ps->id, &(self->vstream))) == -1 ) {
+   return -1;
+  }
+
+  ROAR_DBG("cf_wave_read(*): self->vstream=%p", self->vstream);
+
+  s = ROAR_STREAM(self->vstream);
 
   memcpy(&tmp32, tbuf+24, 4);
   s->info.rate = ROAR_LE2HOST32(tmp32);
@@ -103,7 +118,28 @@ int cf_wave_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
      return -1;
   }
 
-  s->info.codec = codec;
+   s->info.codec            = codec;
+  self->vstream->codec_orgi = codec;
+
+  memcpy(&info, &(s->info), sizeof(struct roar_audio_info));
+
+  if ( streams_set_fh(vid, fh) == -1 ) {
+   return -1;
+  }
+
+/*
+  if ( roar_vio_open_pass(&(self->vstream->vio), &(self->stream->vio)) == -1 ) {
+   return -1;
+  }
+*/
+
+  memcpy(&(self->vstream->vio), &(self->stream->vio), sizeof(struct roar_vio_calls));
+
+  if ( streams_set_fh(ps->id, -1) == -1 ) {
+   return -1;
+  }
+
+  memcpy(&(ps->info), &info, sizeof(struct roar_audio_info));
 
   self->opened = 1;
 
