@@ -384,7 +384,7 @@ int streams_new_virtual (int parent, struct roar_stream_server ** stream) {
 
  s->pos_rel_id = parent;
 
- if ( streams_set_flag(id, ROAR_FLAG_VIRTUAL) == -1 ) {
+ if ( streams_set_rawflag(id, ROAR_FLAG_VIRTUAL) == -1 ) {
   _err();
  }
 
@@ -621,6 +621,18 @@ int streams_set_flag     (int id, int flag) {
  if ( flag & ROAR_FLAG_META )
   stream_meta_finalize(id);
 #endif
+
+ return 0;
+}
+
+int streams_set_rawflag  (int id, int flag) {
+ if ( id == -1 )
+  return -1;
+
+ if ( g_streams[id] == NULL )
+  return -1;
+
+ g_streams[id]->flags |= flag;
 
  return 0;
 }
