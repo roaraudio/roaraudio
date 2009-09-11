@@ -51,6 +51,8 @@ int cf_wave_close(CODECFILTER_USERDATA_T   inst);
 int cf_wave_read(CODECFILTER_USERDATA_T   inst, char * buf, int len);
 int cf_wave_write(CODECFILTER_USERDATA_T   inst, char * buf, int len);
 
+int cf_wave_ctl(CODECFILTER_USERDATA_T   inst, int cmd, void * data);
+
 #endif
 
 #endif

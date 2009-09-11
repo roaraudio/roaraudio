@@ -44,7 +44,7 @@ struct roar_codecfilter g_codecfilter[] = {
 */
 #ifndef ROAR_WITHOUT_CF_WAVE
  {ROAR_CODEC_RIFF_WAVE, "RIFF/WAVE", "RIFF/WAVE", NULL, ROAR_CODECFILTER_READ|ROAR_CODECFILTER_WRITE,
-  cf_wave_open, cf_wave_close, NULL, cf_wave_write, cf_wave_read, NULL, NULL, NULL},
+  cf_wave_open, cf_wave_close, NULL, cf_wave_write, cf_wave_read, NULL, NULL, cf_wave_ctl},
 #endif
 //#endif
 

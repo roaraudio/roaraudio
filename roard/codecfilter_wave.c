@@ -218,6 +218,10 @@ int cf_wave_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  return -1;
 }
 
+int cf_wave_ctl(CODECFILTER_USERDATA_T   inst, int cmd, void * data) {
+ return -1;
+}
+
 #endif
 
 //ll
