@@ -185,7 +185,7 @@ int streams_delete (int id) {
    client = streams_get_client(id);
    streams_set_client(id, -1);
    ROAR_DBG("streams_delete(id=%i): Stream has flag virtual, notifying parent stream %i", id, i);
-   streams_ctl(i, ROAR_CODECFILTER_CTL_VIRTUAL_DELETE, &id);
+   streams_ctl(i, ROAR_CODECFILTER_CTL_VIRTUAL_DELETE|ROAR_STREAM_CTL_TYPE_INT, &id);
    ROAR_DBG("streams_delete(id=%i): Notify send to stream %i", id, i);
    streams_set_client(id, client);
    ROAR_STREAM(s)->pos_rel_id = i;
