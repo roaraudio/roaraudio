@@ -135,7 +135,7 @@ int cf_wave_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
 
   memcpy(&(self->vstream->vio), &(self->stream->vio), sizeof(struct roar_vio_calls));
 
-  if ( streams_set_fh(ps->id, -1) == -1 ) {
+  if ( streams_set_null_io(ps->id) == -1 ) {
    return -1;
   }
 
@@ -219,6 +219,25 @@ int cf_wave_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
 }
 
 int cf_wave_ctl(CODECFILTER_USERDATA_T   inst, int cmd, void * data) {
+ struct codecfilter_wave_inst * self = (struct codecfilter_wave_inst *) inst;
+ int_least32_t type = cmd & ROAR_STREAM_CTL_TYPEMASK;
+
+ cmd -= type;
+
+ ROAR_DBG("cf_wave_ctl(*): command: cmd=0x%.8x, type=0x%.8x, pcmd=0x%.8x",
+                    cmd, type, ROAR_CODECFILTER_CTL2CMD(cmd));
+
+ switch (cmd) {
+  case ROAR_CODECFILTER_CTL2CMD(ROAR_CODECFILTER_CTL_VIRTUAL_DELETE):
+    streams_delete(ROAR_STREAM(self->stream)->id);
+    return 0;
+   break;
+  default:
+    ROAR_DBG("cf_wave_ctl(*): Unknown command: cmd=0x%.8x, type=0x%.8x, pcmd=0x%.8x",
+                    cmd, type, ROAR_CODECFILTER_CTL2CMD(cmd));
+    return -1;
+ }
+
  return -1;
 }
 
