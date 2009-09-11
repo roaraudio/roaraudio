@@ -76,6 +76,7 @@ int    roar_str2dir (char * name);
 #define ROAR_SET_FLAG            0
 #define ROAR_RESET_FLAG          1
 
+#define ROAR_STREAMSTATE_UNKNOWN   -1
 #define ROAR_STREAMSTATE_NULL       0
 #define ROAR_STREAMSTATE_UNUSED     ROAR_STREAMSTATE_NULL
 #define ROAR_STREAMSTATE_INITING    1
