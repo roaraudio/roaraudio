@@ -707,6 +707,8 @@ int set_flags (struct roar_connection * con, int id, int reset, char * flags) {
    f |= ROAR_FLAG_RECSOURCE;
   } else if ( !strcmp(c, "passmixer") ) {
    f |= ROAR_FLAG_PASSMIXER;
+  } else if ( !strcmp(c, "virtual") ) {
+   f |= ROAR_FLAG_VIRTUAL;
   } else {
    fprintf(stderr, "Error: unknown flag: %s\n", c);
    return -1;
