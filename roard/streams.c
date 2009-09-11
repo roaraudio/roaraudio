@@ -933,7 +933,7 @@ int streams_fill_mixbuffer2 (int id, struct roar_audio_info * info) {
   }
  }
 
- s->pos = ROAR_MATH_OVERFLOW_ADD(s->pos, ROAR_OUTPUT_CALC_OUTBUFSAMP(info, outlen));
+ s->pos = ROAR_MATH_OVERFLOW_ADD(s->pos, ROAR_OUTPUT_CALC_OUTBUFSAMP(info, outlen)*info->channels);
 
  return 0;
 }
