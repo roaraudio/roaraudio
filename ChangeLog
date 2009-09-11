@@ -1,4 +1,6 @@
 v. 0.3beta1 - ?
+	* incremented nummber of streams per client fron 4 to 8
+	* RIFF WAVE codecfilter uses virtual streams
 
 v. 0.3beta0 - Sun Sep 06 2009 22:42 CEST
 	* added new stream directions for MIDI and light control
