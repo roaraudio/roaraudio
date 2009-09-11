@@ -39,6 +39,7 @@ __BEGIN_DECLS
 #include "remove.h"
 #include "rms.h"
 #include "transcode.h"
+#include "vio_transcode.h"
 
 #ifdef ROAR_HAVE_LIBCELT
 #include "transcode_celt.h"
