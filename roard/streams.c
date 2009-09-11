@@ -434,6 +434,7 @@ int streams_set_fh     (int id, int fh) {
 
  if ( fh == -1 || fh == -2 ) { // yes, this is valid, indecats full vio!
   ss->ready = 1;
+  ss->state = ROAR_STREAMSTATE_NEW;
   return 0;
  }
 
@@ -469,12 +470,14 @@ int streams_set_fh     (int id, int fh) {
 
  if ( !nonblock ) {
   ss->ready = 1;
+  ss->state = ROAR_STREAMSTATE_NEW;
   return 0;
  } else {
   if ( roar_socket_nonblock(fh, ROAR_SOCKET_NONBLOCK) == -1 )
    return -1;
 
   ss->ready = 1;
+  ss->state = ROAR_STREAMSTATE_NEW;
   return 0;
  }
 }
@@ -888,6 +891,7 @@ int streams_fill_mixbuffer2 (int id, struct roar_audio_info * info) {
  ROAR_DBG("streams_fill_mixbuffer2(id=%i, info=...): inlen_got=%u", id, inlen_got);
 
  if ( ss->is_new ) {
+  ss->state = ROAR_STREAMSTATE_OLD;
   ROAR_WARN("streams_fill_mixbuffer2(id=%i, info=...): stream state: new->old", id);
  }
 
