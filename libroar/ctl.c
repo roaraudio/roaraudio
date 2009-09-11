@@ -380,6 +380,10 @@ int roar_ctl_c2m      (struct roar_message * m, struct roar_client * c) {
  memcpy(&(m->data[cur]), &pid, 4);
  cur += 4;
 
+ pid = ROAR_HOST2NET32(c->byteorder);
+ memcpy(&(m->data[cur]), &pid, 4);
+ cur += 4;
+
  m->datalen = cur;
 
  return 0;
@@ -441,6 +445,14 @@ int roar_ctl_m2c      (struct roar_message * m, struct roar_client * c) {
   cur += 4;
  } else {
   c->proto = ROAR_PROTO_NONE;
+ }
+
+ if ( m->datalen >= cur+4 ) {
+  memcpy(&pid, &(m->data[cur]), 4);
+  c->byteorder = ROAR_NET2HOST32(pid);
+  cur += 4;
+ } else {
+  c->byteorder = ROAR_BYTEORDER_UNKNOWN;
  }
 
  return 0;
