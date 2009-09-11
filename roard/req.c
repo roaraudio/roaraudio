@@ -594,7 +594,7 @@ int req_on_get_stream_para (int client, struct roar_message * mes, char * data) 
 
     audio_info = &(s->info);
 
-    mes->datalen = 2*8;
+    mes->datalen = 2*9;
 
     d[2] = ROAR_OUTPUT_CALC_OUTBUFSIZE(audio_info);
     d[3] = ss->pre_underruns;
@@ -602,6 +602,7 @@ int req_on_get_stream_para (int client, struct roar_message * mes, char * data) 
     d[5] = ss->codec_orgi;
     d[6] = ss->flags | (ss->primary ? ROAR_FLAG_PRIMARY : 0) | (ss->driver_id != -1 ? ROAR_FLAG_OUTPUT : 0);
     d[7] = ss->delay/1000;
+    d[8] = ss->state;
 
     ROAR_DBG("req_on_get_stream_para(*): ss->driver_id=%i", ss->driver_id);
 
