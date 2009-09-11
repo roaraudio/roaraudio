@@ -37,6 +37,12 @@
 #define ROAR_PROTO_ROARAUDIO        1
 #define ROAR_PROTO_ESOUND           2
 
+#define ROAR_BYTEORDER_UNKNOWN      0x00
+#define ROAR_BYTEORDER_LE           ROAR_CODEC_LE
+#define ROAR_BYTEORDER_BE           ROAR_CODEC_BE
+#define ROAR_BYTEORDER_PDP          ROAR_CODEC_PDP
+#define ROAR_BYTEORDER_NETWORK      ROAR_BYTEORDER_BE
+
 struct roar_client {
  int fh; /* controll connection */
 // int last_stream; /* id of the last stream created */
@@ -49,6 +55,7 @@ struct roar_client {
  int streams[ROAR_CLIENTS_MAX_STREAMS_PER_CLIENT];
  struct roar_acl_target * acl;
  int proto;
+ int byteorder;
 };
 
 #endif

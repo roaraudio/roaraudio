@@ -60,7 +60,8 @@ int clients_new (void) {
     *n->name = 0;
     *n->host = 0;
 
-    n->proto = ROAR_PROTO_ROARAUDIO;
+    n->proto     = ROAR_PROTO_ROARAUDIO;
+    n->byteorder = ROAR_BYTEORDER_NETWORK;
 
     n->acl   = NULL;
 
@@ -166,10 +167,19 @@ int clients_set_gid   (int id, int    gid) {
 }
 
 int clients_set_proto (int id, int    proto) {
+ int byteorder = ROAR_BYTEORDER_UNKNOWN;
+
  if ( g_clients[id] == NULL )
   return -1;
 
- g_clients[id]->proto = proto;
+ switch (proto) {
+  case ROAR_PROTO_ROARAUDIO:
+    byteorder = ROAR_BYTEORDER_NETWORK;
+   break;
+ }
+
+ g_clients[id]->proto     = proto;
+ g_clients[id]->byteorder = byteorder;
 
  return 0;
 }
