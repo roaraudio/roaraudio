@@ -37,22 +37,8 @@
 
 #include "roaraudio.h"
 
-/*
-#define roar_dir2str(x)   ((x) == ROAR_DIR_PLAY   ? "play"   : (x) == ROAR_DIR_MONITOR ? "monitor" : \
-                           (x) == ROAR_DIR_FILTER ? "filter" : (x) == ROAR_DIR_RECORD  ? "record"  : \
-                           (x) == ROAR_DIR_OUTPUT ? "output" : (x) == ROAR_DIR_BIDIR   ? "bidir"   : \
-                           (x) == ROAR_DIR_MIXING ? "mixing" : \
-                           "unknown")
-*/
-
 char * roar_dir2str (int dir);
 int    roar_str2dir (char * name);
-
-/*
-#define roar_codec2str(x) ((x) == ROAR_CODEC_PCM_S_LE  ? "pcm_s_le"  : (x) == ROAR_CODEC_PCM_S_BE  ? "pcm_s_be"  : \
-                           (x) == ROAR_CODEC_PCM_S_PDP ? "pcm_s_pdp" : (x) == ROAR_CODEC_MIDI_FILE ? "midi_file" : \
-                           "unknown" )
-*/
 
 #define ROAR_FLAG_NONE           0x0000
 #define ROAR_FLAG_PRIMARY        0x0001
