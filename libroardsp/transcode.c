@@ -146,7 +146,154 @@ int roar_xcoder_proc_packet(struct roar_xcoder * state, void * buf, size_t len) 
 }
 
 int roar_xcoder_proc       (struct roar_xcoder * state, void * buf, size_t len) {
- return -1;
+ struct roar_buffer_stats ringstats;
+ struct roar_buffer * bufbuf;
+ void               * bufdata;
+ size_t               curlen;
+
+ if ( state == NULL )
+  return -1;
+
+ if ( buf == NULL && len != 0 )
+  return -1;
+
+ if ( state->packet_len == -1 )
+  if ( roar_xcoder_packet_size(state, -1) == -1 )
+   return -1;
+
+ if ( state->packet_len == 0 )
+  return roar_xcoder_proc_packet(state, buf, len);
+
+ if ( state->iobuffer == NULL ) {
+  while ( len >= state->packet_len ) {
+   if ( roar_xcoder_proc_packet(state, buf, state->packet_len) == -1 )
+    return -1;
+
+   buf += state->packet_len;
+   len -= state->packet_len;
+  }
+
+  if ( !len )
+   return 0;
+
+  if ( state->encode ) {
+   curlen = len;
+  } else {
+   curlen = state->packet_len;
+  }
+
+  if ( roar_buffer_new(&bufbuf, curlen) == -1 )
+   return -1;
+
+  if ( roar_buffer_get_data(bufbuf, &bufdata) == -1 ) {
+   roar_buffer_free(bufbuf);
+   return -1;
+  }
+
+  if ( state->encode ) {
+   memcpy(bufdata, buf, len);
+  } else {
+   if ( roar_xcoder_proc_packet(state, bufdata, state->packet_len) == -1 ) {
+    roar_buffer_free(bufbuf);
+    return -1;
+   }
+
+   curlen = len;
+
+   if ( roar_buffer_shift_out(&bufbuf, buf, &curlen) == -1 ) {
+    roar_buffer_free(bufbuf);
+    return -1;
+   }
+
+   if ( curlen < len ) { // this should never happen!
+    roar_buffer_free(bufbuf);
+    return -1;
+   }
+  }
+
+  state->iobuffer = bufbuf;
+ } else {
+  if ( state->encode ) {
+   if ( roar_buffer_new(&bufbuf, len) == -1 )
+    return -1;
+
+   if ( roar_buffer_get_data(bufbuf, &bufdata) == -1 ) {
+    roar_buffer_free(bufbuf);
+    return -1;
+   }
+
+   memcpy(bufdata, buf, len);
+
+   if ( roar_buffer_add(state->iobuffer, bufbuf) == -1 ) {
+    roar_buffer_free(bufbuf);
+    return -1;
+   }
+
+   if ( roar_buffer_ring_stats(state->iobuffer, &ringstats) == -1 )
+    return -1;
+
+   if ( roar_buffer_new(&bufbuf, state->packet_len) == -1 )
+    return -1;
+
+   if ( roar_buffer_get_data(bufbuf, &bufdata) == -1 ) {
+    roar_buffer_free(bufbuf);
+    return -1;
+   }
+
+   while ( ringstats.bytes > state->packet_len ) {
+    curlen = state->packet_len;
+    if ( roar_buffer_shift_out(&(state->iobuffer), bufdata, &curlen) == -1 ) {
+     roar_buffer_free(bufbuf);
+     return -1;
+    }
+
+    if ( curlen < state->packet_len ) { // this should not happen...
+     roar_buffer_free(bufbuf);
+     return -1;
+    }
+
+    if ( roar_xcoder_proc_packet(state, bufdata, state->packet_len) == -1 ) {
+     roar_buffer_free(bufbuf);
+     return -1;
+    }
+
+    if ( roar_buffer_ring_stats(state->iobuffer, &ringstats) == -1 ) {
+     roar_buffer_free(bufbuf);
+     return -1;
+    }
+   }
+
+   if ( roar_buffer_free(bufbuf) == -1 )
+    return -1;
+  } else {
+   curlen = len;
+
+   if ( roar_buffer_shift_out(&(state->iobuffer), buf, &curlen) == -1 ) {
+    return -1;
+   }
+
+   if ( curlen == len )
+    return -1;
+
+   // we now have curlen < len and state->iobuffer == NULL
+   // as no data is left in the buffer, need to get some new data.
+   // we simply call ourself to get some more data...
+
+   if ( state->iobuffer == NULL ) {
+    ROAR_WARN("roar_xcoder_proc(state=%p, buf=%p, len=%lu): iobuffer != NULL, "
+                                "This is a bug in libroar{dsp,} or some hardware is broken",
+                   state, buf, (unsigned long)len);
+    return -1;
+   }
+
+   len -= curlen;
+   buf += curlen;
+
+   return roar_xcoder_proc(state, buf, len);
+  }
+ }
+
+ return 0;
 }
 
 int roar_bixcoder_init(struct roar_bixcoder * state, struct roar_audio_info * info, struct roar_vio_calls * vio) {
