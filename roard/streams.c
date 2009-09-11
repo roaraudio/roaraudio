@@ -1418,12 +1418,14 @@ int streams_send_mon   (int id) {
 
   if ( (ret = stream_vio_s_write(ss, obuf, olen)) == olen ) {
    s->pos = ROAR_MATH_OVERFLOW_ADD(s->pos, ROAR_OUTPUT_CALC_OUTBUFSAMP(&(s->info), olen)*s->info.channels);
+   ss->state = ROAR_STREAMSTATE_OLD;
    _return(0);
   }
 
   if ( ret > 0 && errno == 0 ) {
    ROAR_WARN("streams_send_mon(id=%i): Overrun in stream: wrote %i of %i bytes, %i bytes missing", id, (int)ret, olen, olen-(int)ret);
    s->pos = ROAR_MATH_OVERFLOW_ADD(s->pos, ROAR_OUTPUT_CALC_OUTBUFSAMP(&(s->info), ret)*s->info.channels);
+   ss->state = ROAR_STREAMSTATE_OLD;
    _return(0);
   }
  } else {
@@ -1431,6 +1433,7 @@ int streams_send_mon   (int id) {
   if ( codecfilter_write(ss->codecfilter_inst, ss->codecfilter, obuf, olen)
             == olen ) {
    s->pos = ROAR_MATH_OVERFLOW_ADD(s->pos, ROAR_OUTPUT_CALC_OUTBUFSAMP(&(s->info), olen)*s->info.channels);
+   ss->state = ROAR_STREAMSTATE_OLD;
    _return(0);
   } else { // we cann't retry on codec filetered streams
    if ( errno != EAGAIN ) {
@@ -1450,6 +1453,7 @@ int streams_send_mon   (int id) {
 
   if ( stream_vio_s_write(ss, obuf, olen) == olen ) {
    s->pos = ROAR_MATH_OVERFLOW_ADD(s->pos, ROAR_OUTPUT_CALC_OUTBUFSAMP(&(s->info), olen)*s->info.channels);
+   ss->state = ROAR_STREAMSTATE_OLD;
    _return(0);
   } else if ( errno == EAGAIN ) {
    ROAR_WARN("streams_send_mon(id=%i): Can not send data to client: %s", id, strerror(errno));
