@@ -134,6 +134,7 @@ int streams_delete (int id) {
  int prim;
  int no_vio_close = 0;
  int i;
+ int client;
 
  if ( (s = g_streams[id]) == NULL )
   return 0;
@@ -154,8 +155,10 @@ int streams_delete (int id) {
      break;
     default:
       if ( streams_get_flag(i, ROAR_FLAG_VIRTUAL) == 1 ) {
-       if ( i != id )
+       if ( i != id ) {
+        ROAR_DBG("streams_delete(id=%i): Deleting virtual child stream %i", id, i);
         streams_delete(i);
+       }
       } else {
        ROAR_STREAM(g_streams[i])->pos_rel_id = -1;
       }
@@ -168,11 +171,17 @@ int streams_delete (int id) {
 
  if ( streams_get_flag(id, ROAR_FLAG_VIRTUAL) == 1 ) {
   // we un-group the stream here to avoid a client deleting the parent deleting the client deleting ...
-  i = ROAR_STREAM(s)->pos_rel_id;
-  ROAR_STREAM(s)->pos_rel_id = -1;
-  ROAR_DBG("streams_delete(id=%i): Stream has flag virtual, notifying parent stream %i", id, i);
-  streams_ctl(i, ROAR_CODECFILTER_CTL_VIRTUAL_DELETE, &id);
-  ROAR_STREAM(s)->pos_rel_id = i;
+  i      = ROAR_STREAM(s)->pos_rel_id;
+  if ( i != -1 ) {
+   ROAR_STREAM(s)->pos_rel_id = -1;
+   client = streams_get_client(id);
+   streams_set_client(id, -1);
+   ROAR_DBG("streams_delete(id=%i): Stream has flag virtual, notifying parent stream %i", id, i);
+   streams_ctl(i, ROAR_CODECFILTER_CTL_VIRTUAL_DELETE, &id);
+   ROAR_DBG("streams_delete(id=%i): Notify send to stream %i", id, i);
+   streams_set_client(id, client);
+   ROAR_STREAM(s)->pos_rel_id = i;
+  }
  }
 
 #ifdef ROAR_SUPPORT_META
