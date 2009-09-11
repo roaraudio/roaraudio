@@ -356,13 +356,13 @@ int streams_new_virtual (int parent, struct roar_stream_server ** stream) {
  s        = ROAR_STREAM(       ss);
  parent_s = ROAR_STREAM(parent_ss);
 
- s->pos_rel_id = id;
+ s->pos_rel_id = parent;
 
  if ( streams_set_flag(id, ROAR_FLAG_VIRTUAL) == -1 ) {
   _err();
  }
 
- if ( stream == NULL )
+ if ( stream != NULL )
   *stream = ss;
 
  return id;
