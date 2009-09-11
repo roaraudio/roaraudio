@@ -469,4 +469,33 @@ char * roar_proto2str (int    proto) {
  }
 }
 
+int    roar_str2byteorder (char * byteorder) {
+ if (        !strcasecmp(byteorder, "le")            || !strcasecmp(byteorder, "little") ||
+             !strcasecmp(byteorder, "little endian") || !strcasecmp(byteorder, "1234")   ) {
+  return ROAR_BYTEORDER_LE;
+ } else if ( !strcasecmp(byteorder, "be")            || !strcasecmp(byteorder, "big")    ||
+             !strcasecmp(byteorder, "big endian")    || !strcasecmp(byteorder, "4321")   ) {
+  return ROAR_BYTEORDER_BE;
+ } else if ( !strcasecmp(byteorder, "pdp")           ||
+             !strcasecmp(byteorder, "pdp endian") ) {
+  return ROAR_BYTEORDER_PDP;
+ } else if ( !strcasecmp(byteorder, "network")       ||
+             !strcasecmp(byteorder, "network byteorder") ) {
+  return ROAR_BYTEORDER_NETWORK;
+ }
+
+ return -1;
+}
+
+char * roar_byteorder2str (int    byteorder) {
+ switch (byteorder) {
+  case ROAR_BYTEORDER_LE:      return "little endian"; break;
+  case ROAR_BYTEORDER_BE:      return "big endian";    break;
+  case ROAR_BYTEORDER_PDP:     return "pdp endian";    break;
+//  case ROAR_BYTEORDER_NETWORK: return "network";       break;
+  default:
+    return "(unknown)";
+ }
+}
+
 //ll

@@ -82,6 +82,9 @@ int roar_ctl_m2c      (struct roar_message * m, struct roar_client * c);
 int    roar_str2proto (char * proto);
 char * roar_proto2str (int    proto);
 
+int    roar_str2byteorder (char * byteorder);
+char * roar_byteorder2str (int    byteorder);
+
 #endif
 
 //ll
