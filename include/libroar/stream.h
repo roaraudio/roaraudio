@@ -136,6 +136,8 @@ int roar_stream_m2s     (struct roar_stream * s, struct roar_message * m);
 int    roar_str2codec (char * codec);
 char * roar_codec2str (int    codec);
 
+char * roar_streamstate2str(int streamstate);
+
 #endif
 
 //ll

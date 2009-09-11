@@ -691,4 +691,16 @@ char * roar_codec2str (int codec) {
  return "unknown";
 }
 
+char * roar_streamstate2str(int streamstate) {
+ switch (streamstate) {
+  case ROAR_STREAMSTATE_UNUSED:  return "unused";  break;
+  case ROAR_STREAMSTATE_INITING: return "initing"; break;
+  case ROAR_STREAMSTATE_NEW:     return "new";     break;
+  case ROAR_STREAMSTATE_OLD:     return "old";     break;
+  case ROAR_STREAMSTATE_CLOSING: return "closing"; break;
+ }
+
+ return "unknown";
+}
+
 //ll
