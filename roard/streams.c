@@ -166,6 +166,10 @@ int streams_delete (int id) {
  if ( ROAR_STREAM(s)->dir == ROAR_DIR_THRU )
   streams_thru_num--;
 
+ if ( streams_get_flag(id, ROAR_FLAG_VIRTUAL) == 1 ) {
+  streams_ctl(ROAR_STREAM(s)->pos_rel_id, ROAR_CODECFILTER_CTL_VIRTUAL_DELETE, &id);
+ }
+
 #ifdef ROAR_SUPPORT_META
  // delete meta data form other meta streams if needed
  if ( streams_get_flag(id, ROAR_FLAG_META) == 1 ) {
