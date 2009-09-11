@@ -569,6 +569,8 @@ int streams_set_mmap (int id, int reset) {
 }
 
 int streams_set_flag     (int id, int flag) {
+ int parent;
+
  if ( g_streams[id] == NULL )
   return -1;
 
@@ -579,6 +581,16 @@ int streams_set_flag     (int id, int flag) {
  if ( flag & ROAR_FLAG_PRIMARY ) {
   streams_set_primary(id, 1);
   flag -= ROAR_FLAG_PRIMARY;
+ }
+
+ if ( flag & ROAR_FLAG_VIRTUAL ) {
+  if ( (parent = ROAR_STREAM(g_streams[id])->pos_rel_id) == -1 )
+   return -1;
+
+  if ( streams_ctl(parent, ROAR_CODECFILTER_CTL_VIRTUAL_NEW|ROAR_STREAM_CTL_TYPE_INT, &id) == -1 ) {
+//   flag -= ROAR_FLAG_VIRTUAL;
+   return -1;
+  }
  }
 
  if ( flag & ROAR_FLAG_SYNC ) {
