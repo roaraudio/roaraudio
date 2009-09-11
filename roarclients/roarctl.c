@@ -223,6 +223,10 @@ void list_clients (struct roar_connection * con) {
    printf("Player Protocol       : %s\n", roar_proto2str(c.proto));
   }
 
+  if ( g_verbose && c.byteorder != ROAR_BYTEORDER_UNKNOWN ) {
+   printf("Player Byteorder      : %s\n", roar_byteorder2str(c.byteorder));
+  }
+
   if ( c.execed != -1 )
    printf("Execed stream         : %i\n", c.execed);
 
