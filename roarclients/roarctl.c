@@ -333,6 +333,9 @@ void list_streams (struct roar_connection * con) {
     if ( g_verbose > 1 )
      printf("Stream delay          : %ims\n",   (int)info.delay/1000);
 
+    if ( g_verbose > 1 )
+     printf("Stream state          : %s\n",   roar_streamstate2str(info.state));
+
     *flags = 0;
     if ( info.flags & ROAR_FLAG_PRIMARY )
      strcat(flags, "primary ");
