@@ -43,6 +43,14 @@
 #define ROAR_BYTEORDER_PDP          ROAR_CODEC_PDP
 #define ROAR_BYTEORDER_NETWORK      ROAR_BYTEORDER_BE
 
+#if BYTE_ORDER == BIG_ENDIAN
+#define ROAR_BYTEORDER_NATIVE       ROAR_CODEC_BE
+#elif BYTE_ORDER == LITTLE_ENDIAN
+#define ROAR_BYTEORDER_NATIVE       ROAR_CODEC_LE
+#else
+#define ROAR_BYTEORDER_NATIVE       ROAR_CODEC_PDP
+#endif
+
 struct roar_client {
  int fh; /* controll connection */
 // int last_stream; /* id of the last stream created */
