@@ -120,4 +120,41 @@ int roar_color_conv_rgb   (struct roar_color * c, uint32_t system) {
  return -1;
 }
 
+int roar_color_to_string  (struct roar_color * c, char * str, size_t len) {
+ size_t needlen;
+
+ if ( c == NULL || str == NULL || len == 0 )
+  return -1;
+
+ // just to be sure:
+ if ( len >= 1 )
+  *str = 0;
+
+ switch (c->system) {
+  case ROAR_COLORSYSTEM_NONE: needlen = 6; break; // '(none)'
+  case ROAR_COLORSYSTEM_RGB:  needlen = 7; break; // '#RRGGBB'
+  default:
+    return -1;
+ }
+
+ needlen++; // terminating \0
+
+ if ( needlen > len )
+  return -1;
+
+ switch (c->system) {
+  case ROAR_COLORSYSTEM_NONE:
+    strcpy(str, "(none)");
+   break;
+  case ROAR_COLORSYSTEM_RGB:
+    snprintf(str, 8, "#%.2X%.2X%.2X", c->color.rgb.r, c->color.rgb.g, c->color.rgb.b);
+   break;
+ }
+
+ return 0;
+}
+
+int roar_color_to_blob    (struct roar_color * c, char * blob, size_t len);
+int roar_color_from_blob  (struct roar_color * c, char * blob, size_t len);
+
 //ll

@@ -112,6 +112,11 @@ int roar_color_conv       (struct roar_color * c, uint32_t system);
 int roar_color_conv_gray  (struct roar_color * c, uint32_t system);
 int roar_color_conv_rgb   (struct roar_color * c, uint32_t system);
 
+int roar_color_to_string  (struct roar_color * c, char * str, size_t len);
+
+int roar_color_to_blob    (struct roar_color * c, char * blob, size_t len);
+int roar_color_from_blob  (struct roar_color * c, char * blob, size_t len);
+
 #endif
 
 //ll
