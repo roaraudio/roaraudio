@@ -76,6 +76,13 @@ int    roar_str2dir (char * name);
 #define ROAR_SET_FLAG            0
 #define ROAR_RESET_FLAG          1
 
+#define ROAR_STREAMSTATE_NULL       0
+#define ROAR_STREAMSTATE_UNUSED     ROAR_STREAMSTATE_NULL
+#define ROAR_STREAMSTATE_INITING    1
+#define ROAR_STREAMSTATE_NEW        2
+#define ROAR_STREAMSTATE_OLD        3
+#define ROAR_STREAMSTATE_CLOSING    4
+
 struct roar_stream_info {
  int block_size;
  int pre_underruns;
