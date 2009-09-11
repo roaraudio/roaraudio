@@ -208,20 +208,20 @@ void list_clients (struct roar_connection * con) {
    fprintf(stderr, "Error: can not get client info\n");
    continue;
   }
-  printf("Player name           : %s\n", c.name);
-  printf("Player PID            : %i(%s)\n", c.pid, proc_name(c.pid));
+  printf("Client name           : %s\n", c.name);
+  printf("Client PID            : %i(%s)\n", c.pid, proc_name(c.pid));
   if ( c.uid != -1 ) {
 #ifdef _POSIX_USERS
    pwd = getpwuid(c.uid);
    grp = getgrgid(c.gid);
-   printf("Player UID/GID        : %i(%s)/%i(%s)\n", c.uid, pwd ? pwd->pw_name : "?", c.gid, grp ? grp->gr_name : "?");
+   printf("Client UID/GID        : %i(%s)/%i(%s)\n", c.uid, pwd ? pwd->pw_name : "?", c.gid, grp ? grp->gr_name : "?");
 #else
-   printf("Player UID/GID        : %i/%i\n", c.uid, c.gid);
+   printf("Client UID/GID        : %i/%i\n", c.uid, c.gid);
 #endif
   }
 
   if ( g_verbose && c.proto != ROAR_PROTO_NONE ) {
-   printf("Player Protocol       : %s\n", roar_proto2str(c.proto));
+   printf("Client Protocol       : %s\n", roar_proto2str(c.proto));
   }
 
   if ( g_verbose && c.byteorder != ROAR_BYTEORDER_UNKNOWN ) {
@@ -242,7 +242,7 @@ void list_clients (struct roar_connection * con) {
    if ( *tmp )
     strcat(tmp, ")");
 
-   printf("Player Byteorder      : %s%s\n", roar_byteorder2str(c.byteorder), tmp);
+   printf("Client Byteorder      : %s%s\n", roar_byteorder2str(c.byteorder), tmp);
   }
 
   if ( c.execed != -1 )
