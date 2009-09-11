@@ -216,6 +216,7 @@ int clients_check_all (void) {
 
   for (j = 0; j < ROAR_CLIENTS_MAX_STREAMS_PER_CLIENT; j++) {
    if ( (fh = streams_get_fh(g_clients[i]->streams[j])) != -1 ) {
+    ROAR_DBG("clients_check_all(*): g_clients[i=%i]->streams[j=%i] = %i, fh = %i", i, j, g_clients[i]->streams[j], fh);
     if ( fh > -1 ) {
      FD_SET(fh, &r);
 
