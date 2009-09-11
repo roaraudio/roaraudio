@@ -167,7 +167,12 @@ int streams_delete (int id) {
   streams_thru_num--;
 
  if ( streams_get_flag(id, ROAR_FLAG_VIRTUAL) == 1 ) {
-  streams_ctl(ROAR_STREAM(s)->pos_rel_id, ROAR_CODECFILTER_CTL_VIRTUAL_DELETE, &id);
+  // we un-group the stream here to avoid a client deleting the parent deleting the client deleting ...
+  i = ROAR_STREAM(s)->pos_rel_id;
+  ROAR_STREAM(s)->pos_rel_id = -1;
+  ROAR_DBG("streams_delete(id=%i): Stream has flag virtual, notifying parent stream %i", id, i);
+  streams_ctl(i, ROAR_CODECFILTER_CTL_VIRTUAL_DELETE, &id);
+  ROAR_STREAM(s)->pos_rel_id = i;
  }
 
 #ifdef ROAR_SUPPORT_META
