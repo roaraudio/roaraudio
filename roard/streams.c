@@ -472,6 +472,18 @@ int streams_get_fh     (int id) {
  return ROAR_STREAM(g_streams[id])->fh;
 }
 
+int streams_set_null_io(int id) {
+ struct roar_stream_server * ss;
+ struct roar_stream        * s;
+
+ if ( (s = ROAR_STREAM(ss = g_streams[id])) == NULL )
+  return -1;
+
+ s->fh = -1;
+
+ return 0;
+}
+
 int streams_get    (int id, struct roar_stream_server ** stream) {
  if ( g_streams[id] == NULL )
   return -1;
