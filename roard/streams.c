@@ -341,7 +341,7 @@ int streams_new_virtual (int parent, struct roar_stream_server ** stream) {
   return -1;
  }
 
- if ( streams_set_client(id, client) == -1 ) {
+ if ( client_stream_add(client, id) == -1 ) {
   _err();
  }
 
