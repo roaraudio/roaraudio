@@ -190,6 +190,7 @@ void list_clients (struct roar_connection * con) {
  int num;
  int h;
  int id[ROAR_CLIENTS_MAX];
+ char tmp[80];
  struct roar_client c;
 #ifdef _POSIX_USERS
  struct group  * grp = NULL;
@@ -224,7 +225,24 @@ void list_clients (struct roar_connection * con) {
   }
 
   if ( g_verbose && c.byteorder != ROAR_BYTEORDER_UNKNOWN ) {
-   printf("Player Byteorder      : %s\n", roar_byteorder2str(c.byteorder));
+   if ( c.byteorder == ROAR_BYTEORDER_NETWORK ) {
+    strcpy(tmp, " (network byteorder");
+   } else {
+    *tmp = 0;
+   }
+
+   if ( c.byteorder == ROAR_BYTEORDER_NATIVE ) {
+    if ( *tmp ) {
+     strcat(tmp, ", native");
+    } else {
+     strcpy(tmp, " (native");
+    }
+   }
+
+   if ( *tmp )
+    strcat(tmp, ")");
+
+   printf("Player Byteorder      : %s%s\n", roar_byteorder2str(c.byteorder), tmp);
   }
 
   if ( c.execed != -1 )
