@@ -7,6 +7,7 @@ v. 0.3beta1 - ?
 	* cleanup, small fixes
 	* added VIO interface to transcoder interface
 	* ask codecfilter of parent in case of new child stream
+	* added 'subsystem' complex: multi subsystem data on single streams
 
 v. 0.3beta0 - Sun Sep 06 2009 22:42 CEST
 	* added new stream directions for MIDI and light control
