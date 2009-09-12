@@ -44,6 +44,12 @@ struct cont_fw_child_vio_inst {
 
 struct cont_fw_parent_inst {
  struct cont_fw_child * child[CONT_FW_MAX_CHILDS];
+ void * u_inst;
+ struct {
+  ssize_t (*read) (struct cont_fw_parent_inst * self, struct cont_fw_child * child, void *buf, size_t len);
+  ssize_t (*write)(struct cont_fw_parent_inst * self, struct cont_fw_child * child, void *buf, size_t len);
+  int     (*flush)(struct cont_fw_parent_inst * self, struct cont_fw_child * child);
+ } cb;
 };
 
 ssize_t cont_fw_read    (struct roar_vio_calls * vio, void *buf, size_t count);
