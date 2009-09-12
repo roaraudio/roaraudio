@@ -31,25 +31,20 @@
 
 struct cont_fw_parent_inst;
 
-struct cont_fw_child {
- int child;
- void * u_inst;
-};
-
 struct cont_fw_child_vio_inst {
  int child;
- struct cont_fw_child       * inst;
+ void * u_inst;
  struct cont_fw_parent_inst * parent;
 };
 
 struct cont_fw_parent_inst {
- struct cont_fw_child * child[CONT_FW_MAX_CHILDS];
+ struct cont_fw_child_vio_inst * child[CONT_FW_MAX_CHILDS];
  void * u_inst;
  struct {
-  ssize_t (*read) (struct cont_fw_parent_inst * self, struct cont_fw_child * child, void *buf, size_t len);
-  ssize_t (*write)(struct cont_fw_parent_inst * self, struct cont_fw_child * child, void *buf, size_t len);
-  int     (*flush)(struct cont_fw_parent_inst * self, struct cont_fw_child * child);
-  int     (*close)(struct cont_fw_parent_inst * self, struct cont_fw_child * child);
+  ssize_t (*read) (struct cont_fw_parent_inst * self, struct cont_fw_child_vio_inst * child, void *buf, size_t len);
+  ssize_t (*write)(struct cont_fw_parent_inst * self, struct cont_fw_child_vio_inst * child, void *buf, size_t len);
+  int     (*flush)(struct cont_fw_parent_inst * self, struct cont_fw_child_vio_inst * child);
+  int     (*close)(struct cont_fw_parent_inst * self, struct cont_fw_child_vio_inst * child);
  } ccb;
  struct {
   int     (*close)(struct cont_fw_parent_inst * self);

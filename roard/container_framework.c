@@ -115,7 +115,7 @@ ssize_t cont_fw_read    (struct roar_vio_calls * vio, void *buf, size_t count) {
  _BASIC();
 
  if ( inst->parent->ccb.read != NULL )
-  return inst->parent->ccb.read(inst->parent, inst->inst, buf, count);
+  return inst->parent->ccb.read(inst->parent, inst, buf, count);
 
  return -1;
 }
@@ -124,7 +124,7 @@ ssize_t cont_fw_write   (struct roar_vio_calls * vio, void *buf, size_t count) {
  _BASIC();
 
  if ( inst->parent->ccb.write != NULL )
-  return inst->parent->ccb.write(inst->parent, inst->inst, buf, count);
+  return inst->parent->ccb.write(inst->parent, inst, buf, count);
 
  return -1;
 }
@@ -136,7 +136,7 @@ int     cont_fw_sync    (struct roar_vio_calls * vio) {
  _BASIC();
 
  if ( inst->parent->ccb.flush != NULL )
-  return inst->parent->ccb.flush(inst->parent, inst->inst);
+  return inst->parent->ccb.flush(inst->parent, inst);
 
  return 0;
 }
@@ -151,7 +151,7 @@ int     cont_fw_close   (struct roar_vio_calls * vio) {
   r = -1;
 
  if ( inst->parent->ccb.close != NULL )
-  return inst->parent->ccb.close(inst->parent, inst->inst);
+  return inst->parent->ccb.close(inst->parent, inst);
 
  return  r;
 }
