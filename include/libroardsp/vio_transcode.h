@@ -38,8 +38,7 @@
 #include "libroardsp.h"
 
 int     roar_vio_open_xcode    (struct roar_vio_calls * calls, int encoder, struct roar_audio_info * info, struct roar_vio_calls * dst);
-ssize_t roar_vio_xcode_read    (struct roar_vio_calls * vio, void *buf, size_t count);
-ssize_t roar_vio_xcode_write   (struct roar_vio_calls * vio, void *buf, size_t count);
+ssize_t roar_vio_xcode_proc    (struct roar_vio_calls * vio, void *buf, size_t count);
 off_t   roar_vio_xcode_lseek   (struct roar_vio_calls * vio, off_t offset, int whence);
 int     roar_vio_xcode_nonblock(struct roar_vio_calls * vio, int state);
 int     roar_vio_xcode_sync    (struct roar_vio_calls * vio);
