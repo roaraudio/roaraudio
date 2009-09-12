@@ -324,18 +324,26 @@ int roar_simple_play_file(char * file, char * server, char * name) {
 }
 
 int roar_simple_play(int rate, int channels, int bits, int codec, char * server, char * name) {
+ roar_debug_warn_sysio("roar_simple_play", "roar_vio_simple_stream", NULL);
+
  return roar_simple_stream(rate, channels, bits, codec, server, ROAR_DIR_PLAY, name);
 }
 
 int roar_simple_monitor(int rate, int channels, int bits, int codec, char * server, char * name) {
+ roar_debug_warn_sysio("roar_simple_monitor", "roar_vio_simple_stream", NULL);
+
  return roar_simple_stream(rate, channels, bits, codec, server, ROAR_DIR_MONITOR, name);
 }
 
 int roar_simple_record(int rate, int channels, int bits, int codec, char * server, char * name) {
+ roar_debug_warn_sysio("roar_simple_record", "roar_vio_simple_stream", NULL);
+
  return roar_simple_stream(rate, channels, bits, codec, server, ROAR_DIR_RECORD, name);
 }
 
 int roar_simple_filter(int rate, int channels, int bits, int codec, char * server, char * name) {
+ roar_debug_warn_sysio("roar_simple_filter", "roar_vio_simple_stream", NULL);
+
  return roar_simple_stream(rate, channels, bits, codec, server, ROAR_DIR_FILTER, name);
 }
 
@@ -344,6 +352,8 @@ int roar_simple_connect_virtual(struct roar_connection * con, struct roar_stream
 }
 
 int roar_simple_close(int fh) {
+ roar_debug_warn_sysio("roar_simple_close", "roar_vio_close", NULL);
+
 #ifdef ROAR_TARGET_WIN32
  closesocket(fh);
  return 0;
@@ -360,6 +370,8 @@ int roar_simple_close(int fh) {
 
 int roar_simple_get_standby (int fh) {
  struct roar_connection con;
+
+ roar_debug_warn_sysio("roar_simple_get_standby", NULL, NULL);
 
  if ( roar_connect_fh(&con, fh) == -1 )
   return -1;
