@@ -65,7 +65,9 @@ struct roar_codecfilter {
  char * name;
  char * desc;
  char * options;
+ void * setup;
  int    flags;
+ unsigned int subsystems;
  int (*open )(CODECFILTER_USERDATA_T * inst, int codec,
                                              struct roar_stream_server * info,
                                              struct roar_codecfilter   * filter);
