@@ -164,12 +164,26 @@ void print_codecfilterlist (void) {
  int flags;
  char mode[5];
  char delay[6];
+ char subsys[7] = "      ";
  uint_least32_t d;
 
- printf("  Codec        Filtername   Mode Delay - Description\n");
- printf("------------------------------------------------------\n");
+ printf("  Codec        Filtername   Mode Subsys Delay - Description\n");
+ printf("-------------------------------------------------------------\n");
 
  for (i = 0; g_codecfilter[i].name != NULL; i++) {
+  strncpy(subsys, "      ", 6);
+
+  if ( g_codecfilter[i].subsystems & ROAR_SUBSYS_WAVEFORM )
+   subsys[0] = 'W';
+  if ( g_codecfilter[i].subsystems & ROAR_SUBSYS_MIDI )
+   subsys[1] = 'M';
+  if ( g_codecfilter[i].subsystems & ROAR_SUBSYS_CB )
+   subsys[2] = 'C';
+  if ( g_codecfilter[i].subsystems & ROAR_SUBSYS_LIGHT )
+   subsys[3] = 'L';
+  if ( g_codecfilter[i].subsystems & ROAR_SUBSYS_RAW )
+   subsys[4] = 'R';
+
   flags = g_codecfilter[i].flags;
 
   if ( flags == ROAR_CODECFILTER_NONE ) {
@@ -195,10 +209,11 @@ void print_codecfilterlist (void) {
    }
   }
  
-  printf("  %-12s %-12s %-4s %-5s - %s\n",
+  printf("  %-12s %-12s %-4s %6s %-5s - %s\n",
              roar_codec2str(g_codecfilter[i].codec),
              g_codecfilter[i].name,
              mode,
+             subsys,
              delay,
              g_codecfilter[i].desc
              );
