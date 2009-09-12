@@ -28,7 +28,14 @@
 #ifndef _ROARAUDIO_MISC_H_
 #define _ROARAUDIO_MISC_H_
 
-#define ROAR_LIGHT_BITS   8
+// light:
+#define ROAR_LIGHT_BITS       8
+
+// complex:
+#define ROAR_COMPLEX_RATE     0
+#define ROAR_COMPLEX_BITS     0
+#define ROAR_COMPLEX_CHANNELS 0
+#define ROAR_COMPLEX_CODEC    ROAR_CODEC_RAUM
 
 #endif
 

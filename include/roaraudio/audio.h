@@ -61,6 +61,7 @@
       0100 0x14 -> Ogg FLAC
       0101 0x15 -> Ogg General
       0110 0x16 -> Ogg CELT
+      0111 0x17 -> Ogg
       [...]
       **** 0x1a -> ROAR CELT
       **** 0x1b -> ROAR SPEEX
@@ -157,6 +158,8 @@
 /* #define ROAR_CODEC_CELT/OGG_CELT 0x13 Reserved for CELT */
 #define ROAR_CODEC_OGG_FLAC     0x14
 #define ROAR_CODEC_OGG_GENERAL  0x15
+#define ROAR_CODEC_OGG_CELT     0x16
+#define ROAR_CODEC_OGG          0x17
 
 #define ROAR_CODEC_ROAR_CELT    0x1a
 #define ROAR_CODEC_ROAR_SPEEX   0x1b

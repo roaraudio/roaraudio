@@ -40,6 +40,7 @@ void usage (void) {
         "  --midi                - Use MIDI Audio as input\n"
         "  --light               - Use light control input\n"
         "  --raw                 - Use raw input\n"
+        "  --complex             - Use complex input\n"
         "  --rel-id ID           - Set ID of relative stream\n"
         "  --help                - Show this help\n"
        );
@@ -100,6 +101,8 @@ int main (int argc, char * argv[]) {
    dir   = ROAR_DIR_LIGHT_IN;
   } else if ( !strcmp(k, "--raw") ) {
    dir   = ROAR_DIR_RAW_IN;
+  } else if ( !strcmp(k, "--complex") ) {
+   dir   = ROAR_DIR_COMPLEX_IN;
 
   } else if ( !strcmp(k, "--rel-id") ) {
    rel_id = atoi(argv[++i]);
@@ -138,6 +141,12 @@ int main (int argc, char * argv[]) {
     if ( bits     == -1 ) bits     = ROAR_LIGHT_BITS;
     if ( channels == -1 ) channels = 0;
     if ( codec    == -1 ) codec    = ROAR_CODEC_DMX512;
+   break;
+  case ROAR_DIR_COMPLEX_IN:
+    if ( rate     == -1 ) rate     = ROAR_COMPLEX_RATE;
+    if ( bits     == -1 ) bits     = ROAR_COMPLEX_BITS;
+    if ( channels == -1 ) channels = ROAR_COMPLEX_CHANNELS;
+    if ( codec    == -1 ) codec    = ROAR_COMPLEX_CODEC;
    break;
   case ROAR_DIR_RAW_IN:
   default:

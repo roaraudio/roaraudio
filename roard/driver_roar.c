@@ -33,11 +33,12 @@ int driver_roar_open_vio(struct roar_vio_calls * inst, char * device, struct roa
 
  if ( sstream != NULL ) {
   switch (ROAR_STREAM(sstream)->dir) {
-   case ROAR_DIR_OUTPUT:    dir = ROAR_DIR_PLAY;     break;
-   case ROAR_DIR_MIDI_OUT:  dir = ROAR_DIR_MIDI_IN;  break;
-   case ROAR_DIR_LIGHT_OUT: dir = ROAR_DIR_LIGHT_IN; break;
+   case ROAR_DIR_OUTPUT:      dir = ROAR_DIR_PLAY;       break;
+   case ROAR_DIR_MIDI_OUT:    dir = ROAR_DIR_MIDI_IN;    break;
+   case ROAR_DIR_LIGHT_OUT:   dir = ROAR_DIR_LIGHT_IN;   break;
 // TODO: we need to know a real pos id for raw streams...
 //   case ROAR_DIR_RAW_OUT:   dir = ROAR_DIR_RAW_IN;   break;
+   case ROAR_DIR_COMPLEX_OUT: dir = ROAR_DIR_COMPLEX_IN; break;
    default:
      return -1;
   }

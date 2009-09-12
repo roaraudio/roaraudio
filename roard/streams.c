@@ -339,6 +339,10 @@ int streams_get_subsys (int id) {
   case ROAR_DIR_RAW_OUT:
     return ROAR_SUBSYS_RAW;
    break;
+  case ROAR_DIR_COMPLEX_IN:
+  case ROAR_DIR_COMPLEX_OUT:
+    return ROAR_SUBSYS_COMPLEX;
+   break;
   case ROAR_DIR_THRU:
     return streams_get_subsys(ROAR_STREAM(ss)->pos_rel_id);
    break;

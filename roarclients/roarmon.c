@@ -40,6 +40,7 @@ void usage (void) {
         "  --midi               - Output MIDI Audio\n"
         "  --light              - Output light control\n"
         "  --raw                - Output raw data\n"
+        "  --complex            - Output complex data\n"
         "  --thru               - Output copy of other stream\n"
         "  --rel-id ID          - Set ID of relative stream\n"
         "  --help               - Show this help\n"
@@ -100,6 +101,8 @@ int main (int argc, char * argv[]) {
    dir   = ROAR_DIR_LIGHT_OUT;
   } else if ( !strcmp(k, "--raw") ) {
    dir   = ROAR_DIR_RAW_OUT;
+  } else if ( !strcmp(k, "--complex") ) {
+   dir   = ROAR_DIR_COMPLEX_OUT;
   } else if ( !strcmp(k, "--thru") ) {
    dir   = ROAR_DIR_THRU;
   } else if ( !strcmp(k, "--rel-id") ) {
@@ -139,6 +142,12 @@ int main (int argc, char * argv[]) {
     if ( bits     == -1 ) bits     = ROAR_LIGHT_BITS;
     if ( channels == -1 ) channels = 0;
     if ( codec    == -1 ) codec    = ROAR_CODEC_DMX512;
+   break;
+  case ROAR_DIR_COMPLEX_IN:
+    if ( rate     == -1 ) rate     = ROAR_COMPLEX_RATE;
+    if ( bits     == -1 ) bits     = ROAR_COMPLEX_BITS;
+    if ( channels == -1 ) channels = ROAR_COMPLEX_CHANNELS;
+    if ( codec    == -1 ) codec    = ROAR_COMPLEX_CODEC;
    break;
   case ROAR_DIR_RAW_OUT:
   case ROAR_DIR_THRU:

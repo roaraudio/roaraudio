@@ -183,6 +183,8 @@ void print_codecfilterlist (void) {
    subsys[3] = 'L';
   if ( g_codecfilter[i].subsystems & ROAR_SUBSYS_RAW )
    subsys[4] = 'R';
+  if ( g_codecfilter[i].subsystems & ROAR_SUBSYS_COMPLEX )
+   subsys[5] = 'X';
 
   flags = g_codecfilter[i].flags;
 

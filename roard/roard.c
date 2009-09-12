@@ -500,6 +500,8 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
    } else if ( !strcasecmp(v, "raw") ) {
     dir = ROAR_DIR_RAW_OUT;
 #endif
+   } else if ( !strcasecmp(v, "complex") ) {
+    dir = ROAR_DIR_COMPLEX_OUT;
    } else {
     ROAR_ERR("add_output(*): unknown/unsupported subsystem '%s'", k);
     error++;

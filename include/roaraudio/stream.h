@@ -56,7 +56,10 @@
 #define ROAR_DIR_RAW_IN     16
 #define ROAR_DIR_RAW_OUT    17
 
-#define ROAR_DIR_DIRIDS     18
+#define ROAR_DIR_COMPLEX_IN  18
+#define ROAR_DIR_COMPLEX_OUT 19
+
+#define ROAR_DIR_DIRIDS     20
 
 
 #define ROAR_CARE_NOPOS  0

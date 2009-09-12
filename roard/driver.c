@@ -32,11 +32,11 @@ struct roar_driver g_driver[] = {
    NULL, driver_esd_close, driver_esd_open_vio},
 #endif
  { "roar", "RoarAudio driver", "localhost, remote.host.dom", DRV_FLAG_NONE,
-   ROAR_SUBSYS_WAVEFORM|ROAR_SUBSYS_MIDI|ROAR_SUBSYS_LIGHT,
+   ROAR_SUBSYS_WAVEFORM|ROAR_SUBSYS_MIDI|ROAR_SUBSYS_LIGHT|ROAR_SUBSYS_COMPLEX,
    NULL, driver_roar_close, driver_roar_open_vio},
 #ifdef ROAR_HAVE_IO_POSIX
  { "raw",  "RAW PCM driver", "/some/file", DRV_FLAG_FHSEC,
-   ROAR_SUBSYS_WAVEFORM|ROAR_SUBSYS_MIDI|ROAR_SUBSYS_LIGHT|ROAR_SUBSYS_RAW,
+   ROAR_SUBSYS_WAVEFORM|ROAR_SUBSYS_MIDI|ROAR_SUBSYS_LIGHT|ROAR_SUBSYS_RAW|ROAR_SUBSYS_COMPLEX,
    NULL, NULL, driver_raw_open_vio},
 #endif
 #if defined(ROAR_HAVE_OSS_BSD) || defined(ROAR_HAVE_OSS)
@@ -97,6 +97,8 @@ void print_driverlist (void) {
    subsys[3] = 'L';
   if ( g_driver[i].subsystems & ROAR_SUBSYS_RAW )
    subsys[4] = 'R';
+  if ( g_driver[i].subsystems & ROAR_SUBSYS_COMPLEX )
+   subsys[5] = 'X';
 
   printf("  %-9s %c%c%c %6s - %s (devices: %s)\n", g_driver[i].name,
                 g_driver[i].flags & DRV_FLAG_FHSEC                                                         ? 's' : ' ',

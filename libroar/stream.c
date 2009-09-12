@@ -553,23 +553,25 @@ struct {
  int    dir;
  char * name;
 } _libroar_dir[] = {
- {ROAR_DIR_PLAY,      "play"     },
- {ROAR_DIR_RECORD,    "record"   },
- {ROAR_DIR_MONITOR,   "monitor"  },
- {ROAR_DIR_FILTER,    "filter"   },
- {ROAR_DIR_OUTPUT,    "output"   },
- {ROAR_DIR_MIXING,    "mixing"   },
- {ROAR_DIR_META,      "meta"     },
- {ROAR_DIR_BIDIR,     "bidir"    },
- {ROAR_DIR_THRU,      "thru"     },
- {ROAR_DIR_BRIDGE,    "bridge"   },
- {ROAR_DIR_MIDI_IN,   "midi_in"  },
- {ROAR_DIR_MIDI_OUT,  "midi_out" },
- {ROAR_DIR_LIGHT_IN,  "light_in" },
- {ROAR_DIR_LIGHT_OUT, "light_out"},
- {ROAR_DIR_RAW_IN,    "raw_in"   },
- {ROAR_DIR_RAW_OUT,   "raw_out"  },
- {-1,                 "unknown"  }
+ {ROAR_DIR_PLAY,        "play"       },
+ {ROAR_DIR_RECORD,      "record"     },
+ {ROAR_DIR_MONITOR,     "monitor"    },
+ {ROAR_DIR_FILTER,      "filter"     },
+ {ROAR_DIR_OUTPUT,      "output"     },
+ {ROAR_DIR_MIXING,      "mixing"     },
+ {ROAR_DIR_META,        "meta"       },
+ {ROAR_DIR_BIDIR,       "bidir"      },
+ {ROAR_DIR_THRU,        "thru"       },
+ {ROAR_DIR_BRIDGE,      "bridge"     },
+ {ROAR_DIR_MIDI_IN,     "midi_in"    },
+ {ROAR_DIR_MIDI_OUT,    "midi_out"   },
+ {ROAR_DIR_LIGHT_IN,    "light_in"   },
+ {ROAR_DIR_LIGHT_OUT,   "light_out"  },
+ {ROAR_DIR_RAW_IN,      "raw_in"     },
+ {ROAR_DIR_RAW_OUT,     "raw_out"    },
+ {ROAR_DIR_COMPLEX_IN,  "complex_in" },
+ {ROAR_DIR_COMPLEX_OUT, "complex_out"},
+ {-1,                   "unknown"    }
 };
 
 char * roar_dir2str (int dir) {
@@ -627,6 +629,8 @@ struct {
  {ROAR_CODEC_OGG_SPEEX,   "speex"      }, // alias
  {ROAR_CODEC_OGG_FLAC,    "ogg_flac"   },
  {ROAR_CODEC_OGG_GENERAL, "ogg_general"},
+ {ROAR_CODEC_OGG_CELT,    "ogg_celt"   },
+ {ROAR_CODEC_OGG,         "ogg"        },
  {ROAR_CODEC_ROAR_CELT,   "roar_celt"  },
  {ROAR_CODEC_ROAR_SPEEX,  "roar_speex" },
 

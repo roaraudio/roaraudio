@@ -69,6 +69,7 @@
 #define ROAR_SUBSYS_CB            0x04
 #define ROAR_SUBSYS_LIGHT         0x08
 #define ROAR_SUBSYS_RAW           0x10
+#define ROAR_SUBSYS_COMPLEX       0x20
 
 // some usefull macros:
 #define _8BIT  1

@@ -64,6 +64,8 @@ void print_sourcelist (void) {
    subsys[3] = 'L';
   if ( g_source[i].subsystems & ROAR_SUBSYS_RAW )
    subsys[4] = 'R';
+  if ( g_source[i].subsystems & ROAR_SUBSYS_COMPLEX )
+   subsys[5] = 'X';
 
   printf("  %-9s %c%c%c %6s - %s (devices: %s)\n", g_source[i].name,
                 g_source[i].flags & SRC_FLAG_FHSEC      ? 's' : ' ',
