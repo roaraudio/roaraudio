@@ -35,7 +35,7 @@ struct roar_driver g_driver[] = {
    ROAR_SUBSYS_WAVEFORM|ROAR_SUBSYS_MIDI|ROAR_SUBSYS_LIGHT|ROAR_SUBSYS_COMPLEX,
    NULL, driver_roar_close, driver_roar_open_vio},
 #ifdef ROAR_HAVE_IO_POSIX
- { "raw",  "RAW PCM driver", "/some/file", DRV_FLAG_FHSEC,
+ { "raw",  "RAW driver", "/some/file", DRV_FLAG_FHSEC,
    ROAR_SUBSYS_WAVEFORM|ROAR_SUBSYS_MIDI|ROAR_SUBSYS_LIGHT|ROAR_SUBSYS_RAW|ROAR_SUBSYS_COMPLEX,
    NULL, NULL, driver_raw_open_vio},
 #endif
