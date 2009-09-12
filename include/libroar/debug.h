@@ -37,6 +37,10 @@
 
 #include "libroar.h"
 
+#define ROAR_WARNING_NEVER       0
+#define ROAR_WARNING_ONCE        1
+#define ROAR_WARNING_ALWAYS      2
+
 #if 1
 #define roar_debug_warn_sysio(f,n,i) roar_debug_warn_sysio_real((f),(n),(i))
 #else
