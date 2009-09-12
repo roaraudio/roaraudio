@@ -52,6 +52,8 @@ struct cont_fw_parent_inst {
  } cb;
 };
 
+int     cont_fw_new     (struct cont_fw_parent_inst ** inst);
+int     cont_fw_delete  (struct cont_fw_parent_inst  * inst);
 int     cont_fw_init_vio(struct roar_vio_calls * vio, void * inst);
 ssize_t cont_fw_read    (struct roar_vio_calls * vio, void *buf, size_t count);
 ssize_t cont_fw_write   (struct roar_vio_calls * vio, void *buf, size_t count);

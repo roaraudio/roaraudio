@@ -34,6 +34,14 @@
 #define _BASIC() _DECL();  \
                  _PREP()
 
+int     cont_fw_new     (struct cont_fw_parent_inst ** inst) {
+ return -1;
+}
+
+int     cont_fw_delete  (struct cont_fw_parent_inst  * inst) {
+ return -1;
+}
+
 int     cont_fw_init_vio(struct roar_vio_calls * vio, void * inst) {
  if ( vio == NULL )
   return -1;
