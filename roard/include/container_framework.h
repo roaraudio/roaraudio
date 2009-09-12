@@ -49,7 +49,11 @@ struct cont_fw_parent_inst {
   ssize_t (*read) (struct cont_fw_parent_inst * self, struct cont_fw_child * child, void *buf, size_t len);
   ssize_t (*write)(struct cont_fw_parent_inst * self, struct cont_fw_child * child, void *buf, size_t len);
   int     (*flush)(struct cont_fw_parent_inst * self, struct cont_fw_child * child);
- } cb;
+  int     (*close)(struct cont_fw_parent_inst * self, struct cont_fw_child * child);
+ } scb;
+ struct {
+  int     (*close)(struct cont_fw_parent_inst * self);
+ } pcb;
 };
 
 int     cont_fw_new      (struct cont_fw_parent_inst ** inst);
