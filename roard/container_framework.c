@@ -147,6 +147,7 @@ int     cont_fw_sync    (struct roar_vio_calls * vio) {
 int     cont_fw_close   (struct roar_vio_calls * vio) {
  _DECL();
  int r = 0;
+ int i;
 
  _PREP();
 
@@ -155,6 +156,14 @@ int     cont_fw_close   (struct roar_vio_calls * vio) {
 
  if ( inst->parent->ccb.close != NULL )
   return inst->parent->ccb.close(inst->parent, inst);
+
+ for (i = 0; i < CONT_FW_MAX_CHILDS; i++) {
+  if ( inst->parent->child[i] == inst ) {
+   inst->parent->child[i] = NULL;
+  }
+ }
+
+ free(inst);
 
  return  r;
 }
