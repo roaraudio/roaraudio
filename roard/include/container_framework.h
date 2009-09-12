@@ -29,6 +29,8 @@
 
 #define CONT_FW_MAX_CHILDS 8
 
+#define CONT_FW_SETUP_TYPE(f) int (f)(struct cont_fw_parent_inst * self, int codec, struct roar_codecfilter    * filter)
+
 struct cont_fw_parent_inst;
 
 struct cont_fw_child_vio_inst {
