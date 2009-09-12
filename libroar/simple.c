@@ -348,7 +348,30 @@ int roar_simple_filter(int rate, int channels, int bits, int codec, char * serve
 }
 
 int roar_simple_connect_virtual(struct roar_connection * con, struct roar_stream * s, int parent) {
- return -1;
+ struct roar_stream parent_stream;
+ int dir;
+
+ if ( con == NULL || s == NULL || parent < 0 )
+  return -1;
+
+ if ( roar_get_stream(con, &parent_stream, parent) == -1 )
+  return -1;
+
+ if ( (dir = roar_stream_get_dir(&parent_stream)) == -1 )
+  return -1;
+
+ if ( roar_stream_set_rel_id(s, parent) == -1 )
+  return -1;
+
+ if ( roar_stream_connect(con, s, dir) == -1 )
+  return -1;
+
+ if ( roar_stream_set_flags(con, s, ROAR_FLAG_VIRTUAL, 0) == -1 ) {
+  roar_kick(con, ROAR_OT_STREAM, roar_stream_get_id(s));
+  return -1;
+ }
+
+ return 0;
 }
 
 int roar_simple_close(int fh) {
