@@ -216,7 +216,20 @@ int     cont_fw_ctl     (struct roar_vio_calls * vio, int cmd, void * data);
 int cont_fw_cf_open(CODECFILTER_USERDATA_T * inst, int codec,
                                              struct roar_stream_server * info,
                                              struct roar_codecfilter   * filter) {
- return -1;
+ struct cont_fw_parent_inst * self;
+
+ if ( cont_fw_new(&self) == -1 )
+  return -1;
+
+ if ( self->pcb.open != NULL ) {
+  if ( self->pcb.open(self, codec, info, filter) == -1 ) {
+   cont_fw_delete(self);
+   return -1;
+  }
+ }
+
+ *inst = self;
+ return 0;
 }
 
 int cont_fw_cf_close(CODECFILTER_USERDATA_T   inst) {
