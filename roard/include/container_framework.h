@@ -29,6 +29,8 @@
 
 #define CONT_FW_MAX_CHILDS 8
 
+struct cont_fw_parent_inst;
+
 struct cont_fw_child {
  int child;
  void * u_inst;
@@ -36,7 +38,8 @@ struct cont_fw_child {
 
 struct cont_fw_child_vio_inst {
  int child;
- struct cont_fw_child * inst;
+ struct cont_fw_child       * inst;
+ struct cont_fw_parent_inst * parent;
 };
 
 struct cont_fw_parent_inst {
