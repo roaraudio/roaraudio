@@ -57,13 +57,25 @@ int     roar_vio_open_xcode    (struct roar_vio_calls * calls, int encoder, stru
 }
 
 ssize_t roar_vio_xcode_proc    (struct roar_vio_calls * vio, void *buf, size_t count) {
+#ifdef DEBUG
+ int ret;
+#endif
+
  if ( vio == NULL )
   return -1;
 
  if ( buf == NULL && count != 0 )
   return -1;
 
- return roar_xcoder_proc(vio->inst, buf, count);
+#ifdef DEBUG
+ ret = roar_xcoder_proc(vio->inst, buf, count);
+
+ ROAR_DBG("roar_vio_xcode_proc(vio=%p, buf=%p, count=%lu): ret=%i", vio, buf, (unsigned long) count, ret);
+
+ return !ret ? count : -1;
+#else
+ return !roar_xcoder_proc(vio->inst, buf, count) ? count : -1;
+#endif
 }
 
 off_t   roar_vio_xcode_lseek   (struct roar_vio_calls * vio, off_t offset, int whence);
