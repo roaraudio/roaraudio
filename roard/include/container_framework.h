@@ -61,6 +61,7 @@ int     cont_fw_delete   (struct cont_fw_parent_inst  * inst);
 int     cont_fw_set_uinst(struct cont_fw_parent_inst  * inst, void  * u_inst);
 int     cont_fw_get_uinst(struct cont_fw_parent_inst  * inst, void ** u_inst);
 
+int     cont_fw_new_child(struct cont_fw_parent_inst  * inst, int id);
 int     cont_fw_init_vio(struct roar_vio_calls * vio, void * inst);
 ssize_t cont_fw_read    (struct roar_vio_calls * vio, void *buf, size_t count);
 ssize_t cont_fw_write   (struct roar_vio_calls * vio, void *buf, size_t count);

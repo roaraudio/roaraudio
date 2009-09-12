@@ -89,6 +89,12 @@ int     cont_fw_get_uinst(struct cont_fw_parent_inst  * inst, void ** u_inst) {
 }
 
 // VIOs:
+int     cont_fw_new_child(struct cont_fw_parent_inst  * inst, int id) {
+ if ( inst == NULL )
+  return -1;
+
+ return -1;
+}
 
 int     cont_fw_init_vio(struct roar_vio_calls * vio, void * inst) {
  if ( vio == NULL )
