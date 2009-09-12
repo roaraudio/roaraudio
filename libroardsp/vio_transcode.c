@@ -99,13 +99,74 @@ int     roar_vio_xcode_close   (struct roar_vio_calls * vio) {
 }
 
 int     roar_vio_open_bixcode    (struct roar_vio_calls * calls, struct roar_audio_info * info,
-                                  struct roar_vio_calls * dst);
-ssize_t roar_vio_bixcode_read    (struct roar_vio_calls * vio, void *buf, size_t count);
-ssize_t roar_vio_bixcode_write   (struct roar_vio_calls * vio, void *buf, size_t count);
+                                  struct roar_vio_calls * dst) {
+ struct roar_bixcoder * bixcoder = malloc(sizeof(struct roar_bixcoder));
+
+ if ( bixcoder == NULL )
+  return -1;
+
+ if ( calls == NULL || info == NULL || dst == NULL ) {
+  free(bixcoder);
+  return -1;
+ }
+
+ if ( roar_bixcoder_init(bixcoder, info, dst) == -1 ) {
+  free(bixcoder);
+  return -1;
+ }
+
+ memset(calls, 0, sizeof(struct roar_vio_calls));
+
+ calls->inst   = (void*)bixcoder;
+
+ calls->close  = roar_vio_bixcode_close;
+
+ calls->read  = roar_vio_bixcode_read;
+ calls->write = roar_vio_bixcode_write;
+
+ return 0;
+}
+
+ssize_t roar_vio_bixcode_read    (struct roar_vio_calls * vio, void *buf, size_t count) {
+
+ if ( vio == NULL )
+  return -1;
+
+ if ( buf == NULL && count != 0 )
+  return -1;
+
+ return !roar_bixcoder_read(vio->inst, buf, count) ? count : -1;
+}
+
+ssize_t roar_vio_bixcode_write   (struct roar_vio_calls * vio, void *buf, size_t count) {
+
+ if ( vio == NULL )
+  return -1;
+
+ if ( buf == NULL && count != 0 )
+  return -1;
+
+ return !roar_bixcoder_write(vio->inst, buf, count) ? count : -1;
+}
+
 off_t   roar_vio_bixcode_lseek   (struct roar_vio_calls * vio, off_t offset, int whence);
 int     roar_vio_bixcode_nonblock(struct roar_vio_calls * vio, int state);
 int     roar_vio_bixcode_sync    (struct roar_vio_calls * vio);
 int     roar_vio_bixcode_ctl     (struct roar_vio_calls * vio, int cmd, void * data);
-int     roar_vio_bixcode_close   (struct roar_vio_calls * vio);
+
+int     roar_vio_bixcode_close   (struct roar_vio_calls * vio) {
+ int ret = 0;
+
+ if ( vio == NULL )
+  return -1;
+
+ if ( roar_bixcoder_close(vio->inst) == -1 )
+  ret = -1;
+
+ if ( vio->inst != NULL )
+  free(vio->inst);
+
+ return ret;
+}
 
 //ll
