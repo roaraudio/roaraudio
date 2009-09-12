@@ -94,10 +94,14 @@ int     cont_fw_get_uinst(struct cont_fw_parent_inst  * inst, void ** u_inst) {
 // VIOs:
 int     cont_fw_new_child(struct cont_fw_parent_inst  * inst, int id) {
  struct cont_fw_child_vio_inst * self;
+ struct roar_stream_server     * ss;
  int i;
  int cid = -1;
 
  if ( inst == NULL || id == -1 )
+  return -1;
+
+ if ( streams_get(id, &ss) == -1 )
   return -1;
 
  for (i = 0; i < CONT_FW_MAX_CHILDS; i++) {
@@ -128,6 +132,11 @@ int     cont_fw_new_child(struct cont_fw_parent_inst  * inst, int id) {
    return -1;
   }
  }
+
+ // no error possible here.
+ cont_fw_init_vio(&(ss->vio), self);
+
+ streams_set_fh(id, -1); // update some internal structures
 
  return 0;
 }
