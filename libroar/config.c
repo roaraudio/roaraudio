@@ -76,6 +76,12 @@ struct roar_libroar_config * roar_libroar_get_config(void) {
     } else {
      ROAR_WARN("roar_libroar_get_config(void): Unknown workaround option: %s", v);
     }
+   } else if ( !strcmp(k, "warn") ) {
+    if ( !strcmp(v, "sysio") ) {
+     config->warnings.sysio = ROAR_WARNING_ALWAYS;
+    } else {
+     ROAR_WARN("roar_libroar_get_config(void): Unknown warning option: %s", v);
+    }
    } else {
     ROAR_WARN("roar_libroar_get_config(void): Unknown option: %s", k);
    }
