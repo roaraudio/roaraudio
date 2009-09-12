@@ -50,7 +50,7 @@ struct cont_fw_parent_inst {
   ssize_t (*write)(struct cont_fw_parent_inst * self, struct cont_fw_child * child, void *buf, size_t len);
   int     (*flush)(struct cont_fw_parent_inst * self, struct cont_fw_child * child);
   int     (*close)(struct cont_fw_parent_inst * self, struct cont_fw_child * child);
- } scb;
+ } ccb;
  struct {
   int     (*close)(struct cont_fw_parent_inst * self);
  } pcb;
