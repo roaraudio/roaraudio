@@ -52,6 +52,7 @@ struct cont_fw_parent_inst {
  } cb;
 };
 
+int     cont_fw_init_vio(struct roar_vio_calls * vio, void * inst);
 ssize_t cont_fw_read    (struct roar_vio_calls * vio, void *buf, size_t count);
 ssize_t cont_fw_write   (struct roar_vio_calls * vio, void *buf, size_t count);
 off_t   cont_fw_lseek   (struct roar_vio_calls * vio, off_t offset, int whence);
