@@ -1,7 +1,7 @@
-//config.h:
+//debug.h:
 
 /*
- *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008, 2009
+ *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2009
  *
  *  This file is part of libroar a part of RoarAudio,
  *  a cross-platform sound system for both, home and professional use.
@@ -32,30 +32,18 @@
  *  them with any software that uses libesd, libartsc or libpulse*.
  */
 
-#ifndef _LIBROARCONFIG_H_
-#define _LIBROARCONFIG_H_
+#ifndef _LIBROARDEBUG_H_
+#define _LIBROARDEBUG_H_
 
 #include "libroar.h"
 
-// WorkAroundS:
-#define ROAR_LIBROAR_CONFIG_WAS_NONE        0x00
-#define ROAR_LIBROAR_CONFIG_WAS_USE_EXECED  0x01
+#if 1
+#define roar_debug_warn_sysio(f,n,i) roar_debug_warn_sysio_real((f),(n),(i))
+#else
+#define roar_debug_warn_sysio(f,n,i)
+#endif
 
-struct roar_libroar_config {
- struct {
-  int workarounds;
- } workaround;
- char * server;
- struct {
-  int sysio;
- } warnings;
-};
-
-struct roar_libroar_config * roar_libroar_get_config_ptr(void);
-struct roar_libroar_config * roar_libroar_get_config(void);
-
-int    roar_libroar_set_server(char * server);
-char * roar_libroar_get_server(void);
+int roar_debug_warn_sysio_real(char * func, char * newfunc, char * info);
 
 #endif
 

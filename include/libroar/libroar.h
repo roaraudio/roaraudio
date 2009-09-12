@@ -85,6 +85,7 @@
 
 #include "error.h"
 #include "config.h"
+#include "debug.h"
 #include "stack.h"
 #include "buffer.h"
 #include "vio_ctl.h"
