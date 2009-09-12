@@ -34,6 +34,21 @@
 #define _BASIC() _DECL();  \
                  _PREP()
 
+int     cont_fw_init_vio(struct roar_vio_calls * vio, void * inst) {
+ if ( vio == NULL )
+  return -1;
+
+ memset(vio, 0, sizeof(struct roar_vio_calls));
+ vio->inst = inst;
+
+ vio->read  = cont_fw_read;
+ vio->write = cont_fw_write;
+ vio->sync  = cont_fw_sync;
+ vio->close = cont_fw_close;
+
+ return 0;
+}
+
 ssize_t cont_fw_read    (struct roar_vio_calls * vio, void *buf, size_t count) {
  _BASIC();
 
