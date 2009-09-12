@@ -34,6 +34,7 @@
 #define _BASIC() _DECL();  \
                  _PREP()
 
+// Parent:
 int     cont_fw_new     (struct cont_fw_parent_inst ** inst) {
  struct cont_fw_parent_inst * self;
 
@@ -68,6 +69,26 @@ int     cont_fw_delete  (struct cont_fw_parent_inst  * inst) {
 
  return 0;
 }
+
+int     cont_fw_set_uinst(struct cont_fw_parent_inst  * inst, void  * u_inst) {
+ if ( inst == NULL )
+  return -1;
+
+ inst->u_inst = u_inst;
+
+ return 0;
+}
+
+int     cont_fw_get_uinst(struct cont_fw_parent_inst  * inst, void ** u_inst) {
+ if ( inst == NULL || u_inst == NULL )
+  return -1;
+
+ *u_inst = inst->u_inst;
+
+ return 0;
+}
+
+// VIOs:
 
 int     cont_fw_init_vio(struct roar_vio_calls * vio, void * inst) {
  if ( vio == NULL )
