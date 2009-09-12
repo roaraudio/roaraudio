@@ -136,11 +136,15 @@ int roar_xcoder_proc_packet(struct roar_xcoder * state, void * buf, size_t len) 
  if ( state->packet_len > 0 && state->packet_len != len )
   return -1;
 
+ ROAR_DBG("roar_xcoder_proc_packet(state=%p, buf=%p, len=%lu) = ?", state, buf, (unsigned long)len);
+
  if ( state->encode ) {
   _CHECK_BASIC(encode);
+  ROAR_DBG("roar_xcoder_proc_packet(state=%p, buf=%p, len=%lu) = ? // _CHECK_BASIC(encode) -> OK", state, buf, (unsigned long)len);
   return _FUNC(encode)(state, buf, len);
  } else {
   _CHECK_BASIC(decode);
+  ROAR_DBG("roar_xcoder_proc_packet(state=%p, buf=%p, len=%lu) = ? // _CHECK_BASIC(decode) -> OK", state, buf, (unsigned long)len);
   return _FUNC(decode)(state, buf, len);
  }
 }
@@ -150,6 +154,8 @@ int roar_xcoder_proc       (struct roar_xcoder * state, void * buf, size_t len) 
  struct roar_buffer * bufbuf;
  void               * bufdata;
  size_t               curlen;
+
+ ROAR_DBG("roar_xcoder_proc(state=%p, buf=%p, len=%lu) = ?", state, buf, (unsigned long)len);
 
  if ( state == NULL )
   return -1;
@@ -161,20 +167,30 @@ int roar_xcoder_proc       (struct roar_xcoder * state, void * buf, size_t len) 
   if ( roar_xcoder_packet_size(state, -1) == -1 )
    return -1;
 
+ ROAR_DBG("roar_xcoder_proc(state=%p, buf=%p, len=%lu) = ?", state, buf, (unsigned long)len);
+
  if ( state->packet_len == 0 )
   return roar_xcoder_proc_packet(state, buf, len);
 
+ ROAR_DBG("roar_xcoder_proc(state=%p, buf=%p, len=%lu): state->packet_len=%li", state, buf, (unsigned long)len, (long int) state->packet_len);
+
  if ( state->iobuffer == NULL ) {
   while ( len >= state->packet_len ) {
-   if ( roar_xcoder_proc_packet(state, buf, state->packet_len) == -1 )
+   if ( roar_xcoder_proc_packet(state, buf, state->packet_len) == -1 ) {
+    ROAR_DBG("roar_xcoder_proc(state=%p, buf=%p, len=%lu) = -1 // roar_xcoder_proc_packet() error", state, buf, (unsigned long)len);
     return -1;
+   }
 
    buf += state->packet_len;
    len -= state->packet_len;
   }
 
-  if ( !len )
+  if ( !len ) {
+   ROAR_DBG("roar_xcoder_proc(state=%p, buf=%p, len=%lu) = 0", state, buf, (unsigned long)len);
    return 0;
+  }
+
+  ROAR_DBG("roar_xcoder_proc(state=%p, buf=%p, len=%lu) = ?", state, buf, (unsigned long)len);
 
   if ( state->encode ) {
    curlen = len;

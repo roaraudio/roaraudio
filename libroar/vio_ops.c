@@ -41,6 +41,8 @@ ssize_t roar_vio_copy_data   (struct roar_vio_calls * out, struct roar_vio_calls
  ssize_t len;
  ssize_t done = 0;
 
+ ROAR_DBG("roar_vio_copy_data(out=%p, in=%p) = ?", out, in);
+
  if ( out == NULL || in == NULL )
   return -1;
 
@@ -49,8 +51,12 @@ ssize_t roar_vio_copy_data   (struct roar_vio_calls * out, struct roar_vio_calls
    return -1;
 
   done += len;
+  ROAR_DBG("roar_vio_copy_data(out=%p, in=%p): len=%li, done=%li", out, in, (long int)len, (long int)done);
  }
 
+ ROAR_DBG("roar_vio_copy_data(out=%p, in=%p): len=%li, done=%li", out, in, (long int)len, (long int)done);
+
+ ROAR_DBG("roar_vio_copy_data(out=%p, in=%p) = %li", out, in, (long int)done);
  return done;
 }
 
