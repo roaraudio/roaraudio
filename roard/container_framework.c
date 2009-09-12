@@ -35,11 +35,38 @@
                  _PREP()
 
 int     cont_fw_new     (struct cont_fw_parent_inst ** inst) {
- return -1;
+ struct cont_fw_parent_inst * self;
+
+ if ( inst == NULL )
+  return -1;
+
+ if ( (self = malloc(sizeof(struct cont_fw_parent_inst))) == NULL ) {
+  *inst = NULL;
+  return -1;
+ }
+
+ memset(self, 0, sizeof(struct cont_fw_parent_inst));
+
+ *inst = self;
+ return 0;
 }
 
 int     cont_fw_delete  (struct cont_fw_parent_inst  * inst) {
- return -1;
+ int i;
+
+ if ( inst == NULL )
+  return -1;
+
+ // check if there are streams to close...
+ for (i = 0; i < CONT_FW_MAX_CHILDS; i++) {
+  if ( inst->child[i] != NULL ) {
+   return -1;
+  }
+ }
+
+ free(inst);
+
+ return 0;
 }
 
 int     cont_fw_init_vio(struct roar_vio_calls * vio, void * inst) {
