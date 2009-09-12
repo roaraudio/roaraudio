@@ -43,7 +43,7 @@
 #define roar_debug_warn_sysio(f,n,i)
 #endif
 
-int roar_debug_warn_sysio_real(char * func, char * newfunc, char * info);
+void roar_debug_warn_sysio_real(char * func, char * newfunc, char * info);
 
 #endif
 
