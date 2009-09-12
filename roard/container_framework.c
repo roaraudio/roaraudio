@@ -215,7 +215,9 @@ int     cont_fw_ctl     (struct roar_vio_calls * vio, int cmd, void * data);
 // CF:
 int cont_fw_cf_open(CODECFILTER_USERDATA_T * inst, int codec,
                                              struct roar_stream_server * info,
-                                             struct roar_codecfilter   * filter);
+                                             struct roar_codecfilter   * filter) {
+ return -1;
+}
 
 int cont_fw_cf_close(CODECFILTER_USERDATA_T   inst) {
  return cont_fw_delete(inst);

@@ -47,7 +47,10 @@ struct cont_fw_parent_inst {
   int     (*close)(struct cont_fw_parent_inst * self, struct cont_fw_child_vio_inst * child);
  } ccb;
  struct {
-  int     (*open     )(struct cont_fw_parent_inst * self);
+  int     (*open     )(struct cont_fw_parent_inst * self,
+                       int                          codec,
+                       struct roar_stream_server  * stream,
+                       struct roar_codecfilter    * filter);
   int     (*close    )(struct cont_fw_parent_inst * self);
   int     (*flush    )(struct cont_fw_parent_inst * self);
   int     (*new_child)(struct cont_fw_parent_inst * self, struct cont_fw_child_vio_inst * child);
