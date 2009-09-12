@@ -93,10 +93,43 @@ int     cont_fw_get_uinst(struct cont_fw_parent_inst  * inst, void ** u_inst) {
 
 // VIOs:
 int     cont_fw_new_child(struct cont_fw_parent_inst  * inst, int id) {
- if ( inst == NULL )
+ struct cont_fw_child_vio_inst * self;
+ int i;
+ int cid = -1;
+
+ if ( inst == NULL || id == -1 )
   return -1;
 
- return -1;
+ for (i = 0; i < CONT_FW_MAX_CHILDS; i++) {
+  if ( inst->child[i] == NULL ) {
+   cid = i;
+   break;
+  }
+ }
+
+ if ( cid == -1 )
+  return -1;
+
+ if ( (self = malloc(sizeof(struct cont_fw_child_vio_inst))) == NULL )
+  return -1;
+
+ memset(self, 0, sizeof(struct cont_fw_child_vio_inst));
+
+ self->parent = inst;
+ self->child  = id;
+ self->u_inst = NULL;
+
+ inst->child[i] = self;
+
+ if ( inst->pcb.new_child != NULL ) {
+  if ( inst->pcb.new_child(inst, self) == -1 ) {
+   inst->child[i] = NULL;
+   free(self);
+   return -1;
+  }
+ }
+
+ return 0;
 }
 
 int     cont_fw_init_vio(struct roar_vio_calls * vio, void * inst) {

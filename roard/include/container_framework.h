@@ -47,7 +47,8 @@ struct cont_fw_parent_inst {
   int     (*close)(struct cont_fw_parent_inst * self, struct cont_fw_child_vio_inst * child);
  } ccb;
  struct {
-  int     (*close)(struct cont_fw_parent_inst * self);
+  int     (*close    )(struct cont_fw_parent_inst * self);
+  int     (*new_child)(struct cont_fw_parent_inst * self, struct cont_fw_child_vio_inst * child);
  } pcb;
 };
 
