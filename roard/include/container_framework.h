@@ -27,6 +27,30 @@
 
 #include <roaraudio.h>
 
+#define CONT_FW_MAX_CHILDS 8
+
+struct cont_fw_child {
+ int child;
+ void * u_inst;
+};
+
+struct cont_fw_child_vio_inst {
+ int child;
+ struct cont_fw_child * inst;
+};
+
+struct cont_fw_parent_inst {
+ struct cont_fw_child * child[CONT_FW_MAX_CHILDS];
+};
+
+ssize_t cont_fw_read    (struct roar_vio_calls * vio, void *buf, size_t count);
+ssize_t cont_fw_write   (struct roar_vio_calls * vio, void *buf, size_t count);
+off_t   cont_fw_lseek   (struct roar_vio_calls * vio, off_t offset, int whence);
+int     cont_fw_nonblock(struct roar_vio_calls * vio, int state);
+int     cont_fw_sync    (struct roar_vio_calls * vio);
+int     cont_fw_ctl     (struct roar_vio_calls * vio, int cmd, void * data);
+int     cont_fw_close   (struct roar_vio_calls * vio);
+
 #endif
 
 //ll
