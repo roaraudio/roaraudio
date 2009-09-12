@@ -7,7 +7,7 @@ TARGETS=$(SLIB) libroar.a
 VIO_META=vio.o vio_select.o vio_ops.o vio_string.o
 VIO_BRIDGE=vio_bio.o vio_stdio.o
 VIO=$(VIO_META) $(VIO_BRIDGE) vio_cmd.o vio_magic.o vio_pipe.o vio_socket.o vio_stack.o vio_proto.o vio_dstr.o
-OBJS=libroar.o config.o basic.o stream.o simple.o auth.o socket.o ctl.o buffer.o meta.o file.o acl.o cdrom.o pinentry.o sshaskpass.o $(VIO) stack.o slp.o
+OBJS=libroar.o config.o debug.o basic.o stream.o simple.o auth.o socket.o ctl.o buffer.o meta.o file.o acl.o cdrom.o pinentry.o sshaskpass.o $(VIO) stack.o slp.o
 
 #DEFINES        = -DDEBUG
 INCLUDE = -I../include -I../include/libroar
