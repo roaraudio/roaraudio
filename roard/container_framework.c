@@ -245,6 +245,33 @@ int cont_fw_cf_flush(CODECFILTER_USERDATA_T   inst) {
 int cont_fw_cf_delay(CODECFILTER_USERDATA_T   inst, uint_least32_t * delay);
 
 int cont_fw_cf_ctl  (CODECFILTER_USERDATA_T   inst, int cmd, void * data) {
+ struct cont_fw_parent_inst * self = (void*)inst;
+ int_least32_t type = cmd & ROAR_STREAM_CTL_TYPEMASK;
+
+ cmd -= type;
+
+ ROAR_DBG("cont_fw_cf_ctl(*): command: cmd=0x%.8x, type=0x%.8x, pcmd=0x%.8x",
+                    cmd, type, ROAR_CODECFILTER_CTL2CMD(cmd));
+
+ if ( data == NULL && type != ROAR_STREAM_CTL_TYPE_VOID )
+  return -1;
+
+ switch (cmd) {
+  case ROAR_CODECFILTER_CTL2CMD(ROAR_CODECFILTER_CTL_VIRTUAL_DELETE):
+    return 0;
+   break;
+  case ROAR_CODECFILTER_CTL2CMD(ROAR_CODECFILTER_CTL_VIRTUAL_NEW):
+    if ( type != ROAR_STREAM_CTL_TYPE_INT )
+     return -1;
+
+    return cont_fw_new_child(self, *(int*)data);
+   break;
+  default:
+    ROAR_DBG("cont_fw_cf_ctl(*): Unknown command: cmd=0x%.8x, type=0x%.8x, pcmd=0x%.8x",
+                    cmd, type, ROAR_CODECFILTER_CTL2CMD(cmd));
+    return -1;
+ }
+
  return -1;
 }
 
