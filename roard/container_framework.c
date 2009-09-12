@@ -212,4 +212,40 @@ int     cont_fw_close   (struct roar_vio_calls * vio) {
 
 int     cont_fw_ctl     (struct roar_vio_calls * vio, int cmd, void * data);
 
+// CF:
+int cont_fw_cf_open(CODECFILTER_USERDATA_T * inst, int codec,
+                                             struct roar_stream_server * info,
+                                             struct roar_codecfilter   * filter);
+
+int cont_fw_cf_close(CODECFILTER_USERDATA_T   inst) {
+ return cont_fw_delete(inst);
+}
+
+int cont_fw_cf_pause(CODECFILTER_USERDATA_T   inst, int newstate);
+
+
+// no direct read or writing...
+int cont_fw_cf_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
+ return -1;
+}
+
+int cont_fw_cf_read (CODECFILTER_USERDATA_T   inst, char * buf, int len) {
+ return -1;
+}
+
+int cont_fw_cf_flush(CODECFILTER_USERDATA_T   inst) {
+ struct cont_fw_parent_inst * self = (void*)inst;
+
+ if ( self->pcb.flush != NULL )
+  return self->pcb.flush(self);
+
+ return 0;
+}
+
+int cont_fw_cf_delay(CODECFILTER_USERDATA_T   inst, uint_least32_t * delay);
+
+int cont_fw_cf_ctl  (CODECFILTER_USERDATA_T   inst, int cmd, void * data) {
+ return -1;
+}
+
 //ll
