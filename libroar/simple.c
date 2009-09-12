@@ -339,6 +339,9 @@ int roar_simple_filter(int rate, int channels, int bits, int codec, char * serve
  return roar_simple_stream(rate, channels, bits, codec, server, ROAR_DIR_FILTER, name);
 }
 
+int roar_simple_connect_virtual(struct roar_connection * con, struct roar_stream * s, int parent) {
+ return -1;
+}
 
 int roar_simple_close(int fh) {
 #ifdef ROAR_TARGET_WIN32
