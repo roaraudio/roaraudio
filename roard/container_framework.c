@@ -65,6 +65,9 @@ int     cont_fw_delete  (struct cont_fw_parent_inst  * inst) {
   }
  }
 
+ if ( inst->pcb.close != NULL )
+  inst->pcb.close(inst);
+
  free(inst);
 
  return 0;
