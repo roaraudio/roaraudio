@@ -140,9 +140,11 @@ int     cont_fw_new_child(struct cont_fw_parent_inst  * inst, int id) {
 
  // no error possible here.
  cont_fw_init_vio(&(ss->vio), self);
+ ss->ready = 1;
 
- streams_set_fh(id, -1); // update some internal structures
+// streams_set_fh(id, -1); // update some internal structures
 
+ ROAR_DBG("cont_fw_new_child(inst=%p, id=%i) = 0", inst, id);
  return 0;
 }
 
