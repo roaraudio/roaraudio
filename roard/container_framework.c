@@ -101,6 +101,8 @@ int     cont_fw_new_child(struct cont_fw_parent_inst  * inst, int id) {
  int i;
  int cid = -1;
 
+ ROAR_DBG("cont_fw_new_child(inst=%p, id=%i) = ?", inst, id);
+
  if ( inst == NULL || id == -1 )
   return -1;
 
