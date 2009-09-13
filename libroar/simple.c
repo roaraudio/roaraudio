@@ -347,18 +347,19 @@ int roar_simple_filter(int rate, int channels, int bits, int codec, char * serve
  return roar_simple_stream(rate, channels, bits, codec, server, ROAR_DIR_FILTER, name);
 }
 
-int roar_simple_connect_virtual(struct roar_connection * con, struct roar_stream * s, int parent) {
+int roar_simple_connect_virtual(struct roar_connection * con, struct roar_stream * s, int parent, int dir) {
  struct roar_stream parent_stream;
- int dir;
 
  if ( con == NULL || s == NULL || parent < 0 )
   return -1;
 
- if ( roar_get_stream(con, &parent_stream, parent) == -1 )
-  return -1;
+ if ( dir == -1 ) {
+  if ( roar_get_stream(con, &parent_stream, parent) == -1 )
+   return -1;
 
- if ( (dir = roar_stream_get_dir(&parent_stream)) == -1 )
-  return -1;
+  if ( (dir = roar_stream_get_dir(&parent_stream)) == -1 )
+   return -1;
+ }
 
  if ( roar_stream_set_rel_id(s, parent) == -1 )
   return -1;

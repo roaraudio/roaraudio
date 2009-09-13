@@ -55,7 +55,7 @@ int roar_simple_monitor (int rate, int channels, int bits, int codec, char * ser
 int roar_simple_record  (int rate, int channels, int bits, int codec, char * server, char * name);
 int roar_simple_filter  (int rate, int channels, int bits, int codec, char * server, char * name);
 
-int roar_simple_connect_virtual(struct roar_connection * con, struct roar_stream * s, int parent);
+int roar_simple_connect_virtual(struct roar_connection * con, struct roar_stream * s, int parent, int dir);
 
 int roar_simple_close(int fh);
 
