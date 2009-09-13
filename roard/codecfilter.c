@@ -239,6 +239,7 @@ int codecfilter_open (CODECFILTER_USERDATA_T * inst,
  ROAR_DBG("codecfilter_open(*): codecfilter='%s', info->id=%i", codecfilter, ROAR_STREAM(info)->id);
 
  for (i = 0; g_codecfilter[i].name != NULL; i++) {
+  ROAR_DBG("codecfilter_open(*): g_codecfilter[i].codec <-> codec => %i <-> %i", g_codecfilter[i].codec, codec);
   if ( g_codecfilter[i].codec == codec ) {
    if ( !codecfilter || strcmp(codecfilter, g_codecfilter[i].name) == 0 ) {
     *codecfilter_id = i;
