@@ -22,7 +22,6 @@
  *
  */
 
-#define DEBUG
 #include "roard.h"
 
 int req_on_noop        (int client, struct roar_message * mes, char * data) {
