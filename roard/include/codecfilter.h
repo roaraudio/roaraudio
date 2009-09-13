@@ -105,6 +105,8 @@ struct roar_codecfilter {
 #include "codecfilter_fishsound.h"
 #endif
 
+#include "container_framework.h"
+
 //cf alaw/mulaw:
 #include <libroardsp/libroardsp.h>
 
@@ -144,6 +146,8 @@ int cf_mulaw_close(CODECFILTER_USERDATA_T   inst);
 int cf_mulaw_read(CODECFILTER_USERDATA_T   inst, char * buf, int len);
 int cf_mulaw_write(CODECFILTER_USERDATA_T   inst, char * buf, int len);
 // cf_mulaw_delay() would be exactly the same as cf_alaw_delay() so it is just used by mulaw, too.
+
+CONT_FW_SETUP_TYPE(cf_raum_setup);
 
 #endif
 
