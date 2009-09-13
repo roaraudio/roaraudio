@@ -115,9 +115,11 @@ int cf_raum_pcb_new_child(struct cont_fw_parent_inst * self, struct cont_fw_chil
 
 // CCBs:
 ssize_t cf_raum_ccb_read (struct cont_fw_parent_inst * self, struct cont_fw_child_vio_inst * child, void *buf, size_t len) {
+ ROAR_DBG("cf_raum_ccb_read(self=%p, child=%p, buf=%p, len=%lu) = ?", self, child, buf, (unsigned long)len);
  return RAUMStreamRead(child->u_inst, buf, len);
 }
 ssize_t cf_raum_ccb_write(struct cont_fw_parent_inst * self, struct cont_fw_child_vio_inst * child, void *buf, size_t len) {
+ ROAR_DBG("cf_raum_ccb_write(self=%p, child=%p, buf=%p, len=%lu) = ?", self, child, buf, (unsigned long)len);
  return RAUMStreamWrite(child->u_inst, buf, len);
 }
 int     cf_raum_ccb_close(struct cont_fw_parent_inst * self, struct cont_fw_child_vio_inst * child) {
