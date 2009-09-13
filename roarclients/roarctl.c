@@ -82,6 +82,11 @@ void usage (void) {
         "\n"
         "  kick TYPE ID            - Kicks object of TYPE with id ID\n"
         "                            Types: client stream sample source\n"
+        "  newvirtual P D E R B C  - Adds a new virtual (child) stream\n"
+        "                            Parameters:\n"
+        "                             P: Parent stream ID, D: Direction,\n"
+        "                             E: codEc, R: sample Rate,\n"
+        "                             B: bits per sample, C: nummer of channels\n"
         "\n"
         "  metasave ID FILE        - Saves meta data of stream ID to file FILE\n"
         "  metaload ID FILE        - Loads meta data from file FILE and set it on stream ID\n"
@@ -511,6 +516,18 @@ int set_mixer (struct roar_connection * con, int * cur, int max, char * arg[]) {
  return roar_set_vol(con, id, &mixer, chans);
 }
 
+
+int newvirtual (struct roar_connection * con, char *p_s, char *d_s, char *e_s, char *r_s, char *b_s, char *c_s) {
+ struct roar_stream s;
+ int dir    = roar_str2dir(d_s);
+ int parent = atoi(p_s);
+
+ if ( roar_stream_new(&s, atoi(r_s), atoi(c_s), atoi(b_s), roar_str2codec(e_s)) == -1 )
+  return -1;
+
+ return roar_simple_connect_virtual(con, &s, parent, dir);
+}
+
 int set_meta (struct roar_connection * con, int id, char * mode, char * type, char * val) {
  struct roar_meta   meta;
  struct roar_stream s;
@@ -862,6 +879,13 @@ int main (int argc, char * argv[]) {
     fprintf(stderr, "Error: can not kick %s\n", k);
    } else {
     printf("%s kicked\n", k);
+   }
+
+  } else if ( !strcmp(k, "newvirtual") ) {
+   if ( newvirtual(&con, argv[++i], argv[++i], argv[++i], argv[++i], argv[++i], argv[++i]) == -1 ) {
+    fprintf(stderr, "Error: can not create new virtual stream\n");
+   } else {
+    printf("virtual stream created\n");
    }
 
   } else if ( !strcmp(k, "volume") ) {
