@@ -424,8 +424,10 @@ int clients_send_mon  (struct roar_audio_info * sa, uint32_t pos) {
 
   ROAR_DBG("clients_send_mon(*): client=%i, execed=%i", i, g_clients[i]->execed);
 
+/*
   if ( g_clients[i]->execed == -1 ) {
    // TODO: add some code to send a message to the client insetd of the raw data.
+*/
    for (j = 0; j < ROAR_CLIENTS_MAX_STREAMS_PER_CLIENT; j++) {
     //if ( (fh = streams_get_fh(g_clients[i]->streams[j])) != -1 ) {
     if ( g_clients[i]->streams[j] != -1 ) {
@@ -433,12 +435,14 @@ int clients_send_mon  (struct roar_audio_info * sa, uint32_t pos) {
      streams_send_mon(g_clients[i]->streams[j]);
     }
    }
+/*
   } else {
 //   streams_check(g_clients[i]->execed);
    streams_send_mon(g_clients[i]->execed);
 //   if ( streams_send_mon(g_clients[i]->execed) == -1 )
 //    clients_delete(i); // delete client in case we could not write
   } 
+*/
  }
 
  // TODO: FIXME: should this really be -1?
