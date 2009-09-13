@@ -27,6 +27,7 @@
 #ifdef ROAR_HAVE_LIBRAUM
 #include <raum.h>
 
+// PCBs:
 int cf_raum_pcb_open  (struct cont_fw_parent_inst * self,
                        int                          codec,
                        struct roar_stream_server  * stream,
@@ -61,7 +62,7 @@ int cf_raum_pcb_open  (struct cont_fw_parent_inst * self,
 
  cont_fw_set_uinst(self, state);
 
- ROAR_DBG("cf_raum_pcb_open(*) = -1");
+ ROAR_DBG("cf_raum_pcb_open(*) = 0");
  return 0;
 }
 
@@ -77,11 +78,66 @@ int cf_raum_pcb_close (struct cont_fw_parent_inst * self) {
  return RAUMClose(state);
 }
 
+int cf_raum_pcb_new_child(struct cont_fw_parent_inst * self, struct cont_fw_child_vio_inst * child) {
+ struct roar_stream_server * ss;
+ struct roar_stream        *  s;
+ void                      * ps;
+ RAUMStream * stream;
+ int dir = ROAR_DIR_PLAY;
+
+ ROAR_DBG("cf_raum_pcb_new_child(self=%p, child=%p) = ?", self, child);
+
+ if ( streams_get(child->child, &ss) == -1 )
+  return -1;
+
+ if ( (s = ROAR_STREAM(ss)) == NULL )
+  return -1;
+
+ if ( cont_fw_get_uinst(self, &ps) == -1 )
+  return -1;
+
+ if ( ps == NULL )
+  return -1;
+
+ if ( (stream = RAUMStreamNewSimple(s->info.rate, s->info.channels, s->info.bits, s->info.codec, dir)) == NULL )
+  return -1;
+
+ if ( RAUMAddStream(ps, stream) == -1 ) {
+  RAUMStreamClose(stream);
+  return -1;
+ }
+
+ child->u_inst = stream;
+
+ ROAR_DBG("cf_raum_pcb_new_child(self=%p, child=%p) = 0", self, child);
+ return 0;
+}
+
+// CCBs:
+ssize_t cf_raum_ccb_read (struct cont_fw_parent_inst * self, struct cont_fw_child_vio_inst * child, void *buf, size_t len) {
+ return RAUMStreamRead(child->u_inst, buf, len);
+}
+ssize_t cf_raum_ccb_write(struct cont_fw_parent_inst * self, struct cont_fw_child_vio_inst * child, void *buf, size_t len) {
+ return RAUMStreamWrite(child->u_inst, buf, len);
+}
+int     cf_raum_ccb_close(struct cont_fw_parent_inst * self, struct cont_fw_child_vio_inst * child) {
+ ROAR_DBG("cf_raum_ccb_close(self=%p, child=%p) = ?", self, child);
+ return RAUMStreamClose(child->u_inst);
+}
+
+// SETUP:
 CONT_FW_SETUP_TYPE(cf_raum_setup) {
  ROAR_DBG("cf_raum_setup(*) = ?");
 
- self->pcb.open  = cf_raum_pcb_open;
- self->pcb.close = cf_raum_pcb_close;
+ // PCBs:
+ self->pcb.open      = cf_raum_pcb_open;
+ self->pcb.close     = cf_raum_pcb_close;
+ self->pcb.new_child = cf_raum_pcb_new_child;
+
+ // CCBs:
+ self->ccb.read      = cf_raum_ccb_read;
+ self->ccb.write     = cf_raum_ccb_write;
+ self->ccb.close     = cf_raum_ccb_close;
 
  ROAR_DBG("cf_raum_setup(*) = 0");
  return 0;
