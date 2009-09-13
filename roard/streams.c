@@ -1340,6 +1340,16 @@ int streams_send_mon   (int id) {
     return -1;
 #endif
    break;
+
+  case ROAR_DIR_COMPLEX_OUT:
+    // send a tick:
+    if ( ss->codecfilter != -1 ) {
+     if ( codecfilter_write(ss->codecfilter_inst, ss->codecfilter, NULL, 0) == 0 )
+      ss->state = ROAR_STREAMSTATE_OLD;
+    }
+    return 0;
+   break;
+
   case ROAR_DIR_OUTPUT:
     if ( g_standby )
      return 0;
