@@ -522,6 +522,8 @@ int newvirtual (struct roar_connection * con, char *p_s, char *d_s, char *e_s, c
  int dir    = roar_str2dir(d_s);
  int parent = atoi(p_s);
 
+ ROAR_DBG("newvirtual(*): dir=%i, parent=%i", dir, parent);
+
  if ( roar_stream_new(&s, atoi(r_s), atoi(c_s), atoi(b_s), roar_str2codec(e_s)) == -1 )
   return -1;
 
@@ -882,11 +884,12 @@ int main (int argc, char * argv[]) {
    }
 
   } else if ( !strcmp(k, "newvirtual") ) {
-   if ( newvirtual(&con, argv[++i], argv[++i], argv[++i], argv[++i], argv[++i], argv[++i]) == -1 ) {
+   if ( newvirtual(&con, argv[i+1], argv[i+2], argv[i+3], argv[i+4], argv[i+5], argv[i+6]) == -1 ) {
     fprintf(stderr, "Error: can not create new virtual stream\n");
    } else {
     printf("virtual stream created\n");
    }
+   i += 6;
 
   } else if ( !strcmp(k, "volume") ) {
    if ( set_mixer(&con, &i, argc, argv) == -1 ) {
