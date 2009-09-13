@@ -48,6 +48,9 @@ int     cont_fw_new     (struct cont_fw_parent_inst ** inst) {
 
  memset(self, 0, sizeof(struct cont_fw_parent_inst));
 
+ self->stream.id = -1;
+ self->state     = ROAR_STREAMSTATE_INITING;
+
  *inst = self;
  return 0;
 }
@@ -224,19 +227,15 @@ int cont_fw_cf_open(CODECFILTER_USERDATA_T * inst, int codec,
  if ( cont_fw_new(&self) == -1 )
   return -1;
 
+ self->stream.codec  = codec;
+ self->stream.id     = ROAR_STREAM(info)->id;
+ self->stream.stream = info;
+ self->stream.filter = filter;
+
  ROAR_DBG("cont_fw_cf_open(*) = ?");
 
  if ( (setup = filter->setup) != NULL ) {
   if ( setup(self, codec, filter) == -1 ) {
-   cont_fw_delete(self);
-   return -1;
-  }
- }
-
- ROAR_DBG("cont_fw_cf_open(*) = ?");
-
- if ( self->pcb.open != NULL ) {
-  if ( self->pcb.open(self, codec, info, filter) == -1 ) {
    cont_fw_delete(self);
    return -1;
   }
@@ -260,8 +259,24 @@ int cont_fw_cf_pause(CODECFILTER_USERDATA_T   inst, int newstate);
 
 // no direct read or writing...
 int cont_fw_cf_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
- ROAR_DBG("cont_fw_cf_write(*) = -1");
- return -1;
+ struct cont_fw_parent_inst * self = (void*)inst;
+
+ ROAR_DBG("cont_fw_cf_write(*) = ?");
+
+ if ( self->state == ROAR_STREAMSTATE_INITING ) {
+  if ( self->pcb.open != NULL ) {
+   if ( self->pcb.open(self, self->stream.codec, self->stream.stream, self->stream.filter) == -1 ) {
+    return -1;
+   }
+  }
+  self->state = ROAR_STREAMSTATE_NEW;
+
+  ROAR_DBG("cont_fw_cf_write(*) = 0");
+  return 0;
+ } else {
+  ROAR_DBG("cont_fw_cf_write(*) = -1");
+  return -1;
+ }
 }
 
 int cont_fw_cf_read (CODECFILTER_USERDATA_T   inst, char * buf, int len) {

@@ -42,6 +42,13 @@ struct cont_fw_child_vio_inst {
 struct cont_fw_parent_inst {
  struct cont_fw_child_vio_inst * child[CONT_FW_MAX_CHILDS];
  void * u_inst;
+ int state;
+ struct {
+  int id;
+  int codec;
+  struct roar_stream_server  * stream;
+  struct roar_codecfilter    * filter;
+ } stream;
  struct {
   ssize_t (*read) (struct cont_fw_parent_inst * self, struct cont_fw_child_vio_inst * child, void *buf, size_t len);
   ssize_t (*write)(struct cont_fw_parent_inst * self, struct cont_fw_child_vio_inst * child, void *buf, size_t len);
