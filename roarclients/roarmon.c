@@ -143,7 +143,7 @@ int main (int argc, char * argv[]) {
     if ( channels == -1 ) channels = 0;
     if ( codec    == -1 ) codec    = ROAR_CODEC_DMX512;
    break;
-  case ROAR_DIR_COMPLEX_IN:
+  case ROAR_DIR_COMPLEX_OUT:
     if ( rate     == -1 ) rate     = ROAR_COMPLEX_RATE;
     if ( bits     == -1 ) bits     = ROAR_COMPLEX_BITS;
     if ( channels == -1 ) channels = ROAR_COMPLEX_CHANNELS;
