@@ -50,7 +50,7 @@ struct roar_codecfilter g_codecfilter[] = {
 //#endif
 
 #ifdef ROAR_HAVE_LIBRAUM
- {ROAR_CODEC_RAUM, "RAUM", "RAUM Container Format", NULL, cf_raum_setup, ROAR_CODECFILTER_NONE,
+ {ROAR_CODEC_RAUM, "RAUM", "RAUM Container Format", NULL, cf_raum_setup, ROAR_CODECFILTER_WRITE,
   ROAR_SUBSYS_WAVEFORM|ROAR_SUBSYS_MIDI|ROAR_SUBSYS_LIGHT|ROAR_SUBSYS_RAW|ROAR_SUBSYS_COMPLEX,
   cont_fw_cf_open, cont_fw_cf_close, NULL, cont_fw_cf_write, cont_fw_cf_read, cont_fw_cf_flush, NULL, NULL},
 #endif
