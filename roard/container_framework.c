@@ -251,6 +251,7 @@ int cont_fw_cf_open(CODECFILTER_USERDATA_T * inst, int codec,
 }
 
 int cont_fw_cf_close(CODECFILTER_USERDATA_T   inst) {
+ ROAR_DBG("cont_fw_cf_close(*) = ?");
  return cont_fw_delete(inst);
 }
 
@@ -259,15 +260,19 @@ int cont_fw_cf_pause(CODECFILTER_USERDATA_T   inst, int newstate);
 
 // no direct read or writing...
 int cont_fw_cf_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
+ ROAR_DBG("cont_fw_cf_write(*) = -1");
  return -1;
 }
 
 int cont_fw_cf_read (CODECFILTER_USERDATA_T   inst, char * buf, int len) {
+ ROAR_DBG("cont_fw_cf_read(*) = -1");
  return -1;
 }
 
 int cont_fw_cf_flush(CODECFILTER_USERDATA_T   inst) {
  struct cont_fw_parent_inst * self = (void*)inst;
+
+ ROAR_DBG("cont_fw_cf_flush(*) = ?");
 
  if ( self->pcb.flush != NULL )
   return self->pcb.flush(self);
@@ -280,6 +285,8 @@ int cont_fw_cf_delay(CODECFILTER_USERDATA_T   inst, uint_least32_t * delay);
 int cont_fw_cf_ctl  (CODECFILTER_USERDATA_T   inst, int cmd, void * data) {
  struct cont_fw_parent_inst * self = (void*)inst;
  int_least32_t type = cmd & ROAR_STREAM_CTL_TYPEMASK;
+
+ ROAR_DBG("cont_fw_cf_ctl(*) = ?");
 
  cmd -= type;
 
