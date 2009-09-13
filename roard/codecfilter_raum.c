@@ -35,6 +35,8 @@ int cf_raum_pcb_open  (struct cont_fw_parent_inst * self,
  RAUMState * state;
  int flags = 0;
 
+ ROAR_DBG("cf_raum_pcb_open(*) = ?");
+
  if ( stream == NULL )
   return -1;
 
@@ -59,21 +61,29 @@ int cf_raum_pcb_open  (struct cont_fw_parent_inst * self,
 
  cont_fw_set_uinst(self, state);
 
+ ROAR_DBG("cf_raum_pcb_open(*) = -1");
  return 0;
 }
 
 int cf_raum_pcb_close (struct cont_fw_parent_inst * self) {
  void * state;
 
+ ROAR_DBG("cf_raum_pcb_close(*) = ?");
+
  if ( cont_fw_get_uinst(self, &state) == -1 )
   return -1;
 
+ ROAR_DBG("cf_raum_pcb_close(*) = ?");
  return RAUMClose(state);
 }
 
 CONT_FW_SETUP_TYPE(cf_raum_setup) {
+ ROAR_DBG("cf_raum_setup(*) = ?");
+
  self->pcb.open  = cf_raum_pcb_open;
  self->pcb.close = cf_raum_pcb_close;
+
+ ROAR_DBG("cf_raum_setup(*) = 0");
  return 0;
 }
 

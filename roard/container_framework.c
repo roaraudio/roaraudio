@@ -219,8 +219,12 @@ int cont_fw_cf_open(CODECFILTER_USERDATA_T * inst, int codec,
  struct cont_fw_parent_inst * self;
  CONT_FW_SETUP_TYPE((*setup));
 
+ ROAR_DBG("cont_fw_cf_open(*) = ?");
+
  if ( cont_fw_new(&self) == -1 )
   return -1;
+
+ ROAR_DBG("cont_fw_cf_open(*) = ?");
 
  if ( (setup = filter->setup) != NULL ) {
   if ( setup(self, codec, filter) == -1 ) {
@@ -229,6 +233,8 @@ int cont_fw_cf_open(CODECFILTER_USERDATA_T * inst, int codec,
   }
  }
 
+ ROAR_DBG("cont_fw_cf_open(*) = ?");
+
  if ( self->pcb.open != NULL ) {
   if ( self->pcb.open(self, codec, info, filter) == -1 ) {
    cont_fw_delete(self);
@@ -236,7 +242,11 @@ int cont_fw_cf_open(CODECFILTER_USERDATA_T * inst, int codec,
   }
  }
 
+ ROAR_DBG("cont_fw_cf_open(*) = ?");
+
  *inst = self;
+
+ ROAR_DBG("cont_fw_cf_open(*) = 0");
  return 0;
 }
 
