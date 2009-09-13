@@ -58,6 +58,7 @@ void usage (void) {
 #ifdef ROAR_HAVE_GETTIMEOFDAY
         "  ping  NUM               - Do NUM pings using NOOP commands\n"
 #endif
+        "  whoami                  - Get own client ID\n"
         "\n"
         "  standby, off            - Go into standby mode\n"
         "  resume, on              - Go into active mode\n"
@@ -88,6 +89,8 @@ void usage (void) {
         "                             E: codEc, R: sample Rate,\n"
         "                             B: bits per sample, C: nummer of channels\n"
         "\n"
+        "  metaget  ID TYPE        - Read meta date of type TYPE from stream ID\n"
+// TODO: document metaset here.
         "  metasave ID FILE        - Saves meta data of stream ID to file FILE\n"
         "  metaload ID FILE        - Loads meta data from file FILE and set it on stream ID\n"
         "\n"
