@@ -47,19 +47,28 @@
 
 #define ROAR_DIR_BRIDGE     11
 
+// MIDI:
 #define ROAR_DIR_MIDI_IN    12
 #define ROAR_DIR_MIDI_OUT   13
 
+// Light Control:
 #define ROAR_DIR_LIGHT_IN   14
 #define ROAR_DIR_LIGHT_OUT  15
 
+// Raw Data:
 #define ROAR_DIR_RAW_IN     16
 #define ROAR_DIR_RAW_OUT    17
 
+// Complex (multi-content container):
 #define ROAR_DIR_COMPLEX_IN  18
 #define ROAR_DIR_COMPLEX_OUT 19
 
-#define ROAR_DIR_DIRIDS     20
+// Radio Data and Transmitter Control System:
+#define ROAR_DIR_RDTCS_IN    20
+#define ROAR_DIR_RDTCS_OUT   21
+
+// Max DIR +1:
+#define ROAR_DIR_DIRIDS     22
 
 
 #define ROAR_CARE_NOPOS  0
