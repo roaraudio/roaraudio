@@ -40,6 +40,8 @@
 #define RDTCS_RDS_BLOCK_C1    4
 #define RDTCS_RDS_BLOCK_D     5
 
+#define RDTCS_RDS_GROUP_LEN   ((4*(16+10))/8)
+
 struct {
  int inited;
  struct {
@@ -56,6 +58,11 @@ int rdtcs_init_config  (void);
 
 int rdtcs_check_stream  (int id);
 int rdtcs_send_stream   (int id);
+
+int rdtcs_send_stream_rds        (int id, struct roar_stream_server *  ss);
+int rdtcs_send_stream_rds_group  (int id, struct roar_stream_server *  ss);
+
+uint16_t rdtcs_rds_crc_calc      (uint16_t data);
 
 #endif
 

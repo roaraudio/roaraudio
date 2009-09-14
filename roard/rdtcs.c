@@ -51,7 +51,78 @@ int rdtcs_check_stream  (int id) {
 }
 
 int rdtcs_send_stream   (int id) {
- return -1;
+ struct roar_stream        *   s;
+ struct roar_stream_server *  ss;
+
+ if ( g_streams[id] == NULL )
+  return -1;
+
+ ROAR_DBG("rdtcs_send_stream(id=%i) = ?", id);
+
+ s = ROAR_STREAM(ss = g_streams[id]);
+
+ switch (s->info.codec) {
+  case ROAR_CODEC_RDS:
+    return rdtcs_send_stream_rds(id, ss);
+   break;
+  default:
+    streams_delete(id);
+    return -1;
+ }
+
+ return 0;
+}
+
+int rdtcs_send_stream_rds  (int id, struct roar_stream_server *  ss) {
+ struct roar_stream        *   s;
+
+ s = ROAR_STREAM(ss);
+
+
+ return rdtcs_send_stream_rds_group(id, ss);
+}
+
+int rdtcs_send_stream_rds_group  (int id, struct roar_stream_server *  ss) {
+ char out[RDTCS_RDS_GROUP_LEN];
+ char * c;
+ uint16_t data[4];
+ uint16_t crc;
+ register uint32_t s;
+ int i, fill;
+
+ // TODO: think about byte order!
+
+ for (i = 0; i < 4; i++) data[i] = 0;
+
+ data[0] = g_rdtcs.rds.pi;
+
+ memset(out, 0, sizeof(out));
+
+ c    = out;
+ s    = 0;
+ fill = 0;
+ for (i = 0; i < 4; i++) {
+  s |= data[i] << fill;
+  fill += 16;
+
+  crc = rdtcs_rds_crc_calc(data[i]);
+
+  s |= crc << fill;
+  fill += 10;
+
+  while (fill >= 8) {
+   *c     = s & 0xFF;
+    c++;
+    s   >>= 8;
+    fill -= 8;
+  }
+ }
+
+ return stream_vio_s_write(ss, out, RDTCS_RDS_GROUP_LEN) == RDTCS_RDS_GROUP_LEN ? 0 : -1;
+}
+
+uint16_t rdtcs_rds_crc_calc      (uint16_t data) {
+ return 0xAAAA;
 }
 
 #endif
