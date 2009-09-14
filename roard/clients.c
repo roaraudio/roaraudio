@@ -412,10 +412,13 @@ int clients_send_mon  (struct roar_audio_info * sa, uint32_t pos) {
  int i;
 // int fh;
  int j;
+ int keep_going;
 
  for (i = 0; i < ROAR_CLIENTS_MAX; i++) {
   if ( g_clients[i] == NULL )
    continue;
+
+  keep_going = 1;
 
 /*
   if ( (fh = g_clients[i]->fh) == -1 )
@@ -428,11 +431,16 @@ int clients_send_mon  (struct roar_audio_info * sa, uint32_t pos) {
   if ( g_clients[i]->execed == -1 ) {
    // TODO: add some code to send a message to the client insetd of the raw data.
 */
-   for (j = 0; j < ROAR_CLIENTS_MAX_STREAMS_PER_CLIENT; j++) {
+   for (j = 0; keep_going && j < ROAR_CLIENTS_MAX_STREAMS_PER_CLIENT; j++) {
     //if ( (fh = streams_get_fh(g_clients[i]->streams[j])) != -1 ) {
+    ROAR_DBG("clients_send_mon(*): client=%i, stream=%i -> ?", i, j);
     if ( g_clients[i]->streams[j] != -1 ) {
      ROAR_DBG("clients_send_mon(*): client=%i, stream=%i -> %i", i, j, g_clients[i]->streams[j]);
      streams_send_mon(g_clients[i]->streams[j]);
+
+     // the client may be deleted here, check if it still exists:
+     if ( g_clients[i] == NULL )
+      keep_going = 0;
     }
    }
 /*
