@@ -29,6 +29,20 @@
 
 #ifndef ROAR_WITHOUT_DCOMP_RDTCS
 
+#define RDTCS_RDS_PS_LEN      8
+#define RDTCS_RDS_PS_DEFAULT  "ROARING"
+#define RDTCS_RDS_PTY_DEFAULT 0
+#define RDTCS_RDS_PI_DEFAULT  0x0000
+
+struct {
+ int inited;
+ struct {
+  char          ps[RDTCS_RDS_PS_LEN+1];
+  unsigned char pty;
+  uint16_t      pi;
+ } rds;
+} g_rdtcs;
+
 int rdtcs_init  (void);
 int rdtcs_free  (void);
 

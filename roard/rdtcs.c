@@ -35,6 +35,14 @@ int rdtcs_free  (void) {
 }
 
 int rdtcs_init_config  (void) {
+ memset(&g_rdtcs, 0, sizeof(g_rdtcs));
+
+ strncpy(g_rdtcs.rds.ps, RDTCS_RDS_PS_DEFAULT, RDTCS_RDS_PS_LEN);
+ g_rdtcs.rds.ps[RDTCS_RDS_PS_LEN] = 0;
+
+ g_rdtcs.rds.pty  = RDTCS_RDS_PTY_DEFAULT;
+ g_rdtcs.rds.pi   = RDTCS_RDS_PI_DEFAULT;
+
  return 0;
 }
 
