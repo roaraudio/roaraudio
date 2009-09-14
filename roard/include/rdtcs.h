@@ -54,6 +54,9 @@ int rdtcs_free  (void);
 
 int rdtcs_init_config  (void);
 
+int rdtcs_check_stream  (int id);
+int rdtcs_send_stream   (int id);
+
 #endif
 
 #endif

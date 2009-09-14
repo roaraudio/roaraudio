@@ -46,6 +46,14 @@ int rdtcs_init_config  (void) {
  return 0;
 }
 
+int rdtcs_check_stream  (int id) {
+ return -1;
+}
+
+int rdtcs_send_stream   (int id) {
+ return -1;
+}
+
 #endif
 
 //ll

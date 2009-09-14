@@ -1200,6 +1200,14 @@ int streams_check  (int id) {
     return -1;
 #endif
    break;
+  case ROAR_DIR_RDTCS_IN:
+#ifndef ROAR_WITHOUT_DCOMP_RDTCS
+    return rdtcs_check_stream(id);
+#else
+    streams_delete(id);
+    return -1;
+#endif
+   break;
   case ROAR_DIR_PLAY:
   case ROAR_DIR_BIDIR:
    break;
@@ -1339,6 +1347,14 @@ int streams_send_mon   (int id) {
   case ROAR_DIR_MIDI_OUT:
 #ifndef ROAR_WITHOUT_DCOMP_MIDI
     return midi_send_stream(id);
+#else
+    streams_delete(id);
+    return -1;
+#endif
+   break;
+  case ROAR_DIR_RDTCS_OUT:
+#ifndef ROAR_WITHOUT_DCOMP_RDTCS
+    return rdtcs_send_stream(id);
 #else
     streams_delete(id);
     return -1;
