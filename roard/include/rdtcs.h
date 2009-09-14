@@ -34,6 +34,12 @@
 #define RDTCS_RDS_PTY_DEFAULT 0
 #define RDTCS_RDS_PI_DEFAULT  0x0000
 
+#define RDTCS_RDS_BLOCK_A     1
+#define RDTCS_RDS_BLOCK_B     2
+#define RDTCS_RDS_BLOCK_C0    3
+#define RDTCS_RDS_BLOCK_C1    4
+#define RDTCS_RDS_BLOCK_D     5
+
 struct {
  int inited;
  struct {
