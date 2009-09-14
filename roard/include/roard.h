@@ -101,6 +101,7 @@
 #include "ssynth.h"
 #include "light.h"
 #include "raw.h"
+#include "rdtcs.h"
 #include "lib.h"
 
 
