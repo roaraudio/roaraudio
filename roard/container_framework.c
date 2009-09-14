@@ -58,20 +58,29 @@ int     cont_fw_new     (struct cont_fw_parent_inst ** inst) {
 int     cont_fw_delete  (struct cont_fw_parent_inst  * inst) {
  int i;
 
+ ROAR_DBG("cont_fw_delete(inst=%p) = ?", inst);
+
  if ( inst == NULL )
   return -1;
+
+ ROAR_DBG("cont_fw_delete(inst=%p) = ?", inst);
 
  // check if there are streams to close...
  for (i = 0; i < CONT_FW_MAX_CHILDS; i++) {
   if ( inst->child[i] != NULL ) {
+   ROAR_DBG("cont_fw_delete(inst=%p) = -1 // there are still open childs", inst);
    return -1;
   }
  }
+
+ ROAR_DBG("cont_fw_delete(inst=%p) = ?", inst);
 
  if ( inst->pcb.close != NULL )
   inst->pcb.close(inst);
 
  free(inst);
+
+ ROAR_DBG("cont_fw_delete(inst=%p) = 0", inst);
 
  return 0;
 }
@@ -204,7 +213,8 @@ int     cont_fw_close   (struct roar_vio_calls * vio) {
   r = -1;
 
  if ( inst->parent->ccb.close != NULL )
-  return inst->parent->ccb.close(inst->parent, inst);
+  if ( inst->parent->ccb.close(inst->parent, inst) == -1 )
+   r = -1;
 
  for (i = 0; i < CONT_FW_MAX_CHILDS; i++) {
   if ( inst->parent->child[i] == inst ) {
