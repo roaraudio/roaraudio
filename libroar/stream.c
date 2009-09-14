@@ -661,6 +661,26 @@ struct {
  {ROAR_CODEC_DMX512,      "dmx512"     },
  {ROAR_CODEC_ROARDMX,     "roardmx"    },
 
+ // Radio Data and Transmitter Control System:
+ {ROAR_CODEC_RDS,         "rds"        },
+
+ // User specific:
+ {ROAR_CODEC_USER0,       "user0"      },
+ {ROAR_CODEC_USER1,       "user1"      },
+ {ROAR_CODEC_USER2,       "user2"      },
+ {ROAR_CODEC_USER3,       "user3"      },
+ {ROAR_CODEC_USER4,       "user4"      },
+ {ROAR_CODEC_USER5,       "user5"      },
+ {ROAR_CODEC_USER6,       "user6"      },
+ {ROAR_CODEC_USER7,       "user7"      },
+ {ROAR_CODEC_USER8,       "user8"      },
+ {ROAR_CODEC_USER9,       "user9"      },
+ {ROAR_CODEC_USER10,      "user10"     },
+ {ROAR_CODEC_USER11,      "user11"     },
+ {ROAR_CODEC_USER12,      "user12"     },
+ {ROAR_CODEC_USER13,      "user13"     },
+ {ROAR_CODEC_USER14,      "user14"     },
+ {ROAR_CODEC_USER15,      "user15"     },
  {-1, NULL}
 };
 

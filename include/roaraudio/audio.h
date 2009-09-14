@@ -128,6 +128,27 @@
       0000 -> DMX512
       0001 -> RoarDMX
 
+ Bits:
+ 76543210
+ |||||||\---\ byte-
+ ||||||\----/ order
+ |||||\-----> unsigned? (or other flags)
+ ||||\------> ID
+ |||\-------> RDTCS(0) / User/Vendor Specific(1)
+ ||\--------> first subset(0)
+ |\---------> first set(0)
+ \----------> (1)
+
+ RDTCS 0x80:
+  76543210
+      0000 -> RDS
+
+ User  0x90:
+  76543210
+      0000 -> USER0
+      [...]
+      1111 -> USER15
+
 */
 
 #define ROAR_CODEC_IS_SIGNED(x)  (((x) & ROAR_CODEC_UNSIGNED) == 0 ? 1 : 0)
@@ -204,9 +225,33 @@
 #define ROAR_CODEC_CONT_TAR     0x55
 
 
+// MIDI:
 #define ROAR_CODEC_MIDI         0x60
+
+// Light COntrol:
 #define ROAR_CODEC_DMX512       0x70
 #define ROAR_CODEC_ROARDMX      0x71
+
+// RDTCS:
+#define ROAR_CODEC_RDS          0x80
+
+// User specific:
+#define ROAR_CODEC_USER0        0x90
+#define ROAR_CODEC_USER1        0x91
+#define ROAR_CODEC_USER2        0x92
+#define ROAR_CODEC_USER3        0x93
+#define ROAR_CODEC_USER4        0x94
+#define ROAR_CODEC_USER5        0x95
+#define ROAR_CODEC_USER6        0x96
+#define ROAR_CODEC_USER7        0x97
+#define ROAR_CODEC_USER8        0x98
+#define ROAR_CODEC_USER9        0x99
+#define ROAR_CODEC_USER10       0x9a
+#define ROAR_CODEC_USER11       0x9b
+#define ROAR_CODEC_USER12       0x9c
+#define ROAR_CODEC_USER13       0x9d
+#define ROAR_CODEC_USER14       0x9e
+#define ROAR_CODEC_USER15       0x9f
 
 #if BYTE_ORDER == BIG_ENDIAN
 
