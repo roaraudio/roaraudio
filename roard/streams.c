@@ -73,7 +73,7 @@ int streams_new    (void) {
 
    n->id         = i;
    n->fh         = -1;
-//   n->pos_rel_id = i;
+   n->pos_rel_id = -1;
 /*
    n->database   = NULL;
    n->dataoff    = NULL;
