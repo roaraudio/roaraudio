@@ -27,6 +27,15 @@
 
 #include <roaraudio.h>
 
+#ifndef ROAR_WITHOUT_DCOMP_RDTCS
+
+int rdtcs_init  (void);
+int rdtcs_free  (void);
+
+int rdtcs_init_config  (void);
+
+#endif
+
 #endif
 
 //ll

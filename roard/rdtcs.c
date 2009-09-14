@@ -24,4 +24,20 @@
 
 #include "roard.h"
 
+#ifndef ROAR_WITHOUT_DCOMP_RDTCS
+
+int rdtcs_init  (void) {
+ return 0;
+}
+
+int rdtcs_free  (void) {
+ return 0;
+}
+
+int rdtcs_init_config  (void) {
+ return 0;
+}
+
+#endif
+
 //ll

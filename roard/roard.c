@@ -899,6 +899,13 @@ int main (void) {
  }
 #endif
 
+#ifndef ROAR_WITHOUT_DCOMP_RDTCS
+ if ( rdtcs_init_config() == -1 ) {
+  ROAR_ERR("Can not init RDTCS config!");
+  return 1;
+ }
+#endif
+
 #ifdef ROAR_SUPPORT_LISTEN
  sock_addr = ROAR_DEFAULT_SOCK_GLOBAL;
 #ifdef ROAR_HAVE_GETUID
@@ -1322,6 +1329,12 @@ int main (void) {
  }
 #endif
 
+#ifndef ROAR_WITHOUT_DCOMP_RDTCS
+ if ( rdtcs_init() == -1 ) {
+  ROAR_ERR("Can not initialize RDTCS subsystem");
+ }
+#endif
+
 #ifdef ROAR_SUPPORT_LISTEN
  if ( add_listen(sock_addr, port, sock_type, sock_user, sock_grp, sock_proto) != 0 ) {
   ROAR_ERR("Can not open listen socket!");
@@ -1537,6 +1550,9 @@ void clean_quit_prep (void) {
 #endif
 #ifndef ROAR_WITHOUT_DCOMP_LIGHT
  light_free();
+#endif
+#ifndef ROAR_WITHOUT_DCOMP_RDTCS
+ rdtcs_free();
 #endif
 
 #ifdef SUPPORT_PIDFILE
