@@ -37,6 +37,12 @@
 #define ROAR_COMPLEX_CHANNELS 0
 #define ROAR_COMPLEX_CODEC    ROAR_CODEC_RAUM
 
+// complex:
+#define ROAR_RDTCS_RATE       0
+#define ROAR_RDTCS_BITS       0
+#define ROAR_RDTCS_CHANNELS   0
+#define ROAR_RDTCS_CODEC      ROAR_CODEC_RDS
+
 #endif
 
 //ll
