@@ -571,6 +571,8 @@ struct {
  {ROAR_DIR_RAW_OUT,     "raw_out"    },
  {ROAR_DIR_COMPLEX_IN,  "complex_in" },
  {ROAR_DIR_COMPLEX_OUT, "complex_out"},
+ {ROAR_DIR_RDTCS_IN,    "rdtcs_in"   },
+ {ROAR_DIR_RDTCS_OUT,   "rdtcs_out"  },
  {-1,                   "unknown"    }
 };
 
