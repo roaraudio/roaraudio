@@ -30,6 +30,7 @@
 #include <libroarlight/libroarlight.h>
 #include <libroareio/libroareio.h>
 
+#include <ctype.h>
 
 #ifndef ROAR_TARGET_MICROCONTROLLER
 #include <signal.h>
