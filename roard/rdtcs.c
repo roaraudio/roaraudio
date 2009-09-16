@@ -85,6 +85,7 @@ int rdtcs_send_stream_rds  (int id, struct roar_stream_server *  ss) {
 int rdtcs_send_stream_rds_group  (int id, struct roar_stream_server *  ss) {
  char out[RDTCS_RDS_GROUP_LEN];
  char * c;
+ int      block[4] = {RDTCS_RDS_BLOCK_A, RDTCS_RDS_BLOCK_B, RDTCS_RDS_BLOCK_C0, RDTCS_RDS_BLOCK_D};
  uint16_t data[4];
  uint16_t crc;
  register uint32_t s;
@@ -102,14 +103,17 @@ int rdtcs_send_stream_rds_group  (int id, struct roar_stream_server *  ss) {
  s    = 0;
  fill = 0;
  for (i = 0; i < 4; i++) {
-  s |= data[i] << fill;
+  // data is 16 bit long
+  s |= data[i] << (fill & 0xFFFF);
   fill += 16;
 
-  crc = rdtcs_rds_crc_calc(data[i]);
+  crc = rdtcs_rds_crc_calc(data[i], block[i]);
 
-  s |= crc << fill;
+  // CRC is 10 bit long
+  s |= crc << (fill & 0x03FF);
   fill += 10;
 
+  // shift all complet bytes we allready have out
   while (fill >= 8) {
    *c     = s & 0xFF;
     c++;
@@ -121,7 +125,7 @@ int rdtcs_send_stream_rds_group  (int id, struct roar_stream_server *  ss) {
  return stream_vio_s_write(ss, out, RDTCS_RDS_GROUP_LEN) == RDTCS_RDS_GROUP_LEN ? 0 : -1;
 }
 
-uint16_t rdtcs_rds_crc_calc      (uint16_t data) {
+uint16_t rdtcs_rds_crc_calc      (uint16_t data, int block) {
  return 0xAAAA;
 }
 

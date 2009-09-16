@@ -62,7 +62,7 @@ int rdtcs_send_stream   (int id);
 int rdtcs_send_stream_rds        (int id, struct roar_stream_server *  ss);
 int rdtcs_send_stream_rds_group  (int id, struct roar_stream_server *  ss);
 
-uint16_t rdtcs_rds_crc_calc      (uint16_t data);
+uint16_t rdtcs_rds_crc_calc      (uint16_t data, int block);
 
 #endif
 
