@@ -123,6 +123,19 @@ void usage (void) {
        );
 #endif
 
+#ifndef ROAR_WITHOUT_DCOMP_RDTCS
+ printf("\nRadio Date and Transmitter Control System Options:\n\n");
+ printf(" --rds-pi   PI         - Sets the RDS Programme Identification (PI)\n"
+/*
+// TODO:
+        " --rds-ps   PS         - Sets the RDS Programme Service Name (PS)\n"
+        " --rds-pty  PTY        - Sets the RDS Programme Type (PTY)\n"
+        " --rds-tp              - Sets the RDS Traffic Programme (TP) flag\n"
+        " --rds-ct              - Enables sending of RDS Clock Time (CT)\n"
+*/
+       );
+#endif
+
  printf("\nServer Options:\n\n");
  printf(" -t  --tcp             - Use TCP listen socket\n"
         " -u  --unix            - Use UNIX Domain listen socket (default)\n"
@@ -1131,6 +1144,13 @@ int main (void) {
    light_channels = atoi(argv[++i]);
 #else
    ROAR_WARN("main(*): no light subsystem compiled in");
+#endif
+
+  } else if ( strcmp(k, "--rds-pi") == 0 ) {
+#ifndef ROAR_WITHOUT_DCOMP_RDTCS
+   g_rdtcs.rds.pi = atoi(argv[++i]);
+#else
+   ROAR_WARN("main(*): no RDTCS subsystem compiled in");
 #endif
 
   } else if ( strcmp(k, "--midi-no-console") == 0 ) {
