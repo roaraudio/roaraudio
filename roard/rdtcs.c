@@ -40,11 +40,49 @@ int rdtcs_init_config  (void) {
  strncpy(g_rdtcs.rds.ps, RDTCS_RDS_PS_DEFAULT, RDTCS_RDS_PS_LEN);
  g_rdtcs.rds.ps[RDTCS_RDS_PS_LEN] = 0;
 
- g_rdtcs.rds.pty  = RDTCS_RDS_PTY_DEFAULT;
- g_rdtcs.rds.pi   = RDTCS_RDS_PI_DEFAULT;
+ g_rdtcs.rds.pty   = RDTCS_RDS_PTY_DEFAULT;
+ g_rdtcs.rds.pi    = RDTCS_RDS_PI_DEFAULT;
+ g_rdtcs.rds.flags = RDTCS_RDS_FLAG_NONE;
 
  return 0;
 }
+
+int rdtcs_rds_set_ps  (char * ps) {
+ int i;
+
+ if ( ps == NULL )
+  return -1;
+
+ if ( strlen(ps) > 8 )
+  return -1;
+
+ // coppy string converting to upper case:
+ for (i = 0; ps[i]; i++) {
+  g_rdtcs.rds.ps[i] = toupper(ps[i]);
+ }
+
+ g_rdtcs.rds.ps[i] = 0; // terminating \0
+
+ return 0;
+}
+
+int rdtcs_rds_set_pty (char * pty) {
+ if ( pty == NULL )
+  return -1;
+
+ return -1;
+}
+
+int rdtcs_rds_set_flag  (unsigned int flag, int reset) {
+ 
+ g_rdtcs.rds.flags |= flag;
+
+ if ( reset )
+  g_rdtcs.rds.flags -= flag;
+
+ return 0;
+}
+
 
 int rdtcs_check_stream  (int id) {
  return -1;

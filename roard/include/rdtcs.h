@@ -42,12 +42,17 @@
 
 #define RDTCS_RDS_GROUP_LEN   ((4*(16+10))/8)
 
+#define RDTCS_RDS_FLAG_NONE   0x0000
+#define RDTCS_RDS_FLAG_TP     0x0001
+#define RDTCS_RDS_FLAG_CT     0x0002
+
 struct {
  int inited;
  struct {
   char          ps[RDTCS_RDS_PS_LEN+1];
   unsigned char pty;
   uint16_t      pi;
+  unsigned int  flags;
  } rds;
 } g_rdtcs;
 
@@ -55,6 +60,10 @@ int rdtcs_init  (void);
 int rdtcs_free  (void);
 
 int rdtcs_init_config  (void);
+
+int rdtcs_rds_set_ps  (char * ps);
+int rdtcs_rds_set_pty (char * pty);
+int rdtcs_rds_set_flag(unsigned int flag, int reset);
 
 int rdtcs_check_stream  (int id);
 int rdtcs_send_stream   (int id);
