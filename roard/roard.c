@@ -126,13 +126,10 @@ void usage (void) {
 #ifndef ROAR_WITHOUT_DCOMP_RDTCS
  printf("\nRadio Date and Transmitter Control System Options:\n\n");
  printf(" --rds-pi   PI         - Sets the RDS Programme Identification (PI)\n"
-/*
-// TODO:
         " --rds-ps   PS         - Sets the RDS Programme Service Name (PS)\n"
         " --rds-pty  PTY        - Sets the RDS Programme Type (PTY)\n"
         " --rds-tp              - Sets the RDS Traffic Programme (TP) flag\n"
         " --rds-ct              - Enables sending of RDS Clock Time (CT)\n"
-*/
        );
 #endif
 
@@ -1152,6 +1149,43 @@ int main (void) {
 #else
    ROAR_WARN("main(*): no RDTCS subsystem compiled in");
 #endif
+  } else if ( strcmp(k, "--rds-ps") == 0 ) {
+#ifndef ROAR_WITHOUT_DCOMP_RDTCS
+   if ( rdtcs_rds_set_ps(argv[++i]) == -1 ) {
+    ROAR_ERR("Can not set RDS PS to '%s' (longer than 8 chars?)", arvg[i]);
+    return 1;
+   }
+#else
+   ROAR_WARN("main(*): no RDTCS subsystem compiled in");
+#endif
+  } else if ( strcmp(k, "--rds-pty") == 0 ) {
+#ifndef ROAR_WITHOUT_DCOMP_RDTCS
+   if ( rdtcs_rds_set_pty(argv[++i]) == -1 ) {
+    ROAR_ERR("Can not set RDS PTY to '%s'", arvg[i]);
+    return 1;
+   }
+#else
+   ROAR_WARN("main(*): no RDTCS subsystem compiled in");
+#endif
+  } else if ( strcmp(k, "--rds-tp") == 0 ) {
+#ifndef ROAR_WITHOUT_DCOMP_RDTCS
+   if ( rdtcs_rds_set_flag(RDTCS_RDS_FLAG_TP, 0) == -1 ) {
+    ROAR_ERR("Can not set RDS TP flag");
+    return 1;
+   }
+#else
+   ROAR_WARN("main(*): no RDTCS subsystem compiled in");
+#endif
+  } else if ( strcmp(k, "--rds-ct") == 0 ) {
+#ifndef ROAR_WITHOUT_DCOMP_RDTCS
+   if ( rdtcs_rds_set_flag(RDTCS_RDS_FLAG_CT, 0) == -1 ) {
+    ROAR_ERR("Can not set RDS CT flag");
+    return 1;
+   }
+#else
+   ROAR_WARN("main(*): no RDTCS subsystem compiled in");
+#endif
+
 
   } else if ( strcmp(k, "--midi-no-console") == 0 ) {
 #ifndef ROAR_WITHOUT_DCOMP_CB
