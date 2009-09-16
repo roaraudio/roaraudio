@@ -993,6 +993,9 @@ int streams_get_mixbuffers (void *** bufferlist, struct roar_audio_info * info, 
       continue;
    }
 
+   if ( streams_get_flag(i, ROAR_FLAG_PAUSE) )
+    continue;
+
    if ( streams_get_outputbuffer(i, &bufs[have], ROAR_OUTPUT_CALC_OUTBUFSIZE(info)) == -1 ) {
     ROAR_ERR("streams_get_mixbuffer(*): Can not alloc output buffer for stream %i, BAD!", i);
     ROAR_ERR("streams_get_mixbuffer(*): Ignoring stream for this round.");
