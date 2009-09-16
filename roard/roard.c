@@ -1152,7 +1152,7 @@ int main (void) {
   } else if ( strcmp(k, "--rds-ps") == 0 ) {
 #ifndef ROAR_WITHOUT_DCOMP_RDTCS
    if ( rdtcs_rds_set_ps(argv[++i]) == -1 ) {
-    ROAR_ERR("Can not set RDS PS to '%s' (longer than 8 chars?)", arvg[i]);
+    ROAR_ERR("Can not set RDS PS to '%s' (longer than 8 chars?)", argv[i]);
     return 1;
    }
 #else
@@ -1161,7 +1161,7 @@ int main (void) {
   } else if ( strcmp(k, "--rds-pty") == 0 ) {
 #ifndef ROAR_WITHOUT_DCOMP_RDTCS
    if ( rdtcs_rds_set_pty(argv[++i]) == -1 ) {
-    ROAR_ERR("Can not set RDS PTY to '%s'", arvg[i]);
+    ROAR_ERR("Can not set RDS PTY to '%s'", argv[i]);
     return 1;
    }
 #else
