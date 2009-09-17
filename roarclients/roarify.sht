@@ -51,7 +51,7 @@ do
 done
 
 export LD_PRELOAD="%%%PREFIX_LIB%%%/libroar.so $LD_PRELOAD"
-export LD_LIBRARY_PATH='%%%PREFIX_COMP%%%'" $LD_LIBRARY_PATH"
+export LD_LIBRARY_PATH='%%%PREFIX_COMP%%%'":$LD_LIBRARY_PATH"
 
 exec -- "$CMD" "$@"
 
