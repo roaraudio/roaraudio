@@ -1421,6 +1421,7 @@ int main (void) {
  // we should handle this on microcontrollers, too.
 #if !defined(ROAR_TARGET_MICROCONTROLLER) && !defined(ROAR_TARGET_WIN32)
  signal(SIGINT,  on_sig_int);
+ signal(SIGTERM, on_sig_term);
  signal(SIGCHLD, on_sig_chld);
  signal(SIGUSR1, on_sig_usr1);
  signal(SIGPIPE, SIG_IGN);  // ignore broken pipes

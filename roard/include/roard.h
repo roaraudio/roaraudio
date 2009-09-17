@@ -122,6 +122,7 @@ void clean_quit (void);
 void clean_quit_prep (void);
 
 void on_sig_int (int signum);
+void on_sig_term (int signum);
 void on_sig_chld (int signum);
 void on_sig_usr1 (int signum);
 

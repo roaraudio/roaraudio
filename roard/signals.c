@@ -31,6 +31,13 @@
 void on_sig_int (int signum) {
  ROAR_DBG("got SIGINT");
 
+ // TODO: implement some kind of termonate/force depending on how many ^Cs we get
+ on_sig_term(signum);
+}
+
+void on_sig_term (int signum) {
+ ROAR_DBG("got SIGTERM (or called by SIGINT handler)");
+
  alive = 0;
  clean_quit();
 }
