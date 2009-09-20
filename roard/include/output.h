@@ -27,13 +27,8 @@
 
 #include <roaraudio.h>
 
-//#define ROAR_OUTPUT_BUFFER_SAMPLES 1024
-//#define ROAR_OUTPUT_BUFFER_SAMPLES 1024
-#ifdef DEBUG
-// in case of debugging we use a big number of samples to make lager cycles
-#define ROAR_OUTPUT_BUFFER_SAMPLES 2048
-#else
-//#define ROAR_OUTPUT_BUFFER_SAMPLES 441
+// NOTE: we do not set ROAR_OUTPUT_BUFFER_SAMPLES depending on DEBUG anymore
+//       as it caused a lot problems with partly enabled debugging
 
 #ifdef ROAR_OUTPUT_CFREQ
 #define ROAR_OUTPUT_BUFFER_SAMPLES (ROAR_RATE_DEFAULT/ROAR_OUTPUT_CFREQ)
@@ -49,7 +44,6 @@
 #else
 #define ROAR_OUTPUT_BUFFER_SAMPLES (ROAR_RATE_DEFAULT/100)
 #define ROAR_OUTPUT_CFREQ          100
-#endif
 #endif
 
 #endif
