@@ -353,6 +353,8 @@ int add_listen (char * addr, int port, int sock_type, char * user, char * group,
 #endif
  }
 
+ // in case we opened the listening socket correctly.
+ server[sockid] = addr;
  return 0;
 }
 #endif
