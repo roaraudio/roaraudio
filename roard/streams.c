@@ -24,6 +24,9 @@
 
 #include "roard.h"
 
+#define _CHECK_SID_RET(id,ret) if ( (id) < 0 || (id) > ROAR_STREAMS_MAX || g_streams[(id)] == NULL ) return (ret)
+#define _CHECK_SID(id)         _CHECK_SID_RET((id), -1)
+
 int streams_thru_num     =  0;
 int streams_recsource_id = -1;
 
@@ -137,6 +140,8 @@ int streams_delete (int id) {
  int no_vio_close = 0;
  int i;
  int client;
+
+ _CHECK_SID(id);
 
  if ( (s = g_streams[id]) == NULL )
   return 0;
@@ -256,8 +261,8 @@ int streams_delete (int id) {
 }
 
 int streams_set_client (int id, int client) {
- if ( g_streams[id] == NULL )
-  return -1;
+
+ _CHECK_SID(id);
 
  ROAR_DBG("streams_set_client(id=%i): g_streams[id]->id=%i", id, ROAR_STREAM(g_streams[id])->id);
  g_streams[id]->client = client;
@@ -266,14 +271,15 @@ int streams_set_client (int id, int client) {
 }
 
 int streams_get_client (int id) {
- if ( g_streams[id] == NULL )
-  return -1;
+ _CHECK_SID(id);
 
  return g_streams[id]->client;
 }
 
 int streams_set_dir    (int id, int dir, int defaults) {
  struct roar_stream_server * ss;
+
+ _CHECK_SID(id);
 
  if ( (ss = g_streams[id]) == NULL )
   return -1;
@@ -306,6 +312,8 @@ int streams_set_dir    (int id, int dir, int defaults) {
 int streams_get_dir    (int id) {
  struct roar_stream_server * ss;
 
+ _CHECK_SID(id);
+
  if ( (ss = g_streams[id]) == NULL )
   return -1;
 
@@ -314,6 +322,8 @@ int streams_get_dir    (int id) {
 
 int streams_get_subsys (int id) {
  struct roar_stream_server * ss;
+
+ _CHECK_SID(id);
 
  if ( (ss = g_streams[id]) == NULL )
   return -1;
@@ -405,6 +415,8 @@ int streams_set_fh     (int id, int fh) {
  int dir;
  int nonblock = 1;
 
+ _CHECK_SID(id);
+
  if ( (s = ROAR_STREAM(ss = g_streams[id])) == NULL )
   return -1;
 
@@ -487,11 +499,7 @@ int streams_set_fh     (int id, int fh) {
 }
 
 int streams_get_fh     (int id) {
- if ( id < 0 )
-  return -1;
-
- if ( g_streams[id] == NULL )
-  return -1;
+ _CHECK_SID(id);
 
  return ROAR_STREAM(g_streams[id])->fh;
 }
@@ -499,6 +507,8 @@ int streams_get_fh     (int id) {
 int streams_set_null_io(int id) {
  struct roar_stream_server * ss;
  struct roar_stream        * s;
+
+ _CHECK_SID(id);
 
  if ( (s = ROAR_STREAM(ss = g_streams[id])) == NULL )
   return -1;
@@ -509,8 +519,7 @@ int streams_set_null_io(int id) {
 }
 
 int streams_get    (int id, struct roar_stream_server ** stream) {
- if ( g_streams[id] == NULL )
-  return -1;
+ _CHECK_SID(id);
 
  *stream = g_streams[id];
 
@@ -518,8 +527,7 @@ int streams_get    (int id, struct roar_stream_server ** stream) {
 }
 
 int streams_set_socktype (int id, int socktype) {
- if ( g_streams[id] == NULL )
-  return -1;
+ _CHECK_SID(id);
 
  g_streams[id]->socktype = socktype;
 
@@ -527,15 +535,13 @@ int streams_set_socktype (int id, int socktype) {
 }
 
 int streams_get_socktype (int id) {
- if ( g_streams[id] == NULL )
-  return -1;
+ _CHECK_SID(id);
 
  return g_streams[id]->socktype;
 }
 
 int streams_set_primary (int id, int prim) {
- if ( g_streams[id] == NULL )
-  return -1;
+ _CHECK_SID(id);
 
  g_streams[id]->primary = prim;
 
@@ -548,6 +554,8 @@ int streams_mark_primary (int id) {
 
 int streams_set_sync     (int id, int sync) {
  int fh = streams_get_fh(id);
+
+ _CHECK_SID(id);
 
  if ( fh != -1 ) {
   if ( roar_socket_nonblock(fh, sync ? ROAR_SOCKET_BLOCK : ROAR_SOCKET_NONBLOCK) == -1 )
@@ -566,8 +574,7 @@ int streams_set_sync     (int id, int sync) {
 int streams_set_mmap (int id, int reset) {
  int use = !reset;
 
- if ( g_streams[id] == NULL )
-  return -1;
+ _CHECK_SID(id);
 
  return roar_vio_ctl(&(g_streams[id]->vio), ROAR_VIO_CTL_SET_UMMAP, &use);
 }
@@ -575,8 +582,7 @@ int streams_set_mmap (int id, int reset) {
 int streams_set_flag     (int id, int flag) {
  int parent;
 
- if ( g_streams[id] == NULL )
-  return -1;
+ _CHECK_SID(id);
 
  if ( flag & ROAR_FLAG_MMAP )
   if ( streams_set_mmap(id, 0) == -1 )
@@ -646,11 +652,7 @@ int streams_set_flag     (int id, int flag) {
 }
 
 int streams_set_rawflag  (int id, int flag) {
- if ( id == -1 )
-  return -1;
-
- if ( g_streams[id] == NULL )
-  return -1;
+ _CHECK_SID(id);
 
  g_streams[id]->flags |= flag;
 
@@ -658,8 +660,7 @@ int streams_set_rawflag  (int id, int flag) {
 }
 
 int streams_reset_flag   (int id, int flag) {
- if ( g_streams[id] == NULL )
-  return -1;
+ _CHECK_SID(id);
 
  if ( flag & ROAR_FLAG_RECSOURCE )
   if ( streams_recsource_id == id )
@@ -691,8 +692,7 @@ int streams_reset_flag   (int id, int flag) {
 }
 
 int streams_get_flag     (int id, int flag) {
- if ( g_streams[id] == NULL )
-  return -1;
+ _CHECK_SID(id);
 
  return g_streams[id]->flags & flag ? 1 : 0;
 }
@@ -700,8 +700,7 @@ int streams_get_flag     (int id, int flag) {
 int streams_set_name     (int id, char * name) {
  char * str;
 
- if ( g_streams[id] == NULL )
-  return -1;
+ _CHECK_SID(id);
 
  if ( (str = strdup(name)) == NULL )
   return -1;
@@ -715,8 +714,7 @@ int streams_set_name     (int id, char * name) {
 }
 
 char * streams_get_name  (int id) {
- if ( g_streams[id] == NULL )
-  return NULL;
+ _CHECK_SID_RET(id, NULL);
 
  return g_streams[id]->name;
 }
@@ -728,6 +726,8 @@ int streams_calc_delay    (int id) {
  register uint_least32_t d = 0;
  uint_least32_t t[1];
  uint64_t       tmp;
+
+ _CHECK_SID(id);
 
  if ( (s = ROAR_STREAM(ss = g_streams[id])) == NULL )
   return -1;
@@ -761,6 +761,8 @@ int streams_set_mixer    (int id) {
  struct roar_stream_server * pmss;
  int i;
  int subsys;
+
+ _CHECK_SID(id);
 
  if ( (ss = g_streams[id]) == NULL )
   return -1;
@@ -798,6 +800,8 @@ int streams_ctl          (int id, int_least32_t cmd, void * data) {
  struct roar_stream_server * ss;
  int_least32_t comp;
 
+ _CHECK_SID(id);
+
  if ( (ss = g_streams[id]) == NULL )
   return -1;
 
@@ -823,8 +827,7 @@ int streams_ctl          (int id, int_least32_t cmd, void * data) {
 }
 
 int streams_get_outputbuffer  (int id, void ** buffer, size_t size) {
- if ( g_streams[id] == NULL )
-  return -1;
+ _CHECK_SID(id);
 
  // output buffer size does never change.
  if ( g_streams[id]->output != NULL ) {
@@ -855,6 +858,8 @@ int streams_fill_mixbuffer2 (int id, struct roar_audio_info * info) {
  struct roar_audio_info    * stream_info;
  struct roar_stream        * s;
  struct roar_stream_server * ss;
+
+ _CHECK_SID(id);
 
  if ( (s = ROAR_STREAM(ss = g_streams[id])) == NULL )
   return -1;
@@ -1029,8 +1034,7 @@ int streams_get_mixbuffers (void *** bufferlist, struct roar_audio_info * info, 
 int stream_add_buffer  (int id, struct roar_buffer * buf) {
  ROAR_DBG("stream_add_buffer(id=%i, buf=%p) = ?", id, buf);
 
- if ( g_streams[id] == NULL )
-  return -1;
+ _CHECK_SID(id);
 
  if ( g_streams[id]->buffer == NULL ) {
   g_streams[id]->buffer = buf;
@@ -1043,8 +1047,7 @@ int stream_add_buffer  (int id, struct roar_buffer * buf) {
 }
 
 int stream_shift_out_buffer   (int id, void * data, size_t * len) {
- if ( g_streams[id] == NULL )
-  return -1;
+ _CHECK_SID(id);
 
  if ( g_streams[id]->buffer == NULL )
   return -1;
@@ -1055,8 +1058,7 @@ int stream_shift_out_buffer   (int id, void * data, size_t * len) {
 int stream_shift_buffer   (int id, struct roar_buffer ** buf) {
  struct roar_buffer * next;
 
- if ( g_streams[id] == NULL )
-  return -1;
+ _CHECK_SID(id);
 
  if ( g_streams[id]->buffer == NULL ) {
   *buf = NULL;
@@ -1071,8 +1073,7 @@ int stream_shift_buffer   (int id, struct roar_buffer ** buf) {
  return 0;
 }
 int stream_unshift_buffer (int id, struct roar_buffer *  buf) {
- if ( g_streams[id] == NULL )
-  return -1;
+ _CHECK_SID(id);
 
  if ( g_streams[id]->buffer == NULL ) {
   g_streams[id]->buffer = buf;
@@ -1093,6 +1094,8 @@ int stream_outputbuffer_request(int id, struct roar_buffer ** buf, size_t len) {
  size_t buflen;
  void * bufdata;
  int ret;
+
+ _CHECK_SID(id);
 
  if ( (ss = g_streams[id]) == NULL )
   return -1;
@@ -1144,6 +1147,8 @@ int stream_outputbuffer_destroy(int id) {
  int ret;
  register struct roar_stream_server *  ss;
 
+ _CHECK_SID(id);
+
  if ( (ss = g_streams[id]) == NULL )
   return -1;
 
@@ -1165,8 +1170,7 @@ int streams_check  (int id) {
  char                      * buf;
 // char                        tmp;
 
- if ( g_streams[id] == NULL )
-  return -1;
+ _CHECK_SID(id);
 
  ROAR_DBG("streams_check(id=%i) = ?", id);
 
@@ -1320,8 +1324,7 @@ int streams_send_mon   (int id) {
  int     antiecho        = 0;
  ssize_t ret;
 
- if ( g_streams[id] == NULL )
-  return -1;
+ _CHECK_SID(id);
 
  ROAR_DBG("streams_send_mon(id=%i) = ?", id);
 
@@ -1519,8 +1522,7 @@ int streams_send_filter(int id) {
  struct roar_stream        *   s;
  struct roar_stream_server *  ss;
 
- if ( g_streams[id] == NULL )
-  return -1;
+ _CHECK_SID(id);
 
  ROAR_DBG("streams_send_filter(id=%i) = ?", id);
 
@@ -1560,21 +1562,15 @@ int streams_send_filter(int id) {
 // VIO:
 
 ssize_t stream_vio_read (int stream, void *buf, size_t count) {
- struct roar_stream_server * s = g_streams[stream];
+ _CHECK_SID(stream);
 
- if ( !s )
-  return -1;
-
- return stream_vio_s_read(s, buf, count);
+ return stream_vio_s_read(g_streams[stream], buf, count);
 }
 
 ssize_t stream_vio_write(int stream, void *buf, size_t count) {
- struct roar_stream_server * s = g_streams[stream];
+ _CHECK_SID(stream);
 
- if ( !s )
-  return -1;
-
- return stream_vio_s_write(s, buf, count);
+ return stream_vio_s_write(g_streams[stream], buf, count);
 }
 
 
