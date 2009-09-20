@@ -483,6 +483,10 @@ int set_mixer (struct roar_connection * con, int * cur, int max, char * arg[]) {
   mixer.mixer[1] = vol_r;
 
   switch (chans) {
+   case 1:
+     mixer.mixer[0] = vol_mono;
+    break;
+//   case 2: classic stereo...
    case 3:
      mixer.mixer[2] = vol_mono;
     break;
@@ -502,7 +506,7 @@ int set_mixer (struct roar_connection * con, int * cur, int max, char * arg[]) {
      mixer.mixer[5] = vol_r;
     break;
    default:
-     ROAR_ERR("mode stereo not supported");
+     ROAR_ERR("mode stereo not supported on stream with %i channels", chans);
      return -1;
     break;
   }
