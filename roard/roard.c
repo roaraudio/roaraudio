@@ -156,9 +156,9 @@ void usage (void) {
         "     --slp             - Enable OpenSLP support\n"
 #endif
         " -G  GROUP             - Sets the group for the UNIX Domain Socket, (default: %s)\n"
-        "                         You need the permittions to change the GID\n"
+        "                         You need the permissions to change the GID\n"
         " -U  USER              - Sets the user for the UNIX Domain Socket, (default: do not set)\n"
-        "                         You need the permittions to change the UID (normaly only root has)\n"
+        "                         You need the permissions to change the UID (normaly only root has)\n"
         " --no-listen           - Do not listen for new clients\n"
         "                         (only usefull for relaing, impleys --terminate)\n"
         " --client-fh           - Comunicate with a client over this handle\n"
