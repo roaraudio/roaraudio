@@ -410,7 +410,7 @@ int set_mixer (struct roar_connection * con, int * cur, int max, char * arg[]) {
  int i;
  int len;
  int old_chans;
- int vol_l, vol_r;
+ int vol_l, vol_r, vol_mono;
  char * k;
  struct roar_mixer_settings mixer;
  struct roar_mixer_settings old_mixer;
@@ -441,18 +441,18 @@ int set_mixer (struct roar_connection * con, int * cur, int max, char * arg[]) {
 
   if ( k[len - 1] == '%' ) {
    k[len - 1] = 0;
-   vol_l = (atof(k)*65535)/100;
+   vol_mono = (atof(k)*65535)/100;
   } else {
-   vol_l = atoi(k);
+   vol_mono = atoi(k);
   }
 
   for (i = 0; i < old_chans; i++)
-   mixer.mixer[i] = vol_l;
+   mixer.mixer[i] = vol_mono;
 
   chans = old_chans;
 
- } else if ( strcmp(k, "stereo") == 0 && old_chans == 4 ) {
-  chans = 4;
+ } else if ( strcmp(k, "stereo") == 0 && old_chans != 2 ) {
+  chans = old_chans;
 
   if ( *cur + 2 > max )
    return -1;
@@ -477,16 +477,36 @@ int set_mixer (struct roar_connection * con, int * cur, int max, char * arg[]) {
    vol_r = atoi(k);
   }
 
+  vol_mono = (vol_l + vol_r) / 2;
+
   mixer.mixer[0] = vol_l;
   mixer.mixer[1] = vol_r;
-  mixer.mixer[2] = vol_l;
-  mixer.mixer[3] = vol_r;
 
- } else if ( strcmp(k, "stereo") == 0 && old_chans != 2 ) {
-  chans = 2;
-//  printf("mode: stereo; chans=%i, old_chans=%i\n", chans, old_chans);
-  ROAR_ERR("mode stereo not supported");
-  return -1;
+  switch (chans) {
+   case 3:
+     mixer.mixer[2] = vol_mono;
+    break;
+   case 4:
+     mixer.mixer[2] = vol_l;
+     mixer.mixer[3] = vol_r;
+    break;
+   case 5:
+     mixer.mixer[2] = vol_mono;
+     mixer.mixer[3] = vol_l;
+     mixer.mixer[4] = vol_r;
+    break;
+   case 6:
+     mixer.mixer[2] = vol_mono;
+     mixer.mixer[3] = vol_mono;
+     mixer.mixer[4] = vol_l;
+     mixer.mixer[5] = vol_r;
+    break;
+   default:
+     ROAR_ERR("mode stereo not supported");
+     return -1;
+    break;
+  }
+
  } else {
   if ( strcmp(k, "mono") == 0 ) {
    chans = 1;
