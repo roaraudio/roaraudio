@@ -1021,7 +1021,7 @@ int roar_conv2(void * out, void * in,
 
  if ( to->channels > from->channels ) {
   ROAR_DBG("roar_conv2(*): channels: %i->%i", from->channels, to->channels);
-  if ( roar_conv_chans(out, cin, samples/from->channels, from->channels, to->channels, cinfo.bits) == -1 )
+  if ( roar_conv_chans(out, cin, samples, from->channels, to->channels, cinfo.bits) == -1 )
    return -1;
 
   cin            = out;
