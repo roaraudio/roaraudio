@@ -214,6 +214,9 @@ int roar_conv_chans (void * out, void * in, int samples, int from, int to, int b
      switch (to) {
       case  1: return roar_conv_chans_2to116(out, in, samples);
       case  3: return roar_conv_chans_2to316(out, in, samples);
+      case  4: return roar_conv_chans_2to416(out, in, samples);
+      case  5: return roar_conv_chans_2to516(out, in, samples);
+      case  6: return roar_conv_chans_2to616(out, in, samples);
       default: return -1;
      }
      break;
@@ -372,11 +375,66 @@ int roar_conv_chans_2to316 (void * out, void * in, int samples) {
 }
 
 int roar_conv_chans_2to48  (void * out, void * in, int samples);
-int roar_conv_chans_2to416 (void * out, void * in, int samples);
+int roar_conv_chans_2to416 (void * out, void * in, int samples) {
+ int16_t * ip = (int16_t*) in, * op = (int16_t*) out;
+ int i, h;
+
+ samples -= 2;
+
+ i  = samples;
+ h  = (samples / 2) * 4;
+
+ for (; i >= 0; i -= 2, h -= 3) {
+  op[h+0] = ip[i+0];
+  op[h+1] = ip[i+1];
+  op[h+2] = ip[i+0];
+  op[h+3] = ip[i+1];
+ }
+
+ return 0;
+}
+
 int roar_conv_chans_2to58  (void * out, void * in, int samples);
-int roar_conv_chans_2to516 (void * out, void * in, int samples);
+int roar_conv_chans_2to516 (void * out, void * in, int samples) {
+ int16_t * ip = (int16_t*) in, * op = (int16_t*) out;
+ int i, h;
+
+ samples -= 2;
+
+ i  = samples;
+ h  = (samples / 2) * 5;
+
+ for (; i >= 0; i -= 2, h -= 3) {
+  op[h+0] = ip[i+0];
+  op[h+1] = ip[i+1];
+  op[h+2] = ((int)ip[i + 0] + (int)ip[i + 1]) / 2;
+  op[h+3] = ip[i+0];
+  op[h+4] = ip[i+1];
+ }
+
+ return 0;
+}
 int roar_conv_chans_2to68  (void * out, void * in, int samples);
-int roar_conv_chans_2to616 (void * out, void * in, int samples);
+int roar_conv_chans_2to616 (void * out, void * in, int samples) {
+ int16_t * ip = (int16_t*) in, * op = (int16_t*) out;
+ int i, h;
+
+ samples -= 2;
+
+ i  = samples;
+ h  = (samples / 2) * 5;
+
+ for (; i >= 0; i -= 2, h -= 3) {
+  op[h+0] = ip[i+0];
+  op[h+1] = ip[i+1];
+  op[h+2] = ((int)ip[i + 0] + (int)ip[i + 1]) / 2;
+  op[h+3] = op[h+2];
+  op[h+4] = ip[i+0];
+  op[h+5] = ip[i+1];
+ }
+
+ return 0;
+}
 
 
 int roar_conv_rate (void * out, void * in, int samples, int from, int to, int bits, int channels) {
