@@ -872,6 +872,8 @@ int streams_fill_mixbuffer2 (int id, struct roar_audio_info * info) {
 
  buflen = ROAR_OUTPUT_CALC_OUTBUFSIZE_MAX(info, stream_info);
 
+ ROAR_DBG("streams_fill_mixbuffer2(id=%i, info=%p{...}): inlen=%lu, buflen=%lu", id, info, (unsigned long)inlen, (unsigned long)buflen);
+
  if ( inlen == 0 ) {
   ROAR_WARN("streams_fill_mixbuffer2(id=%i, info=%p{...}): inlen == 0, this should not happen!", id, info);
   return -1;
@@ -958,11 +960,13 @@ int streams_fill_mixbuffer2 (int id, struct roar_audio_info * info) {
  }
 
  if ( !streams_get_flag(id, ROAR_FLAG_HWMIXER) && !streams_get_flag(id, ROAR_FLAG_PASSMIXER) ) {
+  ROAR_DBG("streams_fill_mixbuffer2(*): CALL change_vol(*)...");
   if ( change_vol(outdata, info->bits, outdata, 8*outlen / info->bits, info->channels, &(ss->mixer)) == -1 )
    return -1;
  }
 
  if ( streams_get_flag(id, ROAR_FLAG_ANTIECHO) ) {
+  ROAR_DBG("streams_fill_mixbuffer2(*): Calcing antiecho...");
   // we can ignore errors here:
   if ( stream_outputbuffer_request(id, &bufbuf, buflen) == 0 ) {
    if ( roar_buffer_get_data(bufbuf, &bufdata) != -1 )
@@ -972,6 +976,7 @@ int streams_fill_mixbuffer2 (int id, struct roar_audio_info * info) {
 
  s->pos = ROAR_MATH_OVERFLOW_ADD(s->pos, ROAR_OUTPUT_CALC_OUTBUFSAMP(info, outlen)*info->channels);
 
+ ROAR_DBG("streams_fill_mixbuffer2(*) = 0");
  return 0;
 }
 
