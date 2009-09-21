@@ -69,11 +69,11 @@ int roar_conv_chans_2to116 (void * out, void * in, int samples);           // ye
 int roar_conv_chans_2to38  (void * out, void * in, int samples);           // ?            ?
 int roar_conv_chans_2to316 (void * out, void * in, int samples);           // yes          yes
 int roar_conv_chans_2to48  (void * out, void * in, int samples);           // ?            ?
-int roar_conv_chans_2to416 (void * out, void * in, int samples);           // ?            ?
+int roar_conv_chans_2to416 (void * out, void * in, int samples);           // yes          yes
 int roar_conv_chans_2to58  (void * out, void * in, int samples);           // ?            ?
-int roar_conv_chans_2to516 (void * out, void * in, int samples);           // ?            ?
+int roar_conv_chans_2to516 (void * out, void * in, int samples);           // yes          yes
 int roar_conv_chans_2to68  (void * out, void * in, int samples);           // ?            ?
-int roar_conv_chans_2to616 (void * out, void * in, int samples);           // ?            ?
+int roar_conv_chans_2to616 (void * out, void * in, int samples);           // yes          yes
 
 int roar_conv_rate       (void * out, void * in, int samples, int from, int to, int bits, int channels);
 int roar_conv_rate_8     (void * out, void * in, int samples, int from, int to, int channels);
