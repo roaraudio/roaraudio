@@ -384,7 +384,7 @@ int roar_conv_chans_2to416 (void * out, void * in, int samples) {
  i  = samples;
  h  = (samples / 2) * 4;
 
- for (; i >= 0; i -= 2, h -= 3) {
+ for (; i >= 0; i -= 2, h -= 4) {
   op[h+0] = ip[i+0];
   op[h+1] = ip[i+1];
   op[h+2] = ip[i+0];
@@ -404,7 +404,7 @@ int roar_conv_chans_2to516 (void * out, void * in, int samples) {
  i  = samples;
  h  = (samples / 2) * 5;
 
- for (; i >= 0; i -= 2, h -= 3) {
+ for (; i >= 0; i -= 2, h -= 5) {
   op[h+0] = ip[i+0];
   op[h+1] = ip[i+1];
   op[h+2] = ((int)ip[i + 0] + (int)ip[i + 1]) / 2;
@@ -422,9 +422,9 @@ int roar_conv_chans_2to616 (void * out, void * in, int samples) {
  samples -= 2;
 
  i  = samples;
- h  = (samples / 2) * 5;
+ h  = (samples / 2) * 6;
 
- for (; i >= 0; i -= 2, h -= 3) {
+ for (; i >= 0; i -= 2, h -= 6) {
   op[h+0] = ip[i+0];
   op[h+1] = ip[i+1];
   op[h+2] = ((int)ip[i + 0] + (int)ip[i + 1]) / 2;
