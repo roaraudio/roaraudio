@@ -426,8 +426,13 @@ int streams_set_fh     (int id, int fh) {
 
  ROAR_DBG("streams_set_fh(id=%i, fh=%i): driverID=%i", id, fh, ss->driver_id);
 
- if ( ss->driver_id == -1 && fh != -2 )
+ if ( ss->driver_id == -1 && fh != -2 ) {
+#ifndef ROAR_TARGET_WIN32
   roar_vio_set_fh(&(ss->vio), fh);
+#else
+  roar_vio_open_fh_socket(&(ss->vio), fh);
+#endif
+ }
 
  if ( codecfilter_open(&(ss->codecfilter_inst), &(ss->codecfilter), NULL,
                   s->info.codec, ss) == -1 ) {
