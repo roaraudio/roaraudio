@@ -220,6 +220,13 @@ int roar_conv_chans (void * out, void * in, int samples, int from, int to, int b
       default: return -1;
      }
      break;
+    case 4:
+     switch (to) {
+      case  1: return roar_conv_chans_nto116(out, in, samples, 4);
+      case  2: return roar_conv_chans_4to216(out, in, samples);
+      default: return -1;
+     }
+     break;
     default:
      switch (to) {
       case  1: return roar_conv_chans_nto116(out, in, samples, from);
@@ -439,7 +446,20 @@ int roar_conv_chans_2to616 (void * out, void * in, int samples) {
 int roar_conv_chans_3to28  (void * out, void * in, int samples);
 int roar_conv_chans_3to216 (void * out, void * in, int samples);
 int roar_conv_chans_4to28  (void * out, void * in, int samples);
-int roar_conv_chans_4to216 (void * out, void * in, int samples);
+int roar_conv_chans_4to216 (void * out, void * in, int samples) {
+ int16_t * ip = (int16_t*) in, * op = (int16_t*) out;
+ int i, h;
+
+ samples -= 4;
+
+ for (i = h = 0; i < samples; i += 4, h += 2) {
+  op[h+0] = ((int)ip[i + 0] + (int)ip[i + 2]) / 2;
+  op[h+1] = ((int)ip[i + 1] + (int)ip[i + 3]) / 2;
+ }
+
+ return 0;
+}
+
 int roar_conv_chans_5to28  (void * out, void * in, int samples);
 int roar_conv_chans_5to216 (void * out, void * in, int samples);
 int roar_conv_chans_6to28  (void * out, void * in, int samples);
