@@ -768,7 +768,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.206 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.207 $ of RoarAudio
  */
 
 EOF
@@ -1237,7 +1237,7 @@ elif $CCTF -DWITHOUT_SYS_SOCKET_H -DWITH_WINSOCK_H $lib_wsock32 2> /dev/null;
 then
  echo '#define ROAR_HAVE_SHUTDOWN'     >&3
  echo '#define ROAR_SHUTDOWN shutdown' >&3
- echo yes
+ echo yes, WinSock
 else
  echo '#define ROAR_SHUTDOWN(x,y) (-1)' >&3
  echo no
