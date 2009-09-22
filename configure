@@ -547,6 +547,8 @@ test_lib_defmake () {
    echo "$subdir_var=$subdir" >&4
   [ "$lib" != 'c' ] && \
    echo "lib_$lib=$LIBS" >&4
+  [ "$lib" != 'c' ] && \
+   eval "lib_$lib='$LIBS'"
  else
   [ "$subdir" != '' ] && \
    echo "subdir_$subdir=" >&4
@@ -766,7 +768,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.203 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.204 $ of RoarAudio
  */
 
 EOF
