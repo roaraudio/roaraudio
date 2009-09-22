@@ -768,7 +768,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.205 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.206 $ of RoarAudio
  */
 
 EOF
@@ -1209,9 +1209,17 @@ else
 fi
 
 echo -n 'checking for shutdown()... '
-echo '#include <sys/types.h>'      >  $TF_C
-echo '#include <sys/socket.h>'     >> $TF_C
-echo 'int main (void) { shutdown(0, 0); return 0; }'  >> $TF_C
+cat <<EOF > $TF_C
+#include <sys/types.h>
+#ifndef WITHOUT_SYS_SOCKET_H
+#include <sys/socket.h>
+#endif
+#ifdef WITH_WINSOCK_H
+#include <winsock.h>
+#endif
+
+int main (void) { shutdown(0, 0); return 0; }
+EOF
 
 if [ "$SYSNAME" = 'SunOS' ]
 then
@@ -1221,6 +1229,11 @@ else
 fi
 
 if $CCTF $_l 2> /dev/null;
+then
+ echo '#define ROAR_HAVE_SHUTDOWN'     >&3
+ echo '#define ROAR_SHUTDOWN shutdown' >&3
+ echo yes
+elif $CCTF -DWITHOUT_SYS_SOCKET_H -DWITH_WINSOCK_H $lib_wsock32 2> /dev/null;
 then
  echo '#define ROAR_HAVE_SHUTDOWN'     >&3
  echo '#define ROAR_SHUTDOWN shutdown' >&3
