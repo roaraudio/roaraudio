@@ -768,7 +768,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.204 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.205 $ of RoarAudio
  */
 
 EOF
@@ -1165,8 +1165,11 @@ test_func_defmake ROAR_HAVE_GETPEEREID getpeereid 'getpeereid(0, NULL, NULL)' --
 
 echo -n 'checking for select()... '
 cat <<EOF > $TF_C
-#ifndef NO_SYS_SELECT_H
+#ifndef WITHOUT_SYS_SELECT_H
 #include <sys/select.h>
+#endif
+#ifdef WITH_WINSOCK_H
+#include <winsock.h>
 #endif
 #include <sys/time.h>
 #include <sys/types.h>
@@ -1193,10 +1196,14 @@ then
  echo '#define ROAR_HAVE_SELECT' >&3
  echo '#define ROAR_HAVE_H_SYS_SELECT' >&3
  echo yes, POSIX.1-2001
-elif $CCTF -DNO_SYS_SELECT_H 2> /dev/null;
+elif $CCTF -DWITHOUT_SYS_SELECT_H 2> /dev/null;
 then
  echo '#define ROAR_HAVE_SELECT' >&3
  echo yes, old style
+elif $CCTF -DWITHOUT_SYS_SELECT_H -DWITH_WINSOCK_H $lib_wsock32 >&5 2>&5;
+then
+ echo '#define ROAR_HAVE_SELECT' >&3
+ echo yes, WinSock
 else
  echo no
 fi
