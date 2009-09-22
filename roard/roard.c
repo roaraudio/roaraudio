@@ -1458,7 +1458,7 @@ int main (void) {
 */
  }
 
-#ifdef ROAR_HAVE_SETGID
+#if defined(ROAR_HAVE_SETGID) && defined(ROAR_HAVE_IO_POSIX)
  if ( setids & R_SETGID ) {
   if ( sock_grp == NULL ) {
    ROAR_ERR("Can not set GID if no groupname is supplied");
@@ -1534,7 +1534,7 @@ int main (void) {
  }
 #endif
 
-#ifdef ROAR_HAVE_SETUID
+#if defined(ROAR_HAVE_SETUID) && defined(ROAR_HAVE_IO_POSIX)
  if ( setids & R_SETUID ) {
   if ( sock_user == NULL ) {
    ROAR_ERR("Can not set UID if no username is supplied");
