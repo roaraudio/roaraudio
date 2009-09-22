@@ -321,8 +321,10 @@ int add_listen (char * addr, int port, int sock_type, char * user, char * group,
   }
 
 #if defined(ROAR_HAVE_SETGID) && defined(ROAR_HAVE_IO_POSIX)
-  if ( (grp = getgrnam(group)) == NULL ) {
-   ROAR_ERR("Can not get GID for group %s: %s", group, strerror(errno));
+  if ( group != NULL ) {
+   if ( (grp = getgrnam(group)) == NULL ) {
+    ROAR_ERR("Can not get GID for group %s: %s", group, strerror(errno));
+   }
   }
 #endif
 #if defined(ROAR_HAVE_SETUID) && defined(ROAR_HAVE_IO_POSIX)
@@ -335,20 +337,17 @@ int add_listen (char * addr, int port, int sock_type, char * user, char * group,
 
 #if defined(ROAR_HAVE_IO_POSIX) && defined(ROAR_HAVE_UNIX)
   if ( *addr == '/' ) {
-   if ( grp ) {
-    if ( pwd ) {
-     if ( chown(addr, pwd->pw_uid, grp->gr_gid) == -1 )
+   if ( grp || pwd ) {
+     if ( chown(addr, pwd ? pwd->pw_uid : -1, grp ? grp->gr_gid : -1) == -1 )
       return 1;
-    } else {
-     if ( chown(addr, -1, grp->gr_gid) == -1 )
-      return 1;
-    }
+   }
 #ifdef ROAR_HAVE_GETUID
+   if ( grp ) {
     if ( getuid() == 0 )
      if ( chmod(addr, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP) == -1 )
       return 1;
-#endif
    }
+#endif
   }
 #endif
  }
