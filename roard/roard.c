@@ -326,7 +326,7 @@ int add_listen (char * addr, int port, int sock_type, char * user, char * group,
   }
 #endif
 #if defined(ROAR_HAVE_SETUID) && defined(ROAR_HAVE_IO_POSIX)
-  if ( user || (setids & R_SETUID) ) {
+  if ( user ) {
    if ( (pwd = getpwnam(user)) == NULL ) {
     ROAR_ERR("Can not get UID for user %s: %s", user, strerror(errno));
    }
@@ -1529,6 +1529,10 @@ int main (void) {
 
 #ifdef ROAR_HAVE_SETUID
  if ( setids & R_SETUID ) {
+  if ( sock_user == NULL ) {
+   ROAR_ERR("Can not set UID if no username is supplied");
+   return 1;
+  }
   if ( (pwd = getpwnam(sock_user)) == NULL ) {
    ROAR_ERR("Can not get UID for user %s: %s", sock_user, strerror(errno));
    return 1;
