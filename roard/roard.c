@@ -1510,6 +1510,16 @@ int main (void) {
  }
 #endif
 
+#if defined(ROAR_HAVE_SETUID) && defined(ROAR_HAVE_IO_POSIX)
+ // early test for UID as we need this for the pidfile and the setuid()
+ if ( sock_user != NULL ) {
+  if ( (pwd = getpwnam(sock_user)) == NULL ) {
+   ROAR_ERR("Can not get UID for user %s: %s", sock_user, strerror(errno));
+   return 1;
+  }
+ }
+#endif
+
 #ifdef SUPPORT_PIDFILE
  if ( pidfile != NULL ) {
   if ( roar_vio_open_file(&pidfile_vio, pidfile, O_WRONLY|O_CREAT, 0644) == -1 ) {
@@ -1538,10 +1548,6 @@ int main (void) {
  if ( setids & R_SETUID ) {
   if ( sock_user == NULL ) {
    ROAR_ERR("Can not set UID if no username is supplied");
-   return 1;
-  }
-  if ( (pwd = getpwnam(sock_user)) == NULL ) {
-   ROAR_ERR("Can not get UID for user %s: %s", sock_user, strerror(errno));
    return 1;
   }
   if ( !pwd || setuid(pwd->pw_uid) == -1 ) {
