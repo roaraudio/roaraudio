@@ -166,7 +166,11 @@ void usage (void) {
         " --close-fh            - Closes the given fh\n"
         " --standby             - Start in standby state\n"
         " --auto-standby        - Automatical goes into standby if there are no streams\n",
+#ifdef ROAR_DEFAULT_SOCKGRP
         ROAR_DEFAULT_SOCKGRP
+#else
+        "(none)"
+#endif
        );
 // printf("\n Options:\n\n");
  printf("\n");
