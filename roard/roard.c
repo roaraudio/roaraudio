@@ -1528,6 +1528,14 @@ int main (void) {
    roar_vio_printf(&pidfile_vio, "%i\n", getpid());
    roar_vio_close(&pidfile_vio);
   }
+  if ( pwd || grp ) {
+   if ( chown(pidfile, pwd ? pwd->pw_uid : -1, grp ? grp->gr_gid : -1) == -1 ) {
+    ROAR_WARN("Can not change ownership of pidfile: %s: %s", pidfile, strerror(errno));
+   }
+  }
+  if ( chmod(pidfile, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH) == -1 ) {
+   ROAR_WARN("Can not change permissions of pidfile: %s: %s", pidfile, strerror(errno));
+  }
  }
 #endif
 
