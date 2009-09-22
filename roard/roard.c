@@ -1456,6 +1456,10 @@ int main (void) {
 
 #ifdef ROAR_HAVE_SETGID
  if ( setids & R_SETGID ) {
+  if ( sock_grp == NULL ) {
+   ROAR_ERR("Can not set GID if no groupname is supplied");
+   return 1;
+  }
   if ( (grp = getgrnam(sock_grp)) == NULL ) {
    ROAR_ERR("Can not get GID for group %s: %s", sock_grp, strerror(errno));
    return 1;
