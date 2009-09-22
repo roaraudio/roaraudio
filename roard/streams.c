@@ -489,8 +489,10 @@ int streams_set_fh     (int id, int fh) {
   ss->state = ROAR_STREAMSTATE_NEW;
   return 0;
  } else {
+#ifndef ROAR_TARGET_WIN32
   if ( roar_socket_nonblock(fh, ROAR_SOCKET_NONBLOCK) == -1 )
    return -1;
+#endif
 
   ss->ready = 1;
   ss->state = ROAR_STREAMSTATE_NEW;
