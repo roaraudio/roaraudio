@@ -835,7 +835,11 @@ int main (void) {
 #ifndef ROAR_WITHOUT_DCOMP_LIGHT
  int    light_channels = LIGHT_CHANNELS_DEFAULT;
 #endif
+#ifdef ROAR_DEFAULT_SOCKGRP
  char * sock_grp  = ROAR_DEFAULT_SOCKGRP;
+#else
+ char * sock_grp  = NULL;
+#endif
  char * sock_user = NULL;
 #ifdef ROAR_SUPPORT_LISTEN
  int    sock_type = ROAR_SOCKET_TYPE_UNKNOWN;
