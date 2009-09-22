@@ -38,8 +38,9 @@
 #define gid_t     int
 #define socklen_t int
 
-#define SHUT_RD SD_RECEIVE
-#define SHUT_WR SD_SEND
+#define SHUT_RD   SD_RECEIVE
+#define SHUT_WR   SD_SEND
+#define SHUT_RDWR SD_BOTH
 
 #define sleep(n) Sleep(1000*(n))
 
