@@ -768,7 +768,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.207 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.208 $ of RoarAudio
  */
 
 EOF
@@ -1477,8 +1477,14 @@ echo 'checking for decnet status file... '"$PROC_NET_DECNET"
 echo '#define ROAR_PROC_NET_DECNET "'"$PROC_NET_DECNET"'"' >&3
 
 
-echo 'checking for default audio group... '"$DEFAULT_GRP"
-echo '#define ROAR_DEFAULT_SOCKGRP "'"$DEFAULT_GRP"'"' >&3
+echo -n 'checking for default audio group... '
+if [ "$DEFAULT_GRP" = '(none)' ]
+then
+ echo "none (disabled by user)"
+else
+ echo "$DEFAULT_GRP"
+ echo '#define ROAR_DEFAULT_SOCKGRP "'"$DEFAULT_GRP"'"' >&3
+fi
 
 
 $NEED_GNU_SOURCE && echo '#define ROAR_NEED_GNU_SOURCE' >&3
