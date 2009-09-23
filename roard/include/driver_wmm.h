@@ -27,6 +27,27 @@
 
 #include <roaraudio.h>
 
+struct driver_wmm {
+  UINT  id;             /* device id                       */
+  HWAVEOUT hwo;         /* waveout handler                 */
+  WAVEOUTCAPS caps;     /* device caps                     */
+  WAVEFORMATEX wavefmt; /* sample format                   */
+
+  int opened;           /* device has been opened          */
+  int prepared;         /* waveheaders have been prepared  */
+  int blocks;           /* number of blocks (wave headers) */
+  int splPerBlock;      /* sample per blocks.              */
+  int msPerBlock;       /* millisecond per block (approx.) */
+
+//  void * bigbuffer;     /* Allocated buffer for waveheaders and sound data */
+//  myWH_t * wh;          /* Pointer to waveheaders in bigbuffer             */
+//  BYTE * spl;           /* Pointer to sound data in bigbuffer              */
+};
+
+int     driver_wmm_open_vio(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh, struct roar_stream_server * sstream);
+int     driver_wmm_close_vio(struct roar_vio_calls * vio);
+ssize_t driver_wmm_write(struct roar_vio_calls * vio, void *buf, size_t count);
+
 #endif
 
 //ll

@@ -26,6 +26,41 @@
 
 #if defined(ROAR_HAVE_H_MMSYSTEM) && defined(ROAR_TARGET_WIN32)
 
+int     driver_wmm_open_vio(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh, struct roar_stream_server * sstream) {
+ struct driver_wmm * self;
+
+ if ( (self = malloc(sizeof(struct driver_wmm))) == NULL )
+  return -1;
+
+ memset(self, 0, sizeof(struct driver_wmm));
+
+ memset(inst, 0, sizeof(struct roar_vio_calls));
+
+ inst->inst  = self;
+ inst->close = driver_wmm_close_vio;
+ inst->write = driver_wmm_write;
+
+ return 0;
+}
+
+int     driver_wmm_close_vio(struct roar_vio_calls * vio) {
+ struct driver_wmm * self;
+
+ if ( vio == NULL )
+  return -1;
+
+ if ( (self = vio->inst) == NULL )
+  return -1;
+
+ free(self);
+
+ return 0;
+}
+
+ssize_t driver_wmm_write(struct roar_vio_calls * vio, void *buf, size_t count) {
+ return -1;
+}
+
 #endif
 
 //ll
