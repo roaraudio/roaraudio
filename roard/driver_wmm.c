@@ -28,17 +28,35 @@
 
 int     driver_wmm_open_vio(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh, struct roar_stream_server * sstream) {
  struct driver_wmm * self;
+ WAVEFORMATEX wavefmt;
 
  if ( (self = malloc(sizeof(struct driver_wmm))) == NULL )
   return -1;
 
  memset(self, 0, sizeof(struct driver_wmm));
 
+ // VIO Setup:
  memset(inst, 0, sizeof(struct roar_vio_calls));
-
  inst->inst  = self;
  inst->close = driver_wmm_close_vio;
  inst->write = driver_wmm_write;
+
+ // WMM Setup:
+ memset(&wavefmt, 0, sizeof(wavefmt));
+
+ wavefmt.wFormatTag      = WAVE_FORMAT_PCM;
+ wavefmt.nChannels       = info->channels;
+ wavefmt.wBitsPerSample  = info->bits;
+ wavefmt.nSamplesPerSec  = info->rate;
+ wavefmt.nBlockAlign     = (wavefmt.wBitsPerSample>>3)*wavefmt.nChannels;
+ wavefmt.nAvgBytesPerSec = wavefmt.nSamplesPerSec*wavefmt.nBlockAlign;
+ wavefmt.cbSize          = 0;
+
+ /* $$$ later this should be optionnal parms */
+  self->blocks      = 64;
+  self->splPerBlock = 512;
+  self->msPerBlock  =
+    (self->splPerBlock * 1000 + info->rate - 1) / info->rate;
 
  return 0;
 }
