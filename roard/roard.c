@@ -926,7 +926,12 @@ int main (void) {
 #endif
 
 #ifdef ROAR_SUPPORT_LISTEN
+#ifndef ROAR_TARGET_WIN32
  sock_addr = ROAR_DEFAULT_SOCK_GLOBAL;
+#else
+ sock_addr = ROAR_DEFAULT_HOST;
+#endif
+
 #ifdef ROAR_HAVE_GETUID
  if ( getuid() != 0 && getenv("HOME") != NULL ) {
   snprintf(user_sock, 79, "%s/%s", (char*)getenv("HOME"), ROAR_DEFAULT_SOCK_USER);
