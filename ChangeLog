@@ -10,6 +10,8 @@ v. 0.3beta1 - ?
 	* added 'subsystem' complex: multi subsystem data on single streams
 	* added basic /Radio Data and Trasmitter Control System/.
 	* better support for stereo upmixing
+	* make audio group a optional thing
+	* better support for win32
 
 v. 0.3beta0 - Sun Sep 06 2009 22:42 CEST
 	* added new stream directions for MIDI and light control
