@@ -91,6 +91,11 @@
 #include "driver_oss.h"
 #endif
 
+#if defined(ROAR_HAVE_H_MMSYSTEM) && defined(ROAR_TARGET_WIN32)
+#include <mmsystem.h>
+#include "driver_wmm.h"
+#endif
+
 #define DRV_FLAG_NONE           0x00
 #define DRV_FLAG_FHSEC          0x01
 
