@@ -768,7 +768,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.210 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.211 $ of RoarAudio
  */
 
 EOF
@@ -913,6 +913,7 @@ test_lib_defmake ROAR_HAVE_IPX           %            IPX           c          -
 test_lib_defmake ROAR_HAVE_IPV4          %            IPv4          c          -- sys/types.h sys/socket.h 'netinet/in.h'
 test_lib_defmake ROAR_HAVE_OSS           %            OSS           c          -- sys/ioctl.h sys/soundcard.h
 test_lib_defmake ROAR_HAVE_OSS_BSD       %            BSDOSS        c          -- sys/ioctl.h soundcard.h
+test_lib_defmake ROAR_HAVE_LIBWINMM      %            WinMM         winmm      -- windows.h mmsystem.h
 test_lib_defmake ROAR_HAVE_LIBSENDFILE   %            sendfile      sendfile   -- sys/sendfile.h
 test_lib_defmake ROAR_HAVE_LIBSOCKET     %            libsocket     socket     -- sys/socket.h
 test_lib_defmake ROAR_HAVE_LIBWSOCK32    %            WinSockP0     wsock32    -- winsock2.h
