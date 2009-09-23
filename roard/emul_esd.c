@@ -139,7 +139,7 @@ int emul_esd_check_client(int client, struct roar_vio_calls * vio) {
 
  if ( vio == NULL ) {
   vio = &calls;
-  if ( roar_vio_open_fh(vio, clients_get_fh(client)) == -1 )
+  if ( roar_vio_open_fh_socket(vio, clients_get_fh(client)) == -1 )
    return -1;
  }
 
