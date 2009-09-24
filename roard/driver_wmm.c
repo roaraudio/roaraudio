@@ -194,6 +194,8 @@ int     driver_wmm_open_vio(struct roar_vio_calls * inst, char * device, struct 
  // WMM Setup:
  memset(&wavefmt, 0, sizeof(wavefmt));
 
+ info->codec = ROAR_CODEC_PCM_U_LE;
+
  self->wavefmt.wFormatTag      = WAVE_FORMAT_PCM;
  self->wavefmt.nChannels       = info->channels;
  self->wavefmt.wBitsPerSample  = info->bits;
@@ -228,6 +230,8 @@ int     driver_wmm_open_vio(struct roar_vio_calls * inst, char * device, struct 
 
  self->opened = 1;
 
+ ROAR_DBG("driver_wmm_open_vio(*) = 0");
+
  return 0;
 }
 
@@ -248,12 +252,17 @@ int     driver_wmm_close_vio(struct roar_vio_calls * vio) {
 
  free(self);
 
+ ROAR_DBG("driver_wmm_close_vio(*) = 0");
+
  return 0;
 }
 
 ssize_t driver_wmm_write(struct roar_vio_calls * vio, void *buf, size_t count) {
  struct driver_wmm * self;
+ ssize_t ret_ok = count;
  int ret = 1;
+
+ ROAR_DBG("driver_wmm_write(vio=%p, buf=%p, count=%lu) = ?", vio, buf, (unsigned long)count);
 
  if ( vio == NULL )
   return -1;
@@ -312,8 +321,10 @@ ssize_t driver_wmm_write(struct roar_vio_calls * vio, void *buf, size_t count) {
     }
   }
 
+ ROAR_DBG("driver_wmm_write(vio=%p, buf=%p, count=%lu): ret=%i", vio, buf, (unsigned long)count, ret);
+
   /*   debug("ao_wmm_play => %d rem => [%s]\n",num_bytes,ret?"success":"error"); */
-  return ret > -1 ? count : -1;
+  return ret > -1 ? ret_ok : -1;
 }
 
 #endif
