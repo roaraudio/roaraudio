@@ -39,9 +39,21 @@ struct driver_wmm {
   int splPerBlock;      /* sample per blocks.              */
   int msPerBlock;       /* millisecond per block (approx.) */
 
-//  void * bigbuffer;     /* Allocated buffer for waveheaders and sound data */
-//  myWH_t * wh;          /* Pointer to waveheaders in bigbuffer             */
-//  BYTE * spl;           /* Pointer to sound data in bigbuffer              */
+  void * bigbuffer;     /* Allocated buffer for waveheaders and sound data */
+  struct {
+   WAVEHDR wh;          /* waveheader                        */
+   char *  data;        /* sample data ptr                   */
+   int     idx;         /* index of this header              */
+   int     count;       /* current byte count                */
+   int     length;      /* size of data                      */
+   int     sent;        /* set when header is sent to device */
+  } * wh;          /* Pointer to waveheaders in bigbuffer             */
+  BYTE * spl;           /* Pointer to sound data in bigbuffer              */
+
+  int sent_blocks;      /* Number of waveheader sent (not ack).        */
+  int full_blocks;      /* Number of waveheader full (ready to send).  */
+  int widx;             /* Index to the block being currently filled.  */
+  int ridx;             /* Index to the block being sent.              */
 };
 
 int     driver_wmm_open_vio(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh, struct roar_stream_server * sstream);
