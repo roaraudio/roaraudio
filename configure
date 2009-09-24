@@ -432,6 +432,7 @@ do
    AUDACIOUS=false
    WITHOUT_VIO="$WITHOUT_VIO"' pipe cmd' # hope that with buffered pipes we can remove this soon
    WITHOUT_DCOMP="$WITHOUT_DCOMP"' cb'
+   [ "$ROARD_CFREQ" = '' ] && ROARD_CFREQ=20
   ;;
  esac;
 
@@ -768,7 +769,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.211 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.212 $ of RoarAudio
  */
 
 EOF
