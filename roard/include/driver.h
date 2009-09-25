@@ -35,6 +35,10 @@
 #define ROAR_DRIVER_DEFAULT "oss"
 #else
 
+#ifdef ROAR_HAVE_LIBWINMM
+#define ROAR_DRIVER_DEFAULT "wmm"
+#else
+
 #ifdef ROAR_HAVE_LIBAO
 #define ROAR_DRIVER_DEFAULT "ao"
 #else
@@ -44,6 +48,7 @@
 #else
 
 #define ROAR_DRIVER_DEFAULT "null"
+#endif
 #endif
 #endif
 #endif
