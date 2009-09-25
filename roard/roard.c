@@ -814,7 +814,7 @@ int main (void) {
  int i;
  char * k;
 #endif
-#ifdef ROAR_SUPPORT_LISTEN
+#if defined(ROAR_SUPPORT_LISTEN) && defined(ROAR_HAVE_GETUID)
  char user_sock[80]  = {0};
 #endif
  struct roar_audio_info sa, max_sa;
