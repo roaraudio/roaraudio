@@ -458,19 +458,27 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
   prim = 1; // if ( prim == 0 ) prim = 1; -> prim allways = 1
  }
 
+ ROAR_DBG("add_output(drv='%s', dev='%s', opts='%s') = ?", drv, dev, opts);
+
  if ( (stream = streams_new()) == -1 ) {
   ROAR_DBG("add_output(drv='%s', dev='%s', opts='%s') = -1", drv, dev, opts);
   if ( prim ) alive = 0;
   return -1;
  }
 
+ ROAR_DBG("add_output(drv='%s', dev='%s', opts='%s') = ?", drv, dev, opts);
+
  streams_get(stream, &ss);
  s = ROAR_STREAM(ss);
+
+ ROAR_DBG("add_output(drv='%s', dev='%s', opts='%s') = ?", drv, dev, opts);
 
  memset(&(s->info), 0xFF, sizeof(struct roar_audio_info)); // set everything to -1
 
  s->pos_rel_id = -1;
 // s->info.codec = codec;
+
+ ROAR_DBG("add_output(drv='%s', dev='%s', opts='%s') = ?", drv, dev, opts);
 
  k = strtok(opts, ",");
  while (k != NULL) {
@@ -575,6 +583,8 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
 
   k = strtok(NULL, ",");
  }
+
+ ROAR_DBG("add_output(drv='%s', dev='%s', opts='%s') = ?", drv, dev, opts);
 
  // set audio info...
  switch (dir) {
