@@ -480,7 +480,11 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
 
  ROAR_DBG("add_output(drv='%s', dev='%s', opts='%s') = ?", drv, dev, opts);
 
- k = strtok(opts, ",");
+ if ( opts == NULL ) {
+  k = NULL;
+ } else {
+  k = strtok(opts, ",");
+ }
 
  ROAR_DBG("add_output(drv='%s', dev='%s', opts='%s'): initial k='%s'(%p)", drv, dev, opts, k, k);
 
