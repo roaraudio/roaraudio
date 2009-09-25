@@ -871,6 +871,8 @@ int main (void) {
  struct roar_vio_calls pidfile_vio;
 #endif
 
+ ROAR_DBG("main(*): starting roard...");
+
  g_standby       =  0;
  g_autostandby   =  0;
  alive           =  1;
