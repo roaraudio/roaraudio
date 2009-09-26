@@ -25,7 +25,7 @@
 #include "roard.h"
 
 #ifndef ROAR_WITHOUT_DCOMP_EMUL_ESD
-#ifdef ROAR_HAVE_ESD
+#ifdef ROAR_HAVE_H_ESD
 
 #if !defined(ROAR_TARGET_MICROCONTROLLER) && !defined(ROAR_MINIMAL)
 #define _NAME(x) (x)

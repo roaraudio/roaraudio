@@ -138,7 +138,7 @@ int net_get_new_client (int sock, int proto) {
     // nothing needed to be done here
    break;
 #ifndef ROAR_WITHOUT_DCOMP_EMUL_ESD
-#ifdef ROAR_HAVE_ESD
+#ifdef ROAR_HAVE_H_ESD
   case ROAR_PROTO_ESOUND:
     ROAR_DBG("net_get_new_client(*): execing ESD CONNECT command");
 

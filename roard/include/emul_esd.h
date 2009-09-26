@@ -28,7 +28,7 @@
 #include <roaraudio.h>
 
 #ifndef ROAR_WITHOUT_DCOMP_EMUL_ESD
-#ifdef ROAR_HAVE_ESD
+#ifdef ROAR_HAVE_H_ESD
 
 struct emul_esd_command {
  int    cmd;
