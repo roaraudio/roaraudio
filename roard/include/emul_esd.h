@@ -30,6 +30,10 @@
 #ifndef ROAR_WITHOUT_DCOMP_EMUL_ESD
 #ifdef ROAR_HAVE_H_ESD
 
+// in case it is not allready included,
+// only needed in the case we have no libesd.* but a esd.h
+#include <esd.h>
+
 struct emul_esd_command {
  int    cmd;
  size_t datalen;
