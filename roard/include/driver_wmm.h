@@ -27,6 +27,8 @@
 
 #include <roaraudio.h>
 
+#ifdef ROAR_HAVE_LIBWINMM
+
 struct driver_wmm {
   UINT  id;             /* device id                       */
   HWAVEOUT hwo;         /* waveout handler                 */
@@ -59,6 +61,8 @@ struct driver_wmm {
 int     driver_wmm_open_vio(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh, struct roar_stream_server * sstream);
 int     driver_wmm_close_vio(struct roar_vio_calls * vio);
 ssize_t driver_wmm_write(struct roar_vio_calls * vio, void *buf, size_t count);
+
+#endif
 
 #endif
 

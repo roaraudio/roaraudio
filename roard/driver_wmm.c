@@ -24,7 +24,7 @@
 
 #include "roard.h"
 
-#if defined(ROAR_HAVE_H_MMSYSTEM) && defined(ROAR_TARGET_WIN32)
+#ifdef ROAR_HAVE_LIBWINMM
 
 static int _alloc_wave_headers(struct driver_wmm * self) {
   int bytesPerBlock = self->wavefmt.nBlockAlign * self->splPerBlock;
