@@ -690,15 +690,8 @@ int roar_conv_codec_s2u16 (void * out, void * in, int samples) {
  uint16_t * op = out;
  int i;
 
- for(i = 0; i < samples; i++) {
-  op[i] = ip[i];
-
-  if ( ip[i] & 0x8000 ) {
-   op[i] = ip[i] ^ 0xFFFF;
-  } else {
-   op[i] = ip[i] ^ 0x8000;
-  }
- }
+ for(i = 0; i < samples; i++)
+  op[i] = ip[i] + 32768;
 
  return 0;
 }
