@@ -128,21 +128,39 @@ int net_get_new_client (int sock, int proto) {
 
  ROAR_DBG("net_get_new_client(*): proto=0x%.4x", proto);
 
- if ( clients_set_proto(client, proto) == -1 )
+ if ( clients_set_proto(client, proto) == -1 ) {
+  ROAR_WARN("net_get_new_client(*): Setting proto(0x%.4x) of client %i failed.", proto, client);
   return -1;
+ }
 
  switch (proto) {
+  case ROAR_PROTO_ROARAUDIO:
+    // nothing needed to be done here
+   break;
 #ifndef ROAR_WITHOUT_DCOMP_EMUL_ESD
 #ifdef ROAR_HAVE_ESD
   case ROAR_PROTO_ESOUND:
-    if ( roar_vio_open_fh(&vio, fh) == -1 )
+    ROAR_DBG("net_get_new_client(*): execing ESD CONNECT command");
+
+    if ( roar_vio_open_fh_socket(&vio, fh) == -1 )
      return -1;
+
+    ROAR_DBG("net_get_new_client(*): creating VIO OK");
 
     if ( emul_esd_exec_command(client, ESD_PROTO_CONNECT, &vio) == -1 )
      return -1;
+
+    ROAR_DBG("net_get_new_client(*): CONNECT execed sucessfully");
    break;
 #endif
 #endif
+  default:
+    // OS independiend code to close the socket:
+    if ( roar_vio_open_fh_socket(&vio, fh) == -1 )
+     return -1;
+    roar_vio_close(&vio);
+    return -1;
+   break;
  }
 
 // close(fh);
