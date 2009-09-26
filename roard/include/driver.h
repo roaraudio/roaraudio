@@ -65,7 +65,7 @@
 #include "driver_dmx.h"
 #include "driver_pwmled.h"
 
-#ifdef ROAR_HAVE_GETTIMEOFDAY
+#if defined(ROAR_HAVE_GETTIMEOFDAY) && defined(ROAR_HAVE_USLEEP)
 #define ROAR_HAVE_DRIVER_SYSCLOCK
 #include "driver_sysclock.h"
 #endif
