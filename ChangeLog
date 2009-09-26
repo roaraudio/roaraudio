@@ -13,6 +13,8 @@ v. 0.3beta1 - ?
 	* make audio group a optional thing
 	* better support for win32
 	* wrote WMM driver
+	* better multi protocol support
+	* Support for server side EsounD emulation on win32
 
 v. 0.3beta0 - Sun Sep 06 2009 22:42 CEST
 	* added new stream directions for MIDI and light control
