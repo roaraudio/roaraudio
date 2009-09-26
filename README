@@ -15,7 +15,7 @@ http://roaraudio.keep-cool.org/
 
 -- Build requirements:
 
-A POSIX system.
+A POSIX system or win32.
 
 You should install libesd and libao and maybe some codecs.
 For Debian you may use this command:
@@ -29,6 +29,14 @@ RoarAudio has been completed.
 -- How to build:
 
  $ ./configure
+ $ make
+
+In order to build win32 binarys on UNIX or GNU/Linux:
+ $ CC=...mingw32...gcc ./configure --target-win32
+ $ make
+
+In order to build win32 binarys on Win32 with MinGW/MSYS:
+ $ bash configure
  $ make
 
 --- Plugins:
