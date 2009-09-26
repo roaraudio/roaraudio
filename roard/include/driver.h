@@ -96,7 +96,7 @@
 #include "driver_oss.h"
 #endif
 
-#if defined(ROAR_HAVE_H_MMSYSTEM) && defined(ROAR_TARGET_WIN32)
+#ifdef ROAR_HAVE_LIBWINMM
 #include <mmsystem.h>
 #include "driver_wmm.h"
 #endif
