@@ -44,17 +44,6 @@
 
 #define sleep(n) Sleep(1000*(n))
 
-#if !defined(ROAR_HAVE_BSDSOCKETS) && !defined(ROAR_HAVE_IPV4)
-#define ROAR_HAVE_IPV4
-#endif
-
-#define ROAR_NETWORK_READ(x,y,z)  recv((x), (y), (z), 0)
-#define ROAR_NETWORK_WRITE(x,y,z) send((x), (y), (z), 0)
-#else
-#define ROAR_NETWORK_READ(x,y,z)  read((x), (y), (z))
-#define ROAR_NETWORK_WRITE(x,y,z) write((x), (y), (z))
-#endif
-
 #ifndef LITTLE_ENDIAN
 #define LITTLE_ENDIAN 1234
 #endif
@@ -67,6 +56,18 @@
 
 #ifndef BYTE_ORDER
 #define BYTE_ORDER LITTLE_ENDIAN
+#endif
+
+
+#if !defined(ROAR_HAVE_BSDSOCKETS) && !defined(ROAR_HAVE_IPV4)
+#define ROAR_HAVE_IPV4
+#endif
+
+#define ROAR_NETWORK_READ(x,y,z)  recv((x), (y), (z), 0)
+#define ROAR_NETWORK_WRITE(x,y,z) send((x), (y), (z), 0)
+#else
+#define ROAR_NETWORK_READ(x,y,z)  read((x), (y), (z))
+#define ROAR_NETWORK_WRITE(x,y,z) write((x), (y), (z))
 #endif
 
 #endif
