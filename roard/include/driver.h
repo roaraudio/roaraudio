@@ -97,6 +97,7 @@
 #endif
 
 #ifdef ROAR_HAVE_LIBWINMM
+#include <windows.h>
 #include <mmsystem.h>
 #include "driver_wmm.h"
 #endif
