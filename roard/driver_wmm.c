@@ -194,7 +194,7 @@ int     driver_wmm_open_vio(struct roar_vio_calls * inst, char * device, struct 
  // WMM Setup:
  memset(&wavefmt, 0, sizeof(wavefmt));
 
- info->codec = ROAR_CODEC_PCM_U_LE;
+ info->codec = ROAR_CODEC_PCM_S_LE;
 
  self->wavefmt.wFormatTag      = WAVE_FORMAT_PCM;
  self->wavefmt.nChannels       = info->channels;
