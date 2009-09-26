@@ -645,7 +645,8 @@ test_func_defmake () {
 
 exec 3> config.h 4> Makefile.conf 5> config.log
 
-TARGET_CYGWIN=`echo "$SYSNAME" | if grep CYGWIN > /dev/null; then echo true; else echo false; fi`
+TARGET_CYGWIN=`echo "$SYSNAME" | if grep CYGWIN  > /dev/null; then echo true; else echo false; fi`
+TARGET_WIN32=`echo  "$SYSNAME" | if grep MINGW32 > /dev/null; then echo true; else echo false; fi`
 
 if [ "$SYSNAME" = 'Darwin' ]
 then
@@ -769,7 +770,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.214 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.215 $ of RoarAudio
  */
 
 EOF
