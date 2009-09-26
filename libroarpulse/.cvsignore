@@ -1,2 +1,4 @@
 empty.c
 libroarpulseinfo
+*.dll
+*.exe

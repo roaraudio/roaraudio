@@ -3,3 +3,4 @@ driver_esdfw.*
 driver_esdfw.*
 esdfw_*.o
 esdfw*.a
+*.dll

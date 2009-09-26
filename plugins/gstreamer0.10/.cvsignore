@@ -1,3 +1,4 @@
 Makefile.conf
 Makefile.OLD
 files
+*.dll
