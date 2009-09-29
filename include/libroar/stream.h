@@ -57,6 +57,8 @@ int    roar_str2dir (char * name);
 #define ROAR_FLAG_VIRTUAL        0x1000
 #define ROAR_FLAG_RECSOURCE      0x2000
 #define ROAR_FLAG_PASSMIXER      0x4000
+#define ROAR_FLAG_PRETHRU        0x8000
+// next are the exteded flags (> 16 bits)
 //#define ROAR_FLAG_SYNC           0x08
 
 #define ROAR_SET_FLAG            0
@@ -75,7 +77,7 @@ struct roar_stream_info {
  int pre_underruns;
  int post_underruns;
  int codec;
- int flags;
+ uint32_t flags;
  char * driver;
  uint_least32_t delay;
  int state;
