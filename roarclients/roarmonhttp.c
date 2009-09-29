@@ -45,7 +45,7 @@ void print_header (int codec, int rate, int channels) {
  printf("Content-type: %s\r\n", mime);
  printf("ice-audio-info: ice-samplerate=%i;ice-channels=%i\r\n", rate, channels);
  printf("icy-pub:0\r\n");
- printf("Server: RoarAudio (roarmonhttp $Revision: 1.14 $)\r\n");
+ printf("Server: RoarAudio (roarmonhttp $Revision: 1.15 $)\r\n");
  printf("\r\n");
 
  fflush(stdout);
@@ -210,6 +210,8 @@ int main (int argc, char * argv[]) {
  int    bits     = 16;
  int    channels = 2;
  int    codec    = ROAR_CODEC_OGG_VORBIS;
+ int    rel_id   = -1;
+ int    sflags   = ROAR_FLAG_NONE;
 // int    codec    = ROAR_CODEC_DEFAULT;
  char * server   = NULL;
  int    fh;
@@ -219,6 +221,8 @@ int main (int argc, char * argv[]) {
 #endif
  int dir = ROAR_DIR_MONITOR;
  int gopher = 0;
+ struct roar_connection    con;
+ struct roar_stream        s;
 
 #ifdef ROAR_HAVE_ALARM
  alarm(0); // reset alarm timers from httpd 
@@ -260,6 +264,21 @@ int main (int argc, char * argv[]) {
    rate = atoi(v);
   } else if ( !strcmp(k, "bits") ) {
    bits = atoi(v);
+  } else if ( !strcmp(k, "rel-id") || !strcmp(k, "relid") ) {
+   rel_id = atoi(v);
+  } else if ( !strcmp(k, "set-flag") ) {
+   if ( !strcmp(v, "meta") ) {
+    sflags |= ROAR_FLAG_META;
+   } else if ( !strcmp(v, "cleanmeta") ) {
+    sflags |= ROAR_FLAG_CLEANMETA;
+   } else if ( !strcmp(v, "prethru") ) {
+    sflags |= ROAR_FLAG_PRETHRU;
+   } else {
+    return 1;
+   }
+  } else if ( !strcmp(k, "dir") ) {
+   if ( (dir = roar_str2dir(v)) == -1 )
+    return 1;
   } else {
    return 1;
   }
@@ -271,11 +290,41 @@ int main (int argc, char * argv[]) {
 #endif
  }
 
-
- if ( (fh = roar_simple_stream(rate, channels, bits, codec, server, dir, "roarmonhttp")) == -1 ) {
-//  fprintf(stderr, "Error: can not start monitoring\n");
-  return 1;
+ if ( roar_simple_connect(&con, server, "roarmonhttp") == -1 ) {
+  return 10;
  }
+
+ if ( roar_stream_new(&s, rate, channels, bits, codec) == -1 ) {
+  roar_disconnect(&con);
+  return 20;
+ }
+
+ if ( rel_id != -1 ) {
+  if ( roar_stream_set_rel_id(&s, rel_id) ) {
+   roar_disconnect(&con);
+   return 21;
+  }
+ }
+
+ if ( roar_stream_connect(&con, &s, dir) == -1 ) {
+  roar_disconnect(&con);
+  return 11;
+ }
+
+ if ( sflags != ROAR_FLAG_NONE ) {
+  if ( roar_stream_set_flags(&con, &s, sflags, 0) == -1 ) {
+   roar_disconnect(&con);
+   return 14;
+  }
+ }
+
+ if ( roar_stream_exec(&con, &s) == -1 ) {
+  roar_disconnect(&con);
+  return 12;
+ }
+
+ if ( (fh = roar_get_connection_fh(&con)) == -1 )
+  return 1;
 
  if ( !gopher )
   print_header(codec, rate, channels);
@@ -291,6 +340,7 @@ int main (int argc, char * argv[]) {
     stream(fh, ROAR_STDIN);
    break;
   case ROAR_DIR_MONITOR:
+  case ROAR_DIR_THRU:
     stream(ROAR_STDOUT, fh);
    break;
  }

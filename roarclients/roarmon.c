@@ -43,6 +43,7 @@ void usage (void) {
         "  --complex            - Output complex data\n"
         "  --rdtcs              - Output Radio Data and Transmitter Control System data\n"
         "  --thru               - Output copy of other stream\n"
+        "  --prethru            - Sets prethru flag on stream\n"
         "  --rel-id ID          - Set ID of relative stream\n"
         "  --help               - Show this help\n"
        );
@@ -59,6 +60,7 @@ int main (int argc, char * argv[]) {
  char * server   = NULL;
  char * k;
  int    i;
+ int    prethru  = 0;
  struct roar_connection    con;
  struct roar_stream        s;
  struct roar_vio_calls     file, stream;
@@ -110,6 +112,9 @@ int main (int argc, char * argv[]) {
    dir   = ROAR_DIR_THRU;
   } else if ( !strcmp(k, "--rel-id") ) {
    rel_id = atoi(argv[++i]);
+
+  } else if ( !strcmp(k, "--prethru") ) {
+   prethru = 1;
 
   } else if ( !strcmp(k, "--help") || !strcmp(k, "-h") ) {
    usage();
@@ -191,6 +196,14 @@ int main (int argc, char * argv[]) {
   fprintf(stderr, "Error: can not connect stream to server\n");
   roar_disconnect(&con);
   return 11;
+ }
+
+ if ( prethru ) {
+  if ( roar_stream_set_flags(&con, &s, ROAR_FLAG_PRETHRU, 0) == -1 ) {
+   fprintf(stderr, "Error: can not set prethru flag on stream\n");
+   roar_disconnect(&con);
+   return 14;
+  }
  }
 
  if ( roar_stream_exec(&con, &s) == -1 ) {
