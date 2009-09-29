@@ -214,6 +214,8 @@ int roar_connect_fh (struct roar_connection * con, int fh) {
 }
 
 int roar_get_connection_fh (struct roar_connection * con) {
+ roar_debug_warn_sysio("roar_get_connection_fh", "roar_get_connection_vio", NULL);
+
  if ( con == NULL )
   return -1;
 
@@ -224,10 +226,11 @@ int roar_get_connection_vio (struct roar_connection * con, struct roar_vio_calls
  if ( con == NULL || vio == NULL )
   return -1;
 
- return roar_vio_open_fh_socket(vio, roar_get_connection_fh(con));
+ return roar_vio_open_fh_socket(vio, con->__fh);
 }
 
 int roar_disconnect (struct roar_connection * con) {
+ struct roar_vio_calls vio;
  struct roar_message m;
 
  m.datalen = 0;
@@ -237,9 +240,9 @@ int roar_disconnect (struct roar_connection * con) {
 
  roar_req(con, &m, NULL);
 
-#ifdef ROAR_HAVE_IO_POSIX
- close(roar_get_connection_fh(con));
-#endif
+ if ( roar_get_connection_vio(con, &vio) != -1 ) {
+  roar_vio_close(&vio);
+ }
 
  roar_connect_fh(con, -2);
 
@@ -290,7 +293,7 @@ int roar_identify   (struct roar_connection * con, char * name) {
 int roar_send_message (struct roar_connection * con, struct roar_message * mes, char * data) {
  struct roar_vio_calls vio;
 
- if ( roar_vio_open_fh_socket(&vio, roar_get_connection_fh(con)) == -1 )
+ if ( roar_get_connection_vio(con, &vio) == -1 )
   return -1;
 
  return roar_vsend_message(&vio, mes, data);
@@ -330,7 +333,7 @@ int roar_vsend_message(struct roar_vio_calls * vio, struct roar_message * mes, c
 int roar_recv_message (struct roar_connection * con, struct roar_message * mes, char ** data) {
  struct roar_vio_calls vio;
 
- if ( roar_vio_open_fh_socket(&vio, roar_get_connection_fh(con)) == -1 )
+ if ( roar_get_connection_vio(con, &vio) == -1 )
   return -1;
 
  return roar_vrecv_message(&vio, mes, data);
@@ -417,7 +420,7 @@ int roar_vrecv_message(struct roar_vio_calls * vio, struct roar_message * mes, c
 int roar_req (struct roar_connection * con, struct roar_message * mes, char ** data) {
  struct roar_vio_calls vio;
 
- if ( roar_vio_open_fh_socket(&vio, roar_get_connection_fh(con)) == -1 )
+ if ( roar_get_connection_vio(con, &vio) == -1 )
   return -1;
 
  return roar_vreq(&vio, mes, data);

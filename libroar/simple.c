@@ -395,7 +395,7 @@ int roar_simple_close(int fh) {
 int roar_simple_get_standby (int fh) {
  struct roar_connection con;
 
- roar_debug_warn_sysio("roar_simple_get_standby", NULL, NULL);
+ roar_debug_warn_sysio("roar_simple_get_standby", "roar_get_standby", NULL);
 
  if ( roar_connect_fh(&con, fh) == -1 )
   return -1;
