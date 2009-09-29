@@ -88,6 +88,7 @@
 #include "debug.h"
 #include "stack.h"
 #include "buffer.h"
+#include "nnode.h"
 #include "vio_ctl.h"
 #include "vio.h"
 #include "vio_cmd.h"
@@ -103,6 +104,7 @@
 #include "vio_select.h"
 // dstr needs to have access to all other VIOs, so it must be included last
 #include "vio_dstr.h"
+#include "client.h"
 #include "basic.h"
 #include "stream.h"
 #include "simple.h"
