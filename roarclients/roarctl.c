@@ -199,11 +199,18 @@ void list_clients (struct roar_connection * con) {
  int h;
  int id[ROAR_CLIENTS_MAX];
  char tmp[80];
+ int self_id;
+ struct roar_client self_client;
  struct roar_client c;
 #ifdef _POSIX_USERS
  struct group  * grp = NULL;
  struct passwd * pwd = NULL;
 #endif
+
+ if ( (self_id = roar_get_clientid(con)) != -1 ) {
+  if ( roar_get_client(con, &self_client, self_id) == -1 )
+   self_id = -1;
+ }
 
  if ( (num = roar_list_clients(con, id, ROAR_CLIENTS_MAX)) == -1 ) {
   fprintf(stderr, "Error: can not get client list\n");
@@ -217,15 +224,30 @@ void list_clients (struct roar_connection * con) {
    continue;
   }
   printf("Client name           : %s\n", c.name);
-  printf("Client PID            : %i(%s)\n", c.pid, proc_name(c.pid));
+
+  if ( roar_nnode_get_socktype(&(c.nnode)) != ROAR_SOCKET_TYPE_UNKNOWN ) {
+   if ( roar_nnode_to_str(&(c.nnode), tmp, 80) == 0 ) {
+    printf("Client network node   : %s\n", tmp);
+   }
+  }
+
+  if ( self_id != -1 && roar_nnode_cmp(&(self_client.nnode), &(c.nnode)) == 0 ) {
+   printf("Client PID            : %i(%s)\n", c.pid, proc_name(c.pid));
+  } else { 
+   printf("Client PID            : %i\n", c.pid);
+  }
   if ( c.uid != -1 ) {
 #ifdef _POSIX_USERS
-   pwd = getpwuid(c.uid);
-   grp = getgrgid(c.gid);
-   printf("Client UID/GID        : %i(%s)/%i(%s)\n", c.uid, pwd ? pwd->pw_name : "?", c.gid, grp ? grp->gr_name : "?");
+   if ( self_id != -1 && roar_nnode_cmp(&(self_client.nnode), &(c.nnode)) == 0 ) {
+    pwd = getpwuid(c.uid);
+    grp = getgrgid(c.gid);
+    printf("Client UID/GID        : %i(%s)/%i(%s)\n", c.uid, pwd ? pwd->pw_name : "?", c.gid, grp ? grp->gr_name : "?");
+   } else {
 #else
-   printf("Client UID/GID        : %i/%i\n", c.uid, c.gid);
+   if ( 1 ) {
 #endif
+    printf("Client UID/GID        : %i/%i\n", c.uid, c.gid);
+   }
   }
 
   if ( g_verbose && c.proto != ROAR_PROTO_NONE ) {
@@ -375,6 +397,8 @@ void list_streams (struct roar_connection * con) {
      strcat(flags, "recsource ");
     if ( info.flags & ROAR_FLAG_PASSMIXER )
      strcat(flags, "passmixer ");
+    if ( info.flags & ROAR_FLAG_PRETHRU )
+     strcat(flags, "prethru ");
 
     printf("Flags                 : %s\n", flags);
    }
@@ -758,6 +782,8 @@ int set_flags (struct roar_connection * con, int id, int reset, char * flags) {
    f |= ROAR_FLAG_PASSMIXER;
   } else if ( !strcmp(c, "virtual") ) {
    f |= ROAR_FLAG_VIRTUAL;
+  } else if ( !strcmp(c, "prethru") ) {
+   f |= ROAR_FLAG_PRETHRU;
   } else {
    fprintf(stderr, "Error: unknown flag: %s\n", c);
    return -1;
