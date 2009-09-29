@@ -260,6 +260,8 @@ int cf_speex_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  int fs2;
  int ret = 0;
  int need_extra;
+ int sid;
+ void * prethru;
 
 /*
  TODO: Befor this realy works there must be a working way to set the number of channels and bits
@@ -270,6 +272,18 @@ int cf_speex_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  ROAR_DBG("cf_speex_write(inst=%p, buf=%p, len=%i) = ?", inst, buf, len);
 
  if ( ! self->encoder ) {
+  sid = ROAR_STREAM(self->stream)->id;
+
+  if ( stream_prethru_destroy(sid) == -1 ) {
+   return -1;
+  }
+
+  if ( stream_prethru_add_data(sid, &prethru, ROAR_SPEEX_MAGIC_LEN) == -1 ) {
+   return -1;
+  }
+
+  memcpy(prethru, ROAR_SPEEX_MAGIC, ROAR_SPEEX_MAGIC_LEN);
+
   if ( stream_vio_s_write(self->stream, ROAR_SPEEX_MAGIC, ROAR_SPEEX_MAGIC_LEN) != ROAR_SPEEX_MAGIC_LEN )
    return -1;
 
@@ -281,7 +295,14 @@ int cf_speex_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
    self->encoder = speex_encoder_init(&speex_uwb_mode);
   }
 
+
   mode = ROAR_HOST2NET16(mode);
+
+  if ( stream_prethru_add_data(sid, &prethru, 2) == -1 ) {
+   return -1;
+  }
+
+  *(uint16_t*)prethru = mode;
 
   if ( stream_vio_s_write(self->stream, &mode, 2) != 2 )
    return -1;

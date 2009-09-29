@@ -79,6 +79,7 @@ struct roar_stream_server {
  int ready;
  struct roar_buffer * outputbuffer;
  int state;
+ struct roar_buffer * prethru;
 } * g_streams[ROAR_STREAMS_MAX];
 
 int streams_thru_num;
@@ -133,6 +134,11 @@ int stream_unshift_buffer (int id, struct roar_buffer *  buf);
 
 int stream_outputbuffer_request(int id, struct roar_buffer ** buf, size_t len);
 int stream_outputbuffer_destroy(int id);
+
+int stream_prethru_add(int id, struct roar_buffer * buf);
+int stream_prethru_add_data(int id, void ** buf, size_t len);
+int stream_prethru_destroy(int id);
+int stream_prethru_send(int dst, int src);
 
 int streams_check      (int id);
 int streams_send_mon   (int id);

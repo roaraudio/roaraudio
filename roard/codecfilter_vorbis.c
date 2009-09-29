@@ -143,6 +143,8 @@ int cf_vorbis_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  int i, c;
  int chans;
  int end;
+ int sid;
+ void * prethrubuf;
 #if ROAR_VORBIS_BITS == 8
  int8_t  * data = (int8_t  *) buf;
 #elif ROAR_VORBIS_BITS == 16
@@ -160,11 +162,15 @@ int cf_vorbis_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
    }
   }
 
+  sid = ROAR_STREAM(self->stream)->id;
+
   vorbis_analysis_headerout(&(self->encoder.vd), &(self->encoder.vc), &header, &header_comm, &header_code);
 
   ogg_stream_packetin(&(self->encoder.os), &header);
   ogg_stream_packetin(&(self->encoder.os), &header_comm);
   ogg_stream_packetin(&(self->encoder.os), &header_code);
+
+  stream_prethru_destroy(sid);
 
   while (ogg_stream_flush(&(self->encoder.os), &(self->encoder.og))) {
    if ( stream_vio_s_write(self->stream, self->encoder.og.header, self->encoder.og.header_len)
@@ -173,6 +179,11 @@ int cf_vorbis_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
                                                                  != self->encoder.og.body_len     ) {
     free(self); // TODO: do we need addional cleanup?
     return -1;
+   }
+   // we ignore errors at the moment...
+   if ( stream_prethru_add_data(sid, &prethrubuf, self->encoder.og.header_len + self->encoder.og.body_len) != -1 ) {
+    memcpy(prethrubuf,                               self->encoder.og.header, self->encoder.og.header_len);
+    memcpy(prethrubuf + self->encoder.og.header_len, self->encoder.og.body,   self->encoder.og.body_len  );
    }
   }
   self->opened = 1;

@@ -35,6 +35,15 @@
 struct roar_codecfilter g_codecfilter[] = {
  {-1,                     "null", "null codec filter", NULL, NULL, ROAR_CODECFILTER_NONE, ROAR_SUBSYS_NONE,
                                           NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
+ {-1,                     "PCM", "Native PCM Support", NULL, NULL,
+                          ROAR_CODECFILTER_READ|ROAR_CODECFILTER_WRITE|ROAR_CODECFILTER_PRETHRU_NN, ROAR_SUBSYS_WAVEFORM,
+                                          NULL, NULL, NULL, NULL, NULL, NULL, cf_alaw_delay, NULL},
+ {ROAR_CODEC_MIDI,        "MIDI", "Native MIDI Support", NULL, NULL,
+                          ROAR_CODECFILTER_READ|ROAR_CODECFILTER_WRITE|ROAR_CODECFILTER_PRETHRU_NN, ROAR_SUBSYS_MIDI,
+                                          NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
+ {ROAR_CODEC_DMX512,      "DMX512", "Native DMX512 Support", NULL, NULL,
+                          ROAR_CODECFILTER_READ|ROAR_CODECFILTER_WRITE|ROAR_CODECFILTER_PRETHRU_NN, ROAR_SUBSYS_LIGHT,
+                                          NULL, NULL, NULL, NULL, NULL, NULL, cf_alaw_delay, NULL},
 
 /*
 #ifdef ROAR_HAVE_LIBSNDFILE
@@ -44,7 +53,7 @@ struct roar_codecfilter g_codecfilter[] = {
 */
 #ifndef ROAR_WITHOUT_CF_WAVE
  {ROAR_CODEC_RIFF_WAVE, "RIFF/WAVE", "RIFF/WAVE", NULL, NULL,
-  ROAR_CODECFILTER_READ|ROAR_CODECFILTER_WRITE, ROAR_SUBSYS_WAVEFORM,
+  ROAR_CODECFILTER_READ|ROAR_CODECFILTER_WRITE|ROAR_CODECFILTER_PRETHRU, ROAR_SUBSYS_WAVEFORM,
   cf_wave_open, cf_wave_close, NULL, cf_wave_write, cf_wave_read, NULL, NULL, cf_wave_ctl},
 #endif
 //#endif
@@ -55,12 +64,18 @@ struct roar_codecfilter g_codecfilter[] = {
   cont_fw_cf_open, cont_fw_cf_close, NULL, cont_fw_cf_write, cont_fw_cf_read, cont_fw_cf_flush, NULL, cont_fw_cf_ctl},
 #endif
 
+#ifdef ROAR_HAVE_LIBOGG
+ {ROAR_CODEC_OGG, "Ogg", "Ogg Container Format", NULL, NULL, ROAR_CODECFILTER_NONE,
+  ROAR_SUBSYS_WAVEFORM|ROAR_SUBSYS_MIDI,
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
+#endif
+
 #ifdef ROAR_SUPPORT_ALAW
  {ROAR_CODEC_ALAW, "alaw", "A-Law", NULL, NULL,
 #ifdef ROAR_SUPPORT_ALAW_RW
-  ROAR_CODECFILTER_READ|ROAR_CODECFILTER_WRITE,
+  ROAR_CODECFILTER_READ|ROAR_CODECFILTER_WRITE|ROAR_CODECFILTER_PRETHRU_NN,
 #else
-  ROAR_CODECFILTER_READ,
+  ROAR_CODECFILTER_READ|ROAR_CODECFILTER_PRETHRU_NN,
 #endif
   ROAR_SUBSYS_WAVEFORM,
   cf_alaw_open, cf_alaw_close, NULL,
@@ -75,9 +90,9 @@ struct roar_codecfilter g_codecfilter[] = {
 #ifdef ROAR_SUPPORT_MULAW
  {ROAR_CODEC_MULAW, "mulaw", "mu-Law", NULL, NULL,
 #ifdef ROAR_SUPPORT_MULAW_RW
-  ROAR_CODECFILTER_READ|ROAR_CODECFILTER_WRITE,
+  ROAR_CODECFILTER_READ|ROAR_CODECFILTER_WRITE|ROAR_CODECFILTER_PRETHRU_NN,
 #else
-  ROAR_CODECFILTER_READ,
+  ROAR_CODECFILTER_READ|ROAR_CODECFILTER_PRETHRU_NN,
 #endif
   ROAR_SUBSYS_WAVEFORM,
   cf_mulaw_open, cf_mulaw_close, NULL,
@@ -100,7 +115,7 @@ struct roar_codecfilter g_codecfilter[] = {
 #ifdef ROAR_HAVE_LIBVORBISFILE
  {ROAR_CODEC_OGG_VORBIS, "oggvorbis", "Ogg Vorbis decoder", NULL, NULL,
 #ifdef ROAR_HAVE_LIBVORBISENC
- ROAR_CODECFILTER_READ|ROAR_CODECFILTER_WRITE,
+ ROAR_CODECFILTER_READ|ROAR_CODECFILTER_WRITE|ROAR_CODECFILTER_PRETHRU,
 #else
  ROAR_CODECFILTER_READ,
 #endif
@@ -135,13 +150,15 @@ struct roar_codecfilter g_codecfilter[] = {
 #endif
 
 #ifdef ROAR_HAVE_LIBCELT
- {ROAR_CODEC_ROAR_CELT, "RoarCELT", "RoarAudio CELT", NULL, NULL, ROAR_CODECFILTER_READ|ROAR_CODECFILTER_WRITE,
+ {ROAR_CODEC_ROAR_CELT, "RoarCELT", "RoarAudio CELT", NULL, NULL,
+  ROAR_CODECFILTER_READ|ROAR_CODECFILTER_WRITE|ROAR_CODECFILTER_PRETHRU,
   ROAR_SUBSYS_WAVEFORM,
   cf_celt_open, cf_celt_close, NULL, cf_celt_write, cf_celt_read, NULL, cf_celt_delay, NULL},
 #endif
 
 #ifdef ROAR_HAVE_LIBSPEEX
- {ROAR_CODEC_ROAR_SPEEX, "RoarSpeex", "RoarAudio Speex", NULL, NULL, ROAR_CODECFILTER_READ|ROAR_CODECFILTER_WRITE,
+ {ROAR_CODEC_ROAR_SPEEX, "RoarSpeex", "RoarAudio Speex", NULL, NULL,
+  ROAR_CODECFILTER_READ|ROAR_CODECFILTER_WRITE|ROAR_CODECFILTER_PRETHRU,
   ROAR_SUBSYS_WAVEFORM,
   cf_speex_open, cf_speex_close, NULL, cf_speex_write, cf_speex_read, NULL, NULL, NULL},
 #endif
@@ -160,6 +177,10 @@ struct roar_codecfilter g_codecfilter[] = {
   cf_cmd_open, NULL, NULL, NULL, NULL, NULL, codecfilter_delay_fulldyn, NULL},
 #endif
 #endif
+
+ {ROAR_CODEC_ROARDMX, "RoarDMX", "Native RoarDMX Support", NULL, NULL,
+                          ROAR_CODECFILTER_READ|ROAR_CODECFILTER_WRITE|ROAR_CODECFILTER_PRETHRU_NN, ROAR_SUBSYS_LIGHT,
+                                          NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
 
  {-1, NULL, NULL, NULL, NULL, ROAR_CODECFILTER_NONE, ROAR_SUBSYS_NONE,
   NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL} // end of list
@@ -202,6 +223,10 @@ void print_codecfilterlist (void) {
     mode[0] = 'r';
    if ( flags & ROAR_CODECFILTER_WRITE )
     mode[1] = 'w';
+   if ( flags & ROAR_CODECFILTER_PRETHRU )
+    mode[2] = 'P';
+   if ( flags & ROAR_CODECFILTER_PRETHRU_NN )
+    mode[2] = 'p';
   }
 
   *delay = 0;

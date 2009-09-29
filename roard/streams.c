@@ -103,6 +103,7 @@ int streams_new    (void) {
    s->primary         =  0;
    s->ready           =  0;
    s->outputbuffer    = NULL;
+   s->prethru         = NULL;
 
    s->mixer.scale     = 65535;
    s->mixer.rpg_mul   = 1;
@@ -227,6 +228,7 @@ int streams_delete (int id) {
  }
 
  stream_outputbuffer_destroy(id);
+ stream_prethru_destroy(id);
 
  if ( s->buffer != NULL )
   roar_buffer_free(s->buffer);
@@ -420,6 +422,8 @@ int streams_set_fh     (int id, int fh) {
  if ( (s = ROAR_STREAM(ss = g_streams[id])) == NULL )
   return -1;
 
+ dir = ROAR_STREAM(ss)->dir;
+
  ROAR_DBG("streams_set_fh(id=%i): g_streams[id]->id=%i", id, s->id);
 
  s->fh = fh;
@@ -434,10 +438,16 @@ int streams_set_fh     (int id, int fh) {
 #endif
  }
 
- if ( codecfilter_open(&(ss->codecfilter_inst), &(ss->codecfilter), NULL,
-                  s->info.codec, ss) == -1 ) {
-  return streams_delete(id); // TODO: FIXME: is this correct? shoudn't we return -1 in any case here?
+ ROAR_DBG("streams_set_fh(id=%i, fh=%i) = ?", id, fh);
+
+ if ( dir != ROAR_DIR_THRU ) {
+  if ( codecfilter_open(&(ss->codecfilter_inst), &(ss->codecfilter), NULL,
+                   s->info.codec, ss) == -1 ) {
+   return streams_delete(id); // TODO: FIXME: is this correct? shoudn't we return -1 in any case here?
+  }
  }
+
+ ROAR_DBG("streams_set_fh(id=%i, fh=%i) = ?", id, fh);
 
  if ( fh == -2 ) {
   ROAR_DBG("streams_set_fh(id=%i, fh=%i) = ?", id, fh);
@@ -453,15 +463,17 @@ int streams_set_fh     (int id, int fh) {
   }
  }
 
+ ROAR_DBG("streams_set_fh(id=%i, fh=%i) = ?", id, fh);
+
  if ( fh == -1 || fh == -2 ) { // yes, this is valid, indecats full vio!
   ss->ready = 1;
   ss->state = ROAR_STREAMSTATE_NEW;
   return 0;
  }
 
-// roar_socket_recvbuf(fh, ROAR_OUTPUT_CALC_OUTBUFSIZE( &(ROAR_STREAM(g_streams[id])->info) )); // set recv buffer to minimum
+ ROAR_DBG("streams_set_fh(id=%i, fh=%i) = ?", id, fh);
 
- dir = ROAR_STREAM(ss)->dir;
+// roar_socket_recvbuf(fh, ROAR_OUTPUT_CALC_OUTBUFSIZE( &(ROAR_STREAM(g_streams[id])->info) )); // set recv buffer to minimum
 
  switch (dir) {
   case ROAR_DIR_MONITOR:
@@ -492,6 +504,8 @@ int streams_set_fh     (int id, int fh) {
  if ( !nonblock ) {
   ss->ready = 1;
   ss->state = ROAR_STREAMSTATE_NEW;
+
+  ROAR_DBG("streams_set_fh(id=%i, fh=%i) = 0", id, fh);
   return 0;
  } else {
 #ifndef ROAR_TARGET_WIN32
@@ -501,6 +515,8 @@ int streams_set_fh     (int id, int fh) {
 
   ss->ready = 1;
   ss->state = ROAR_STREAMSTATE_NEW;
+
+  ROAR_DBG("streams_set_fh(id=%i, fh=%i) = 0", id, fh);
   return 0;
  }
 }
@@ -1173,6 +1189,106 @@ int stream_outputbuffer_destroy(int id) {
  return 0;
 }
 
+int stream_prethru_add(int id, struct roar_buffer * buf) {
+ register struct roar_stream_server *  ss;
+
+ _CHECK_SID(id);
+
+ if ( (ss = g_streams[id]) == NULL )
+  return -1;
+
+ if ( ss->prethru == NULL ) {
+  ss->prethru = buf;
+  return 0;
+ }
+
+ if ( roar_buffer_add(ss->prethru, buf) == -1 ) {
+  return -1;
+ }
+
+ return 0;
+}
+
+int stream_prethru_add_data(int id, void ** buf, size_t len) {
+ struct roar_buffer * buffer;
+
+ _CHECK_SID(id);
+
+ if ( roar_buffer_new(&buffer, len) == -1 )
+  return -1;
+
+ if ( roar_buffer_get_data(buffer, buf) == -1 ) {
+  roar_buffer_free(buffer);
+  return -1;
+ }
+
+ if ( stream_prethru_add(id, buffer) == -1 ) {
+  roar_buffer_free(buffer);
+  return -1;
+ }
+
+ return 0;
+}
+
+int stream_prethru_destroy(int id) {
+ int ret;
+ register struct roar_stream_server *  ss;
+
+ _CHECK_SID(id);
+
+ if ( (ss = g_streams[id]) == NULL )
+  return -1;
+
+ if ( ss->prethru != NULL ) {
+  ret = roar_buffer_free(ss->prethru);
+  ss->prethru = NULL;
+  return ret;
+ }
+
+ return 0;
+}
+
+int stream_prethru_send(int dst, int src) {
+ struct roar_stream_server *  dst_ss, * src_ss;
+ struct roar_buffer * bufbuf;
+ void * bufdata;
+ size_t buflen;
+
+ ROAR_DBG("stream_prethru_send(dst=%i, src=%i) = ?", dst, src);
+
+ _CHECK_SID(dst);
+ _CHECK_SID(src);
+
+ if ( (dst_ss = g_streams[dst]) == NULL )
+  return -1;
+
+ if ( (src_ss = g_streams[src]) == NULL )
+  return -1;
+
+ bufbuf = src_ss->prethru;
+
+ ROAR_DBG("stream_prethru_send(dst=%i, src=%i): prethru buffer at %p", dst, src, bufbuf);
+
+ while (bufbuf != NULL) {
+  ROAR_DBG("stream_prethru_send(dst=%i, src=%i): looping with buffer at %p", dst, src, bufbuf);
+
+  if ( roar_buffer_get_data(bufbuf, &bufdata) == -1 )
+   return -1;
+
+  if ( roar_buffer_get_len(bufbuf, &buflen) == -1 )
+   return -1;
+
+  if ( stream_vio_s_write(dst_ss, bufdata, buflen) != buflen )
+   return -1;
+
+  if ( roar_buffer_get_next(bufbuf, &bufbuf) == -1 )
+   return -1;
+ }
+
+ ROAR_DBG("stream_prethru_send(dst=%i, src=%i) = 0", dst, src);
+ return 0;
+}
+
 int streams_check  (int id) {
  int fh;
  ssize_t req, realreq, done;
@@ -1613,13 +1729,21 @@ ssize_t stream_vio_s_read (struct roar_stream_server * stream, void *buf, size_t
  if ( len == 0 && r == -1 )
   return -1;
 
- if ( streams_thru_num )
-  for (i = 0; i < ROAR_STREAMS_MAX; i++)
-   if ( g_streams[i] != NULL && ROAR_STREAM(g_streams[i])->pos_rel_id == ROAR_STREAM(stream)->id )
-    if ( ROAR_STREAM(g_streams[i])->dir == ROAR_DIR_THRU )
-     if ( g_streams[i]->ready )
+ if ( streams_thru_num ) {
+  for (i = 0; i < ROAR_STREAMS_MAX; i++) {
+   if ( g_streams[i] != NULL && ROAR_STREAM(g_streams[i])->pos_rel_id == ROAR_STREAM(stream)->id ) {
+    if ( ROAR_STREAM(g_streams[i])->dir == ROAR_DIR_THRU ) {
+     if ( g_streams[i]->ready ) {
       if ( stream_vio_write(i, orig_buf, len) != len )
        streams_delete(i);
+
+      if ( g_streams[i] != NULL )
+       g_streams[i]->state = ROAR_STREAMSTATE_OLD;
+     }
+    }
+   }
+  }
+ }
 
  return len;
 }
@@ -1639,13 +1763,30 @@ ssize_t stream_vio_s_write(struct roar_stream_server * stream, void *buf, size_t
 
 // ROAR_WARN("stream_vio_s_write(*): writing...");
 
- if ( streams_thru_num )
-  for (i = 0; i < ROAR_STREAMS_MAX; i++)
-   if ( g_streams[i] != NULL && ROAR_STREAM(g_streams[i])->pos_rel_id == ROAR_STREAM(stream)->id )
-    if ( ROAR_STREAM(g_streams[i])->dir == ROAR_DIR_THRU )
-     if ( g_streams[i]->ready )
-      if ( stream_vio_write(i, buf, count) != count )
+ if ( streams_thru_num ) {
+  for (i = 0; i < ROAR_STREAMS_MAX; i++) {
+   if ( g_streams[i] != NULL && ROAR_STREAM(g_streams[i])->pos_rel_id == ROAR_STREAM(stream)->id ) {
+    if ( ROAR_STREAM(g_streams[i])->dir == ROAR_DIR_THRU ) {
+     if ( g_streams[i]->ready ) {
+      if ( g_streams[i]->state == ROAR_STREAMSTATE_NEW ) {
+       if ( streams_get_flag(i, ROAR_FLAG_PRETHRU) == 1 ) {
+         if ( stream_prethru_send(i, ROAR_STREAM(stream)->id) == -1 ) {
+         streams_delete(i);
+        }
+       }
+      }
+
+      if ( stream_vio_write(i, buf, count) != count ) {
        streams_delete(i);
+      }
+
+      if ( g_streams[i] != NULL )
+       g_streams[i]->state = ROAR_STREAMSTATE_OLD;
+     }
+    }
+   }
+  }
+ }
 
  return roar_vio_write(&(stream->vio), buf, count);
 }

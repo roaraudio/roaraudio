@@ -153,11 +153,12 @@ int cf_wave_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
 int cf_wave_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  struct codecfilter_wave_inst * self = (struct codecfilter_wave_inst *) inst;
  struct roar_stream           * s    = ROAR_STREAM(self->stream);
- char header[44];
+ void   * header;
  int32_t  tmp32;
  int16_t  tmp16;
  int16_t  bits;
  int16_t  codec;
+ int      sid;
 
  ROAR_DBG("cf_wave_write(inst=%p, buf=%p, len=%i) = ?", inst, buf, len);
  ROAR_DBG("cf_wave_write(inst=%p, buf=%p, len=%i): self->opened=%i", inst, buf, len, self->opened);
@@ -168,6 +169,16 @@ int cf_wave_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
 
   if ( s->fh == -1 ) {
    errno = EAGAIN;
+   return -1;
+  }
+
+  sid = ROAR_STREAM(self->stream)->id;
+
+  if ( stream_prethru_destroy(sid) == -1 ) {
+   return -1;
+  }
+
+  if ( stream_prethru_add_data(sid, &header, 44) == -1 ) {
    return -1;
   }
 

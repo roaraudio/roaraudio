@@ -224,10 +224,24 @@ int cf_celt_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
  int org_len = len;
  int diff;
  int fs2 = self->frame_size * 2 * ROAR_STREAM(self->stream)->info.channels;
+ int sid;
  uint16_t pkglen_net, pkglen;
  unsigned char cbits[BS+2];
+ void * prethru;
 
  if ( !self->opened_encoder ) {
+  sid = ROAR_STREAM(self->stream)->id;
+
+  if ( stream_prethru_destroy(sid) == -1 ) {
+   return -1;
+  }
+
+  if ( stream_prethru_add_data(sid, &prethru, ROAR_CELT_MAGIC_LEN) == -1 ) {
+   return -1;
+  }
+
+  memcpy(prethru, ROAR_CELT_MAGIC, ROAR_CELT_MAGIC_LEN);
+
   if ( stream_vio_s_write(self->stream, ROAR_CELT_MAGIC, ROAR_CELT_MAGIC_LEN) != ROAR_CELT_MAGIC_LEN )
    return -1;
   self->opened_encoder = 1;

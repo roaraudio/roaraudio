@@ -31,9 +31,11 @@
 
 struct roar_stream_server;
 
-#define ROAR_CODECFILTER_NONE  0
-#define ROAR_CODECFILTER_READ  1
-#define ROAR_CODECFILTER_WRITE 2
+#define ROAR_CODECFILTER_NONE        0x00
+#define ROAR_CODECFILTER_READ        0x01
+#define ROAR_CODECFILTER_WRITE       0x02
+#define ROAR_CODECFILTER_PRETHRU     0x04 /* we have support for prethru */
+#define ROAR_CODECFILTER_PRETHRU_NN  0x08 /* prethru Not Needed          */
 
 
 #define ROAR_CODECFILTER_CTL_NOOP            ROAR_STREAM_CTL_COMP_CF|0x0000 /* noop... */
