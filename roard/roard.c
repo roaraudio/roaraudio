@@ -1518,6 +1518,15 @@ int main (void) {
 
  strcpy(self->name, "RoarAudio daemon internal");
 
+ if ( roar_nnode_free(&(self->nnode)) == -1 )
+  return 1;
+
+ // not fully correct but ok as workaorund
+ // so tools assume that roard runs on the same machine as
+ // they in case they use AF_UNIX:
+ if ( roar_nnode_new(&(self->nnode), ROAR_SOCKET_TYPE_UNIX) == -1 )
+  return 1;
+
 #ifdef ROAR_HAVE_FORK
  if ( daemon ) {
   close(ROAR_STDIN );

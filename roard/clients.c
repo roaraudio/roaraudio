@@ -69,6 +69,11 @@ int clients_new (void) {
     for (s = 0; s < ROAR_CLIENTS_MAX_STREAMS_PER_CLIENT; s++)
      n->streams[s] = -1;
 
+    if ( roar_nnode_new(&(n->nnode), ROAR_SOCKET_TYPE_UNKNOWN) == -1 ) {
+     free(n);
+     return -1;
+    }
+
     g_clients[i] = n;
 
     ROAR_DBG("clients_new(void) = %i", i);
@@ -105,6 +110,8 @@ int clients_delete (int id) {
 
  if ( g_clients[id]->fh != -1 && close_client_fh )
   close(g_clients[id]->fh);
+
+ roar_nnode_free(&(g_clients[id]->nnode));
 
  free(g_clients[id]);
  g_clients[id] = NULL;
@@ -494,6 +501,7 @@ int client_stream_exec   (int client, int stream) {
    g_clients[client]->execed = stream;
    streams_set_fh(stream, g_clients[client]->fh);
    streams_set_socktype(stream, ROAR_SOCKET_TYPE_GENSTR);
+   ROAR_DBG("client_stream_exec(client=%i, stream=%i) = 0", client, stream);
    return 0;
   }
  }

@@ -88,9 +88,11 @@ int net_get_new_client (int sock, int proto) {
  struct ucred cred;
  socklen_t cred_len = sizeof(cred);
 #endif
- struct roar_vio_calls vio;
+ struct roar_vio_calls    vio;
+ struct sockaddr_storage  addr;
+ socklen_t                addrlen = sizeof(addr);
 
- fh = accept(sock, NULL, NULL);
+ fh = accept(sock, (struct sockaddr*)&addr, &addrlen);
 
  ROAR_DBG("net_get_new_client(void): fh = %i", fh);
 
@@ -125,6 +127,12 @@ int net_get_new_client (int sock, int proto) {
   }
  }
 #endif
+
+ if ( roar_nnode_free(&(c->nnode)) == -1 )
+  return -1;
+
+ if ( roar_nnode_new_from_sockaddr(&(c->nnode), (struct sockaddr*)&addr, addrlen) == -1 )
+  return -1;
 
  ROAR_DBG("net_get_new_client(*): proto=0x%.4x", proto);
 
