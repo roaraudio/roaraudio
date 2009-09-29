@@ -336,6 +336,7 @@ int roar_ctl_c2m      (struct roar_message * m, struct roar_client * c) {
  int i;
  int max_len;
  uint32_t pid;
+ size_t len_rest;
 
  if ( c == NULL )
   return -1;
@@ -384,6 +385,11 @@ int roar_ctl_c2m      (struct roar_message * m, struct roar_client * c) {
  memcpy(&(m->data[cur]), &pid, 4);
  cur += 4;
 
+ len_rest = sizeof(m->data) - cur;
+ if ( roar_nnode_to_blob(&(c->nnode), &(m->data[cur]), &len_rest) == 0 ) {
+  cur += len_rest;
+ }
+
  m->datalen = cur;
 
  return 0;
@@ -393,6 +399,7 @@ int roar_ctl_m2c      (struct roar_message * m, struct roar_client * c) {
  int i;
  int cur;
  uint32_t pid;
+ size_t len;
 
  if ( m == NULL || c == NULL )
   return -1;
@@ -453,6 +460,19 @@ int roar_ctl_m2c      (struct roar_message * m, struct roar_client * c) {
   cur += 4;
  } else {
   c->byteorder = ROAR_BYTEORDER_UNKNOWN;
+ }
+
+ if ( m->datalen > cur ) {
+  len = m->datalen - cur;
+  if ( roar_nnode_from_blob(&(c->nnode), &(m->data[cur]), &len) == 0 ) {
+   cur += len;
+  } else {
+   if ( roar_nnode_new(&(c->nnode), ROAR_SOCKET_TYPE_UNKNOWN) == -1 )
+    return -1;
+  }
+ } else {
+  if ( roar_nnode_new(&(c->nnode), ROAR_SOCKET_TYPE_UNKNOWN) == -1 )
+   return -1;
  }
 
  return 0;
