@@ -774,7 +774,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.216 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.217 $ of RoarAudio
  */
 
 EOF
@@ -787,7 +787,9 @@ EOF
 
  echo "ARGS(): $_CARGS"
 
- for i in PATH SHELL CC RANLIB PKG_CONFIG SYSNAME TARGET_CYGWIN
+ for i in PATH SHELL CC RANLIB PKG_CONFIG SYSNAME \
+          TARGET_CYGWIN TARGET_WIN32 TARGET_MICROCONTROLLER CROSS_COMPILE \
+          RUNTIME_DETECT MINIMAL EXEC_HELPER
  do
   eval echo "BASICCONF\($i\): \$$i";
  done
