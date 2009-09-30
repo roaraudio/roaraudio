@@ -77,6 +77,7 @@ int esd_close( int esd ) {
 /* if your stream is at 22.05 Khz it'll be double this - in mono   */
 /* double again ... etc.                                           */
 int esd_get_latency(int esd) {
+#ifdef ROAR_HAVE_GETTIMEOFDAY
  struct timeval         try, ans;
  struct roar_message    m;
  struct roar_connection con;
@@ -102,6 +103,10 @@ int esd_get_latency(int esd) {
 */
 
  return 441*ans.tv_usec/10000;
+#else
+ // don't know...
+ return 0;
+#endif
 }
 
 
