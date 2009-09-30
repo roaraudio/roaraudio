@@ -774,7 +774,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.217 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.218 $ of RoarAudio
  */
 
 EOF
@@ -892,7 +892,7 @@ fi
 echo >&3
 
 #                #define                 subdir       name          -lxxx      -- header
-test_lib_defmake ROAR_HAVE_ESD           libroaresd   EsounD        esd        -- esd.h
+test_lib_defmake ROAR_HAVE_ESD           %            EsounD        esd        -- esd.h
 test_lib_defmake ROAR_HAVE_LIBAO         %            libao         ao         -- ao/ao.h ao/plugin.h
 test_lib_defmake ROAR_HAVE_LIBRAUM       %            RAUM          raum       -- raum.h
 test_lib_defmake ROAR_HAVE_LIBOGG        %            libogg        ogg        -- ogg/ogg.h
@@ -938,7 +938,7 @@ test_lib_defmake ROAR_HAVE_H_FCNTL       %            fcntl.h       c          -
 test_lib_defmake ROAR_HAVE_H_UNISTD      %            unistd.h      c          -- unistd.h
 test_lib_defmake ROAR_HAVE_H_POLL        %            poll.h        c          -- poll.h
 test_lib_defmake ROAR_HAVE_H_MMSYSTEM    %            mmsystem.h    c          -- windows.h mmsystem.h
-test_lib_defmake ROAR_HAVE_H_ESD         %            esd.h         c          -- esd.h
+test_lib_defmake ROAR_HAVE_H_ESD         libroaresd   esd.h         c          -- esd.h
 MINIMAL=$OLD_MINIMAL
 
 echo >&3
