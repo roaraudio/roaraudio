@@ -774,7 +774,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.218 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.219 $ of RoarAudio
  */
 
 EOF
@@ -909,7 +909,7 @@ test_lib_defmake ROAR_HAVE_LIBSAMPLERATE %            libsamplerate samplerate -
 test_lib_defmake ROAR_HAVE_LIBSHOUT      %            libshout      shout      -- shout/shout.h
 test_lib_defmake ROAR_HAVE_LIBPULSE      libroarpulse libpulse      pulse      -- pulse/pulseaudio.h pulse/simple.h
 test_lib_defmake ROAR_HAVE_LIBY2         libroaryiff  libyiff       Y2         -- Y2/Y.h Y2/Ylib.h
-test_lib_defmake ROAR_HAVE_LIBARTSC      libroararts  libartsc      artsc      -- kde/artsc/artsc.h
+test_lib_defmake ROAR_HAVE_LIBARTSC      %            libartsc      artsc      -- kde/artsc/artsc.h
 test_lib_defmake ROAR_HAVE_LIBOSSAUDIO   %            libossaudio   ossaudio   -- sys/ioctl.h
 test_lib_defmake ROAR_HAVE_LIBSNDIO      %            libsndio      sndio      -- sndio.h
 test_lib_defmake ROAR_HAVE_LIBSSL        %            OpenSSL       ssl        -- openssl/bio.h openssl/evp.h
@@ -939,6 +939,7 @@ test_lib_defmake ROAR_HAVE_H_UNISTD      %            unistd.h      c          -
 test_lib_defmake ROAR_HAVE_H_POLL        %            poll.h        c          -- poll.h
 test_lib_defmake ROAR_HAVE_H_MMSYSTEM    %            mmsystem.h    c          -- windows.h mmsystem.h
 test_lib_defmake ROAR_HAVE_H_ESD         libroaresd   esd.h         c          -- esd.h
+test_lib_defmake ROAR_HAVE_H_ARTSC       libroararts  artsc.h       c          -- kde/artsc/artsc.h
 MINIMAL=$OLD_MINIMAL
 
 echo >&3
