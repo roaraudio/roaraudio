@@ -1,8 +1,8 @@
-TARGETS=libartsc.so libroarartsc.so
-OBJS=libartsc.o
-
 include ../Makefile.conf
 include ../Makefile.inc
+
+TARGETS=libartsc$(SHARED_SUFFIX) libroarartsc$(SHARED_SUFFIX)
+OBJS=libartsc.o
 
 #DEFINES        = -DDEBUG
 INCLUDE = -I../include -I../include/libroarpulse
@@ -16,7 +16,7 @@ clean:
 	rm -f ${TARGETS} *.o
 new: clean all
 
-libartsc.so: libroarartsc.so
-	cp libroarartsc.so libartsc.so
-libroarartsc.so: ${OBJS}
-	${CC} ${LDFLAGS} $(SHARED) -o libroarartsc.so ${OBJS} ${LIBS}
+libartsc$(SHARED_SUFFIX): libroarartsc$(SHARED_SUFFIX)
+	cp libroarartsc$(SHARED_SUFFIX) libartsc$(SHARED_SUFFIX)
+libroarartsc$(SHARED_SUFFIX): ${OBJS}
+	${CC} ${LDFLAGS} $(SHARED) -o libroarartsc$(SHARED_SUFFIX) ${OBJS} ${LIBS}
