@@ -81,9 +81,7 @@ int net_check_listen  (void) {
 int net_get_new_client (int sock, int proto) {
  int fh;
  int client;
-#if defined(SO_PEERCRED) || defined(ROAR_HAVE_GETPEEREID)
  struct roar_client * c;
-#endif
 #ifdef SO_PEERCRED
  struct ucred cred;
  socklen_t cred_len = sizeof(cred);
@@ -108,8 +106,8 @@ int net_get_new_client (int sock, int proto) {
   return -1;
  }
 
-#ifdef SO_PEERCRED
  if ( clients_get(client, &c) != -1 ) {
+#ifdef SO_PEERCRED
   if (getsockopt(fh, SOL_SOCKET, SO_PEERCRED, &cred, &cred_len) != -1) {
    if ( cred.pid != 0 ) {
     c->pid = cred.pid;
@@ -119,20 +117,18 @@ int net_get_new_client (int sock, int proto) {
   } else {
    ROAR_DBG("req_on_identify(): Can't get creds via SO_PEERCRED: %s", strerror(errno));
   }
- }
 #elif defined(ROAR_HAVE_GETPEEREID)
- if ( clients_get(client, &c) != -1 ) {
   if (getpeereid(fh, &(c->uid), &(c->gid)) == -1) {
    ROAR_DBG("req_on_identify(): Can't get creds via getpeereid(): %s", strerror(errno));
   }
- }
 #endif
 
- if ( roar_nnode_free(&(c->nnode)) == -1 )
-  return -1;
+  if ( roar_nnode_free(&(c->nnode)) == -1 )
+   return -1;
 
- if ( roar_nnode_new_from_sockaddr(&(c->nnode), (struct sockaddr*)&addr, addrlen) == -1 )
-  return -1;
+  if ( roar_nnode_new_from_sockaddr(&(c->nnode), (struct sockaddr*)&addr, addrlen) == -1 )
+   return -1;
+ }
 
  ROAR_DBG("net_get_new_client(*): proto=0x%.4x", proto);
 
