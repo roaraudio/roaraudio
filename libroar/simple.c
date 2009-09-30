@@ -59,12 +59,16 @@ int roar_simple_connect (struct roar_connection * con, char * server, char * nam
 int roar_simple_stream(int rate, int channels, int bits, int codec, char * server, int dir, char * name) {
  struct roar_stream     s;
 
+ roar_debug_warn_sysio("roar_simple_stream", "roar_vio_simple_stream", NULL);
+
  return roar_simple_stream_obj(&s, rate, channels, bits, codec, server, dir, name);
 }
 
 int roar_simple_stream_obj  (struct roar_stream * s, int rate, int channels, int bits, int codec, char * server, int dir, char * name) {
  struct roar_connection con;
  int ret;
+
+ roar_debug_warn_sysio("roar_simple_stream_obj", NULL, NULL);
 
  if ( roar_simple_connect(&con, server, name) == -1 ) {
   ROAR_DBG("roar_simple_play(*): roar_simple_connect() faild!");
