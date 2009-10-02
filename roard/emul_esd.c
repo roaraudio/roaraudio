@@ -191,7 +191,23 @@ int emul_esd_test_auth     (int client, void * data, struct roar_vio_calls * vio
 }
 
 int emul_esd_test_byteorder(int client, void * data) {
- // TODO: do a real test
+ struct roar_client * c;
+
+ if ( clients_get(client, &c) == -1 )
+  return -1;
+
+// "NDNE";
+
+ if ( !memcmp(data, "NDNE", 4) ) {
+  c->byteorder = ROAR_BYTEORDER_LE;
+ } else if ( !memcmp(data, "ENDE", 4) ) {
+  c->byteorder = ROAR_BYTEORDER_BE;
+ } else if ( !memcmp(data, "NEED", 4) ) {
+  c->byteorder = ROAR_BYTEORDER_PDP;
+ } else {
+  return -1;
+ }
+
  return 0;
 }
 

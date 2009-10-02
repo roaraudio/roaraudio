@@ -181,10 +181,8 @@ int clients_set_proto (int id, int    proto) {
 
  switch (proto) {
   case ROAR_PROTO_ROARAUDIO:
-    byteorder = ROAR_BYTEORDER_NETWORK;
-   break;
   case ROAR_PROTO_ESOUND:
-    byteorder = ROAR_BYTEORDER_NATIVE;
+    byteorder = ROAR_BYTEORDER_NETWORK;
    break;
  }
 
