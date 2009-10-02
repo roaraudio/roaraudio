@@ -51,6 +51,11 @@ int     cont_fw_new     (struct cont_fw_parent_inst ** inst) {
  self->stream.id = -1;
  self->state     = ROAR_STREAMSTATE_INITING;
 
+ if ( cont_pvio_open(&(self->vio), self) == -1 ) {
+  free(self);
+  return -1;
+ }
+
  *inst = self;
  return 0;
 }
@@ -103,7 +108,7 @@ int     cont_fw_get_uinst(struct cont_fw_parent_inst  * inst, void ** u_inst) {
  return 0;
 }
 
-// VIOs:
+// VIO Client:
 int     cont_fw_new_child(struct cont_fw_parent_inst  * inst, int id) {
  struct cont_fw_child_vio_inst * self;
  struct roar_stream_server     * ss;
@@ -228,6 +233,51 @@ int     cont_fw_close   (struct roar_vio_calls * vio) {
 }
 
 int     cont_fw_ctl     (struct roar_vio_calls * vio, int cmd, void * data);
+
+// VIO Parent:
+int     cont_pvio_open    (struct roar_vio_calls * vio, void * inst) {
+ memset(vio, 0, sizeof(struct roar_vio_calls));
+
+ vio->inst  = inst;
+
+ vio->read     = cont_pvio_read;
+ vio->write    = cont_pvio_write;
+ vio->lseek    = cont_pvio_lseek;
+ vio->nonblock = cont_pvio_nonblock;
+ vio->sync     = cont_pvio_sync;
+ vio->ctl      = cont_pvio_ctl;
+ vio->close    = cont_pvio_close;
+
+ return 0;
+}
+
+ssize_t cont_pvio_read    (struct roar_vio_calls * vio, void *buf, size_t count) {
+ return stream_vio_s_read(((struct cont_fw_parent_inst*)(vio->inst))->stream.stream, buf, count);
+}
+
+ssize_t cont_pvio_write   (struct roar_vio_calls * vio, void *buf, size_t count) {
+ return stream_vio_s_write(((struct cont_fw_parent_inst*)(vio->inst))->stream.stream, buf, count);
+}
+
+off_t   cont_pvio_lseek   (struct roar_vio_calls * vio, off_t offset, int whence) {
+ return roar_vio_lseek(&(((struct cont_fw_parent_inst*)(vio->inst))->stream.stream->vio), offset, whence);
+}
+
+int     cont_pvio_nonblock(struct roar_vio_calls * vio, int state) {
+ return roar_vio_nonblock(&(((struct cont_fw_parent_inst*)(vio->inst))->stream.stream->vio), state);
+}
+
+int     cont_pvio_sync    (struct roar_vio_calls * vio) {
+ return roar_vio_sync(&(((struct cont_fw_parent_inst*)(vio->inst))->stream.stream->vio));
+}
+
+int     cont_pvio_ctl     (struct roar_vio_calls * vio, int cmd, void * data) {
+ return roar_vio_ctl(&(((struct cont_fw_parent_inst*)(vio->inst))->stream.stream->vio), cmd, data);
+}
+
+int     cont_pvio_close   (struct roar_vio_calls * vio) {
+ return roar_vio_close(&(((struct cont_fw_parent_inst*)(vio->inst))->stream.stream->vio));
+}
 
 // CF:
 int cont_fw_cf_open(CODECFILTER_USERDATA_T * inst, int codec,

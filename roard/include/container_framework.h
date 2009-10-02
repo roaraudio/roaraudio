@@ -43,6 +43,7 @@ struct cont_fw_parent_inst {
  struct cont_fw_child_vio_inst * child[CONT_FW_MAX_CHILDS];
  void * u_inst;
  int state;
+ struct roar_vio_calls vio;
  struct {
   int id;
   int codec;
@@ -76,7 +77,7 @@ int     cont_fw_get_uinst(struct cont_fw_parent_inst  * inst, void ** u_inst);
 int     cont_fw_new_child(struct cont_fw_parent_inst  * inst, int id);
 int     cont_fw_init_vio(struct roar_vio_calls * vio, void * inst);
 
-// VIO:
+// VIO Childs:
 ssize_t cont_fw_read    (struct roar_vio_calls * vio, void *buf, size_t count);
 ssize_t cont_fw_write   (struct roar_vio_calls * vio, void *buf, size_t count);
 off_t   cont_fw_lseek   (struct roar_vio_calls * vio, off_t offset, int whence);
@@ -84,6 +85,16 @@ int     cont_fw_nonblock(struct roar_vio_calls * vio, int state);
 int     cont_fw_sync    (struct roar_vio_calls * vio);
 int     cont_fw_ctl     (struct roar_vio_calls * vio, int cmd, void * data);
 int     cont_fw_close   (struct roar_vio_calls * vio);
+
+// VIO Parent:
+int     cont_pvio_open    (struct roar_vio_calls * vio, void * inst);
+ssize_t cont_pvio_read    (struct roar_vio_calls * vio, void *buf, size_t count);
+ssize_t cont_pvio_write   (struct roar_vio_calls * vio, void *buf, size_t count);
+off_t   cont_pvio_lseek   (struct roar_vio_calls * vio, off_t offset, int whence);
+int     cont_pvio_nonblock(struct roar_vio_calls * vio, int state);
+int     cont_pvio_sync    (struct roar_vio_calls * vio);
+int     cont_pvio_ctl     (struct roar_vio_calls * vio, int cmd, void * data);
+int     cont_pvio_close   (struct roar_vio_calls * vio);
 
 // CF:
 int cont_fw_cf_open(CODECFILTER_USERDATA_T * inst, int codec,
