@@ -443,7 +443,8 @@ int streams_set_fh     (int id, int fh) {
  if ( dir != ROAR_DIR_THRU ) {
   if ( codecfilter_open(&(ss->codecfilter_inst), &(ss->codecfilter), NULL,
                    s->info.codec, ss) == -1 ) {
-   return streams_delete(id); // TODO: FIXME: is this correct? shoudn't we return -1 in any case here?
+   streams_delete(id); // TODO: FIXME: is this correct? shoudn't we return -1 in any case here?
+   return -1;
   }
  }
 
