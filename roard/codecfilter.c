@@ -297,7 +297,7 @@ int codecfilter_open (CODECFILTER_USERDATA_T * inst,
   return 0;
  }
 
- return 0; // we found no filter -> ok
+ return -1; // we found no filter -> ok
 }
 
 int codecfilter_close(CODECFILTER_USERDATA_T   inst, int codecfilter) {
