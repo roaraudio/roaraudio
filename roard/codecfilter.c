@@ -284,11 +284,15 @@ int codecfilter_open (CODECFILTER_USERDATA_T * inst,
  info->codecfilter = *codecfilter_id;
 
  if (*codecfilter_id != -1) {
-  if ( filter->open ) {
+  if ( filter->open != NULL ) {
    if ( (i = filter->open(inst, codec, info, filter)) == -1 ) {
     info->codecfilter = *codecfilter_id = -1;
    }
    return i;
+  } else {
+   // in case we can not open the filter we will not use it
+   *codecfilter_id   = -1;
+   info->codecfilter = -1;
   }
   return 0;
  }
