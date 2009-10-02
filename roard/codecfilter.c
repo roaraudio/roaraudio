@@ -35,10 +35,13 @@
 #define _DUMMY_FILTER(codec,name,desc,flags,subsystem) {(codec),(name),(desc),NULL,NULL,(flags),(subsystem), \
                                                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL        }
 
+#define _PCM_FILTER(codec) _DUMMY_FILTER(codec, "PCM", "Native PCM Support", \
+                                         ROAR_CODECFILTER_READ|ROAR_CODECFILTER_WRITE|ROAR_CODECFILTER_PRETHRU_NN, \
+                                         ROAR_SUBSYS_WAVEFORM)
+
 struct roar_codecfilter g_codecfilter[] = {
  _DUMMY_FILTER(-1, "null", "null codec filter", ROAR_CODECFILTER_NONE, ROAR_SUBSYS_NONE),
- _DUMMY_FILTER(-1, "PCM", "Native PCM Support",
-               ROAR_CODECFILTER_READ|ROAR_CODECFILTER_WRITE|ROAR_CODECFILTER_PRETHRU_NN, ROAR_SUBSYS_WAVEFORM),
+ _PCM_FILTER(-1),
  _DUMMY_FILTER(ROAR_CODEC_MIDI, "MIDI", "Native MIDI Support",
                ROAR_CODECFILTER_READ|ROAR_CODECFILTER_WRITE|ROAR_CODECFILTER_PRETHRU_NN, ROAR_SUBSYS_MIDI),
  {ROAR_CODEC_DMX512,      "DMX512", "Native DMX512 Support", NULL, NULL,
