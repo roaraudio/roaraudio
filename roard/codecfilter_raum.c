@@ -55,7 +55,7 @@ int cf_raum_pcb_open  (struct cont_fw_parent_inst * self,
     return -1;
  }
 
- state = RAUMOpenVIO(&(stream->vio), flags);
+ state = RAUMOpenVIO(&(self->vio), flags);
 
  if ( state == NULL )
   return -1;
