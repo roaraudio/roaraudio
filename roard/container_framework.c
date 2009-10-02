@@ -256,6 +256,7 @@ ssize_t cont_pvio_read    (struct roar_vio_calls * vio, void *buf, size_t count)
 }
 
 ssize_t cont_pvio_write   (struct roar_vio_calls * vio, void *buf, size_t count) {
+ ROAR_DBG("cont_pvio_write(vio=%p, buf=%p, count=%lu) = ?", vio, buf, (unsigned long) count);
  return stream_vio_s_write(((struct cont_fw_parent_inst*)(vio->inst))->stream.stream, buf, count);
 }
 
