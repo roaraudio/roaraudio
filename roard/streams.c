@@ -440,12 +440,18 @@ int streams_set_fh     (int id, int fh) {
 
  ROAR_DBG("streams_set_fh(id=%i, fh=%i) = ?", id, fh);
 
- if ( dir != ROAR_DIR_THRU ) {
-  if ( codecfilter_open(&(ss->codecfilter_inst), &(ss->codecfilter), NULL,
-                   s->info.codec, ss) == -1 ) {
-   streams_delete(id); // TODO: FIXME: is this correct? shoudn't we return -1 in any case here?
-   return -1;
-  }
+ switch (dir) {
+  case ROAR_DIR_THRU:
+  case ROAR_DIR_RAW_IN:
+  case ROAR_DIR_RAW_OUT:
+   break;
+  default:
+    if ( codecfilter_open(&(ss->codecfilter_inst), &(ss->codecfilter), NULL,
+                     s->info.codec, ss) == -1 ) {
+     streams_delete(id); // TODO: FIXME: is this correct? shoudn't we return -1 in any case here?
+     return -1;
+    }
+   break;
  }
 
  ROAR_DBG("streams_set_fh(id=%i, fh=%i) = ?", id, fh);
