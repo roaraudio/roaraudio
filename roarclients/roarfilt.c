@@ -142,7 +142,6 @@ int main (int argc, char * argv[]) {
  int    codec    = ROAR_CODEC_DEFAULT;
  char * server   = NULL;
  char * k;
- int    fh;
  int    i;
  int    mul = 1, div = 1;
  int32_t tmp;
@@ -153,6 +152,7 @@ int main (int argc, char * argv[]) {
  struct roardsp_filter      filter_real[8];
  struct roardsp_filter    * filter = filter_real - 1;
  struct roar_stream         stream;
+ struct roar_vio_calls      svio;
 
 #ifdef ROAR_HAVE_LIBM
  memset(&g_lowpass, 0, sizeof(g_lowpass));
@@ -232,7 +232,7 @@ int main (int argc, char * argv[]) {
   }
  }
 
- if ( (fh = roar_simple_filter(rate, channels, bits, codec, server, "roarfilt")) == -1 ) {
+ if ( roar_vio_simple_stream(&svio, rate, channels, bits, codec, server, ROAR_DIR_FILTER, "roarfilt") == -1 ) {
   fprintf(stderr, "Error: can not start playback\n");
   return 1;
  }
@@ -247,7 +247,7 @@ int main (int argc, char * argv[]) {
  }
 
  if ( bits == 16 ) {
-  while((i = read(fh, buf, BUFSIZE))) {
+  while((i = roar_vio_read(&svio, buf, BUFSIZE))) {
    if ( mul != div )
     vol2((void*)buf, mul, div, i);
 #ifdef ROAR_HAVE_LIBM
@@ -257,13 +257,13 @@ int main (int argc, char * argv[]) {
     lowpass2((void*)buf, i, channels);
 #endif
    roardsp_fchain_calc(&fc, (void*)buf, (8*i)/bits);
-   if (write(fh, buf, i) != i)
+   if (roar_vio_write(&svio, buf, i) != i)
     break;
   }
  } else if ( bits == 8 ) {
-  while((i = read(fh, buf, BUFSIZE))) {
+  while((i = roar_vio_read(&svio, buf, BUFSIZE))) {
    vol1((void*)buf, mul, div, i);
-   if (write(fh, buf, i) != i)
+   if (roar_vio_write(&svio, buf, i) != i)
     break;
   }
  } else {
@@ -271,7 +271,7 @@ int main (int argc, char * argv[]) {
   return 1;
  }
 
- roar_simple_close(fh);
+ roar_vio_close(&svio);
 
  roardsp_fchain_uninit(&fc);
 
