@@ -2,6 +2,7 @@ v. 0.3beta2 - ?
 	* Added prethru flag
 	* Added support to read info about client's network node
 	* Ported libroaresd, libroarartsc
+	* Fixed some problems with EsounD emulation
 
 v. 0.3beta1 - Sat Sep 26 2009 25:50 CEST
 	* incremented nummber of streams per client fron 4 to 8
