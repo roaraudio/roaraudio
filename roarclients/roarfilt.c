@@ -246,29 +246,32 @@ int main (int argc, char * argv[]) {
   return 0;
  }
 
- if ( bits == 16 ) {
-  while((i = roar_vio_read(&svio, buf, BUFSIZE))) {
-   if ( mul != div )
-    vol2((void*)buf, mul, div, i);
+ switch (bits) {
+  case 16:
+    while((i = roar_vio_read(&svio, buf, BUFSIZE))) {
+     if ( mul != div )
+      vol2((void*)buf, mul, div, i);
 #ifdef ROAR_HAVE_LIBM
-   if ( logscale )
-    logs2((void*)buf, logscale, i);
-   if ( g_lowpass.a )
-    lowpass2((void*)buf, i, channels);
+     if ( logscale )
+      logs2((void*)buf, logscale, i);
+     if ( g_lowpass.a )
+      lowpass2((void*)buf, i, channels);
 #endif
-   roardsp_fchain_calc(&fc, (void*)buf, (8*i)/bits);
-   if (roar_vio_write(&svio, buf, i) != i)
-    break;
-  }
- } else if ( bits == 8 ) {
-  while((i = roar_vio_read(&svio, buf, BUFSIZE))) {
-   vol1((void*)buf, mul, div, i);
-   if (roar_vio_write(&svio, buf, i) != i)
-    break;
-  }
- } else {
-  fprintf(stderr, "Error: %i bits per sample is not supported!\n", bits);
-  return 1;
+     roardsp_fchain_calc(&fc, (void*)buf, (8*i)/bits);
+     if (roar_vio_write(&svio, buf, i) != i)
+      break;
+    }
+   break;
+  case 8:
+    while((i = roar_vio_read(&svio, buf, BUFSIZE))) {
+     vol1((void*)buf, mul, div, i);
+     if (roar_vio_write(&svio, buf, i) != i)
+      break;
+    }
+   break;
+  default:
+    fprintf(stderr, "Error: %i bits per sample is not supported!\n", bits);
+    return 1;
  }
 
  roar_vio_close(&svio);
