@@ -35,7 +35,8 @@ PREFIX_BIN=''
 PREFIX_LIB=''
 PREFIX_INC=''
 PREFIX_MAN=''
-PREFIX_COMP=''
+PREFIX_COMP_LIBS=''
+PREFIX_COMP_BINS=''
 
 CDROM_IS_DEV=true
 CDROM=""
@@ -176,7 +177,8 @@ do
    echo '--prefix-lib DIR            - Set prefix for librarys (default: $PREFIX/libs)'
    echo '--prefix-inc DIR            - Set prefix for include files (default: $PREFIX/include)'
    echo '--prefix-man DIR            - Set prefix for manpages (default: $PREFIX/man)'
-   echo '--prefix-comp DIR           - Set prefix for compatibility librarys (default: $PREFIX_LIB/roaraudio/complibs)'
+   echo '--prefix-comp-libs DIR      - Set prefix for compatibility librarys (default: $PREFIX_LIB/roaraudio/complibs)'
+   echo '--prefix-comp-bins DIR      - Set prefix for compatibility binarys  (default: $PREFIX_LIB/roaraudio/compbins)'
    echo
    echo '--default-rate RATE         - Set default sample rate for roard and roarclients'
    echo '--default-channels CHANNELS - Set default number of channels for roard and roarclients'
@@ -401,8 +403,13 @@ do
    PREFIX_MAN="$2"
    shift;
   ;;
-  '--prefix-comp')
-   PREFIX_COMP="$2"
+  # we should remove --prefix-comp soon
+  '--prefix-comp'|'--prefix-comp-libs')
+   PREFIX_COMP_LIBS="$2"
+   shift;
+  ;;
+  '--prefix-comp-libs')
+   PREFIX_COMP_BINS="$2"
    shift;
   ;;
   '--mmcu')
@@ -729,7 +736,8 @@ fi
 [ "$PREFIX_LIB"  = '' ] && PREFIX_LIB="$PREFIX/lib/"
 [ "$PREFIX_INC"  = '' ] && PREFIX_INC="$PREFIX/include/"
 [ "$PREFIX_MAN"  = '' ] && PREFIX_MAN="$PREFIX/share/man/"
-[ "$PREFIX_COMP" = '' ] && PREFIX_COMP="$PREFIX_LIB/roaraudio/complibs/"
+[ "$PREFIX_COMP_LIBS" = '' ] && PREFIX_COMP_LIBS="$PREFIX_LIB/roaraudio/complibs/"
+[ "$PREFIX_COMP_BINS" = '' ] && PREFIX_COMP_BINS="$PREFIX_LIB/roaraudio/compbins/"
 
 [ "$DEFAULT_GRP" = '' ] && DEFAULT_GRP='audio'
 
@@ -757,7 +765,8 @@ fi
  echo "PREFIX_LIB=$PREFIX_LIB"
  echo "PREFIX_INC=$PREFIX_INC"
  echo "PREFIX_MAN=$PREFIX_MAN"
- echo "PREFIX_COMP=$PREFIX_COMP"
+ echo "PREFIX_COMP_LIBS=$PREFIX_COMP_LIBS"
+ echo "PREFIX_COMP_BINS=$PREFIX_COMP_BINS"
  echo
  $COMP_LIBS     && echo "comp_libs=libroar libroardsp libroarmidi libroarlight libroareio"
  $COMP_ROARD    && echo "comp_roard=roard"
@@ -774,7 +783,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.219 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.220 $ of RoarAudio
  */
 
 EOF

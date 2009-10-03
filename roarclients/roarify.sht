@@ -31,7 +31,7 @@ do
    shift;
   ;;
   '--load')
-   LD_PRELOAD="%%%PREFIX_COMP%%%/lib$1.so $LD_PRELOAD"
+   LD_PRELOAD="%%%PREFIX_COMP_LIBS%%%/lib$1.so $LD_PRELOAD"
    shift;
   ;;
   '--help'|'-h')
@@ -51,7 +51,8 @@ do
 done
 
 export LD_PRELOAD="%%%PREFIX_LIB%%%/libroar.so $LD_PRELOAD"
-export LD_LIBRARY_PATH='%%%PREFIX_COMP%%%'":$LD_LIBRARY_PATH"
+export LD_LIBRARY_PATH='%%%PREFIX_COMP_LIBS%%%'":$LD_LIBRARY_PATH"
+export PATH='%%%PREFIX_COMP_BINS%%%'":$PATH"
 
 exec -- "$CMD" "$@"
 

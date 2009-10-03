@@ -91,5 +91,5 @@ roarfctest: roarfctest.o
 
 roarify.sht:
 roarify: roarify.sht
-	sed 's#%%%PREFIX_COMP%%%#$(PREFIX_COMP)#g; s#%%%PREFIX_LIB%%%#$(PREFIX_LIB)#g;' < roarify.sht > roarify
+	sed 's#%%%PREFIX_COMP_LIBS%%%#$(PREFIX_COMP_LIBS)#g; s#%%%PREFIX_COMP_BINS%%%#$(PREFIX_COMP_BINS)#g; s#%%%PREFIX_LIB%%%#$(PREFIX_LIB)#g;' < roarify.sht > roarify
 	chmod +rx roarify
