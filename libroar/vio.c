@@ -254,6 +254,21 @@ int     roar_vio_simple_stream (struct roar_vio_calls * calls, int rate, int cha
  return roar_vio_open_fh_socket(calls, fh);
 }
 
+int     roar_vio_simple_new_stream_obj (struct roar_vio_calls * calls,
+                                        struct roar_connection * con,
+                                        struct roar_stream * s,
+                                        int rate, int channels, int bits, int codec, int dir) {
+ int fh;
+
+ if ( calls == NULL )
+  return -1;
+
+ if ( (fh = roar_simple_new_stream_obj(con, s, rate, channels, bits, codec, dir)) == -1 )
+  return -1;
+
+ return roar_vio_open_fh_socket(calls, fh);
+}
+
 // VIOs:
 
 // basic

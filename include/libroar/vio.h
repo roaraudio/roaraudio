@@ -37,6 +37,8 @@
 
 #include "libroar.h"
 
+struct roar_connection;
+
 // sys io:
 
 struct roar_vio_calls {
@@ -80,6 +82,11 @@ int     roar_vio_open_socket_listen(struct roar_vio_calls * calls, int type, cha
 
 int     roar_vio_simple_stream (struct roar_vio_calls * calls, int rate, int channels, int bits, int codec,
                                                                char * server, int dir, char * name);
+
+int     roar_vio_simple_new_stream_obj (struct roar_vio_calls * calls,
+                                        struct roar_connection * con,
+                                        struct roar_stream * s,
+                                        int rate, int channels, int bits, int codec, int dir);
 
 // possible VIOs:
 
