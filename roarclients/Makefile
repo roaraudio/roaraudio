@@ -1,4 +1,12 @@
-TARGETS=roarcat roarcatad roarcat2sock roarcatsendfile roarcatplay roarcatpassfh roarbidir roarphone roarctl roarlight roarmon roarsockconnect roartypes roarvorbis roarvumeter roarfilt roarsin roar-config polytest roarsocktypes roarshout roarradio roarfctest roarmonhttp pinentrytest zcattest pgptest roarcatvio pipetest roarinterconnect
+TARGETS_TESTS=pinentrytest zcattest pgptest pipetest polytest roarfctest
+TARGETS_DEVEL=roartypes roarsocktypes roar-config
+TARGETS_EXAMPLE=roarcatad roarcat2sock roarcatsendfile roarcatpassfh roarvorbis roarsin
+TARGETS_IO=roarcat roarcatplay roarcatvio roarbidir roarmon roarmonhttp roarradio
+TARGETS_CTL=roarctl roarlight roarinterconnect
+TARGETS_DSP=roarvumeter roarfilt
+TARGETS_MISC=roarsockconnect roarphone roarshout
+
+TARGETS=$(TARGETS_IO) $(TARGETS_CTL) $(TARGETS_DSP) $(TARGETS_MISC) $(TARGETS_DEVEL) $(TARGETS_EXAMPLE) $(TARGETS_TESTS)
 TOOLS=roarify
 
 include ../Makefile.conf
