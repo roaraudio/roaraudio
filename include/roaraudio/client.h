@@ -36,6 +36,10 @@
 #define ROAR_PROTO_NONE             0
 #define ROAR_PROTO_ROARAUDIO        1
 #define ROAR_PROTO_ESOUND           2
+#define ROAR_PROTO_AUTO             3 /* auto detect */
+#define ROAR_PROTO_HTTP             4
+#define ROAR_PROTO_GOPHER           5
+#define ROAR_PROTO_ICY              7 /* Nullsoft ICY */
 
 #define ROAR_BYTEORDER_UNKNOWN      0x00
 #define ROAR_BYTEORDER_LE           ROAR_CODEC_LE

@@ -487,6 +487,16 @@ int    roar_str2proto (char * proto) {
   return ROAR_PROTO_ESOUND;
  } else if ( !strcasecmp(proto, "esound") ) {
   return ROAR_PROTO_ESOUND;
+ } else if ( !strcasecmp(proto, "auto") ) {
+  return ROAR_PROTO_AUTO;
+ } else if ( !strcasecmp(proto, "(auto)") ) {
+  return ROAR_PROTO_AUTO;
+ } else if ( !strcasecmp(proto, "http") ) {
+  return ROAR_PROTO_HTTP;
+ } else if ( !strcasecmp(proto, "gopher") ) {
+  return ROAR_PROTO_GOPHER;
+ } else if ( !strcasecmp(proto, "icy") ) {
+  return ROAR_PROTO_ICY;
  }
 
  return -1;
@@ -496,6 +506,10 @@ char * roar_proto2str (int    proto) {
  switch (proto) {
   case ROAR_PROTO_ROARAUDIO: return "RoarAudio"; break;
   case ROAR_PROTO_ESOUND:    return "EsounD";    break;
+  case ROAR_PROTO_AUTO:      return "(auto)";    break;
+  case ROAR_PROTO_HTTP:      return "http";      break;
+  case ROAR_PROTO_GOPHER:    return "gopher";    break;
+  case ROAR_PROTO_ICY:       return "ICY";       break;
   default:
     return "(unknown)";
  }
