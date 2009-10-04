@@ -1,0 +1,85 @@
+#!/bin/sh
+
+OUT="$1"
+IN="$2"
+
+[ -r $IN ] || exit 1;
+
+. $IN
+
+{
+ echo '#!/bin/sh'
+ echo
+
+ cat <<_E_O_F_
+ _args=''
+
+while [ -n "\$1" ]
+do
+ k="\$1"
+ shift;
+
+ case "\$k" in
+_E_O_F_
+
+ for o in $ARGS_IGNORE_OPTS
+ do
+  on=`echo $o | cut -d: -f1`
+  oa=`echo $o | cut -d: -f2`
+  echo "  '$on')";
+  if $oa
+  then
+   echo '   shift;';
+  fi
+  echo '  ;;';
+ done
+
+ for o in $ARGS_PASS_OPTS
+ do
+  on=`echo $o | cut -d: -f1`
+  oa=`echo $o | cut -d: -f2`
+  echo "  '$on')";
+  if $oa
+  then
+   echo '   _args="$_args '"$on"' $1";';
+   echo '   shift;';
+  else
+   echo '   _args="$_args '"$on"'";';
+  fi
+  echo '  ;;';
+ done
+
+ cat <<_E_O_F_
+  '-'*)
+   echo "Unknown option" >&2;
+   exit 1;
+  ;;
+  *)
+_E_O_F_
+
+ if $ARGS_PASS_NON_OPTS
+ then
+  echo '   _args="$_args $k";';
+  echo '   shift;';
+ else
+  echo '   echo "Unknown option" >&2;';
+  echo '   exit 1;';
+ fi
+
+ cat <<_E_O_F_
+  ;;
+ esac;
+done
+
+exec $RNAME \$_args
+_E_O_F_
+
+ echo
+ echo '#ll'
+} > $OUT
+
+chmod a+rx $OUT
+
+exit 0;
+
+#ll
