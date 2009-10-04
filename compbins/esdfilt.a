@@ -1,0 +1,10 @@
+#!/bin/sh
+
+NAME='esdfilt'
+RNAME='roarfilt'
+
+ARGS_IGNORE_OPTS=''
+ARGS_PASS_OPTS='-s:true -b:false -m:false -r:true -half:false -double:false'
+ARGS_PASS_NON_OPTS=false
+
+#ll

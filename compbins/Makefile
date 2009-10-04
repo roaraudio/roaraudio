@@ -1,4 +1,4 @@
-TARGETS=esdcat.r
+TARGETS=esdcat.r esdmon.r esdfilt.r esdplay.r
 
 include ../Makefile.conf
 include ../Makefile.inc
