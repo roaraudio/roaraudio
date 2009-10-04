@@ -49,6 +49,22 @@ _E_O_F_
   echo '  ;;';
  done
 
+ for o in $ARGS_MAP_OPTS
+ do
+  on=`echo $o | cut -d: -f1`
+  oa=`echo $o | cut -d: -f2`
+  or=`echo $o | cut -d: -f3`
+  echo "  '$on')";
+  if $oa
+  then
+   echo '   _args="$_args '"$or"' $1";';
+   echo '   shift;';
+  else
+   echo '   _args="$_args '"$or"'";';
+  fi
+  echo '  ;;';
+ done
+
  cat <<_E_O_F_
   '-'*)
    echo "Unknown option" >&2;
