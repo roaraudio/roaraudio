@@ -51,8 +51,10 @@
 
 #define ROAR_VIO_CTL_GET                  0x1
 #define ROAR_VIO_CTL_SET                  0x2
+
 #define ROAR_VIO_CTL_CLIENT            0x0000
 #define ROAR_VIO_CTL_SERVER            0x1000
+
 #define ROAR_VIO_CTL_GENERIC     (0x0000<<16)
 #define ROAR_VIO_CTL_STREAM      (0x0001<<16)
 #define ROAR_VIO_CTL_DRIVER      (0x0002<<16)
@@ -68,6 +70,11 @@
 #define ROAR_VIO_CTL_SET_UMMAP         (ROAR_VIO_CTL_GENERIC|ROAR_VIO_CTL_SET|0x0130) /* ** */
 #define ROAR_VIO_CTL_GET_SHUTDOWN      (ROAR_VIO_CTL_GENERIC|0x0140) /* shutdown(), need specs */
 #define ROAR_VIO_CTL_SET_NOSYNC        (ROAR_VIO_CTL_GENERIC|0x0150) /* delete call of vio sync() from object */
+#define ROAR_VIO_CTL_GET_NAME          (ROAR_VIO_CTL_GENERIC|ROAR_VIO_CTL_GET|0x0160) /* get name of VIO */
+
+// get or set data format used for read and write calls, see below
+#define ROAR_VIO_CTL_GET_DATA_FORMAT   (ROAR_VIO_CTL_GENERIC|ROAR_VIO_CTL_GET|0x0170)
+#define ROAR_VIO_CTL_SET_DATA_FORMAT   (ROAR_VIO_CTL_GENERIC|ROAR_VIO_CTL_SET|0x0170)
 
 // stream:
 #define ROAR_VIO_CTL_SET_STREAM    (ROAR_VIO_CTL_STREAM|ROAR_VIO_CTL_CLIENT|ROAR_VIO_CTL_SET) /* normal streams */
@@ -95,6 +102,26 @@
 #define ROAR_VIO_CTL_GET_VOLUME    (ROAR_VIO_CTL_DRIVER|ROAR_VIO_CTL_GET|0x10)
 #define ROAR_VIO_CTL_SET_VOLUME    (ROAR_VIO_CTL_DRIVER|ROAR_VIO_CTL_SET|0x10)
 
+
+// Data format used for read/write():
+
+// _D_ata _F_ormat _T_ypes:
+// generic types:
+#define ROAR_VIO_DFT_UNKNOWN           -1
+#define ROAR_VIO_DFT_NULL          0x0000
+#define ROAR_VIO_DFT_RAW           0x0001 /* raw bytes, default */
+
+// RoarAudio types:
+#define ROAR_VIO_DFT_RA_MESSAGE    0x0101
+#define ROAR_VIO_DFT_RA_BUFFER     0x0102
+
+// extern types:
+#define ROAR_VIO_DFT_OGG_PAGE      0x0201
+#define ROAR_VIO_DFT_OGG_PACKET    0x0202
+
+struct roar_vio_dataformat {
+ unsigned int type;
+};
 
 #endif
 
