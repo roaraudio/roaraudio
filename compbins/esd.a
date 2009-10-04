@@ -1,0 +1,19 @@
+#!/bin/sh
+
+NAME='esd'
+RNAME='roard'
+
+ARGS_IGNORE_OPTS='-noterminate:false -nobeeps:false -trust:false'
+ARGS_PASS_OPTS=''
+ARGS_MAP_OPTS='-d:true:-O -r:true:-R -unix:false:-u -tcp:false:-t -terminate:false:--terminate -port:false:--port -bind:false:--bind'
+ARGS_PASS_NON_OPTS=true
+
+# Still to do:
+#  -v --version  print version information
+#  -b            run server in 8 bit sound mode
+#  -as SECS      free audio device after SECS of inactivity (-1 to disable)
+#  -public       make tcp/ip access public (other than localhost)
+#  -promiscuous  start unlocked and owned (disable authenticaton) NOT RECOMMENDED
+#  -beeps        enable startup beeps
+
+#ll
