@@ -79,9 +79,9 @@ FreeBSD 7.1		i386	gcc 4.2.1	0.2	s/OK
 FreeBSD 7.2		i386	gcc 4.2.1	0.3b1	s/OK
 OpenSolaris 5.11	i386	gcc 3.4.3	?	m/OK
 Darwin 9.4.0		i386	gcc 4.0.1	0.1b?	s/OK
-Cygwin 1.5.25		i686	gcc 3.4.4	0.3b1	s/Client+	Client libs work, roard only partly
+Cygwin 1.5.25		i686	gcc 3.4.4	0.3b2	s/Client+	Client libs work, roard only partly
 									Hostsystem: WinXP Home
-WinXP Home		ix86	mingw 3.4.5	0.3b1	s/Client+	Some Clients work, roard only partly
+WinXP Home		ix86	mingw 3.4.5	0.3b2	s/Client+	Some Clients work, roard only partly
 									was build on Debian Etch
 
 Tested Version:
