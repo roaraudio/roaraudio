@@ -1,4 +1,4 @@
-v. 0.3beta2 - ?
+v. 0.3beta2 - Mon Oct 05 2009 19:48 CEST
 	* Added prethru flag
 	* Added support to read info about client's network node
 	* Ported libroaresd, libroarartsc
