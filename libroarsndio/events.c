@@ -36,6 +36,7 @@
 #define _CHECK() if ( hdl == NULL ) return 0
 
 int    sio_nfds   (struct sio_hdl * hdl) {
+#ifdef ROAR_HAVE_H_POLL
  int fh = -1;
 
  _CHECK();
@@ -50,9 +51,13 @@ int    sio_nfds   (struct sio_hdl * hdl) {
   return 0;
 
  return 1;
+#else
+ return 0;
+#endif
 }
 
 int    sio_pollfd (struct sio_hdl * hdl, struct pollfd * pfd, int events) {
+#ifdef ROAR_HAVE_H_POLL
  int num;
  int fh;
 
@@ -80,9 +85,13 @@ int    sio_pollfd (struct sio_hdl * hdl, struct pollfd * pfd, int events) {
  pfd->revents = 0;
 
  return num;
+#else
+ return 0;
+#endif
 }
 
 int    sio_revents(struct sio_hdl * hdl, struct pollfd * pfd) {
+#ifdef ROAR_HAVE_H_POLL
  short revents = 0;
  int num;
  int i;
@@ -96,6 +105,9 @@ int    sio_revents(struct sio_hdl * hdl, struct pollfd * pfd) {
   revents |= pfd[i].revents;
 
  return revents;
+#else
+ return 0;
+#endif
 }
 
 
