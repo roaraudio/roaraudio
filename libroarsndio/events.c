@@ -33,16 +33,69 @@
 #define ROAR_USE_OWN_SNDIO_HDL
 #include "libroarsndio.h"
 
+#define _CHECK() if ( hdl == NULL ) return 0
+
 int    sio_nfds   (struct sio_hdl * hdl) {
- return 0;
+ int fh = -1;
+
+ _CHECK();
+
+ if ( hdl->stream_opened != 1 )
+  return 0;
+
+ if ( roar_vio_ctl(&(hdl->svio), ROAR_VIO_CTL_GET_FH, &fh) == -1 )
+  return 0;
+
+ if ( fh == -1 )
+  return 0;
+
+ return 1;
 }
 
 int    sio_pollfd (struct sio_hdl * hdl, struct pollfd * pfd, int events) {
- return 0;
+ int num;
+ int fh;
+
+ _CHECK();
+
+ if ( (num = sio_nfds(hdl)) == 0 )
+  return 0;
+
+ // not supportet currently:
+ if ( num > 1 )
+  return 0;
+
+ memset(pfd, 0, num*sizeof(struct pollfd));
+
+ // if stream is ok is tested by sio_nfds()
+
+ if ( roar_vio_ctl(&(hdl->svio), ROAR_VIO_CTL_GET_FH, &fh) == -1 )
+  return 0;
+
+ if ( fh == -1 )
+  return 0;
+
+ pfd->fd      = fh;
+ pfd->events  = events;
+ pfd->revents = 0;
+
+ return num;
 }
 
 int    sio_revents(struct sio_hdl * hdl, struct pollfd * pfd) {
- return 0;
+ short revents = 0;
+ int num;
+ int i;
+
+ _CHECK();
+
+ if ( (num = sio_nfds(hdl)) == 0 )
+  return 0;
+
+ for (i = 0; i < num; i++)
+  revents |= pfd[i].revents;
+
+ return revents;
 }
 
 
