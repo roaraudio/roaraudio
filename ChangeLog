@@ -4,6 +4,7 @@ v. 0.3beta2 - ?
 	* Ported libroaresd, libroarartsc
 	* Fixed some problems with EsounD emulation
 	* added support for compatibility binarys
+	* added poll() support to libroarsndio
 
 v. 0.3beta1 - Sat Sep 26 2009 25:50 CEST
 	* incremented nummber of streams per client fron 4 to 8
