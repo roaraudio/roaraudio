@@ -11,8 +11,8 @@ IN="$2"
  echo '#!/bin/sh'
  echo
 
+ echo "_args='$ARGS_ADD_OPTS';"
  cat <<_E_O_F_
- _args=''
 
 while [ -n "\$1" ]
 do
