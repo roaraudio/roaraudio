@@ -195,6 +195,13 @@ __BEGIN_DECLS
 #define ROAR_LIBS_EIO            "-lroareio "   ROAR_LIBS
 #define ROAR_CFLAGS              ""
 
+// comp libs:
+#define ROAR_LIBS_C_ESD          "-lroaresd "   ROAR_LIBS
+#define ROAR_LIBS_C_ARTSC        "-lroarartsc " ROAR_LIBS
+#define ROAR_LIBS_C_PULSE        "-lroarpulse " ROAR_LIBS
+#define ROAR_LIBS_C_SNDIO        "-lroarsndio " ROAR_LIBS
+#define ROAR_LIBS_C_YIFF         "-lroaryiff "  ROAR_LIBS
+
 //some basic macros:
 #define ROAR_STDIN  0
 #define ROAR_STDOUT 1
