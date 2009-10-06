@@ -29,11 +29,24 @@ struct {
  char * cflags;
  char * libs;
 } flags[] = {
- {"roar",      ROAR_CFLAGS, ROAR_LIBS      }, // NOTE: libroar *MUST* be the first entry
- {"roardsp",   ROAR_CFLAGS, ROAR_LIBS_DSP  },
- {"roarmidi",  ROAR_CFLAGS, ROAR_LIBS_MIDI },
- {"roarlight", ROAR_CFLAGS, ROAR_LIBS_LIGHT},
- {"roareio",   ROAR_CFLAGS, ROAR_LIBS_EIO  },
+ // native/own libs:
+ {"roar",      ROAR_CFLAGS, ROAR_LIBS        }, // NOTE: libroar *MUST* be the first entry
+ {"roardsp",   ROAR_CFLAGS, ROAR_LIBS_DSP    },
+ {"roarmidi",  ROAR_CFLAGS, ROAR_LIBS_MIDI   },
+ {"roarlight", ROAR_CFLAGS, ROAR_LIBS_LIGHT  },
+ {"roareio",   ROAR_CFLAGS, ROAR_LIBS_EIO    },
+ // comp libs:
+ {"roaresd",   ROAR_CFLAGS, ROAR_LIBS_C_ESD  },
+ {"esd",       ROAR_CFLAGS, ROAR_LIBS_C_ESD  },
+ {"roarartsc", ROAR_CFLAGS, ROAR_LIBS_C_ARTSC},
+ {"artsc",     ROAR_CFLAGS, ROAR_LIBS_C_ARTSC},
+ {"roarpulse", ROAR_CFLAGS, ROAR_LIBS_C_PULSE},
+ {"pulse",     ROAR_CFLAGS, ROAR_LIBS_C_PULSE},
+ {"pulse-simple", ROAR_CFLAGS, ROAR_LIBS_C_PULSE},
+ {"roarsndio", ROAR_CFLAGS, ROAR_LIBS_C_SNDIO},
+ {"sndio",     ROAR_CFLAGS, ROAR_LIBS_C_SNDIO},
+ {"roaryiff",  ROAR_CFLAGS, ROAR_LIBS_C_YIFF },
+ {"Y2",        ROAR_CFLAGS, ROAR_LIBS_C_YIFF },
  {NULL, NULL, NULL}
 }, * flags_ptr = NULL;
 
