@@ -5,7 +5,7 @@ RNAME='roard'
 
 ARGS_IGNORE_OPTS='-noterminate:false -nobeeps:false -trust:false'
 ARGS_PASS_OPTS=''
-ARGS_MAP_OPTS='-d:true:-O -r:true:-R -unix:false:-u -tcp:false:-t -terminate:false:--terminate -port:false:--port -bind:false:--bind'
+ARGS_MAP_OPTS='-d:true:-O -r:true:-R -unix:false:-u -tcp:false:-t -terminate:false:--terminate -port:true:--port -bind:true:--bind'
 ARGS_PASS_NON_OPTS=true
 
 # Still to do:
