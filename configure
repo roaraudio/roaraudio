@@ -783,7 +783,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.220 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.221 $ of RoarAudio
  */
 
 EOF
@@ -882,6 +882,7 @@ test_tool_defmake ROAR_HAVE_BIN_GZIP        Gzip         gzip
 test_tool_defmake ROAR_HAVE_BIN_BZIP2       bzip2        bzip2
 test_tool_defmake ROAR_HAVE_BIN_GPG         GnuPG        gpg
 test_tool_defmake ROAR_HAVE_BIN_CHAT        chat         chat
+test_tool_defmake ROAR_HAVE_BIN_EJECT       eject        eject
 
 echo >&3
 echo >&5
