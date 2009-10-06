@@ -1,0 +1,35 @@
+#!/bin/sh
+
+NAME='artsd'
+RNAME='roard'
+
+ARGS_IGNORE_OPTS='-n:false -u:false -d:false'
+ARGS_PASS_OPTS='-h:false'
+ARGS_MAP_OPTS='-a:true:-o -D:true:-O -r:true:-R -b:true:-B -p:true:--port -A:false:--list-driver -v:false:--help'
+ARGS_PASS_NON_OPTS=true
+
+
+#server/network options:
+#-N                  use larger network buffers
+#-w <n>              increase network buffers by factor of <n>
+# -> can we ignore them?
+
+#audio options:
+#-V <volume>[dB]     set output volume
+
+#-F <fragments>      number of fragments
+#-S <size>           fragment size in bytes
+# -> -oO
+
+#-s <seconds>        auto-suspend time in seconds
+
+#-f                  force starting artsd (if no soundcard is there, uses the null output device)
+# -> -o sysclock
+
+#misc options:
+#-l <level>          information level
+#  3: quiet, 2: warnings, 1: info, 0: debug
+#-m <appName>        application to display messages
+#-c <appName>        application to display crash dialogs
+
+#ll

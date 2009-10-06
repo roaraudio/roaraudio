@@ -1,0 +1,13 @@
+#!/bin/sh
+
+NAME='artscat'
+RNAME='roarcat'
+
+ARGS_IGNORE_OPTS=''
+ARGS_PASS_OPTS='-h:false'
+ARGS_MAP_OPTS='-r:true:-R -b:true:-B -c:true:-C -v:false:--help'
+ARGS_PASS_NON_OPTS=true
+
+#-t <title>          set stream title
+
+#ll

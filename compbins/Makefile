@@ -1,4 +1,6 @@
-TARGETS=esdcat.r esdmon.r esdfilt.r esdplay.r esd.r
+TARGETS_ESD  = esdcat.r esdmon.r esdfilt.r esdplay.r esd.r
+TARGETS_ARTS = artscat.r artsd.r
+TARGETS=$(TARGETS_ESD) $(TARGETS_ARTS)
 
 include ../Makefile.conf
 include ../Makefile.inc
