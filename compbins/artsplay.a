@@ -1,0 +1,9 @@
+#!/bin/sh
+
+NAME='artsplayplay'
+RNAME='roarplay'
+
+ARGS_ADD_OPTS='--background'
+ARGS_PASS_NON_OPTS=true
+
+#ll
