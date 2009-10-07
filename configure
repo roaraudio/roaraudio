@@ -68,6 +68,7 @@ COMP_LIBS=true
 COMP_ROARD=true
 COMP_CLIENTS=true
 COMP_DOC=true
+COMP_COMP_BINS=true
 
 ALAW=true
 MULAW=true
@@ -196,6 +197,7 @@ do
    echo '--without-comp-roard        - Disable build of roard'
    echo '--without-comp-clients      - Disable build of clients'
    echo '--without-comp-doc          - Disable build of documentation'
+   echo '--without-comp-comp-bins    - Disable build of compatibility binarys'
    echo
    echo '--without-meta-data         - Disable support for Meta Data'
    echo
@@ -329,6 +331,9 @@ do
   ;;
   '--without-comp-doc')
    COMP_DOC=false
+  ;;
+  '--without-comp-comp-bins')
+   COMP_COMP_BINS=false
   ;;
   '--without-meta-data')
    META_DATA=false
@@ -768,10 +773,11 @@ fi
  echo "PREFIX_COMP_LIBS=$PREFIX_COMP_LIBS"
  echo "PREFIX_COMP_BINS=$PREFIX_COMP_BINS"
  echo
- $COMP_LIBS     && echo "comp_libs=libroar libroardsp libroarmidi libroarlight libroareio"
- $COMP_ROARD    && echo "comp_roard=roard"
- $COMP_CLIENTS  && echo "comp_clients=roarclients"
- $COMP_DOC      && echo "comp_doc=doc"
+ $COMP_LIBS      && echo "comp_libs=libroar libroardsp libroarmidi libroarlight libroareio"
+ $COMP_ROARD     && echo "comp_roard=roard"
+ $COMP_CLIENTS   && echo "comp_clients=roarclients"
+ $COMP_DOC       && echo "comp_doc=doc"
+ $COMP_COMP_BINS && echo "comp_comp_bins=compbins"
  echo
  $SNDIO_EMUL && echo "subdir_libroarsndio=libroarsndio"
 } >&4
@@ -783,7 +789,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.221 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.222 $ of RoarAudio
  */
 
 EOF
