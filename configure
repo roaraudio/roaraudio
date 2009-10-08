@@ -413,7 +413,7 @@ do
    PREFIX_COMP_LIBS="$2"
    shift;
   ;;
-  '--prefix-comp-libs')
+  '--prefix-comp-bins')
    PREFIX_COMP_BINS="$2"
    shift;
   ;;
@@ -789,7 +789,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.222 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.223 $ of RoarAudio
  */
 
 EOF
