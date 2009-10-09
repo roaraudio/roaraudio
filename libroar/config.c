@@ -52,45 +52,56 @@ struct roar_libroar_config * roar_libroar_get_config_ptr(void) {
 struct roar_libroar_config * roar_libroar_get_config(void) {
  struct roar_libroar_config * config = roar_libroar_get_config_ptr();
  static int inited = 0;
- char * k, * v, * next;
+ char * next;
 
  if ( !inited ) {
   next = getenv("ROAR_OPTIONS");
 
-  while (next != NULL) {
-   k = next;
-   next = strstr(next, " ");
-   if ( next != NULL ) {
-    *next = 0;
-     next++;
-   }
-
-   if ( (v = strstr(k, ":")) != NULL ) {
-    *v = 0;
-     v++;
-   }
-
-   if ( !strcmp(k, "workaround") ) {
-    if ( !strcmp(v, "use-execed") ) {
-     config->workaround.workarounds |= ROAR_LIBROAR_CONFIG_WAS_USE_EXECED;
-    } else {
-     ROAR_WARN("roar_libroar_get_config(void): Unknown workaround option: %s", v);
-    }
-   } else if ( !strcmp(k, "warning") || !strcmp(k, "warn") ) {
-    if ( !strcmp(v, "sysio") ) {
-     config->warnings.sysio = ROAR_WARNING_ALWAYS;
-    } else {
-     ROAR_WARN("roar_libroar_get_config(void): Unknown warning option: %s", v);
-    }
-   } else {
-    ROAR_WARN("roar_libroar_get_config(void): Unknown option: %s", k);
-   }
+  if ( next != NULL ) {
+   roar_libroar_config_parse(next, " ");
   }
 
   inited++;
  }
 
  return config;
+}
+
+int    roar_libroar_config_parse(char * txt, char * delm) {
+ struct roar_libroar_config * config = roar_libroar_get_config_ptr();
+ char * k, * v, * next = txt;
+
+ while (next != NULL) {
+  k = next;
+  next = strstr(next, delm);
+  if ( next != NULL ) {
+   *next = 0;
+    next++;
+  }
+
+  if ( (v = strstr(k, ":")) != NULL ) {
+   *v = 0;
+    v++;
+  }
+
+  if ( !strcmp(k, "workaround") ) {
+   if ( !strcmp(v, "use-execed") ) {
+    config->workaround.workarounds |= ROAR_LIBROAR_CONFIG_WAS_USE_EXECED;
+   } else {
+    ROAR_WARN("roar_libroar_get_config(void): Unknown workaround option: %s", v);
+   }
+  } else if ( !strcmp(k, "warning") || !strcmp(k, "warn") ) {
+   if ( !strcmp(v, "sysio") ) {
+    config->warnings.sysio = ROAR_WARNING_ALWAYS;
+   } else {
+    ROAR_WARN("roar_libroar_get_config(void): Unknown warning option: %s", v);
+   }
+  } else {
+   ROAR_WARN("roar_libroar_get_config(void): Unknown option: %s", k);
+  }
+ }
+
+ return 0;
 }
 
 int    roar_libroar_set_server(char * server) {
