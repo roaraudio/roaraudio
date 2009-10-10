@@ -10,6 +10,7 @@ Things we should do:
  * (1.0) add internal memory management
  * (0.3) do a lot work on the manpages
  * (0.3) publish IDs used in proto as public domain
+ * (0.3) fix names of comp libs
 
 Things it would be nice to have:
  * (1.1) add code to handle streams with more than ROAR_MAX_CHANNELS channels
