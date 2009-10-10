@@ -51,6 +51,9 @@ int roar_connect_raw (char * server) {
 
  roar_errno = ROAR_ERROR_UNKNOWN;
 
+ // load config
+ roar_libroar_get_config();
+
  if ( server == NULL )
   server = roar_libroar_get_server();
 
