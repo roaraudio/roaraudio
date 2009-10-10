@@ -29,6 +29,8 @@
 #define _16BIT (16/8)
 #define _SIZE_LEN 2
 
+#define _HAVE_CCFG(x) (self->codec_config != NULL && (self->codec_config->para_set & (x)))
+
 int roar_xcoder_speex_init       (struct roar_xcoder * state) {
  struct roar_xcoder_speex * self = malloc(sizeof(struct roar_xcoder_speex));
  struct roar_audio_info  * info = &(state->info.pcm);
@@ -61,13 +63,36 @@ int roar_xcoder_speex_init       (struct roar_xcoder * state) {
  self->mode  = ROAR_SPEEX_MODE_UWB;
 
  if (state->encode) {
+  self->codec_config = roar_libroar_config_codec_get(ROAR_CODEC_ROAR_SPEEX, 0);
+  self->max_cc = ROAR_SPEEX_MAX_CC;
+
+  if ( _HAVE_CCFG(ROAR_LIBROAR_CONFIG_PSET_MAX_CC) ) {
+   self->max_cc = self->codec_config->max_cc;
+  }
+
   switch (self->mode) {
    case ROAR_SPEEX_MODE_NB:  self->xcoder = speex_encoder_init(&speex_nb_mode);  break;
    case ROAR_SPEEX_MODE_WB:  self->xcoder = speex_encoder_init(&speex_wb_mode);  break;
    case ROAR_SPEEX_MODE_UWB: self->xcoder = speex_encoder_init(&speex_uwb_mode); break;
   }
-  tmp = 8;
+
+  if ( _HAVE_CCFG(ROAR_LIBROAR_CONFIG_PSET_COMPLEXITY) ) {
+   tmp = self->codec_config->complexity / 256;
+  } else {
+   tmp = 8;
+  }
   speex_encoder_ctl(self->xcoder, SPEEX_SET_QUALITY,       &tmp);
+
+  if ( _HAVE_CCFG(ROAR_LIBROAR_CONFIG_PSET_Q) ) {
+   tmp = self->codec_config->q / 256;
+   speex_encoder_ctl(self->xcoder, SPEEX_SET_QUALITY,       &tmp);
+  }
+
+  if ( _HAVE_CCFG(ROAR_LIBROAR_CONFIG_PSET_DTX) ) {
+   tmp = self->codec_config->dtx ? 1 : 0;
+   speex_encoder_ctl(self->xcoder, SPEEX_SET_DTX,       &tmp);
+  }
+
   tmp = info->rate;
   speex_encoder_ctl(self->xcoder, SPEEX_SET_SAMPLING_RATE, &tmp);
   speex_encoder_ctl(self->xcoder, SPEEX_GET_FRAME_SIZE,    &(self->frame_size));
@@ -140,7 +165,7 @@ int roar_xcoder_speex_encode     (struct roar_xcoder * state, void * buf, size_t
 
  speex_encode_int(self->xcoder, (spx_int16_t *) buf, &(self->bits));
 
- pkg_len = speex_bits_write(&(self->bits), self->cc, ROAR_SPEEX_MAX_CC);
+ pkg_len = speex_bits_write(&(self->bits), self->cc, self->max_cc);
 
  tmp_net = ROAR_HOST2NET16(pkg_len);
 

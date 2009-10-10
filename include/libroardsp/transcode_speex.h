@@ -49,6 +49,8 @@ struct roar_xcoder_speex {
  int         stereo;
  int frame_size;
  char       cc[ROAR_SPEEX_MAX_CC]; /* buffer for read() and write() */
+ struct roar_libroar_config_codec * codec_config;
+ int    max_cc;
 };
 
 int roar_xcoder_speex_init       (struct roar_xcoder * state);
