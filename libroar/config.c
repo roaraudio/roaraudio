@@ -86,6 +86,24 @@ int    roar_libroar_config_parse(char * txt, char * delm) {
     next++;
   }
 
+  // strip leading spaces:
+  while ( *k == ' ' ) k++;
+
+  // strip tailing new lions:
+  v = strtok(k, "\r\n");
+  if ( v != NULL ) {
+   if ( *v == '\r' || *v == '\n' )
+    *v = 0;
+  }
+
+  // comments
+  if ( *k == '#' )
+   continue;
+
+  // empty options:
+  if ( *k == 0 )
+   continue;
+
   if ( (v = strstr(k, ":")) != NULL ) {
    *v = 0;
     v++;
