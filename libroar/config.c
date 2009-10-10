@@ -194,6 +194,8 @@ int    roar_libroar_config_parse(char * txt, char * delm) {
    if ( roar_libroar_config_parse_codec(config, v) == -1 ) {
     ROAR_WARN("roar_libroar_config_parse(*): Error parsing codec config option");
    }
+  } else if ( !strcmp(k, "set-server") ) {
+   roar_libroar_set_server(v);
   } else {
    ROAR_WARN("roar_libroar_config_parse(*): Unknown option: %s", k);
   }
