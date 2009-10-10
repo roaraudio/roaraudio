@@ -165,14 +165,11 @@ int roar_xcoder_speex_encode     (struct roar_xcoder * state, void * buf, size_t
 
  speex_encode_int(self->xcoder, (spx_int16_t *) buf, &(self->bits));
 
- pkg_len = speex_bits_write(&(self->bits), self->cc, self->max_cc);
+ pkg_len = speex_bits_write(&(self->bits), self->cc + 2, self->max_cc);
 
- tmp_net = ROAR_HOST2NET16(pkg_len);
+ *((uint16_t*)self->cc) = ROAR_HOST2NET16(pkg_len);
 
- if ( roar_vio_write(state->backend, &tmp_net, 2) != 2 )
-  return -1;
-
- if ( roar_vio_write(state->backend, self->cc, pkg_len) != pkg_len )
+ if ( roar_vio_write(state->backend, self->cc, pkg_len + 2) != (pkg_len + 2) )
    return -1;
 
  return 0;
