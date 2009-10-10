@@ -67,6 +67,63 @@ struct roar_libroar_config * roar_libroar_get_config(void) {
  return config;
 }
 
+#define _P_FP(v)   ((int)(atof((v))*256.0))
+#define _P_INT(v)  (atoi((v)))
+#define _P_BOOL(v) (*(v) == 'y' || *(v) == 'j' || *(v) == 't' || *(v) == '1' ? 1 : 0)
+
+static int roar_libroar_config_parse_codec(struct roar_libroar_config * config, char * txt) {
+ struct roar_libroar_config_codec * codec_cfg;
+ int codec;
+ char * codec_str, * option_str, * value_str;
+
+ if ( config == NULL || txt == NULL )
+  return -1;
+
+ codec_str = txt;
+
+ option_str = strtok(txt, ":");
+
+ if ( option_str == NULL )
+  return -1;
+
+ *option_str = 0;
+  option_str++;
+
+ value_str = strtok(option_str, ":");
+
+ if ( value_str == NULL )
+  return -1;
+
+ *value_str = 0;
+  value_str++;
+
+ if ( (codec = roar_str2codec(codec_str)) == -1 ) {
+  ROAR_WARN("roar_libroar_config_parse_codec(*): Unknown codec: %s", codec_str);
+  return -1;
+ }
+
+ if ( (codec_cfg = roar_libroar_config_codec_get(codec, 1)) == NULL )
+  return -1;
+
+ if ( !strcmp(option_str, "q") || !strcmp(option_str, "quality") ) {
+  codec_cfg->para_set |= ROAR_LIBROAR_CONFIG_PSET_Q;
+  codec_cfg->q = _P_FP(value_str);
+ } else if ( !strcmp(option_str, "complexity") ) {
+  codec_cfg->para_set |= ROAR_LIBROAR_CONFIG_PSET_COMPLEXITY;
+  codec_cfg->complexity = _P_FP(value_str);
+ } else if ( !strcmp(option_str, "dtx") ) {
+  codec_cfg->para_set |= ROAR_LIBROAR_CONFIG_PSET_DTX;
+  codec_cfg->dtx = _P_BOOL(value_str);
+ } else if ( !strcmp(option_str, "cc-max") ) {
+  codec_cfg->para_set |= ROAR_LIBROAR_CONFIG_PSET_MAX_CC;
+  codec_cfg->max_cc = _P_INT(value_str);
+ } else {
+  ROAR_WARN("roar_libroar_config_parse_codec(*): Unkown codec option: %s", option_str);
+ }
+
+ return -1;
+}
+
 int    roar_libroar_config_parse(char * txt, char * delm) {
  struct roar_libroar_config * config = roar_libroar_get_config_ptr();
  char * k, * v, * next = txt;
@@ -130,6 +187,10 @@ int    roar_libroar_config_parse(char * txt, char * delm) {
     config->warnings.sysio = ROAR_WARNING_ALWAYS;
    } else {
     ROAR_WARN("roar_libroar_config_parse(*): Unknown warning option: %s", v);
+   }
+  } else if ( !strcmp(k, "codec") ) {
+   if ( roar_libroar_config_parse_codec(config, v) == -1 ) {
+    ROAR_WARN("roar_libroar_config_parse(*): Error parsing codec config option");
    }
   } else {
    ROAR_WARN("roar_libroar_config_parse(*): Unknown option: %s", k);
