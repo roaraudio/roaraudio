@@ -73,7 +73,14 @@ int    roar_libroar_config_parse(char * txt, char * delm) {
 
  while (next != NULL) {
   k = next;
-  next = strstr(next, delm);
+
+  if ( delm == NULL ) {
+   // no delm -> we have only one option
+   next = NULL;
+  } else {
+   next = strstr(next, delm);
+  }
+
   if ( next != NULL ) {
    *next = 0;
     next++;
@@ -102,6 +109,60 @@ int    roar_libroar_config_parse(char * txt, char * delm) {
  }
 
  return 0;
+}
+
+struct roar_libroar_config_codec * roar_libroar_config_codec_get(int codec, int create) {
+ struct roar_libroar_config * config = roar_libroar_get_config_ptr();
+ int i;
+ int need_new = 1;
+
+ if ( codec < 0 || create < 0 )
+  return NULL;
+
+ if ( config->codecs.num == 0 ) {
+  // no match case:
+  if ( !create )
+   return NULL;
+ } else {
+  for (i = 0; i < config->codecs.num; i++) {
+   if ( config->codecs.codec[i].codec == codec )
+    return &(config->codecs.codec[i]);
+   if ( config->codecs.codec[i].codec == -1 )
+    need_new = 0;
+  }
+ }
+
+ if ( !create )
+  return NULL;
+
+ if ( !need_new ) {
+  for (i = 0; i < config->codecs.num; i++) {
+   if ( config->codecs.codec[i].codec == -1 ) {
+    memset(&(config->codecs.codec[i]), 0, sizeof(struct roar_libroar_config_codec));
+    config->codecs.codec[i].codec = codec;
+    return &(config->codecs.codec[i]);
+   }
+  }
+ }
+
+ if ( config->codecs.num == 0 ) {
+  config->codecs.codec = malloc(16*sizeof(struct roar_libroar_config_codec));
+ } else {
+  config->codecs.codec = realloc(config->codecs.codec, (config->codecs.num+16)*sizeof(struct roar_libroar_config_codec));
+ }
+
+ if ( config->codecs.codec == NULL )
+  return NULL;
+
+ memset(&(config->codecs.codec[config->codecs.num]), 0, 16);
+ for (i = config->codecs.num; i < (config->codecs.num+16); i++) {
+  config->codecs.codec[i].codec = -1;
+ }
+
+ i = config->codecs.num;
+ config->codecs.num += 16;
+
+ return &(config->codecs.codec[i]);
 }
 
 int    roar_libroar_set_server(char * server) {
