@@ -86,8 +86,12 @@ int    roar_libroar_config_parse(char * txt, char * delm) {
     next++;
   }
 
+  ROAR_DBG("roar_libroar_config_parse(*): k='%s'", k);
+
   // strip leading spaces:
   while ( *k == ' ' ) k++;
+
+  ROAR_DBG("roar_libroar_config_parse(*): k='%s'", k);
 
   // strip tailing new lions:
   v = strtok(k, "\r\n");
@@ -96,9 +100,13 @@ int    roar_libroar_config_parse(char * txt, char * delm) {
     *v = 0;
   }
 
+  ROAR_DBG("roar_libroar_config_parse(*): k='%s'", k);
+
   // comments
   if ( *k == '#' )
    continue;
+
+  ROAR_DBG("roar_libroar_config_parse(*): k='%s'", k);
 
   // empty options:
   if ( *k == 0 )
@@ -109,20 +117,22 @@ int    roar_libroar_config_parse(char * txt, char * delm) {
     v++;
   }
 
+  ROAR_DBG("roar_libroar_config_parse(*): k='%s', v='%s'", k, v);
+
   if ( !strcmp(k, "workaround") ) {
    if ( !strcmp(v, "use-execed") ) {
     config->workaround.workarounds |= ROAR_LIBROAR_CONFIG_WAS_USE_EXECED;
    } else {
-    ROAR_WARN("roar_libroar_get_config(void): Unknown workaround option: %s", v);
+    ROAR_WARN("roar_libroar_config_parse(*): Unknown workaround option: %s", v);
    }
   } else if ( !strcmp(k, "warning") || !strcmp(k, "warn") ) {
    if ( !strcmp(v, "sysio") ) {
     config->warnings.sysio = ROAR_WARNING_ALWAYS;
    } else {
-    ROAR_WARN("roar_libroar_get_config(void): Unknown warning option: %s", v);
+    ROAR_WARN("roar_libroar_config_parse(*): Unknown warning option: %s", v);
    }
   } else {
-   ROAR_WARN("roar_libroar_get_config(void): Unknown option: %s", k);
+   ROAR_WARN("roar_libroar_config_parse(*): Unknown option: %s", k);
   }
  }
 
