@@ -41,6 +41,20 @@
 #define ROAR_LIBROAR_CONFIG_WAS_NONE        0x00
 #define ROAR_LIBROAR_CONFIG_WAS_USE_EXECED  0x01
 
+struct roar_libroar_config_codec {
+ unsigned int codec; // Codec ID
+ // the folloing ints are 256 times there correct value
+ // to emulate a .8 bit fixed point float.
+ int q;
+ int complexity;
+
+ // currectly bools:
+ int dtx;
+
+ // sizes:
+ size_t max_cc;
+};
+
 struct roar_libroar_config {
  struct {
   int workarounds;
@@ -49,10 +63,18 @@ struct roar_libroar_config {
  struct {
   int sysio;
  } warnings;
+ struct {
+  size_t num;
+  struct roar_libroar_config_codec * codec;
+ } codecs;
 };
 
 struct roar_libroar_config * roar_libroar_get_config_ptr(void);
 struct roar_libroar_config * roar_libroar_get_config(void);
+
+int    roar_libroar_config_parse(char * txt, char * delm);
+
+struct roar_libroar_config_codec * roar_libroar_config_codec_get(int codec, int create);
 
 int    roar_libroar_set_server(char * server);
 char * roar_libroar_get_server(void);
