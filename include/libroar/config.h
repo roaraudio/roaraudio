@@ -41,8 +41,17 @@
 #define ROAR_LIBROAR_CONFIG_WAS_NONE        0x00
 #define ROAR_LIBROAR_CONFIG_WAS_USE_EXECED  0x01
 
+#define ROAR_LIBROAR_CONFIG_PSET_Q          0x0001
+#define ROAR_LIBROAR_CONFIG_PSET_COMPLEXITY 0x0002
+#define ROAR_LIBROAR_CONFIG_PSET_DTX        0x0004
+#define ROAR_LIBROAR_CONFIG_PSET_MAX_CC     0x0008
+
 struct roar_libroar_config_codec {
  unsigned int codec; // Codec ID
+
+ // parameters which are set:
+ unsigned int para_set;
+
  // the folloing ints are 256 times there correct value
  // to emulate a .8 bit fixed point float.
  int q;
