@@ -99,7 +99,7 @@ static int roar_libroar_config_parse_codec(struct roar_libroar_config * config, 
   return -1;
  }
 
- if ( (codec_cfg = roar_libroar_config_codec_get(codec, 1)) == NULL )
+ if ( (codec_cfg = roar_libroar_config_codec_get_conf(codec, 1, config)) == NULL )
   return -1;
 
  if ( !strcmp(option_str, "q") || !strcmp(option_str, "quality") ) {
@@ -199,7 +199,12 @@ int    roar_libroar_config_parse(char * txt, char * delm) {
 }
 
 struct roar_libroar_config_codec * roar_libroar_config_codec_get(int codec, int create) {
- struct roar_libroar_config * config = roar_libroar_get_config_ptr();
+ struct roar_libroar_config * config = roar_libroar_get_config();
+ return roar_libroar_config_codec_get_conf(codec, create, config);
+}
+
+static struct roar_libroar_config_codec *
+           roar_libroar_config_codec_get_conf(int codec, int create, struct roar_libroar_config * config) {
  int i;
  int need_new = 1;
 

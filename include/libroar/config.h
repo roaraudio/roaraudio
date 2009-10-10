@@ -83,6 +83,8 @@ struct roar_libroar_config * roar_libroar_get_config(void);
 
 int    roar_libroar_config_parse(char * txt, char * delm);
 
+static struct roar_libroar_config_codec *
+           roar_libroar_config_codec_get_conf(int codec, int create, struct roar_libroar_config * config);
 struct roar_libroar_config_codec * roar_libroar_config_codec_get(int codec, int create);
 
 int    roar_libroar_set_server(char * server);
