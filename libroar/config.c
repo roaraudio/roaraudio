@@ -79,23 +79,20 @@ static int roar_libroar_config_parse_codec(struct roar_libroar_config * config, 
  if ( config == NULL || txt == NULL )
   return -1;
 
- codec_str = txt;
+ codec_str = strtok(txt, ":");
 
- option_str = strtok(txt, ":");
+ if ( codec_str == NULL )
+  return -1;
+
+ option_str = strtok(NULL, ":");
 
  if ( option_str == NULL )
   return -1;
 
- *option_str = 0;
-  option_str++;
-
- value_str = strtok(option_str, ":");
+ value_str = strtok(NULL, ":");
 
  if ( value_str == NULL )
   return -1;
-
- *value_str = 0;
-  value_str++;
 
  if ( (codec = roar_str2codec(codec_str)) == -1 ) {
   ROAR_WARN("roar_libroar_config_parse_codec(*): Unknown codec: %s", codec_str);
@@ -119,9 +116,10 @@ static int roar_libroar_config_parse_codec(struct roar_libroar_config * config, 
   codec_cfg->max_cc = _P_INT(value_str);
  } else {
   ROAR_WARN("roar_libroar_config_parse_codec(*): Unknown codec option: %s", option_str);
+  return -1;
  }
 
- return -1;
+ return 0;
 }
 
 int    roar_libroar_config_parse(char * txt, char * delm) {
