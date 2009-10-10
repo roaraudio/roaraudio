@@ -314,7 +314,7 @@ int cf_speex_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
   fs2 = self->frame_size * _FS;
 
   if ( !self->cd ) {
-   self->cd = malloc(fs2);
+   self->cd = malloc(fs2 + 2);
    if ( !self->cd )
     return 0;
   }
@@ -340,11 +340,11 @@ int cf_speex_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
 
    speex_encode_int(self->encoder, (spx_int16_t *) self->o_rest, &(self->bits));
 
-   tmp = mode = speex_bits_write(&(self->bits), self->cd, fs2);
+   tmp = mode = speex_bits_write(&(self->bits), self->cd + 2, fs2);
 
    mode = ROAR_HOST2NET16(mode);
-   stream_vio_s_write(self->stream, &mode, 2);
-   if ( stream_vio_s_write(self->stream, self->cd, tmp) != tmp )
+   *(uint16_t*)(self->cd) = mode;
+   if ( stream_vio_s_write(self->stream, self->cd, tmp + 2) != (tmp + 2) )
     return -1;
 
    buf += need_extra;
@@ -370,13 +370,13 @@ int cf_speex_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
 
   speex_encode_int(self->encoder, (spx_int16_t *) buf, &(self->bits));
 
-  tmp = mode = speex_bits_write(&(self->bits), self->cd, fs2);
+  tmp = mode = speex_bits_write(&(self->bits), self->cd + 2, fs2);
 
   mode = ROAR_HOST2NET16(mode);
 
-  stream_vio_s_write(self->stream, &mode, 2);
+  *(uint16_t*)(self->cd) = mode;
 
-  if ( stream_vio_s_write(self->stream, self->cd, tmp) != tmp )
+  if ( stream_vio_s_write(self->stream, self->cd, tmp + 2) != (tmp + 2) )
    return -1;
 
   len -= fs2;
