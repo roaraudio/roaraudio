@@ -34,6 +34,10 @@
 
 #include "libroar.h"
 
+static struct roar_libroar_config_codec *
+           roar_libroar_config_codec_get_conf(int codec, int create, struct roar_libroar_config * config);
+
+
 struct roar_libroar_config * roar_libroar_get_config_ptr(void) {
  static struct roar_libroar_config config;
  static int inited = 0;
