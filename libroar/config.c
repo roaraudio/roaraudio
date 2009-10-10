@@ -118,7 +118,7 @@ static int roar_libroar_config_parse_codec(struct roar_libroar_config * config, 
   codec_cfg->para_set |= ROAR_LIBROAR_CONFIG_PSET_MAX_CC;
   codec_cfg->max_cc = _P_INT(value_str);
  } else {
-  ROAR_WARN("roar_libroar_config_parse_codec(*): Unkown codec option: %s", option_str);
+  ROAR_WARN("roar_libroar_config_parse_codec(*): Unknown codec option: %s", option_str);
  }
 
  return -1;
