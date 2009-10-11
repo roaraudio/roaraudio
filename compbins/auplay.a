@@ -1,0 +1,9 @@
+#!/bin/sh
+
+NAME='auplay'
+RNAME='roarcatplay'
+
+ARGS_MAP_OPTS='-audio:true:--server'
+ARGS_PASS_NON_OPTS=true
+
+#ll
