@@ -180,11 +180,6 @@ int main (int argc, char * argv[]) {
    break;
 #ifdef ROAR_HAVE_ESD
   case MT_ESD:
-    if ( (type & ST_MASK) != ST_FILTER ) {
-     fprintf(stderr, "Error: server type only supports stream type filter\n");
-     return 2;
-    }
-
     tmp = ESD_STREAM|ESD_PLAY;
 
     switch (bits) {
@@ -212,7 +207,21 @@ int main (int argc, char * argv[]) {
      return 2;
     }
 
-    rfh = esd_filter_stream(tmp, rate, remote, "roarinterconnect");
+    switch (type & ST_MASK) {
+     case ST_FILTER:
+       rfh = esd_filter_stream(tmp, rate, remote, "roarinterconnect");
+      break;
+     case ST_TRANSMIT:
+       rfh = esd_play_stream(tmp, rate, remote, "roarinterconnect");
+      break;
+     case ST_RECEIVE:
+       rfh = esd_monitor_stream(tmp, rate, remote, "roarinterconnect");
+      break;
+     default:
+       fprintf(stderr, "Error: this type is not supported by EsounD\n");
+       return 2;
+      break;
+    }
    break;
 #endif
   default:
