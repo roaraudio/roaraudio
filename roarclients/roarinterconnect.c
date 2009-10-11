@@ -28,16 +28,18 @@
 #include <esd.h>
 #endif
 
-#define MT_NONE    0x00
+#define MT_NONE     0x00
 #define MT_MASK    0xF0
-#define MT_ROAR    0x10
-#define MT_ESD     0x20
-#define MT_DEFAULT MT_ROAR
+#define MT_ROAR     0x10
+#define MT_ESD      0x20
+#define MT_DEFAULT  MT_ROAR
 
-#define ST_NONE    0x00
-#define ST_MASK    0x0F
-#define ST_BIDIR   0x01
-#define ST_FILTER  0x02
+#define ST_NONE     0x00
+#define ST_MASK     0x0F
+#define ST_BIDIR    0x01
+#define ST_FILTER   0x02
+#define ST_TRANSMIT 0x03
+#define ST_RECEIVE  0x04
 // no default here as the default depend on the server type
 
 void usage (void) {
@@ -80,6 +82,12 @@ int parse_type (char * type) {
    } else if ( !strcmp(type, "filter") ) {
     ret -= ret & ST_MASK;
     ret += ST_FILTER;
+   } else if ( !strcmp(type, "transmit") ) {
+    ret -= ret & ST_MASK;
+    ret += ST_TRANSMIT;
+   } else if ( !strcmp(type, "receive") ) {
+    ret -= ret & ST_MASK;
+    ret += ST_RECEIVE;
    } else {
     return MT_NONE|ST_NONE;
    }
@@ -118,6 +126,7 @@ int main (int argc, char * argv[]) {
  char * k;
  int    rfh;
  int    i;
+ int    localdir = ROAR_DIR_BIDIR;
 
  for (i = 1; i < argc; i++) {
   k = argv[i];
@@ -150,10 +159,18 @@ int main (int argc, char * argv[]) {
   case MT_ROAR:
     switch (type & ST_MASK) {
      case ST_BIDIR:
-       tmp = ROAR_DIR_BIDIR;
+       tmp      = ROAR_DIR_BIDIR;
       break;
      case ST_FILTER:
-       tmp = ROAR_DIR_FILTER;
+       tmp      = ROAR_DIR_FILTER;
+      break;
+     case ST_TRANSMIT:
+       tmp      = ROAR_DIR_PLAY;
+       localdir = ROAR_DIR_MONITOR;
+      break;
+     case ST_RECEIVE:
+       tmp      = ROAR_DIR_MONITOR;
+       localdir = ROAR_DIR_PLAY;
       break;
      default:
        fprintf(stderr, "Error: unknown stream type\n");
@@ -218,7 +235,7 @@ int main (int argc, char * argv[]) {
   return 21;
  }
 
- if ( roar_stream_connect(con, stream, ROAR_DIR_BIDIR) == -1 ) {
+ if ( roar_stream_connect(con, stream, localdir) == -1 ) {
   roar_disconnect(con);
   return 22;
  }
