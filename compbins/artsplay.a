@@ -1,6 +1,6 @@
 #!/bin/sh
 
-NAME='artsplayplay'
+NAME='artsplay'
 RNAME='roarcatplay'
 
 ARGS_ADD_OPTS='--background'
