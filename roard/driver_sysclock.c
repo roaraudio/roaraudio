@@ -90,7 +90,7 @@ int     driver_sysclock_close   (struct roar_vio_calls * vio) {
 ssize_t driver_sysclock_write   (struct roar_vio_calls * vio, void *buf, size_t count) {
  struct driver_sysclock * self = vio->inst;
  struct timeval now;
- long long diff = (1000000 * count / self->bps);
+ long long diff = (1000000LL * count / (long long)self->bps);
  long long ago;
 
  gettimeofday(&now, NULL);
@@ -107,6 +107,8 @@ ssize_t driver_sysclock_write   (struct roar_vio_calls * vio, void *buf, size_t 
  diff -= ago;
 
  self->last_wanted = diff;
+
+ ROAR_DBG("driver_sysclock_write(*): diff=%lli", diff);
 
  if ( diff > 0 )
   usleep(diff);
