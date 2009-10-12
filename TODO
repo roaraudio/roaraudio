@@ -10,7 +10,6 @@ Things we should do:
  * (1.0) add internal memory management
  * (0.3) do a lot work on the manpages
  * (0.3) publish IDs used in proto as public domain
- * (0.3) fix names of comp libs
  * (0.3) Check for things needed to be done to support newer versions of CELT
 
 Things it would be nice to have:
