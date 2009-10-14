@@ -277,6 +277,9 @@ static struct roar_libroar_config_codec *
  i = config->codecs.num;
  config->codecs.num += 16;
 
+ memset(&(config->codecs.codec[i]), 0, sizeof(struct roar_libroar_config_codec));
+ config->codecs.codec[i].codec = codec;
+
  return &(config->codecs.codec[i]);
 }
 
