@@ -66,6 +66,8 @@ int roar_xcoder_speex_init       (struct roar_xcoder * state) {
   self->codec_config = roar_libroar_config_codec_get(ROAR_CODEC_ROAR_SPEEX, 0);
   self->max_cc = ROAR_SPEEX_MAX_CC;
 
+  ROAR_DBG("roar_xcoder_speex_init(*): self->codec_config=%p", self->codec_config);
+
   if ( _HAVE_CCFG(ROAR_LIBROAR_CONFIG_PSET_MAX_CC) ) {
    self->max_cc = self->codec_config->max_cc;
   }
