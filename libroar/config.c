@@ -80,8 +80,12 @@ static int roar_libroar_config_parse_codec(struct roar_libroar_config * config, 
  int codec;
  char * codec_str, * option_str, * value_str;
 
+ ROAR_DBG("roar_libroar_config_parse_codec(config=%p, txt='%s') = ?", config, txt);
+
  if ( config == NULL || txt == NULL )
   return -1;
+
+ ROAR_DBG("roar_libroar_config_parse_codec(config=%p, txt='%s') = ?", config, txt);
 
  codec_str = strtok(txt, ":");
 
@@ -98,13 +102,19 @@ static int roar_libroar_config_parse_codec(struct roar_libroar_config * config, 
  if ( value_str == NULL )
   return -1;
 
+ ROAR_DBG("roar_libroar_config_parse_codec(config=%p, txt='%s') = ?", config, txt);
+
  if ( (codec = roar_str2codec(codec_str)) == -1 ) {
   ROAR_WARN("roar_libroar_config_parse_codec(*): Unknown codec: %s", codec_str);
   return -1;
  }
 
+ ROAR_DBG("roar_libroar_config_parse_codec(config=%p, txt='%s'): codec=%i", config, txt, codec);
+
  if ( (codec_cfg = roar_libroar_config_codec_get_conf(codec, 1, config)) == NULL )
   return -1;
+
+ ROAR_DBG("roar_libroar_config_parse_codec(config=%p, txt='%s'): codec=%i, codec_cfg=%p", config, txt, codec, codec_cfg);
 
  if ( !strcmp(option_str, "q") || !strcmp(option_str, "quality") ) {
   codec_cfg->para_set |= ROAR_LIBROAR_CONFIG_PSET_Q;
@@ -215,8 +225,12 @@ static struct roar_libroar_config_codec *
  int i;
  int need_new = 1;
 
+ ROAR_DBG("roar_libroar_config_codec_get_conf(codec=%i, create=%i, config=%p) = ?", codec, create, config);
+
  if ( codec < 0 || create < 0 )
   return NULL;
+
+ ROAR_DBG("roar_libroar_config_codec_get_conf(codec=%i, create=%i, config=%p) = ?", codec, create, config);
 
  if ( config->codecs.num == 0 ) {
   // no match case:
@@ -230,6 +244,8 @@ static struct roar_libroar_config_codec *
     need_new = 0;
   }
  }
+
+ ROAR_DBG("roar_libroar_config_codec_get_conf(codec=%i, create=%i, config=%p) = ?", codec, create, config);
 
  if ( !create )
   return NULL;
