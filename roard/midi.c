@@ -521,6 +521,8 @@ int midi_clock_init (void) {
   return -1;
  }
 
+ client_stream_add(g_self_client, g_midi_clock.stream);
+
  midi_vio_set_dummy(g_midi_clock.stream);
 
  streams_get(g_midi_clock.stream, &ss);
@@ -649,6 +651,8 @@ int midi_cb_init (void) {
   midi_cb_free();
   return -1;
  }
+
+ client_stream_add(g_self_client, g_midi_clock.stream);
 
  midi_vio_set_dummy(g_midi_cb.stream);
 
