@@ -135,6 +135,26 @@ int roar_xcoder_speex_packet_size(struct roar_xcoder * state, int samples) {
  return _16BIT * self->frame_size * (self->stereo ? 2 : 1);
 }
 
+int roar_xcoder_speex_proc_header(struct roar_xcoder * state) {
+ struct roar_xcoder_speex * self = state->inst;
+
+ // we do allready open streams not considder an error.
+ if ( state->stage == ROAR_XCODER_STAGE_OPENED )
+  return 0;
+
+ // everything else expected an INITED stream (OPENING, MAGIC,..)
+ // is an error...
+ if ( state->stage != ROAR_XCODER_STAGE_INITED )
+  return -1;
+
+ if ( state->encode ) {
+ } else {
+ }
+
+ // on no error...
+ return 0;
+}
+
 int roar_xcoder_speex_encode     (struct roar_xcoder * state, void * buf, size_t len) {
  struct roar_xcoder_speex * self = state->inst;
  uint16_t tmp_net;

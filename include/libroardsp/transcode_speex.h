@@ -56,6 +56,7 @@ struct roar_xcoder_speex {
 int roar_xcoder_speex_init       (struct roar_xcoder * state);
 int roar_xcoder_speex_uninit     (struct roar_xcoder * state);
 int roar_xcoder_speex_packet_size(struct roar_xcoder * state, int samples);
+int roar_xcoder_speex_proc_header(struct roar_xcoder * state);
 int roar_xcoder_speex_encode     (struct roar_xcoder * state, void * buf, size_t len);
 int roar_xcoder_speex_decode     (struct roar_xcoder * state, void * buf, size_t len);
 
