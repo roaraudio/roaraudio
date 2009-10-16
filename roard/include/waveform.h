@@ -27,6 +27,10 @@
 
 #include <roaraudio.h>
 
+struct {
+ int stream;
+} g_waveform_mixer;
+
 int waveform_init  (void);
 int waveform_free  (void);
 
