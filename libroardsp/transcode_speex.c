@@ -90,6 +90,11 @@ int roar_xcoder_speex_init       (struct roar_xcoder * state) {
    speex_encoder_ctl(self->xcoder, SPEEX_SET_QUALITY,       &tmp);
   }
 
+  if ( _HAVE_CCFG(ROAR_LIBROAR_CONFIG_PSET_VBR) ) {
+   tmp = self->codec_config->vbr ? 1 : 0;
+   speex_encoder_ctl(self->xcoder, SPEEX_SET_VBR,       &tmp);
+  }
+
   if ( _HAVE_CCFG(ROAR_LIBROAR_CONFIG_PSET_DTX) ) {
    tmp = self->codec_config->dtx ? 1 : 0;
    speex_encoder_ctl(self->xcoder, SPEEX_SET_DTX,       &tmp);
