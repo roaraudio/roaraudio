@@ -73,6 +73,9 @@ int add_mixer (int subsys, char * name, struct roar_stream_server ** ss_ptr) {
    break;
  }
 
+ if ( ss_ptr != NULL )
+  *ss_ptr = ss;
+
  return stream;
 }
 
