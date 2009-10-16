@@ -43,6 +43,7 @@ int midi_init_config(void) {
 }
 
 int midi_init (void) {
+ struct roar_stream_server * ss;
 
  midi_config.inited = 0;
 
@@ -63,9 +64,10 @@ int midi_init (void) {
 
  g_midi_mess.buf = NULL;
 
- if ( (g_midi_mixer.stream = add_mixer(ROAR_SUBSYS_MIDI, _MIXER_NAME("MIDI"), NULL)) == -1 ) {
+ if ( (g_midi_mixer.stream = add_mixer(ROAR_SUBSYS_MIDI, _MIXER_NAME("MIDI"), &ss)) == -1 ) {
   ROAR_WARN("Can not create MIDI mixer");
  }
+ ss->state = ROAR_STREAMSTATE_OLD;
 
  midi_config.inited |= MIDI_INITED_MAIN;
 
@@ -555,6 +557,8 @@ int midi_clock_init (void) {
 
  midi_clock_set_bph(3600); // one beat per sec
 
+ ss->state = ROAR_STREAMSTATE_NEW;
+
  midi_config.inited |= MIDI_INITED_CLOCK;
 
  return 0;
@@ -606,6 +610,7 @@ int midi_clock_tick (void) {
    }
 
    ROAR_STREAM(ss)->pos = ROAR_MATH_OVERFLOW_ADD(ROAR_STREAM(ss)->pos, 1);
+   ss->state = ROAR_STREAMSTATE_OLD;
   } else {
    ROAR_DBG("midi_clock_tick(void): silent tick. (nt=%lu)", g_midi_clock.nt);
   }
