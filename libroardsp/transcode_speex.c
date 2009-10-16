@@ -137,6 +137,11 @@ int roar_xcoder_speex_packet_size(struct roar_xcoder * state, int samples) {
 
 int roar_xcoder_speex_proc_header(struct roar_xcoder * state) {
  struct roar_xcoder_speex * self = state->inst;
+ uint16_t tmp_net;
+ int tmp;
+ SpeexStereoState stereo = SPEEX_STEREO_STATE_INIT;
+ SpeexCallback callback;
+ char magic[ROAR_SPEEX_MAGIC_LEN];
 
  // we do allready open streams not considder an error.
  if ( state->stage == ROAR_XCODER_STAGE_OPENED )
@@ -148,24 +153,6 @@ int roar_xcoder_speex_proc_header(struct roar_xcoder * state) {
   return -1;
 
  if ( state->encode ) {
- } else {
- }
-
- // on no error...
- return 0;
-}
-
-int roar_xcoder_speex_encode     (struct roar_xcoder * state, void * buf, size_t len) {
- struct roar_xcoder_speex * self = state->inst;
- uint16_t tmp_net;
- int pkg_len;
-
- if (!state->encode)
-  return -1;
-
- ROAR_DBG("roar_xcoder_speex_encode(*): Encoding...");
-
- if ( state->stage == ROAR_XCODER_STAGE_INITED ) {
   if ( roar_vio_write(state->backend, ROAR_SPEEX_MAGIC, ROAR_SPEEX_MAGIC_LEN) != ROAR_SPEEX_MAGIC_LEN )
    return -1;
   state->stage = ROAR_XCODER_STAGE_MAGIC;
@@ -178,38 +165,7 @@ int roar_xcoder_speex_encode     (struct roar_xcoder * state, void * buf, size_t
    return -1;
 
   state->stage = ROAR_XCODER_STAGE_OPENED;
- }
-
- speex_bits_reset(&(self->bits));
-
- if ( self->stereo )
-  speex_encode_stereo_int((spx_int16_t *) buf, self->frame_size, &(self->bits));
-
- speex_encode_int(self->xcoder, (spx_int16_t *) buf, &(self->bits));
-
- pkg_len = speex_bits_write(&(self->bits), self->cc + 2, self->max_cc);
-
- *((uint16_t*)self->cc) = ROAR_HOST2NET16(pkg_len);
-
- if ( roar_vio_write(state->backend, self->cc, pkg_len + 2) != (pkg_len + 2) )
-   return -1;
-
- return 0;
-}
-
-// TODO: move all the init thingys into a seperate function
-int roar_xcoder_speex_decode     (struct roar_xcoder * state, void * buf, size_t len) {
- struct roar_xcoder_speex * self = state->inst;
- char magic[ROAR_SPEEX_MAGIC_LEN];
- uint16_t tmp_net;
- int pkg_len;
- int tmp;
- SpeexStereoState stereo = SPEEX_STEREO_STATE_INIT;
- SpeexCallback callback;
-
- ROAR_DBG("roar_xcoder_speex_decode(state=%p, buf=%p, len=%lu) = ?", state, buf, (unsigned long)len);
-
- if ( state->stage == ROAR_XCODER_STAGE_INITED ) {
+ } else {
   ROAR_DBG("roar_xcoder_speex_decode(state=%p, buf=%p, len=%lu): state->stage = INITED", state, buf, (unsigned long)len);
   if ( roar_vio_read(state->backend, magic, ROAR_SPEEX_MAGIC_LEN) != ROAR_SPEEX_MAGIC_LEN )
    return -1;
@@ -260,6 +216,52 @@ int roar_xcoder_speex_decode     (struct roar_xcoder * state, void * buf, size_t
   state->stage = ROAR_XCODER_STAGE_OPENED;
   ROAR_DBG("roar_xcoder_speex_decode(state=%p, buf=%p, len=%lu): state->stage = OPENED", state, buf, (unsigned long)len);
  }
+
+ // on no error...
+ return 0;
+}
+
+int roar_xcoder_speex_encode     (struct roar_xcoder * state, void * buf, size_t len) {
+ struct roar_xcoder_speex * self = state->inst;
+ int pkg_len;
+
+ if (!state->encode)
+  return -1;
+
+ ROAR_DBG("roar_xcoder_speex_encode(*): Encoding...");
+
+ if ( state->stage == ROAR_XCODER_STAGE_INITED )
+  if ( roar_xcoder_speex_proc_header(state) == -1 )
+   return -1;
+
+ speex_bits_reset(&(self->bits));
+
+ if ( self->stereo )
+  speex_encode_stereo_int((spx_int16_t *) buf, self->frame_size, &(self->bits));
+
+ speex_encode_int(self->xcoder, (spx_int16_t *) buf, &(self->bits));
+
+ pkg_len = speex_bits_write(&(self->bits), self->cc + 2, self->max_cc);
+
+ *((uint16_t*)self->cc) = ROAR_HOST2NET16(pkg_len);
+
+ if ( roar_vio_write(state->backend, self->cc, pkg_len + 2) != (pkg_len + 2) )
+   return -1;
+
+ return 0;
+}
+
+// TODO: move all the init thingys into a seperate function
+int roar_xcoder_speex_decode     (struct roar_xcoder * state, void * buf, size_t len) {
+ struct roar_xcoder_speex * self = state->inst;
+ uint16_t tmp_net;
+ int pkg_len;
+
+ ROAR_DBG("roar_xcoder_speex_decode(state=%p, buf=%p, len=%lu) = ?", state, buf, (unsigned long)len);
+
+ if ( state->stage == ROAR_XCODER_STAGE_INITED )
+  if ( roar_xcoder_speex_proc_header(state) == -1 )
+   return -1;
 
  ROAR_DBG("roar_xcoder_speex_decode(state=%p, buf=%p, len=%lu): state->stage = %s", state, buf, (unsigned long)len,
           state->stage == ROAR_XCODER_STAGE_OPENED ? "OPENED" : "???"
