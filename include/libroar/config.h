@@ -45,6 +45,11 @@
 #define ROAR_LIBROAR_CONFIG_PSET_COMPLEXITY 0x0002
 #define ROAR_LIBROAR_CONFIG_PSET_DTX        0x0004
 #define ROAR_LIBROAR_CONFIG_PSET_MAX_CC     0x0008
+#define ROAR_LIBROAR_CONFIG_PSET_ABR        0x0010 /* need to implement */
+#define ROAR_LIBROAR_CONFIG_PSET_VAD        0x0020 /* need to implement */
+#define ROAR_LIBROAR_CONFIG_PSET_AGC        0x0040 /* need to implement */
+#define ROAR_LIBROAR_CONFIG_PSET_DENOISE    0x0080 /* need to implement */
+#define ROAR_LIBROAR_CONFIG_PSET_VBR        0x0100
 
 struct roar_libroar_config_codec {
  unsigned int codec; // Codec ID
@@ -59,6 +64,7 @@ struct roar_libroar_config_codec {
 
  // currectly bools:
  int dtx;
+ int vbr;
 
  // sizes:
  size_t max_cc;

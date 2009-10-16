@@ -128,6 +128,9 @@ static int roar_libroar_config_parse_codec(struct roar_libroar_config * config, 
  } else if ( !strcmp(option_str, "cc-max") ) {
   codec_cfg->para_set |= ROAR_LIBROAR_CONFIG_PSET_MAX_CC;
   codec_cfg->max_cc = _P_INT(value_str);
+ } else if ( !strcmp(option_str, "vbr") ) {
+  codec_cfg->para_set |= ROAR_LIBROAR_CONFIG_PSET_VBR;
+  codec_cfg->vbr = _P_BOOL(value_str);
  } else {
   ROAR_WARN("roar_libroar_config_parse_codec(*): Unknown codec option: %s", option_str);
   return -1;
