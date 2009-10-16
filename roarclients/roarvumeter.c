@@ -48,7 +48,7 @@ void usage (void) {
 
 }
 
-int vumeter16bit2ch (int fh, int samples, int16_t * buf, int mode) {
+int vumeter16bit2ch (struct roar_vio_calls * vio, int samples, int16_t * buf, int mode) {
  int i;
  int samples_half = samples/2;
  int64_t suml, sumr;
@@ -57,7 +57,7 @@ int vumeter16bit2ch (int fh, int samples, int16_t * buf, int mode) {
  printf("\e[s");
  fflush(stdout);
 
- while (read(fh, buf, samples * 2)) {
+ while (roar_vio_read(vio, buf, samples * 2) > 0) {
   suml = sumr = 0;
 
   for (i = 0; i < samples; i += 2) {
@@ -82,7 +82,7 @@ int vumeter16bit2ch (int fh, int samples, int16_t * buf, int mode) {
  return 0;
 }
 
-int vumeter (int fh, int samples, int bits, int channels, int mode) {
+int vumeter (struct roar_vio_calls * vio, int samples, int bits, int channels, int mode) {
  void * buf = malloc(samples*bits*2);
 
  if ( !buf )
@@ -90,7 +90,7 @@ int vumeter (int fh, int samples, int bits, int channels, int mode) {
 
  if ( bits == 16 ) {
   if ( channels == 2 ) {
-   vumeter16bit2ch(fh, samples, (int16_t *) buf, mode);
+   vumeter16bit2ch(vio, samples, (int16_t *) buf, mode);
    free(buf);
    return 0;
   } else {
@@ -109,7 +109,7 @@ int main (int argc, char * argv[]) {
  int    samples  = 441;
  char * server   = NULL;
  char * k;
- int    fh;
+ struct roar_vio_calls stream, re;
  int    i;
  int    mode = MODE_PC;
 
@@ -138,16 +138,22 @@ int main (int argc, char * argv[]) {
   }
  }
 
- if ( (fh = roar_simple_monitor(rate, channels, bits, codec, server, "roarvumeter")) == -1 ) {
-  fprintf(stderr, "Error: can not start playback\n");
+ if ( roar_vio_simple_stream(&stream, rate, channels, bits, codec, server, ROAR_DIR_MONITOR, "roarvumeter") == -1) {
+  fprintf(stderr, "Error: can not start monetoring\n");
   return 1;
  }
 
- vumeter(fh, samples*channels, bits, channels, mode);
+ if ( roar_vio_open_re(&re, &stream) == -1 ) {
+  roar_vio_close(&stream);
+  fprintf(stderr, "Error: can not open RE VIO layer\n");
+  return 1;
+ }
+
+ vumeter(&re, samples*channels, bits, channels, mode);
 
  printf("\n"); // if the reach this then roard has quited and we should print a newline
 
- roar_simple_close(fh);
+ roar_vio_close(&re);
 
  return 0;
 }
