@@ -5,6 +5,7 @@ v. 0.3beta3 - ?
 	* write much better support for config, including codec config
 	* reduced the TCP overhead produced by speex
 	* get names of complibs from table, do not guess them
+	* a lot small fixes
 
 v. 0.3beta2 - Mon Oct 05 2009 19:48 CEST
 	* Added prethru flag
