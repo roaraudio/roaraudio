@@ -37,6 +37,10 @@ struct {
  unsigned char * changes;
 } g_light_state;
 
+struct {
+ int stream;
+} g_light_mixer;
+
 int light_init  (unsigned int channels);
 int light_free  (void);
 

@@ -44,6 +44,11 @@ int light_init  (unsigned int channels) {
 
  g_light_state.channels = channels;
 
+ if ( (g_light_mixer.stream = add_mixer(ROAR_SUBSYS_LIGHT, _MIXER_NAME("Light Control"), NULL)) == -1 ) {
+  free(g_light_state.state);
+  return -1;
+ }
+
  return light_reset();
 }
 
