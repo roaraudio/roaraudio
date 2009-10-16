@@ -59,6 +59,7 @@ struct roar_xcoder_entry {
  int (*packet_size)(struct roar_xcoder * state, int samples);
  int (*encode)(struct roar_xcoder * state, void * buf, size_t len);
  int (*decode)(struct roar_xcoder * state, void * buf, size_t len);
+ int (*proc_header)(struct roar_xcoder * state);
 };
 
 struct roar_xcoder {
@@ -89,14 +90,17 @@ int roar_xcoder_init(struct roar_xcoder * state, int encoder, struct roar_audio_
 int roar_xcoder_set_backend(struct roar_xcoder * state, struct roar_vio_calls * vio);
 int roar_xcoder_packet_size(struct roar_xcoder * state, int samples);
 int roar_xcoder_close      (struct roar_xcoder * state);
+int roar_xcoder_proc_header(struct roar_xcoder * state);
 int roar_xcoder_proc_packet(struct roar_xcoder * state, void * buf, size_t len);
 int roar_xcoder_proc       (struct roar_xcoder * state, void * buf, size_t len);
 
 int roar_bixcoder_init(struct roar_bixcoder * state, struct roar_audio_info * info, struct roar_vio_calls * vio);
 int roar_bixcoder_packet_size (struct roar_bixcoder * state, int samples);
 int roar_bixcoder_close       (struct roar_bixcoder * state);
+int roar_bixcoder_read_header (struct roar_bixcoder * state);
 int roar_bixcoder_read_packet (struct roar_bixcoder * state, void * buf, size_t len);
 int roar_bixcoder_read        (struct roar_bixcoder * state, void * buf, size_t len);
+int roar_bixcoder_write_header(struct roar_bixcoder * state);
 int roar_bixcoder_write_packet(struct roar_bixcoder * state, void * buf, size_t len);
 int roar_bixcoder_write       (struct roar_bixcoder * state, void * buf, size_t len);
 

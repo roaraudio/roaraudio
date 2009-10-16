@@ -32,18 +32,18 @@
 
 static struct roar_xcoder_entry g_xcoders[] = {
  {ROAR_CODEC_ALAW,  roar_xcoder_dummy_inituninit, roar_xcoder_dummy_inituninit, roar_xcoder_dummy_packet_size_any,
-                     roar_xcoder_alaw_encode,  roar_xcoder_alaw_decode},
+                     roar_xcoder_alaw_encode,  roar_xcoder_alaw_decode, NULL},
  {ROAR_CODEC_MULAW, roar_xcoder_dummy_inituninit, roar_xcoder_dummy_inituninit, roar_xcoder_dummy_packet_size_any,
-                     roar_xcoder_mulaw_encode, roar_xcoder_mulaw_decode},
+                     roar_xcoder_mulaw_encode, roar_xcoder_mulaw_decode, NULL},
 #ifdef ROAR_HAVE_LIBCELT
  {ROAR_CODEC_ROAR_CELT, roar_xcoder_celt_init, roar_xcoder_celt_uninit, roar_xcoder_celt_packet_size,
-                     roar_xcoder_celt_encode,  roar_xcoder_celt_decode},
+                     roar_xcoder_celt_encode,  roar_xcoder_celt_decode, NULL},
 #endif
 #ifdef ROAR_HAVE_LIBSPEEX
  {ROAR_CODEC_ROAR_SPEEX, roar_xcoder_speex_init, roar_xcoder_speex_uninit, roar_xcoder_speex_packet_size,
-                     roar_xcoder_speex_encode, roar_xcoder_speex_decode},
+                     roar_xcoder_speex_encode, roar_xcoder_speex_decode, NULL},
 #endif
- {-1, NULL, NULL, NULL, NULL, NULL}
+ {-1, NULL, NULL, NULL, NULL, NULL, NULL}
 };
 
 int roar_xcoder_init(struct roar_xcoder * state, int encoder, struct roar_audio_info * info, struct roar_vio_calls * vio) {
@@ -123,6 +123,12 @@ int roar_xcoder_close      (struct roar_xcoder * state) {
  }
 
  return _FUNC(uninit)(state);
+}
+
+int roar_xcoder_proc_header(struct roar_xcoder * state) {
+ _CHECK_BASIC(proc_header);
+
+ return _FUNC(proc_header)(state);
 }
 
 int roar_xcoder_proc_packet(struct roar_xcoder * state, void * buf, size_t len) {
@@ -366,6 +372,13 @@ int roar_bixcoder_close       (struct roar_bixcoder * state) {
  return ret;
 }
 
+int roar_bixcoder_read_header (struct roar_bixcoder * state) {
+ if ( state == NULL )
+  return -1;
+
+ return roar_xcoder_proc_header(&(state->decoder));
+}
+
 int roar_bixcoder_read_packet (struct roar_bixcoder * state, void * buf, size_t len) {
 
  ROAR_DBG("roar_bixcoder_read_packet(state=%p, buf=%p, len=%lu) = ?", state, buf, (unsigned long)len);
@@ -381,6 +394,13 @@ int roar_bixcoder_read        (struct roar_bixcoder * state, void * buf, size_t 
   return -1;
 
  return roar_xcoder_proc(&(state->decoder), buf, len);
+}
+
+int roar_bixcoder_write_header(struct roar_bixcoder * state) {
+ if ( state == NULL )
+  return -1;
+
+ return roar_xcoder_proc_header(&(state->decoder));
 }
 
 int roar_bixcoder_write_packet(struct roar_bixcoder * state, void * buf, size_t len) {
