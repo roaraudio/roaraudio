@@ -429,6 +429,9 @@ gst_roarmixer_track_new (GstRoarMixer * mixer,
    case ROAR_DIR_PLAY:
      flags |= GST_MIXER_TRACK_OUTPUT;
     break;
+   case ROAR_DIR_MIXING:
+     flags |= GST_MIXER_TRACK_OUTPUT;
+    break;
    case ROAR_DIR_OUTPUT:
      flags |= GST_MIXER_TRACK_MASTER;
    case ROAR_DIR_MONITOR:
