@@ -1398,6 +1398,11 @@ int main (void) {
 
  ROAR_DBG("Server config: rate=%i, bits=%i, chans=%i", sa.rate, sa.bits, sa.channels);
 
+ if ( waveform_init() == -1 ) {
+  ROAR_ERR("Can not initialize Waveform subsystem");
+  return 1;
+ }
+
 #ifndef ROAR_WITHOUT_DCOMP_MIDI
  if ( midi_init() == -1 ) {
   ROAR_ERR("Can not initialize MIDI subsystem");
@@ -1675,6 +1680,8 @@ void clean_quit_prep (void) {
 #ifndef ROAR_WITHOUT_DCOMP_RDTCS
  rdtcs_free();
 #endif
+
+ waveform_free();
 
 #ifdef SUPPORT_PIDFILE
  if ( pidfile != NULL )

@@ -104,6 +104,7 @@
 #include "light.h"
 #include "raw.h"
 #include "rdtcs.h"
+#include "waveform.h"
 #include "lib.h"
 
 
