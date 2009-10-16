@@ -47,6 +47,11 @@ int waveform_free  (void) {
 }
 
 int waveform_update_mixer (void) {
+ if ( streams_get_flag(g_waveform_mixer.stream, ROAR_FLAG_MUTE) == 1 ) {
+  memset(g_output_buffer, 0, (g_sa->bits*ROAR_OUTPUT_BUFFER_SAMPLES*g_sa->channels)/8);
+  return 0;
+ }
+
  if ( !need_vol_change(ROAR_STREAM(g_waveform_mixer.ss)->info.channels, &(g_waveform_mixer.ss->mixer)) )
   return 0;
 
