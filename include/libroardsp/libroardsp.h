@@ -33,6 +33,7 @@ __BEGIN_DECLS
 #include "synth.h"
 #include "poly.h"
 #include "fader.h"
+#include "mixer.h"
 #include "convert.h"
 #include "midside.h"
 #include "point.h"
