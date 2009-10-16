@@ -170,7 +170,7 @@ int ssynth_update (void) {
    return -1;
   }
 
-  if ( mix_clients(outbufdata, g_sa->bits, indbufs, ROAR_OUTPUT_BUFFER_SAMPLES) == -1 ) {
+  if ( roar_mix_pcm(outbufdata, g_sa->bits, indbufs, ROAR_OUTPUT_BUFFER_SAMPLES) == -1 ) {
    roar_buffer_free(outbuf);
    return -1;
   }
