@@ -27,12 +27,6 @@
 
 #include <roaraudio.h>
 
-int change_vol       (void * output, int bits, void * input, int samples, int channels, struct roar_mixer_settings * set);
-int change_vol_8bit  (void * output, void * input, int samples, int channels, struct roar_mixer_settings * set);
-int change_vol_16bit (void * output, void * input, int samples, int channels, struct roar_mixer_settings * set);
-int change_vol_24bit (void * output, void * input, int samples, int channels, struct roar_mixer_settings * set);
-int change_vol_32bit (void * output, void * input, int samples, int channels, struct roar_mixer_settings * set);
-
 int need_vol_change  (int channels, struct roar_mixer_settings * set);
 
 #endif

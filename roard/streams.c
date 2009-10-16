@@ -990,8 +990,8 @@ int streams_fill_mixbuffer2 (int id, struct roar_audio_info * info) {
  }
 
  if ( !streams_get_flag(id, ROAR_FLAG_HWMIXER) && !streams_get_flag(id, ROAR_FLAG_PASSMIXER) ) {
-  ROAR_DBG("streams_fill_mixbuffer2(*): CALL change_vol(*)...");
-  if ( change_vol(outdata, info->bits, outdata, 8*outlen / info->bits, info->channels, &(ss->mixer)) == -1 )
+  ROAR_DBG("streams_fill_mixbuffer2(*): CALL roar_amp_pcm(*)...");
+  if ( roar_amp_pcm(outdata, info->bits, outdata, 8*outlen / info->bits, info->channels, &(ss->mixer)) == -1 )
    return -1;
  }
 
@@ -1570,7 +1570,7 @@ int streams_send_mon   (int id) {
  }
 
  if ( !is_vol_eq ) {
-  if ( change_vol(obuf, g_sa->bits, ip, ROAR_OUTPUT_BUFFER_SAMPLES*g_sa->channels, g_sa->channels, &(ss->mixer)) == -1 ) {
+  if ( roar_amp_pcm(obuf, g_sa->bits, ip, ROAR_OUTPUT_BUFFER_SAMPLES*g_sa->channels, g_sa->channels, &(ss->mixer)) == -1 ) {
    _return(-1);
   }
 
