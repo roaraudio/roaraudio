@@ -83,7 +83,7 @@ int vumeter16bit2ch (struct roar_vio_calls * vio, int samples, int16_t * buf, in
 }
 
 int vumeter (struct roar_vio_calls * vio, int samples, int bits, int channels, int mode) {
- void * buf = malloc(samples*bits*2);
+ void * buf = malloc((samples*bits*channels)/8);
 
  if ( !buf )
   return -1;
@@ -94,9 +94,11 @@ int vumeter (struct roar_vio_calls * vio, int samples, int bits, int channels, i
    free(buf);
    return 0;
   } else {
+   free(buf);
    return -1;
   }
  } else {
+  free(buf);
   return -1;
  }
 }
