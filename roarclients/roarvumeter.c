@@ -51,7 +51,8 @@ void usage (void) {
 int vumeter16bit2ch (int fh, int samples, int16_t * buf, int mode) {
  int i;
  int samples_half = samples/2;
- double suml, sumr;
+ int64_t suml, sumr;
+ double  rmsl, rmsr;
 
  printf("\e[s");
  fflush(stdout);
@@ -60,19 +61,19 @@ int vumeter16bit2ch (int fh, int samples, int16_t * buf, int mode) {
   suml = sumr = 0;
 
   for (i = 0; i < samples; i += 2) {
-   suml += (double) buf[i  ] * (double) buf[i  ];
-   sumr += (double) buf[i+1] * (double) buf[i+1];
+   suml += (int64_t) buf[i  ] * (int64_t) buf[i  ];
+   sumr += (int64_t) buf[i+1] * (int64_t) buf[i+1];
   }
 
-  suml = sqrt(suml/samples_half);
-  sumr = sqrt(sumr/samples_half);
+  rmsl = sqrt((double)suml/(double)samples_half);
+  rmsr = sqrt((double)sumr/(double)samples_half);
 
   switch (mode) {
    case MODE_PC:
-     printf("L: %3i%% R: %3i%%          \e[u", (int)(suml/327.68), (int)(sumr/327.68));
+     printf("L: %3i%% R: %3i%%          \e[u", (int)(rmsl/327.68), (int)(rmsr/327.68));
     break;
    case MODE_DB:
-     printf("L: %6.2fdB R: %6.2fdB          \e[u", 20*log10(suml/32768), 20*log10(sumr/32768));
+     printf("L: %6.2fdB R: %6.2fdB          \e[u", 20*log10(rmsl/32768.), 20*log10(rmsr/32768.));
     break;
   }
 
