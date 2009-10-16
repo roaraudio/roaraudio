@@ -27,7 +27,13 @@
 
 #include <roaraudio.h>
 
+#define _MIXER_NAME_PREFIX ""
+#define _MIXER_NAME_SUFFIX " Mixer"
+#define _MIXER_NAME(x)     (_MIXER_NAME_PREFIX x _MIXER_NAME_SUFFIX)
+
 int need_vol_change  (int channels, struct roar_mixer_settings * set);
+
+int add_mixer (int subsys, char * name, struct roar_stream_server ** ss_ptr);
 
 #endif
 

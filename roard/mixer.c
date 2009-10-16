@@ -40,4 +40,40 @@ int need_vol_change  (int channels, struct roar_mixer_settings * set) {
  return 0;
 }
 
+#define _err() streams_delete(stream); return -1
+int add_mixer (int subsys, char * name, struct roar_stream_server ** ss_ptr) {
+ struct roar_stream_server * ss;
+ int stream;
+
+ if ( (stream = streams_new()) == -1 )
+  return -1;
+
+ if ( streams_get(stream, &ss) == -1 ) {
+  _err();
+ }
+
+ if ( streams_set_name(stream, name) == -1 ) {
+  _err();
+ }
+
+ if ( client_stream_add(g_self_client, stream) == -1 ) {
+  _err();
+ }
+
+ if ( streams_set_dir(stream, ROAR_DIR_MIXING, 1) == -1 ) {
+  _err();
+ }
+
+ if ( streams_set_flag(stream, ROAR_FLAG_PRIMARY) == -1 ) {
+  _err();
+ }
+
+ switch (subsys) {
+  case ROAR_SUBSYS_WAVEFORM:
+   break;
+ }
+
+ return stream;
+}
+
 //ll
