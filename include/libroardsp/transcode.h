@@ -107,6 +107,7 @@ int roar_bixcoder_write       (struct roar_bixcoder * state, void * buf, size_t 
 // dummy functions used by some de/encoders:
 int roar_xcoder_dummy_inituninit(struct roar_xcoder * state);
 int roar_xcoder_dummy_packet_size_any(struct roar_xcoder * state, int samples);
+int roar_xcoder_dummy_proc_header(struct roar_xcoder * state);
 
 // prototypes for some simple xcoders:
 int roar_xcoder_alaw_encode(struct roar_xcoder * state, void * buf, size_t len);

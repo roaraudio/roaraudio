@@ -32,9 +32,9 @@
 
 static struct roar_xcoder_entry g_xcoders[] = {
  {ROAR_CODEC_ALAW,  roar_xcoder_dummy_inituninit, roar_xcoder_dummy_inituninit, roar_xcoder_dummy_packet_size_any,
-                     roar_xcoder_alaw_encode,  roar_xcoder_alaw_decode, NULL},
+                     roar_xcoder_alaw_encode,  roar_xcoder_alaw_decode, roar_xcoder_dummy_proc_header},
  {ROAR_CODEC_MULAW, roar_xcoder_dummy_inituninit, roar_xcoder_dummy_inituninit, roar_xcoder_dummy_packet_size_any,
-                     roar_xcoder_mulaw_encode, roar_xcoder_mulaw_decode, NULL},
+                     roar_xcoder_mulaw_encode, roar_xcoder_mulaw_decode, roar_xcoder_dummy_proc_header},
 #ifdef ROAR_HAVE_LIBCELT
  {ROAR_CODEC_ROAR_CELT, roar_xcoder_celt_init, roar_xcoder_celt_uninit, roar_xcoder_celt_packet_size,
                      roar_xcoder_celt_encode,  roar_xcoder_celt_decode, NULL},
@@ -424,6 +424,10 @@ int roar_xcoder_dummy_inituninit(struct roar_xcoder * state) {
 
 int roar_xcoder_dummy_packet_size_any(struct roar_xcoder * state, int samples) {
  // the case samples=-1/samples!=-1 based things are done in the general func
+ return 0;
+}
+
+int roar_xcoder_dummy_proc_header(struct roar_xcoder * state) {
  return 0;
 }
 
