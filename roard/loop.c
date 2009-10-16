@@ -103,6 +103,9 @@ int main_loop (int driver, DRIVER_USERDATA_T driver_inst, struct roar_audio_info
   if ( term && streams < 1 )
    alive = 0;
 
+  if ( waveform_update_mixer() == -1 )
+   alive = 0;
+
 /*
   // while in standby we still need to write out our buffer to not run in an endless loop without
   // a break

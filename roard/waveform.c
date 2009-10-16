@@ -31,6 +31,8 @@ int waveform_init  (void) {
  if ( (g_waveform_mixer.stream = add_mixer(ROAR_SUBSYS_WAVEFORM, _MIXER_NAME("Waveform"), &ss)) == -1 )
   return -1;
 
+ g_waveform_mixer.ss = ss;
+
  s = ROAR_STREAM(ss);
 
  memcpy(&(s->info), g_sa, sizeof(struct roar_audio_info));
@@ -41,6 +43,17 @@ int waveform_init  (void) {
 }
 
 int waveform_free  (void) {
+ return 0;
+}
+
+int waveform_update_mixer (void) {
+ if ( !need_vol_change(ROAR_STREAM(g_waveform_mixer.ss)->info.channels, &(g_waveform_mixer.ss->mixer)) )
+  return 0;
+
+ roar_amp_pcm(g_output_buffer, g_sa->bits, g_output_buffer,
+              ROAR_OUTPUT_BUFFER_SAMPLES*g_sa->channels, g_sa->channels,
+              &(g_waveform_mixer.ss->mixer));
+
  return 0;
 }
 

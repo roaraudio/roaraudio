@@ -29,10 +29,13 @@
 
 struct {
  int stream;
+ struct roar_stream_server * ss;
 } g_waveform_mixer;
 
 int waveform_init  (void);
 int waveform_free  (void);
+
+int waveform_update_mixer (void);
 
 #endif
 
