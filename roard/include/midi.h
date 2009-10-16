@@ -125,6 +125,10 @@ struct {
  uint32_t       nt;  // time of next tick
 } g_midi_clock;
 
+struct {
+ int stream;
+} g_midi_mixer;
+
 
 // general midi interface:
 int midi_init_config(void);

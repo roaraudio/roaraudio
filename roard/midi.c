@@ -63,6 +63,10 @@ int midi_init (void) {
 
  g_midi_mess.buf = NULL;
 
+ if ( (g_midi_mixer.stream = add_mixer(ROAR_SUBSYS_MIDI, _MIXER_NAME("MIDI"), NULL)) == -1 ) {
+  ROAR_WARN("Can not create MIDI mixer");
+ }
+
  midi_config.inited |= MIDI_INITED_MAIN;
 
  return 0;
