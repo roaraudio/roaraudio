@@ -498,6 +498,10 @@ int main (int argc, char * argv[]) {
    return 10;
   }
 
+  // ignore errors as it may also work if this fails
+  roar_bixcoder_write_header(transcoder);
+  roar_bixcoder_read_header(transcoder);
+
   g_conf.samples = 8 * roar_bixcoder_packet_size(transcoder, -1) / dinfo.bits;
  }
 
