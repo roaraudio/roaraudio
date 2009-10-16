@@ -45,7 +45,7 @@ roarcatvio: roarcatvio.o
 roarradio: roarradio.o
 	$L
 roarctl: roarctl.o
-	$L
+	$L $(lib_m)
 roarmon: roarmon.o
 	$L
 roarmonhttp: roarmonhttp.o

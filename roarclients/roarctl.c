@@ -36,6 +36,10 @@
 #include <sys/time.h>
 #include <time.h>
 
+#ifdef ROAR_HAVE_LIBM
+#include <math.h>
+#endif
+
 int g_verbose = 0;
 
 int display_mixer (struct roar_connection * con, int stream);
@@ -422,10 +426,43 @@ int display_mixer (struct roar_connection * con, int stream) {
   return -1;
  }
 
+#ifdef ROAR_HAVE_LIBM
+#define _DB ", %.2fdB"
+#else
+#define _DB ""
+#endif
+
  for (i = 0; i < channels; i++)
-  printf("Mixer volume chan %2i  : %i (%.2f%%)\n", i, mixer.mixer[i], (float)mixer.mixer[i]/655.35);
+  printf("Mixer volume chan %2i  : %i (%.2f%%" _DB ")\n", i, mixer.mixer[i],
+                           (float)mixer.mixer[i]/655.35f
+#ifdef ROAR_HAVE_LIBM
+                          , 20*log10f((float)mixer.mixer[i]/65535.f)
+#endif
+        );
 
  return 0;
+}
+
+static unsigned int set_mixer_parse_volume (char * k, int len) {
+ switch (k[len - 1]) {
+  case '%':
+    k[len - 1] = 0;
+    return (atof(k)*65535.f)/100;
+   break;
+#ifdef ROAR_HAVE_LIBM
+  case 'b':
+  case 'B':
+    // TODO: can we hanle the error better?
+    if ( len < 2 )
+     return 0;
+
+    k[len - 2] = 0;
+    return powf(10, atof(k)/20.f)*65535.f;
+   break;
+#endif
+ }
+
+ return atoi(k);
 }
 
 int set_mixer (struct roar_connection * con, int * cur, int max, char * arg[]) {
@@ -463,12 +500,7 @@ int set_mixer (struct roar_connection * con, int * cur, int max, char * arg[]) {
   k   = arg[++(*cur)];
   len = strlen(k);
 
-  if ( k[len - 1] == '%' ) {
-   k[len - 1] = 0;
-   vol_mono = (atof(k)*65535)/100;
-  } else {
-   vol_mono = atoi(k);
-  }
+  vol_mono = set_mixer_parse_volume(k, len);
 
   for (i = 0; i < old_chans; i++)
    mixer.mixer[i] = vol_mono;
@@ -484,22 +516,12 @@ int set_mixer (struct roar_connection * con, int * cur, int max, char * arg[]) {
   k   = arg[++(*cur)];
   len = strlen(k);
 
-  if ( k[len - 1] == '%' ) {
-   k[len - 1] = 0;
-   vol_l = (atof(k)*65535)/100;
-  } else {
-   vol_l = atoi(k);
-  }
+  vol_l = set_mixer_parse_volume(k, len);
 
   k   = arg[++(*cur)];
   len = strlen(k);
 
-  if ( k[len - 1] == '%' ) {
-   k[len - 1] = 0;
-   vol_r = (atof(k)*65535)/100;
-  } else {
-   vol_r = atoi(k);
-  }
+  vol_r = set_mixer_parse_volume(k, len);
 
   vol_mono = (vol_l + vol_r) / 2;
 
@@ -553,12 +575,7 @@ int set_mixer (struct roar_connection * con, int * cur, int max, char * arg[]) {
    k   = arg[++(*cur)];
    len = strlen(k);
 
-   if ( k[len - 1] == '%' ) {
-    k[len - 1] = 0;
-    mixer.mixer[i] = (atof(k)*(int)65535)/100;
-   } else {
-    mixer.mixer[i] = atoi(k);
-   }
+   mixer.mixer[i] = set_mixer_parse_volume(k, len);
   }
  }
 
