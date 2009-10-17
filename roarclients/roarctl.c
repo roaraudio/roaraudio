@@ -403,6 +403,10 @@ void list_streams (struct roar_connection * con) {
      strcat(flags, "passmixer ");
     if ( info.flags & ROAR_FLAG_PRETHRU )
      strcat(flags, "prethru ");
+    if ( info.flags & ROAR_FLAG_IMMUTABLE )
+     strcat(flags, "immutable ");
+    if ( info.flags & ROAR_FLAG_ENHANCE )
+     strcat(flags, "enhance ");
 
     printf("Flags                 : %s\n", flags);
    }
@@ -801,6 +805,10 @@ int set_flags (struct roar_connection * con, int id, int reset, char * flags) {
    f |= ROAR_FLAG_VIRTUAL;
   } else if ( !strcmp(c, "prethru") ) {
    f |= ROAR_FLAG_PRETHRU;
+  } else if ( !strcmp(c, "immutable") ) {
+   f |= ROAR_FLAG_IMMUTABLE;
+  } else if ( !strcmp(c, "enhance") ) {
+   f |= ROAR_FLAG_ENHANCE;
   } else {
    fprintf(stderr, "Error: unknown flag: %s\n", c);
    return -1;
