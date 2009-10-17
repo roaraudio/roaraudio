@@ -60,6 +60,8 @@ int    roar_str2dir (char * name);
 #define ROAR_FLAG_PRETHRU        0x8000
 // next are the exteded flags (> 16 bits)
 //#define ROAR_FLAG_SYNC           0x08
+#define ROAR_FLAG_IMMUTABLE      0x00010000
+#define ROAR_FLAG_ENHANCE        0x00020000
 
 #define ROAR_SET_FLAG            0
 #define ROAR_RESET_FLAG          1
