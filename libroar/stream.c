@@ -384,11 +384,17 @@ int roar_stream_get_info (struct roar_connection * con, struct roar_stream * s, 
  info->flags          = data[6];
  info->delay          = data[7]*1000;
 
- if ( m.datalen < 8*2 ) {
+ if ( m.datalen < 9*2 ) {
   info->state         = ROAR_STREAMSTATE_UNKNOWN;
   return 0;
  } else {
   info->state         = data[8];
+ }
+
+ if ( m.datalen < 10*2 ) {
+  return 0;
+ } else {
+  info->flags        |= ((uint32_t)data[9]) << 16;
  }
 
  return 0;
