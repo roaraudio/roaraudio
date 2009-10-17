@@ -27,6 +27,7 @@
 #ifndef ROAR_WITHOUT_DCOMP_LIGHT
 
 int light_init  (unsigned int channels) {
+ struct roar_stream_server * ss;
 
  g_light_state.channels = 0;
 
@@ -44,10 +45,14 @@ int light_init  (unsigned int channels) {
 
  g_light_state.channels = channels;
 
- if ( (g_light_mixer.stream = add_mixer(ROAR_SUBSYS_LIGHT, _MIXER_NAME("Light Control"), NULL)) == -1 ) {
+ if ( (g_light_mixer.stream = add_mixer(ROAR_SUBSYS_LIGHT, _MIXER_NAME("Light Control"), &ss)) == -1 ) {
   free(g_light_state.state);
   return -1;
  }
+
+ ROAR_STREAM(ss)->info.codec = ROAR_CODEC_DMX512;
+ ROAR_STREAM(ss)->info.bits  = ROAR_LIGHT_BITS;
+ ROAR_STREAM(ss)->info.rate  = ROAR_OUTPUT_CFREQ;
 
  return light_reset();
 }
