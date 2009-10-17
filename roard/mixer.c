@@ -64,7 +64,7 @@ int add_mixer (int subsys, char * name, struct roar_stream_server ** ss_ptr) {
   _err();
  }
 
- if ( streams_set_flag(stream, ROAR_FLAG_PRIMARY) == -1 ) {
+ if ( streams_set_flag(stream, ROAR_FLAG_IMMUTABLE) == -1 ) {
   _err();
  }
 

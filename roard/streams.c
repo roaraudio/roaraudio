@@ -614,6 +614,9 @@ int streams_set_flag     (int id, int flag) {
 
  _CHECK_SID(id);
 
+ if ( flag & ROAR_FLAG_IMMUTABLE )
+  flag |= ROAR_FLAG_PRIMARY;
+
  if ( flag & ROAR_FLAG_MMAP )
   if ( streams_set_mmap(id, 0) == -1 )
    flag -= ROAR_FLAG_MMAP;
@@ -691,6 +694,11 @@ int streams_set_rawflag  (int id, int flag) {
 
 int streams_reset_flag   (int id, int flag) {
  _CHECK_SID(id);
+
+ if ( g_streams[id]->flags & ROAR_FLAG_IMMUTABLE ) {
+  flag |= ROAR_FLAG_PRIMARY;
+  flag -= ROAR_FLAG_PRIMARY;
+ }
 
  if ( flag & ROAR_FLAG_RECSOURCE )
   if ( streams_recsource_id == id )

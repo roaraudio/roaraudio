@@ -684,8 +684,14 @@ int req_on_kick (int client, struct roar_message * mes, char * data) {
  if ( info[0] == ROAR_OT_CLIENT ) {
   clients_delete(info[1]);
  } else if ( info[0] == ROAR_OT_STREAM ) {
+  if ( streams_get_flag(info[1], ROAR_FLAG_IMMUTABLE) == 1 )
+   return -1;
+
   streams_delete(info[1]);
  } else if ( info[0] == ROAR_OT_SOURCE ) {
+  if ( streams_get_flag(info[1], ROAR_FLAG_IMMUTABLE) == 1 )
+   return -1;
+
   if ( streams_get_flag(info[1], ROAR_FLAG_SOURCE) == 1 ) {
    streams_delete(info[1]);
   } else {
