@@ -64,6 +64,11 @@ int add_mixer (int subsys, char * name, struct roar_stream_server ** ss_ptr) {
   _err();
  }
 
+ // the mixers are the most sync thing we have...
+ if ( streams_set_rawflag(stream, ROAR_FLAG_SYNC) == -1 ) {
+  _err();
+ }
+
  if ( streams_set_flag(stream, ROAR_FLAG_IMMUTABLE) == -1 ) {
   _err();
  }
