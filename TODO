@@ -11,7 +11,6 @@ Things we should do:
  * (0.3) do a lot work on the manpages
  * (0.3) publish IDs used in proto as public domain
  * (0.3) Check for things needed to be done to support newer versions of CELT
- * (0.3) Move mixer things from roard to libroardsp
  * (0.3) Add mixer streams to roard
 
 Things it would be nice to have:
