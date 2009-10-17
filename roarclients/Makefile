@@ -3,10 +3,11 @@ TARGETS_DEVEL=roartypes roarsocktypes roar-config
 TARGETS_EXAMPLE=roarcatad roarcat2sock roarcatsendfile roarcatpassfh roarvorbis roarsin
 TARGETS_IO=roarcat roarcatplay roarcatvio roarbidir roarmon roarmonhttp roarradio
 TARGETS_CTL=roarctl roarlight roarinterconnect
-TARGETS_DSP=roarvumeter roarfilt
+TARGETS_DSP=roarfilt
 TARGETS_MISC=roarsockconnect roarphone roarshout
+TARGETS_M=roarvumeter
 
-TARGETS=$(TARGETS_IO) $(TARGETS_CTL) $(TARGETS_DSP) $(TARGETS_MISC) $(TARGETS_DEVEL) $(TARGETS_EXAMPLE) $(TARGETS_TESTS)
+TARGETS=$(TARGETS_IO) $(TARGETS_CTL) $(TARGETS_DSP) $(TARGETS_MISC) $(TARGETS_DEVEL) $(TARGETS_EXAMPLE) $(TARGETS_TESTS) $(TARGETS_M)
 TOOLS=roarify
 
 include ../Makefile.conf
@@ -55,13 +56,13 @@ roarinterconnect: roarinterconnect.o
 roarbidir: roarbidir.o
 	$L
 roarphone: roarphone.o
-	${CC} ${LDFLAGS} -o roarphone roarphone.o $(LIBROARDSP) $(LIBROAREIO) $(lib_speex)
+	${CC} ${LDFLAGS} -o roarphone roarphone.o $(LIBROARDSP) $(LIBROAREIO)
 roarfilt: roarfilt.o
 	${CC} ${LDFLAGS} -o roarfilt roarfilt.o $(LIBROARDSP)
 roarsin: roarsin.o
 	${CC} ${LDFLAGS} -o roarsin roarsin.o $(LIBROARDSP)
 roarvumeter: roarvumeter.o
-	${CC} ${LDFLAGS} -o roarvumeter roarvumeter.o $(LIBROARDSP)
+	${CC} ${LDFLAGS} -o roarvumeter roarvumeter.o $(LIBROAR) $(lib_m)
 roarsockconnect: roarsockconnect.o
 	$L
 roartypes: roartypes.o
