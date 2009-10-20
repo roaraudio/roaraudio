@@ -72,10 +72,16 @@ int roar_xcoder_speex_init       (struct roar_xcoder * state) {
    self->max_cc = self->codec_config->max_cc;
   }
 
+  if ( _HAVE_CCFG(ROAR_LIBROAR_CONFIG_PSET_MODE) ) {
+   // NB, WB and UWB mode numbers are the same for Speex and codec config.
+   self->mode   = self->codec_config->mode;
+  }
+
   switch (self->mode) {
    case ROAR_SPEEX_MODE_NB:  self->xcoder = speex_encoder_init(&speex_nb_mode);  break;
    case ROAR_SPEEX_MODE_WB:  self->xcoder = speex_encoder_init(&speex_wb_mode);  break;
    case ROAR_SPEEX_MODE_UWB: self->xcoder = speex_encoder_init(&speex_uwb_mode); break;
+   default: return -1;
   }
 
   if ( _HAVE_CCFG(ROAR_LIBROAR_CONFIG_PSET_COMPLEXITY) ) {
