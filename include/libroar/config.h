@@ -50,6 +50,11 @@
 #define ROAR_LIBROAR_CONFIG_PSET_AGC        0x0040 /* need to implement */
 #define ROAR_LIBROAR_CONFIG_PSET_DENOISE    0x0080 /* need to implement */
 #define ROAR_LIBROAR_CONFIG_PSET_VBR        0x0100
+#define ROAR_LIBROAR_CONFIG_PSET_MODE       0x0200
+
+#define ROAR_LIBROAR_CONFIG_MODE_NB         ROAR_SPEEX_MODE_NB
+#define ROAR_LIBROAR_CONFIG_MODE_WB         ROAR_SPEEX_MODE_WB
+#define ROAR_LIBROAR_CONFIG_MODE_UWB        ROAR_SPEEX_MODE_UWB
 
 struct roar_libroar_config_codec {
  unsigned int codec; // Codec ID
@@ -68,6 +73,9 @@ struct roar_libroar_config_codec {
 
  // sizes:
  size_t max_cc;
+
+ // enums:
+ int mode;
 };
 
 struct roar_libroar_config {
