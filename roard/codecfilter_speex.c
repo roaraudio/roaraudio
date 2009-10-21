@@ -39,6 +39,8 @@
 
 #define _FS (_16BIT * (self->stereo ? 2 : 1))
 
+#define _HAVE_CCFG(x) (self->codec_config != NULL && (self->codec_config->para_set & (x)))
+
 int cf_speex_open(CODECFILTER_USERDATA_T * inst, int codec,
                                             struct roar_stream_server * info,
                                             struct roar_codecfilter   * filter) {
@@ -304,8 +306,28 @@ int cf_speex_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
   if ( stream_vio_s_write(self->stream, &mode, 2) != 2 )
    return -1;
 
-  tmp = 8;
-  speex_encoder_ctl(self->encoder, SPEEX_SET_QUALITY,    &tmp);
+  if ( _HAVE_CCFG(ROAR_LIBROAR_CONFIG_PSET_COMPLEXITY) ) {
+   tmp = self->codec_config->complexity / 256;
+  } else {
+   tmp = 8;
+  }
+  speex_encoder_ctl(self->encoder, SPEEX_SET_COMPLEXITY,    &tmp);
+
+  if ( _HAVE_CCFG(ROAR_LIBROAR_CONFIG_PSET_Q) ) {
+   tmp = self->codec_config->q / 256;
+   speex_encoder_ctl(self->encoder, SPEEX_SET_QUALITY,      &tmp);
+  }
+
+  if ( _HAVE_CCFG(ROAR_LIBROAR_CONFIG_PSET_VBR) ) {
+   tmp = self->codec_config->vbr ? 1 : 0;
+   speex_encoder_ctl(self->encoder, SPEEX_SET_VBR,          &tmp);
+  }
+
+  if ( _HAVE_CCFG(ROAR_LIBROAR_CONFIG_PSET_DTX) ) {
+   tmp = self->codec_config->dtx ? 1 : 0;
+   speex_encoder_ctl(self->encoder, SPEEX_SET_DTX,          &tmp);
+  }
+
   speex_encoder_ctl(self->encoder, SPEEX_GET_FRAME_SIZE, &(self->frame_size));
 
   fs2 = self->frame_size * _FS;
