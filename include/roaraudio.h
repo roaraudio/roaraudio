@@ -216,10 +216,17 @@ __BEGIN_DECLS
 
 #define ROAR_DBG_FULLPREFIX "(" ROAR_DBG_PREFIX ": " __FILE__ ":%i): "
 
+// some default info levels:
+#define ROAR_DBG_INFO_NONE             0
+#define ROAR_DBG_INFO_NOTICE           1
+#define ROAR_DBG_INFO_INFO             2
+#define ROAR_DBG_INFO_VERBOSE          3
+
 #if __GNUC__ < 3
  #define ROAR_DBG(format, args...)
  #define ROAR_ERR(format, args...)
  #define ROAR_WARN(format, args...)
+ #define ROAR_INFO(format, level, args...)
 #else
 
 #ifdef DEBUG
@@ -230,6 +237,13 @@ __BEGIN_DECLS
 
 #define ROAR_ERR(format, args...)  fprintf(ROAR_DEBUG_OUTFH, ROAR_DBG_FULLPREFIX "Error: "   format "\n", __LINE__, ## args)
 #define ROAR_WARN(format, args...) fprintf(ROAR_DEBUG_OUTFH, ROAR_DBG_FULLPREFIX "Warning: " format "\n", __LINE__, ## args)
+
+// INFO function:
+#ifdef ROAR_DBG_INFOVAR
+ #define ROAR_INFO(format, level, args...) if ( (ROAR_DBG_INFOVAR) >= (level) ) fprintf(ROAR_DEBUG_OUTFH, ROAR_DBG_FULLPREFIX "Info: " format "\n", __LINE__, ## args)
+#else
+ #define ROAR_INFO(format, level, args...)
+#endif
 
 #endif
 
