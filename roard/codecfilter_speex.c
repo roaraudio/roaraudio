@@ -284,14 +284,12 @@ int cf_speex_write(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
   if ( stream_vio_s_write(self->stream, ROAR_SPEEX_MAGIC, ROAR_SPEEX_MAGIC_LEN) != ROAR_SPEEX_MAGIC_LEN )
    return -1;
 
-  if ( mode == ROAR_SPEEX_MODE_NB ) {
-   self->encoder = speex_encoder_init(&speex_nb_mode);
-  } else if ( mode == ROAR_SPEEX_MODE_WB ) {
-   self->encoder = speex_encoder_init(&speex_wb_mode);
-  } else if ( mode == ROAR_SPEEX_MODE_UWB ) {
-   self->encoder = speex_encoder_init(&speex_uwb_mode);
+  switch (mode) {
+   case ROAR_SPEEX_MODE_NB:  self->encoder = speex_encoder_init(&speex_nb_mode);  break;
+   case ROAR_SPEEX_MODE_WB:  self->encoder = speex_encoder_init(&speex_wb_mode);  break;
+   case ROAR_SPEEX_MODE_UWB: self->encoder = speex_encoder_init(&speex_uwb_mode); break;
+   default: return -1;
   }
-
 
   mode = ROAR_HOST2NET16(mode);
 
