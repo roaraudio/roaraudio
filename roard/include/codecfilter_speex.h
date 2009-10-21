@@ -54,6 +54,7 @@ struct codecfilter_speex_inst {
  int s_buf;
  int fi_rest; /-* how much is in rest? *-/
 */
+ struct roar_libroar_config_codec * codec_config;
 };
 
 int cf_speex_open(CODECFILTER_USERDATA_T * inst, int codec,

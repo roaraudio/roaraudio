@@ -80,6 +80,8 @@ int cf_speex_open(CODECFILTER_USERDATA_T * inst, int codec,
  self->o_rest  = NULL;
  self->fo_rest = 0;
 
+ self->codec_config = roar_libroar_config_codec_get(ROAR_CODEC_ROAR_SPEEX, 0);
+
  speex_bits_init(&(self->bits));
 
  *inst = (void*) self;
