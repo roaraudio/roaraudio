@@ -916,6 +916,9 @@ int main (void) {
   return 1;
  }
 
+ // load config
+ roar_libroar_get_config();
+
 #ifdef ROAR_SUPPORT_LISTEN
  if ( init_listening() == -1 ) {
   ROAR_ERR("Can not init listening sockets!");
