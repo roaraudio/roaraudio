@@ -207,9 +207,7 @@ int roar_xcoder_speex_proc_header(struct roar_xcoder * state) {
    case ROAR_SPEEX_MODE_NB:  self->xcoder = speex_decoder_init(&speex_nb_mode);  break;
    case ROAR_SPEEX_MODE_WB:  self->xcoder = speex_decoder_init(&speex_wb_mode);  break;
    case ROAR_SPEEX_MODE_UWB: self->xcoder = speex_decoder_init(&speex_uwb_mode); break;
-   default:
-     return -1;
-    break;
+   default: return -1;
   }
 
   ROAR_DBG("roar_xcoder_speex_decode(state=%p, buf=%p, len=%lu): opened decoder state", state, buf, (unsigned long)len);
