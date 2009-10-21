@@ -969,7 +969,7 @@ int streams_fill_mixbuffer2 (int id, struct roar_audio_info * info) {
 
  if ( ss->is_new ) {
   ss->state = ROAR_STREAMSTATE_OLD;
-  ROAR_WARN("streams_fill_mixbuffer2(id=%i, info=...): stream state: new->old", id);
+  ROAR_INFO("streams_fill_mixbuffer2(id=%i, info=...): stream state: new->old", ROAR_DBG_INFO_VERBOSE, id);
  }
 
  ss->is_new = 0;
