@@ -97,7 +97,7 @@ int roar_xcoder_speex_init       (struct roar_xcoder * state) {
   } else {
    tmp = 8;
   }
-  speex_encoder_ctl(self->xcoder, SPEEX_SET_QUALITY,       &tmp);
+  speex_encoder_ctl(self->xcoder, SPEEX_SET_COMPLEXITY,    &tmp);
 
   if ( _HAVE_CCFG(ROAR_LIBROAR_CONFIG_PSET_Q) ) {
    tmp = self->codec_config->q / 256;
