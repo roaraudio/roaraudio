@@ -44,6 +44,7 @@ void usage (void) {
  printf("Misc Options:\n\n");
  printf(
         " --daemon              - Bring the server into background after init\n"
+        " --verbose             - Be more verbose, can be used multiple times\n"
         " --terminate           - Terminate after last client quited\n"
         " --start               - No op parameter (starting roard is default operation)\n"
         " --restart             - Trys to stop an old instance and start a new with new settings\n"
@@ -899,6 +900,8 @@ int main (void) {
  g_terminate     =  1;
 #endif
 
+ g_verbose       = ROAR_DBG_INFO_NONE;
+
  sa.bits     = ROAR_BITS_DEFAULT;
  sa.channels = ROAR_CHANNELS_DEFAULT;
  sa.rate     = ROAR_RATE_DEFAULT;
@@ -1040,6 +1043,8 @@ int main (void) {
 #else
    ROAR_ERR("--daemon not supported");
 #endif
+  } else if ( strcmp(k, "--verbose") == 0 ) {
+   g_verbose++;
   } else if ( strcmp(k, "--terminate") == 0 ) {
    g_terminate = 1;
   } else if ( strcmp(k, "--sysclocksync") == 0 ) {

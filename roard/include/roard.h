@@ -25,6 +25,10 @@
 #ifndef _ROARD_H_
 #define _ROARD_H_
 
+// configure ROAR_INFO()
+int g_verbose;
+#define ROAR_DBG_INFOVAR g_verbose
+
 // need to include this first as we need the config
 #include <roaraudio.h>
 #include <libroarlight/libroarlight.h>
