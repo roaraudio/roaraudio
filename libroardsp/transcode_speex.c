@@ -72,6 +72,14 @@ int roar_xcoder_speex_init       (struct roar_xcoder * state) {
    self->max_cc = self->codec_config->max_cc;
   }
 
+  if ( info->rate < 12000 ) {
+   self->mode = ROAR_SPEEX_MODE_NB;  // optimized for 8kHz
+  } else if ( info->rate < 24000 ) {
+   self->mode = ROAR_SPEEX_MODE_WB;  // optimized for 16kHz
+  } else {
+   self->mode = ROAR_SPEEX_MODE_UWB; // optimized for 32kHz
+  }
+
   if ( _HAVE_CCFG(ROAR_LIBROAR_CONFIG_PSET_MODE) ) {
    // NB, WB and UWB mode numbers are the same for Speex and codec config.
    self->mode   = self->codec_config->mode;
