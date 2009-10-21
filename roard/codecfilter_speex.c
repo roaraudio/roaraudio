@@ -143,14 +143,11 @@ int cf_speex_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
 
   mode = ROAR_NET2HOST16(ui);
 
-  if ( mode == ROAR_SPEEX_MODE_NB ) {
-   self->decoder = speex_decoder_init(&speex_nb_mode);
-  } else if ( mode == ROAR_SPEEX_MODE_WB ) {
-   self->decoder = speex_decoder_init(&speex_wb_mode);
-  } else if ( mode == ROAR_SPEEX_MODE_UWB ) {
-   self->decoder = speex_decoder_init(&speex_uwb_mode);
-  } else {
-   return 0;
+  switch (mode) {
+   case ROAR_SPEEX_MODE_NB:  self->decoder = speex_decoder_init(&speex_nb_mode);  break;
+   case ROAR_SPEEX_MODE_WB:  self->decoder = speex_decoder_init(&speex_wb_mode);  break;
+   case ROAR_SPEEX_MODE_UWB: self->decoder = speex_decoder_init(&speex_uwb_mode); break;
+   default: return 0;
   }
 
   tmp=1;
