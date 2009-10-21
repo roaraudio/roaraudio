@@ -101,17 +101,17 @@ int roar_xcoder_speex_init       (struct roar_xcoder * state) {
 
   if ( _HAVE_CCFG(ROAR_LIBROAR_CONFIG_PSET_Q) ) {
    tmp = self->codec_config->q / 256;
-   speex_encoder_ctl(self->xcoder, SPEEX_SET_QUALITY,       &tmp);
+   speex_encoder_ctl(self->xcoder, SPEEX_SET_QUALITY,      &tmp);
   }
 
   if ( _HAVE_CCFG(ROAR_LIBROAR_CONFIG_PSET_VBR) ) {
    tmp = self->codec_config->vbr ? 1 : 0;
-   speex_encoder_ctl(self->xcoder, SPEEX_SET_VBR,       &tmp);
+   speex_encoder_ctl(self->xcoder, SPEEX_SET_VBR,          &tmp);
   }
 
   if ( _HAVE_CCFG(ROAR_LIBROAR_CONFIG_PSET_DTX) ) {
    tmp = self->codec_config->dtx ? 1 : 0;
-   speex_encoder_ctl(self->xcoder, SPEEX_SET_DTX,       &tmp);
+   speex_encoder_ctl(self->xcoder, SPEEX_SET_DTX,          &tmp);
   }
 
   tmp = info->rate;
