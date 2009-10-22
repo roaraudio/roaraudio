@@ -37,18 +37,18 @@
 int roar_buffer_new      (struct roar_buffer ** buf, size_t len) {
  void * data;
 
- if ((data = malloc(len)) == NULL) {
+ if ((data = roar_mm_malloc(len)) == NULL) {
   return -1;
  }
 
  if ( roar_buffer_new_no_ma(buf, len, data) == -1 ) {
-  free(data);
+  roar_mm_free(data);
   return -1;
  }
 
  if ( roar_buffer_set_flag(*buf, ROAR_BUFFER_FLAG_NOFREE, ROAR_BUFFER_RESET) == -1 ) {
   roar_buffer_free(*buf);
-  free(data);
+  roar_mm_free(data);
   return -1;
  }
 
@@ -63,7 +63,7 @@ int roar_buffer_new_no_ma(struct roar_buffer ** buf, size_t len, void * data) { 
  if ( buf == NULL || data == NULL )
   return -1;
 
- if ((new = malloc(sizeof(struct roar_buffer))) == NULL) {
+ if ((new = roar_mm_malloc(sizeof(struct roar_buffer))) == NULL) {
   *buf = NULL;
   return -1;
  }
@@ -92,15 +92,17 @@ int roar_buffer_free     (struct roar_buffer * buf) {
   return -1;
 
  while ((next = buf->next)) {
-  free(buf->data);
-  free(buf);
+  if ( roar_buffer_get_flag(buf, ROAR_BUFFER_FLAG_NOFREE) != 1 )
+   roar_mm_free(buf->data);
+
+  roar_mm_free(buf);
   buf = next;
  }
 
  if ( roar_buffer_get_flag(buf, ROAR_BUFFER_FLAG_NOFREE) != 1 )
-  free(buf->data);
+  roar_mm_free(buf->data);
 
- free(buf);
+ roar_mm_free(buf);
 
  return 0;
 }
@@ -117,8 +119,10 @@ int roar_buffer_delete   (struct roar_buffer * buf, struct roar_buffer ** next) 
  if ( next != NULL )
   *next = buf->next;
 
- free(buf->data);
- free(buf);
+ if ( roar_buffer_get_flag(buf, ROAR_BUFFER_FLAG_NOFREE) != 1 )
+  roar_mm_free(buf->data);
+
+ roar_mm_free(buf);
 
  ROAR_DBG("buffer_delete(buf=%p, next=%p) = 0", buf, next);
  return 0;

@@ -86,6 +86,7 @@
 #include "error.h"
 #include "config.h"
 #include "debug.h"
+#include "memmgr.h"
 #include "stack.h"
 #include "buffer.h"
 #include "nnode.h"
