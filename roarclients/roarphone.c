@@ -71,6 +71,11 @@ struct {
 struct roar_bixcoder transcoder[1];
 
 struct {
+ struct roardsp_filterchain input;
+ struct roardsp_filterchain output;
+} g_filterchains;
+
+struct {
  struct {
   char key[ROAR_META_MAX_NAMELEN];
   char value[LIBROAR_BUFFER_MSGDATA];
@@ -312,6 +317,11 @@ int run_stream (struct roar_vio_calls * s0, struct roar_vio_calls * s1, struct r
   if ( (miclen = roar_vio_read(s0, micbuf, len)) <= 0 )
    break;
 
+  if ( roardsp_fchain_num(&(g_filterchains.input)) ) {
+   if ( roardsp_fchain_calc(&(g_filterchains.input), micbuf, len) == -1 )
+    break;
+  }
+
   if ( g_conf.dtx_threshold > 0 )
    if ( info->bits == 16 )
     zero_if_noise16(micbuf, miclen/2);
@@ -337,6 +347,11 @@ int run_stream (struct roar_vio_calls * s0, struct roar_vio_calls * s1, struct r
 
   if ( g_conf.antiecho != AE_NONE && info->bits == 16 )
    anti_echo16(outbuf, micbuf, ROAR_MIN(miclen, outlen)/2, info);
+
+  if ( roardsp_fchain_num(&(g_filterchains.output)) ) {
+   if ( roardsp_fchain_calc(&(g_filterchains.output), outbuf, outlen) == -1 )
+    break;
+  }
 
   if ( roar_vio_write(s0, outbuf, outlen) != outlen )
    break;
@@ -370,6 +385,9 @@ int main (int argc, char * argv[]) {
  g_cons.state = CON_NONE;
 
  memset(&g_meta, 0, sizeof(g_meta));
+
+ roardsp_fchain_init(&(g_filterchains.input));
+ roardsp_fchain_init(&(g_filterchains.output));
 
  for (i = 1; i < argc; i++) {
   k = argv[i];
@@ -513,6 +531,9 @@ int main (int argc, char * argv[]) {
 
  roar_vio_close(&svio);
  roar_vio_close(&dvio);
+
+ roardsp_fchain_uninit(&(g_filterchains.input));
+ roardsp_fchain_uninit(&(g_filterchains.output));
 
  roar_disconnect(&(g_cons.con));
 
