@@ -8,6 +8,7 @@ Things we should do:
  * (0.3) do a lot work on the manpages
  * (0.3) publish IDs used in proto as public domain
  * (0.3) Check for things needed to be done to support newer versions of CELT
+ * (0.3) Clean libroardsp headers
  * (1.0) add RAUM support
  * (1.0) replace OpenBSD's aucat
  * (1.0) add internal memory management
