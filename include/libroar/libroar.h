@@ -99,6 +99,7 @@
 #include "vio_bio.h"
 #include "vio_stdio.h"
 #include "vio_stack.h"
+#include "vio_jumbo.h"
 #include "vio_pipe.h"
 #include "vio_socket.h"
 #include "vio_proto.h"
