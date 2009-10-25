@@ -38,6 +38,7 @@
 #include "libroar.h"
 
 struct roar_vio_jumbo {
+ struct roar_buffer    * buffer;
  struct roar_vio_calls * backend;
 };
 
