@@ -144,6 +144,14 @@ struct roardsp_swap {
  int map[ROAR_MAX_CHANNELS];
 };
 
+struct roardsp_agc {
+ struct roardsp_filter * amp;
+};
+
+struct roardsp_speex_prep {
+ char dummy[8];
+};
+
 // funcs:
 int    roardsp_filter_str2id(char * str);
 char * roardsp_filter_id2str(int id);
