@@ -40,6 +40,7 @@
 struct roar_vio_jumbo {
  struct roar_buffer    * buffer;
  struct roar_vio_calls * backend;
+ size_t                  pos;
 };
 
 int     roar_vio_open_jumbo    (struct roar_vio_calls * calls, struct roar_vio_calls * vio, size_t buffersize);
