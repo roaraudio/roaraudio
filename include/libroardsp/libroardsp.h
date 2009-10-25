@@ -68,6 +68,8 @@ __BEGIN_DECLS
 #define ROARDSP_FILTER_DOWNMIX        8
 #define ROARDSP_FILTER_DCBLOCK        9
 #define ROARDSP_FILTER_SWAP          10
+#define ROARDSP_FILTER_SPEEX_PREP    11
+#define ROARDSP_FILTER_AGC           12
 
 // filter CTLs:
 
@@ -80,6 +82,7 @@ __BEGIN_DECLS
 #define ROARDSP_FCTL_PHASE            7
 #define ROARDSP_FCTL_Q                8
 #define ROARDSP_FCTL_MODE             9
+#define ROARDSP_FCTL_PACKET_SIZE     10
 
 // consts for filter(chain) reset:
 #define ROARDSP_RESET_NONE            0
