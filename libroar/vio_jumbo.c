@@ -86,11 +86,17 @@ ssize_t roar_vio_jumbo_write   (struct roar_vio_calls * vio, void *buf, size_t c
  size_t   buflen;
  void   * data;
 
+ ROAR_DBG("roar_vio_jumbo_write(vio=%p, buf=%p, count=%lu) = ?", vio, buf, (unsigned long) count);
+
  if ( roar_buffer_get_len(self->buffer, &buflen) == -1 )
   return -1;
 
+ ROAR_DBG("roar_vio_jumbo_write(vio=%p, buf=%p, count=%lu) = ?", vio, buf, (unsigned long) count);
+
  if ( roar_buffer_get_data(self->buffer, &data) == -1 )
   return -1;
+
+ ROAR_DBG("roar_vio_jumbo_write(vio=%p, buf=%p, count=%lu) = ?", vio, buf, (unsigned long) count);
 
  if ( (self->pos + count) > buflen ) {
   if ( roar_vio_jumbo_sync(vio) == -1 )
@@ -103,7 +109,9 @@ ssize_t roar_vio_jumbo_write   (struct roar_vio_calls * vio, void *buf, size_t c
   self->pos += count;
  }
 
- return 0;
+ ROAR_DBG("roar_vio_jumbo_write(vio=%p, buf=%p, count=%lu) = ?", vio, buf, (unsigned long) count);
+
+ return count;
 }
 
 off_t   roar_vio_jumbo_lseek   (struct roar_vio_calls * vio, off_t offset, int whence) {
