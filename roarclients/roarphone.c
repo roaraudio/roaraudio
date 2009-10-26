@@ -58,6 +58,7 @@ struct {
  int transcode;
  int64_t dtx_threshold;
  size_t jumbo_mtu;
+ int    ioflush_interval;
  struct {
   struct {
    int downmix;
@@ -103,6 +104,7 @@ void usage (void) {
 
  printf("  --server   SERVER    - Set server hostname\n"
         " --jumbo-mtu MTU       - Sets the MTU for Jumbo Packets\n"
+        " --io-flush  INTERVAL  - Flushs output every INTERVAL packets\n"
        );
 
  printf("\nAudio Options:\n\n");
@@ -316,6 +318,7 @@ int run_stream (struct roar_vio_calls * s0, struct roar_vio_calls * s1, struct r
  size_t len;
  void * outbuf, * micbuf;
  ssize_t outlen, miclen;
+ unsigned long int pkg_count = 0;
 
  ROAR_DBG("run_stream(*): g_conf.samples = %i, info->bits = %i", g_conf.samples, info->bits);
  len = g_conf.samples * info->bits / 8;
@@ -347,6 +350,11 @@ int run_stream (struct roar_vio_calls * s0, struct roar_vio_calls * s1, struct r
     break;
   }
 
+  if ( g_conf.ioflush_interval != -1 ) {
+   if ( !(pkg_count % g_conf.ioflush_interval) )
+    roar_vio_sync(s1);
+  }
+
   if ( g_conf.transcode ) {
    ROAR_DBG("run_stream(*): outbuf=%p, len=%lu", outbuf, (unsigned long) len);
    if ( roar_bixcoder_read_packet(transcoder, outbuf, len) == -1 )
@@ -368,6 +376,8 @@ int run_stream (struct roar_vio_calls * s0, struct roar_vio_calls * s1, struct r
 
   if ( roar_vio_write(s0, outbuf, outlen) != outlen )
    break;
+
+  pkg_count++;
  }
 
  free(outbuf);
@@ -393,8 +403,9 @@ int main (int argc, char * argv[]) {
 
  memset(&g_conf, 0, sizeof(g_conf));
 
- g_conf.antiecho      = AE_ROARD;
- g_conf.dtx_threshold = -1;
+ g_conf.antiecho         = AE_ROARD;
+ g_conf.dtx_threshold    = -1;
+ g_conf.ioflush_interval = -1;
 
  memset(&g_cons, 0, sizeof(g_cons));
  g_cons.state = CON_NONE;
@@ -411,6 +422,8 @@ int main (int argc, char * argv[]) {
    server = argv[++i];
   } else if ( strcmp(k, "--jumbo-mtu") == 0 ) {
    g_conf.jumbo_mtu = atoi(argv[++i]);
+  } else if ( strcmp(k, "--io-flush") == 0 ) {
+   g_conf.ioflush_interval = atoi(argv[++i]);
   } else if ( strcmp(k, "--rate") == 0 ) {
    info.rate = atoi(argv[++i]);
   } else if ( strcmp(k, "--bits") == 0 ) {
