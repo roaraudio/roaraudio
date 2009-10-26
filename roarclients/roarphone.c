@@ -58,6 +58,12 @@ struct {
  int transcode;
  int64_t dtx_threshold;
  size_t jumbo_mtu;
+ struct {
+  struct {
+   int downmix;
+   float lowp_freq;
+  } in;
+ } filter;
 } g_conf;
 
 int dtx_counter = 0;
@@ -103,6 +109,11 @@ void usage (void) {
  printf("  --rate     RATE      - Set sample rate\n"
         "  --bits     BITS      - Set bits per sample\n"
         "  --chans    CHANNELS  - Set number of channels\n"
+       );
+
+ printf("\nAudio Filter Options:\n\n");
+ printf("  --afi-downmix        - Enable input downmixing\n"
+        "  --afi-lowpass FREQ   - Enable input lowpass at FREQ (in Hz)\n"
        );
 
  printf("\nCodec Options:\n\n");
@@ -373,6 +384,7 @@ int main (int argc, char * argv[]) {
  struct roar_audio_info dinfo;
  struct roar_vio_calls dvio, svio, svio_jumbo, svio_real;
  struct roar_vio_calls * svio_p;
+ struct roardsp_filter * filter;
  char * driver   = DRIVER;
  char * device   = NULL;
  char * server   = NULL;
@@ -405,8 +417,19 @@ int main (int argc, char * argv[]) {
    info.bits = atoi(argv[++i]);
   } else if ( strcmp(k, "--channels") == 0 || strcmp(k, "--chans") == 0 ) {
    info.channels = atoi(argv[++i]);
+
+/*
+ printf("  --afi-downmix        - Enable input downmixing\n"
+        "  --afi-lowpass FREQ   - Enable input lowpass at FREQ (in Hz)\n"
+*/
+  } else if ( strcmp(k, "--afi-downmix") == 0 ) {
+   g_conf.filter.in.downmix = 1;
+  } else if ( strcmp(k, "--afi-lowpass") == 0 ) {
+   g_conf.filter.in.lowp_freq = atof(argv[++i]);
+
   } else if ( strcmp(k, "--codec") == 0 ) {
    info.codec = roar_str2codec(argv[++i]);
+
   } else if ( strcmp(k, "--driver") == 0 ) {
    driver = argv[++i];
   } else if ( strcmp(k, "--device") == 0 ) {
@@ -522,6 +545,34 @@ int main (int argc, char * argv[]) {
  }
 
  set_meta();
+
+#define _err(x) roar_vio_close(&dvio); roar_vio_close(&svio); return (x)
+
+ if ( g_conf.filter.in.downmix ) {
+  if ( roardsp_filter_new(&filter, &(g_cons.stream), ROARDSP_FILTER_DOWNMIX) == -1 ) {
+   _err(2);
+  }
+
+  if ( roardsp_fchain_add(&(g_filterchains.input), filter) == -1 ) {
+   _err(2);
+  }
+ }
+
+ if ( g_conf.filter.in.lowp_freq > 1 ) {
+  if ( roardsp_filter_new(&filter, &(g_cons.stream), ROARDSP_FILTER_LOWP) == -1 ) {
+   _err(2);
+  }
+
+  if ( roardsp_filter_ctl(filter, ROARDSP_FCTL_FREQ, &(g_conf.filter.in.lowp_freq)) == -1 ) {
+   _err(2);
+  }
+
+  if ( roardsp_fchain_add(&(g_filterchains.input), filter) == -1 ) {
+   _err(2);
+  }
+ }
+
+#undef _err
 
  if ( g_conf.transcode ) {
   dinfo.codec = info.codec;
