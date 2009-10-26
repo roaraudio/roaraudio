@@ -5,7 +5,7 @@ LIBROAR_NS      = $(AUXLIBS) $(NETLIBS)
 LIBROAR         = -lroar $(LIBROAR_NS)
 
 # libroardsp:
-DSP_CODECLIBS   = $(lib_celt) $(lib_speex)
+DSP_CODECLIBS   = $(lib_celt) $(lib_speex) $(lib_speexdsp)
 DSP_AUXLIBS     = $(lib_samplerate)
 LIBROARDSP_NS   = $(DSP_CODECLIBS) $(DSP_AUXLIBS) $(LIBROAR) $(lib_m)
 LIBROARDSP      = -lroardsp $(LIBROARDSP_NS)

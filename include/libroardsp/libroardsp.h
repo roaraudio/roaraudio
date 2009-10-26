@@ -29,6 +29,14 @@
 
 __BEGIN_DECLS
 
+// enable Speex preprocessing and better type handling if speex > 1.1.8
+#ifdef ROAR_HAVE_LIBSPEEX
+#include <speex/speex.h>
+#ifdef _SPEEX_TYPES_H
+#include <speex/speex_preprocess.h>
+#endif
+#endif
+
 #include "midi.h"
 #include "synth.h"
 #include "poly.h"
@@ -73,7 +81,7 @@ __BEGIN_DECLS
 
 // filter CTLs:
 
-#define ROARDSP_FCTL_FREQ             1
+#define ROARDSP_FCTL_FREQ             1 /* float */
 #define ROARDSP_FCTL_TIME             2
 #define ROARDSP_FCTL_MUL              3
 #define ROARDSP_FCTL_DIV              4
@@ -82,7 +90,7 @@ __BEGIN_DECLS
 #define ROARDSP_FCTL_PHASE            7
 #define ROARDSP_FCTL_Q                8
 #define ROARDSP_FCTL_MODE             9
-#define ROARDSP_FCTL_PACKET_SIZE     10
+#define ROARDSP_FCTL_PACKET_SIZE     10 /* size_t */
 
 // consts for filter flags:
 #define ROARDSP_FFLAG_NONE            0x0000
@@ -154,7 +162,12 @@ struct roardsp_agc {
 };
 
 struct roardsp_speex_prep {
+#ifdef _SPEEX_TYPES_H
+ SpeexPreprocessState *preprocess;
+ int frame_size;
+#else
  char dummy[8];
+#endif
 };
 
 // funcs:
@@ -227,6 +240,13 @@ int roardsp_swap_uninit (struct roardsp_filter * filter);
 int roardsp_swap_calc162(struct roardsp_filter * filter, void * data, size_t samples);
 int roardsp_swap_ctl    (struct roardsp_filter * filter, int cmd, void * data);
 int roardsp_swap_reset  (struct roardsp_filter * filter, int what);
+
+#ifdef _SPEEX_TYPES_H
+int roardsp_speex_prep_init   (struct roardsp_filter * filter, struct roar_stream * stream, int id);
+int roardsp_speex_prep_uninit (struct roardsp_filter * filter);
+int roardsp_speex_prep_ctl    (struct roardsp_filter * filter, int cmd, void * data);
+int roardsp_speex_prep_reset  (struct roardsp_filter * filter, int what);
+#endif
 
 // codecs:
 int roardsp_conv_alaw2pcm16 (int16_t * out, char * in, size_t len);
