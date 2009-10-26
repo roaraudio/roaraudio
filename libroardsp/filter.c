@@ -83,6 +83,32 @@ char * roardsp_filter_id2str(int id) {
  return NULL;
 }
 
+int    roardsp_filter_new   (struct roardsp_filter ** filter, struct roar_stream * stream, int id) {
+ struct roardsp_filter * n;
+ int ret;
+
+ if ( filter == NULL || stream == NULL )
+  return -1;
+
+ *filter = NULL; // just to be sure
+
+ n = roar_mm_malloc(sizeof(struct roardsp_filter));
+
+ if ( n == NULL )
+  return -1;
+
+ if ( (ret = roardsp_filter_init(n, stream, id)) == -1 ) {
+  roar_mm_free(n);
+  return -1;
+ }
+
+ n->flags |= ROARDSP_FFLAG_FREE;
+
+ *filter = n;
+
+ return ret;
+}
+
 int roardsp_filter_init  (struct roardsp_filter * filter, struct roar_stream * stream, int id) {
  struct _roardsp_filterlist * l = _roardsp_filterlist;
  int bytes;
@@ -144,7 +170,11 @@ int roardsp_filter_uninit(struct roardsp_filter * filter) {
  if ( filter->uninit )
   ret = filter->uninit(filter);
 
- memset(filter, 0, sizeof(struct roardsp_filter));
+ if ( filter->flags & ROARDSP_FFLAG_FREE ) {
+  roar_mm_free(filter);
+ } else  {
+  memset(filter, 0, sizeof(struct roardsp_filter));
+ }
 
  return ret;
 }
