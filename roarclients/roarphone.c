@@ -103,8 +103,8 @@ void usage (void) {
  printf("\nServer Options:\n\n");
 
  printf("  --server   SERVER    - Set server hostname\n"
-        " --jumbo-mtu MTU       - Sets the MTU for Jumbo Packets\n"
-        " --io-flush  INTERVAL  - Flushs output every INTERVAL packets\n"
+        "  --jumbo-mtu MTU      - Sets the MTU for Jumbo Packets\n"
+        "  --io-flush  INTERVAL - Flushs output every INTERVAL packets\n"
        );
 
  printf("\nAudio Options:\n\n");
