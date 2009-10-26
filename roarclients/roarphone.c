@@ -57,6 +57,7 @@ struct {
  int samples;
  int transcode;
  int64_t dtx_threshold;
+ size_t jumbo_mtu;
 } g_conf;
 
 int dtx_counter = 0;
@@ -95,6 +96,7 @@ void usage (void) {
  printf("\nServer Options:\n\n");
 
  printf("  --server   SERVER    - Set server hostname\n"
+        " --jumbo-mtu MTU       - Sets the MTU for Jumbo Packets\n"
        );
 
  printf("\nAudio Options:\n\n");
@@ -369,7 +371,8 @@ int main (int argc, char * argv[]) {
                                 .codec    = ROAR_CODEC_DEFAULT
                                };
  struct roar_audio_info dinfo;
- struct roar_vio_calls dvio, svio, svio_real;
+ struct roar_vio_calls dvio, svio, svio_jumbo, svio_real;
+ struct roar_vio_calls * svio_p;
  char * driver   = DRIVER;
  char * device   = NULL;
  char * server   = NULL;
@@ -394,6 +397,8 @@ int main (int argc, char * argv[]) {
 
   if ( strcmp(k, "--server") == 0 ) {
    server = argv[++i];
+  } else if ( strcmp(k, "--jumbo-mtu") == 0 ) {
+   g_conf.jumbo_mtu = atoi(argv[++i]);
   } else if ( strcmp(k, "--rate") == 0 ) {
    info.rate = atoi(argv[++i]);
   } else if ( strcmp(k, "--bits") == 0 ) {
@@ -505,12 +510,23 @@ int main (int argc, char * argv[]) {
   return 2;
  }
 
+ if ( g_conf.jumbo_mtu ) {
+  if ( roar_vio_open_jumbo(&svio_jumbo, &svio, g_conf.jumbo_mtu) == -1 ) {
+   roar_vio_close(&dvio);
+   roar_vio_close(&svio);
+   return 2;
+  }
+  svio_p = &svio_jumbo;
+ } else {
+  svio_p = &svio;
+ }
+
  set_meta();
 
  if ( g_conf.transcode ) {
   dinfo.codec = info.codec;
 
-  if ( roar_bixcoder_init(transcoder, &dinfo, &svio) == -1 ) {
+  if ( roar_bixcoder_init(transcoder, &dinfo, svio_p) == -1 ) {
    roar_vio_close(&svio);
    roar_vio_close(&dvio);
    return 10;
@@ -524,12 +540,12 @@ int main (int argc, char * argv[]) {
  }
 
  ROAR_DBG("main(*): CALL run_stream(&dvio, &svio, &info);");
- run_stream(&dvio, &svio, &info);
+ run_stream(&dvio, svio_p, &info);
  ROAR_DBG("main(*): RET");
 
  roar_bixcoder_close(transcoder);
 
- roar_vio_close(&svio);
+ roar_vio_close(svio_p);
  roar_vio_close(&dvio);
 
  roardsp_fchain_uninit(&(g_filterchains.input));
