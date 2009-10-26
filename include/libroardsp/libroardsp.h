@@ -84,6 +84,10 @@ __BEGIN_DECLS
 #define ROARDSP_FCTL_MODE             9
 #define ROARDSP_FCTL_PACKET_SIZE     10
 
+// consts for filter flags:
+#define ROARDSP_FFLAG_NONE            0x0000
+#define ROARDSP_FFLAG_FREE            0x0001
+
 // consts for filter(chain) reset:
 #define ROARDSP_RESET_NONE            0
 #define ROARDSP_RESET_FULL            1
@@ -104,6 +108,7 @@ struct roardsp_filter {
  int    bits;
  int    rate;
  void * inst;
+ uint_least16_t flags;
  int (*calc  )(struct roardsp_filter * filter, void * data, size_t samples);
  int (*uninit)(struct roardsp_filter * filter);
  int (*ctl   )(struct roardsp_filter * filter, int cmd, void * data);
@@ -155,11 +160,13 @@ struct roardsp_speex_prep {
 // funcs:
 int    roardsp_filter_str2id(char * str);
 char * roardsp_filter_id2str(int id);
-int    roardsp_filter_init  (struct roardsp_filter * filter, struct roar_stream * stream, int id);
-int    roardsp_filter_uninit(struct roardsp_filter * filter);
-int    roardsp_filter_calc  (struct roardsp_filter * filter, void * data, size_t len);
-int    roardsp_filter_ctl   (struct roardsp_filter * filter, int cmd, void * data);
-int    roardsp_filter_reset (struct roardsp_filter * filter, int what);
+int    roardsp_filter_new   (struct roardsp_filter ** filter, struct roar_stream * stream, int id);
+#define roardsp_filter_free(x) roar_dsp_filter_uninit((x))
+int    roardsp_filter_init  (struct roardsp_filter *  filter, struct roar_stream * stream, int id);
+int    roardsp_filter_uninit(struct roardsp_filter *  filter);
+int    roardsp_filter_calc  (struct roardsp_filter *  filter, void * data, size_t len);
+int    roardsp_filter_ctl   (struct roardsp_filter *  filter, int cmd, void * data);
+int    roardsp_filter_reset (struct roardsp_filter *  filter, int what);
 
 int roardsp_fchain_init  (struct roardsp_filterchain * chain);
 int roardsp_fchain_uninit(struct roardsp_filterchain * chain);
