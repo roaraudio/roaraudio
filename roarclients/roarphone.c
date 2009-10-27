@@ -578,6 +578,22 @@ int main (int argc, char * argv[]) {
 
  set_meta();
 
+ if ( g_conf.transcode ) {
+  dinfo.codec = info.codec;
+
+  if ( roar_bixcoder_init(transcoder, &dinfo, svio_p) == -1 ) {
+   roar_vio_close(&svio);
+   roar_vio_close(&dvio);
+   return 10;
+  }
+
+  // ignore errors as it may also work if this fails
+  roar_bixcoder_write_header(transcoder);
+  roar_bixcoder_read_header(transcoder);
+
+  g_conf.samples = 8 * roar_bixcoder_packet_size(transcoder, -1) / dinfo.bits;
+ }
+
 #define _err(x) roar_vio_close(&dvio); roar_vio_close(&svio); return (x)
 
  if ( g_conf.filter.in.downmix ) {
@@ -635,22 +651,6 @@ int main (int argc, char * argv[]) {
  }
 
 #undef _err
-
- if ( g_conf.transcode ) {
-  dinfo.codec = info.codec;
-
-  if ( roar_bixcoder_init(transcoder, &dinfo, svio_p) == -1 ) {
-   roar_vio_close(&svio);
-   roar_vio_close(&dvio);
-   return 10;
-  }
-
-  // ignore errors as it may also work if this fails
-  roar_bixcoder_write_header(transcoder);
-  roar_bixcoder_read_header(transcoder);
-
-  g_conf.samples = 8 * roar_bixcoder_packet_size(transcoder, -1) / dinfo.bits;
- }
 
  ROAR_DBG("main(*): CALL run_stream(&dvio, &svio, &info);");
  run_stream(&dvio, svio_p, &info);
