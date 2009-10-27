@@ -27,7 +27,15 @@
 #ifdef _SPEEX_TYPES_H
 // TODO: check parameters we allready know:
 int roardsp_speex_prep_init   (struct roardsp_filter * filter, struct roar_stream * stream, int id) {
- struct roardsp_speex_prep * self = roar_mm_malloc(sizeof(struct roardsp_speex_prep));
+ struct roardsp_speex_prep * self;
+
+ if ( filter->channels != 1 )
+  return -1;
+
+ if ( filter->bits != 16 )
+  return -1;
+
+ self = roar_mm_malloc(sizeof(struct roardsp_speex_prep));
 
  if ( self == NULL )
   return -1;
