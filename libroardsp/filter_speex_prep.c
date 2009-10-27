@@ -28,9 +28,16 @@
 
 #if defined(ROAR_HAVE_LIBSPEEX) && !defined(ROAR_HAVE_LIBSPEEXDSP)
 #define _SPEEX_API_OLD
+#define _SPEEX_INT int
 #elif defined(ROAR_HAVE_LIBSPEEX) && defined(ROAR_HAVE_LIBSPEEXDSP)
 #define _SPEEX_API_NEW
+#define _SPEEX_INT spx_int32_t
 #endif
+
+#define _on  1
+#define _off 2
+
+#define _CBVM(opt) (ROARDSP_SPEEX_PREP_CBV((opt), ROARDSP_SPEEX_PREP_MASK))
 
 // TODO: check parameters we allready know:
 int roardsp_speex_prep_init   (struct roardsp_filter * filter, struct roar_stream * stream, int id) {
@@ -85,12 +92,55 @@ int roardsp_speex_prep_calc161(struct roardsp_filter * filter, void * data, size
 
 int roardsp_speex_prep_ctl    (struct roardsp_filter * filter, int cmd, void * data) {
  struct roardsp_speex_prep * self = filter->inst;
- size_t * val;
+ union {
+  size_t  size;
+  int32_t i32;
+ } * val = data;
+ _SPEEX_INT si;
 
  switch (cmd) {
+  case ROARDSP_FCTL_MODE:
+    if ( self->preprocess == NULL )
+     return -1;
+
+    if ( val->i32 & _CBVM(ROARDSP_SPEEX_PREP_DENOISE) ) {
+     val->i32 -= val->i32 & _CBVM(ROARDSP_SPEEX_PREP_DENOISE);
+     switch (ROARDSP_SPEEX_PREP_CTB(ROARDSP_SPEEX_PREP_DENOISE, val->i32)) {
+      case ROARDSP_SPEEX_PREP_ON:  si = _on;  break;
+      case ROARDSP_SPEEX_PREP_OFF: si = _off; break;
+      default: return -1;
+     }
+     speex_preprocess_ctl(self->preprocess, SPEEX_PREPROCESS_SET_DENOISE, &si);
+    }
+
+    if ( val->i32 & _CBVM(ROARDSP_SPEEX_PREP_AGC) ) {
+     val->i32 -= val->i32 & _CBVM(ROARDSP_SPEEX_PREP_AGC);
+     switch (ROARDSP_SPEEX_PREP_CTB(ROARDSP_SPEEX_PREP_DENOISE, val->i32)) {
+      case ROARDSP_SPEEX_PREP_ON:  si = _on;  break;
+      case ROARDSP_SPEEX_PREP_OFF: si = _off; break;
+      default: return -1;
+     }
+     speex_preprocess_ctl(self->preprocess, SPEEX_PREPROCESS_SET_AGC, &si);
+    }
+
+    if ( val->i32 & _CBVM(ROARDSP_SPEEX_PREP_VAD) ) {
+     val->i32 -= val->i32 & _CBVM(ROARDSP_SPEEX_PREP_VAD);
+     switch (ROARDSP_SPEEX_PREP_CTB(ROARDSP_SPEEX_PREP_DENOISE, val->i32)) {
+      case ROARDSP_SPEEX_PREP_ON:  si = _on;  break;
+      case ROARDSP_SPEEX_PREP_OFF: si = _off; break;
+      default: return -1;
+     }
+     speex_preprocess_ctl(self->preprocess, SPEEX_PREPROCESS_SET_VAD, &si);
+    }
+
+    // any other options left? error:
+    if ( val->i32 )
+     return -1;
+
+    return 0;
+   break;
   case ROARDSP_FCTL_PACKET_SIZE:
-    val = data;
-    self->frame_size = *val;
+    self->frame_size = val->size;
 
     self->preprocess = speex_preprocess_state_init(self->frame_size, filter->rate);
     if ( self->preprocess == NULL )
