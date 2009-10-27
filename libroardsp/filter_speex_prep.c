@@ -25,6 +25,13 @@
 #include "libroardsp.h"
 
 #ifdef _SPEEX_TYPES_H
+
+#if defined(ROAR_HAVE_LIBSPEEX) && !defined(ROAR_HAVE_LIBSPEEXDSP)
+#define _SPEEX_API_OLD
+#elif defined(ROAR_HAVE_LIBSPEEX) && defined(ROAR_HAVE_LIBSPEEXDSP)
+#define _SPEEX_API_NEW
+#endif
+
 // TODO: check parameters we allready know:
 int roardsp_speex_prep_init   (struct roardsp_filter * filter, struct roar_stream * stream, int id) {
  struct roardsp_speex_prep * self;
@@ -57,7 +64,23 @@ int roardsp_speex_prep_uninit (struct roardsp_filter * filter) {
 }
 
 int roardsp_speex_prep_calc161(struct roardsp_filter * filter, void * data, size_t samples) {
+ struct roardsp_speex_prep * self = filter->inst;
+
+ if ( self->preprocess == NULL )
+  return -1;
+
+ if ( samples != self->frame_size )
+  return -1;
+
+#ifdef _SPEEX_API_OLD
+ speex_preprocess(self->preprocess, data, NULL);
+#elif defined(_SPEEX_API_NEW)
+ speex_preprocess_run(self->preprocess, data);
+#else
  return -1;
+#endif
+
+ return 0;
 }
 
 int roardsp_speex_prep_ctl    (struct roardsp_filter * filter, int cmd, void * data) {
