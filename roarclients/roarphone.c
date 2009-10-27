@@ -63,6 +63,7 @@ struct {
   struct {
    int downmix;
    float lowp_freq;
+   int speex_prep;
   } in;
  } filter;
 } g_conf;
@@ -116,6 +117,7 @@ void usage (void) {
  printf("\nAudio Filter Options:\n\n");
  printf("  --afi-downmix        - Enable input downmixing\n"
         "  --afi-lowpass FREQ   - Enable input lowpass at FREQ (in Hz)\n"
+        "  --afi-speex-prep     - Enable speex preprocessor\n"
        );
 
  printf("\nCodec Options:\n\n");
@@ -431,14 +433,12 @@ int main (int argc, char * argv[]) {
   } else if ( strcmp(k, "--channels") == 0 || strcmp(k, "--chans") == 0 ) {
    info.channels = atoi(argv[++i]);
 
-/*
- printf("  --afi-downmix        - Enable input downmixing\n"
-        "  --afi-lowpass FREQ   - Enable input lowpass at FREQ (in Hz)\n"
-*/
   } else if ( strcmp(k, "--afi-downmix") == 0 ) {
    g_conf.filter.in.downmix = 1;
   } else if ( strcmp(k, "--afi-lowpass") == 0 ) {
    g_conf.filter.in.lowp_freq = atof(argv[++i]);
+  } else if ( strcmp(k, "--afi-speex-prep") == 0 ) {
+   g_conf.filter.in.speex_prep = 1;
 
   } else if ( strcmp(k, "--codec") == 0 ) {
    info.codec = roar_str2codec(argv[++i]);
@@ -577,6 +577,16 @@ int main (int argc, char * argv[]) {
   }
 
   if ( roardsp_filter_ctl(filter, ROARDSP_FCTL_FREQ, &(g_conf.filter.in.lowp_freq)) == -1 ) {
+   _err(2);
+  }
+
+  if ( roardsp_fchain_add(&(g_filterchains.input), filter) == -1 ) {
+   _err(2);
+  }
+ }
+
+ if ( g_conf.filter.in.speex_prep ) {
+  if ( roardsp_filter_new(&filter, &(g_cons.stream), ROARDSP_FILTER_SPEEX_PREP) == -1 ) {
    _err(2);
   }
 
