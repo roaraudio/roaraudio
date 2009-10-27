@@ -83,13 +83,13 @@ __BEGIN_DECLS
 
 #define ROARDSP_FCTL_FREQ             1 /* float */
 #define ROARDSP_FCTL_TIME             2
-#define ROARDSP_FCTL_MUL              3
-#define ROARDSP_FCTL_DIV              4
-#define ROARDSP_FCTL_N                5
-#define ROARDSP_FCTL_LIMIT            6
+#define ROARDSP_FCTL_MUL              3 /* int32_t */
+#define ROARDSP_FCTL_DIV              4 /* int32_t */
+#define ROARDSP_FCTL_N                5 /* int32_t */
+#define ROARDSP_FCTL_LIMIT            6 /* int32_t */
 #define ROARDSP_FCTL_PHASE            7
-#define ROARDSP_FCTL_Q                8
-#define ROARDSP_FCTL_MODE             9
+#define ROARDSP_FCTL_Q                8 /* int32_t */
+#define ROARDSP_FCTL_MODE             9 /* int32_t */
 #define ROARDSP_FCTL_PACKET_SIZE     10 /* size_t */
 
 // consts for filter flags:
@@ -108,6 +108,27 @@ __BEGIN_DECLS
 #define ROARDSP_DOWNMIX_RMS           4
 
 #define ROARDSP_DCBLOCK_NUMBLOCKS     100
+
+
+#define ROARDSP_SPEEX_PREP_ON          0x0001
+#define ROARDSP_SPEEX_PREP_OFF         0x0002
+#define ROARDSP_SPEEX_PREP_MASK        (ROARDSP_SPEEX_PREP_ON|ROARDSP_SPEEX_PREP_OFF)
+
+// Config Bit Vector
+#define ROARDSP_SPEEX_PREP_CBV(opt,sw) ((sw)<<((opt)*2))
+#define ROARDSP_SPEEX_PREP_CTB(opt,val) (((val) & ROARDSP_SPEEX_PREP_CBV((opt),ROARDSP_SPEEX_PREP_MASK)) >> ((opt)*2))
+
+#define ROARDSP_SPEEX_PREP_DENOISE     0
+#define ROARDSP_SPEEX_PREP_AGC         1
+#define ROARDSP_SPEEX_PREP_VAD         2
+
+#define ROARDSP_SPEEX_PREP_DENOISE_ON  ROARDSP_SPEEX_PREP_CBV(ROARDSP_SPEEX_PREP_DENOISE, ROARDSP_SPEEX_PREP_ON)
+#define ROARDSP_SPEEX_PREP_DENOISE_OFF ROARDSP_SPEEX_PREP_CBV(ROARDSP_SPEEX_PREP_DENOISE, ROARDSP_SPEEX_PREP_OFF)
+#define ROARDSP_SPEEX_PREP_AGC_ON      ROARDSP_SPEEX_PREP_CBV(ROARDSP_SPEEX_PREP_AGC, ROARDSP_SPEEX_PREP_ON)
+#define ROARDSP_SPEEX_PREP_AGC_OFF     ROARDSP_SPEEX_PREP_CBV(ROARDSP_SPEEX_PREP_AGC, ROARDSP_SPEEX_PREP_OFF)
+#define ROARDSP_SPEEX_PREP_VAD_ON      ROARDSP_SPEEX_PREP_CBV(ROARDSP_SPEEX_PREP_VAD, ROARDSP_SPEEX_PREP_ON)
+#define ROARDSP_SPEEX_PREP_VAD_OFF     ROARDSP_SPEEX_PREP_CBV(ROARDSP_SPEEX_PREP_VAD, ROARDSP_SPEEX_PREP_OFF)
+
 
 // types:
 
