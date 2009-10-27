@@ -27,7 +27,7 @@
 int roardsp_swap_init   (struct roardsp_filter * filter, struct roar_stream * stream, int id) {
  struct roardsp_swap * inst = malloc(sizeof(struct roardsp_swap));
 
- ROAR_WARN("roardsp_swap_init(*): inst=%p", inst);
+ ROAR_DBG("roardsp_swap_init(*): inst=%p", inst);
 
  if ( inst == NULL ) {
   ROAR_ERR("roardsp_swap_init(*): Can not alloc memory for filter swap: %s", strerror(errno));
@@ -58,7 +58,7 @@ int roardsp_swap_calc162(struct roardsp_filter * filter, void * data, size_t sam
  int i;
 
  for (i = 0; i < samples; i += 2) {
-  ROAR_WARN("roardsp_swap_calc162(*): d[i]=%i, d[i+1]=%i", d[i], d[i+1]);
+  ROAR_DBG("roardsp_swap_calc162(*): d[i]=%i, d[i+1]=%i", d[i], d[i+1]);
   s      = d[i];
   d[i]   = d[i+1];
   d[i+1] = s;
