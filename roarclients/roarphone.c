@@ -64,6 +64,9 @@ struct {
    int downmix;
    float lowp_freq;
    int speex_prep;
+   int speex_prep_denoise;
+   int speex_prep_agc;
+   int speex_prep_vad;
   } in;
  } filter;
 } g_conf;
@@ -118,6 +121,9 @@ void usage (void) {
  printf("  --afi-downmix        - Enable input downmixing\n"
         "  --afi-lowpass FREQ   - Enable input lowpass at FREQ (in Hz)\n"
         "  --afi-speex-prep     - Enable speex preprocessor\n"
+        "  --afi-speex-denoise  - Enable speex denoiser\n"
+        "  --afi-speex-agc      - Enable speex AGC\n"
+        "  --afi-speex-vad      - Enable speex VAD\n"
        );
 
  printf("\nCodec Options:\n\n");
@@ -402,6 +408,10 @@ int main (int argc, char * argv[]) {
  char * server   = NULL;
  char * k;
  int    i;
+ union {
+  int32_t i32;
+  size_t  size;
+ } tmp;
 
  memset(&g_conf, 0, sizeof(g_conf));
 
@@ -439,6 +449,15 @@ int main (int argc, char * argv[]) {
    g_conf.filter.in.lowp_freq = atof(argv[++i]);
   } else if ( strcmp(k, "--afi-speex-prep") == 0 ) {
    g_conf.filter.in.speex_prep = 1;
+  } else if ( strcmp(k, "--afi-speex-denoise") == 0 ) {
+   g_conf.filter.in.speex_prep = 1;
+   g_conf.filter.in.speex_prep_denoise = 1;
+  } else if ( strcmp(k, "--afi-speex-agc") == 0 ) {
+   g_conf.filter.in.speex_prep = 1;
+   g_conf.filter.in.speex_prep_agc = 1;
+  } else if ( strcmp(k, "--afi-speex-vad") == 0 ) {
+   g_conf.filter.in.speex_prep = 1;
+   g_conf.filter.in.speex_prep_vad = 1;
 
   } else if ( strcmp(k, "--codec") == 0 ) {
    info.codec = roar_str2codec(argv[++i]);
@@ -587,6 +606,26 @@ int main (int argc, char * argv[]) {
 
  if ( g_conf.filter.in.speex_prep ) {
   if ( roardsp_filter_new(&filter, &(g_cons.stream), ROARDSP_FILTER_SPEEX_PREP) == -1 ) {
+   _err(2);
+  }
+
+  tmp.size = g_conf.samples;
+  if ( roardsp_filter_ctl(filter, ROARDSP_FCTL_PACKET_SIZE, &tmp) == -1 ) {
+   _err(2);
+  }
+
+  tmp.i32 = 0;
+
+  if ( g_conf.filter.in.speex_prep_denoise )
+   tmp.i32 |= ROARDSP_SPEEX_PREP_DENOISE_ON;
+
+  if ( g_conf.filter.in.speex_prep_agc )
+   tmp.i32 |= ROARDSP_SPEEX_PREP_AGC_ON;
+
+  if ( g_conf.filter.in.speex_prep_vad )
+   tmp.i32 |= ROARDSP_SPEEX_PREP_VAD_ON;
+
+  if ( roardsp_filter_ctl(filter, ROARDSP_FCTL_MODE, &tmp) == -1 ) {
    _err(2);
   }
 
