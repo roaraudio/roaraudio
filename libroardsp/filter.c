@@ -188,6 +188,9 @@ int roardsp_filter_calc  (struct roardsp_filter * filter, void * data, size_t le
  if ( filter == NULL )
   return -1;
 
+ if ( data == NULL && len != 0 )
+  return -1;
+
  if ( filter->calc )
   ret = filter->calc(filter, data, len);
 
