@@ -244,6 +244,7 @@ int roardsp_swap_reset  (struct roardsp_filter * filter, int what);
 #ifdef _SPEEX_TYPES_H
 int roardsp_speex_prep_init   (struct roardsp_filter * filter, struct roar_stream * stream, int id);
 int roardsp_speex_prep_uninit (struct roardsp_filter * filter);
+int roardsp_speex_prep_calc161(struct roardsp_filter * filter, void * data, size_t samples);
 int roardsp_speex_prep_ctl    (struct roardsp_filter * filter, int cmd, void * data);
 int roardsp_speex_prep_reset  (struct roardsp_filter * filter, int what);
 #endif

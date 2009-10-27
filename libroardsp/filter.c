@@ -55,7 +55,7 @@ struct _roardsp_filterlist {
            {NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, roardsp_swap_calc162, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL}}},
  {ROARDSP_FILTER_SPEEX_PREP, "SpeexPrep", roardsp_speex_prep_init, roardsp_speex_prep_uninit,
                                           roardsp_speex_prep_ctl,  roardsp_speex_prep_reset, {
-           {NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL}}},
+           {NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, roardsp_speex_prep_calc161, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL}}},
  {-1, NULL, NULL, NULL, NULL, NULL, {
       // ?                  8Bit               16Bit              24Bit              32Bit
       // 0B:n     1     2   1B:n     1     2   2B:n     1     2   3B:n     1    2    4B:n     1     2

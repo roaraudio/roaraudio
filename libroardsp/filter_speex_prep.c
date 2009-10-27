@@ -56,6 +56,10 @@ int roardsp_speex_prep_uninit (struct roardsp_filter * filter) {
  return 0;
 }
 
+int roardsp_speex_prep_calc161(struct roardsp_filter * filter, void * data, size_t samples) {
+ return -1;
+}
+
 int roardsp_speex_prep_ctl    (struct roardsp_filter * filter, int cmd, void * data) {
  struct roardsp_speex_prep * self = filter->inst;
  size_t * val;
