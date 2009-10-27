@@ -25,7 +25,7 @@
 #include "libroardsp.h"
 
 int roardsp_amp_init  (struct roardsp_filter * filter, struct roar_stream * stream, int id) {
- struct roardsp_amp * self = malloc(sizeof(struct roardsp_amp));
+ struct roardsp_amp * self = roar_mm_malloc(sizeof(struct roardsp_amp));
 
  if ( self == NULL )
   return -1;
@@ -41,7 +41,7 @@ int roardsp_amp_init  (struct roardsp_filter * filter, struct roar_stream * stre
 
 int roardsp_amp_uninit(struct roardsp_filter * filter) {
 
- free(filter->inst);
+ roar_mm_free(filter->inst);
  return 0;
 }
 

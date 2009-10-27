@@ -27,7 +27,7 @@
 #ifdef ROAR_HAVE_LIBM
 
 int roardsp_lowp_init  (struct roardsp_filter * filter, struct roar_stream * stream, int id) {
- struct roardsp_lowp * self = malloc(sizeof(struct roardsp_lowp));
+ struct roardsp_lowp * self = roar_mm_malloc(sizeof(struct roardsp_lowp));
  float freq = filter->rate/2;
 
  ROAR_DBG("roardsp_lowp_init(*): self=%p", self);
@@ -46,7 +46,7 @@ int roardsp_lowp_init  (struct roardsp_filter * filter, struct roar_stream * str
 
 int roardsp_lowp_uninit(struct roardsp_filter * filter) {
 
- free(filter->inst);
+ roar_mm_free(filter->inst);
  return 0;
 }
 

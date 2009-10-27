@@ -27,7 +27,7 @@
 #ifdef ROAR_HAVE_LIBM
 
 int roardsp_highp_init  (struct roardsp_filter * filter, struct roar_stream * stream, int id) {
- struct roardsp_highp * self = malloc(sizeof(struct roardsp_highp));
+ struct roardsp_highp * self = roar_mm_malloc(sizeof(struct roardsp_highp));
  float freq = 25;
 
  if ( self == NULL )
@@ -44,7 +44,7 @@ int roardsp_highp_init  (struct roardsp_filter * filter, struct roar_stream * st
 
 int roardsp_highp_uninit(struct roardsp_filter * filter) {
 
- free(filter->inst);
+ roar_mm_free(filter->inst);
  return 0;
 }
 

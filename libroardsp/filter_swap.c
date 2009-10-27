@@ -25,7 +25,7 @@
 #include "libroardsp.h"
 
 int roardsp_swap_init   (struct roardsp_filter * filter, struct roar_stream * stream, int id) {
- struct roardsp_swap * inst = malloc(sizeof(struct roardsp_swap));
+ struct roardsp_swap * inst = roar_mm_malloc(sizeof(struct roardsp_swap));
 
  ROAR_DBG("roardsp_swap_init(*): inst=%p", inst);
 
@@ -47,7 +47,7 @@ int roardsp_swap_uninit (struct roardsp_filter * filter) {
  if ( filter->inst == NULL )
   return -1;
 
- free(filter->inst);
+ roar_mm_free(filter->inst);
 
  return 0;
 }
