@@ -180,6 +180,7 @@ struct roardsp_swap {
 
 struct roardsp_agc {
  struct roardsp_filter * amp;
+ uint32_t target_amp;
 };
 
 struct roardsp_speex_prep {
@@ -195,7 +196,7 @@ struct roardsp_speex_prep {
 int    roardsp_filter_str2id(char * str);
 char * roardsp_filter_id2str(int id);
 int    roardsp_filter_new   (struct roardsp_filter ** filter, struct roar_stream * stream, int id);
-#define roardsp_filter_free(x) roar_dsp_filter_uninit((x))
+#define roardsp_filter_free(x) roardsp_filter_uninit((x))
 int    roardsp_filter_init  (struct roardsp_filter *  filter, struct roar_stream * stream, int id);
 int    roardsp_filter_uninit(struct roardsp_filter *  filter);
 int    roardsp_filter_calc  (struct roardsp_filter *  filter, void * data, size_t len);
@@ -261,6 +262,11 @@ int roardsp_swap_uninit (struct roardsp_filter * filter);
 int roardsp_swap_calc162(struct roardsp_filter * filter, void * data, size_t samples);
 int roardsp_swap_ctl    (struct roardsp_filter * filter, int cmd, void * data);
 int roardsp_swap_reset  (struct roardsp_filter * filter, int what);
+
+int roardsp_agc_init   (struct roardsp_filter * filter, struct roar_stream * stream, int id);
+int roardsp_agc_uninit (struct roardsp_filter * filter);
+int roardsp_agc_ctl    (struct roardsp_filter * filter, int cmd, void * data);
+int roardsp_agc_reset  (struct roardsp_filter * filter, int what);
 
 #ifdef _SPEEX_TYPES_H
 int roardsp_speex_prep_init   (struct roardsp_filter * filter, struct roar_stream * stream, int id);

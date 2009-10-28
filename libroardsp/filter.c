@@ -53,6 +53,8 @@ struct _roardsp_filterlist {
            {NULL, NULL, NULL},{NULL, NULL, NULL},{roardsp_dcblock_calc16, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL}}},
  {ROARDSP_FILTER_SWAP, "Swap", roardsp_swap_init, roardsp_swap_uninit, roardsp_swap_ctl, roardsp_swap_reset, {
            {NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, roardsp_swap_calc162},{NULL, NULL, NULL},{NULL, NULL, NULL}}},
+ {ROARDSP_FILTER_AGC, "AGC", roardsp_agc_init, roardsp_agc_uninit, roardsp_agc_ctl, roardsp_agc_reset, {
+           {NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL}}},
  {ROARDSP_FILTER_SPEEX_PREP, "SpeexPrep", roardsp_speex_prep_init, roardsp_speex_prep_uninit,
                                           roardsp_speex_prep_ctl,  roardsp_speex_prep_reset, {
            {NULL, NULL, NULL},{NULL, NULL, NULL},{NULL, roardsp_speex_prep_calc161, NULL},{NULL, NULL, NULL},{NULL, NULL, NULL}}},
