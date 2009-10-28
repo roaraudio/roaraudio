@@ -56,6 +56,8 @@ int roardsp_speex_prep_init   (struct roardsp_filter * filter, struct roar_strea
 
  memset(self, 0, sizeof(struct roardsp_speex_prep));
 
+ filter->inst = self;
+
  return 0;
 }
 
@@ -103,34 +105,38 @@ int roardsp_speex_prep_ctl    (struct roardsp_filter * filter, int cmd, void * d
     if ( self->preprocess == NULL )
      return -1;
 
+    ROAR_DBG("roardsp_speex_prep_ctl(*): val->i32 = 0x%.8x", val->i32);
+    ROAR_DBG("roardsp_speex_prep_ctl(*): _CBVM(ROARDSP_SPEEX_PREP_DENOISE) = 0x%.8x", _CBVM(ROARDSP_SPEEX_PREP_DENOISE));
+
     if ( val->i32 & _CBVM(ROARDSP_SPEEX_PREP_DENOISE) ) {
-     val->i32 -= val->i32 & _CBVM(ROARDSP_SPEEX_PREP_DENOISE);
+     ROAR_DBG("roardsp_speex_prep_ctl(*): ROARDSP_SPEEX_PREP_CTB(ROARDSP_SPEEX_PREP_DENOISE, val->i32) = 0x%.8x", ROARDSP_SPEEX_PREP_CTB(ROARDSP_SPEEX_PREP_DENOISE, val->i32));
      switch (ROARDSP_SPEEX_PREP_CTB(ROARDSP_SPEEX_PREP_DENOISE, val->i32)) {
       case ROARDSP_SPEEX_PREP_ON:  si = _on;  break;
       case ROARDSP_SPEEX_PREP_OFF: si = _off; break;
       default: return -1;
      }
      speex_preprocess_ctl(self->preprocess, SPEEX_PREPROCESS_SET_DENOISE, &si);
+     val->i32 -= val->i32 & _CBVM(ROARDSP_SPEEX_PREP_DENOISE);
     }
 
     if ( val->i32 & _CBVM(ROARDSP_SPEEX_PREP_AGC) ) {
-     val->i32 -= val->i32 & _CBVM(ROARDSP_SPEEX_PREP_AGC);
      switch (ROARDSP_SPEEX_PREP_CTB(ROARDSP_SPEEX_PREP_DENOISE, val->i32)) {
       case ROARDSP_SPEEX_PREP_ON:  si = _on;  break;
       case ROARDSP_SPEEX_PREP_OFF: si = _off; break;
       default: return -1;
      }
      speex_preprocess_ctl(self->preprocess, SPEEX_PREPROCESS_SET_AGC, &si);
+     val->i32 -= val->i32 & _CBVM(ROARDSP_SPEEX_PREP_AGC);
     }
 
     if ( val->i32 & _CBVM(ROARDSP_SPEEX_PREP_VAD) ) {
-     val->i32 -= val->i32 & _CBVM(ROARDSP_SPEEX_PREP_VAD);
      switch (ROARDSP_SPEEX_PREP_CTB(ROARDSP_SPEEX_PREP_DENOISE, val->i32)) {
       case ROARDSP_SPEEX_PREP_ON:  si = _on;  break;
       case ROARDSP_SPEEX_PREP_OFF: si = _off; break;
       default: return -1;
      }
      speex_preprocess_ctl(self->preprocess, SPEEX_PREPROCESS_SET_VAD, &si);
+     val->i32 -= val->i32 & _CBVM(ROARDSP_SPEEX_PREP_VAD);
     }
 
     // any other options left? error:
