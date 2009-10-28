@@ -29,7 +29,7 @@
 #endif
 
 #define MT_NONE     0x00
-#define MT_MASK    0xF0
+#define MT_MASK     0xF0
 #define MT_ROAR     0x10
 #define MT_ESD      0x20
 #define MT_DEFAULT  MT_ROAR
