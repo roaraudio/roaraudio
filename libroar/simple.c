@@ -155,6 +155,8 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
  int socks[2]; // for socketpair()
 #endif
 
+ roar_debug_warn_sysio("roar_simple_new_stream_obj", "roar_vio_simple_new_stream_obj", NULL);
+
  if ( config != NULL ) {
   if ( config->workaround.workarounds & ROAR_LIBROAR_CONFIG_WAS_USE_EXECED ) {
    return roar_simple_new_stream_attachexeced_obj(con, s, rate, channels, bits, codec, dir);
