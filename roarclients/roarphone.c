@@ -164,15 +164,11 @@ int open_stream (struct roar_vio_calls * vio, char * server, struct roar_audio_i
 
  g_cons.state |= CON_CON;
 
- // TODO: find out if this can be done more nicely by using VIOs
-
- if ( (fh = roar_simple_new_stream_obj(&(g_cons.con), &(g_cons.stream),
-                                       info->rate, info->channels, info->bits, info->codec,
-                                       ROAR_DIR_BIDIR
-                                      )) == -1 )
+ if ( (fh = roar_vio_simple_new_stream_obj(vio, &(g_cons.con), &(g_cons.stream),
+                                           info->rate, info->channels, info->bits, info->codec,
+                                           ROAR_DIR_BIDIR
+                                          )) == -1 )
   return -1;
-
- roar_vio_open_fh_socket(vio, fh);
 
  g_cons.state |= CON_STREAM;
 
