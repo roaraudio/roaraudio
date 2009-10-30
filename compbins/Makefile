@@ -1,7 +1,7 @@
 TARGETS_ESD  = esdcat.r esdmon.r esdfilt.r esdplay.r esd.r
 TARGETS_ARTS = artscat.r artsd.r artsplay.r
 TARGETS_NAS  = auplay.r
-TARGETS_YIFF = yplay.r yshutdown.r
+TARGETS_YIFF = yplay.r yshutdown.r yiff.r
 TARGETS=$(TARGETS_ESD) $(TARGETS_ARTS) $(TARGETS_NAS) $(TARGETS_YIFF)
 
 include ../Makefile.conf

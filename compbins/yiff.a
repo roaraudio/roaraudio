@@ -1,0 +1,23 @@
+#!/bin/sh
+
+NAME='yiff'
+RNAME='roard'
+
+ARGS_MAP_OPTS='--version:false:--help --device:true:-O'
+ARGS_PASS_OPTS='--port:true'
+ARGS_PASS_NON_OPTS=false
+
+
+#Usage: yiff [config_file] [options]
+#
+#    [config_file] specifies the configuration file to be used.
+#
+#    [options] can be any of the following:
+#
+#        --mixer <device>        Specifies the mixer device.
+#        --mixer_rc <file>       Specifies alternate mixer settings file.
+#        --path <path>           Adds a sound path (can be used
+#                                more than once).
+#        --foreground            Run in foreground, do not fork into background.
+
+#ll
