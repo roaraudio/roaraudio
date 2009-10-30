@@ -1,0 +1,10 @@
+#!/bin/sh
+
+NAME='yshutdown'
+RNAME='roarctl'
+
+ARGS_ADD_OPTS='exit'
+ARGS_MAP_OPTS='--recorder:true:--server'
+ARGS_PASS_NON_OPTS=false
+
+#ll
