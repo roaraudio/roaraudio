@@ -78,7 +78,7 @@ int roardsp_speex_prep_calc161(struct roardsp_filter * filter, void * data, size
  if ( self->preprocess == NULL )
   return -1;
 
- if ( samples != self->frame_size )
+ if ( samples != ((self->frame_size * filter->bits) / 8) )
   return -1;
 
 #ifdef _SPEEX_API_OLD
