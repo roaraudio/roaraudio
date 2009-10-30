@@ -4,7 +4,7 @@ NAME='yiff'
 RNAME='roard'
 
 ARGS_MAP_OPTS='--version:false:--help --device:true:-O'
-ARGS_PASS_OPTS='--port:true'
+ARGS_PASS_OPTS='--port:true --help:false'
 ARGS_PASS_NON_OPTS=false
 
 
