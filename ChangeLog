@@ -1,9 +1,10 @@
 v. 0.3beta3 - ?
-	* added some aRts/NAS tools to compbins
+	* added some aRts/NAS/YIFF tools to compbins
 	* added support for comp libs to roar-config
 	* added support for uni-directional streams in roarinterconnect
 	* write much better support for config, including codec config
 	* reduced the TCP overhead produced by speex
+	* added support for speex preprocessor
 	* get names of complibs from table, do not guess them
 	* a lot small fixes
 	* moved most of the mixer stuff out of roard into libroardsp
