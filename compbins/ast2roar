@@ -5,7 +5,7 @@ IN="$2"
 
 [ -r $IN ] || exit 1;
 
-. $IN
+. ./$IN
 
 {
  echo '#!/bin/sh'
