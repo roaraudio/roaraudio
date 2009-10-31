@@ -136,6 +136,9 @@ int roar_buffer_add      (struct roar_buffer * buf, struct roar_buffer *  next) 
 
  ROAR_DBG("buffer_add(buf=%p, next=%p) = ?", buf, next);
 
+ if ( buf->flags & ROAR_BUFFER_FLAG_RING )
+  return -1;
+
  if ( buf == next ) {
   ROAR_ERR("buffer_add(*): both pointer are of the same destination, This is a error in the application");
   return -1;
@@ -164,6 +167,37 @@ int roar_buffer_get_next (struct roar_buffer *  buf, struct roar_buffer ** next)
   return -1;
 
  *next = buf->next;
+
+ return 0;
+}
+
+int roar_buffer_ring_new (struct roar_buffer ** buf, size_t len, int free_running) {
+ struct roar_buffer * n;
+
+ if ( buf == NULL || len == 0 )
+  return -1;
+
+ // just to be sure:
+ *buf = NULL;
+
+ // currently we are limited to free running mode
+ if ( !free_running )
+  return -1;
+
+ if ( roar_buffer_new(&n, len) == -1 )
+  return -1;
+
+ n->flags |= ROAR_BUFFER_FLAG_RING;
+
+ if ( free_running )
+  n->flags |= ROAR_BUFFER_FLAG_FREE_RUNNING;
+
+ n->meta.ring.read_pos  = 0;
+ n->meta.ring.write_pos = 0;
+
+ memset(n->data, 0, n->len);
+
+ *buf = n;
 
  return 0;
 }
@@ -379,6 +413,82 @@ int roar_buffer_ring_stats (struct roar_buffer *  buf, struct roar_buffer_stats 
  }
 
  return 0;
+}
+
+int roar_buffer_ring_read  (struct roar_buffer *  buf, void * data, size_t * len) {
+ if ( buf == NULL || len == NULL )
+  return -1;
+
+ if ( data == NULL && *len != 0 )
+  return -1;
+
+ if ( !(buf->flags & ROAR_BUFFER_FLAG_RING) )
+  return -1;
+
+ if ( *len == 0 )
+  return 0;
+
+ // we may handle this later:
+ if ( *len > buf->user_len )
+  return -1;
+
+ if ( buf->meta.ring.read_pos >= buf->user_len )
+  buf->meta.ring.read_pos -= buf->user_len;
+
+ if ( (*len + buf->meta.ring.read_pos) > buf->user_len ) {
+  // wraped mode:
+  memcpy(data, buf->user_data+buf->meta.ring.read_pos, buf->user_len - buf->meta.ring.read_pos);
+  memcpy(data, buf->user_data, *len + buf->meta.ring.read_pos - buf->user_len);
+
+  buf->meta.ring.read_pos += *len;
+  buf->meta.ring.read_pos -= buf->user_len;
+  return 0;
+ } else {
+  // unwarped mode:
+  memcpy(data, buf->user_data+buf->meta.ring.read_pos, *len);
+  buf->meta.ring.read_pos += *len;
+  return 0;
+ }
+
+ return -1;
+}
+
+int roar_buffer_ring_write (struct roar_buffer *  buf, void * data, size_t * len) {
+ if ( buf == NULL || len == NULL )
+  return -1;
+
+ if ( data == NULL && *len != 0 )
+  return -1;
+
+ if ( !(buf->flags & ROAR_BUFFER_FLAG_RING) )
+  return -1;
+
+ if ( *len == 0 )
+  return 0;
+
+ // we may handle this later:
+ if ( *len > buf->user_len )
+  return -1;
+
+ if ( buf->meta.ring.write_pos >= buf->user_len )
+  buf->meta.ring.write_pos -= buf->user_len;
+
+ if ( (*len + buf->meta.ring.write_pos) > buf->user_len ) {
+  // wraped mode:
+  memcpy(buf->user_data+buf->meta.ring.write_pos, data, buf->user_len - buf->meta.ring.write_pos);
+  memcpy(buf->user_data, data, *len + buf->meta.ring.write_pos - buf->user_len);
+
+  buf->meta.ring.write_pos += *len;
+  buf->meta.ring.write_pos -= buf->user_len;
+  return 0;
+ } else {
+  // unwarped mode:
+  memcpy(buf->user_data+buf->meta.ring.write_pos, data, *len);
+  buf->meta.ring.write_pos += *len;
+  return 0;
+ }
+
+ return -1;
 }
 
 //ll

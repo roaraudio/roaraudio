@@ -37,11 +37,18 @@
 
 #include <roaraudio.h>
 
-#define ROAR_BUFFER_FLAG_NONE      0
-#define ROAR_BUFFER_FLAG_NOFREE    1
+#define ROAR_BUFFER_FLAG_NONE            0x00
+#define ROAR_BUFFER_FLAG_NOFREE          0x01
+#define ROAR_BUFFER_FLAG_RING            0x02
+#define ROAR_BUFFER_FLAG_FREE_RUNNING    0x04
 
-#define ROAR_BUFFER_SET            0
-#define ROAR_BUFFER_RESET          1
+#define ROAR_BUFFER_SET                     0
+#define ROAR_BUFFER_RESET                   1
+
+struct roar_buffer_ring {
+ size_t read_pos;
+ size_t write_pos;
+};
 
 struct roar_buffer {
  size_t               len;
@@ -50,8 +57,9 @@ struct roar_buffer {
  void               * data;
  void               * user_data;
  union {
-  void              * vp;
-  int32_t             i32;
+  void                    * vp;
+  int32_t                   i32;
+  struct roar_buffer_ring   ring;
  }                    meta;
  struct roar_buffer * next;
 };
@@ -69,6 +77,8 @@ int roar_buffer_new_no_ma(struct roar_buffer ** buf, size_t len, void * data); /
 int roar_buffer_free     (struct roar_buffer *  buf);
 int roar_buffer_delete   (struct roar_buffer *  buf, struct roar_buffer ** next);
 int roar_buffer_add      (struct roar_buffer *  buf, struct roar_buffer *  next);
+
+int roar_buffer_ring_new (struct roar_buffer ** buf, size_t len, int free_running);
 
 int roar_buffer_get_next (struct roar_buffer *  buf, struct roar_buffer ** next);
 
@@ -92,6 +102,9 @@ int roar_buffer_get_flag (struct roar_buffer *  buf, int flag);
 int roar_buffer_duplicate (struct roar_buffer *  buf, struct roar_buffer ** copy);
 
 int roar_buffer_ring_stats (struct roar_buffer *  buf, struct roar_buffer_stats * stats);
+
+int roar_buffer_ring_read  (struct roar_buffer *  buf, void * data, size_t * len);
+int roar_buffer_ring_write (struct roar_buffer *  buf, void * data, size_t * len);
 
 #endif
 
