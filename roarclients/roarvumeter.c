@@ -104,11 +104,11 @@ int vumeter (struct roar_vio_calls * vio, int samples, int bits, int channels, i
 }
 
 int main (int argc, char * argv[]) {
- int    rate     = 44100;
+ int    rate     = ROAR_RATE_DEFAULT;
  int    bits     = 16;
  int    channels = 2;
  int    codec    = ROAR_CODEC_DEFAULT;
- int    samples  = 441;
+ int    samples  = -1;
  char * server   = NULL;
  char * k;
  struct roar_vio_calls stream, re;
@@ -139,6 +139,9 @@ int main (int argc, char * argv[]) {
    return 1;
   }
  }
+
+ if ( samples == -1 )
+  samples = rate/10;
 
  if ( roar_vio_simple_stream(&stream, rate, channels, bits, codec, server, ROAR_DIR_MONITOR, "roarvumeter") == -1) {
   fprintf(stderr, "Error: can not start monetoring\n");
