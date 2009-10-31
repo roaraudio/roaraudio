@@ -328,8 +328,12 @@ int roar_buffer_set_len  (struct roar_buffer *  buf, size_t    len) {
   return -1;
 
  if ( len > buf->user_len ) {
+  // we can only enlage a buffer if it's one of our own memory segments
+  if ( buf->flags & ROAR_BUFFER_FLAG_NOFREE )
+   return -1;
+
   totlen = buf->len - buf->user_len + len;
-  newbuf = realloc(buf->data, totlen);
+  newbuf = roar_mm_realloc(buf->data, totlen);
   if ( newbuf == NULL )
    return -1;
 
