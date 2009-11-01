@@ -31,8 +31,9 @@
 
 #define BUFSIZE 1024
 
-#define MODE_PC    1
-#define MODE_DB    2
+#define MODE_PC    0x01
+#define MODE_DB    0x02
+#define MODE_BEAT  0x04
 
 void usage (void) {
  printf("roarvumeter [OPTIONS]...\n");
@@ -50,11 +51,26 @@ void usage (void) {
 }
 
 int vumeter16bit2ch (struct roar_vio_calls * vio, int samples, int16_t * buf, int mode, struct roardsp_filterchain * fc) {
+ struct roar_stream    beat_stream[1];
+ struct roardsp_filter beat_lp[1];
+ float                 beat_lpfreq = 1;
  int i;
  int samples_half = samples/2;
  int64_t suml, sumr;
  double  rmsl, rmsr;
- int run_filters = roardsp_fchain_num(fc);
+ int run_filters    = roardsp_fchain_num(fc);
+ int beat_detection = mode & MODE_BEAT;
+ char * beat[2]     = {"     ", "Beat!"};
+ char * dbeat       = beat[0];
+ int16_t beat_val, beat_old;
+
+ if ( beat_detection ) {
+  mode -= MODE_BEAT;
+
+  roar_stream_new(beat_stream, 10, 1, 16, ROAR_CODEC_PCM);
+  roardsp_filter_init(beat_lp, beat_stream, ROARDSP_FILTER_LOWP);
+  roardsp_filter_ctl(beat_lp, ROARDSP_FCTL_FREQ, &beat_lpfreq);
+ }
 
  printf("\e[s");
  fflush(stdout);
@@ -74,17 +90,30 @@ int vumeter16bit2ch (struct roar_vio_calls * vio, int samples, int16_t * buf, in
   rmsl = sqrt((double)suml/(double)samples_half);
   rmsr = sqrt((double)sumr/(double)samples_half);
 
+  if ( beat_detection ) {
+   beat_old = beat_val = (rmsl + rmsr) / 2;
+   roardsp_filter_calc(beat_lp, &beat_val, 2);
+   if ( (float)beat_old > (float)beat_val*1.15f ) {
+    dbeat = beat[1];
+   } else {
+    dbeat = beat[0];
+   }
+  }
+
   switch (mode) {
    case MODE_PC:
-     printf("L: %3i%% R: %3i%%          \e[u", (int)(rmsl/327.68), (int)(rmsr/327.68));
+     printf("L: %3i%% R: %3i%% %s          \e[u", (int)(rmsl/327.68), (int)(rmsr/327.68), dbeat);
     break;
    case MODE_DB:
-     printf("L: %6.2fdB R: %6.2fdB          \e[u", 20*log10(rmsl/32768.), 20*log10(rmsr/32768.));
+     printf("L: %6.2fdB R: %6.2fdB %s          \e[u", 20*log10(rmsl/32768.), 20*log10(rmsr/32768.), dbeat);
     break;
   }
 
   fflush(stdout);
  }
+
+ roardsp_filter_uninit(beat_lp);
+
  return 0;
 }
 
@@ -124,7 +153,7 @@ int main (int argc, char * argv[]) {
  char * k;
  struct roar_vio_calls stream, re;
  int    i;
- int    mode = MODE_PC;
+ int    mode = 0;
 
  for (i = 1; i < argc; i++) {
   k = argv[i];
@@ -140,7 +169,9 @@ int main (int argc, char * argv[]) {
   } else if ( strcmp(k, "--samples") == 0 ) {
    samples = atoi(argv[++i]);
   } else if ( strcmp(k, "--db") == 0 ) {
-   mode = MODE_DB;
+   mode |= MODE_DB;
+  } else if ( strcmp(k, "--beat") == 0 ) {
+   mode |= MODE_BEAT;
   } else if ( strcmp(k, "--lowpass") == 0 ) {
    lowpass_freq = atof(argv[++i]);
   } else if ( strcmp(k, "--help") == 0 ) {
@@ -152,6 +183,9 @@ int main (int argc, char * argv[]) {
    return 1;
   }
  }
+
+ if ( !mode )
+  mode = MODE_PC;
 
  if ( samples == -1 )
   samples = rate/10;
