@@ -31,6 +31,7 @@
 
 #define BUFSIZE 1024
 
+#define MODE_NONE  0x00
 #define MODE_PC    0x01
 #define MODE_DB    0x02
 #define MODE_BEAT  0x04
@@ -62,6 +63,7 @@ int vumeter16bit2ch (struct roar_vio_calls * vio, int samples, int16_t * buf, in
  int beat_detection = mode & MODE_BEAT;
  char * beat[2]     = {"     ", "Beat!"};
  char * dbeat       = beat[0];
+ int have_beat;
  int16_t beat_val, beat_old;
 
  if ( beat_detection ) {
@@ -95,12 +97,18 @@ int vumeter16bit2ch (struct roar_vio_calls * vio, int samples, int16_t * buf, in
    roardsp_filter_calc(beat_lp, &beat_val, 2);
    if ( (float)beat_old > (float)beat_val*1.15f ) {
     dbeat = beat[1];
+    have_beat = 1;
    } else {
     dbeat = beat[0];
+    have_beat = 0;
    }
   }
 
   switch (mode) {
+   case MODE_NONE: // beat only
+     if ( have_beat )
+      printf("%s\n", dbeat);
+    break;
    case MODE_PC:
      printf("L: %3i%% R: %3i%% %s          \e[u", (int)(rmsl/327.68), (int)(rmsr/327.68), dbeat);
     break;
