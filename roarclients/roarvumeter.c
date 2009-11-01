@@ -95,7 +95,7 @@ int vumeter16bit2ch (struct roar_vio_calls * vio, int samples, int16_t * buf, in
   if ( beat_detection ) {
    beat_old = beat_val = (rmsl + rmsr) / 2;
    roardsp_filter_calc(beat_lp, &beat_val, 2);
-   if ( (float)beat_old > (float)beat_val*1.15f ) {
+   if ( (float)beat_old > (float)beat_val*1.1f ) {
     dbeat = beat[1];
     have_beat = 1;
    } else {
