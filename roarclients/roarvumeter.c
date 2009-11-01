@@ -23,6 +23,7 @@
  */
 
 #include <roaraudio.h>
+#include <libroardsp/libroardsp.h>
 
 #ifdef ROAR_HAVE_LIBM
 
@@ -48,17 +49,22 @@ void usage (void) {
 
 }
 
-int vumeter16bit2ch (struct roar_vio_calls * vio, int samples, int16_t * buf, int mode) {
+int vumeter16bit2ch (struct roar_vio_calls * vio, int samples, int16_t * buf, int mode, struct roardsp_filterchain * fc) {
  int i;
  int samples_half = samples/2;
  int64_t suml, sumr;
  double  rmsl, rmsr;
+ int run_filters = roardsp_fchain_num(fc);
 
  printf("\e[s");
  fflush(stdout);
 
  while (roar_vio_read(vio, buf, samples * 2) > 0) {
   suml = sumr = 0;
+
+  if ( run_filters ) {
+   roardsp_fchain_calc(fc, buf, samples * 2);
+  }
 
   for (i = 0; i < samples; i += 2) {
    suml += (int64_t) buf[i  ] * (int64_t) buf[i  ];
@@ -82,7 +88,7 @@ int vumeter16bit2ch (struct roar_vio_calls * vio, int samples, int16_t * buf, in
  return 0;
 }
 
-int vumeter (struct roar_vio_calls * vio, int samples, int bits, int channels, int mode) {
+int vumeter (struct roar_vio_calls * vio, int samples, int bits, int channels, int mode, struct roardsp_filterchain * fc) {
  void * buf = malloc((samples*bits*channels)/8);
 
  if ( !buf )
@@ -90,7 +96,7 @@ int vumeter (struct roar_vio_calls * vio, int samples, int bits, int channels, i
 
  if ( bits == 16 ) {
   if ( channels == 2 ) {
-   vumeter16bit2ch(vio, samples, (int16_t *) buf, mode);
+   vumeter16bit2ch(vio, samples, (int16_t *) buf, mode, fc);
    free(buf);
    return 0;
   } else {
@@ -104,6 +110,11 @@ int vumeter (struct roar_vio_calls * vio, int samples, int bits, int channels, i
 }
 
 int main (int argc, char * argv[]) {
+ struct roar_connection       con;
+ struct roar_stream           s;
+ struct roardsp_filterchain   fchain;
+ struct roardsp_filter      * filter;
+ float  lowpass_freq = 0;
  int    rate     = ROAR_RATE_DEFAULT;
  int    bits     = 16;
  int    channels = 2;
@@ -130,6 +141,8 @@ int main (int argc, char * argv[]) {
    samples = atoi(argv[++i]);
   } else if ( strcmp(k, "--db") == 0 ) {
    mode = MODE_DB;
+  } else if ( strcmp(k, "--lowpass") == 0 ) {
+   lowpass_freq = atof(argv[++i]);
   } else if ( strcmp(k, "--help") == 0 ) {
    usage();
    return 0;
@@ -143,7 +156,12 @@ int main (int argc, char * argv[]) {
  if ( samples == -1 )
   samples = rate/10;
 
- if ( roar_vio_simple_stream(&stream, rate, channels, bits, codec, server, ROAR_DIR_MONITOR, "roarvumeter") == -1) {
+ if ( roar_simple_connect(&con, server, "roarvumeter") == -1 ) {
+  fprintf(stderr, "Error: can not connect to server!\n");
+  return 1;
+ }
+
+ if ( roar_vio_simple_new_stream_obj(&stream, &con, &s, rate, channels, bits, codec, ROAR_DIR_MONITOR) == -1) {
   fprintf(stderr, "Error: can not start monetoring\n");
   return 1;
  }
@@ -154,11 +172,44 @@ int main (int argc, char * argv[]) {
   return 1;
  }
 
- vumeter(&re, samples*channels, bits, channels, mode);
+ if ( roardsp_fchain_init(&fchain) == -1 ) {
+  roar_vio_close(&re);
+  fprintf(stderr, "Error: can not init filterchain\n");
+  return 1;
+ }
+
+ if ( lowpass_freq > 1 ) {
+  if ( roardsp_filter_new(&filter, &s, ROARDSP_FILTER_LOWP) == -1 ) {
+   fprintf(stderr, "Error: can not open lowpass\n");
+   roar_vio_close(&re);
+   roardsp_fchain_uninit(&fchain);
+   return 1;
+  }
+
+  if ( roardsp_filter_ctl(filter, ROARDSP_FCTL_FREQ, &lowpass_freq) == -1 ) {
+   fprintf(stderr, "Error: can not set filter frequency\n");
+   roar_vio_close(&re);
+   roardsp_fchain_uninit(&fchain);
+   return 1;
+  }
+
+  if ( roardsp_fchain_add(&fchain, filter) == -1 ) {
+   fprintf(stderr, "Error: can not set filter frequency\n");
+   roar_vio_close(&re);
+   roardsp_fchain_uninit(&fchain);
+   return 1;
+  }
+ }
+
+ vumeter(&re, samples*channels, bits, channels, mode, &fchain);
 
  printf("\n"); // if the reach this then roard has quited and we should print a newline
 
  roar_vio_close(&re);
+
+ roar_disconnect(&con);
+
+ roardsp_fchain_uninit(&fchain);
 
  return 0;
 }
