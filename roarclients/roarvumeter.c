@@ -213,25 +213,27 @@ int main (int argc, char * argv[]) {
  }
 
  if ( lowpass_freq > 1 ) {
-  if ( roardsp_filter_new(&filter, &s, ROARDSP_FILTER_LOWP) == -1 ) {
-   fprintf(stderr, "Error: can not open lowpass\n");
-   roar_vio_close(&re);
-   roardsp_fchain_uninit(&fchain);
-   return 1;
-  }
+  for (i = 0; i < 6; i++) {
+   if ( roardsp_filter_new(&filter, &s, ROARDSP_FILTER_LOWP) == -1 ) {
+    fprintf(stderr, "Error: can not open lowpass\n");
+    roar_vio_close(&re);
+    roardsp_fchain_uninit(&fchain);
+    return 1;
+   }
 
-  if ( roardsp_filter_ctl(filter, ROARDSP_FCTL_FREQ, &lowpass_freq) == -1 ) {
-   fprintf(stderr, "Error: can not set filter frequency\n");
-   roar_vio_close(&re);
-   roardsp_fchain_uninit(&fchain);
-   return 1;
-  }
+   if ( roardsp_filter_ctl(filter, ROARDSP_FCTL_FREQ, &lowpass_freq) == -1 ) {
+    fprintf(stderr, "Error: can not set filter frequency\n");
+    roar_vio_close(&re);
+    roardsp_fchain_uninit(&fchain);
+    return 1;
+   }
 
-  if ( roardsp_fchain_add(&fchain, filter) == -1 ) {
-   fprintf(stderr, "Error: can not set filter frequency\n");
-   roar_vio_close(&re);
-   roardsp_fchain_uninit(&fchain);
-   return 1;
+   if ( roardsp_fchain_add(&fchain, filter) == -1 ) {
+    fprintf(stderr, "Error: can not set filter frequency\n");
+    roar_vio_close(&re);
+    roardsp_fchain_uninit(&fchain);
+    return 1;
+   }
   }
  }
 
