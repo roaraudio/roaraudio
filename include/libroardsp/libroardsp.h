@@ -269,6 +269,7 @@ int roardsp_agc_ctl    (struct roardsp_filter * filter, int cmd, void * data);
 int roardsp_agc_reset  (struct roardsp_filter * filter, int what);
 
 #ifdef _SPEEX_TYPES_H
+#define ROAR_HAVE_SPEEX_FILTER
 int roardsp_speex_prep_init   (struct roardsp_filter * filter, struct roar_stream * stream, int id);
 int roardsp_speex_prep_uninit (struct roardsp_filter * filter);
 int roardsp_speex_prep_calc161(struct roardsp_filter * filter, void * data, size_t samples);
