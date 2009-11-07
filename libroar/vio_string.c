@@ -92,7 +92,10 @@ char *  roar_vio_fgets   (struct roar_vio_calls * vio, char * s, size_t size) {
  }
 */
 
- s[size] = 0;
+ if ( !have )
+  return NULL;
+
+ s[have] = 0;
 
  return s;
 }
