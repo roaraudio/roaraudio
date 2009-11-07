@@ -60,8 +60,13 @@ int     roar_vio_printf(struct roar_vio_calls * vio, const char *format, ...) {
 }
 
 char *  roar_vio_fgets   (struct roar_vio_calls * vio, char * s, size_t size) {
- size_t have = 0;
- char   cur;
+ size_t  have = 0;
+ size_t  need = size;
+ ssize_t ret;
+ char    cur;
+ char    buf[1024];
+ off_t   offs;
+ char  * eol;
 
  if ( size == 0 )
   return s;
@@ -72,9 +77,7 @@ char *  roar_vio_fgets   (struct roar_vio_calls * vio, char * s, size_t size) {
  // space for the \0
  size -= 1;
 
-/*
- if ( roar_vio_lseek(vio, 0, SEEK_CUR) == (off_t)-1 ) {
-*/
+ if ( (offs = roar_vio_lseek(vio, 0, SEEK_CUR)) == (off_t)-1 ) {
   // need to use the one byte at a time methode
   while ( have < size ) {
    if ( roar_vio_read(vio, &cur, 1) != 1 )
@@ -86,11 +89,51 @@ char *  roar_vio_fgets   (struct roar_vio_calls * vio, char * s, size_t size) {
    if ( cur == '\n' )
     break;
   }
-/*
  } else {
   // can use the optimized version
+  eol = NULL;
+
+  memset(s, '+', size);
+
+  while ( have < size && eol == NULL ) {
+   ret = roar_vio_read(vio, buf, need > 1023 ? 1023 : need);
+
+   if ( ret == -1 || ret == 0 )
+    break;
+
+   ROAR_DBG("roar_vio_fgets(*): have=%u", (unsigned int) have);
+
+   buf[1023] = 0;
+   if ( (eol = strstr(buf, "\n")) == NULL ) {
+    memcpy(s, buf, ret);
+    s    += ret;
+    have += ret;
+    need -= ret;
+   } else {
+    offs = eol - buf - ret + 1;
+    if ( roar_vio_lseek(vio, offs, SEEK_CUR) == -1 )
+     return NULL;
+
+    ROAR_DBG("roar_vio_fgets(*): have=%u", (unsigned int) have);
+    ROAR_DBG("roar_vio_fgets(*): eol - buf=%lli", (long long) (eol - buf));
+
+    ret = (size_t)(eol - buf);
+    ret++;
+    ROAR_DBG("roar_vio_fgets(*): ret=%lli", (long long) ret);
+
+    memcpy(s, buf, ret);
+    have += ret;
+
+    ROAR_DBG("roar_vio_fgets(*): have=%u", (unsigned int) have);
+
+    break;
+   }
+   ROAR_DBG("roar_vio_fgets(*): have=%u", (unsigned int) have);
+  }
+
  }
-*/
+
+ ROAR_DBG("roar_vio_fgets(*): have=%u", (unsigned int) have);
 
  if ( !have )
   return NULL;
