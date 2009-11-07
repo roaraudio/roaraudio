@@ -327,6 +327,12 @@ int roar_buffer_set_len  (struct roar_buffer *  buf, size_t    len) {
  if ( buf == NULL )
   return -1;
 
+ // handle specal case where user length is zero:
+ if ( len && !buf->user_len ) {
+  buf->user_data = buf->data;
+  buf->user_len  = buf->len;
+ }
+
  if ( len > buf->user_len ) {
   // we can only enlage a buffer if it's one of our own memory segments
   if ( buf->flags & ROAR_BUFFER_FLAG_NOFREE )
