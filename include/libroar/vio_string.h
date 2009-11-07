@@ -42,6 +42,7 @@
 //#define roar_vio_putc(vio,c) roar_vio_write((vio), &(c), 1)
 int     roar_vio_putc    (struct roar_vio_calls * vio, char c);
 int     roar_vio_getc    (struct roar_vio_calls * vio);
+char *  roar_vio_fgets   (struct roar_vio_calls * vio, char * s, size_t size);
 
 int     roar_vio_printf  (struct roar_vio_calls * vio, const char *format, ...);
 

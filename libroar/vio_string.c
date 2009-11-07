@@ -59,5 +59,42 @@ int     roar_vio_printf(struct roar_vio_calls * vio, const char *format, ...) {
  return roar_vio_write(vio, buf, ret);
 }
 
+char *  roar_vio_fgets   (struct roar_vio_calls * vio, char * s, size_t size) {
+ size_t have = 0;
+ char   cur;
+
+ if ( size == 0 )
+  return s;
+
+ if ( vio == NULL || s == NULL )
+  return NULL;
+
+ // space for the \0
+ size -= 1;
+
+/*
+ if ( roar_vio_lseek(vio, 0, SEEK_CUR) == (off_t)-1 ) {
+*/
+  // need to use the one byte at a time methode
+  while ( have < size ) {
+   if ( roar_vio_read(vio, &cur, 1) != 1 )
+    break;
+
+   s[have] = cur;
+     have++;
+
+   if ( cur == '\n' )
+    break;
+  }
+/*
+ } else {
+  // can use the optimized version
+ }
+*/
+
+ s[size] = 0;
+
+ return s;
+}
 
 //ll
