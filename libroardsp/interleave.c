@@ -61,8 +61,35 @@ int roar_interl_ctl   (struct roar_interleave * state, int cmd, void * data) {
 }
 
 int roar_interl_encode_ext(struct roar_interleave * state, void ** in, void  * out, size_t len) {
+ size_t chan = 0;
+ size_t oc;
+ size_t bc   = 0; // bit counter
+ char   * ip[ROAR_INTERLEAVE_MAX_CHANNELS]; // output pointer
+
  if ( state == NULL )
   return -1;
+
+ if ( in == NULL || out == NULL )
+  return -1;
+
+ if ( len == 0 )
+  return 0;
+
+ memcpy(ip, in, sizeof(void*)*state->channels);
+
+ for (oc = 0; oc < len; oc++) {
+  ((char*)out)[oc] = *(ip[chan]);
+  ip[chan]++;
+
+  bc += 8;
+
+  if ( bc == state->bits ) {
+   bc = 0;
+   chan++;
+   if ( chan == state->channels )
+    chan = 0;
+  }
+ }
 
  return -1;
 }
