@@ -60,6 +60,13 @@ int roar_interl_ctl   (struct roar_interleave * state, int cmd, void * data) {
  return -1;
 }
 
+int roar_interl_encode_ext(struct roar_interleave * state, void ** in, void  * out, size_t len) {
+ if ( state == NULL )
+  return -1;
+
+ return -1;
+}
+
 int roar_interl_decode_ext(struct roar_interleave * state, void * in, void ** out, size_t len) {
  size_t chan = 0;
  size_t ic;       // input counter

@@ -54,7 +54,8 @@ int roar_interl_uninit(struct roar_interleave * state);
 
 int roar_interl_ctl   (struct roar_interleave * state, int cmd, void * data);
 
-int roar_interl_decode_ext(struct roar_interleave * state, void * in, void ** out, size_t len);
+int roar_interl_encode_ext(struct roar_interleave * state, void ** in, void  * out, size_t len);
+int roar_interl_decode_ext(struct roar_interleave * state, void  * in, void ** out, size_t len);
 
 #endif
 
