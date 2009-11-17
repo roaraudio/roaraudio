@@ -37,6 +37,7 @@ __BEGIN_DECLS
 #endif
 #endif
 
+#include "interleave.h"
 #include "midi.h"
 #include "synth.h"
 #include "poly.h"
