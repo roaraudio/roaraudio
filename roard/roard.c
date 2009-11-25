@@ -156,6 +156,7 @@ void usage (void) {
 #ifdef ROAR_HAVE_LIBSLP
         "     --slp             - Enable OpenSLP support\n"
 #endif
+        " --jumbo-mtu MTU       - Sets the MTU for Jumbo Packets\n"
         " -G  GROUP             - Sets the group for the UNIX Domain Socket, (default: %s)\n"
         "                         You need the permissions to change the GID\n"
         " -U  USER              - Sets the user for the UNIX Domain Socket, (default: do not set)\n"
@@ -1357,6 +1358,9 @@ int main (void) {
     ROAR_ERR("No OpenSLP support compiled in!");
     return 1;
 #endif
+
+  } else if ( strcmp(k, "--jumbo-mtu") == 0 ) {
+   g_config->jumbo_mtu = atoi(argv[++i]);
 
   } else if ( strcmp(k, "-G") == 0 ) {
    sock_grp  = argv[++i];

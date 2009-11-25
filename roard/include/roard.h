@@ -151,6 +151,7 @@ struct roard_config {
   int                        mixer_channels;
  } streams[ROAR_DIR_DIRIDS];
  char * location;
+ size_t jumbo_mtu;
 } * g_config;
 
 #endif
