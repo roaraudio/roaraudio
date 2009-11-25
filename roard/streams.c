@@ -120,6 +120,8 @@ int streams_new    (void) {
 #endif
 
    roar_vio_init_calls(&(s->vio));
+   roar_vio_init_calls(&(s->jumbo));
+   s->viop      = &(s->vio);
    s->driver_id = -1;
    s->flags     =  ROAR_FLAG_NONE;
 
@@ -242,7 +244,7 @@ int streams_delete (int id) {
 */
 
  if ( !no_vio_close )
-  roar_vio_close(&(s->vio));
+  roar_vio_close(s->viop);
 
  prim = s->primary;
 
@@ -1481,6 +1483,9 @@ int streams_send_mon   (int id) {
  if ( !ss->ready )
   return 0;
 
+ if ( g_config->jumbo_mtu )
+  roar_vio_sync(ss->viop);
+
  if ( streams_get_flag(id, ROAR_FLAG_PAUSE) )
   return 0;
 
@@ -1785,7 +1790,7 @@ ssize_t stream_vio_s_write(struct roar_stream_server * stream, void *buf, size_t
      if ( g_streams[i]->ready ) {
       if ( g_streams[i]->state == ROAR_STREAMSTATE_NEW ) {
        if ( streams_get_flag(i, ROAR_FLAG_PRETHRU) == 1 ) {
-         if ( stream_prethru_send(i, ROAR_STREAM(stream)->id) == -1 ) {
+        if ( stream_prethru_send(i, ROAR_STREAM(stream)->id) == -1 ) {
          streams_delete(i);
         }
        }
@@ -1803,7 +1808,17 @@ ssize_t stream_vio_s_write(struct roar_stream_server * stream, void *buf, size_t
   }
  }
 
- return roar_vio_write(&(stream->vio), buf, count);
+ if ( g_config->jumbo_mtu ) {
+  if ( stream->viop != &(stream->jumbo) ) {
+   if ( roar_vio_open_jumbo(&(stream->jumbo), &(stream->vio), g_config->jumbo_mtu) != -1 ) {
+    // if that works we continue using the jumbo vio,
+    // in case it didn't we dont, just use normal VIO.
+    stream->viop = &(stream->jumbo);
+   }
+  }
+ }
+
+ return roar_vio_write(stream->viop, buf, count);
 }
 
 //ll
