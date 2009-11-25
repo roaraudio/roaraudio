@@ -304,12 +304,12 @@ int add_listen (char * addr, int port, int sock_type, char * user, char * group,
     }
     if ( (sock = roar_socket_connect(addr, port)) != -1 ) {
      close(sock);
-     ROAR_ERR("Can not open listen socket!");
+     ROAR_ERR("Can not open listen socket: Socket allready in use");
      return 1;
     } else {
      unlink(addr);
      if ( (g_listen_socket[sockid] = roar_socket_listen(sock_type, addr, port)) == -1 ) {
-      ROAR_ERR("Can not open listen socket!");
+      ROAR_ERR("Can not open listen socket: %s", strerror(errno));
       return 1;
      }
     }
