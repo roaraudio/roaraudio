@@ -321,7 +321,7 @@ int add_listen (char * addr, int port, int sock_type, char * user, char * group,
    if (0) { // noop
 #endif
    } else {
-    ROAR_ERR("Can not open listen socket!");
+    ROAR_ERR("Can not open listen socket: %s", strerror(errno));
     return 1;
    }
   }
