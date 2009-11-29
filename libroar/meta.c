@@ -80,6 +80,9 @@ struct {
  {ROAR_META_TYPE_RPG_ALBUM_PEAK,     "REPLAYGAIN_ALBUM_PEAK" },
  {ROAR_META_TYPE_RPG_ALBUM_GAIN,     "REPLAYGAIN_ALBUM_GAIN" },
  {ROAR_META_TYPE_HASH,               "HASH"           },
+ {ROAR_META_TYPE_SIGNALINFO,         "SIGNALINFO"     },
+ {ROAR_META_TYPE_AUDIOINFO,          "AUDIOINFO"      },
+ {ROAR_META_TYPE_OFFSET,             "OFFSET"         },
  
  {-1, "EOL"}
 };
