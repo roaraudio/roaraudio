@@ -78,6 +78,10 @@ int update_stream (struct roar_connection * con, struct roar_stream * s, int * o
 
  fprintf(stderr, "\n");
 
+ if ( vclt != NULL ) {
+  roar_vio_printf(vclt, "AUDIOINFO=rate:%iHz, channels:%i\n", vi->rate, vi->channels);
+ }
+
  if ( *out == -1 ) {
   need_new_stream = 1;
  } else if ( info->rate != vi->rate || info->channels != vi->channels ) {
