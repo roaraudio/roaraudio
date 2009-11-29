@@ -46,6 +46,7 @@ void usage (void) {
 
  printf("  --server SERVER    - Set server hostname\n"
         "  --help             - Show this help\n"
+        "  --vclt-out FILE    - Writes VCLT file\n"
        );
 
 }
@@ -64,7 +65,7 @@ FILE * open_http (char * file) {
 #endif
 }
 
-int update_stream (struct roar_connection * con, struct roar_stream * s, int * out, OggVorbis_File * vf, char * file, struct roar_audio_info * info) {
+int update_stream (struct roar_connection * con, struct roar_stream * s, int * out, OggVorbis_File * vf, char * file, struct roar_audio_info * info, struct roar_vio_calls * vclt) {
  vorbis_info *vi = ov_info(vf, -1);
  int    bits     = 16;
  int    codec    = ROAR_CODEC_DEFAULT;
@@ -145,6 +146,10 @@ int update_stream (struct roar_connection * con, struct roar_stream * s, int * o
    if ( meta_ok ) {
     fprintf(stderr, "Meta %-16s: %s\n", key, value);
 
+    if ( vclt != NULL ) {
+     roar_vio_printf(vclt, "%s=%s\n", key, value);
+    }
+
     meta.type = roar_meta_inttype(key);
     if ( meta.type != -1 )
      roar_stream_meta_set(con, s, ROAR_META_MODE_SET, &meta);
@@ -158,18 +163,25 @@ int update_stream (struct roar_connection * con, struct roar_stream * s, int * o
  meta.type   = ROAR_META_TYPE_NONE;
  roar_stream_meta_set(con, s, ROAR_META_MODE_FINALIZE, &meta);
 
+ if ( vclt != NULL ) {
+  roar_vio_printf(vclt, "==\n");
+ }
+
  return 0;
 }
 
 #endif
 
 int main (int argc, char * argv[]) {
+ struct roar_vio_calls vclt;
+ struct roar_vio_defaults def;
 #ifndef ROAR_HAVE_LIBVORBISFILE
  fprintf(stderr, "Error: no Vorbis support!\n");
  return 1;
 #else
  char * server   = NULL;
  char * file     = NULL;
+ char * vcltfile = NULL;
  char * k;
  int    i;
  FILE * in;
@@ -189,6 +201,8 @@ int main (int argc, char * argv[]) {
 
   if ( strcmp(k, "--server") == 0 ) {
    server = argv[++i];
+  } else if ( strcmp(k, "--vclt-out") == 0 ) {
+   vcltfile = argv[++i];
   } else if ( strcmp(k, "--help") == 0 ) {
    usage();
    return 0;
@@ -234,6 +248,15 @@ int main (int argc, char * argv[]) {
   return 1;
  }
 
+ if ( vcltfile != NULL ) {
+  if ( roar_vio_dstr_init_defaults(&def, ROAR_VIO_DEF_TYPE_NONE, O_WRONLY|O_CREAT|O_APPEND, 0644) == -1 )
+   return 1;
+  if ( roar_vio_open_dstr(&vclt, vcltfile, &def, 1) == -1 ) {
+   fprintf(stderr, "Error: can not open file: %s: %s\n", k, strerror(errno));
+   return 1;
+  }
+ }
+
 // if ( update_stream(&con, &s, &out, &vf, file) == -1 )
 //  return 1;
 
@@ -241,7 +264,7 @@ int main (int argc, char * argv[]) {
   long ret = ov_read(&vf, pcmout, sizeof(pcmout), 0, 2, 1, &current_section);
 
   if ( last_section != current_section )
-   if ( update_stream(&con, &s, &out, &vf, file, &info) == -1 )
+   if ( update_stream(&con, &s, &out, &vf, file, &info, vcltfile == NULL ? NULL : &vclt) == -1 )
     return 1;
 
   last_section = current_section;
@@ -265,6 +288,10 @@ int main (int argc, char * argv[]) {
 // fclose(in);
  close(out);
  roar_disconnect(&con);
+
+ if ( vcltfile != NULL ) {
+  roar_vio_close(&vclt);
+ }
 
  return 0;
 #endif
