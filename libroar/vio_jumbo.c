@@ -103,7 +103,7 @@ ssize_t roar_vio_jumbo_write   (struct roar_vio_calls * vio, void *buf, size_t c
    return -1;
 
   // in case we write something that is longer than the buffer
-  if ( self->pos > buflen ) {
+  if ( count > buflen ) {
    return roar_vio_write(self->backend, data, count);
   }
 
