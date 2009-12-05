@@ -1,4 +1,4 @@
-//stream.h:
+//sample.h:
 
 /*
  *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008
