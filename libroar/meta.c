@@ -87,6 +87,15 @@ struct {
  {-1, "EOL"}
 };
 
+
+struct {
+ int    id;
+ char * name;
+} _libroar_meta_genrelist[] = {
+
+ {-1, "EOL"}
+};
+
 char * roar_meta_strtype(int type) {
  int i;
  static char name[ROAR_META_MAX_NAMELEN];
@@ -228,6 +237,30 @@ int roar_meta_free (struct roar_meta * meta) {
   free(meta->value);
 
  return 0;
+}
+
+
+// genere:
+char * roar_meta_strgenre(int genre) {
+ int i;
+
+ for (i = 0; _libroar_meta_genrelist[i].id != -1; i++)
+  if ( _libroar_meta_genrelist[i].id == genre ) {
+   return _libroar_meta_genrelist[i].name;
+  }
+
+ return NULL;
+}
+
+int    roar_meta_intgenre(char * genre) {
+ int i;
+
+ for (i = 0; _libroar_meta_genrelist[i].id != -1; i++)
+  if ( strcasecmp(_libroar_meta_genrelist[i].name, genre) == 0 ) {
+   return _libroar_meta_genrelist[i].id;
+  }
+
+ return -1;
 }
 
 //ll

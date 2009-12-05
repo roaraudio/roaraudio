@@ -47,6 +47,9 @@ int roar_meta_free (struct roar_meta * meta);
 char * roar_meta_strtype(int type);
 int    roar_meta_inttype(char * type);
 
+char * roar_meta_strgenre(int genre);
+int    roar_meta_intgenre(char * genre);
+
 #endif
 
 //ll
