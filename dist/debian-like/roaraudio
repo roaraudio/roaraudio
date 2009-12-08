@@ -55,7 +55,9 @@ case "$ROARD_EMUL_ESD_AF" in
    mkdir /tmp/.esd/ 2> /dev/null;
   ;;
   TCP|tcp)
-   ESD_OPTS="--new-sock --proto esd -t -b localhost -p 16001"
+   _host='localhost';
+   [ "$ROARD_HOST" = '' ]   || _host="$ROARD_HOST"
+   ESD_OPTS="--new-sock --proto esd -t -b $_host -p 16001"
   ;;
 esac
 
