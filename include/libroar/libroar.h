@@ -49,7 +49,7 @@
 #include <fcntl.h>
 #endif
 
-#if !defined(ROAR_TARGET_WIN32) && !defined(ROAR_TARGET_MICROCONTROLLER)
+#ifdef ROAR_HAVE_H_SIGNAL
 #include <signal.h>
 #endif
 

@@ -36,7 +36,7 @@ int g_verbose;
 
 #include <ctype.h>
 
-#ifndef ROAR_TARGET_MICROCONTROLLER
+#ifdef ROAR_HAVE_H_SIGNAL
 #include <signal.h>
 #endif
 
