@@ -9,6 +9,7 @@ v. 0.3beta3 - ?
 	* a lot small fixes
 	* moved most of the mixer stuff out of roard into libroardsp
 	* added flags immutable and enhance
+	* test for signal.h
 
 v. 0.3beta2 - Mon Oct 05 2009 19:48 CEST
 	* Added prethru flag
