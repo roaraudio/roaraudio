@@ -22,13 +22,17 @@
  *
  */
 
+#include <roaraudio.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
+#ifdef ROAR_HAVE_H_UNISTD
 #include <unistd.h>
-#include <roaraudio.h>
+#endif
+#ifdef ROAR_HAVE_H_SIGNAL
 #include <signal.h>
+#endif
 #include <sys/time.h>
 #include <sys/uio.h>
 #include <inttypes.h>
