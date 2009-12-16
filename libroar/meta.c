@@ -559,4 +559,55 @@ int    roar_meta_intgenre(char * genre) {
  return -1;
 }
 
+int    roar_meta_parse_audioinfo(struct roar_audio_info * info, char * str) {
+ char * lc;
+ char * cur, * next;
+ char * k,   * v;
+
+ if ( info == NULL || str == NULL )
+  return -1;
+
+ memset(info, 0, sizeof(struct roar_audio_info));
+
+ if ( (lc = strdup(str)) == NULL )
+  return -1;
+
+ cur = lc;
+
+ while (cur != NULL) {
+  next = strstr(cur, " ");
+  if ( next != NULL ) {
+   *next = 0;
+    next++;
+  }
+
+  k = cur;
+  v = strstr(cur, ":");
+
+  if ( v != NULL ) {
+   *v = 0;
+    v++;
+  } else {
+    v = "";
+  }
+
+  // we test for the key, unknown keys get ignored.
+  if ( !strcasecmp(k, "rate") ) {
+   info->rate     = atoi(v);
+  } else if ( !strcasecmp(k, "bits") ) {
+   info->bits     = atoi(v);
+  } else if ( !strcasecmp(k, "channels") ) {
+   info->channels = atoi(v);
+  } else if ( !strcasecmp(k, "codec") ) {
+   info->codec    = roar_str2codec(v);
+  }
+
+  cur = next;
+ }
+
+ free(lc);
+
+ return 0;
+}
+
 //ll

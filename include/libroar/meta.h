@@ -50,6 +50,8 @@ int    roar_meta_inttype(char * type);
 char * roar_meta_strgenre(int genre);
 int    roar_meta_intgenre(char * genre);
 
+int    roar_meta_parse_audioinfo(struct roar_audio_info * info, char * str);
+
 #endif
 
 //ll
