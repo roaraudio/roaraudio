@@ -569,6 +569,8 @@ int    roar_meta_parse_audioinfo(struct roar_audio_info * info, char * str) {
 
  memset(info, 0, sizeof(struct roar_audio_info));
 
+ info->codec = -1;
+
  if ( (lc = strdup(str)) == NULL )
   return -1;
 
