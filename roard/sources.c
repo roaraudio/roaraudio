@@ -26,6 +26,8 @@
 
 #ifndef ROAR_WITHOUT_DCOMP_SOURCES
 
+#define ROAR_SOURCE_DEFAULT "cf"
+
 struct roar_source g_source[] = {
  {"raw",  "Raw source",                  "/some/file",     SRC_FLAG_FHSEC, ROAR_SUBSYS_WAVEFORM, NULL,  sources_add_raw},
 #ifdef ROAR_HAVE_IO_POSIX
@@ -92,6 +94,9 @@ int sources_free (void) {
 
 int sources_add (char * driver, char * device, char * container, char * options, int primary) {
  int i;
+
+ if ( driver == NULL )
+  driver = ROAR_SOURCE_DEFAULT;
 
  for (i = 0; g_source[i].name != NULL; i++) {
   if ( !strcmp(g_source[i].name, driver) ) {
