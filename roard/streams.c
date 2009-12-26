@@ -67,7 +67,7 @@ int streams_new    (void) {
 
  for (i = 0; i < ROAR_STREAMS_MAX; i++) {
   if ( g_streams[i] == NULL ) {
-   s = ROAR_STREAM_SERVER(n = ROAR_STREAM(malloc(sizeof(struct roar_stream_server))));
+   s = ROAR_STREAM_SERVER(n = ROAR_STREAM(roar_mm_malloc(sizeof(struct roar_stream_server))));
    if ( n == NULL ) {
     ROAR_ERR("streams_new(void): can not allocate memory for new stream: %s", strerror(errno));
     ROAR_DBG("streams_new(void) = -1");
@@ -251,7 +251,7 @@ int streams_delete (int id) {
  if ( s->name != NULL )
   free(s->name);
 
- free(s);
+ roar_mm_free(s);
 
  g_streams[id] = NULL;
 

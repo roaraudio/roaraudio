@@ -32,7 +32,7 @@
 #define _HAVE_CCFG(x) (self->codec_config != NULL && (self->codec_config->para_set & (x)))
 
 int roar_xcoder_speex_init       (struct roar_xcoder * state) {
- struct roar_xcoder_speex * self = malloc(sizeof(struct roar_xcoder_speex));
+ struct roar_xcoder_speex * self = roar_mm_malloc(sizeof(struct roar_xcoder_speex));
  struct roar_audio_info  * info = &(state->info.pcm);
  int tmp;
 
@@ -43,7 +43,7 @@ int roar_xcoder_speex_init       (struct roar_xcoder * state) {
 
  // curruntly only 16 bit mode is supported
  if ( info->bits != 16 ) {
-  free(self);
+  roar_mm_free(self);
   return -1;
  }
 
@@ -52,7 +52,7 @@ int roar_xcoder_speex_init       (struct roar_xcoder * state) {
   case 1: self->stereo = 0; break;
   case 2: self->stereo = 1; break;
   default:
-    free(self);
+    roar_mm_free(self);
     return -1;
  }
 
@@ -139,7 +139,7 @@ int roar_xcoder_speex_uninit     (struct roar_xcoder * state) {
 
  speex_bits_destroy(&(self->bits));
 
- free(self);
+ roar_mm_free(self);
 
  return 0;
 }

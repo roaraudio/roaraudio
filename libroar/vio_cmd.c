@@ -45,7 +45,7 @@ int roar_vio_open_cmd(struct roar_vio_calls * calls, struct roar_vio_calls * dst
  if ( reader == NULL && writer == NULL )
   return -1;
 
- if ( (state = malloc(sizeof(struct roar_vio_cmd_state))) == NULL )
+ if ( (state = roar_mm_malloc(sizeof(struct roar_vio_cmd_state))) == NULL )
   return -1;
 
  ROAR_DBG("roar_vio_open_cmd(*): pre reqs are OK");
@@ -131,7 +131,7 @@ int roar_vio_cmd_close(struct roar_vio_calls * vio) {
  roar_vio_close(state->next);
 
 // state->state = ROAR_VIO_CMD_STATE_CLOSED;
- free(state);
+ roar_mm_free(state);
 
  return 0;
 }
@@ -225,7 +225,7 @@ int roar_vio_open_2popen(struct roar_vio_calls * calls, char * command, int opti
  if ( calls == NULL || command == NULL || options < 0 )
   return -1;
 
- if ( (state = malloc(sizeof(struct roar_vio_2popen_state))) == NULL )
+ if ( (state = roar_mm_malloc(sizeof(struct roar_vio_2popen_state))) == NULL )
   return -1;
 
  ROAR_DBG("roar_vio_open_2popen(*): pre reqs are OK");
@@ -281,7 +281,7 @@ int roar_vio_2popen_close(struct roar_vio_calls * vio) {
  if ( state->child.cmd != NULL )
   free(state->child.cmd);
 
- free(state);
+ roar_mm_free(state);
 
  return 0;
 }

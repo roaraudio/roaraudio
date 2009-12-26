@@ -40,7 +40,7 @@ int     roar_vio_open_stack    (struct roar_vio_calls * calls) {
  if ( calls == NULL )
   return -1;
 
- if ( (self = malloc(sizeof(struct roar_vio_stack))) == NULL )
+ if ( (self = roar_mm_malloc(sizeof(struct roar_vio_stack))) == NULL )
   return -1;
 
  memset(self,  0, sizeof(struct roar_vio_stack));
@@ -93,7 +93,7 @@ int     roar_vio_stack_close   (struct roar_vio_calls * vio) {
    free(self->calls[i]);
  }
 
- free(self);
+ roar_mm_free(self);
 
  return 0;
 }

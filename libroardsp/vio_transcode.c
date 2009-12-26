@@ -26,18 +26,18 @@
 
 int     roar_vio_open_xcode    (struct roar_vio_calls * calls, int encoder, struct roar_audio_info * info,
                                 struct roar_vio_calls * dst) {
- struct roar_xcoder * xcoder = malloc(sizeof(struct roar_xcoder));
+ struct roar_xcoder * xcoder = roar_mm_malloc(sizeof(struct roar_xcoder));
 
  if ( xcoder == NULL )
   return -1;
 
  if ( calls == NULL || info == NULL || dst == NULL ) {
-  free(xcoder);
+  roar_mm_free(xcoder);
   return -1;
  }
 
  if ( roar_xcoder_init(xcoder, encoder, info, dst) == -1 ) {
-  free(xcoder);
+  roar_mm_free(xcoder);
   return -1;
  }
 
@@ -93,25 +93,25 @@ int     roar_vio_xcode_close   (struct roar_vio_calls * vio) {
   ret = -1;
 
  if ( vio->inst != NULL )
-  free(vio->inst);
+  roar_mm_free(vio->inst);
 
  return ret;
 }
 
 int     roar_vio_open_bixcode    (struct roar_vio_calls * calls, struct roar_audio_info * info,
                                   struct roar_vio_calls * dst) {
- struct roar_bixcoder * bixcoder = malloc(sizeof(struct roar_bixcoder));
+ struct roar_bixcoder * bixcoder = roar_mm_malloc(sizeof(struct roar_bixcoder));
 
  if ( bixcoder == NULL )
   return -1;
 
  if ( calls == NULL || info == NULL || dst == NULL ) {
-  free(bixcoder);
+  roar_mm_free(bixcoder);
   return -1;
  }
 
  if ( roar_bixcoder_init(bixcoder, info, dst) == -1 ) {
-  free(bixcoder);
+  roar_mm_free(bixcoder);
   return -1;
  }
 
@@ -164,7 +164,7 @@ int     roar_vio_bixcode_close   (struct roar_vio_calls * vio) {
   ret = -1;
 
  if ( vio->inst != NULL )
-  free(vio->inst);
+  roar_mm_free(vio->inst);
 
  return ret;
 }

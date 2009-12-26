@@ -50,7 +50,7 @@ int clients_new (void) {
 
  for (i = 0; i < ROAR_CLIENTS_MAX; i++) {
   if ( g_clients[i] == NULL ) {
-   n = malloc(sizeof(struct roar_client));
+   n = roar_mm_malloc(sizeof(struct roar_client));
    if ( n != NULL ) {
     n->pid    = -1;
     n->uid    = -1;
@@ -70,7 +70,7 @@ int clients_new (void) {
      n->streams[s] = -1;
 
     if ( roar_nnode_new(&(n->nnode), ROAR_SOCKET_TYPE_UNKNOWN) == -1 ) {
-     free(n);
+     roar_mm_free(n);
      return -1;
     }
 
@@ -113,7 +113,7 @@ int clients_delete (int id) {
 
  roar_nnode_free(&(g_clients[id]->nnode));
 
- free(g_clients[id]);
+ roar_mm_free(g_clients[id]);
  g_clients[id] = NULL;
 
  ROAR_DBG("clients_delete(id=%i) = 0", id);

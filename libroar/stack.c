@@ -47,7 +47,7 @@ int roar_stack_new(struct roar_stack * stack) {
 }
 
 struct roar_stack * roar_stack_newalloc(void) {
- struct roar_stack * stack = malloc(sizeof(struct roar_stack));
+ struct roar_stack * stack = roar_mm_malloc(sizeof(struct roar_stack));
 
  if ( stack == NULL )
   return NULL;

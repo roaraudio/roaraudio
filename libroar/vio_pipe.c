@@ -42,7 +42,7 @@ int roar_vio_open_pipe (struct roar_vio_calls * s0, struct roar_vio_calls * s1, 
  if ( s0 == NULL || s1 == NULL )
   return -1;
 
- if ( (self = malloc(sizeof(struct roar_vio_pipe))) == NULL )
+ if ( (self = roar_mm_malloc(sizeof(struct roar_vio_pipe))) == NULL )
   return -1;
 
  memset(self, 0, sizeof(struct roar_vio_pipe));
@@ -64,7 +64,7 @@ int roar_vio_open_pipe (struct roar_vio_calls * s0, struct roar_vio_calls * s1, 
   case ROAR_VIO_PIPE_TYPE_BUFFER:
     // no buffers need to be set up here,
     // we handle the NULL pointer in the reader and writer func
-    free(self);
+    roar_mm_free(self);
     return -1;
    break;
   case ROAR_VIO_PIPE_TYPE_PIPE:
@@ -72,20 +72,20 @@ int roar_vio_open_pipe (struct roar_vio_calls * s0, struct roar_vio_calls * s1, 
 
     if ( rw == O_RDWR || rw == O_RDONLY )
      if ( pipe(self->b.p) == -1 ) {
-      free(self);
+      roar_mm_free(self);
       return -1;
      }
     if ( rw == O_RDWR || rw == O_WRONLY )
      if ( pipe((self->b.p) + 2) == -1 ) {
       close(self->b.p[0]);
       close(self->b.p[1]);
-      free(self);
+      roar_mm_free(self);
       return -1;
      }
    break;
   case ROAR_VIO_PIPE_TYPE_SOCKET:
     if ( socketpair(AF_UNIX, SOCK_STREAM, 0, self->b.p) == -1 ) {
-     free(self);
+     roar_mm_free(self);
      return -1;
     }
 
@@ -98,7 +98,7 @@ int roar_vio_open_pipe (struct roar_vio_calls * s0, struct roar_vio_calls * s1, 
     }
    break;
   default:
-    free(self);
+    roar_mm_free(self);
     return -1;
  }
 
@@ -174,7 +174,7 @@ int     roar_vio_pipe_close   (struct roar_vio_calls * vio) {
  }
 
  if ( ! self->refcount ) {
-  free(self);
+  roar_mm_free(self);
  }
 
  vio->inst = NULL;
