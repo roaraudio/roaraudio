@@ -149,6 +149,93 @@ int roar_vio_open_proto      (struct roar_vio_calls * calls, struct roar_vio_cal
 }
 
 #ifndef ROAR_WITHOUT_VIO_PROTO
+ssize_t roar_vio_proto_read    (struct roar_vio_calls * vio, void *buf, size_t count) {
+ struct roar_vio_proto * self = vio->inst;
+ ssize_t ret;
+ ssize_t have = 0;
+ size_t  len;
+
+ if ( self->reader.buffer != NULL ) {
+  len = count;
+  if ( roar_buffer_shift_out(&(self->reader.buffer), buf, &len) == -1 ) {
+   // This is very bad.
+   return -1;
+  }
+
+  if ( len ) {
+   have   = len;
+   buf   += len;
+   count -= len;
+  }
+ }
+
+ if ( count == 0 )
+  return have;
+
+ if ( (ret = roar_vio_read(self->next, buf, count)) == -1 )
+  return ret;
+
+ return have + ret;
+}
+
+ssize_t roar_vio_proto_write   (struct roar_vio_calls * vio, void *buf, size_t count) {
+ struct roar_vio_proto * self = vio->inst;
+
+ return roar_vio_write(self->next, buf, count);
+}
+
+// TODO: this is currently not implemented as this is hard to implement with buffers:
+off_t   roar_vio_proto_lseek   (struct roar_vio_calls * vio, off_t offset, int whence);
+
+int     roar_vio_proto_nonblock(struct roar_vio_calls * vio, int state) {
+ struct roar_vio_proto * self = vio->inst;
+
+ /* we can simply use the next layer's nonblock as all we do in addtion *
+  * to call there functions are our buffers which do not block normaly  */
+
+ return roar_vio_nonblock(self->next, state);
+}
+
+int     roar_vio_proto_sync    (struct roar_vio_calls * vio) {
+ struct roar_vio_proto * self = vio->inst;
+
+ return roar_vio_sync(self->next);
+}
+
+int     roar_vio_proto_ctl     (struct roar_vio_calls * vio, int cmd, void * data) {
+ struct roar_vio_proto * self = vio->inst;
+
+ if (vio == NULL || cmd == -1)
+  return -1;
+
+ ROAR_DBG("roar_vio_proto_ctl(vio=%p, cmd=0x%.8x, data=%p) = ?", vio, cmd, data);
+
+ switch (cmd) {
+  case ROAR_VIO_CTL_GET_NEXT:
+    *(struct roar_vio_calls **)data = self->next;
+    return 0;
+   break;
+  case ROAR_VIO_CTL_SET_NEXT:
+    self->next = *(struct roar_vio_calls **)data;
+    return 0;
+   break;
+ }
+
+ return roar_vio_ctl(self->next, cmd, data);
+}
+
+int     roar_vio_proto_close   (struct roar_vio_calls * vio) {
+ struct roar_vio_proto * self = vio->inst;
+
+ if ( roar_vio_close(self->next) == -1 )
+  return -1;
+
+ roar_mm_free(self);
+
+ return 0;
+}
+
+
 int roar_vio_open_proto_http   (struct roar_vio_calls * calls, struct roar_vio_calls * dst, char * host, char * file) {
  char buf[1024];
  char b0[80], b1[80];
@@ -164,7 +251,7 @@ int roar_vio_open_proto_http   (struct roar_vio_calls * calls, struct roar_vio_c
 
  roar_vio_printf(dst, "GET /%s HTTP/1.1\r\n", file);
  roar_vio_printf(dst, "Host: %s\r\n", host);
- roar_vio_printf(dst, "User-Agent: roar_vio_open_proto_http() $Revision: 1.7 $\r\n");
+ roar_vio_printf(dst, "User-Agent: roar_vio_open_proto_http() $Revision: 1.8 $\r\n");
  roar_vio_printf(dst, "Connection: close\r\n");
  roar_vio_printf(dst, "\r\n");
 
