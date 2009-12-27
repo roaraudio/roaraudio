@@ -43,10 +43,25 @@ struct roar_vio_defaults;
 #define ROAR_VIO_PROTO_P_HTTP      1
 #define ROAR_VIO_PROTO_P_GOPHER    2
 
+struct roar_vio_proto {
+ struct roar_vio_calls * next;
+ struct {
+  struct roar_buffer * buffer;
+ } reader, writer;
+};
+
 int roar_vio_proto_init_def  (struct roar_vio_defaults * def, char * dstr, int proto, struct roar_vio_defaults * odef);
 
 int roar_vio_open_proto      (struct roar_vio_calls * calls, struct roar_vio_calls * dst,
                               char * dstr, int proto, struct roar_vio_defaults * odef);
+
+ssize_t roar_vio_proto_read    (struct roar_vio_calls * vio, void *buf, size_t count);
+ssize_t roar_vio_proto_write   (struct roar_vio_calls * vio, void *buf, size_t count);
+off_t   roar_vio_proto_lseek   (struct roar_vio_calls * vio, off_t offset, int whence);
+int     roar_vio_proto_nonblock(struct roar_vio_calls * vio, int state);
+int     roar_vio_proto_sync    (struct roar_vio_calls * vio);
+int     roar_vio_proto_ctl     (struct roar_vio_calls * vio, int cmd, void * data);
+int     roar_vio_proto_close   (struct roar_vio_calls * vio);
 
 int roar_vio_open_proto_http   (struct roar_vio_calls * calls, struct roar_vio_calls * dst, char * host, char * file);
 int roar_vio_open_proto_gopher (struct roar_vio_calls * calls, struct roar_vio_calls * dst, char * host, char * file);
