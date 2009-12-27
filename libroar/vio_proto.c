@@ -85,6 +85,7 @@ int roar_vio_proto_init_def  (struct roar_vio_defaults * def, char * dstr, int p
 int roar_vio_open_proto      (struct roar_vio_calls * calls, struct roar_vio_calls * dst,
                               char * dstr, int proto, struct roar_vio_defaults * odef) {
 #ifndef ROAR_WITHOUT_VIO_PROTO
+ struct roar_vio_proto * self;
  char * host;
  char * tmp;
 
@@ -96,8 +97,22 @@ int roar_vio_open_proto      (struct roar_vio_calls * calls, struct roar_vio_cal
  ROAR_DBG("roar_vio_open_proto(*): odef->o_flags=%i", odef->o_flags);
  ROAR_DBG("roar_vio_open_proto(*) = ?");
 
- if ( roar_vio_open_pass(calls, dst) == -1 )
+ if ( (self = roar_mm_malloc(sizeof(struct roar_vio_proto))) == NULL )
   return -1;
+
+ memset(self, 0, sizeof(struct roar_vio_proto));
+
+ self->next      = dst;
+
+ calls->inst     = self;
+
+ calls->read     = roar_vio_proto_read;
+ calls->write    = roar_vio_proto_write;
+// calls->lseek    = roar_vio_proto_lseek; // TODO: this is currently not supported
+ calls->nonblock = roar_vio_proto_nonblock;
+ calls->sync     = roar_vio_proto_sync;
+ calls->ctl      = roar_vio_proto_ctl;
+ calls->close    = roar_vio_proto_close;
 
  ROAR_DBG("roar_vio_open_proto(*) = ?");
 
@@ -247,11 +262,13 @@ int roar_vio_open_proto_http   (struct roar_vio_calls * calls, struct roar_vio_c
  if ( calls == NULL || dst == NULL || host == NULL || file == NULL )
   return -1;
 
+ calls->write = NULL; // Disable write as we do not support this
+
  ROAR_DBG("roar_vio_open_proto_http(calls=%p, dst=%p, host='%s', file='%s') = ?", calls, dst, host, file);
 
  roar_vio_printf(dst, "GET /%s HTTP/1.1\r\n", file);
  roar_vio_printf(dst, "Host: %s\r\n", host);
- roar_vio_printf(dst, "User-Agent: roar_vio_open_proto_http() $Revision: 1.8 $\r\n");
+ roar_vio_printf(dst, "User-Agent: roar_vio_open_proto_http() $Revision: 1.9 $\r\n");
  roar_vio_printf(dst, "Connection: close\r\n");
  roar_vio_printf(dst, "\r\n");
 
@@ -299,6 +316,8 @@ int roar_vio_open_proto_http   (struct roar_vio_calls * calls, struct roar_vio_c
 int roar_vio_open_proto_gopher (struct roar_vio_calls * calls, struct roar_vio_calls * dst, char * host, char * file) {
  if ( calls == NULL || dst == NULL || host == NULL || file == NULL )
   return -1;
+
+ calls->write = NULL; // Disable write as we do not support this
 
  ROAR_DBG("roar_vio_open_proto_gopher(calls=%p, dst=%p, host='%s', file='%s') = ?", calls, dst, host, file);
 
