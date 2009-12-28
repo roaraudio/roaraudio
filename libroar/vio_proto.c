@@ -282,7 +282,7 @@ int roar_vio_open_proto_http   (struct roar_vio_calls * calls, struct roar_vio_c
 
  roar_vio_printf(dst, "GET /%s HTTP/1.1\r\n", file);
  roar_vio_printf(dst, "Host: %s\r\n", host);
- roar_vio_printf(dst, "User-Agent: roar_vio_open_proto_http() $Revision: 1.10 $\r\n");
+ roar_vio_printf(dst, "User-Agent: roar_vio_open_proto_http() $Revision: 1.11 $\r\n");
  roar_vio_printf(dst, "Connection: close\r\n");
  roar_vio_printf(dst, "\r\n");
 
@@ -342,7 +342,7 @@ int roar_vio_open_proto_http   (struct roar_vio_calls * calls, struct roar_vio_c
 
  if ( bufbuf != NULL ) {
   roar_buffer_set_offset(bufbuf, endofheader - buf + 4);
-  roar_buffer_set_len(bufbuf,    1024 - (endofheader - buf + 4) - 1);
+  roar_buffer_set_len(bufbuf,    len - (endofheader - buf + 4) - 1);
  }
  self->reader.buffer = bufbuf;
 
