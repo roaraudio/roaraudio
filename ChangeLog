@@ -10,6 +10,8 @@ v. 0.3beta3 - ?
 	* moved most of the mixer stuff out of roard into libroardsp
 	* added flags immutable and enhance
 	* test for signal.h
+	* Corrected (DSTR) HTTP Protocol support so servers without headerflush
+	  should now work, too.
 
 v. 0.3beta2 - Mon Oct 05 2009 19:48 CEST
 	* Added prethru flag
