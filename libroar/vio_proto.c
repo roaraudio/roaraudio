@@ -187,6 +187,8 @@ ssize_t roar_vio_proto_read    (struct roar_vio_calls * vio, void *buf, size_t c
  if ( count == 0 )
   return have;
 
+ ROAR_DBG("roar_vio_proto_read(*): have=%lli, count=%lli", (long long int)have, (long long int)count);
+
  if ( (ret = roar_vio_read(self->next, buf, count)) == -1 )
   return ret;
 
@@ -252,7 +254,10 @@ int     roar_vio_proto_close   (struct roar_vio_calls * vio) {
 
 
 int roar_vio_open_proto_http   (struct roar_vio_calls * calls, struct roar_vio_calls * dst, char * host, char * file) {
- char buf[1024];
+ struct roar_vio_proto * self;
+ struct roar_buffer * bufbuf;
+ char * buf;
+ char * endofheader = NULL;
  char b0[80], b1[80];
  int  status;
  int  len;
@@ -262,13 +267,22 @@ int roar_vio_open_proto_http   (struct roar_vio_calls * calls, struct roar_vio_c
  if ( calls == NULL || dst == NULL || host == NULL || file == NULL )
   return -1;
 
+ self         = calls->inst;
  calls->write = NULL; // Disable write as we do not support this
+
+ if ( roar_buffer_new(&bufbuf, 1024) == -1 )
+  return -1;
+
+ if ( roar_buffer_get_data(bufbuf, &buf) == -1 ) {
+  roar_buffer_free(bufbuf);
+  return -1;
+ }
 
  ROAR_DBG("roar_vio_open_proto_http(calls=%p, dst=%p, host='%s', file='%s') = ?", calls, dst, host, file);
 
  roar_vio_printf(dst, "GET /%s HTTP/1.1\r\n", file);
  roar_vio_printf(dst, "Host: %s\r\n", host);
- roar_vio_printf(dst, "User-Agent: roar_vio_open_proto_http() $Revision: 1.9 $\r\n");
+ roar_vio_printf(dst, "User-Agent: roar_vio_open_proto_http() $Revision: 1.10 $\r\n");
  roar_vio_printf(dst, "Connection: close\r\n");
  roar_vio_printf(dst, "\r\n");
 
@@ -280,6 +294,7 @@ int roar_vio_open_proto_http   (struct roar_vio_calls * calls, struct roar_vio_c
 
  if ( (len = roar_vio_read(dst, buf, 1023)) < 1 ) {
   ROAR_DBG("roar_vio_open_proto_http(*) = -1");
+  roar_buffer_free(bufbuf);
   return -1;
  }
 
@@ -289,6 +304,7 @@ int roar_vio_open_proto_http   (struct roar_vio_calls * calls, struct roar_vio_c
 
  if ( sscanf(buf, "%79s %i %79s\n", b0, &status, b1) != 3 ) {
   ROAR_DBG("roar_vio_open_proto_http(*) = -1");
+  roar_buffer_free(bufbuf);
   return -1;
  }
 
@@ -296,12 +312,41 @@ int roar_vio_open_proto_http   (struct roar_vio_calls * calls, struct roar_vio_c
 
  if ( status != 200 ) {
   ROAR_DBG("roar_vio_open_proto_http(*) = -1 // status=%i", status);
+  roar_buffer_free(bufbuf);
   return -1;
  }
 
  ROAR_DBG("roar_vio_open_proto_http(*): status=%i", status);
 // ROAR_WARN("roar_vio_open_proto_http(*): buf='%s'", buf);
 
+ endofheader = strstr(buf, "\r\n\r\n");
+
+ ROAR_DBG("roar_vio_open_proto_http(*): endofheader=%p\n", endofheader);
+
+ while ( endofheader == NULL ) {
+  if ( (len = roar_vio_read(dst, buf, 1023)) < 1 )
+   return -1;
+
+  buf[len] = 0;
+  endofheader = strstr(buf, "\r\n\r\n");
+  ROAR_DBG("roar_vio_open_proto_http(*): endofheader=%p\n", endofheader);
+ }
+
+ ROAR_DBG("roar_vio_open_proto_http(*): endofheader=%p\n", endofheader);
+ ROAR_DBG("roar_vio_open_proto_http(*): buf=%p\n", buf);
+
+ if ( (endofheader - buf) == (len - 4) ) {
+  roar_buffer_free(bufbuf);
+  bufbuf = NULL;
+ }
+
+ if ( bufbuf != NULL ) {
+  roar_buffer_set_offset(bufbuf, endofheader - buf + 4);
+  roar_buffer_set_len(bufbuf,    1024 - (endofheader - buf + 4) - 1);
+ }
+ self->reader.buffer = bufbuf;
+
+/*
  if ( !strcmp((buf+len)-4, "\r\n\r\n") )
   return 0;
 
@@ -309,6 +354,7 @@ int roar_vio_open_proto_http   (struct roar_vio_calls * calls, struct roar_vio_c
   if ( (len = roar_vio_read(dst, buf, 1023)) < 1 )
    return -1;
  }
+*/
 
  return 0;
 }
