@@ -37,7 +37,7 @@
 
 #define _PCM_FILTER(codec) _DUMMY_FILTER(codec, "PCM", "Native PCM Support", \
                                          ROAR_CODECFILTER_READ|ROAR_CODECFILTER_WRITE|ROAR_CODECFILTER_PRETHRU_NN, \
-                                         ROAR_SUBSYS_WAVEFORM, NULL)
+                                         ROAR_SUBSYS_WAVEFORM, cf_alaw_delay)
 
 struct roar_codecfilter g_codecfilter[] = {
  _DUMMY_FILTER(-1, "null", "null codec filter", ROAR_CODECFILTER_NONE, ROAR_SUBSYS_NONE, NULL),
