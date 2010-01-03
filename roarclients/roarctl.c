@@ -607,9 +607,8 @@ int set_meta (struct roar_connection * con, int id, char * mode, char * type, ch
  struct roar_stream s;
  int mode_i = ROAR_META_MODE_SET;
 
- memset(&s, 0, sizeof(s));
-
- s.id = id;
+ if ( roar_stream_new_by_id(&s, id) == -1 )
+  return -1;
 
 // printf("set_meta(*): mode='%s', type='%s', val='%s'\n", mode, type, val);
 
@@ -645,9 +644,8 @@ int load_meta (struct roar_connection * con, int id, char * file) {
  char lion[1024];
  char * v;
 
- memset(&s, 0, sizeof(s));
-
- s.id = id;
+ if ( roar_stream_new_by_id(&s, id) == -1 )
+  return -1;
 
  if ( (in = fopen(file, "r")) == NULL )
   return -1;
@@ -689,9 +687,8 @@ int show_meta_type (struct roar_connection * con, int id, char * type) {
  struct roar_meta   meta;
  struct roar_stream s;
 
- memset(&s, 0, sizeof(s));
-
- s.id = id;
+ if ( roar_stream_new_by_id(&s, id) == -1 )
+  return -1;
 
  meta.type  = roar_meta_inttype(type);
 
@@ -716,9 +713,8 @@ int show_meta_all (struct roar_connection * con, int id) {
  int i;
  int len;
 
- memset(&s, 0, sizeof(s));
-
- s.id = id;
+ if ( roar_stream_new_by_id(&s, id) == -1 )
+  return -1;
 
  if ( (len = roar_stream_meta_list(con, &s, types, ROAR_META_MAX_PER_STREAM)) == -1 )
   return -1;
@@ -737,9 +733,8 @@ int save_meta (struct roar_connection * con, int id, char * file) {
  int len;
  FILE * out;
 
- memset(&s, 0, sizeof(s));
-
- s.id = id;
+ if ( roar_stream_new_by_id(&s, id) == -1 )
+  return -1;
 
  if ( (out = fopen(file, "w")) == NULL )
   return -1;
@@ -773,9 +768,8 @@ int set_flags (struct roar_connection * con, int id, int reset, char * flags) {
  char * c;
  struct roar_stream s[1];
 
- memset(s, 0, sizeof(struct roar_stream));
-
- s->id = id;
+ if ( roar_stream_new_by_id(s, id) == -1 )
+  return -1;
 
  c = strtok(flags, ",");
  while (c != NULL) {
