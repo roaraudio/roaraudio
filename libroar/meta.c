@@ -83,6 +83,8 @@ struct {
  {ROAR_META_TYPE_SIGNALINFO,         "SIGNALINFO"     },
  {ROAR_META_TYPE_AUDIOINFO,          "AUDIOINFO"      },
  {ROAR_META_TYPE_OFFSET,             "OFFSET"         },
+ {ROAR_META_TYPE_PERFORMER,          "PERFORMER"      },
+ {ROAR_META_TYPE_COPYRIGHT,          "COPYRIGHT"      },
  
  {-1, "EOL"}
 };
