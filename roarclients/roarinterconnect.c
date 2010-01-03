@@ -57,6 +57,16 @@ void usage (void) {
         "  --help             - Show this help\n"
        );
 
+ printf("\nPossible Types:\n\n");
+ printf("  roar               - RoarAudio Server\n"
+        "  esd                - EsounD Server\n"
+        "\n"
+        "  bidir              - Connect bidirectional\n"
+        "  filter             - Use local server as filter for remote server\n"
+        "  transmit           - Transmit data from local server to remote server\n"
+        "  receive            - Receive data from remote server\n"
+       );
+
 }
 
 int parse_type (char * type) {
