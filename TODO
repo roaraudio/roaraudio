@@ -4,6 +4,9 @@ Things we need to do:
 
 Things we should do:
  * (*.*) add a lot other things
+ * (0.3) do not install .cvsignore files
+ * (0.3) better tests for libspeex{,dsp}-dev
+ * (0.3) autotool like config options
  * (0.3) add support for JumboPackets to roard
  * (0.3) add support to to roard to auto select a sync stream
  * (0.3) do a lot work on the manpages
