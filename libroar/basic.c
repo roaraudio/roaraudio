@@ -67,6 +67,13 @@ int roar_connect_raw (char * server) {
  }
 #endif
 
+ if ( !strcasecmp(server, "+slp") ) {
+  server = roar_slp_find_roard(0);
+  if ( server == NULL ) {
+   return -1;
+  }
+ }
+
  if ( server == NULL || *server == 0 ) {
   /* connect via defaults */
 

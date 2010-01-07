@@ -739,7 +739,7 @@ int register_slp (int unreg, char * sockname) {
  if ( sockname != NULL )
   sn = sockname;
 
- snprintf(addr, sizeof(addr), ROAR_SLP_URL_TYPE "://%s", sn);
+ snprintf(addr, sizeof(addr), ROAR_SLP_URL_TYPE_ROAR "://%s", sn);
 
  err = SLPOpen("en", SLP_FALSE, &hslp);
 
