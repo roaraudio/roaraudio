@@ -98,6 +98,8 @@ grep '^#define ROAR_VIO_DSTR_OBJT_' vio_dstr.h | cut -d' ' -f2 | while read objt
       {ROAR_VIO_DEF_TYPE_EOL}},
  {ROAR_VIO_DSTR_OBJT_GOPHER_PLUS,"gopher+",
       {ROAR_VIO_DEF_TYPE_EOL}},
+ {ROAR_VIO_DSTR_OBJT_ICY,        "icy",
+      {ROAR_VIO_DEF_TYPE_EOL}},
 
  {ROAR_VIO_DSTR_OBJT_GZIP,       "gzip",
       {ROAR_VIO_DEF_TYPE_EOL}},
@@ -550,6 +552,13 @@ int     roar_vio_dstr_set_defaults(struct roar_vio_dstr_chain * chain, int len, 
      if ( roar_vio_proto_init_def(next->def, c->dst, ROAR_VIO_PROTO_P_GOPHER, c->def) == -1 )
       return -1;
     break;
+   case ROAR_VIO_DSTR_OBJT_ICY:
+     c->need_vio = 1;
+     next->def = &(next->store_def);
+
+     if ( roar_vio_proto_init_def(next->def, c->dst, ROAR_VIO_PROTO_P_ICY, c->def) == -1 )
+      return -1;
+    break;
    default:
     return -1;
   }
@@ -667,6 +676,11 @@ int     roar_vio_dstr_build_chain(struct roar_vio_dstr_chain * chain, struct roa
     case ROAR_VIO_DSTR_OBJT_GOPHER:
     case ROAR_VIO_DSTR_OBJT_GOPHER_PLUS:
       if ( roar_vio_open_proto(tc, prev, c->dst, ROAR_VIO_PROTO_P_GOPHER, c->def) == -1 ) {
+       _ret(-1);
+      }
+     break;
+    case ROAR_VIO_DSTR_OBJT_ICY:
+      if ( roar_vio_open_proto(tc, prev, c->dst, ROAR_VIO_PROTO_P_ICY, c->def) == -1 ) {
        _ret(-1);
       }
      break;

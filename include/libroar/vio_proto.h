@@ -42,6 +42,7 @@ struct roar_vio_defaults;
 #define ROAR_VIO_PROTO_P_NONE      0
 #define ROAR_VIO_PROTO_P_HTTP      1
 #define ROAR_VIO_PROTO_P_GOPHER    2
+#define ROAR_VIO_PROTO_P_ICY       3
 
 struct roar_vio_proto {
  struct roar_vio_calls * next;

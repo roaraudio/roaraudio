@@ -44,8 +44,9 @@ int roar_vio_proto_init_def  (struct roar_vio_defaults * def, char * dstr, int p
   return -1;
 
  switch (proto) {
-  case ROAR_VIO_PROTO_P_HTTP:    port = 80; break;
-  case ROAR_VIO_PROTO_P_GOPHER:  port = 70; break;
+  case ROAR_VIO_PROTO_P_HTTP:    port =   80; break;
+  case ROAR_VIO_PROTO_P_GOPHER:  port =   70; break;
+  case ROAR_VIO_PROTO_P_ICY:     port = 8000; break;
   default:
     return -1;
  }
@@ -149,6 +150,7 @@ int roar_vio_open_proto      (struct roar_vio_calls * calls, struct roar_vio_cal
 
  switch (proto) {
   case ROAR_VIO_PROTO_P_HTTP:
+  case ROAR_VIO_PROTO_P_ICY:
     return roar_vio_open_proto_http(calls, dst, host, dstr);
    break;
   case ROAR_VIO_PROTO_P_GOPHER:
@@ -282,7 +284,7 @@ int roar_vio_open_proto_http   (struct roar_vio_calls * calls, struct roar_vio_c
 
  roar_vio_printf(dst, "GET /%s HTTP/1.1\r\n", file);
  roar_vio_printf(dst, "Host: %s\r\n", host);
- roar_vio_printf(dst, "User-Agent: roar_vio_open_proto_http() $Revision: 1.11 $\r\n");
+ roar_vio_printf(dst, "User-Agent: roar_vio_open_proto_http() $Revision: 1.12 $\r\n");
  roar_vio_printf(dst, "Connection: close\r\n");
  roar_vio_printf(dst, "\r\n");
 
