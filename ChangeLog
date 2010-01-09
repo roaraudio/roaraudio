@@ -14,6 +14,7 @@ v. 0.3beta3 - ?
 	  should now work, too.
 	* added protocol support for icy
 	* Added version numbers to lib names
+	* updated manpages
 
 v. 0.3beta2 - Mon Oct 05 2009 19:48 CEST
 	* Added prethru flag
