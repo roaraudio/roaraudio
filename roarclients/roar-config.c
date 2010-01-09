@@ -50,6 +50,19 @@ struct {
  {NULL, NULL, NULL}
 }, * flags_ptr = NULL;
 
+void usage (void) {
+ printf("Usage: roar-config [--version] [--libs] [--cflags] [lib]\n");
+
+ printf("\nOptions:\n\n");
+
+ printf(
+        "  --version          - Show version of library\n"
+        "  --libs             - Show linker flags (-lxxx) needed to link library\n"
+        "  --cflags           - Show compiler flags needed to link library\n"
+       );
+
+}
+
 int main (int argc, char * argv[]) {
  int i, h;
  int cflags = 0;
@@ -57,13 +70,16 @@ int main (int argc, char * argv[]) {
  char buf[1024] = {0};
 
  if ( argc == 1 ) {
-  printf("Usage: roar-config [--version] [--libs] [--cflags] [lib]\n");
+  usage();
   return 0;
  }
 
  for (i = 1; i < argc; i++) {
   if ( !strcmp(argv[i], "--version") ) {
    printf("unknown\n");
+  } else if ( !strcmp(argv[i], "--help") || !strcmp(argv[i], "-h") ) {
+   usage();
+   return 0;
   } else if ( !strcmp(argv[i], "--libs") ) {
    libs   = 1;
   } else if ( !strcmp(argv[i], "--cflags") ) {
@@ -83,6 +99,7 @@ int main (int argc, char * argv[]) {
    }
   } else {
    fprintf(stderr, "Unknown option: %s\n", argv[i]);
+   usage();
    return 1;
   }
  }
