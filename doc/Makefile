@@ -2,7 +2,9 @@ include ../Makefile.conf
 
 all: symlinks
 clean:
-	echo Warning: no target clean for docs
+	while read fn fc tn tc; do rm man$$fc/$$fn.$$fc 2> /dev/null; done < symlinks.src; true
+	while read fn fc tn tc; do rm html/man$$fc/$$fn.$$fc.html 2> /dev/null; done < symlinks.src; true
+	rm -fr html/man?
 
 symlinks:
 	while read fn fc tn tc; do ln -s ../man$$tc/$$tn.$$tc man$$fc/$$fn.$$fc 2> /dev/null; done < symlinks.src; true
