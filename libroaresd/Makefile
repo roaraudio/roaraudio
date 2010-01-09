@@ -21,7 +21,7 @@ clean:
 new: clean all
 
 $(SLIB): ${OBJS}
-	${CC} ${LDFLAGS} -o $(SLIB) ${OBJS} ${LIBS}
+	${CC} ${LDFLAGS} -Wl,-soname,$(SLIB).$(COMMON_V_MAJOR) -o $(SLIB) ${OBJS} ${LIBS}
 $(LIB_BASENAME).a: ${OBJS}
 	${AR} cru $(LIB_BASENAME).a ${OBJS}
 	${RANLIB} $(LIB_BASENAME).a

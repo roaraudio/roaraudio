@@ -28,7 +28,7 @@ clean:
 new: clean all
 
 $(SLIB): $(ALLOBJS)
-	${CC} ${LDFLAGS} -o $(SLIB) $(ALLOBJS) $(LIBS)
+	${CC} ${LDFLAGS} -Wl,-soname,$(SLIB).$(COMMON_V_MAJOR) -o $(SLIB) $(ALLOBJS) $(LIBS)
 libroardsp.a: $(ALLOBJS)
 	${AR} cru libroardsp.a $(ALLOBJS)
 	${RANLIB} libroardsp.a

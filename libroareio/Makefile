@@ -25,7 +25,7 @@ esdfw.a:
 	${RANLIB} esdfw.a
 
 $(SLIB): ${OBJS}
-	${CC} ${LDFLAGS} -o $(SLIB) ${OBJS} $(LIBS)
+	${CC} ${LDFLAGS} -Wl,-soname,$(SLIB).$(COMMON_V_MAJOR) -o $(SLIB) $(OBJS) $(LIBS)
 libroareio.a: ${OBJS}
 	${AR} cru libroareio.a ${OBJS}
 	${RANLIB} libroareio.a
