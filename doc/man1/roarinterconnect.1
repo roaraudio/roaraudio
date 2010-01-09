@@ -1,0 +1,86 @@
+.\" roarinterconnect.1:
+
+.TH "roarinterconnect" "1" "January 2010" "RoarAudio" "System User's Manual: roarinterconnect"
+
+.SH NAME
+
+roarinterconnect \- interconnect two audio servers
+
+.SH SYNOPSIS
+
+roarinterconnect [OPTIONS]...
+
+.SH DESCRIPTION
+
+This program can interconnect two audio servers bi- (default) or uni-directional.
+
+.SH "OPTIONS"
+
+.TP
+\fB--server SERVER\fR
+Set server hostname
+
+.TP
+\fB--remote SERVER\fR
+Set remote server
+
+.TP
+\fB--type   TYPE\fR
+Set type of remote server
+
+.TP
+\fB--rate   RATE\fR
+Set sample rate
+
+.TP
+\fB--bits   BITS\fR
+Set bits per sample
+
+.TP
+\fB--chans  CHANNELS\fR
+Set number of channels
+
+.TP
+\fB--codec  CODEC\fR
+Set the codec
+
+.TP
+\fB--help\fR
+Show this help
+
+.SH "POSSIBLE TYPES"
+
+.TP
+\fBroar\fR
+RoarAudio Server
+
+.TP
+\fBesd\fR
+EsounD Server
+
+.TP
+\fBbidir\fR
+Connect bidirectional
+
+.TP
+\fBfilter\fR
+Use local server as filter for remote server
+
+.TP
+\fBtransmit\fR
+Transmit data from local server to remote server
+
+.TP
+\fBreceive\fR
+Receive data from remote server
+
+.SH "SEE ALSO"
+\fBroartips\fR(7),
+\fBlibroar\fR(7),
+\fBRoarAudio\fR(7).
+
+.SH "HISTORY"
+
+For history information see \fBRoarAudio\fR(7).
+
+.\" ll

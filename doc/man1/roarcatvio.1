@@ -1,0 +1,55 @@
+.\" roarcatvio.1:
+
+.TH "roarcatvio" "1" "January 2010" "RoarAudio" "System User's Manual: roarcatvio"
+
+.SH NAME
+
+roarcatvio \- send files to RoarAudio using VIO API
+
+.SH SYNOPSIS
+
+roarcatvio [OPTIONS]... [FILE]
+
+.SH DESCRIPTION
+
+This tool sends files to roard using the RoarAudio VIO API.
+It uses RoarAudio's DSTR to open the file so it also supports HTTP and other
+network protocol.
+
+.SH "OPTIONS"
+
+.TP
+\fB--server SERVER\fR
+Set server hostname
+
+.TP
+\fB--rate   RATE\fR
+Set sample rate
+
+.TP
+\fB--bits   BITS\fR
+Set bits per sample
+
+.TP
+\fB--chans  CHANNELS\fR
+Set number of channels
+
+.TP
+\fB--codec  CODEC\fR
+Set the codec
+
+.TP
+\fB--help\fR
+Show this help
+
+.SH "SEE ALSO"
+\fBroarcat\fR(1),
+\fBroartips\fR(7),
+\fBlibroar\fR(7),
+\fBRoarAudio\fR(7).
+
+.SH "HISTORY"
+
+For history information see \fBRoarAudio\fR(7).
+
+.\" ll

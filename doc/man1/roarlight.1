@@ -1,0 +1,52 @@
+.\" roarlight.1:
+
+.TH "roarlight" "1" "January 2010" "RoarAudio" "System User's Manual: roarlight"
+
+.SH NAME
+
+roarlight \- controls the Light Control subsystem of RoarAudio
+
+.SH SYNOPSIS
+
+roarlight [OPTIONS]... command [command...]
+
+.SH DESCRIPTION
+
+This command works simular to \fBroarctl\fR but controls actual data on the
+Light Control subsystem.
+
+.SH "OPTIONS"
+
+.TP
+\fB--server    SERVER\fR
+Set server hostname
+
+.TP
+\fB--help\fR
+Show this help
+
+.SH "COMMANDS"
+
+.TP
+\fBhelp\fR
+Show this help
+
+.TP
+\fBsleep TIME\fR
+Sleeps for TIME seconds
+
+.TP
+\fBset   chan=val\fR
+Set a DMX Channel
+
+.SH "SEE ALSO"
+\fBroarctl\fR(1),
+\fBroartips\fR(7),
+\fBlibroar\fR(7),
+\fBRoarAudio\fR(7).
+
+.SH "HISTORY"
+
+For history information see \fBRoarAudio\fR(7).
+
+.\" ll

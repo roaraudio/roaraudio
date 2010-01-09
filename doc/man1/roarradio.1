@@ -1,0 +1,55 @@
+.\" roarradio.1:
+
+.TH "roarradio" "1" "January 2010" "RoarAudio" "System User's Manual: roarradio"
+
+.SH NAME
+
+roarradio \- program to play web radio streams in background with RoarAudio
+
+.SH SYNOPSIS
+
+roarradio [OPTIONS]... [FILE|URL]
+
+.SH DESCRIPTION
+
+This program plays a webradio stream in background using RoarAudio.
+It exits as soon as everything is set up.
+You need to use \fBroarctl\fR to kill the stream or set the volume.
+
+.SH "OPTIONS"
+
+.TP
+\fB--server SERVER\fR
+Set server hostname
+
+.TP
+\fB--rate   RATE\fR
+Set sample rate
+
+.TP
+\fB--bits   BITS\fR
+Set bits per sample
+
+.TP
+\fB--chans  CHANNELS\fR
+Set number of channels
+
+.TP
+\fB--codec  CODEC\fR
+Set the codec
+
+.TP
+\fB--help\fR
+Show this help
+
+.SH "SEE ALSO"
+\fBroarctl\fR(1),
+\fBroartips\fR(7),
+\fBlibroar\fR(7),
+\fBRoarAudio\fR(7).
+
+.SH "HISTORY"
+
+For history information see \fBRoarAudio\fR(7).
+
+.\" ll
