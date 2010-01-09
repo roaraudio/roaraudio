@@ -19,4 +19,4 @@ new: clean all
 libartsc$(SHARED_SUFFIX): libroarartsc$(SHARED_SUFFIX)
 	cp libroarartsc$(SHARED_SUFFIX) libartsc$(SHARED_SUFFIX)
 libroarartsc$(SHARED_SUFFIX): ${OBJS}
-	${CC} ${LDFLAGS} $(SHARED) -o libroarartsc$(SHARED_SUFFIX) ${OBJS} ${LIBS}
+	${CC} ${LDFLAGS} $(SHARED) -Wl,-soname,libroarartsc$(SHARED_SUFFIX).$(COMMON_V_MAJOR) -o libroarartsc$(SHARED_SUFFIX) ${OBJS} ${LIBS}

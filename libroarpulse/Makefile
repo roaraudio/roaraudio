@@ -17,6 +17,6 @@ clean:
 new: clean all
 
 libroarpulse.so: ${OBJS}
-	${CC} ${LDFLAGS} $(SHARED) -o libroarpulse.so ${OBJS} ${LIBS}
+	${CC} ${LDFLAGS} $(SHARED) -Wl,-soname,libroarpulse$(SHARED_SUFFIX).$(COMMON_V_MAJOR) -o libroarpulse$(SHARED_SUFFIX) ${OBJS} ${LIBS}
 
 libroarpulseinfo: libroarpulseinfo.o

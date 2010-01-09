@@ -17,4 +17,4 @@ clean:
 new: clean all
 
 libroaryiff.so: ${OBJS}
-	${CC} ${LDFLAGS} -o libroaryiff.so ${OBJS} ${LIBS}
+	${CC} ${LDFLAGS} -Wl,-soname,libroaryiff$(SHARED_SUFFIX).$(COMMON_V_MAJOR) -o libroaryiff$(SHARED_SUFFIX) ${OBJS} ${LIBS}
