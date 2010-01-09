@@ -17,6 +17,7 @@ clean:
 new: clean all
 
 install: ${TARGET}
+	mkdir -p ${DESTDIR}${INSTALL_DIR}
 	cp ${TARGET} ${DESTDIR}${INSTALL_DIR}/
 
 xineplug_ao_out_roar.so: $(OBJ)

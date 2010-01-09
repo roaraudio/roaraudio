@@ -16,8 +16,10 @@ clean:
 new: clean all
 
 install: libroar.so
+	mkdir -p ${DESTDIR}${INSTALL_DIR}
 	cp libroar.so ${DESTDIR}${INSTALL_DIR}
 semi-install: libroar.so
+	mkdir -p ${DESTDIR}${INSTALL_DIR}
 	ln -fs `pwd`/libroar.so ${DESTDIR}${INSTALL_DIR}
 
 libroar.so: $(OBJ)
