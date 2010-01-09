@@ -23,6 +23,6 @@ semi-install: libroar.so
 	ln -fs `pwd`/libroar.so ${DESTDIR}${INSTALL_DIR}
 
 libroar.so: $(OBJ)
-	$(CC) $(LDFLAGS) -o libroar.so $(OBJ) $(LIBS)
+	$(CC) $(LDFLAGS) -Wl,-soname,libroar.so -o libroar.so $(OBJ) $(LIBS)
 
 ao_roar.c:
