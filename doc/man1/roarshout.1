@@ -1,0 +1,77 @@
+.\" roarshout.1:
+
+.TH "roarshout" "1" "January 2010" "RoarAudio" "System User's Manual: roarshout"
+
+.SH NAME
+
+roarshout \- stream data to streaming server
+
+.SH SYNOPSIS
+
+roarshout [OPTIONS]... [address [port [password [mountpoint]]]
+
+.SH DESCRIPTION
+
+This tool sends data to (audio) streaming servers like icecast using libshout.
+The options and command lion syntax is compatible with the one used by
+\fBoggfwd\fR(1).
+
+.SH "ROARAUDIO OPTIONS"
+
+.TP
+\fB--server SERVER\fR
+Set server hostname
+
+.TP
+\fB--rate   RATE\fR
+Set sample rate
+
+.TP
+\fB--bits   BITS\fR
+Set bits per sample
+
+.TP
+\fB--chans  CHANNELS\fR
+Set number of channels
+
+.TP
+\fB--codec  CODEC\fR
+Set the codec
+
+.TP
+\fB-h --help\fR
+Show this help
+
+.SH "LIBSHOUT OPTIONS"
+
+.TP
+\fB-p --public\fR
+Allow listing in stream directory
+
+.TP
+\fB-d          DESC\fR
+Set stream description
+
+.TP
+\fB-g          GENRE\fR
+Set stream genre
+
+.TP
+\fB-n          NAME\fR
+Set stream name
+
+.TP
+\fB-u          URL\fR
+Set stream URL/homepage
+
+.SH "SEE ALSO"
+\fBoggfwd\fR(1),
+\fBroartips\fR(7),
+\fBlibroar\fR(7),
+\fBRoarAudio\fR(7).
+
+.SH "HISTORY"
+
+For history information see \fBRoarAudio\fR(7).
+
+.\" ll
