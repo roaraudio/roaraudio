@@ -31,6 +31,8 @@
 
 #define BUFSIZE 1024
 
+#define LOWPASS_ORDER  6
+
 #define MODE_NONE  0x00
 #define MODE_PC    0x01
 #define MODE_DB    0x02
@@ -45,8 +47,13 @@ void usage (void) {
         "  --rate    RATE     - Set sample rate\n"
         "  --bits    BITS     - Set bits per sample\n"
         "  --chans   CHANNELS - Set number of channels\n"
-        "  --samples SAMPLES  - Set number of samples\n"
-        "  --help             - Show this help\n"
+        "  --samples SAMPLES  - Set number of input samples per block\n"
+        "  --pc               - Use percent scale\n"
+        "  --db               - Use dB scale\n"
+        "  --beat             - Enable beat detection\n"
+        "  --lowpass FREQ     - Use lowpass to filter input (-%idB/dec)\n"
+        "  --help             - Show this help\n",
+        LOWPASS_ORDER * 20
        );
 
 }
@@ -172,12 +179,18 @@ int main (int argc, char * argv[]) {
    rate = atoi(argv[++i]);
   } else if ( strcmp(k, "--bits") == 0 ) {
    bits = atoi(argv[++i]);
-  } else if ( strcmp(k, "--channels") == 0 ) {
+  } else if ( strcmp(k, "--channels") == 0 || strcmp(k, "--chans") == 0) {
    channels = atoi(argv[++i]);
   } else if ( strcmp(k, "--samples") == 0 ) {
    samples = atoi(argv[++i]);
   } else if ( strcmp(k, "--db") == 0 ) {
+   mode |= MODE_PC;
+   mode -= MODE_PC;
    mode |= MODE_DB;
+  } else if ( strcmp(k, "--pc") == 0 ) {
+   mode |= MODE_DB;
+   mode -= MODE_DB;
+   mode |= MODE_PC;
   } else if ( strcmp(k, "--beat") == 0 ) {
    mode |= MODE_BEAT;
   } else if ( strcmp(k, "--lowpass") == 0 ) {
@@ -221,7 +234,7 @@ int main (int argc, char * argv[]) {
  }
 
  if ( lowpass_freq > 1 ) {
-  for (i = 0; i < 6; i++) {
+  for (i = 0; i < LOWPASS_ORDER; i++) {
    if ( roardsp_filter_new(&filter, &s, ROARDSP_FILTER_LOWP) == -1 ) {
     fprintf(stderr, "Error: can not open lowpass\n");
     roar_vio_close(&re);
