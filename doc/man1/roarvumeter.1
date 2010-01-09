@@ -1,0 +1,69 @@
+.\" roarvumeter.1:
+
+.TH "roarvumeter" "1" "January 2010" "RoarAudio" "System User's Manual: roarvumeter"
+
+.SH NAME
+
+roarvumeter \- display current audio level of RoarAudio's waveform mixer
+
+.SH SYNOPSIS
+
+roarvumeter [OPTIONS]...
+
+.SH DESCRIPTION
+
+This tool can be used to view the current audio levels of RoarAudio's sound servers'
+waveform mixer. In Addition it implements a simple beat detection.
+
+.SH "OPTIONS"
+
+.TP
+\fB--server  SERVER\fR
+Set server hostname
+
+.TP
+\fB--rate    RATE\fR
+Set sample rate
+
+.TP
+\fB--bits    BITS\fR
+Set bits per sample
+
+.TP
+\fB--chans   CHANNELS\fR
+Set number of channels
+
+.TP
+\fB--samples SAMPLES\fR
+Set number of input samples per block
+
+.TP
+\fB--pc\fR
+Use percent scale
+
+.TP
+\fB--db\fR
+Use dB scale
+
+.TP
+\fB--beat\fR
+Enable beat detection
+
+.TP
+\fB--lowpass FREQ\fR
+Use lowpass to filter input (-120dB/dec)
+
+.TP
+\fB--help\fR
+Show this help
+
+.SH "SEE ALSO"
+\fBroartips\fR(7),
+\fBlibroar\fR(7),
+\fBRoarAudio\fR(7).
+
+.SH "HISTORY"
+
+For history information see \fBRoarAudio\fR(7).
+
+.\" ll
