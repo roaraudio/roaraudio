@@ -12,6 +12,8 @@ v. 0.3beta3 - ?
 	* test for signal.h
 	* Corrected (DSTR) HTTP Protocol support so servers without headerflush
 	  should now work, too.
+	* added protocol support for icy
+	* Added version numbers to lib names
 
 v. 0.3beta2 - Mon Oct 05 2009 19:48 CEST
 	* Added prethru flag
