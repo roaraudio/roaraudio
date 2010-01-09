@@ -1,0 +1,69 @@
+#!/usr/bin/perl
+
+use strict;
+
+#use Data::Dumper;
+
+my $progname;
+
+my $usage = <>;
+my @cat;
+my $cur = ['FIXME', []];
+
+my ($opts, $desc);
+
+$usage =~ s/\r?\n//;
+
+$usage =~ s/^Usage:\s*//;
+
+($progname) = $usage =~ /^(\S+)\s/;
+
+while (<>) {
+ s/\r?\n//;
+ next if $_ eq '';
+
+ if ( /^(.+):$/ ) {
+  push(@cat, $cur);
+  $cur = [$1, []];
+ } else {
+  ($opts, $desc) = /\s+(-.+?)\s+-\s+(.+)$/;
+  push(@{$cur->[1]}, [$opts, $desc]);
+ }
+}
+
+shift(@cat);
+
+#print Dumper($usage, $progname, \@cat);
+
+print ".\\\" $progname.1:\n\n";
+print ".TH \"$progname\" \"1\" \"FIXME(DATE)\" \"RoarAudio\" \"System User's Manual: $progname\"\n\n";
+print ".SH NAME\n\n";
+print "$progname \\- FIXME(PROGNAME)\n\n";
+print ".SH SYNOPSIS\n\n";
+print $usage, "\n\n";
+print ".SH DESCRIPTION\n\n";
+print "FIXME(DESCRIPTION)\n\n";
+
+foreach my $c (@cat) {
+ print ".SH \"\U$c->[0]\"\n\n";
+ foreach my $o (@{$c->[1]}) {
+  print ".TP\n";
+  print "\\fB$o->[0]\\fR\n";
+  print $o->[1], "\n\n";
+ }
+}
+
+print <<'DATA';
+.SH "SEE ALSO"
+\fBroartips\fR(7),
+\fBlibroar\fR(7),
+\fBRoarAudio\fR(7).
+
+.SH "HISTORY"
+
+For history information see \fBRoarAudio\fR(7).
+
+.\" ll
+DATA
+
+#ll
