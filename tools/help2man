@@ -26,10 +26,12 @@ while (<>) {
   push(@cat, $cur);
   $cur = [$1, []];
  } else {
-  ($opts, $desc) = /\s+(-.+?)\s+-\s+(.+)$/;
+  ($opts, $desc) = /\s+(.+?)\s+-\s+(.+)$/;
   push(@{$cur->[1]}, [$opts, $desc]);
  }
 }
+
+push(@cat, $cur);
 
 shift(@cat);
 
