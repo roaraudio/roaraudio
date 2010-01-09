@@ -1,0 +1,43 @@
+.\" roarmonhttp.1:
+
+.TH "roarmonhttp" "1" "January 2010" "RoarAudio" "System User's Manual: roarmonhttp"
+
+.SH NAME
+
+roarmonhttp \- CGI and inetd based streaming server emulation for RoarAudio
+
+.SH SYNOPSIS
+
+roarmonhttp [--inetd]
+
+.SH DESCRIPTION
+
+This program emulates a streaming server using RoarAudio.
+It can be run from via a webserver as CGI or via inetd in inetd mode.
+IN CGI mode it is limited to client (listener) HTTP connections.
+In inetd mode it can handle source clients and gopher, too.
+There is no need for a specal port for gopher. The protocol
+is detected per client at runtime.
+
+.SH "OPTIONS"
+
+.TP
+\fB--inetd\fR
+Enables inetd mode.
+
+.SH "EXAMPLES"
+Here is an example of a roarmonhttp listening on port 8000 using inetd:
+ 8000 stream tcp nowait roard /usr/bin/roarmonhttp roarmonhttp --inetd
+
+.SH "SEE ALSO"
+\fBinetd\fR(8),
+\fBinetd.conf\fR(5),
+\fBroartips\fR(7),
+\fBlibroar\fR(7),
+\fBRoarAudio\fR(7).
+
+.SH "HISTORY"
+
+For history information see \fBRoarAudio\fR(7).
+
+.\" ll
