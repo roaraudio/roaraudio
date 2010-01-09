@@ -15,6 +15,9 @@ clean:
 	for i in ${SUBDIRS}; do cd $$i; $(MAKE) clean; cd ..; done;
 	for i in ${PLUGINS}; do cd $$i; $(MAKE) clean; cd ../..; done;
 
+distclean: clean
+	rm -f Makefile.conf config.log include/roaraudio/config.h
+
 new: clean all
 
 test: all
