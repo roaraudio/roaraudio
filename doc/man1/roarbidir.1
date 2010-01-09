@@ -1,0 +1,53 @@
+.\" roarbidir.1:
+
+.TH "roarbidir" "1" "January 2010" "RoarAudio" "System User's Manual: roarbidir"
+
+.SH NAME
+
+roarbidir \- Opens a bidirectional stream to RoarAudio's sound server
+
+.SH SYNOPSIS
+
+roarbidir [OPTIONS]... [IN_FILE]
+
+.SH DESCRIPTION
+
+Opens a bidirectional stream to RoarAudio's sound server.
+The data is read from stdin or the provideded file and send to stdout.
+
+.SH "OPTIONS"
+
+.TP
+\fB--server SERVER\fR
+Set server hostname
+
+.TP
+\fB--rate   RATE\fR
+Set sample rate
+
+.TP
+\fB--bits   BITS\fR
+Set bits per sample
+
+.TP
+\fB--chans  CHANNELS\fR
+Set number of channels
+
+.TP
+\fB--codec  CODEC\fR
+Set the codec
+
+.TP
+\fB--help\fR
+Show this help
+
+.SH "SEE ALSO"
+\fBroartips\fR(7),
+\fBlibroar\fR(7),
+\fBRoarAudio\fR(7).
+
+.SH "HISTORY"
+
+For history information see \fBRoarAudio\fR(7).
+
+.\" ll
