@@ -29,7 +29,12 @@ There are several important functions. This is a small list of the most importan
 
 .TP
 \fBOpening\fR
-\fBroar_vio_open_file\fR(3), \fBroar_vio_open_fh\fR(3), \fBroar_vio_open_stdio\fR(3)
+\fBroar_vio_open_file\fR(3), \fBroar_vio_open_fh\fR(3), \fBroar_vio_open_stdio\fR(3),
+\fBroar_vio_open_dstr\fR(3), \fBroar_vio_open_proto\fR(3).
+
+However there is a lot function that are important for opening files the most important
+function is \fBroar_vio_open_dstr\fR(3). It opens a stream based on URLs that can point
+to local files or files on remotge machines. It also can handle compression and encryption.
 
 .TP
 \fBClosing\fR
