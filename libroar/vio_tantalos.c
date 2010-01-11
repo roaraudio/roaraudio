@@ -34,7 +34,8 @@
 
 #include "libroar.h"
 
-int     roar_vio_open_tantalos    (struct roar_vio_calls * calls, struct roar_vio_calls * dst) {
+int     roar_vio_open_tantalos    (struct roar_vio_calls * calls, struct roar_vio_calls * dst,
+                                   char * key, struct roar_vio_defaults * odef) {
 #ifdef ROAR_HAVE_LIBSLP
  struct roar_slp_cookie   cookie;
  char * url;
