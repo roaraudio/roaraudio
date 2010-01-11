@@ -106,6 +106,7 @@
 #include "vio_select.h"
 // dstr needs to have access to all other VIOs, so it must be included last
 #include "vio_dstr.h"
+#include "vio_tantalos.h"
 #include "client.h"
 #include "basic.h"
 #include "stream.h"
