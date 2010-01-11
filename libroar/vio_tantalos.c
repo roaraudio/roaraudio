@@ -34,4 +34,36 @@
 
 #include "libroar.h"
 
+int     roar_vio_open_tantalos    (struct roar_vio_calls * calls, struct roar_vio_calls * dst) {
+#ifdef ROAR_HAVE_LIBSLP
+ struct roar_slp_cookie   cookie;
+ char * url;
+ int i;
+
+ if ( roar_slp_cookie_init(&cookie, NULL) == -1 )
+  return -1;
+
+ if ( roar_slp_search(&cookie, ROAR_SLP_URL_TYPE_DOWNLOAD_HTTP) == -1 )
+  return -1;
+
+ for (i = 0; i < cookie.matchcount; i++) {
+  url = cookie.match[i].url + ROAR_SLP_URL_TYPE_DOWNLOAD_HTTP_LEN - 4;
+ }
+
+ return -1;
+#else
+ return -1;
+#endif
+}
+
+#ifdef ROAR_HAVE_LIBSLP
+ssize_t roar_vio_tantalos_read    (struct roar_vio_calls * vio, void *buf, size_t count);
+ssize_t roar_vio_tantalos_write   (struct roar_vio_calls * vio, void *buf, size_t count);
+off_t   roar_vio_tantalos_lseek   (struct roar_vio_calls * vio, off_t offset, int whence);
+int     roar_vio_tantalos_nonblock(struct roar_vio_calls * vio, int state);
+int     roar_vio_tantalos_sync    (struct roar_vio_calls * vio);
+int     roar_vio_tantalos_ctl     (struct roar_vio_calls * vio, int cmd, void * data);
+int     roar_vio_tantalos_close   (struct roar_vio_calls * vio);
+#endif
+
 //ll

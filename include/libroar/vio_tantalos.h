@@ -37,6 +37,9 @@
 
 #include "libroar.h"
 
+#define ROAR_SLP_URL_TYPE_DOWNLOAD_HTTP     "service:download.fellig:http"
+#define ROAR_SLP_URL_TYPE_DOWNLOAD_HTTP_LEN 28
+
 int     roar_vio_open_tantalos    (struct roar_vio_calls * calls, struct roar_vio_calls * dst);
 ssize_t roar_vio_tantalos_read    (struct roar_vio_calls * vio, void *buf, size_t count);
 ssize_t roar_vio_tantalos_write   (struct roar_vio_calls * vio, void *buf, size_t count);
