@@ -34,11 +34,13 @@
 
 #include "libroar.h"
 
+#define _LEN 1024
+
 int     roar_vio_open_tantalos    (struct roar_vio_calls * calls, struct roar_vio_calls * dst,
                                    char * key, struct roar_vio_defaults * odef) {
 #ifdef ROAR_HAVE_LIBSLP
  struct roar_slp_cookie   cookie;
- char * url;
+ char url[_LEN];
  int i;
 
  if ( roar_slp_cookie_init(&cookie, NULL) == -1 )
@@ -48,7 +50,13 @@ int     roar_vio_open_tantalos    (struct roar_vio_calls * calls, struct roar_vi
   return -1;
 
  for (i = 0; i < cookie.matchcount; i++) {
-  url = cookie.match[i].url + ROAR_SLP_URL_TYPE_DOWNLOAD_HTTP_LEN - 4;
+  strncpy(url, cookie.match[i].url + ROAR_SLP_URL_TYPE_DOWNLOAD_HTTP_LEN - 4, _LEN);
+  strcat(url, key);
+
+  ROAR_DBG("roar_vio_open_tantalos(*): url='%s'");
+
+  if ( roar_vio_open_dstr(calls, url, odef, 1) == 0 )
+   return 0;
  }
 
  return -1;
