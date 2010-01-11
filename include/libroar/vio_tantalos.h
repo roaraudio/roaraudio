@@ -42,13 +42,6 @@
 
 int     roar_vio_open_tantalos    (struct roar_vio_calls * calls, struct roar_vio_calls * dst,
                                    char * key, struct roar_vio_defaults * odef);
-ssize_t roar_vio_tantalos_read    (struct roar_vio_calls * vio, void *buf, size_t count);
-ssize_t roar_vio_tantalos_write   (struct roar_vio_calls * vio, void *buf, size_t count);
-off_t   roar_vio_tantalos_lseek   (struct roar_vio_calls * vio, off_t offset, int whence);
-int     roar_vio_tantalos_nonblock(struct roar_vio_calls * vio, int state);
-int     roar_vio_tantalos_sync    (struct roar_vio_calls * vio);
-int     roar_vio_tantalos_ctl     (struct roar_vio_calls * vio, int cmd, void * data);
-int     roar_vio_tantalos_close   (struct roar_vio_calls * vio);
 
 #endif
 
