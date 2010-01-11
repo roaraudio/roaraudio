@@ -53,10 +53,12 @@ int     roar_vio_open_tantalos    (struct roar_vio_calls * calls, struct roar_vi
   strncpy(url, cookie.match[i].url + ROAR_SLP_URL_TYPE_DOWNLOAD_HTTP_LEN - 4, _LEN);
   strcat(url, key);
 
-  ROAR_DBG("roar_vio_open_tantalos(*): url='%s'");
+  ROAR_DBG("roar_vio_open_tantalos(*): url='%s'", url);
 
-  if ( roar_vio_open_dstr(calls, url, odef, 1) == 0 )
+  if ( roar_vio_open_dstr_vio(calls, url, odef, 1, NULL) == 0 )
    return 0;
+
+  memset(calls, 0, sizeof(*calls));
  }
 
  return -1;

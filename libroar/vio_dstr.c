@@ -125,6 +125,8 @@ grep '^#define ROAR_VIO_DSTR_OBJT_' vio_dstr.h | cut -d' ' -f2 | while read objt
 
  {ROAR_VIO_DSTR_OBJT_MAGIC,      "magic",
       {ROAR_VIO_DEF_TYPE_EOL}},
+ {ROAR_VIO_DSTR_OBJT_TANTALOS,   "tantalos",
+      {ROAR_VIO_DEF_TYPE_EOL}},
 
  {ROAR_VIO_DSTR_OBJT_INTERNAL, "INTERNAL",
       {ROAR_VIO_DEF_TYPE_FILE, ROAR_VIO_DEF_TYPE_SOCKET, ROAR_VIO_DEF_TYPE_FH, ROAR_VIO_DEF_TYPE_SOCKETFH,
@@ -399,6 +401,7 @@ int     roar_vio_dstr_set_defaults(struct roar_vio_dstr_chain * chain, int len, 
    case ROAR_VIO_DSTR_OBJT_SSL3:
    case ROAR_VIO_DSTR_OBJT_TLS:
    case ROAR_VIO_DSTR_OBJT_MAGIC:
+   case ROAR_VIO_DSTR_OBJT_TANTALOS:
      if ( tmp[0] )
       c->need_vio = 0;
 
@@ -687,6 +690,11 @@ int     roar_vio_dstr_build_chain(struct roar_vio_dstr_chain * chain, struct roa
     case ROAR_VIO_DSTR_OBJT_PGP_ENC:
     case ROAR_VIO_DSTR_OBJT_PGP_STORE:
       if ( roar_vio_open_pgp_store(tc, prev, ROAR_VIO_PGP_OPTS_NONE) == -1 ) {
+       _ret(-1);
+      }
+     break;
+    case ROAR_VIO_DSTR_OBJT_TANTALOS:
+      if ( roar_vio_open_tantalos(tc, prev, c->dst, c->def) == -1 ) {
        _ret(-1);
       }
      break;
