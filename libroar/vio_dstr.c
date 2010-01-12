@@ -190,6 +190,8 @@ int     roar_vio_open_default (struct roar_vio_calls * calls, struct roar_vio_de
   return -1;
 
  switch (def->type) {
+  case ROAR_VIO_DEF_TYPE_NONE:
+   break;
   case ROAR_VIO_DEF_TYPE_FILE:
     if ( roar_vio_open_file(calls, def->d.file, def->o_flags, def->o_mode) == -1 )
      return -1;
@@ -401,11 +403,14 @@ int     roar_vio_dstr_set_defaults(struct roar_vio_dstr_chain * chain, int len, 
    case ROAR_VIO_DSTR_OBJT_SSL3:
    case ROAR_VIO_DSTR_OBJT_TLS:
    case ROAR_VIO_DSTR_OBJT_MAGIC:
-   case ROAR_VIO_DSTR_OBJT_TANTALOS:
      if ( tmp[0] )
       c->need_vio = 0;
 
      next->def = c->def;
+    break;
+   case ROAR_VIO_DSTR_OBJT_TANTALOS:
+     next->def = &(next->store_def);
+     roar_vio_dstr_init_defaults_c(next->def, ROAR_VIO_DEF_TYPE_NONE, NULL, -1);
     break;
    case ROAR_VIO_DSTR_OBJT_FILE:
      if ( c->dst == NULL ) /* should we allow multible cascaed file: objects? */
