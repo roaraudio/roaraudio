@@ -1,0 +1,36 @@
+#!/bin/sh
+
+NAME='pacat'
+RNAME='roarcat'
+
+ARGS_IGNORE_OPTS='-p:false --playback:false'
+ARGS_PASS_OPTS='-h:false --help:false -s:true'
+ARGS_MAP_OPTS='--version:false:--help'
+ARGS_DEEQ_OPTS='--server --rate --channels'
+ARGS_PASS_NON_OPTS=true
+
+cat <<COMMENT > /dev/null
+pacat [options]
+
+  -r, --record                          Create a connection for recording
+
+  -v, --verbose                         Enable verbose operations
+
+  -d, --device=DEVICE                   The name of the sink/source to connect to
+  -n, --client-name=NAME                How to call this client on the server
+      --stream-name=NAME                How to call this stream on the server
+      --volume=VOLUME                   Specify the initial (linear) volume in range 0...65536
+      --format=SAMPLEFORMAT             The sample type, one of s16le, s16be, u8, float32le,
+                                        float32be, ulaw, alaw (defaults to s16ne)
+      --channel-map=CHANNELMAP          Channel map to use instead of the default
+      --fix-format                      Take the sample format from the sink the stream is
+                                        being connected to.
+      --fix-rate                        Take the sampling rate from the sink the stream is
+                                        being connected to.
+      --fix-channels                    Take the number of channels and the channel map
+                                        from the sink the stream is being connected to.
+      --no-remix                        Don't upmix or downmix channels.
+      --no-remap                        Map channels by index instead of name.
+COMMENT
+
+#ll
