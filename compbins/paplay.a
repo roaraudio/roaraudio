@@ -1,0 +1,20 @@
+#!/bin/sh
+
+NAME='paplay'
+RNAME='roarcatplay'
+
+ARGS_PASS_OPTS='-h:false --help:false -s:true --verbose:false'
+ARGS_MAP_OPTS='--version:false:--help -v:false:--verbose'
+ARGS_DEEQ_OPTS='--server'
+ARGS_PASS_NON_OPTS=true
+
+cat <<COMMENT > /dev/null
+paplay [options] [FILE]
+  -d, --device=DEVICE                   The name of the sink to connect to
+  -n, --client-name=NAME                How to call this client on the server
+      --stream-name=NAME                How to call this stream on the server
+      --volume=VOLUME                   Specify the initial (linear) volume in range 0...65536
+      --channel-map=CHANNELMAP          Set the channel map to the use
+COMMENT
+
+#ll
