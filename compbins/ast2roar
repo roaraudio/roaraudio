@@ -65,6 +65,14 @@ _E_O_F_
   echo '  ;;';
  done
 
+ for o in $ARGS_DEEQ_OPTS
+ do
+  echo "  '$o='*)";
+  echo '   _para=`echo "$k" | cut -d= -f2`;';
+  echo '   _args="$_args '"$o"' $_para";';
+  echo '  ;;';
+ done
+
  cat <<_E_O_F_
   '-'*)
    echo "Unknown option" >&2;
