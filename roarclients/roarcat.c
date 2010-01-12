@@ -166,7 +166,7 @@ int main (int argc, char * argv[]) {
    break;
  }
 
- if ( roar_simple_connect(&con, server, "roarcat") == -1 ) {
+ if ( roar_simple_connect(&con, server, name) == -1 ) {
   fprintf(stderr, "Error: can not connect to server\n");
   return 10;
  }
