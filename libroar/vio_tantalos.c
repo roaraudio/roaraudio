@@ -36,21 +36,50 @@
 
 #define _LEN 1024
 
+static struct roar_slp_cookie * roar_vio_open_get_cookie (int reinit) {
+ static struct roar_slp_cookie   cookie;
+ static int inited = 0;
+
+ if ( !inited ) {
+  if ( roar_slp_cookie_init(&cookie, NULL) == -1 )
+   return NULL;
+  inited++;
+ }
+
+ return &cookie;
+}
+
 int     roar_vio_open_tantalos    (struct roar_vio_calls * calls, struct roar_vio_calls * dst,
                                    char * key, struct roar_vio_defaults * odef) {
 #ifdef ROAR_HAVE_LIBSLP
- struct roar_slp_cookie   cookie;
+ struct roar_slp_cookie * cookie;
  char url[_LEN];
  int i;
+ int need_search = 0;
+ time_t now = time(NULL);
 
- if ( roar_slp_cookie_init(&cookie, NULL) == -1 )
+ if ( (cookie = roar_vio_open_get_cookie(0)) == NULL )
   return -1;
 
- if ( roar_slp_search(&cookie, ROAR_SLP_URL_TYPE_DOWNLOAD_HTTP) == -1 )
-  return -1;
+ if ( cookie->matchcount == 0 ) {
+  need_search++;
+ } else {
+  for (i = 0; i < cookie->matchcount; i++) {
+   if ( cookie->match[i].tod < now ) {
+    need_search++;
+   }
+  }
+ }
 
- for (i = 0; i < cookie.matchcount; i++) {
-  strncpy(url, cookie.match[i].url + ROAR_SLP_URL_TYPE_DOWNLOAD_HTTP_LEN - 4, _LEN);
+ if ( need_search ) {
+  if ( (cookie = roar_vio_open_get_cookie(1)) == NULL )
+   return -1;
+  if ( roar_slp_search(cookie, ROAR_SLP_URL_TYPE_DOWNLOAD_HTTP) == -1 )
+   return -1;
+ }
+
+ for (i = 0; i < cookie->matchcount; i++) {
+  strncpy(url, cookie->match[i].url + ROAR_SLP_URL_TYPE_DOWNLOAD_HTTP_LEN - 4, _LEN);
   strcat(url, key);
 
   ROAR_DBG("roar_vio_open_tantalos(*): url='%s'", url);
