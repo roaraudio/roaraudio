@@ -132,7 +132,7 @@ int main (int argc, char * argv[]) {
  int    type     = parse_type(NULL);
  int    tmp;
  char * server   = NULL;
- char * remote   = NULL;
+ char * remote   = "+slp"; // we hope SLP located server is not local one
  char * k;
  int    rfh;
  int    i;
