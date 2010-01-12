@@ -1,5 +1,5 @@
 v. 0.3beta3 - ?
-	* added some aRts/NAS/YIFF tools to compbins
+	* added some aRts/NAS/YIFF/PulseAudio tools to compbins
 	* added support for comp libs to roar-config
 	* added support for uni-directional streams in roarinterconnect
 	* write much better support for config, including codec config
