@@ -1,14 +1,25 @@
 Server:
-ROAR_DRIVER
-ROAR_DEVICE
+ROAR_DRIVER	by server init
+ROAR_DEVICE	by server init
+DMX		by dmx driver
 
 Client:
-ROAR_PROXY
-socks_proxy
-http_proxy
-https_proxy
-ssh_proxy
+ROAR_PROXY	by sockets
+socks_proxy	by sockets
+http_proxy	by sockets
+https_proxy	by sockets
+ssh_proxy	by sockets
+TERM		by password API
+DISPLAY		by password API
+CDDA_DEVICE	by CDDA API
 
 Both:
-HOME
-ROAR_SERVER
+HOME		by basic API, autodetection
+ROAR_SERVER	by basic API, server init
+ROAR_OPTIONS	by config API
+USER		by sockets, autodetection
+
+Compatibility layers:
+AUDIODEVICE	by sndio
+MIDIDEVICE	by sndio
+PULSE_SERVER	by pulseaudio
