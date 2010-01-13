@@ -152,6 +152,7 @@ void usage (void) {
         " -b  --bind            - IP/Hostname to bind to\n"
         "     --sock            - Filename for UNIX Domain Socket\n"
         "     --proto PROTO     - Use PROTO as protocol on Socket\n"
+        "     --list-proto      - List supported protocols\n"
         "     --new-sock        - Parameters for new socket follows\n"
 #ifdef ROAR_HAVE_LIBSLP
         "     --slp             - Enable OpenSLP support\n"
@@ -177,6 +178,16 @@ void usage (void) {
 // printf("\n Options:\n\n");
  printf("\n");
 }
+
+static void list_proto (void) {
+ printf("  Protocol Flag Subsys - Description\n");
+ printf("------------------------------------------------------\n");
+ printf("  roar          WM LRX - RoarAudio native protocol\n");
+#if !defined(ROAR_WITHOUT_DCOMP_EMUL_ESD) && defined(ROAR_HAVE_H_ESD)
+ printf("  esd           W      - EsounD emulation\n");
+#endif
+}
+
 #endif
 
 int restart_server (char * server, int terminate) {
@@ -1297,6 +1308,9 @@ int main (void) {
     return 1;
    }
 #endif
+  } else if ( strcmp(k, "--list-proto") == 0 ) {
+   list_proto();
+   return 0;
 
   } else if ( strcmp(k, "-t") == 0 || strcmp(k, "--tcp") == 0 ) {
 #ifdef ROAR_SUPPORT_LISTEN
