@@ -1,4 +1,4 @@
-//roar.h:
+//mixer.c:
 
 /*
  *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2010
@@ -32,30 +32,6 @@
  *  them with any software that uses libesd, libartsc or libpulse*.
  */
 
-#ifndef _ROARAUDIO_PLUGINS_ALSA_ROAR_H_
-#define _ROARAUDIO_PLUGINS_ALSA_ROAR_H_
-
-#include <roaraudio.h>
-#include <errno.h>
-#include <alsa/asoundlib.h>
-#include <alsa/pcm_external.h>
-#include <alsa/control_external.h>
-
-#define _as(x) (sizeof((x))/sizeof(*(x)))
-
-struct roar_alsa {
- struct roar_connection con;
-};
-
-struct roar_alsa_pcm {
- snd_pcm_ioplug_t       io;
- struct roar_alsa       roar;
- struct roar_audio_info info;
- struct roar_stream     stream;
- struct roar_vio_calls  stream_vio;
- int                    stream_opened;
-};
-
-#endif
+#include "roar.h"
 
 //ll
