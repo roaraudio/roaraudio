@@ -134,7 +134,19 @@ void on_sig_usr1 (int signum);
 
 #ifdef ROAR_SUPPORT_LISTEN
 int g_listen_socket[ROAR_MAX_LISTEN_SOCKETS];
-int g_listen_proto[ROAR_MAX_LISTEN_SOCKETS];
+//int g_listen_proto[ROAR_MAX_LISTEN_SOCKETS];
+struct {
+ int socket;
+ int proto;
+ union {
+  void * vp;
+  int    si;
+  struct {
+   int                    dir;
+   struct roar_audio_info info;
+  } stpl;
+ } inst;
+} g_listen[ROAR_MAX_LISTEN_SOCKETS];
 #endif
 
 int g_self_client;

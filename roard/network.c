@@ -64,7 +64,7 @@ int net_check_listen  (void) {
   for (i = 0; i < ROAR_MAX_LISTEN_SOCKETS; i++) {
    if ( g_listen_socket[i] != -1 ) {
     if ( FD_ISSET(g_listen_socket[i], &sl) ) {
-     if ( net_get_new_client(g_listen_socket[i], g_listen_proto[i]) == -1 )
+     if ( net_get_new_client(g_listen_socket[i], g_listen[i].proto) == -1 )
       return -1;
     }
    }

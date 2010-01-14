@@ -268,9 +268,11 @@ int init_config (void) {
 int init_listening (void) {
  int i;
 
+ memset(g_listen, 0, sizeof(g_listen));
+
  for (i = 0; i < ROAR_MAX_LISTEN_SOCKETS; i++) {
   g_listen_socket[i] = -1;
-  g_listen_proto[i]  = ROAR_PROTO_ROARAUDIO;
+  g_listen[i].proto  = ROAR_PROTO_ROARAUDIO;
   server[i]          = NULL;
  }
 
@@ -302,7 +304,7 @@ int add_listen (char * addr, int port, int sock_type, char * user, char * group,
   if ( sockid == -1 )
    return -1;
 
-  g_listen_proto[sockid] = proto;
+  g_listen[sockid].proto = proto;
 
   ROAR_DBG("add_listen(*): proto=0x%.4x", proto);
 
