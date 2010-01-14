@@ -271,7 +271,7 @@ int init_listening (void) {
  memset(g_listen, 0, sizeof(g_listen));
 
  for (i = 0; i < ROAR_MAX_LISTEN_SOCKETS; i++) {
-  g_listen_socket[i] = -1;
+  g_listen[i].socket = -1;
   g_listen[i].proto  = ROAR_PROTO_ROARAUDIO;
   server[i]          = NULL;
  }
@@ -295,7 +295,7 @@ int add_listen (char * addr, int port, int sock_type, char * user, char * group,
 
  if ( *addr != 0 ) {
   for (i = 0; i < ROAR_MAX_LISTEN_SOCKETS; i++) {
-   if ( g_listen_socket[i] == -1 ) {
+   if ( g_listen[i].socket == -1 ) {
     sockid = i;
     break;
    }
@@ -308,7 +308,7 @@ int add_listen (char * addr, int port, int sock_type, char * user, char * group,
 
   ROAR_DBG("add_listen(*): proto=0x%.4x", proto);
 
-  if ( (g_listen_socket[sockid] = roar_socket_listen(sock_type, addr, port)) == -1 ) {
+  if ( (g_listen[sockid].socket = roar_socket_listen(sock_type, addr, port)) == -1 ) {
 #ifdef ROAR_HAVE_UNIX
    if ( *addr == '/' ) {
     if ( (env_roar_proxy_backup = getenv("ROAR_PROXY")) != NULL ) {
@@ -321,7 +321,7 @@ int add_listen (char * addr, int port, int sock_type, char * user, char * group,
      return 1;
     } else {
      unlink(addr);
-     if ( (g_listen_socket[sockid] = roar_socket_listen(sock_type, addr, port)) == -1 ) {
+     if ( (g_listen[sockid].socket = roar_socket_listen(sock_type, addr, port)) == -1 ) {
       ROAR_ERR("Can not open listen socket: %s", strerror(errno));
       return 1;
      }
@@ -1664,12 +1664,12 @@ void cleanup_listen_socket (int terminate) {
 
 #ifdef ROAR_SUPPORT_LISTEN
  for (i = 0; i < ROAR_MAX_LISTEN_SOCKETS; i++) {
-  if ( g_listen_socket[i] != -1 ) {
+  if ( g_listen[i].socket != -1 ) {
 #ifdef ROAR_HAVE_IO_POSIX
-   close(g_listen_socket[i]);
+   close(g_listen[i].socket);
 #endif // #else is useless because we are in void context.
 
-   g_listen_socket[i] = -1;
+   g_listen[i].socket = -1;
 
 #ifdef ROAR_HAVE_UNIX
    if ( server[i] != NULL )

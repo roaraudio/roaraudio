@@ -64,7 +64,7 @@ int main_loop (int driver, DRIVER_USERDATA_T driver_inst, struct roar_audio_info
 #ifdef ROAR_SUPPORT_LISTEN
   have_listen = 0;
   for (i = 0; i < ROAR_MAX_LISTEN_SOCKETS; i++) {
-   if ( g_listen_socket[i] != -1 ) {
+   if ( g_listen[i].socket != -1 ) {
     have_listen = 1;
     break;
    }

@@ -45,11 +45,11 @@ int net_check_listen  (void) {
  FD_ZERO(&sl);
 
  for (i = 0; i < ROAR_MAX_LISTEN_SOCKETS; i++) {
-  if ( g_listen_socket[i] != -1 ) {
-   if ( g_listen_socket[i] > max_fh )
-    max_fh = g_listen_socket[i];
+  if ( g_listen[i].socket != -1 ) {
+   if ( g_listen[i].socket > max_fh )
+    max_fh = g_listen[i].socket;
 
-   FD_SET(g_listen_socket[i], &sl);
+   FD_SET(g_listen[i].socket, &sl);
   }
  }
 
@@ -62,9 +62,9 @@ int net_check_listen  (void) {
  if ((r = select(max_fh + 1, &sl, NULL, NULL, &tv)) > 0) {
   ROAR_DBG("net_check_listen(void): We have a connection!");
   for (i = 0; i < ROAR_MAX_LISTEN_SOCKETS; i++) {
-   if ( g_listen_socket[i] != -1 ) {
-    if ( FD_ISSET(g_listen_socket[i], &sl) ) {
-     if ( net_get_new_client(g_listen_socket[i], g_listen[i].proto) == -1 )
+   if ( g_listen[i].socket != -1 ) {
+    if ( FD_ISSET(g_listen[i].socket, &sl) ) {
+     if ( net_get_new_client(g_listen[i].socket, g_listen[i].proto) == -1 )
       return -1;
     }
    }
