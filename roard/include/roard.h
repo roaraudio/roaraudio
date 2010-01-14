@@ -133,8 +133,6 @@ void on_sig_chld (int signum);
 void on_sig_usr1 (int signum);
 
 #ifdef ROAR_SUPPORT_LISTEN
-//int g_listen_socket[ROAR_MAX_LISTEN_SOCKETS];
-//int g_listen_proto[ROAR_MAX_LISTEN_SOCKETS];
 struct {
  int socket;
  int proto;
