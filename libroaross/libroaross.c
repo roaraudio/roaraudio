@@ -63,6 +63,10 @@
 #define REAL_LIBC ((void *) -1L)
 #endif
 
+#ifndef ENOTSUP
+#define ENOTSUP ENOSYS
+#endif
+
 #define OSS_VOLUME_SCALE 100
 
 #define _MAX_POINTER  8
