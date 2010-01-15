@@ -486,12 +486,13 @@ static inline int _ioctl_stream_format_list (void) {
 // mixer ioctls:
 // -------------------------------------
 
-static int _ioctl_mixer (struct handle * handle, long unsigned int req, int * ip) {
+static int _ioctl_mixer (struct handle * handle, long unsigned int req, void * vp) {
  int channels;
  struct roar_mixer_settings mixer;
  char * name = NULL;
  int o_w    =  0;
  int o_sid  = -1;
+ int * ip   = vp;
 
  switch (req) {
 #if 0
@@ -769,7 +770,7 @@ extern int ioctl (int __fd, unsigned long int __request, ...) {
      }
     break;
    case HT_MIXER:
-     return _ioctl_mixer(handle, __request, ip);
+     return _ioctl_mixer(handle, __request, argp);
     break;
    default:
      ROAR_DBG("ioctl(__fd=%i, __request=%lu): unknown handle type: no ioctl()s supported", __fd, (long unsigned int) __request);
