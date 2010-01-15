@@ -275,6 +275,18 @@ static int _open_file (const char *pathname, int flags) {
 
  handle->type = ptr->type;
 
+ switch (flags & (O_RDONLY|O_WRONLY|O_RDWR)) {
+  case O_RDONLY:
+    handle->stream_dir = ROAR_DIR_MONITOR;
+   break;
+  case O_WRONLY:
+    handle->stream_dir = ROAR_DIR_PLAY;
+   break;
+  case O_RDWR:
+    handle->stream_dir = ROAR_DIR_BIDIR;
+   break;
+ }
+
  if ( (pointer = _open_pointer(handle)) == NULL ) {
   _close_handle(handle);
   return -1;
