@@ -63,6 +63,8 @@
 #define REAL_LIBC ((void *) -1L)
 #endif
 
+#define OSS_VOLUME_SCALE 100
+
 #define _MAX_POINTER  8
 
 // handle type:
@@ -479,7 +481,6 @@ static int _ioctl_mixer (struct handle * handle, long unsigned int req, int * ip
   case SOUND_MIXER_PRIVATE5:         name = "SOUND_MIXER_PRIVATE5";         break;
   case OSS_GETVERSION:               name = "OSS_GETVERSION";               break;
   case SOUND_MIXER_READ_RECSRC:      name = "SOUND_MIXER_READ_RECSRC";      break;
-  case SOUND_MIXER_READ_RECMASK:     name = "SOUND_MIXER_READ_RECMASK";     break;
   case SOUND_MIXER_READ_STEREODEVS:  name = "SOUND_MIXER_READ_STEREODEVS";  break;
   case SOUND_MIXER_READ_CAPS:        name = "SOUND_MIXER_READ_CAPS";        break;
   case SOUND_MIXER_WRITE_RECSRC:     name = "SOUND_MIXER_WRITE_RECSRC";     break;
@@ -522,8 +523,8 @@ static int _ioctl_mixer (struct handle * handle, long unsigned int req, int * ip
   // set/get volume
   if ( o_w ) {
    mixer.scale    = 65535;
-   mixer.mixer[0] = ( *ip       & 0xFF)*65535/50;
-   mixer.mixer[1] = ((*ip >> 8) & 0xFF)*65535/50;
+   mixer.mixer[0] = ( *ip       & 0xFF)*65535/OSS_VOLUME_SCALE;
+   mixer.mixer[1] = ((*ip >> 8) & 0xFF)*65535/OSS_VOLUME_SCALE;
    if ( roar_set_vol(&(handle->session->con), o_sid, &mixer, 2) == -1 ) {
     errno = ENOSYS;
     return -1;
@@ -534,7 +535,7 @@ static int _ioctl_mixer (struct handle * handle, long unsigned int req, int * ip
     errno = ENOSYS;
     return -1;
    }
-   *ip = ((50*mixer.mixer[0])/mixer.scale) | (((50*mixer.mixer[0])/mixer.scale)<<8);
+   *ip = ((OSS_VOLUME_SCALE*mixer.mixer[0])/mixer.scale) | (((OSS_VOLUME_SCALE*mixer.mixer[0])/mixer.scale)<<8);
    return 0;
   }
  }
@@ -562,6 +563,10 @@ static int _ioctl_mixer (struct handle * handle, long unsigned int req, int * ip
     if ( _mix_settings.sid.digital3 != -1 )
      *ip |= SOUND_MASK_DIGITAL3;
 
+    return 0;
+   break;
+  case SOUND_MIXER_READ_RECMASK:
+    *ip = SOUND_MASK_VOLUME; // we can currently only read from mixer
     return 0;
    break;
  }
