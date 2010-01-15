@@ -92,6 +92,7 @@ static struct {
  int     (*close)(int fd);
  ssize_t (*write)(int fd, const void *buf, size_t count);
  ssize_t (*read)(int fd, void *buf, size_t count);
+ int     (*ioctl)(int d, int request, ...);
 } _os;
 
 static struct pointer {
@@ -106,6 +107,7 @@ static void _init_os (void) {
  _os.close = dlsym(REAL_LIBC, "close");
  _os.write = dlsym(REAL_LIBC, "write");
  _os.read  = dlsym(REAL_LIBC, "read");
+ _os.ioctl = dlsym(REAL_LIBC, "ioctl");
 }
 
 static void _init_ptr (void) {
@@ -409,6 +411,19 @@ ssize_t read(int fd, void *buf, size_t count) {
  }
 
  return _os.read(fd, buf, count);
+}
+
+extern int ioctl (int __fd, unsigned long int __request, ...) {
+ va_list args;
+ void *argp;
+
+ _init();
+
+ va_start (args, __request);
+ argp = va_arg (args, void *);
+ va_end (args);
+
+ return _os.ioctl(__fd, __request, argp);
 }
 
 #endif
