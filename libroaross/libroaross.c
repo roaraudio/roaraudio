@@ -340,6 +340,7 @@ static int _open_file (const char *pathname, int flags) {
   int type;
  } * ptr = NULL, p[] = {
   {"/dev/dsp",   HT_STREAM},
+  {"/dev/audio", HT_STREAM},
   {"/dev/mixer", HT_MIXER},
   {NULL, HT_NONE},
  };
