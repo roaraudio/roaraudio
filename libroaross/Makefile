@@ -9,8 +9,8 @@ OBJS=libroaross.o
 DEFINES        = -DDEBUG
 INCLUDE = -I../include -I../include/libroar
 CFLAGS += -g -Wall -O2 $(DEFINES) $(INCLUDE) $(INCPATH) $(SHARED_CF) $(fPIC)
-LDFLAGS = -g $(SHARED) $(LDPATH)
-LIBS    = $(LIBROAR) -ldl
+LDFLAGS = -g $(SHARED) $(LDPATH) -L../lib
+LIBS    = $(LIBROAR) $(lib_dl)
 
 all: ${TARGETS}
 	rm -f ../lib/${SLIB} 2> /dev/null || true
