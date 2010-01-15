@@ -3,7 +3,7 @@ include Makefile.inc
 
 COMP_LIB=$(subdir_libroaresd) $(subdir_libroarsndio) $(subdir_libroaryiff) $(subdir_libroarpulse) $(subdir_libroararts) $(subdir_libroaross)
 
-SUBDIRS=$(comp_libs) $(subdir_libroaresd) $(comp_roard) $(comp_clients) $(comp_doc) $(comp_comp_bins) $(subdir_libroarsndio) $(subdir_roarfish) $(subdir_libroaryiff) $(subdir_libroarpulse) $(subdir_libroararts) $(subdir_libroaross)
+SUBDIRS=$(comp_libs) $(comp_roard) $(comp_clients) $(comp_doc) $(comp_comp_bins) $(subdir_roarfish) $(COMP_LIB)
 
 PLUGINS=$(subdir_plugins_ao) $(subdir_plugins_xmms) $(subdir_plugins_audacious)
 
