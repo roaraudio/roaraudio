@@ -156,6 +156,38 @@ static void _init (void) {
  }
 }
 
+static void _find_volume_sid (struct session * session) {
+ int i;
+ int num;
+ int id[ROAR_STREAMS_MAX];
+ struct roar_stream s;
+ char name[1024];
+
+ ROAR_DBG("_find_volume_sid(session=%p) = ?", session);
+
+ if ( (num = roar_list_streams(&(session->con), id, ROAR_STREAMS_MAX)) == -1 ) {
+  return;
+ }
+
+ for (i = 0; i < num; i++) {
+  if ( roar_get_stream(&(session->con), &s, id[i]) == -1 )
+   continue;
+
+  if ( s.dir != ROAR_DIR_MIXING )
+   continue;
+
+  if ( roar_stream_get_name(&(session->con), &s, name, 1024) == -1 )
+   continue;
+
+  if ( !strcasecmp(name, "Waveform Mixer") ) {
+   _mix_settings.sid.volume = id[i];
+   ROAR_DBG("_find_volume_sid(session=%p): found waveform mixer at sid %i", session, id[i]);
+   ROAR_DBG("_find_volume_sid(session=%p) = (void)", session);
+   return;
+  }
+ }
+}
+
 static int _open_dummy (void) {
  int p[2];
 
@@ -175,6 +207,8 @@ static struct session * _open_session (char * server, char * name) {
 
   if ( roar_simple_connect(&(_session.con), server, name) == -1 )
    return NULL;
+
+  _find_volume_sid(&_session);
  }
 
  _session.refc++;
