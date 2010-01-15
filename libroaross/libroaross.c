@@ -237,14 +237,38 @@ static void _close_pointer(struct pointer * pointer) {
 }
 
 // -------------------------------------
+// central open function:
+// -------------------------------------
+
+static int _open_file (const char *pathname, int flags) {
+ return -1;
+}
+
+// -------------------------------------
 // emulated functions follow:
 // -------------------------------------
 
 int     open(const char *pathname, int flags, ...) {
- mode_t mode = 0;
+ int     ret;
+ mode_t  mode = 0;
  va_list args;
 
  _init();
+
+ _os.write(1, "DOOF!\n", 6);
+
+ ret = _open_file(pathname, flags);
+
+ switch (ret) {
+  case -2:       // continue as normal, use _op.open()
+   break;
+  case -1:       // pass error to caller
+    return -1;
+   break;
+  default:       // return successfully opened pointer to caller
+    return ret;
+   break;
+ }
 
  if (flags & O_CREAT) {
   va_start(args, flags);
