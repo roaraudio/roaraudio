@@ -35,15 +35,30 @@
 #include "libroar.h"
 
 int roar_stream_connect (struct roar_connection * con, struct roar_stream * s, int dir) {
+ struct roar_libroar_config * config = roar_libroar_get_config();
+ struct roar_stream  ms;
  struct roar_message m;
 
  s->dir = dir;
+
+ memcpy(&ms, s, sizeof(ms));
 
  m.cmd     = ROAR_CMD_NEW_STREAM;
  m.stream  = -1;
  m.pos     = 0;
 
- roar_stream_s2m(s, &m);
+ if ( config != NULL ) {
+  if ( config->info.rate )
+   ms.info.rate = config->info.rate;
+  if ( config->info.bits )
+   ms.info.bits = config->info.bits;
+  if ( config->info.channels )
+   ms.info.channels = config->info.channels;
+  if ( config->info.codec )
+   ms.info.codec = config->info.codec;
+ }
+
+ roar_stream_s2m(&ms, &m);
 
  if ( roar_req(con, &m, NULL) != 0 )
   return -1;

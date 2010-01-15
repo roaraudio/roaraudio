@@ -90,6 +90,7 @@ struct roar_libroar_config {
   size_t num;
   struct roar_libroar_config_codec * codec;
  } codecs;
+ struct roar_audio_info info;
 };
 
 struct roar_libroar_config * roar_libroar_get_config_ptr(void);

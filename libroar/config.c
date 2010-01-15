@@ -217,6 +217,14 @@ int    roar_libroar_config_parse(char * txt, char * delm) {
    } else {
     ROAR_WARN("roar_libroar_config_parse(*): Unknown warning option: %s", v);
    }
+  } else if ( !strcmp(k, "force-rate") ) {
+   config->info.rate = atoi(v);
+  } else if ( !strcmp(k, "force-bits") ) {
+   config->info.bits = atoi(v);
+  } else if ( !strcmp(k, "force-channels") ) {
+   config->info.channels = atoi(v);
+  } else if ( !strcmp(k, "force-codec") ) {
+   config->info.codec = roar_str2codec(v);
   } else if ( !strcmp(k, "codec") ) {
    if ( roar_libroar_config_parse_codec(config, v) == -1 ) {
     ROAR_WARN("roar_libroar_config_parse(*): Error parsing codec config option");
