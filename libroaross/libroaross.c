@@ -71,6 +71,10 @@
 #define IOCTL_IS_ALIAS
 #endif
 
+#ifdef ROAR_OS_FREEBSD
+#define mode_t int
+#endif
+
 #define OSS_VOLUME_SCALE 100
 
 #define _MAX_POINTER  8
