@@ -78,10 +78,16 @@
 #ifdef ROAR_OS_NETBSD
 #define IOCTL() int _oss_ioctl __P((int fd, unsigned long com, void *argp))
 #define map_args int __fd = fd; unsigned long int __request = com
+#elif defined(ROAR_TARGET_CYGWIN)
+#define IOCTL() int ioctl (int __fd, int __cmd, ...)
+#define map_args unsigned long int __request = __cmd; void * argp
+#define va_argp
+#define ioctl_lastarg __cmd
 #else
 #define IOCTL() int ioctl (int __fd, unsigned long int __request, ...)
 #define map_args void * argp
 #define va_argp
+#define ioctl_lastarg __request
 #endif
 
 #define OSS_VOLUME_SCALE 100
@@ -816,7 +822,7 @@ IOCTL() {
 // ROAR_DBG("ioctl(__fd=%i, __request=%lu) = ?", __fd, (long unsigned int) __request);
 
 #ifdef va_argp
- va_start (args, __request);
+ va_start (args, ioctl_lastarg);
  argp = va_arg (args, void *);
  va_end (args);
 #endif
