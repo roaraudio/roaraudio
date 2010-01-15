@@ -480,10 +480,8 @@ static int _ioctl_mixer (struct handle * handle, long unsigned int req, int * ip
   case SOUND_MIXER_PRIVATE4:         name = "SOUND_MIXER_PRIVATE4";         break;
   case SOUND_MIXER_PRIVATE5:         name = "SOUND_MIXER_PRIVATE5";         break;
   case OSS_GETVERSION:               name = "OSS_GETVERSION";               break;
-  case SOUND_MIXER_READ_RECSRC:      name = "SOUND_MIXER_READ_RECSRC";      break;
   case SOUND_MIXER_READ_STEREODEVS:  name = "SOUND_MIXER_READ_STEREODEVS";  break;
   case SOUND_MIXER_READ_CAPS:        name = "SOUND_MIXER_READ_CAPS";        break;
-  case SOUND_MIXER_WRITE_RECSRC:     name = "SOUND_MIXER_WRITE_RECSRC";     break;
 /*
   case :     name = "";     break;
 */
@@ -566,8 +564,17 @@ static int _ioctl_mixer (struct handle * handle, long unsigned int req, int * ip
     return 0;
    break;
   case SOUND_MIXER_READ_RECMASK:
+  case SOUND_MIXER_READ_RECSRC:
     *ip = SOUND_MASK_VOLUME; // we can currently only read from mixer
     return 0;
+   break;
+  case SOUND_MIXER_WRITE_RECSRC:
+    if ( *ip == SOUND_MASK_VOLUME ) {
+     return  0;
+    } else {
+     errno = ENOTSUP;
+     return -1;
+    }
    break;
  }
 
