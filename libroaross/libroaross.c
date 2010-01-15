@@ -83,6 +83,7 @@ struct handle {
  int type;
  struct roar_stream    stream;
  struct roar_vio_calls stream_vio;
+ int                   stream_dir;
  int                   stream_opened;
 };
 
@@ -156,6 +157,8 @@ static void _close_session(struct session * session) {
 
  session->refc--;
 
+ ROAR_DBG("_close_session(session=%p): session->refc=%i", session, session->refc);
+
  if ( session->refc == 0 ) {
   roar_disconnect(&(session->con));
  }
@@ -173,7 +176,8 @@ static struct handle * _open_handle(struct session * session) {
  handle->session = session;
  session->refc++; // TODO: better warp this
  handle->type = HT_NONE;
- roar_stream_new_empty(&(handle->stream));
+ handle->stream_dir = ROAR_DIR_PLAY;
+ roar_stream_new(&(handle->stream), ROAR_RATE_DEFAULT, ROAR_CHANNELS_DEFAULT, ROAR_BITS_DEFAULT, ROAR_CODEC_DEFAULT);
 
  return handle;
 }
@@ -184,18 +188,18 @@ static void _close_handle(struct handle * handle) {
 
  handle->refc--;
 
- if ( handle->refc == 0 ) {
-  _close_session(handle->session);
+ ROAR_DBG("_close_handle(handle=%p): handle->refc=%i", handle, handle->refc);
 
+ if ( handle->refc == 0 ) {
   if ( handle->stream_opened )
    roar_vio_close(&(handle->stream_vio));
 
+  handle->session->refc--;
+
+  _close_session(handle->session);
+
   roar_mm_free(handle);
  }
-}
-
-static int _open_stream (struct handle * handle) {
-  return -1;
 }
 
 static struct pointer * _get_pointer_by_fh (int fh) {
@@ -260,8 +264,6 @@ static int _open_file (const char *pathname, int flags) {
  if ( ptr == NULL )
   return -2;
 
- _os.write(1, "DOOF!\n", 6);
-
  if ( (session = _open_session(NULL, NULL)) == NULL ) {
   return -1;
  }
@@ -279,6 +281,31 @@ static int _open_file (const char *pathname, int flags) {
  }
 
  return pointer->fh;
+}
+
+// -------------------------------------
+// open function for streams:
+// -------------------------------------
+
+static int _open_stream (struct handle * handle) {
+  // FIXME: this should be re-written much more cleanly:
+
+ if ( handle == NULL )
+  return -1;
+
+ if ( roar_vio_simple_new_stream_obj(&(handle->stream_vio),
+                                     &(handle->session->con), &(handle->stream),
+                                     handle->stream.info.rate,
+                                     handle->stream.info.channels,
+                                     handle->stream.info.bits,
+                                     handle->stream.info.codec,
+                                     handle->stream_dir
+                                    ) == -1 )
+  return -1;
+
+ handle->stream_opened++;
+
+ return 0;
 }
 
 // -------------------------------------
