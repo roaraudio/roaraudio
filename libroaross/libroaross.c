@@ -494,11 +494,14 @@ static int _ioctl_mixer (struct handle * handle, long unsigned int req, void * v
  mixer_info * info;
  int channels;
  struct roar_mixer_settings mixer;
- char * name = NULL;
  int o_w    =  0;
  int o_sid  = -1;
  int * ip   = vp;
+#if defined(DEBUG) && defined(DEBUG_IOCTL_NAMES)
+ char * name = NULL;
+#endif
 
+#if defined(DEBUG) && defined(DEBUG_IOCTL_NAMES)
  switch (req) {
 #if 0
   case SNDCTL_MIX_DESCRIPTION: name = "SNDCTL_MIX_DESCRIPTION"; break;
@@ -535,6 +538,7 @@ static int _ioctl_mixer (struct handle * handle, long unsigned int req, void * v
   errno = ENOSYS;
   return -1;
  }
+#endif
 
  switch (req) {
   case SOUND_MIXER_READ_VOLUME:    o_w = 0; o_sid = _mix_settings.sid.volume;   break;
