@@ -379,10 +379,13 @@ static int _ioctl_stream_format (struct handle * handle, int format) {
     info->codec = ROAR_CODEC_OGG_VORBIS;
    break;
 #endif
+  default:
+    errno = ENOSYS;
+    return -1;
+   break;
  }
 
- errno = ENOSYS;
- return -1;
+ return 0;
 }
 
 // -------------------------------------
@@ -485,13 +488,18 @@ extern int ioctl (int __fd, unsigned long int __request, ...) {
 
  _init();
 
+ ROAR_DBG("ioctl(__fd=%i, __request=%lu) = ?", __fd, (long unsigned int) __request);
+
  va_start (args, __request);
  argp = va_arg (args, void *);
  va_end (args);
 
+ ROAR_DBG("ioctl(__fd=%i, __request=%lu): argp=%p", __fd, (long unsigned int) __request, argp);
+
  if ( (pointer = _get_pointer_by_fh(__fd)) != NULL ) {
+  ip = argp;
+  ROAR_DBG("ioctl(__fd=%i, __request=%lu): ip=%p", __fd, (long unsigned int) __request, ip);
   switch ((handle = pointer->handle)->type) {
-   ip = argp;
    case HT_STREAM:
      switch (__request) {
       case SNDCTL_DSP_RESET:
@@ -508,7 +516,13 @@ extern int ioctl (int __fd, unsigned long int __request, ...) {
       case SNDCTL_DSP_SETFMT:
         return _ioctl_stream_format(handle, *ip);
        break;
+      case SNDCTL_DSP_GETFMTS:
+        ROAR_DBG("ioctl(__fd=%i, __request=%lu): ip=%p", __fd, (long unsigned int) __request, ip);
+        *ip = AFMT_S8|AFMT_S16_LE;
+        return 0;
+       break;
       default:
+        ROAR_DBG("ioctl(__fd=%i, __request=%lu) = -1 // errno = ENOSYS", __fd, (long unsigned int) __request);
         errno = ENOSYS;
         return -1;
      }
