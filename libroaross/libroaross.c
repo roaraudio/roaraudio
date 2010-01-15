@@ -767,6 +767,10 @@ extern int ioctl (int __fd, unsigned long int __request, ...) {
         handle->stream.info.channels = *ip ? 2 : 1;
         return 0;
        break;
+      case SNDCTL_DSP_GETBLKSIZE:
+         *ip = handle->stream.info.rate * handle->stream.info.channels * handle->stream.info.bits / 800;
+        return 0;
+       break;
       case SNDCTL_DSP_SETFMT:
         return _ioctl_stream_format(handle, *ip);
        break;
