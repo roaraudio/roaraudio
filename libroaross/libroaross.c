@@ -456,7 +456,7 @@ static int _ioctl_mixer (struct handle * handle, long unsigned int req, int * ip
  int channels;
  struct roar_mixer_settings mixer;
  char * name = NULL;
- int o_w    = 0;
+ int o_w    =  0;
  int o_sid  = -1;
 
  switch (req) {
@@ -480,7 +480,6 @@ static int _ioctl_mixer (struct handle * handle, long unsigned int req, int * ip
   case SOUND_MIXER_PRIVATE4:         name = "SOUND_MIXER_PRIVATE4";         break;
   case SOUND_MIXER_PRIVATE5:         name = "SOUND_MIXER_PRIVATE5";         break;
   case OSS_GETVERSION:               name = "OSS_GETVERSION";               break;
-  case SOUND_MIXER_READ_STEREODEVS:  name = "SOUND_MIXER_READ_STEREODEVS";  break;
   case SOUND_MIXER_READ_CAPS:        name = "SOUND_MIXER_READ_CAPS";        break;
 /*
   case :     name = "";     break;
@@ -539,6 +538,7 @@ static int _ioctl_mixer (struct handle * handle, long unsigned int req, int * ip
  }
 
  switch (req) {
+  case SOUND_MIXER_READ_STEREODEVS: /* FIXME: check the streams for channel config */
   case SOUND_MIXER_READ_DEVMASK:
     *ip = 0;
 
