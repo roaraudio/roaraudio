@@ -144,12 +144,10 @@ static struct session * _open_session (char * server, char * name) {
 
   if ( roar_simple_connect(&(_session.con), server, name) == -1 )
    return NULL;
-
-  _session.refc++;
- } else {
-  _session.refc++;
-  return &_session;
  }
+
+ _session.refc++;
+ return &_session;
 }
 
 static void _close_session(struct session * session) {
@@ -241,7 +239,46 @@ static void _close_pointer(struct pointer * pointer) {
 // -------------------------------------
 
 static int _open_file (const char *pathname, int flags) {
- return -1;
+ struct session * session;
+ struct handle  * handle;
+ struct pointer * pointer;
+ struct {
+  char * prefix;
+  int type;
+ } * ptr = NULL, p[] = {
+  {"/dev/dsp", HT_STREAM},
+  {NULL, HT_NONE},
+ };
+ int i;
+
+ for (i = 0; p[i].prefix != NULL; i++) {
+  if ( !strcmp(pathname, p[i].prefix) ) {
+   ptr = &(p[i]);
+  }
+ }
+
+ if ( ptr == NULL )
+  return -2;
+
+ _os.write(1, "DOOF!\n", 6);
+
+ if ( (session = _open_session(NULL, NULL)) == NULL ) {
+  return -1;
+ }
+
+ if ( (handle = _open_handle(session)) == NULL ) {
+  _close_session(session);
+  return -1;
+ }
+
+ handle->type = ptr->type;
+
+ if ( (pointer = _open_pointer(handle)) == NULL ) {
+  _close_handle(handle);
+  return -1;
+ }
+
+ return pointer->fh;
 }
 
 // -------------------------------------
@@ -254,8 +291,6 @@ int     open(const char *pathname, int flags, ...) {
  va_list args;
 
  _init();
-
- _os.write(1, "DOOF!\n", 6);
 
  ret = _open_file(pathname, flags);
 
