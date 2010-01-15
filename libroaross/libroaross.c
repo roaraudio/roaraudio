@@ -767,6 +767,7 @@ IOCTL() {
  struct pointer * pointer;
  struct handle  * handle;
  int * ip = NULL;
+ audio_buf_info * bi;
 #ifdef va_argp
  va_list args;
 #endif
@@ -816,6 +817,16 @@ IOCTL() {
       case SNDCTL_DSP_GETFMTS:
 //        ROAR_DBG("ioctl(__fd=%i, __request=%lu): ip=%p", __fd, (long unsigned int) __request, ip);
         *ip = _ioctl_stream_format_list();
+        return 0;
+       break;
+      case SNDCTL_DSP_GETOSPACE:
+      case SNDCTL_DSP_GETISPACE:
+        bi = argp;
+        memset(bi, 0, sizeof(*bi));
+        bi->bytes      = handle->stream.info.rate * handle->stream.info.channels * handle->stream.info.bits / 800;
+        bi->fragments  = 1;
+        bi->fragsize   = bi->bytes;
+        bi->fragstotal = 1;
         return 0;
        break;
       default:
