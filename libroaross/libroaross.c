@@ -77,10 +77,10 @@
 
 #ifdef ROAR_OS_NETBSD
 #define IOCTL() int _oss_ioctl __P((int fd, unsigned long com, void *argp))
-#define map_args int __fd = fd; unsigned long int __request = com;
+#define map_args int __fd = fd; unsigned long int __request = com
 #else
 #define IOCTL() int ioctl (int __fd, unsigned long int __request, ...)
-#define map_args void * argp;
+#define map_args void * argp
 #define va_argp
 #endif
 
