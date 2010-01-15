@@ -108,6 +108,8 @@ struct handle {
  struct roar_vio_calls stream_vio;
  int                   stream_dir;
  int                   stream_opened;
+ size_t                stream_buffersize;
+ size_t                readc, writec;
 };
 
 static struct {
@@ -687,6 +689,19 @@ static int _ioctl_mixer (struct handle * handle, long unsigned int req, void * v
 }
 
 // -------------------------------------
+// buffer size calculation:
+// -------------------------------------
+
+static size_t _get_stream_buffersize (struct handle * handle) {
+ if ( handle->stream_buffersize )
+  return handle->stream_buffersize;
+
+ return handle->stream_buffersize = handle->stream.info.rate     *
+                                    handle->stream.info.channels *
+                                    handle->stream.info.bits     / 800;
+}
+
+// -------------------------------------
 // emulated functions follow:
 // -------------------------------------
 
@@ -733,6 +748,7 @@ int     close(int fd) {
 
 ssize_t write(int fd, const void *buf, size_t count) {
  struct pointer * pointer;
+ ssize_t ret;
 
  _init();
 
@@ -744,7 +760,10 @@ ssize_t write(int fd, const void *buf, size_t count) {
      return -1;
     }
    }
-   return roar_vio_write(&(pointer->handle->stream_vio), (char*)buf, count);
+   ret = roar_vio_write(&(pointer->handle->stream_vio), (char*)buf, count);
+   if ( ret > 0 )
+    pointer->handle->writec += ret;
+   return ret;
   } else {
    errno = EINVAL;
    return -1;
@@ -756,6 +775,7 @@ ssize_t write(int fd, const void *buf, size_t count) {
 
 ssize_t read(int fd, void *buf, size_t count) {
  struct pointer * pointer;
+ ssize_t ret;
 
  _init();
 
@@ -767,7 +787,10 @@ ssize_t read(int fd, void *buf, size_t count) {
      return -1;
     }
    }
-   return roar_vio_read(&(pointer->handle->stream_vio), buf, count);
+   ret = roar_vio_read(&(pointer->handle->stream_vio), buf, count);
+   if ( ret > 0 )
+    pointer->handle->writec += ret;
+   return ret;
   } else {
    errno = EINVAL;
    return -1;
@@ -783,6 +806,7 @@ IOCTL() {
  struct handle  * handle;
  int * ip = NULL;
  audio_buf_info * bi;
+ count_info     * ci;
 #ifdef va_argp
  va_list args;
 #endif
@@ -823,7 +847,7 @@ IOCTL() {
         return 0;
        break;
       case SNDCTL_DSP_GETBLKSIZE:
-         *ip = handle->stream.info.rate * handle->stream.info.channels * handle->stream.info.bits / 800;
+        *ip = _get_stream_buffersize(handle);
         return 0;
        break;
       case SNDCTL_DSP_SETFMT:
@@ -838,10 +862,26 @@ IOCTL() {
       case SNDCTL_DSP_GETISPACE:
         bi = argp;
         memset(bi, 0, sizeof(*bi));
-        bi->bytes      = handle->stream.info.rate * handle->stream.info.channels * handle->stream.info.bits / 800;
+        bi->bytes      = _get_stream_buffersize(handle);
         bi->fragments  = 1;
         bi->fragsize   = bi->bytes;
         bi->fragstotal = 1;
+        return 0;
+       break;
+      case SNDCTL_DSP_GETOPTR:
+        ci = argp;
+        memset(ci, 0, sizeof(*ci));
+        ci->bytes  = handle->writec;
+        ci->blocks = ci->bytes / _get_stream_buffersize(handle);
+        ci->ptr    = 0;
+        return 0;
+       break;
+      case SNDCTL_DSP_GETIPTR:
+        ci = argp;
+        memset(ci, 0, sizeof(*ci));
+        ci->bytes  = handle->readc;
+        ci->blocks = ci->bytes / _get_stream_buffersize(handle);
+        ci->ptr    = 0;
         return 0;
        break;
 #ifdef SNDCTL_DSP_GETPLAYVOL
