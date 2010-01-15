@@ -388,6 +388,35 @@ static int _ioctl_stream_format (struct handle * handle, int format) {
  return 0;
 }
 
+static inline int _ioctl_stream_format_list (void) {
+ int format = 0;
+
+ format |= AFMT_S8;
+ format |= AFMT_U8;
+
+ format |= AFMT_S16_BE;
+ format |= AFMT_S16_LE;
+
+ format |= AFMT_U16_BE;
+ format |= AFMT_U16_LE;
+
+#ifdef AFMT_S32_BE
+ format |= AFMT_S32_BE;
+#endif
+#ifdef AFMT_S32_LE
+ format |= AFMT_S32_LE;
+#endif
+
+ format |= AFMT_A_LAW;
+ format |= AFMT_MU_LAW;
+
+#ifdef AFMT_VORBIS
+ format |= AFMT_VORBIS;
+#endif
+
+ return format;
+}
+
 // -------------------------------------
 // emulated functions follow:
 // -------------------------------------
@@ -518,7 +547,7 @@ extern int ioctl (int __fd, unsigned long int __request, ...) {
        break;
       case SNDCTL_DSP_GETFMTS:
         ROAR_DBG("ioctl(__fd=%i, __request=%lu): ip=%p", __fd, (long unsigned int) __request, ip);
-        *ip = AFMT_S8|AFMT_S16_LE;
+        *ip = _ioctl_stream_format_list();
         return 0;
        break;
       default:
