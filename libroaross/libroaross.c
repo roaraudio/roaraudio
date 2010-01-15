@@ -55,6 +55,13 @@
 #endif
 
 #include <sys/stat.h>
+#include <dlfcn.h>
+
+#if defined(RTLD_NEXT)
+#define REAL_LIBC RTLD_NEXT
+#else
+#define REAL_LIBC ((void *) -1L)
+#endif
 
 #define _MAX_POINTER  8
 
@@ -84,6 +91,11 @@ static struct {
 
 static void _init_os (void) {
  memset(&_os, 0, sizeof(_os));
+
+ _os.open  = dlsym(REAL_LIBC, "open");
+ _os.close = dlsym(REAL_LIBC, "close");
+ _os.write = dlsym(REAL_LIBC, "write");
+ _os.read  = dlsym(REAL_LIBC, "read");
 }
 
 static void _init_ptr (void) {
