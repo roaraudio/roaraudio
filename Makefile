@@ -14,6 +14,7 @@ clean:
 	rm -f lib/* || true
 	for i in ${SUBDIRS}; do cd $$i; $(MAKE) clean; cd ..; done;
 	for i in ${PLUGINS}; do cd $$i; $(MAKE) clean; cd ../..; done;
+	cd tests/; $(MAKE) clean; cd ..;
 
 distclean: clean
 	rm -f Makefile.conf config.log include/roaraudio/config.h

@@ -5,14 +5,21 @@ CLIENTS=roar-config roarbidir roarcat roarcat2sock roarcatad roarcatpassfh roarc
 
 all:
 	echo Warning: There is nothing to build
-clean:
-	echo Warning: There is nothing to clean
+clean: sandbox-clean
 
 new: clean all
 
-test: test-runnable test-roard
+#test: sandbox-install test-all sandbox-clean
+test: test-all
+
+test-all: test-runnable test-roard
 
 test-runnable:
 	./test-runnable.sh "$(CLIENTS)"
 test-roard:
 	./test-roard.sh
+sandbox-install:
+	mkdir sandbox
+	sh -c 'cd ..; DESTDIR=`pwd`/tests/sandbox make install'
+sandbox-clean:
+	rm -rf sandbox/
