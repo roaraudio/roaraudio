@@ -233,6 +233,9 @@ static int _open_dummy (void) {
 }
 
 static struct session * _open_session (char * server, char * name) {
+ ROAR_DBG("_open_session(server='%s', name='%s') = ?", server, name);
+ ROAR_DBG("_open_session(server='%s', name='%s'): _session.refc=%i", server, name, _session.refc);
+
  if ( _session.refc == 0 ) {
 
   if ( name == NULL )
@@ -245,6 +248,8 @@ static struct session * _open_session (char * server, char * name) {
  }
 
  _session.refc++;
+
+ ROAR_DBG("_open_session(server='%s', name='%s') = %p", server, name, &_session);
  return &_session;
 }
 
@@ -264,6 +269,8 @@ static void _close_session(struct session * session) {
 static struct handle * _open_handle(struct session * session) {
  struct handle * handle;
 
+ ROAR_DBG("_open_handle(session=%p) = ?", session);
+
  if ( (handle = roar_mm_malloc(sizeof(struct handle))) == NULL )
   return NULL;
 
@@ -276,6 +283,7 @@ static struct handle * _open_handle(struct session * session) {
  handle->stream_dir = ROAR_DIR_PLAY;
  roar_stream_new(&(handle->stream), ROAR_RATE_DEFAULT, ROAR_CHANNELS_DEFAULT, ROAR_BITS_DEFAULT, ROAR_CODEC_DEFAULT);
 
+ ROAR_DBG("_open_handle(session=%p) = %p", session, handle);
  return handle;
 }
 
