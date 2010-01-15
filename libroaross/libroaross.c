@@ -95,6 +95,32 @@ static struct {
  int     (*ioctl)(int d, int request, ...);
 } _os;
 
+static struct {
+ struct {
+  int volume;
+  int pcm;
+  int line;
+  int line1;
+  int line2;
+  int line3;
+  int digital1;
+  int digital2;
+  int digital3;
+ } sid;
+} _mix_settings = {
+                   .sid = {
+                           .volume   = -1,
+                           .pcm      = -1,
+                           .line     =  0,
+                           .line1    =  1,
+                           .line2    =  2,
+                           .line3    =  3,
+                           .digital1 =  1,
+                           .digital2 =  2,
+                           .digital3 =  3
+                          }
+                  };
+
 static struct pointer {
  int fh;
  struct handle * handle;
@@ -252,7 +278,8 @@ static int _open_file (const char *pathname, int flags) {
   char * prefix;
   int type;
  } * ptr = NULL, p[] = {
-  {"/dev/dsp", HT_STREAM},
+  {"/dev/dsp",   HT_STREAM},
+  {"/dev/mixer", HT_MIXER},
   {NULL, HT_NONE},
  };
  int i;
@@ -318,6 +345,8 @@ static int _open_stream (struct handle * handle) {
   return -1;
 
  handle->stream_opened++;
+
+ _mix_settings.sid.pcm = roar_stream_get_id(&(handle->stream));
 
  return 0;
 }
@@ -415,6 +444,116 @@ static inline int _ioctl_stream_format_list (void) {
 #endif
 
  return format;
+}
+
+// -------------------------------------
+// mixer ioctls:
+// -------------------------------------
+
+static int _ioctl_mixer (struct handle * handle, long unsigned int req, int * ip) {
+ int channels;
+ struct roar_mixer_settings mixer;
+ char * name = NULL;
+ int o_w    = 0;
+ int o_sid  = -1;
+
+ switch (req) {
+#if 0
+  case SNDCTL_MIX_DESCRIPTION: name = "SNDCTL_MIX_DESCRIPTION"; break;
+  case SNDCTL_MIX_ENUMINFO:    name = "SNDCTL_MIX_ENUMINFO";    break;
+  case SNDCTL_MIX_EXTINFO:     name = "SNDCTL_MIX_EXTINFO";     break;
+  case SNDCTL_MIX_NREXT:       name = "SNDCTL_MIX_NREXT";       break;
+  case SNDCTL_MIX_NRMIX:       name = "SNDCTL_MIX_NRMIX";       break;
+  case SNDCTL_MIX_READ:        name = "SNDCTL_MIX_READ";        break;
+  case SNDCTL_MIX_WRITE:       name = "SNDCTL_MIX_WRITE";       break;
+#endif
+  case SOUND_MIXER_READ_DEVMASK: name = "SOUND_MIXER_READ_DEVMASK"; break;
+  case SOUND_MIXER_READ_PCM:     name = "SOUND_MIXER_READ_PCM";     break;
+  case SOUND_MIXER_WRITE_PCM:    name = "SOUND_MIXER_WRITE_PCM";    break;
+ }
+ if ( name != NULL ) {
+  ROAR_DBG("_ioctl_mixer(handle=%p, req=%lu, ip=%p): unspported mixer command %s", handle, req, ip, name);
+  ROAR_DBG("_ioctl_mixer(handle=%p, req=%lu, ip=%p) = -1 // errno = ENOSYS", handle, req, ip);
+  errno = ENOSYS;
+  return -1;
+ }
+
+ switch (req) {
+  case SOUND_MIXER_READ_VOLUME:    o_w = 0; o_sid = _mix_settings.sid.volume;   break;
+  case SOUND_MIXER_READ_PCM:       o_w = 0; o_sid = _mix_settings.sid.pcm;      break;
+  case SOUND_MIXER_READ_LINE:      o_w = 0; o_sid = _mix_settings.sid.line;     break;
+  case SOUND_MIXER_READ_LINE1:     o_w = 0; o_sid = _mix_settings.sid.line1;    break;
+  case SOUND_MIXER_READ_LINE2:     o_w = 0; o_sid = _mix_settings.sid.line2;    break;
+  case SOUND_MIXER_READ_LINE3:     o_w = 0; o_sid = _mix_settings.sid.line3;    break;
+#if 0
+  case SOUND_MIXER_READ_DIGITAL1:  o_w = 0; o_sid = _mix_settings.sid.digital1; break;
+  case SOUND_MIXER_READ_DIGITAL2:  o_w = 0; o_sid = _mix_settings.sid.digital2; break;
+  case SOUND_MIXER_READ_DIGITAL3:  o_w = 0; o_sid = _mix_settings.sid.digital3; break;
+#endif
+  case SOUND_MIXER_WRITE_VOLUME:   o_w = 1; o_sid = _mix_settings.sid.volume;   break;
+  case SOUND_MIXER_WRITE_PCM:      o_w = 1; o_sid = _mix_settings.sid.pcm;      break;
+  case SOUND_MIXER_WRITE_LINE:     o_w = 1; o_sid = _mix_settings.sid.line;     break;
+  case SOUND_MIXER_WRITE_LINE1:    o_w = 1; o_sid = _mix_settings.sid.line1;    break;
+  case SOUND_MIXER_WRITE_LINE2:    o_w = 1; o_sid = _mix_settings.sid.line2;    break;
+  case SOUND_MIXER_WRITE_LINE3:    o_w = 1; o_sid = _mix_settings.sid.line3;    break;
+#if 0
+  case SOUND_MIXER_WRITE_DIGITAL1: o_w = 1; o_sid = _mix_settings.sid.digital1; break;
+  case SOUND_MIXER_WRITE_DIGITAL2: o_w = 1; o_sid = _mix_settings.sid.digital2; break;
+  case SOUND_MIXER_WRITE_DIGITAL3: o_w = 1; o_sid = _mix_settings.sid.digital3; break;
+#endif
+ }
+ if ( o_sid != -1 ) {
+  // set/get volume
+  if ( o_w ) {
+   mixer.scale    = 65535;
+   mixer.mixer[0] = ( *ip       & 0xFF)*65535/50;
+   mixer.mixer[1] = ((*ip >> 8) & 0xFF)*65535/50;
+   if ( roar_set_vol(&(handle->session->con), o_sid, &mixer, 2) == -1 ) {
+    errno = ENOSYS;
+    return -1;
+   }
+   return 0;
+  } else {
+   if ( roar_get_vol(&(handle->session->con), o_sid, &mixer, &channels) == -1 ) {
+    errno = ENOSYS;
+    return -1;
+   }
+   *ip = ((50*mixer.mixer[0])/mixer.scale) | (((50*mixer.mixer[0])/mixer.scale)<<8);
+   return 0;
+  }
+ }
+
+ switch (req) {
+  case SOUND_MIXER_READ_DEVMASK:
+    *ip = 0;
+
+    if ( _mix_settings.sid.volume != -1 )
+     *ip |= SOUND_MASK_VOLUME;
+    if ( _mix_settings.sid.pcm != -1 )
+     *ip |= SOUND_MASK_PCM;
+    if ( _mix_settings.sid.line != -1 )
+     *ip |= SOUND_MASK_LINE;
+    if ( _mix_settings.sid.line1 != -1 )
+     *ip |= SOUND_MASK_LINE1;
+    if ( _mix_settings.sid.line2 != -1 )
+     *ip |= SOUND_MASK_LINE2;
+    if ( _mix_settings.sid.line3 != -1 )
+     *ip |= SOUND_MASK_LINE3;
+    if ( _mix_settings.sid.digital1 != -1 )
+     *ip |= SOUND_MASK_DIGITAL1;
+    if ( _mix_settings.sid.digital2 != -1 )
+     *ip |= SOUND_MASK_DIGITAL2;
+    if ( _mix_settings.sid.digital3 != -1 )
+     *ip |= SOUND_MASK_DIGITAL3;
+
+    return 0;
+   break;
+ }
+
+ ROAR_DBG("_ioctl_mixer(handle=%p, req=%lu, ip=%p): unknown mixer CTL", handle, req, ip);
+ ROAR_DBG("_ioctl_mixer(handle=%p, req=%lu, ip=%p) = -1 // errno = ENOSYS", handle, req, ip);
+ errno = ENOSYS;
+ return -1;
 }
 
 // -------------------------------------
@@ -517,17 +656,17 @@ extern int ioctl (int __fd, unsigned long int __request, ...) {
 
  _init();
 
- ROAR_DBG("ioctl(__fd=%i, __request=%lu) = ?", __fd, (long unsigned int) __request);
+// ROAR_DBG("ioctl(__fd=%i, __request=%lu) = ?", __fd, (long unsigned int) __request);
 
  va_start (args, __request);
  argp = va_arg (args, void *);
  va_end (args);
 
- ROAR_DBG("ioctl(__fd=%i, __request=%lu): argp=%p", __fd, (long unsigned int) __request, argp);
+// ROAR_DBG("ioctl(__fd=%i, __request=%lu): argp=%p", __fd, (long unsigned int) __request, argp);
 
  if ( (pointer = _get_pointer_by_fh(__fd)) != NULL ) {
   ip = argp;
-  ROAR_DBG("ioctl(__fd=%i, __request=%lu): ip=%p", __fd, (long unsigned int) __request, ip);
+//  ROAR_DBG("ioctl(__fd=%i, __request=%lu): ip=%p", __fd, (long unsigned int) __request, ip);
   switch ((handle = pointer->handle)->type) {
    case HT_STREAM:
      switch (__request) {
@@ -546,7 +685,7 @@ extern int ioctl (int __fd, unsigned long int __request, ...) {
         return _ioctl_stream_format(handle, *ip);
        break;
       case SNDCTL_DSP_GETFMTS:
-        ROAR_DBG("ioctl(__fd=%i, __request=%lu): ip=%p", __fd, (long unsigned int) __request, ip);
+//        ROAR_DBG("ioctl(__fd=%i, __request=%lu): ip=%p", __fd, (long unsigned int) __request, ip);
         *ip = _ioctl_stream_format_list();
         return 0;
        break;
@@ -557,10 +696,11 @@ extern int ioctl (int __fd, unsigned long int __request, ...) {
      }
     break;
    case HT_MIXER:
-     errno = ENOSYS;
-     return -1;
+     return _ioctl_mixer(handle, __request, ip);
     break;
    default:
+     ROAR_DBG("ioctl(__fd=%i, __request=%lu): unknown handle type: no ioctl()s supported", __fd, (long unsigned int) __request);
+     ROAR_DBG("ioctl(__fd=%i, __request=%lu) = -1 // errno = ENOSYS", __fd, (long unsigned int) __request);
      errno = EINVAL;
      return -1;
     break;
