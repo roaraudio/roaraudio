@@ -245,6 +245,9 @@ static struct session * _open_session (char * server, char * name) {
    return NULL;
 
   _find_volume_sid(&_session);
+
+  if ( getenv("ROAR_OSS_KEEP_SESSION") != NULL )
+   _session.refc++;
  }
 
  _session.refc++;
