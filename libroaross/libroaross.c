@@ -467,6 +467,25 @@ static int _ioctl_mixer (struct handle * handle, long unsigned int req, int * ip
   case SNDCTL_MIX_READ:        name = "SNDCTL_MIX_READ";        break;
   case SNDCTL_MIX_WRITE:       name = "SNDCTL_MIX_WRITE";       break;
 #endif
+  case SOUND_MIXER_INFO:             name = "SOUND_MIXER_INFO";             break;
+  case SOUND_OLD_MIXER_INFO:         name = "SOUND_OLD_MIXER_INFO";         break;
+  case SOUND_MIXER_ACCESS:           name = "SOUND_MIXER_ACCESS";           break;
+  case SOUND_MIXER_AGC:              name = "SOUND_MIXER_AGC";              break;
+  case SOUND_MIXER_3DSE:             name = "SOUND_MIXER_3DSE";             break;
+  case SOUND_MIXER_PRIVATE1:         name = "SOUND_MIXER_PRIVATE1";         break;
+  case SOUND_MIXER_PRIVATE2:         name = "SOUND_MIXER_PRIVATE2";         break;
+  case SOUND_MIXER_PRIVATE3:         name = "SOUND_MIXER_PRIVATE3";         break;
+  case SOUND_MIXER_PRIVATE4:         name = "SOUND_MIXER_PRIVATE4";         break;
+  case SOUND_MIXER_PRIVATE5:         name = "SOUND_MIXER_PRIVATE5";         break;
+  case OSS_GETVERSION:               name = "OSS_GETVERSION";               break;
+  case SOUND_MIXER_READ_RECSRC:      name = "SOUND_MIXER_READ_RECSRC";      break;
+  case SOUND_MIXER_READ_RECMASK:     name = "SOUND_MIXER_READ_RECMASK";     break;
+  case SOUND_MIXER_READ_STEREODEVS:  name = "SOUND_MIXER_READ_STEREODEVS";  break;
+  case SOUND_MIXER_READ_CAPS:        name = "SOUND_MIXER_READ_CAPS";        break;
+  case SOUND_MIXER_WRITE_RECSRC:     name = "SOUND_MIXER_WRITE_RECSRC";     break;
+/*
+  case :     name = "";     break;
+*/
  }
  if ( name != NULL ) {
   ROAR_DBG("_ioctl_mixer(handle=%p, req=%lu, ip=%p): unspported mixer command %s", handle, req, ip, name);
