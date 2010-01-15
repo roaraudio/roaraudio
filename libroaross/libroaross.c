@@ -754,6 +754,7 @@ extern int ioctl (int __fd, unsigned long int __request, ...) {
      switch (__request) {
       case SNDCTL_DSP_RESET:
       case SNDCTL_DSP_POST:
+      case SNDCTL_DSP_SETFRAGMENT: // any fragments should be ok for us...
        break;
       case SNDCTL_DSP_SPEED:
         handle->stream.info.rate = *ip;
