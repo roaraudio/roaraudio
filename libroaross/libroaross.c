@@ -280,7 +280,7 @@ ssize_t write(int fd, const void *buf, size_t count) {
      return -1;
     }
    }
-   return roar_vio_write(&(pointer->handle->stream_vio), buf, count);
+   return roar_vio_write(&(pointer->handle->stream_vio), (char*)buf, count);
   } else {
    errno = EINVAL;
    return -1;
