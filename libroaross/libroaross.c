@@ -792,6 +792,7 @@ IOCTL() {
       case SNDCTL_DSP_RESET:
       case SNDCTL_DSP_POST:
       case SNDCTL_DSP_SETFRAGMENT: // any fragments should be ok for us...
+        return 0;
        break;
       case SNDCTL_DSP_SPEED:
         handle->stream.info.rate = *ip;
