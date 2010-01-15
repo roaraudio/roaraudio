@@ -780,6 +780,7 @@ fi
  $COMP_COMP_BINS && echo "comp_comp_bins=compbins"
  echo
  $SNDIO_EMUL && echo "subdir_libroarsndio=libroarsndio"
+ echo "subdir_libroaross=libroaross" # this builds an empty file in case of not supported
 } >&4
 
 CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
@@ -789,7 +790,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.228 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.229 $ of RoarAudio
  */
 
 EOF

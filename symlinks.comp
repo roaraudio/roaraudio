@@ -10,3 +10,5 @@ libroarsndio.so	libsndio.so
 libroarsndio.so	libsndio.so.0
 libroaryiff.so	libY2.so
 libroaryiff.so	libY2.so.14
+libroaross.so   liboss.so
+libroaross.so   libossaudio.so

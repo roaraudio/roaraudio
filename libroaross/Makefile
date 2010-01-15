@@ -6,7 +6,7 @@ SLIB=libroaross$(SHARED_SUFFIX)
 TARGETS=$(SLIB) libroaross.a
 OBJS=libroaross.o
 
-DEFINES        = -DDEBUG
+#DEFINES = -DDEBUG
 INCLUDE = -I../include -I../include/libroar
 CFLAGS += -g -Wall -O2 $(DEFINES) $(INCLUDE) $(INCPATH) $(SHARED_CF) $(fPIC)
 LDFLAGS = -g $(SHARED) $(LDPATH) -L../lib
