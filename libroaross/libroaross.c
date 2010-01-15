@@ -65,6 +65,11 @@
 
 #define _MAX_POINTER  8
 
+// handle type:
+#define HT_NONE       0
+#define HT_STREAM     1
+#define HT_MIXER      2
+
 struct session {
  int refc;
  struct roar_connection con;
@@ -75,6 +80,10 @@ static struct session _session = {.refc = 0};
 struct handle {
  int refc; // refrence counter
  struct session * session;
+ int type;
+ struct roar_stream    stream;
+ struct roar_vio_calls stream_vio;
+ int                   stream_opened;
 };
 
 static struct {
@@ -84,7 +93,7 @@ static struct {
  ssize_t (*read)(int fd, void *buf, size_t count);
 } _os;
 
-static struct {
+static struct pointer {
  int fh;
  struct handle * handle;
 } _ptr[_MAX_POINTER];
@@ -154,6 +163,78 @@ static void _close_session(struct session * session) {
  }
 }
 
+static struct handle * _open_handle(struct session * session) {
+ struct handle * handle;
+
+ if ( (handle = roar_mm_malloc(sizeof(struct handle))) == NULL )
+  return NULL;
+
+ memset(handle, 0, sizeof(struct handle));
+
+ handle->refc = 1;
+ handle->session = session;
+ session->refc++; // TODO: better warp this
+ handle->type = HT_NONE;
+ roar_stream_new_empty(&(handle->stream));
+
+ return handle;
+}
+
+static void _close_handle(struct handle * handle) {
+ if (handle == NULL)
+  return;
+
+ handle->refc--;
+
+ if ( handle->refc == 0 ) {
+  _close_session(handle->session);
+
+  if ( handle->stream_opened )
+   roar_vio_close(&(handle->stream_vio));
+
+  roar_mm_free(handle);
+ }
+}
+
+static int _open_stream (struct handle * handle) {
+  return -1;
+}
+
+static struct pointer * _get_pointer_by_fh (int fh) {
+ int i;
+
+ for (i = 0; i < _MAX_POINTER; i++) {
+  if ( _ptr[i].fh == fh )
+   return &(_ptr[i]);
+ }
+
+ return NULL;
+}
+
+static struct pointer * _open_pointer(struct handle * handle) {
+ struct pointer * ret = _get_pointer_by_fh(-1);
+
+ if ( ret == NULL )
+  return NULL;
+
+ if ( (ret->fh = _open_dummy()) == -1 )
+  return NULL;
+
+ ret->handle = handle;
+
+ return ret;
+}
+
+static void _close_pointer(struct pointer * pointer) {
+ if ( pointer == NULL )
+  return;
+
+ _os.close(pointer->fh);
+
+ pointer->fh = -1;
+
+ _close_handle(pointer->handle);
+}
 
 // -------------------------------------
 // emulated functions follow:
@@ -175,19 +256,59 @@ int     open(const char *pathname, int flags, ...) {
 }
 
 int     close(int fd) {
+ struct pointer * pointer;
  _init();
+
+ if ( (pointer = _get_pointer_by_fh(fd)) != NULL ) {
+  _close_pointer(pointer);
+  return 0;
+ }
 
  return _os.close(fd);
 }
 
 ssize_t write(int fd, const void *buf, size_t count) {
+ struct pointer * pointer;
+
  _init();
+
+ if ( (pointer = _get_pointer_by_fh(fd)) != NULL ) {
+  if ( pointer->handle->type == HT_STREAM ) {
+   if ( pointer->handle->stream_opened == 0 ) {
+    if ( _open_stream(pointer->handle) == -1 ) {
+     errno = EIO;
+     return -1;
+    }
+   }
+   return roar_vio_write(&(pointer->handle->stream_vio), buf, count);
+  } else {
+   errno = EINVAL;
+   return -1;
+  }
+ }
 
  return _os.write(fd, buf, count);
 }
 
 ssize_t read(int fd, void *buf, size_t count) {
+ struct pointer * pointer;
+
  _init();
+
+ if ( (pointer = _get_pointer_by_fh(fd)) != NULL ) {
+  if ( pointer->handle->type == HT_STREAM ) {
+   if ( pointer->handle->stream_opened == 0 ) {
+    if ( _open_stream(pointer->handle) == -1 ) {
+     errno = EIO;
+     return -1;
+    }
+   }
+   return roar_vio_read(&(pointer->handle->stream_vio), buf, count);
+  } else {
+   errno = EINVAL;
+   return -1;
+  }
+ }
 
  return _os.read(fd, buf, count);
 }
