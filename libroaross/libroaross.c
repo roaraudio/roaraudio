@@ -323,6 +323,69 @@ static int _open_stream (struct handle * handle) {
 }
 
 // -------------------------------------
+// function to parse format:
+// -------------------------------------
+
+static int _ioctl_stream_format (struct handle * handle, int format) {
+ struct roar_audio_info * info = &(handle->stream.info);
+
+ switch (format) {
+  case AFMT_S8:
+    info->bits  = 8;
+    info->codec = ROAR_CODEC_PCM_S_LE;
+   break;
+  case AFMT_U8:
+    info->bits  = 8;
+    info->codec = ROAR_CODEC_PCM_U_LE;
+   break;
+  case AFMT_S16_BE:
+    info->bits  = 16;
+    info->codec = ROAR_CODEC_PCM_S_BE;
+   break;
+  case AFMT_S16_LE:
+    info->bits  = 16;
+    info->codec = ROAR_CODEC_PCM_S_LE;
+   break;
+  case AFMT_U16_BE:
+    info->bits  = 16;
+    info->codec = ROAR_CODEC_PCM_U_BE;
+   break;
+  case AFMT_U16_LE:
+    info->bits  = 16;
+    info->codec = ROAR_CODEC_PCM_U_LE;
+   break;
+#ifdef AFMT_S32_BE
+  case AFMT_S32_BE:
+    info->bits  = 32;
+    info->codec = ROAR_CODEC_PCM_S_BE;
+   break;
+#endif
+#ifdef AFMT_S32_LE
+  case AFMT_S32_LE:
+    info->bits  = 32;
+    info->codec = ROAR_CODEC_PCM_S_LE;
+   break;
+#endif
+  case AFMT_A_LAW:
+    info->bits  = 8;
+    info->codec = ROAR_CODEC_ALAW;
+   break;
+  case AFMT_MU_LAW:
+    info->bits  = 8;
+    info->codec = ROAR_CODEC_MULAW;
+   break;
+#ifdef AFMT_VORBIS
+  case AFMT_VORBIS:
+    info->codec = ROAR_CODEC_OGG_VORBIS;
+   break;
+#endif
+ }
+
+ errno = ENOSYS;
+ return -1;
+}
+
+// -------------------------------------
 // emulated functions follow:
 // -------------------------------------
 
@@ -414,14 +477,52 @@ ssize_t read(int fd, void *buf, size_t count) {
 }
 
 extern int ioctl (int __fd, unsigned long int __request, ...) {
+ struct pointer * pointer;
+ struct handle  * handle;
  va_list args;
  void *argp;
+ int * ip = NULL;
 
  _init();
 
  va_start (args, __request);
  argp = va_arg (args, void *);
  va_end (args);
+
+ if ( (pointer = _get_pointer_by_fh(__fd)) != NULL ) {
+  switch ((handle = pointer->handle)->type) {
+   ip = argp;
+   case HT_STREAM:
+     switch (__request) {
+      case SNDCTL_DSP_RESET:
+      case SNDCTL_DSP_POST:
+       break;
+      case SNDCTL_DSP_SPEED:
+        handle->stream.info.rate = *ip;
+        return 0;
+       break;
+      case SNDCTL_DSP_CHANNELS:
+        handle->stream.info.channels = *ip;
+        return 0;
+       break;
+      case SNDCTL_DSP_SETFMT:
+        return _ioctl_stream_format(handle, *ip);
+       break;
+      default:
+        errno = ENOSYS;
+        return -1;
+     }
+    break;
+   case HT_MIXER:
+     errno = ENOSYS;
+     return -1;
+    break;
+   default:
+     errno = EINVAL;
+     return -1;
+    break;
+  }
+ }
 
  return _os.ioctl(__fd, __request, argp);
 }
