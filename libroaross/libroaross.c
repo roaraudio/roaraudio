@@ -487,6 +487,7 @@ static inline int _ioctl_stream_format_list (void) {
 // -------------------------------------
 
 static int _ioctl_mixer (struct handle * handle, long unsigned int req, void * vp) {
+ mixer_info * info;
  int channels;
  struct roar_mixer_settings mixer;
  char * name = NULL;
@@ -504,7 +505,7 @@ static int _ioctl_mixer (struct handle * handle, long unsigned int req, void * v
   case SNDCTL_MIX_READ:        name = "SNDCTL_MIX_READ";        break;
   case SNDCTL_MIX_WRITE:       name = "SNDCTL_MIX_WRITE";       break;
 #endif
-  case SOUND_MIXER_INFO:             name = "SOUND_MIXER_INFO";             break;
+//  case SOUND_MIXER_INFO:             name = "SOUND_MIXER_INFO";             break;
   case SOUND_OLD_MIXER_INFO:         name = "SOUND_OLD_MIXER_INFO";         break;
   case SOUND_MIXER_ACCESS:           name = "SOUND_MIXER_ACCESS";           break;
   case SOUND_MIXER_AGC:              name = "SOUND_MIXER_AGC";              break;
@@ -619,6 +620,13 @@ static int _ioctl_mixer (struct handle * handle, long unsigned int req, void * v
    break;
   case SOUND_MIXER_READ_CAPS:
     *ip = 0;
+    return 0;
+   break;
+  case SOUND_MIXER_INFO:
+    info = vp;
+    memset(info, 0, sizeof(*info));
+    strcpy(info->id, "RoarAudio");
+    strcpy(info->name, "RoarAudio");
     return 0;
    break;
  }
