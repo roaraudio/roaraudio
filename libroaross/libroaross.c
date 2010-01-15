@@ -763,6 +763,10 @@ extern int ioctl (int __fd, unsigned long int __request, ...) {
         handle->stream.info.channels = *ip;
         return 0;
        break;
+      case SNDCTL_DSP_STEREO:
+        handle->stream.info.channels = *ip ? 2 : 1;
+        return 0;
+       break;
       case SNDCTL_DSP_SETFMT:
         return _ioctl_stream_format(handle, *ip);
        break;
