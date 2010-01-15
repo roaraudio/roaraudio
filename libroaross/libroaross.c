@@ -567,7 +567,6 @@ static int _ioctl_mixer (struct handle * handle, long unsigned int req, void * v
 
  switch (req) {
   case SOUND_MIXER_READ_VOLUME:    o_w = 0; o_sid = _mix_settings.sid.volume;   break;
-  case SOUND_MIXER_READ_PCM:       o_w = 0; o_sid = _mix_settings.sid.pcm;      break;
   case SOUND_MIXER_READ_LINE:      o_w = 0; o_sid = _mix_settings.sid.line;     break;
   case SOUND_MIXER_READ_LINE1:     o_w = 0; o_sid = _mix_settings.sid.line1;    break;
   case SOUND_MIXER_READ_LINE2:     o_w = 0; o_sid = _mix_settings.sid.line2;    break;
@@ -578,7 +577,6 @@ static int _ioctl_mixer (struct handle * handle, long unsigned int req, void * v
   case SOUND_MIXER_READ_DIGITAL3:  o_w = 0; o_sid = _mix_settings.sid.digital3; break;
 #endif
   case SOUND_MIXER_WRITE_VOLUME:   o_w = 1; o_sid = _mix_settings.sid.volume;   break;
-  case SOUND_MIXER_WRITE_PCM:      o_w = 1; o_sid = _mix_settings.sid.pcm;      break;
   case SOUND_MIXER_WRITE_LINE:     o_w = 1; o_sid = _mix_settings.sid.line;     break;
   case SOUND_MIXER_WRITE_LINE1:    o_w = 1; o_sid = _mix_settings.sid.line1;    break;
   case SOUND_MIXER_WRITE_LINE2:    o_w = 1; o_sid = _mix_settings.sid.line2;    break;
@@ -588,6 +586,23 @@ static int _ioctl_mixer (struct handle * handle, long unsigned int req, void * v
   case SOUND_MIXER_WRITE_DIGITAL2: o_w = 1; o_sid = _mix_settings.sid.digital2; break;
   case SOUND_MIXER_WRITE_DIGITAL3: o_w = 1; o_sid = _mix_settings.sid.digital3; break;
 #endif
+  // we handle PCM seperatly as we want to be abled to abled to handle it on a stream (not mixer), too:
+  case SOUND_MIXER_READ_PCM:
+    o_w = 0;
+    if ( handle->type == HT_STREAM ) {
+     o_sid = roar_stream_get_id(&(handle->stream));
+    } else {
+     o_sid = _mix_settings.sid.pcm;
+    }
+   break;
+  case SOUND_MIXER_WRITE_PCM:
+    o_w = 1;
+    if ( handle->type == HT_STREAM ) {
+     o_sid = roar_stream_get_id(&(handle->stream));
+    } else {
+     o_sid = _mix_settings.sid.pcm;
+    }
+   break;
  }
  if ( o_sid != -1 ) {
   // set/get volume
@@ -829,6 +844,16 @@ IOCTL() {
         bi->fragstotal = 1;
         return 0;
        break;
+#ifdef SNDCTL_DSP_GETPLAYVOL
+      case SNDCTL_DSP_GETPLAYVOL:
+        return _ioctl_mixer(handle, SOUND_MIXER_READ_PCM, argp);
+       break;
+#endif
+#ifdef SNDCTL_DSP_SETPLAYVOL
+      case SNDCTL_DSP_SETPLAYVOL:
+        return _ioctl_mixer(handle, SOUND_MIXER_WRITE_PCM, argp);
+       break;
+#endif
       default:
         ROAR_DBG("ioctl(__fd=%i, __request=%lu) = -1 // errno = ENOSYS", __fd, (long unsigned int) __request);
         errno = ENOSYS;
