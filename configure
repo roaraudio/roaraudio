@@ -789,7 +789,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.227 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.228 $ of RoarAudio
  */
 
 EOF
@@ -870,6 +870,7 @@ EOF
  echo
  $TARGET_MICROCONTROLLER && echo '#define ROAR_TARGET_MICROCONTROLLER'
  $TARGET_WIN32           && echo '#define ROAR_TARGET_WIN32'
+ $TARGET_CYGWIN          && echo '#define ROAR_TARGET_CYGWIN'
                             echo '#define ROAR_OS_'$(echo $SYSNAME | tr a-z-. A-Z__)
  echo
 } >&3
