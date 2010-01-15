@@ -38,6 +38,7 @@
 #include <roaraudio.h>
 #include <errno.h>
 #include <alsa/asoundlib.h>
+#include <alsa/global.h>
 #include <alsa/pcm_external.h>
 #include <alsa/control_external.h>
 

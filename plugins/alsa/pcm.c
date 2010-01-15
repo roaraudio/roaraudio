@@ -49,6 +49,8 @@ static int roar_hw_constraint(struct roar_alsa_pcm * self) {
  };
  int ret;
 
+ ROAR_DBG("roar_hw_constraint(*) = ?");
+
  if ( (ret = snd_pcm_ioplug_set_param_list(io, SND_PCM_IOPLUG_HW_ACCESS,
         _as(access_list), access_list)) < 0 )
   return ret;
@@ -73,14 +75,18 @@ static int roar_hw_constraint(struct roar_alsa_pcm * self) {
  if ( (ret = snd_pcm_ioplug_set_param_minmax(io, SND_PCM_IOPLUG_HW_BUFFER_BYTES, 1, 4294967295U)) < 0 )
   return ret;
 
+ ROAR_DBG("roar_hw_constraint(*) = 0");
+
  return 0;
 }
 
 static int roar_pcm_dummy (snd_pcm_ioplug_t * io) {
+ ROAR_DBG("roar_pcm_dummy(*) = ?");
  return 0;
 }
 
 static snd_pcm_sframes_t roar_pcm_pointer(snd_pcm_ioplug_t *io) {
+ ROAR_DBG("roar_pcm_pointer(*) = ?");
  return 0;
 }
 
@@ -92,6 +98,8 @@ static snd_pcm_sframes_t roar_pcm_transfer(snd_pcm_ioplug_t *io,
  struct roar_alsa_pcm * self = io->private_data;
  char * buf;
 
+ ROAR_DBG("roar_pcm_transfer(*) = ?");
+
  buf = (char *)areas->addr + (areas->first + areas->step * offset) / 8;
 
  roar_vio_write(&(self->stream_vio), buf, size * self->info.channels * self->info.bits / 8);
@@ -100,11 +108,14 @@ static snd_pcm_sframes_t roar_pcm_transfer(snd_pcm_ioplug_t *io,
 }
 
 static int roar_pcm_delay(snd_pcm_ioplug_t *io, snd_pcm_sframes_t *delayp) {
+ ROAR_DBG("roar_pcm_delay(*) = ?");
  return 0;
 }
 
 static int roar_pcm_prepare(snd_pcm_ioplug_t *io) {
  struct roar_alsa_pcm * self = io->private_data;
+
+ ROAR_DBG("roar_pcm_prepare(*) = ?");
 
  if ( self->stream_opened ) {
   roar_vio_close(&(self->stream_vio));
@@ -126,6 +137,8 @@ static int roar_pcm_prepare(snd_pcm_ioplug_t *io) {
 
 static int roar_pcm_hw_params(snd_pcm_ioplug_t *io, snd_pcm_hw_params_t *params) {
  struct roar_alsa_pcm * self = io->private_data;
+
+ ROAR_DBG("roar_pcm_hw_params(*) = ?");
 
  self->info.channels = io->channels;
  self->info.rate     = io->rate;
@@ -161,6 +174,8 @@ static int roar_pcm_hw_params(snd_pcm_ioplug_t *io, snd_pcm_hw_params_t *params)
 static int roar_pcm_close (snd_pcm_ioplug_t * io) {
  struct roar_alsa_pcm * self = io->private_data;
 
+ ROAR_DBG("roar_pcm_close(*) = ?");
+
  roar_disconnect(&(self->roar.con));
 
  free(self);
@@ -191,7 +206,7 @@ SND_PCM_PLUGIN_DEFINE_FUNC(roar) {
  const char   * server = NULL;
  int            ret;
 
- printf("TEST!\n");
+ ROAR_DBG("SND_PCM_PLUGIN_DEFINE_FUNC(roar) = ?");
 
  snd_config_for_each(i, next, conf) {
   n = snd_config_iterator_entry(i);
@@ -244,9 +259,15 @@ SND_PCM_PLUGIN_DEFINE_FUNC(roar) {
   return ret;
  }
 
+ ROAR_DBG("SND_PCM_PLUGIN_DEFINE_FUNC(roar) = 0");
+
  return 0;
 }
 
 SND_PCM_PLUGIN_SYMBOL(roar);
+
+int __snd_pcm_roar_open_dlsym_pcm_001 (void) {
+ return 0;
+}
 
 //ll

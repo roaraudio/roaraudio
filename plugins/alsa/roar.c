@@ -34,4 +34,6 @@
 
 #include "roar.h"
 
+struct snd_dlsym_link *snd_dlsym_start;
+
 //ll

@@ -8,9 +8,10 @@ include ../../Makefile.inc
 #include Makefile.conf
 
 #DEFINES=-DDEBUG
+DEFINES=-DPACKAGE_NAME=\"\" -DPACKAGE_TARNAME=\"\" -DPACKAGE_VERSION=\"\" -DPACKAGE_STRING=\"\" -DPACKAGE_BUGREPORT=\"\" -DPACKAGE=\"alsa-plugins\" -DVERSION=\"1.0.13\" -DSTDC_HEADERS=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_MEMORY_H=1 -DHAVE_STRINGS_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_UNISTD_H=1 -DHAVE_DLFCN_H=1 -DSTDC_HEADERS=1 -DHAVE_LIBASOUND=1 -D_REENTRANT -DDEBUG
 CFLAGS += -g -Wall -O2 -I../../include $(DEFINES) $(INCLUDE) $(INCPATH) $(SHARED_CF) $(fPIC) -I/usr/include/alsa -D_GNU_SOURCE
-LDFLAGS = -g $(SHARED) $(LDPATH) -L../../lib -module -avoid-version -export-dynamic
-LIBS    = $(LIBROAR) -lasound
+LDFLAGS = -g $(SHARED) $(LDPATH) -L../../lib 
+LIBS    = $(LIBROAR) -lm -ldl /usr/lib/libasound.so
 
 all: ${TARGET}
 clean:
@@ -25,4 +26,4 @@ semi-install: ${TARGET}
 	ln -fs `pwd`/$(SLIB) ${DESTDIR}${INSTALL_DIR}
 
 $(SLIB): $(OBJS)
-	$(CC) $(LDFLAGS) -Wl,-soname,$(SLIB) -o $(SLIB) $(OBJS) $(LIBS)
+	$(CC) $(LDFLAGS) -Wl,-soname -Wl,$(SLIB) -o $(SLIB) $(OBJS) $(LIBS)
