@@ -75,6 +75,15 @@
 #define mode_t int
 #endif
 
+#ifdef ROAR_OS_NETBSD
+#define IOCTL() int _oss_ioctl __P((int fd, unsigned long com, void *argp))
+#define map_args int __fd = fd; unsigned long int __request = request;
+#else
+#define IOCTL() int ioctl (int __fd, unsigned long int __request, ...)
+#define map_args void * argp;
+#define va_argp
+#endif
+
 #define OSS_VOLUME_SCALE 100
 
 #define _MAX_POINTER  8
@@ -749,20 +758,24 @@ ssize_t read(int fd, void *buf, size_t count) {
  return _os.read(fd, buf, count);
 }
 
-int ioctl (int __fd, unsigned long int __request, ...) {
+IOCTL() {
+ map_args;
  struct pointer * pointer;
  struct handle  * handle;
- va_list args;
- void *argp;
  int * ip = NULL;
+#ifdef va_argp
+ va_list args;
+#endif
 
  _init();
 
 // ROAR_DBG("ioctl(__fd=%i, __request=%lu) = ?", __fd, (long unsigned int) __request);
 
+#ifdef va_argp
  va_start (args, __request);
  argp = va_arg (args, void *);
  va_end (args);
+#endif
 
 // ROAR_DBG("ioctl(__fd=%i, __request=%lu): argp=%p", __fd, (long unsigned int) __request, argp);
 
