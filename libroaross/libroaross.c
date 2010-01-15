@@ -474,14 +474,18 @@ static int _ioctl_mixer (struct handle * handle, long unsigned int req, int * ip
   case SOUND_MIXER_ACCESS:           name = "SOUND_MIXER_ACCESS";           break;
   case SOUND_MIXER_AGC:              name = "SOUND_MIXER_AGC";              break;
   case SOUND_MIXER_3DSE:             name = "SOUND_MIXER_3DSE";             break;
+  case SOUND_MIXER_GETLEVELS:        name = "SOUND_MIXER_GETLEVELS";        break;
+  case SOUND_MIXER_SETLEVELS:        name = "SOUND_MIXER_SETLEVELS";        break;
   case SOUND_MIXER_PRIVATE1:         name = "SOUND_MIXER_PRIVATE1";         break;
   case SOUND_MIXER_PRIVATE2:         name = "SOUND_MIXER_PRIVATE2";         break;
   case SOUND_MIXER_PRIVATE3:         name = "SOUND_MIXER_PRIVATE3";         break;
   case SOUND_MIXER_PRIVATE4:         name = "SOUND_MIXER_PRIVATE4";         break;
   case SOUND_MIXER_PRIVATE5:         name = "SOUND_MIXER_PRIVATE5";         break;
   case OSS_GETVERSION:               name = "OSS_GETVERSION";               break;
-  case SOUND_MIXER_READ_CAPS:        name = "SOUND_MIXER_READ_CAPS";        break;
+//  case SOUND_MIXER_READ_CAPS:        name = "SOUND_MIXER_READ_CAPS";        break;
+  case SOUND_MIXER_READ_MUTE:        name = "SOUND_MIXER_READ_MUTE";        break;
 /*
+  case :     name = "";     break;
   case :     name = "";     break;
 */
  }
@@ -523,13 +527,13 @@ static int _ioctl_mixer (struct handle * handle, long unsigned int req, int * ip
    mixer.mixer[0] = ( *ip       & 0xFF)*65535/OSS_VOLUME_SCALE;
    mixer.mixer[1] = ((*ip >> 8) & 0xFF)*65535/OSS_VOLUME_SCALE;
    if ( roar_set_vol(&(handle->session->con), o_sid, &mixer, 2) == -1 ) {
-    errno = ENOSYS;
+    errno = EIO;
     return -1;
    }
    return 0;
   } else {
    if ( roar_get_vol(&(handle->session->con), o_sid, &mixer, &channels) == -1 ) {
-    errno = ENOSYS;
+    errno = EIO;
     return -1;
    }
    *ip = ((OSS_VOLUME_SCALE*mixer.mixer[0])/mixer.scale) | (((OSS_VOLUME_SCALE*mixer.mixer[0])/mixer.scale)<<8);
@@ -555,11 +559,13 @@ static int _ioctl_mixer (struct handle * handle, long unsigned int req, int * ip
     if ( _mix_settings.sid.line3 != -1 )
      *ip |= SOUND_MASK_LINE3;
     if ( _mix_settings.sid.digital1 != -1 )
+#if 0
      *ip |= SOUND_MASK_DIGITAL1;
     if ( _mix_settings.sid.digital2 != -1 )
      *ip |= SOUND_MASK_DIGITAL2;
     if ( _mix_settings.sid.digital3 != -1 )
      *ip |= SOUND_MASK_DIGITAL3;
+#endif
 
     return 0;
    break;
@@ -576,9 +582,14 @@ static int _ioctl_mixer (struct handle * handle, long unsigned int req, int * ip
      return -1;
     }
    break;
+  case SOUND_MIXER_READ_CAPS:
+    *ip = 0;
+    return 0;
+   break;
  }
 
  ROAR_DBG("_ioctl_mixer(handle=%p, req=%lu, ip=%p): unknown mixer CTL", handle, req, ip);
+// _os.ioctl(-1, req, ip);
  ROAR_DBG("_ioctl_mixer(handle=%p, req=%lu, ip=%p) = -1 // errno = ENOSYS", handle, req, ip);
  errno = ENOSYS;
  return -1;
