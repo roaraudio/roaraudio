@@ -67,6 +67,10 @@
 #define ENOTSUP ENOSYS
 #endif
 
+#if defined(ROAR_OS_NETBSD) && defined(ioctl)
+#define IOCTL_IS_ALIAS
+#endif
+
 #define OSS_VOLUME_SCALE 100
 
 #define _MAX_POINTER  8
@@ -98,7 +102,9 @@ static struct {
  int     (*close)(int fd);
  ssize_t (*write)(int fd, const void *buf, size_t count);
  ssize_t (*read)(int fd, void *buf, size_t count);
+#ifndef IOCTL_IS_ALIAS
  int     (*ioctl)(int d, int request, ...);
+#endif
 } _os;
 
 static struct {
@@ -139,7 +145,9 @@ static void _init_os (void) {
  _os.close = dlsym(REAL_LIBC, "close");
  _os.write = dlsym(REAL_LIBC, "write");
  _os.read  = dlsym(REAL_LIBC, "read");
+#ifndef IOCTL_IS_ALIAS
  _os.ioctl = dlsym(REAL_LIBC, "ioctl");
+#endif
 }
 
 static void _init_ptr (void) {
@@ -806,7 +814,12 @@ extern int ioctl (int __fd, unsigned long int __request, ...) {
   }
  }
 
+#ifdef IOCTL_IS_ALIAS
+ errno = ENOSYS;
+ return -1;
+#else
  return _os.ioctl(__fd, __request, argp);
+#endif
 }
 
 #endif
