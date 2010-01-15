@@ -467,9 +467,6 @@ static int _ioctl_mixer (struct handle * handle, long unsigned int req, int * ip
   case SNDCTL_MIX_READ:        name = "SNDCTL_MIX_READ";        break;
   case SNDCTL_MIX_WRITE:       name = "SNDCTL_MIX_WRITE";       break;
 #endif
-  case SOUND_MIXER_READ_DEVMASK: name = "SOUND_MIXER_READ_DEVMASK"; break;
-  case SOUND_MIXER_READ_PCM:     name = "SOUND_MIXER_READ_PCM";     break;
-  case SOUND_MIXER_WRITE_PCM:    name = "SOUND_MIXER_WRITE_PCM";    break;
  }
  if ( name != NULL ) {
   ROAR_DBG("_ioctl_mixer(handle=%p, req=%lu, ip=%p): unspported mixer command %s", handle, req, ip, name);
