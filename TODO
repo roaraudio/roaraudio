@@ -15,6 +15,7 @@ Things we should do:
  * (0.3) Clean libroardsp headers
  * (0.3) Implement OSS emulation layer
  * (0.3) Implement ALSA support
+ * (0.3) Implement support for ICY Meta Data
  * (1.0) impelemnt RTS/SDP/SAP
  * (1.0) add RAUM support
  * (1.0) replace OpenBSD's aucat
