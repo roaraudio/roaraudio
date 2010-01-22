@@ -26,7 +26,7 @@ L          = $(CC) $(LDFLAGS) -o $@ $+ $(LIBS)
 all: ${TARGETS} $(TOOLS)
 	cp $(cp_v) ${TARGETS} $(TOOLS) ../lib/
 clean:
-	rm -f ${TARGETS} *.o
+	rm -f ${TARGETS} ${TOOLS} *.o
 new: clean all
 
 roarcat: roarcat.o
