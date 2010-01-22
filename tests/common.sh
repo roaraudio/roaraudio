@@ -1,7 +1,9 @@
 #!/bin/sh
 
 PWD=`pwd`
-export LD_LIBRARY_PATH=$PWD/../lib/
+PF="$PWD/sandbox"
+export LD_LIBRARY_PATH="$PF/$PREFIX_LIB"
+export BIN_PATH="$PF/$PREFIX_BIN"
 
 OK=0
 FAILED=0

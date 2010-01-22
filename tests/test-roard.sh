@@ -9,7 +9,7 @@ c=roard
 FORMAT="%-42s : "
 
 printf "$FORMAT" 'Testing for general runnability'
-if $LD_LIBRARY_PATH$c --no-listen --terminate --client-fh 0 < /dev/null > /dev/null 2> /dev/null
+if $BIN_PATH$c --no-listen --terminate --client-fh 0 < /dev/null > /dev/null 2> /dev/null
 then
  _ok
  echo ok

@@ -10,14 +10,14 @@ clean: sandbox-clean
 new: clean all
 
 #test: sandbox-install test-all sandbox-clean
-test: test-all
+test: sandbox-clean sandbox-install test-all sandbox-clean
 
 test-all: test-runnable test-roard
 
 test-runnable:
-	./test-runnable.sh "$(CLIENTS)"
+	PREFIX_BIN=$(PREFIX_BIN) PREFIX_LIB=$(PREFIX_LIB) ./test-runnable.sh "$(CLIENTS)"
 test-roard:
-	./test-roard.sh
+	PREFIX_BIN=$(PREFIX_BIN) PREFIX_LIB=$(PREFIX_LIB) ./test-roard.sh
 sandbox-install:
 	mkdir sandbox
 	sh -c 'cd ..; DESTDIR=`pwd`/tests/sandbox make install'
