@@ -147,8 +147,13 @@ case "$1" in
 	$DAEMON --restart $ROARD_OPTS
 	echo "."
 	;;
+  terminate|shutdown)
+	echo -n "Terminating $DESC: $NAME"
+	$DAEMON --shutdown $ROARD_OPTS
+	echo "."
+	;;
   *)
-	echo "Usage: $SCRIPTNAME {start|stop|restart|force-reload}" >&2
+	echo "Usage: $SCRIPTNAME {start|stop|restart|force-reload|terminate|shutdown}" >&2
 	exit 1
 	;;
 esac
