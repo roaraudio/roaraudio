@@ -1,5 +1,6 @@
 v. 0.3beta4 - ?
 	* Applyed patches for Debian
+	* updated roarify to load libs of correct version
 
 v. 0.3beta3 - Fri Jan 22 2010 22:17 CET
 	* added some aRts/NAS/YIFF/PulseAudio tools to compbins

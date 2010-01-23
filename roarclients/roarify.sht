@@ -50,7 +50,7 @@ do
  esac
 done
 
-export LD_PRELOAD="%%%PREFIX_LIB%%%/libroar.so %%%PREFIX_LIB%%%/libroaross.so $LD_PRELOAD"
+export LD_PRELOAD="%%%PREFIX_LIB%%%/libroar.so.%%%VERSION%%% %%%PREFIX_LIB%%%/libroaross.so.%%%VERSION%%% $LD_PRELOAD"
 export LD_LIBRARY_PATH='%%%PREFIX_COMP_LIBS%%%'":$LD_LIBRARY_PATH"
 export PATH='%%%PREFIX_COMP_BINS%%%'":$PATH"
 
