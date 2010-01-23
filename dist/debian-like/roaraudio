@@ -35,7 +35,7 @@
 #                    supports many common codecs like Ogg Vorbis, Speex or FLAC.
 ### END INIT INFO
 
-set -e
+#set -e
 
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
 DAEMON=/usr/bin/roard
