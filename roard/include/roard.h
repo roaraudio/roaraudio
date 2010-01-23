@@ -52,8 +52,10 @@ int g_verbose;
 #include <pwd.h>
 #endif
 
-#ifndef ROAR_TARGET_MICROCONTROLLER
+#ifdef ROAR_HAVE_H_SYS_TIME
 #include <sys/time.h>
+#endif
+#ifdef ROAR_HAVE_H_TIME
 #include <time.h>
 #endif
 

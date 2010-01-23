@@ -41,8 +41,13 @@
 
 #include <roaraudio.h>
 #include <esd.h>
-#include <time.h>
+
+#ifdef ROAR_HAVE_H_SYS_TIME
 #include <sys/time.h>
+#endif
+#ifdef ROAR_HAVE_H_TIME
+#include <time.h>
+#endif
 
 #define ROAR_BC2ESD(b,c) (((b) == 8 ? ESD_BITS8 : ESD_BITS16) | ((c) == 1 ? ESD_MONO : ESD_STEREO))
 #define ROAR_DIR2ESD(d)  ((d)  == ROAR_DIR_PLAY ? ESD_PLAY : (d) == ROAR_DIR_MONITOR ? ESD_MONITOR : \
