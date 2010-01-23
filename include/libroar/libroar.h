@@ -81,6 +81,12 @@
 
 #ifdef ROAR_HAVE_LIBSLP
 #include <slp.h>
+#ifdef ROAR_HAVE_H_SYS_TIME
+#include <sys/time.h>
+#endif
+#ifdef ROAR_HAVE_H_TIME
+#include <time.h>
+#endif
 #endif
 
 #include "error.h"
