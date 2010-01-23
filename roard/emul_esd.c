@@ -241,7 +241,7 @@ int emul_esd_on_stream     (int client, struct emul_esd_command * cmd, void * da
  int stream;
  int dir = -1;
  int esdformat;
- int rate;
+ int rate = 0;
 
  if ( client == -1 || cmd == NULL || data == NULL || vio == NULL )
   return -1;
@@ -372,8 +372,8 @@ int emul_esd_on_standbymode(int client, struct emul_esd_command * cmd, void * da
 
 int emul_esd_on_stream_pan (int client, struct emul_esd_command * cmd, void * data, struct roar_vio_calls * vio) {
  struct roar_stream_server * ss;
- int stream;
- int left, right;
+ int stream = -1;
+ int left = 256, right = 256;
  int ok = 0;
 
  emul_esd_int_read_buf(client, &stream, data + 0*_INTSIZE);
