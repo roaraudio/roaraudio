@@ -821,6 +821,13 @@ int streams_calc_delay    (int id) {
  if ( s->dir == ROAR_DIR_MIXING )
   return 0;
 
+ if ( ss->mixer_stream != id ) {
+  if ( streams_calc_delay(ss->mixer_stream) != -1 ) {
+   d += g_streams[ss->mixer_stream]->delay; // in case we can calc the delay
+                                            // the stream must exist, so no check here
+  }
+ }
+
  if ( ss->codecfilter != -1 ) {
   if ( codecfilter_delay(ss->codecfilter_inst, ss->codecfilter, t) != -1 )
    d += *t;
