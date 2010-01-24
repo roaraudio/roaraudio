@@ -242,8 +242,8 @@ int    roar_libroar_config_parse(char * txt, char * delm) {
    if ( roar_libroar_get_server() == NULL )
     roar_libroar_set_server(v);
   } else if ( !strcmp(k, "set-authfile") ) {
-   strncpy(confi->authfile, v, 1023);
-   confi->authfile[1023] = 0;
+   strncpy(config->authfile, v, 1023);
+   config->authfile[1023] = 0;
   } else {
    ROAR_WARN("roar_libroar_config_parse(*): Unknown option: %s", k);
   }
