@@ -82,6 +82,7 @@ struct roar_stream_server {
  struct roar_buffer * prethru;
  struct roar_vio_calls jumbo;
  struct roar_vio_calls * viop;
+ int mixer_stream;
 } * g_streams[ROAR_STREAMS_MAX];
 
 int streams_thru_num;
@@ -98,6 +99,9 @@ int streams_get_client (int id);
 
 int streams_set_dir    (int id, int dir, int defaults);
 int streams_get_dir    (int id);
+
+int streams_set_mixer_stream(int id, int mixer);
+int streams_get_mixer_stream(int id, int mixer);
 
 int streams_get_subsys (int id);
 

@@ -104,6 +104,7 @@ int streams_new    (void) {
    s->ready           =  0;
    s->outputbuffer    = NULL;
    s->prethru         = NULL;
+   s->mixer_stream    = -1;
 
    s->mixer.scale     = 65535;
    s->mixer.rpg_mul   = 1;
@@ -322,6 +323,30 @@ int streams_get_dir    (int id) {
   return -1;
 
  return ROAR_STREAM(ss)->dir;
+}
+
+int streams_set_mixer_stream(int id, int mixer) {
+ struct roar_stream_server * ss;
+
+ _CHECK_SID(id);
+
+ if ( (ss = g_streams[id]) == NULL )
+  return -1;
+
+ ss->mixer_stream = mixer;
+
+ return 0;
+}
+
+int streams_get_mixer_stream(int id, int mixer) {
+ struct roar_stream_server * ss;
+
+ _CHECK_SID(id);
+
+ if ( (ss = g_streams[id]) == NULL )
+  return -1;
+
+ return ss->mixer_stream;
 }
 
 int streams_get_subsys (int id) {

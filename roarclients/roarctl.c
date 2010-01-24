@@ -371,6 +371,9 @@ void list_streams (struct roar_connection * con) {
      printf("Stream delay          : %ims (%.2fm)\n",   (int)info.delay/1000, (info.delay*(float)_SPEED_OF_SOUND));
 
     if ( g_verbose > 1 )
+     printf("Stream mixer          : %i\n",   info.mixer);
+
+    if ( g_verbose > 1 )
      printf("Stream state          : %s\n",   roar_streamstate2str(info.state));
 
     *flags = 0;

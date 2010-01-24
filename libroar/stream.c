@@ -391,6 +391,7 @@ int roar_stream_get_info (struct roar_connection * con, struct roar_stream * s, 
   return -1;
 
  memset(info, 0, sizeof(struct roar_stream_info));
+ info->mixer = -1;
 
  info->block_size     = data[2];
  info->pre_underruns  = data[3];
@@ -410,6 +411,12 @@ int roar_stream_get_info (struct roar_connection * con, struct roar_stream * s, 
   return 0;
  } else {
   info->flags        |= ((uint32_t)data[9]) << 16;
+ }
+
+ if ( m.datalen < 11*2 ) {
+  return 0;
+ } else {
+  info->mixer         = data[10];
  }
 
  return 0;
