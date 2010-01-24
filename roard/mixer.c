@@ -75,6 +75,7 @@ int add_mixer (int subsys, char * name, struct roar_stream_server ** ss_ptr) {
 
  switch (subsys) {
   case ROAR_SUBSYS_WAVEFORM:
+    ss->delay = _MEGA/ROAR_OUTPUT_CFREQ;
    break;
  }
 

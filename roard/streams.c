@@ -772,6 +772,10 @@ int streams_calc_delay    (int id) {
  if ( (s = ROAR_STREAM(ss = g_streams[id])) == NULL )
   return -1;
 
+ // mixer store there value in ss->delay directly
+ if ( s->dir == ROAR_DIR_MIXING )
+  return 0;
+
  if ( ss->codecfilter != -1 ) {
   if ( codecfilter_delay(ss->codecfilter_inst, ss->codecfilter, t) != -1 )
    d += *t;
