@@ -22,7 +22,10 @@
  *
  */
 
+#define _UNITS_T_BASE_USEC
+
 #include <roaraudio.h>
+#include <roaraudio/units.h>
 
 #if defined(ROAR_HAVE_SETGID) && defined(ROAR_HAVE_SETUID)
 #define _POSIX_USERS
@@ -365,7 +368,7 @@ void list_streams (struct roar_connection * con) {
 
     printf("Underruns pre/post    : %i/%i\n",   info.pre_underruns, info.post_underruns);
     if ( g_verbose > 1 )
-     printf("Stream delay          : %ims\n",   (int)info.delay/1000);
+     printf("Stream delay          : %ims (%.2fm)\n",   (int)info.delay/1000, (info.delay*(float)_SPEED_OF_SOUND));
 
     if ( g_verbose > 1 )
      printf("Stream state          : %s\n",   roar_streamstate2str(info.state));
