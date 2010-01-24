@@ -40,12 +40,21 @@ static struct roar_libroar_config_codec *
 
 struct roar_libroar_config * roar_libroar_get_config_ptr(void) {
  static struct roar_libroar_config config;
- static int inited = 0;
+ static int    inited = 0;
+ static char   authfile[1024];
+ char        * home = getenv("HOME");
 
  if ( !inited ) {
   memset(&config, 0, sizeof(config));
 
-  config.server = NULL;
+  config.server   = NULL;
+  config.authfile = NULL;
+
+  if ( home != NULL ) {
+   snprintf(authfile, 1023, "%s/.roarauth", home);
+   authfile[1023]  = 0;
+   config.authfile = authfile;
+  }
 
   inited++;
  }
@@ -232,6 +241,9 @@ int    roar_libroar_config_parse(char * txt, char * delm) {
   } else if ( !strcmp(k, "set-server") ) {
    if ( roar_libroar_get_server() == NULL )
     roar_libroar_set_server(v);
+  } else if ( !strcmp(k, "set-authfile") ) {
+   strncpy(confi->authfile, v, 1023);
+   confi->authfile[1023] = 0;
   } else {
    ROAR_WARN("roar_libroar_config_parse(*): Unknown option: %s", k);
   }
