@@ -24,4 +24,84 @@
 
 #include "libroareio.h"
 
+static char * _sd (char * str) {
+ ssize_t len = strlen(str) + 1;
+ char * ret = roar_mm_malloc(len);
+
+ memcpy(ret, str, len);
+
+ return ret;
+}
+
+void roar_ff_ssdp_init (struct roar_ff_ssdp * c) {
+ memset(c, 0, sizeof(struct roar_ff_ssdp));
+
+ c->method        = ROAR_FF_SSDP_M_NOTIFY;
+ c->server        = _sd("RoarAudio libroareio/ff_ssdp.c");
+ c->max_age       = 1800;
+ c->location      = NULL;
+ c->nt            = NULL;
+ c->usn           = NULL;
+ c->usn_nt_suffix = 1;
+ c->host          = _sd(ROAR_FF_SSDP_HOST_UPNP);
+}
+
+void roar_ff_ssdp_free (struct roar_ff_ssdp * c) {
+ if ( c->server != NULL )
+  roar_mm_free(c->server);
+
+ if ( c->location != NULL )
+  roar_mm_free(c->location);
+
+ if ( c->nt != NULL )
+  roar_mm_free(c->nt);
+
+ if ( c->usn != NULL )
+  roar_mm_free(c->usn);
+
+ if ( c->host != NULL )
+  roar_mm_free(c->host);
+
+ memset(c, 0, sizeof(struct roar_ff_ssdp));
+}
+
+int  roar_ff_ssdp_write(struct roar_vio_calls * vio, struct roar_ff_ssdp * c) {
+ char * met;
+ char * nts;
+
+ switch (c->method) {
+  case ROAR_FF_SSDP_M_NOTIFY:   met = ROAR_FF_SSDP_MS_NOTIFY;   break;
+  case ROAR_FF_SSDP_M_M_SEARCH: met = ROAR_FF_SSDP_MS_M_SEARCH; break;
+  default: return -1;
+ }
+
+ switch (c->nst) {
+  case ROAR_FF_SSDP_A_ALIVE:  nts = ROAR_FF_SSDP_AS_ALIVE;  break;
+  case ROAR_FF_SSDP_A_BYEBYE: nts = ROAR_FF_SSDP_AS_BYEBYE; break;
+  default: return -1;
+ }
+
+ roar_vio_printf(vio, "%s * HTTP/1.1\r\n", met);
+ roar_vio_printf(vio, "SERVER: %s\r\n", c->server);
+ roar_vio_printf(vio, "CACHE-CONTROL: max-age=%i\r\n", c->max_age);
+ roar_vio_printf(vio, "LOCATION: %s\r\n", c->location);
+ roar_vio_printf(vio, "NTS: %s\r\n", nts);
+ roar_vio_printf(vio, "NT: %s\r\n", c->nt);
+
+ if ( c->usn_nt_suffix ) {
+  roar_vio_printf(vio, "USN: %s::%s\r\n", c->usn, c->nt);
+ } else {
+  roar_vio_printf(vio, "USN: %s\r\n", c->usn);
+ }
+
+ roar_vio_printf(vio, "HOST: %s\r\n", c->host);
+ roar_vio_printf(vio, "\r\n");
+
+ return 0;
+}
+int  roar_ff_ssdp_read (struct roar_vio_calls * vio, struct roar_ff_ssdp * c) {
+ return -1;
+}
+
+
 //ll

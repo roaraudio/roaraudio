@@ -51,10 +51,16 @@
 #define ROAR_FF_SSDP_M_NOTIFY    1
 #define ROAR_FF_SSDP_M_M_SEARCH  2
 
+#define ROAR_FF_SSDP_MS_NOTIFY   "NOTIFY"
+#define ROAR_FF_SSDP_MS_M_SEARCH "M-SEARCH"
+
 #define ROAR_FF_SSDP_A_ALIVE     1
 #define ROAR_FF_SSDP_A_BYEBYE    2
 #define ROAR_FF_SSDP_A_REG       ROAR_FF_SSDP_A_ALIVE
 #define ROAR_FF_SSDP_A_UNREG     ROAR_FF_SSDP_A_BYEBYE
+
+#define ROAR_FF_SSDP_AS_ALIVE    "ssdp:alive"
+#define ROAR_FF_SSDP_AS_BYEBYE   "ssdp:byebye"
 
 #define ROAR_FF_SSDP_HOST_UPNP   "239.255.255.250:1900"
 
@@ -71,6 +77,7 @@ struct roar_ff_ssdp {
 };
 
 void roar_ff_ssdp_init (struct roar_ff_ssdp * c);
+void roar_ff_ssdp_free (struct roar_ff_ssdp * c);
 
 int  roar_ff_ssdp_write(struct roar_vio_calls * vio, struct roar_ff_ssdp * c);
 int  roar_ff_ssdp_read (struct roar_vio_calls * vio, struct roar_ff_ssdp * c);
