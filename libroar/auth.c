@@ -165,19 +165,32 @@ static void roar_auth_mes_init(struct roar_auth_message * authmes, int type) {
  authmes->len   = 0;
 }
 
+#define _EOL ROAR_AUTH_T_AUTO
 int roar_auth   (struct roar_connection * con) {
  struct roar_auth_message authmes;
  int ret;
+ int i;
+ int ltt[] = {
+              ROAR_AUTH_T_TRUST,
+              ROAR_AUTH_T_IDENT,
+              ROAR_AUTH_T_RHOST,
+              ROAR_AUTH_T_NONE,
+              _EOL
+             };
 
- roar_auth_mes_init(&authmes, ROAR_AUTH_T_NONE);
+ for (i = 0; ltt[i] != _EOL; i++) {
+  roar_auth_mes_init(&authmes, ltt[i]);
 
- if ( (ret = roar_auth_ask_server(con, &authmes)) == -1 )
-  return -1;
+  if ( (ret = roar_auth_ask_server(con, &authmes)) == -1 )
+   continue;
 
- if ( authmes.stage != 0 )
-  return -1;
+  if ( authmes.stage != 0 )
+   continue;
 
- return 0;
+  return 0;
+ }
+
+ return -1;
 }
 
 // String functions:
