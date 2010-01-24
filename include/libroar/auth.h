@@ -38,6 +38,7 @@
 #include "libroar.h"
 
 // Auth Types:
+#define ROAR_AUTH_T_AUTO               -1
 #define ROAR_AUTH_T_NONE                0
 #define ROAR_AUTH_T_COOKIE              1
 #define ROAR_AUTH_T_TRUST               2
@@ -51,7 +52,21 @@
 #define ROAR_AUTH_T_XAUTH              10
 #define ROAR_AUTH_T_IDENT              11
 
+struct roar_auth_message {
+ int type;
+ int stage;
+ union {
+  char     c[2];
+  uint16_t ui16;
+ } reserved;
+ void * data;
+ size_t len;
+};
+
 int roar_auth   (struct roar_connection * con);
+
+int    roar_str2autht(char * str);
+char * roar_autht2str(int auth);
 
 #endif
 
