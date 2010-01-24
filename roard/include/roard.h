@@ -31,6 +31,7 @@ int g_verbose;
 
 // need to include this first as we need the config
 #include <roaraudio.h>
+#include <roaraudio/units.h>
 #include <libroarlight/libroarlight.h>
 #include <libroareio/libroareio.h>
 
@@ -78,13 +79,6 @@ int g_verbose;
 #define ROAR_SUBSYS_RAW           0x10
 #define ROAR_SUBSYS_COMPLEX       0x20
 #define ROAR_SUBSYS_RDTCS         0x40
-
-// some usefull macros:
-#define _8BIT  1
-#define _16BIT 2
-#define _24BIT 3
-#define _32BIT 4
-#define _64BIT 8
 
 // listeing code:
 #define ROAR_MAX_LISTEN_SOCKETS  8
