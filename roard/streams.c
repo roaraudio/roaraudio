@@ -310,6 +310,26 @@ int streams_set_dir    (int id, int dir, int defaults) {
    ss->mixer.rpg_div = g_config->streams[dir].mixer.rpg_div;
  }
 
+ if ( dir != ROAR_DIR_MIXING ) {
+  switch (streams_get_subsys(id)) {
+   case ROAR_SUBSYS_WAVEFORM:
+     streams_set_mixer_stream(id, g_waveform_mixer.stream);
+    break;
+#ifndef ROAR_WITHOUT_DCOMP_MIDI
+   case ROAR_SUBSYS_MIDI:
+     streams_set_mixer_stream(id, g_midi_mixer.stream);
+    break;
+#endif
+#ifndef ROAR_WITHOUT_DCOMP_LIGHT
+   case ROAR_SUBSYS_LIGHT:
+     streams_set_mixer_stream(id, g_light_mixer.stream);
+    break;
+#endif
+  }
+ } else {
+  streams_set_mixer_stream(id, id);
+ }
+
  ROAR_DBG("streams_set_dir(*) = 0");
  return 0;
 }
