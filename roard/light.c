@@ -28,6 +28,7 @@
 
 int light_init  (unsigned int channels) {
  struct roar_stream_server * ss;
+ int i;
 
  g_light_state.channels = 0;
 
@@ -53,6 +54,14 @@ int light_init  (unsigned int channels) {
  ROAR_STREAM(ss)->info.codec = ROAR_CODEC_DMX512;
  ROAR_STREAM(ss)->info.bits  = ROAR_LIGHT_BITS;
  ROAR_STREAM(ss)->info.rate  = ROAR_OUTPUT_CFREQ;
+
+ for (i = 0; i < ROAR_STREAMS_MAX; i++) {
+  if ( g_streams[i] != NULL ) {
+   if ( streams_get_subsys(i) == ROAR_SUBSYS_LIGHT ) {
+    streams_set_mixer_stream(i, g_light_mixer.stream);
+   }
+  }
+ }
 
  return light_reset();
 }

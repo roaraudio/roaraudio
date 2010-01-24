@@ -44,6 +44,7 @@ int midi_init_config(void) {
 
 int midi_init (void) {
  struct roar_stream_server * ss;
+ int i;
 
  midi_config.inited = 0;
 
@@ -68,6 +69,14 @@ int midi_init (void) {
   ROAR_WARN("Can not create MIDI mixer");
  }
  ss->state = ROAR_STREAMSTATE_OLD;
+
+ for (i = 0; i < ROAR_STREAMS_MAX; i++) {
+  if ( g_streams[i] != NULL ) {
+   if ( streams_get_subsys(i) == ROAR_SUBSYS_MIDI ) {
+    streams_set_mixer_stream(i, g_midi_mixer.stream);
+   }
+  }
+ }
 
  midi_config.inited |= MIDI_INITED_MAIN;
 

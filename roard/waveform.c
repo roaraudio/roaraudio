@@ -27,6 +27,7 @@
 int waveform_init  (void) {
  struct roar_stream_server * ss;
  struct roar_stream        *  s;
+ int                          i;
 
  if ( (g_waveform_mixer.stream = add_mixer(ROAR_SUBSYS_WAVEFORM, _MIXER_NAME("Waveform"), &ss)) == -1 )
   return -1;
@@ -38,6 +39,14 @@ int waveform_init  (void) {
  memcpy(&(s->info), g_sa, sizeof(struct roar_audio_info));
 
  ss->state = ROAR_STREAMSTATE_OLD;
+
+ for (i = 0; i < ROAR_STREAMS_MAX; i++) {
+  if ( g_streams[i] != NULL ) {
+   if ( streams_get_subsys(i) == ROAR_SUBSYS_WAVEFORM ) {
+    streams_set_mixer_stream(i, g_waveform_mixer.stream);
+   }
+  }
+ }
 
  return 0;
 }
