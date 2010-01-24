@@ -135,4 +135,45 @@ int roar_auth   (struct roar_connection * con) {
  return roar_req(con, &mes, NULL);
 }
 
+// String functions:
+static struct {
+ int    type;
+ char * name;
+} _g_authts[] = {
+// grep ^'#define ROAR_AUTH_T_' auth.h | while read d t d; do n=$(cut -d_ -f4 <<<$t | tr A-Z a-z); printf ' {%-28s %-10s},\n' $t, \"$n\"; done
+ {ROAR_AUTH_T_NONE,            "none"    },
+ {ROAR_AUTH_T_COOKIE,          "cookie"  },
+ {ROAR_AUTH_T_TRUST,           "trust"   },
+ {ROAR_AUTH_T_PASSWORD,        "password"},
+ {ROAR_AUTH_T_SYSUSER,         "sysuser" },
+ {ROAR_AUTH_T_OPENPGP_SIGN,    "openpgp" },
+ {ROAR_AUTH_T_OPENPGP_ENCRYPT, "openpgp" },
+ {ROAR_AUTH_T_OPENPGP_AUTH,    "openpgp" },
+ {ROAR_AUTH_T_KERBEROS,        "kerberos"},
+ {ROAR_AUTH_T_RHOST,           "rhost"   },
+ {ROAR_AUTH_T_XAUTH,           "xauth"   },
+ {ROAR_AUTH_T_IDENT,           "ident"   },
+ {-1, NULL}
+};
+
+int    roar_str2autht(char * str) {
+ int i;
+
+ for (i = 0; _g_authts[i].name != NULL; i++)
+  if ( !strcasecmp(_g_authts[i].name, str) )
+   return _g_authts[i].type;
+
+ return -1;
+}
+
+char * roar_autht2str(int auth) {
+ int i;
+
+ for (i = 0; _g_authts[i].name != NULL; i++)
+  if ( _g_authts[i].type == auth )
+   return _g_authts[i].name;
+
+ return "(UNKNOWN)";
+}
+
 //ll
