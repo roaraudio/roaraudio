@@ -37,6 +37,20 @@
 
 #include "libroar.h"
 
+// Auth Types:
+#define ROAR_AUTH_T_NONE                0
+#define ROAR_AUTH_T_COOKIE              1
+#define ROAR_AUTH_T_TRUST               2
+#define ROAR_AUTH_T_PASSWORD            3
+#define ROAR_AUTH_T_SYSUSER             4
+#define ROAR_AUTH_T_OPENPGP_SIGN        5
+#define ROAR_AUTH_T_OPENPGP_ENCRYPT     6
+#define ROAR_AUTH_T_OPENPGP_AUTH        7
+#define ROAR_AUTH_T_KERBEROS            8
+#define ROAR_AUTH_T_RHOST               9
+#define ROAR_AUTH_T_XAUTH              10
+#define ROAR_AUTH_T_IDENT              11
+
 int roar_auth   (struct roar_connection * con);
 
 #endif
