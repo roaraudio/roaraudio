@@ -75,10 +75,10 @@
 
 
 /* speed */
-#define _MPS                   (_METER/_SEC)
+#define _MPS                   ((double)_METER/_SEC)
 #define _KMPH                  (_KILO*_METER/_HOUR)
-#define _SPEED_OF_SOUND_AIR    (343 *_MPS)
-#define _SPEED_OF_SOUND_WATER  (1407*_MPS)
+#define _SPEED_OF_SOUND_AIR    (343. *_MPS)
+#define _SPEED_OF_SOUND_WATER  (1407.*_MPS)
 #define _SPEED_OF_SOUND        _SPEED_OF_SOUND_AIR
 #define _SPEED_OF_LIGHT_VACUUM (299792458LL*_MPS)
 #define _SPEED_OF_LIGHT        _SPEED_OF_LIGHT_VACUUM
