@@ -493,6 +493,7 @@ static int _ioctl_stream_format (struct handle * handle, int format) {
    break;
 #endif
   default:
+    ROAR_DBG("_ioctl_stream_format(*): unsupported format");
     errno = ENOSYS;
     return -1;
    break;
@@ -824,6 +825,9 @@ IOCTL() {
  int * ip = NULL;
  audio_buf_info * bi;
  count_info     * ci;
+#ifdef __FIXME__
+ char * nosys_reqname = NULL;
+#endif
 #ifdef va_argp
  va_list args;
 #endif
@@ -843,6 +847,30 @@ IOCTL() {
  if ( (pointer = _get_pointer_by_fh(__fd)) != NULL ) {
   ip = argp;
 //  ROAR_DBG("ioctl(__fd=%i, __request=%lu): ip=%p", __fd, (long unsigned int) __request, ip);
+#ifdef __FIXME__
+  switch ((handle = pointer->handle)->type) {
+   case SOUND_PCM_READ_RATE: nosys_reqname = "SOUND_PCM_READ_RATE"; break;
+   case SOUND_PCM_READ_CHANNELS: nosys_reqname = "SOUND_PCM_READ_CHANNELS"; break;
+   case SOUND_PCM_READ_BITS: nosys_reqname = "SOUND_PCM_READ_BITS"; break;
+   case SOUND_PCM_READ_FILTER: nosys_reqname = "SOUND_PCM_READ_FILTER"; break;
+   case SNDCTL_COPR_RESET: nosys_reqname = "SNDCTL_COPR_RESET"; break;
+   case SNDCTL_COPR_LOAD: nosys_reqname = "SNDCTL_COPR_LOAD"; break;
+   case SNDCTL_COPR_HALT: nosys_reqname = "SNDCTL_COPR_HALT"; break;
+   case SNDCTL_COPR_RDATA: nosys_reqname = "SNDCTL_COPR_RDATA"; break;
+   case SNDCTL_COPR_RCODE: nosys_reqname = "SNDCTL_COPR_RCODE"; break;
+   case SNDCTL_COPR_WDATA: nosys_reqname = "SNDCTL_COPR_WDATA"; break;
+   case SNDCTL_COPR_WCODE: nosys_reqname = "SNDCTL_COPR_WCODE"; break;
+   case SNDCTL_COPR_RUN: nosys_reqname = "SNDCTL_COPR_RUN"; break;
+   case SNDCTL_COPR_SENDMSG: nosys_reqname = "SNDCTL_COPR_SENDMSG"; break;
+   case SNDCTL_COPR_RCVMSG: nosys_reqname = "SNDCTL_COPR_RCVMSG"; break;
+   case SNDCTL_DSP_SPEED: nosys_reqname = "SNDCTL_DSP_SPEED"; break;
+/*
+   case : nosys_reqname = ""; break;
+   case : nosys_reqname = ""; break;
+   case : nosys_reqname = ""; break;
+*/
+  }
+#endif
   switch ((handle = pointer->handle)->type) {
    case HT_STREAM:
      switch (__request) {
@@ -853,10 +881,12 @@ IOCTL() {
        break;
       case SNDCTL_DSP_SPEED:
         handle->stream.info.rate = *ip;
+        ROAR_DBG("ioctl(__fd=%i, __request=%lu): rate=%i", __fd, (long unsigned int) __request, *ip);
         return 0;
        break;
       case SNDCTL_DSP_CHANNELS:
         handle->stream.info.channels = *ip;
+        ROAR_DBG("ioctl(__fd=%i, __request=%lu): channels=%i", __fd, (long unsigned int) __request, *ip);
         return 0;
        break;
       case SNDCTL_DSP_STEREO:
@@ -868,6 +898,7 @@ IOCTL() {
         return 0;
        break;
       case SNDCTL_DSP_SETFMT:
+        ROAR_DBG("ioctl(__fd=%i, __request=%lu): fmt=0x%x", __fd, (long unsigned int) __request, *ip);
         return _ioctl_stream_format(handle, *ip);
        break;
       case SNDCTL_DSP_GETFMTS:
@@ -912,7 +943,11 @@ IOCTL() {
        break;
 #endif
       default:
+#ifdef __FIXME__
+        ROAR_DBG("ioctl(__fd=%i, __request=%lu (%s)) = -1 // errno = ENOSYS", __fd, (long unsigned int) __request, nosys_reqname);
+#else
         ROAR_DBG("ioctl(__fd=%i, __request=%lu) = -1 // errno = ENOSYS", __fd, (long unsigned int) __request);
+#endif
         errno = ENOSYS;
         return -1;
      }
