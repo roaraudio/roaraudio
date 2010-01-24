@@ -59,6 +59,8 @@
  *
  * Auth response:
  * The same as the auth request.
+ * if the server sends an zero size message back it means the server accepted our connection
+ * and no additional stage is needed.
  * if the message type is OK the server accepted our auth.
  * if the message type is ERROR the server recjected us. we may try other auth methodes.
  * if the server accepted our data and the stage is non-zero we need to continue with the next
@@ -124,15 +126,58 @@
  *
  */
 
-int roar_auth   (struct roar_connection * con) {
- struct roar_message mes;
+static int roar_auth_ask_server (struct roar_connection * con, struct roar_auth_message * authmes) {
+ struct roar_message   mes;
+ char                * header = mes.data;
+ int                   ret;
 
  memset(&mes, 0, sizeof(struct roar_message)); // make valgrind happy!
 
  mes.cmd     = ROAR_CMD_AUTH;
- mes.datalen = 0;
+ mes.datalen = 4;
 
- return roar_req(con, &mes, NULL);
+ header[0] = authmes->type;
+ header[1] = authmes->stage;
+ header[2] = authmes->reserved.c[0];
+ header[3] = authmes->reserved.c[1];
+
+ if ( (ret = roar_req(con, &mes, NULL)) == -1 )
+  return -1;
+
+ if ( mes.datalen < 4 ) {
+  memset(header+mes.datalen, 0, 4-mes.datalen);
+ }
+
+ authmes->type          = header[0];
+ authmes->stage         = header[1];
+ authmes->reserved.c[0] = header[2];
+ authmes->reserved.c[1] = header[3];
+
+ return 0;
+}
+
+static void roar_auth_mes_init(struct roar_auth_message * authmes, int type) {
+ memset(authmes, 0, sizeof(struct roar_auth_message));
+
+ authmes->type  = type;
+ authmes->stage = 0;
+ authmes->data  = NULL;
+ authmes->len   = 0;
+}
+
+int roar_auth   (struct roar_connection * con) {
+ struct roar_auth_message authmes;
+ int ret;
+
+ roar_auth_mes_init(&authmes, ROAR_AUTH_T_NONE);
+
+ if ( (ret = roar_auth_ask_server(con, &authmes)) == -1 )
+  return -1;
+
+ if ( authmes.stage != 0 )
+  return -1;
+
+ return 0;
 }
 
 // String functions:
