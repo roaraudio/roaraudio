@@ -39,6 +39,7 @@
 
 
 /* Time: */
+#ifndef _SEC
 #if defined(_UNITS_T_BASE_MSEC)
 #define _SEC  1000
 #elif defined(_UNITS_T_BASE_USEC)
@@ -46,6 +47,7 @@
 //#elif defined(_UNITS_T_BASE_SEC)
 #else
 #define _SEC  1
+#endif
 #endif
 
 #define _MIN  (60*_SEC)
@@ -56,10 +58,31 @@
 
 
 /* distance */
+#ifndef _METER
+#if defined(_UNITS_D_BASE_MMETER)
+#define _METER 1000
+#elif defined(_UNITS_D_BASE_UMETER)
+#define _METER 1000000
+//#elif defined(_UNITS_D_BASE_METER)
+#else
 #define _METER 1
-#define _AE    (149597870691*_METER)
-#define _LJ    (9460730472580800*_METER)
-#define _PC    (3.2615668*_LJ)
+#endif
+#endif
+
+#define _AE    (149597870691LL     *_METER)
+#define _LJ    (9460730472580800LL *_METER)
+#define _PC    (30856804413117847LL*_METER) /* TODO: FIXME: get a more corret value */
+
+
+/* speed */
+#define _MPS                   (_METER/_SEC)
+#define _KMPH                  (_KILO*_METER/_HOUR)
+#define _SPEED_OF_SOUND_AIR    (343 *_MPS)
+#define _SPEED_OF_SOUND_WATER  (1407*_MPS)
+#define _SPEED_OF_SOUND        _SPEED_OF_SOUND_AIR
+#define _SPEED_OF_LIGHT_VACUUM (299792458LL*_MPS)
+#define _SPEED_OF_LIGHT        _SPEED_OF_LIGHT_VACUUM
+
 
 /* Bits -> Bytes: */
 #define _BIT2BYTE(x) (((int)((x)/8)) + ((x) % 8 ? 1 : 0))
