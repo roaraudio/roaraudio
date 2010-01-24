@@ -790,7 +790,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.231 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.232 $ of RoarAudio
  */
 
 EOF
@@ -1020,6 +1020,7 @@ test_func_defmake ROAR_HAVE_SETSID    setsid    'setsid()'                   -- 
 test_func_defmake ROAR_HAVE_GETTIMEOFDAY gettimeofday 'struct timeval tv; gettimeofday(&tv, NULL)' -- sys/time.h time.h
 test_func_defmake ROAR_HAVE_USLEEP    usleep    'usleep(0)'                  -- sys/types.h unistd.h
 test_func_defmake ROAR_HAVE_ALARM     alarm     'alarm(0)'                   -- sys/types.h unistd.h
+test_func_defmake ROAR_HAVE_TIME      time      'time((void*)0)'             -- time.h
 test_func_defmake ROAR_HAVE_KILL      kill      'kill(0,0)'                  -- sys/types.h signal.h
 test_func_defmake ROAR_HAVE_UNAME     uname     'uname((void*)0)'            -- sys/utsname.h
 
