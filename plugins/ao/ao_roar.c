@@ -118,12 +118,34 @@ int ao_plugin_set_option(ao_device * device, const char * key, const char * valu
 
 int ao_plugin_open(ao_device * device, ao_sample_format * format) {
  ao_roar_internal * internal = (ao_roar_internal *) device->internal;
+#ifdef HAVE_MATRIX
+ char * map = NULL;
+#endif
 
  if ( roar_vio_simple_stream(&(internal->svio), format->rate, format->channels, format->bits,
                              ROAR_CODEC_DEFAULT, internal->host, ROAR_DIR_PLAY, "libao client") == -1 )
   return 0;
 
  device->driver_byte_format = AO_FMT_NATIVE;
+
+#ifdef HAVE_MATRIX
+ if( device->output_matrix != NULL )
+  free(device->output_matrix);
+
+ device->output_matrix = NULL;
+
+ switch (format->channels) {
+  case  1: map = "M";               break;
+  case  2: map = "L,R";             break;
+  case  3: map = "L,R,C";           break;
+  case  4: map = "L,R,BL,BR";       break;
+  case  5: map = "L,R,C,BL,BR";     break;
+  case  6: map = "L,R,C,LFE,BL,BR"; break;
+ }
+
+ if ( map != NULL )
+  device->output_matrix = strdup(map);
+#endif
 
  return 1;
 }
