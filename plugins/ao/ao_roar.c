@@ -2,7 +2,7 @@
  *
  *  ao_roar.c
  *
- *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - May 2008
+ *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008-2010
  *      based on ao_esd.c of libao by Stan Seibert - July 2000, July 2001
  *
  *  This file is part of RoarAudio, a cross-platform sound server. See

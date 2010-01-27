@@ -1,7 +1,7 @@
                RoarAudio output plugin for libao
          -------------------------------------------
 
-Copyright (C) Philipp 'ph3-der-loewe' Schafft - May 2008
+Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008-2010
 based on ao_esd.c of libao by Stan Seibert - July 2000, July 2001
 
 This is free software; you can redistribute it and/or modify
