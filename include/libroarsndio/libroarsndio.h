@@ -60,19 +60,19 @@ extern "C" {
 #endif
 
 struct roar_sio_hdl {
- char           * device;
+ char                   * device;
 // int              fh;
- int                    stream_opened;
- int                    dir;
- struct roar_vio_calls  svio;
- struct roar_connection con;
- struct roar_stream     stream;
- struct roar_audio_info info;
- struct sio_par   para;
- void           (*on_move)(void * arg, int delta);
- void           * on_move_arg;
- void           (*on_vol )(void * arg, unsigned vol);
- void           * on_vol_arg;
+ int                      stream_opened;
+ int                      dir;
+ struct roar_vio_calls    svio;
+ struct roar_connection   con;
+ struct roar_stream       stream;
+ struct roar_audio_info   info;
+ struct sio_par           para;
+ void                   (*on_move)(void * arg, int delta);
+ void                   * on_move_arg;
+ void                   (*on_vol )(void * arg, unsigned vol);
+ void                   * on_vol_arg;
 };
 
 #ifdef __cplusplus
