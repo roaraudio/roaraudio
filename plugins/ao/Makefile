@@ -6,7 +6,7 @@ include ../../Makefile.inc
 include Makefile.conf
 
 #DEFINES=-DDEBUG
-CFLAGS += -g -Wall -O2 -I../../include $(DEFINES) $(INCLUDE) $(INCPATH) $(SHARED_CF) $(fPIC) $(AO_CFLAGS)
+CFLAGS += -g -Wall -O2 -I../../include $(DEFINES) $(HAVE_MATRIX) $(INCLUDE) $(INCPATH) $(SHARED_CF) $(fPIC) $(AO_CFLAGS)
 LDFLAGS = -g $(SHARED) $(LDPATH) -L../../lib
 LIBS    = $(LIBROAR) $(AO_LIBS)
 

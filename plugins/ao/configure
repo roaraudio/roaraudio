@@ -111,6 +111,8 @@ echo creating Makefile.conf...
  echo
  echo "AO_CFLAGS=$AO_CFLAGS"
  echo "AO_LIBS=$AO_LIBS"
+ echo
+ $HAVE_MATRIX && echo "HAVE_MATRIX=-DHAVE_MATRIX"
 } > Makefile.conf
 
 #ll
