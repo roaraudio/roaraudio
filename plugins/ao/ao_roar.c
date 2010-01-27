@@ -64,7 +64,7 @@ static ao_info ao_roar_info =
 
 
 typedef struct ao_roar_internal {
- int    sock;
+ struct roar_vio_calls svio;
  char * host;
 } ao_roar_internal;
 
@@ -119,10 +119,8 @@ int ao_plugin_set_option(ao_device * device, const char * key, const char * valu
 int ao_plugin_open(ao_device * device, ao_sample_format * format) {
  ao_roar_internal * internal = (ao_roar_internal *) device->internal;
 
- internal->sock = roar_simple_play(format->rate, format->channels, format->bits,
-                                   ROAR_CODEC_DEFAULT, internal->host, "libao client");
-
- if ( internal->sock == -1 )
+ if ( roar_vio_simple_stream(&(internal->svio), format->rate, format->channels, format->bits,
+                             ROAR_CODEC_DEFAULT, internal->host, ROAR_DIR_PLAY, "libao client") == -1 )
   return 0;
 
  device->driver_byte_format = AO_FMT_NATIVE;
@@ -133,7 +131,7 @@ int ao_plugin_open(ao_device * device, ao_sample_format * format) {
 int ao_plugin_play(ao_device * device, const char * output_samples, uint_32 num_bytes) {
  ao_roar_internal * internal = (ao_roar_internal *) device->internal;
 
- if (write(internal->sock, output_samples, num_bytes) == -1) {
+ if (roar_vio_write(&(internal->svio), (char*)output_samples, num_bytes) == -1) {
   return 0;
  } else {
   return 1;
@@ -144,7 +142,7 @@ int ao_plugin_play(ao_device * device, const char * output_samples, uint_32 num_
 int ao_plugin_close(ao_device * device) {
  ao_roar_internal * internal = (ao_roar_internal *) device->internal;
 
- roar_simple_close(internal->sock);
+ roar_vio_close(&(internal->svio));
 
  return 1;
 }
