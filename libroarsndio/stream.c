@@ -91,6 +91,13 @@ int    sio_start  (struct sio_hdl * hdl) {
 
  ROAR_DBG("sio_start(hdl=%p): rate=%i, channels=%i, bits=%i, codec=%i", hdl, _i(rate), _i(channels), _i(bits), _i(codec));
 
+ if ( hdl->nonblock ) {
+  if ( roar_vio_nonblock(&(hdl->svio), ROAR_SOCKET_NONBLOCK) == -1 ) {
+   roar_vio_close(&(hdl->svio));
+   return 0;
+  }
+ }
+
  send_vol_event(hdl);
 
  hdl->stream_opened = 1;

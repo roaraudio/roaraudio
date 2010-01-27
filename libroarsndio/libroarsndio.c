@@ -148,6 +148,8 @@ struct sio_hdl * sio_open(const char * name, unsigned mode, int nbio_flag) {
   }
  }
 
+ hdl->nonblock = nbio_flag;
+
  return hdl;
 }
 
