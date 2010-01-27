@@ -57,7 +57,7 @@ static ao_info ao_roar_info =
  "Philipp 'ph3-der-loewe' Schafft, Based on code by: Stan Seibert <volsung@asu.edu>",
  "Outputs to the RoarAudio Sound Daemon.",
  AO_FMT_NATIVE,
- 41,
+ 50,
  ao_roar_options,
  1
 };
