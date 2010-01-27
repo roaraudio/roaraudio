@@ -79,6 +79,27 @@ else
  on_error
 fi
 
+echo -n 'testing for libao to support mapping matrix... '
+cat > tests.c << EOF
+#include <ao/ao.h>
+#include <ao/plugin.h>
+int main (void) { ao_device dev = {.output_matrix = ""}; return 0; }
+EOF
+
+$CC $AO_LIBS $AO_CFLAGS -o tests tests.c 2> /dev/null
+R="$?"
+./tests 2> /dev/null
+
+HAVE_MATRIX=false
+
+if [ "$R" = '0' -a "$?" = '0' ]
+then
+ echo yes
+ HAVE_MATRIX=true
+else
+ echo no.
+fi
+
 check_libroar;
 
 rm -f tests tests.c
