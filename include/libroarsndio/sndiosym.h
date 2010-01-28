@@ -91,7 +91,25 @@ struct sio_par {
  unsigned xrun;          /* what to do on overrun/underrun */
 };
 
-struct sio_cap;
+struct sio_cap {
+ struct sio_enc {                /* allowed encodings */
+  unsigned bits;                 /* bits per sample */
+  unsigned bps;                  /* bytes per sample */
+  unsigned sig;                  /* 1 = signed, 0 = unsigned */
+  unsigned le;                   /* 1 = LE, 0 = BE byte order */
+  unsigned msb;                  /* 1 = MSB, 0 = LSB aligned */
+ } enc[SIO_NENC];
+ unsigned rchan[SIO_NCHAN];      /* allowed rchans */
+ unsigned pchan[SIO_NCHAN];      /* allowed pchans */
+ unsigned rate[SIO_NRATE];       /* allowed rates */
+ unsigned nconf;                 /* num. of confs[] */
+ struct sio_conf {
+  unsigned enc;                  /* bitmask of enc[] indexes */
+  unsigned rchan;                /* bitmask of rchan[] indexes */
+  unsigned pchan;                /* bitmask of pchan[] indexes */
+  unsigned rate;                 /* bitmask of rate[] indexes */
+ } confs[SIO_NCONF];
+};
 
 struct sio_hdl * sio_open(const char * name, unsigned mode, int nbio_flag);
 void   sio_close  (struct sio_hdl * hdl);
