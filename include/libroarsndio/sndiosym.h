@@ -51,7 +51,7 @@ struct pollfd;
 #define SIO_ERROR       2       /* terminate on xrun */
 #define SIO_XSTRINGS    {"ignore", "sync", "error"}
 
-#define SIO_NENC	8
+#define SIO_NENC	16
 #define SIO_NCHAN	8
 #define SIO_NRATE	16
 #define SIO_NCONF	4

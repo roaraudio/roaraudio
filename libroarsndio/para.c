@@ -145,7 +145,55 @@ int    sio_getpar (struct sio_hdl * hdl, struct sio_par * par) {
 }
 
 int    sio_getcap (struct sio_hdl * hdl, struct sio_cap * cap) {
- return 0;
+ struct roar_stream s;
+ int i;
+ int bytes;
+ int sign;
+ int le;
+ unsigned mask = 0;
+
+ if ( cap == NULL )
+  return 0;
+
+ if ( roar_server_oinfo(&(hdl->con), &s) == -1 )
+  return 0;
+
+ i = 0;
+ for (bytes = 1; bytes <= s.info.bits/8; bytes++) {
+  for (sign = 0; sign  < 2; sign++) {
+   for (le  = 0; le    < 2; le++) {
+    cap->enc[i].bits =   8*bytes;
+    cap->enc[i].bps  =     bytes;
+    cap->enc[i].sig  =     sign;
+    cap->enc[i].le   =     le;
+    cap->enc[i].msb  =   1;
+    mask |= 1 << i;
+    i++;
+   }
+  }
+ }
+
+ // TODO: fix this (at least include server channels,
+ //                 do nit include confusing setups)
+ if ( s.info.channels > SIO_NCHAN ) {
+  s.info.channels = SIO_NCHAN;
+ }
+
+ for (i = 0; i < s.info.channels; i++) {
+  cap->rchan[i] = i+1;
+  cap->pchan[i] = i+1;
+ }
+
+ cap->rate[0] = s.info.rate;
+
+ cap->nconf = 1;
+
+ cap->confs[0].enc   = mask;
+ cap->confs[0].rchan = mask;
+ cap->confs[0].pchan = mask;
+ cap->confs[0].rate  = 0x0001;
+
+ return 1;
 }
 
 
