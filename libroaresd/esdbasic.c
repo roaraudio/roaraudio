@@ -46,6 +46,9 @@ int esd_open_sound( const char *host ) {
  struct roar_connection con;
  int fh;
 
+ if ( host == NULL )
+  host = getenv("ESPEAKER");
+
  if ( roar_simple_connect(&con, (char*) host, NULL) == -1 ) {
   ROAR_DBG("esd_open_sound(*): roar_simple_connect() faild!");
   return -1;
