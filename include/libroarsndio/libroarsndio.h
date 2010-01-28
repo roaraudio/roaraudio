@@ -65,6 +65,7 @@ struct roar_sio_hdl {
  int                      stream_opened;
  int                      dir;
  int                      nonblock;
+ int                      ioerror;
  struct roar_vio_calls    svio;
  struct roar_connection   con;
  struct roar_stream       stream;

@@ -101,6 +101,7 @@ int    sio_start  (struct sio_hdl * hdl) {
  send_vol_event(hdl);
 
  hdl->stream_opened = 1;
+ hdl->ioerror       = 0;
 
  return 1;
 }
@@ -130,8 +131,13 @@ size_t sio_read   (struct sio_hdl * hdl, void * addr, size_t nbytes) {
  if ( !hdl->stream_opened )
   return 0;
 
- if ( (ret = roar_vio_read(&(hdl->svio), addr, nbytes)) < 0 )
+ if ( (ret = roar_vio_read(&(hdl->svio), addr, nbytes)) < 0 ) {
+  hdl->ioerror = 1;
   return 0;
+ }
+
+ if ( hdl->nonblock )
+  hdl->ioerror = 0;
 
  return ret;
 }
@@ -144,8 +150,13 @@ size_t sio_write  (struct sio_hdl * hdl, const void * addr, size_t nbytes) {
  if ( !hdl->stream_opened )
   return 0;
 
- if ( (ret = roar_vio_write(&(hdl->svio), (void*) addr, nbytes)) < 0 )
+ if ( (ret = roar_vio_write(&(hdl->svio), (void*) addr, nbytes)) < 0 ) {
+  hdl->ioerror = 1;
   return 0;
+ }
+
+ if ( hdl->nonblock )
+  hdl->ioerror = 0;
 
  if ( hdl->on_move != NULL ) {
   hdl->on_move(hdl->on_move_arg, 8*ret/(hdl->info.channels * hdl->info.bits));

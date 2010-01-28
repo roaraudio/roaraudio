@@ -165,7 +165,7 @@ void   sio_close  (struct sio_hdl * hdl) {
 }
 
 int    sio_eof    (struct sio_hdl * hdl) {
- return 0;
+ return hdl->ioerror;
 }
 
 void   sio_onmove (struct sio_hdl * hdl, void (*cb)(void * arg, int delta), void * arg) {
