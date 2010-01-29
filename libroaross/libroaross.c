@@ -100,6 +100,7 @@
 #define HT_MIXER      2
 #define HT_WAVEFORM   3
 #define HT_MIDI       4
+#define HT_DMX        5
 
 struct session {
  int refc;
@@ -118,6 +119,7 @@ struct handle {
  int                   stream_opened;
  size_t                stream_buffersize;
  size_t                readc, writec;
+ size_t                pos;
 };
 
 static struct {
@@ -128,6 +130,7 @@ static struct {
 #ifndef IOCTL_IS_ALIAS
  int     (*ioctl)(int d, int request, ...);
 #endif
+ off_t   (*lseek)(int fildes, off_t offset, int whence);
 } _os;
 
 static struct {
@@ -171,6 +174,7 @@ static void _init_os (void) {
 #ifndef IOCTL_IS_ALIAS
  _os.ioctl = dlsym(REAL_LIBC, "ioctl");
 #endif
+ _os.lseek = dlsym(REAL_LIBC, "lseek");
 }
 
 static void _init_ptr (void) {
@@ -370,6 +374,7 @@ static int _open_file (const char *pathname, int flags) {
   {"/dev/rmidi",         HT_MIDI},
   {"/dev/sound/midi",    HT_MIDI},
   {"/dev/sound/rmidi",   HT_MIDI},
+  {"/dev/dmx",           HT_DMX},
 #ifdef ROAR_DEFAULT_OSS_DEV
   {ROAR_DEFAULT_OSS_DEV, HT_WAVEFORM},
 #endif
@@ -407,6 +412,9 @@ static int _open_file (const char *pathname, int flags) {
      case HT_MIDI:
        handle->stream_dir = ROAR_DIR_MIDI_OUT;
       break;
+     case HT_DMX:
+       handle->stream_dir = ROAR_DIR_LIGHT_OUT;
+      break;
     }
    break;
   case O_WRONLY:
@@ -416,6 +424,9 @@ static int _open_file (const char *pathname, int flags) {
       break;
      case HT_MIDI:
        handle->stream_dir = ROAR_DIR_MIDI_IN;
+      break;
+     case HT_DMX:
+       handle->stream_dir = ROAR_DIR_LIGHT_IN;
       break;
     }
    break;
@@ -857,6 +868,36 @@ ssize_t read(int fd, void *buf, size_t count) {
  }
 
  return _os.read(fd, buf, count);
+}
+
+off_t lseek(int fildes, off_t offset, int whence) {
+ struct pointer * pointer;
+
+ _init();
+
+ if ( (pointer = _get_pointer_by_fh(fildes)) != NULL ) {
+  if ( pointer->handle->type == HT_DMX ) {
+   switch (whence) {
+    case SEEK_SET:
+      pointer->handle->pos  = offset;
+     break;
+    case SEEK_CUR:
+      pointer->handle->pos += offset;
+     break;
+    case SEEK_END:
+    default:
+      errno = EINVAL;
+      return -1;
+     break;
+   }
+   return pointer->handle->pos;
+  } else {
+   errno = EINVAL;
+   return -1;
+  }
+ }
+
+ return _os.lseek(fildes, offset, whence);
 }
 
 IOCTL() {
