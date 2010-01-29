@@ -418,6 +418,8 @@ static int _open_file (const char *pathname, int flags) {
      case HT_DMX:
        handle->stream_dir = ROAR_DIR_LIGHT_OUT;
       break;
+     default:
+       return -1;
     }
    break;
   case O_WRONLY:
@@ -431,6 +433,8 @@ static int _open_file (const char *pathname, int flags) {
      case HT_DMX:
        handle->stream_dir = ROAR_DIR_LIGHT_IN;
       break;
+     default:
+       return -1;
     }
    break;
   case O_RDWR:
@@ -438,6 +442,8 @@ static int _open_file (const char *pathname, int flags) {
      case HT_WAVEFORM:
        handle->stream_dir = ROAR_DIR_BIDIR;
       break;
+     default:
+       return -1;
     }
    break;
  }
