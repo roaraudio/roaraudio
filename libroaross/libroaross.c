@@ -367,6 +367,9 @@ static int _open_file (const char *pathname, int flags) {
   {"/dev/mixer",         HT_MIXER},
   {"/dev/sound/mixer",   HT_MIXER},
   {"/dev/midi",          HT_MIDI},
+  {"/dev/rmidi",         HT_MIDI},
+  {"/dev/sound/midi",    HT_MIDI},
+  {"/dev/sound/rmidi",   HT_MIDI},
 #ifdef ROAR_DEFAULT_OSS_DEV
   {ROAR_DEFAULT_OSS_DEV, HT_WAVEFORM},
 #endif
