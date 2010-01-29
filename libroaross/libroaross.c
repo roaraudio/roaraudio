@@ -358,9 +358,12 @@ static int _open_file (const char *pathname, int flags) {
   char * prefix;
   int type;
  } * ptr = NULL, p[] = {
-  {"/dev/dsp",   HT_STREAM},
-  {"/dev/audio", HT_STREAM},
-  {"/dev/mixer", HT_MIXER},
+  {"/dev/dsp",           HT_STREAM},
+  {"/dev/audio",         HT_STREAM},
+  {"/dev/sound/dsp",     HT_STREAM},
+  {"/dev/sound/audio",   HT_STREAM},
+  {"/dev/mixer",         HT_MIXER},
+  {"/dev/sound/mixer",   HT_MIXER},
 #ifdef ROAR_DEFAULT_OSS_DEV
   {ROAR_DEFAULT_OSS_DEV, HT_STREAM},
 #endif
