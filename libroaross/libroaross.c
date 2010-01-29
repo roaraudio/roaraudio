@@ -98,6 +98,8 @@
 #define HT_NONE       0
 #define HT_STREAM     1
 #define HT_MIXER      2
+#define HT_WAVEFORM   3
+#define HT_MIDI       4
 
 struct session {
  int refc;
@@ -358,14 +360,15 @@ static int _open_file (const char *pathname, int flags) {
   char * prefix;
   int type;
  } * ptr = NULL, p[] = {
-  {"/dev/dsp",           HT_STREAM},
-  {"/dev/audio",         HT_STREAM},
-  {"/dev/sound/dsp",     HT_STREAM},
-  {"/dev/sound/audio",   HT_STREAM},
+  {"/dev/dsp",           HT_WAVEFORM},
+  {"/dev/audio",         HT_WAVEFORM},
+  {"/dev/sound/dsp",     HT_WAVEFORM},
+  {"/dev/sound/audio",   HT_WAVEFORM},
   {"/dev/mixer",         HT_MIXER},
   {"/dev/sound/mixer",   HT_MIXER},
+  {"/dev/midi",          HT_MIDI},
 #ifdef ROAR_DEFAULT_OSS_DEV
-  {ROAR_DEFAULT_OSS_DEV, HT_STREAM},
+  {ROAR_DEFAULT_OSS_DEV, HT_WAVEFORM},
 #endif
   {NULL, HT_NONE},
  };
@@ -389,17 +392,49 @@ static int _open_file (const char *pathname, int flags) {
   return -1;
  }
 
- handle->type = ptr->type;
+ handle->type       = ptr->type;
+ handle->stream_dir = -1;
 
  switch (flags & (O_RDONLY|O_WRONLY|O_RDWR)) {
   case O_RDONLY:
-    handle->stream_dir = ROAR_DIR_MONITOR;
+    switch (ptr->type) {
+     case HT_WAVEFORM:
+       handle->stream_dir = ROAR_DIR_MONITOR;
+      break;
+     case HT_MIDI:
+       handle->stream_dir = ROAR_DIR_MIDI_OUT;
+      break;
+    }
    break;
   case O_WRONLY:
-    handle->stream_dir = ROAR_DIR_PLAY;
+    switch (ptr->type) {
+     case HT_WAVEFORM:
+       handle->stream_dir = ROAR_DIR_PLAY;
+      break;
+     case HT_MIDI:
+       handle->stream_dir = ROAR_DIR_MIDI_IN;
+      break;
+    }
    break;
   case O_RDWR:
-    handle->stream_dir = ROAR_DIR_BIDIR;
+    switch (ptr->type) {
+     case HT_WAVEFORM:
+       handle->stream_dir = ROAR_DIR_BIDIR;
+      break;
+    }
+   break;
+ }
+
+ switch (handle->type) {
+  case HT_WAVEFORM:
+    handle->type = HT_STREAM;
+   break;
+  case HT_MIDI:
+    handle->type = HT_STREAM;
+    handle->stream.info.rate     = 0;
+    handle->stream.info.bits     = ROAR_MIDI_BITS;
+    handle->stream.info.channels = ROAR_MIDI_CHANNELS_DEFAULT;
+    handle->stream.info.codec    = ROAR_CODEC_MIDI;
    break;
  }
 
