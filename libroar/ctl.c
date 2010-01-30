@@ -497,6 +497,8 @@ int    roar_str2proto (char * proto) {
   return ROAR_PROTO_GOPHER;
  } else if ( !strcasecmp(proto, "icy") ) {
   return ROAR_PROTO_ICY;
+ } else if ( !strcasecmp(proto, "simple") ) {
+  return ROAR_PROTO_SIMPLE;
  }
 
  return -1;
@@ -510,6 +512,7 @@ char * roar_proto2str (int    proto) {
   case ROAR_PROTO_HTTP:      return "http";      break;
   case ROAR_PROTO_GOPHER:    return "gopher";    break;
   case ROAR_PROTO_ICY:       return "ICY";       break;
+  case ROAR_PROTO_SIMPLE:    return "simple";    break;
   default:
     return "(unknown)";
  }
