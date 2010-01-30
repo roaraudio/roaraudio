@@ -152,6 +152,11 @@ void usage (void) {
         " -b  --bind            - IP/Hostname to bind to\n"
         "     --sock            - Filename for UNIX Domain Socket\n"
         "     --proto PROTO     - Use PROTO as protocol on Socket\n"
+        "     --proto-dir DIR   - Set direction parameter for protocol\n"
+        "     --proto-rate RATE - Set sample rate parameter for protocol\n"
+        "     --proto-bits BITS - Set bits per sample parameter for protocol\n"
+        "     --proto-codec E   - Set codec parameter for protocol\n"
+        "     --proto-chans C   - Set number of channels paramter for protocol\n"
         "     --list-proto      - List supported protocols\n"
         "     --new-sock        - Parameters for new socket follows\n"
 #ifdef ROAR_HAVE_LIBSLP
@@ -279,7 +284,7 @@ int init_listening (void) {
  return 0;
 }
 
-int add_listen (char * addr, int port, int sock_type, char * user, char * group, int proto) {
+int add_listen (char * addr, int port, int sock_type, char * user, char * group, int proto, int dir, struct roar_audio_info * info) {
 #if defined(ROAR_HAVE_SETGID) && defined(ROAR_HAVE_IO_POSIX)
  struct group   * grp  = NULL;
 #endif
@@ -372,6 +377,8 @@ int add_listen (char * addr, int port, int sock_type, char * user, char * group,
  }
 
  // in case we opened the listening socket correctly.
+ g_listen[sockid].inst.stpl.dir = dir;
+ memcpy(&(g_listen[sockid].inst.stpl.info), info, sizeof(struct roar_audio_info));
  server[sockid] = addr;
  return 0;
 }
@@ -853,6 +860,8 @@ int main (void) {
  int    port       = ROAR_DEFAULT_PORT;
  char * sock_addr  = NULL;
  int    sock_proto = ROAR_PROTO_ROARAUDIO;
+ int    sock_dir   = -1;
+ struct roar_audio_info sock_info = {0, 0, 0, 0};
 #endif
  int               drvid;
 #ifndef ROAR_WITHOUT_DCOMP_SOURCES
@@ -1310,6 +1319,34 @@ int main (void) {
     return 1;
    }
 #endif
+  } else if ( strcmp(k, "--proto-dir") == 0 ) {
+#ifdef ROAR_SUPPORT_LISTEN
+   if ( (sock_dir = roar_str2dir(argv[++i])) == -1 ) {
+    ROAR_ERR("Unknown stream direction: %s", argv[i]);
+    return 1;
+   }
+#endif
+  } else if ( strcmp(k, "--proto-rate") == 0 ) {
+#ifdef ROAR_SUPPORT_LISTEN
+   sock_info.rate = atoi(argv[++i]);
+#endif
+  } else if ( strcmp(k, "--proto-bits") == 0 ) {
+#ifdef ROAR_SUPPORT_LISTEN
+   sock_info.bits = atoi(argv[++i]);
+#endif
+  } else if ( strcmp(k, "--proto-chans") == 0 ) {
+#ifdef ROAR_SUPPORT_LISTEN
+   sock_info.channels = atoi(argv[++i]);
+#endif
+  } else if ( strcmp(k, "--proto-codec") == 0 ) {
+#ifdef ROAR_SUPPORT_LISTEN
+   if ( (sock_info.codec = roar_str2codec(argv[++i])) == -1 ) {
+    ROAR_ERR("Unknown codec: %s", argv[i]);
+    return 1;
+   }
+#endif
+
+
   } else if ( strcmp(k, "--list-proto") == 0 ) {
    list_proto();
    return 0;
@@ -1361,7 +1398,7 @@ int main (void) {
 #endif
   } else if ( strcmp(k, "--new-sock") == 0 ) {
 #ifdef ROAR_SUPPORT_LISTEN
-   if ( add_listen(sock_addr, port, sock_type, sock_user, sock_grp, sock_proto) != 0 ) {
+   if ( add_listen(sock_addr, port, sock_type, sock_user, sock_grp, sock_proto, sock_dir, &sock_info) != 0 ) {
     ROAR_ERR("Can not open listen socket!");
     return 1;
    }
@@ -1456,7 +1493,7 @@ int main (void) {
 #endif
 
 #ifdef ROAR_SUPPORT_LISTEN
- if ( add_listen(sock_addr, port, sock_type, sock_user, sock_grp, sock_proto) != 0 ) {
+ if ( add_listen(sock_addr, port, sock_type, sock_user, sock_grp, sock_proto, sock_dir, &sock_info) != 0 ) {
   ROAR_ERR("Can not open listen socket!");
   return 1;
  }
