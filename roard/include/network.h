@@ -29,7 +29,9 @@
 
 int net_check_listen  (void);
 
-int net_get_new_client (int sock, int proto);
+struct roard_listen;
+
+int net_get_new_client (struct roard_listen * lsock);
 
 #endif
 

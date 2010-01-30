@@ -129,7 +129,7 @@ void on_sig_chld (int signum);
 void on_sig_usr1 (int signum);
 
 #ifdef ROAR_SUPPORT_LISTEN
-struct {
+struct roard_listen {
  int socket;
  int proto;
  union {

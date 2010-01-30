@@ -64,7 +64,7 @@ int net_check_listen  (void) {
   for (i = 0; i < ROAR_MAX_LISTEN_SOCKETS; i++) {
    if ( g_listen[i].socket != -1 ) {
     if ( FD_ISSET(g_listen[i].socket, &sl) ) {
-     if ( net_get_new_client(g_listen[i].socket, g_listen[i].proto) == -1 )
+     if ( net_get_new_client(&(g_listen[i])) == -1 )
       return -1;
     }
    }
@@ -78,7 +78,7 @@ int net_check_listen  (void) {
 }
 
 #ifdef _CAN_OPERATE
-int net_get_new_client (int sock, int proto) {
+int net_get_new_client (struct roard_listen * lsock) {
  int fh;
  int client;
  struct roar_client * c;
@@ -90,7 +90,7 @@ int net_get_new_client (int sock, int proto) {
  struct sockaddr_storage  addr;
  socklen_t                addrlen = sizeof(addr);
 
- fh = accept(sock, (struct sockaddr*)&addr, &addrlen);
+ fh = accept(lsock->socket, (struct sockaddr*)&addr, &addrlen);
 
  ROAR_DBG("net_get_new_client(void): fh = %i", fh);
 
@@ -130,14 +130,14 @@ int net_get_new_client (int sock, int proto) {
    return -1;
  }
 
- ROAR_DBG("net_get_new_client(*): proto=0x%.4x", proto);
+ ROAR_DBG("net_get_new_client(*): proto=0x%.4x", lsock->proto);
 
- if ( clients_set_proto(client, proto) == -1 ) {
-  ROAR_WARN("net_get_new_client(*): Setting proto(0x%.4x) of client %i failed.", proto, client);
+ if ( clients_set_proto(client, lsock->proto) == -1 ) {
+  ROAR_WARN("net_get_new_client(*): Setting proto(0x%.4x) of client %i failed.", lsock->proto, client);
   return -1;
  }
 
- switch (proto) {
+ switch (lsock->proto) {
   case ROAR_PROTO_ROARAUDIO:
     // nothing needed to be done here
    break;
@@ -157,6 +157,8 @@ int net_get_new_client (int sock, int proto) {
     ROAR_DBG("net_get_new_client(*): CONNECT execed sucessfully");
    break;
 #endif
+  case ROAR_PROTO_SIMPLE:
+   break;
 #endif
   default:
     // OS independiend code to close the socket:
