@@ -4,6 +4,7 @@ Things we need to do:
 
 Things we should do:
  * (*.*) add a lot other things
+ * (0.3) add DSTR driver
  * (0.3) do not install .cvsignore files
  * (0.3) better tests for libspeex{,dsp}-dev
  * (0.3) autotool like config options
