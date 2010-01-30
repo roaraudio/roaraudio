@@ -191,6 +191,7 @@ static void list_proto (void) {
 #if !defined(ROAR_WITHOUT_DCOMP_EMUL_ESD) && defined(ROAR_HAVE_H_ESD)
  printf("  esd           W      - EsounD emulation\n");
 #endif
+ printf("  simple        WM LRX - PulseAudio simple protocol\n");
 }
 
 #endif
