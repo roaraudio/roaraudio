@@ -512,7 +512,7 @@ char * roar_proto2str (int    proto) {
   case ROAR_PROTO_HTTP:      return "http";      break;
   case ROAR_PROTO_GOPHER:    return "gopher";    break;
   case ROAR_PROTO_ICY:       return "ICY";       break;
-  case ROAR_PROTO_SIMPLE:    return "simple";    break;
+  case ROAR_PROTO_SIMPLE:    return "Simple";    break;
   default:
     return "(unknown)";
  }
