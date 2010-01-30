@@ -158,6 +158,8 @@ int net_get_new_client (struct roard_listen * lsock) {
    break;
 #endif
   case ROAR_PROTO_SIMPLE:
+    if ( emul_simple_on_connect(client, lsock) == -1 )
+     return -1;
    break;
 #endif
   default:

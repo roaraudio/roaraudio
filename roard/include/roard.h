@@ -96,6 +96,7 @@ int g_verbose;
 #include "commands.h"
 #include "req.h"
 #include "emul_esd.h"
+#include "emul_simple.h"
 #include "sources.h"
 #include "sample.h"
 #include "meta.h"
