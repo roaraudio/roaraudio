@@ -33,6 +33,7 @@
  */
 
 #include "roaraudio.h"
+#include "libroarlight/libroarlight.h"
 
 #if defined(ROAR_HAVE_OSS_BSD) || defined(ROAR_HAVE_OSS)
 #if defined(__OpenBSD__) || defined(__NetBSD__)
@@ -459,6 +460,12 @@ static int _open_file (const char *pathname, int flags) {
     handle->stream.info.channels = ROAR_MIDI_CHANNELS_DEFAULT;
     handle->stream.info.codec    = ROAR_CODEC_MIDI;
    break;
+  case HT_DMX:
+    handle->stream.info.rate     = 0;
+    handle->stream.info.bits     = ROAR_LIGHT_BITS;
+    handle->stream.info.channels = 512;
+    handle->stream.info.codec    = ROAR_CODEC_ROARDMX;
+   break;
  }
 
  if ( (pointer = _open_pointer(handle)) == NULL ) {
@@ -791,6 +798,12 @@ int     open(const char *pathname, int flags, ...) {
 
  _init();
 
+ if ( pathname == NULL ) {
+  errno = EFAULT;
+  return -1;
+ }
+
+ ROAR_DBG("open(pathname='%s', flags=%x, ...) = ?\n", pathname, flags);
  ret = _open_file(pathname, flags);
 
  switch (ret) {
@@ -826,26 +839,61 @@ int     close(int fd) {
 }
 
 ssize_t write(int fd, const void *buf, size_t count) {
+ struct roar_roardmx_message roardmxmsg;
  struct pointer * pointer;
  ssize_t ret;
+ int i;
 
  _init();
 
  if ( (pointer = _get_pointer_by_fh(fd)) != NULL ) {
-  if ( pointer->handle->type == HT_STREAM ) {
-   if ( pointer->handle->stream_opened == 0 ) {
-    if ( _open_stream(pointer->handle) == -1 ) {
-     errno = EIO;
+  switch (pointer->handle->type) {
+   case HT_STREAM:
+     if ( pointer->handle->stream_opened == 0 ) {
+      if ( _open_stream(pointer->handle) == -1 ) {
+       errno = EIO;
+       return -1;
+      }
+     }
+     ret = roar_vio_write(&(pointer->handle->stream_vio), (char*)buf, count);
+     if ( ret > 0 )
+      pointer->handle->writec += ret;
+     return ret;
+    break;
+   case HT_DMX:
+     if ( pointer->handle->stream_opened == 0 ) {
+      if ( _open_stream(pointer->handle) == -1 ) {
+       errno = EIO;
+       return -1;
+      }
+     }
+     if ( count > 0 ) {
+      if ( roar_roardmx_message_new_sset(&roardmxmsg) == -1 ) {
+       errno = EIO;
+       return -1;
+      }
+      for (i = 0; i < count; i++) {
+       if ( roar_roardmx_message_add_chanval(&roardmxmsg, pointer->handle->pos + i, ((unsigned char*)buf)[i]) == -1 ) {
+#ifdef EMSGSIZE
+        errno = EMSGSIZE;
+#else
+        errno = EIO;
+#endif
+        return -1;
+       }
+      }
+      if ( roar_roardmx_message_send(&roardmxmsg, &(pointer->handle->stream_vio)) == -1 ) {
+       errno = EIO;
+       return -1;
+      }
+     }
+     pointer->handle->pos += count;
+     return count;
+    break;
+   default:
+     errno = EINVAL;
      return -1;
-    }
-   }
-   ret = roar_vio_write(&(pointer->handle->stream_vio), (char*)buf, count);
-   if ( ret > 0 )
-    pointer->handle->writec += ret;
-   return ret;
-  } else {
-   errno = EINVAL;
-   return -1;
+    break;
   }
  }
 
