@@ -130,7 +130,7 @@ int main (int argc, char * argv[]) {
  shout_init();
 
  if (!(shout = shout_new())) {
-  ROAR_ERR("Can not clreate shout object");
+  ROAR_ERR("Can not create shout object");
   return 1;
  }
 
@@ -184,7 +184,7 @@ int main (int argc, char * argv[]) {
   shout_set_url(shout, s_url);
 
  if ( (fh = roar_simple_monitor(rate, channels, bits, codec, server, "roarshout")) == -1 ) {
-  fprintf(stderr, "Error: can not start monetoring\n");
+  fprintf(stderr, "Error: can not start monitoring\n");
   return 1;
  }
 
