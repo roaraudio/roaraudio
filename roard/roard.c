@@ -377,8 +377,32 @@ int add_listen (char * addr, int port, int sock_type, char * user, char * group,
  }
 
  // in case we opened the listening socket correctly.
+ if ( dir == -1 )
+  dir = ROAR_DIR_PLAY;
+
  g_listen[sockid].inst.stpl.dir = dir;
  memcpy(&(g_listen[sockid].inst.stpl.info), info, sizeof(struct roar_audio_info));
+
+ switch (dir) {
+  case ROAR_DIR_PLAY:
+  case ROAR_DIR_RECORD:
+  case ROAR_DIR_MONITOR:
+  case ROAR_DIR_FILTER:
+  case ROAR_DIR_BIDIR:
+    if ( !g_listen[sockid].inst.stpl.info.rate )
+     g_listen[sockid].inst.stpl.info.rate = g_sa->rate;
+
+    if ( !g_listen[sockid].inst.stpl.info.bits )
+     g_listen[sockid].inst.stpl.info.bits = g_sa->bits;
+
+    if ( !g_listen[sockid].inst.stpl.info.channels )
+     g_listen[sockid].inst.stpl.info.channels = g_sa->channels;
+
+    if ( !g_listen[sockid].inst.stpl.info.codec )
+     g_listen[sockid].inst.stpl.info.codec = g_sa->codec;
+   break;
+ }
+
  server[sockid] = addr;
  return 0;
 }
