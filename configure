@@ -104,6 +104,9 @@ ROAR_DRIVER_CODEC=''
 
 ROARD_CFREQ='' # cycle frequens for roard, normaly 100Hz
 
+# Libs which are per default disabled:
+no_lib_ssl=true
+
 _CARGS="$@";
 
 echo -n "checking for C compiler... "
@@ -167,6 +170,7 @@ do
    echo '--audio-group GROUP         - Sets group of audio permitted users'
    echo
    echo '--no-LIB                    - disable library LIB'
+   echo '--maybe-LIB                 - autodetect library LIB (default)'
    echo '--runtime-detect            - do as much as posible auto detecting on runtime (for distributors)'
    echo
    echo '--ao-install-dir DIR        - Set install dir for libao plugin'
@@ -267,6 +271,10 @@ do
   '--no-'*)
    lib=$(echo "$1" | sed 's/^--no-//')
    eval no_lib_$lib=true
+  ;;
+  '--maybe-'*)
+   lib=$(echo "$1" | sed 's/^--maybe-//')
+   eval unset no_lib_$lib
   ;;
   '--runtime-detect')
    RUNTIME_DETECT=true
@@ -790,7 +798,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.233 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.234 $ of RoarAudio
  */
 
 EOF

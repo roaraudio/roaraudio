@@ -7,6 +7,7 @@ v. 0.3beta4 - ?
 	* added support to libroaross to emulate DMX4Linux (write only)
 	* added DSTR driver to roard
 	* updated librarys' soname
+	* do not link OpenSSL by default (licence incompatible?)
 
 v. 0.3beta3 - Fri Jan 22 2010 22:17 CET
 	* added some aRts/NAS/YIFF/PulseAudio tools to compbins
