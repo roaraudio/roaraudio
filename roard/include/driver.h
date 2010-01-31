@@ -62,6 +62,7 @@
 
 #include "driver_roar.h"
 #include "driver_raw.h"
+#include "driver_dstr.h"
 #include "driver_dmx.h"
 #include "driver_pwmled.h"
 
