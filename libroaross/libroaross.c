@@ -1136,7 +1136,7 @@ FILE *fopen(const char *path, const char *mode) {
   return NULL;
  }
 
- ROAR_DBG("open(pathname='%s', mode='%s') = ?\n", pathname, mode);
+ ROAR_DBG("open(path='%s', mode='%s') = ?\n", path, mode);
 
  for (i = 0; (c = mode[i]) != 0; i++) {
   switch (c) {
