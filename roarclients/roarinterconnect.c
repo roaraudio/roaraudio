@@ -32,6 +32,7 @@
 #define MT_MASK     0xF0
 #define MT_ROAR     0x10
 #define MT_ESD      0x20
+#define MT_SIMPLE   0x30
 #define MT_DEFAULT  MT_ROAR
 
 #define ST_NONE     0x00
@@ -60,6 +61,7 @@ void usage (void) {
  printf("\nPossible Types:\n\n");
  printf("  roar               - RoarAudio Server\n"
         "  esd                - EsounD Server\n"
+        "  simple             - PulseAudio using simple protocol\n"
         "\n"
         "  bidir              - Connect bidirectional\n"
         "  filter             - Use local server as filter for remote server\n"
@@ -86,6 +88,9 @@ int parse_type (char * type) {
    } else if ( !strcmp(type, "esd") ) {
     ret -= ret & MT_MASK;
     ret += MT_ESD;
+   } else if ( !strcmp(type, "simple") ) {
+    ret -= ret & MT_MASK;
+    ret += MT_SIMPLE;
    } else if ( !strcmp(type, "bidir") ) {
     ret -= ret & ST_MASK;
     ret += ST_BIDIR;
@@ -111,8 +116,9 @@ int parse_type (char * type) {
 
  if ( (ret & ST_MASK) == ST_NONE ) {
   switch (ret & MT_MASK) {
-   case MT_ROAR: ret |= ST_BIDIR;  break;
-   case MT_ESD:  ret |= ST_FILTER; break;
+   case MT_ROAR:   ret |= ST_BIDIR;    break;
+   case MT_ESD:    ret |= ST_FILTER;   break;
+   case MT_SIMPLE: ret |= ST_TRANSMIT; break;
    default:
      return MT_NONE|ST_NONE; // error case
     break;
@@ -137,6 +143,7 @@ int main (int argc, char * argv[]) {
  int    rfh;
  int    i;
  int    localdir = ROAR_DIR_BIDIR;
+ int    rport;
 
  for (i = 1; i < argc; i++) {
   k = argv[i];
@@ -234,6 +241,31 @@ int main (int argc, char * argv[]) {
     }
    break;
 #endif
+  case MT_SIMPLE:
+    switch (type & ST_MASK) {
+     case ST_TRANSMIT:
+       tmp = SHUT_RD;
+       localdir = ROAR_DIR_MONITOR;
+      break;
+     case ST_RECEIVE:
+       tmp = SHUT_WR;
+       localdir = ROAR_DIR_PLAY;
+      break;
+     default:
+       fprintf(stderr, "Error: this type is not supported by PulseAudio\n");
+       return 2;
+    }
+    // we guess INET here...
+    if ( strstr(remote, "/") == NULL && (k = strstr(remote, ":")) != NULL ) {
+     *k = 0;
+     k++;
+     rport = atoi(k);
+    } else {
+     rport = 4712;
+    }
+    rfh = roar_socket_connect(remote, rport);
+    ROAR_SHUTDOWN(rfh, tmp);
+   break;
   default:
     fprintf(stderr, "Error: unknown/not supported server type\n");
     return 2;
