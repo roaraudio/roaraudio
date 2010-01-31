@@ -132,6 +132,7 @@ static struct {
  int     (*ioctl)(int d, int request, ...);
 #endif
  off_t   (*lseek)(int fildes, off_t offset, int whence);
+ FILE   *(*fopen)(const char *path, const char *mode);
 } _os;
 
 static struct {
@@ -176,6 +177,7 @@ static void _init_os (void) {
  _os.ioctl = dlsym(REAL_LIBC, "ioctl");
 #endif
  _os.lseek = dlsym(REAL_LIBC, "lseek");
+ _os.fopen = dlsym(REAL_LIBC, "fopen");
 }
 
 static void _init_ptr (void) {
@@ -1109,6 +1111,80 @@ IOCTL() {
 #else
  return _os.ioctl(__fd, __request, argp);
 #endif
+}
+
+
+// -------------------------------------
+// emulated stdio functions follow:
+// -------------------------------------
+
+//roar_vio_to_stdio
+
+FILE *fopen(const char *path, const char *mode) {
+ struct pointer * pointer;
+ FILE  * fr;
+ int     ret;
+ int     r = 0, w = 0;
+ int     flags = 0;
+ int     i;
+ register char c;
+
+ _init();
+
+ if ( path == NULL || mode == NULL ) {
+  errno = EFAULT;
+  return NULL;
+ }
+
+ ROAR_DBG("open(pathname='%s', mode='%s') = ?\n", pathname, mode);
+
+ for (i = 0; (c = mode[i]) != 0; i++) {
+  switch (c) {
+   case 'r': r = 1; break;
+   case 'w': w = 1; break;
+   case 'a': w = 1; break;
+   case '+':
+     r = 1;
+     w = 1;
+    break;
+  }
+ }
+
+ if ( r && w ) {
+  flags = O_RDWR;
+ } else if ( r ) {
+  flags = O_RDONLY;
+ } else if ( w ) {
+  flags = O_WRONLY;
+ } else {
+  errno = EINVAL;
+  return NULL;
+ }
+
+ ret = _open_file(path, flags);
+
+ switch (ret) {
+  case -2:       // continue as normal, use _op.open()
+   break;
+  case -1:       // pass error to caller
+    return NULL;
+   break;
+  default:       // return successfully opened pointer to caller
+    if ( (pointer = _get_pointer_by_fh(ret)) != NULL ) {
+     if ( (fr = roar_vio_to_stdio(&(pointer->handle->stream_vio), flags)) == NULL ) {
+      errno = EIO;
+      return NULL;
+     } else {
+      return fr;
+     }
+    } else {
+     errno = EIO;
+     return NULL;
+    }
+   break;
+ }
+
+ return _os.fopen(path, mode);
 }
 
 #endif
