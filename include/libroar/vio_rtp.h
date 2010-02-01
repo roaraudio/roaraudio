@@ -106,6 +106,7 @@ struct roar_rtp_header {
 struct roar_rtp_inst {
  struct roar_vio_calls * vio;
  struct roar_rtp_header header;
+ struct roar_buffer    * tx;
 };
 
 int roar_vio_open_rtp        (struct roar_vio_calls * calls, struct roar_vio_calls * dst,
