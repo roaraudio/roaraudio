@@ -38,11 +38,15 @@ int roar_vio_open_rtp        (struct roar_vio_calls * calls, struct roar_vio_cal
                               char * dstr, struct roar_vio_defaults * odef) {
  struct roar_rtp_inst * self = NULL;
 
+ ROAR_DBG("roar_vio_open_rtp(calls=%p, dst=%p, dstr='%s', odef=%p) = ?", calls, dst, dstr, odef);
+
  if ( calls == NULL || dst == NULL )
   return -1;
 
  if ( (self = roar_mm_malloc(sizeof(struct roar_rtp_inst))) == NULL )
   return -1;
+
+ ROAR_DBG("roar_vio_open_rtp(calls=%p, dst=%p, dstr='%s', odef=%p) = ?", calls, dst, dstr, odef);
 
  memset(self, 0, sizeof(struct roar_rtp_inst));
 
@@ -61,6 +65,8 @@ int roar_vio_open_rtp        (struct roar_vio_calls * calls, struct roar_vio_cal
  calls->sync               = roar_vio_rtp_sync;
  calls->ctl                = roar_vio_rtp_ctl;
  calls->close              = roar_vio_rtp_close;
+
+ ROAR_DBG("roar_vio_open_rtp(calls=%p, dst=%p, dstr='%s', odef=%p) = 0", calls, dst, dstr, odef);
 
  return 0;
 }
@@ -81,6 +87,8 @@ ssize_t roar_vio_rtp_write   (struct roar_vio_calls * vio, void *buf, size_t cou
  ssize_t ret;
  int     i;
 
+ ROAR_DBG("roar_vio_rtp_write(vio=%p, buf=%p, count=%llu) = ?", vio, buf, (long long unsigned)count);
+
  if ( self->tx == NULL ) {
   if ( roar_buffer_new(&(self->tx), len_need) == -1 )
    return -1;
@@ -100,6 +108,8 @@ ssize_t roar_vio_rtp_write   (struct roar_vio_calls * vio, void *buf, size_t cou
    }
   }
  }
+
+ ROAR_DBG("roar_vio_rtp_write(vio=%p, buf=%p, count=%llu) = ?", vio, buf, (long long unsigned)count);
 
  if ( roar_buffer_get_data(self->tx, &(data.vp)) == -1 )
   return -1;
@@ -123,6 +133,8 @@ ssize_t roar_vio_rtp_write   (struct roar_vio_calls * vio, void *buf, size_t cou
 
  memcpy(data.vp + dataoffset, buf, count);
 
+ ROAR_DBG("roar_vio_rtp_write(vio=%p, buf=%p, count=%llu) = ?", vio, buf, (long long unsigned)count);
+
  if ( (ret = roar_vio_write(self->vio, data.vp, count+dataoffset)) == -1 )
   return -1;
 
@@ -134,11 +146,15 @@ off_t   roar_vio_rtp_lseek   (struct roar_vio_calls * vio, off_t offset, int whe
 int     roar_vio_rtp_nonblock(struct roar_vio_calls * vio, int state) {
  struct roar_rtp_inst * self = vio->inst;
 
+ ROAR_DBG("roar_vio_rtp_nonblock(vio=%p, state=%i) = ?", vio, state);
+
  return roar_vio_nonblock(self->vio, state);
 }
 
 int     roar_vio_rtp_sync    (struct roar_vio_calls * vio) {
  struct roar_rtp_inst * self = vio->inst;
+
+ ROAR_DBG("roar_vio_rtp_sync(vio=%p) = ?", vio);
 
  return roar_vio_sync(self->vio);
 }
@@ -146,8 +162,12 @@ int     roar_vio_rtp_sync    (struct roar_vio_calls * vio) {
 int     roar_vio_rtp_ctl     (struct roar_vio_calls * vio, int cmd, void * data) {
  struct roar_rtp_inst * self = vio->inst;
 
+ ROAR_DBG("roar_vio_rtp_ctl(vio=%p, cmd=%i, data=%p) = ?", vio, cmd, data);
+
  if (vio == NULL || cmd == -1)
   return -1;
+
+ ROAR_DBG("roar_vio_rtp_ctl(vio=%p, cmd=%i, data=%p) = ?", vio, cmd, data);
 
  switch (cmd) {
   case ROAR_VIO_CTL_GET_NEXT:
@@ -160,12 +180,16 @@ int     roar_vio_rtp_ctl     (struct roar_vio_calls * vio, int cmd, void * data)
    break;
  }
 
+ ROAR_DBG("roar_vio_rtp_ctl(vio=%p, cmd=%i, data=%p) = ?", vio, cmd, data);
+
  return roar_vio_ctl(self->vio, cmd, data);
 }
 
 int     roar_vio_rtp_close   (struct roar_vio_calls * vio) {
  struct roar_rtp_inst * self = vio->inst;
  int ret;
+
+ ROAR_DBG("roar_vio_rtp_close(vio=%p) = ?", vio);
 
  ret = roar_vio_close(self->vio);
 
@@ -174,6 +198,8 @@ int     roar_vio_rtp_close   (struct roar_vio_calls * vio) {
    ret = -1;
 
  roar_mm_free(self);
+
+ ROAR_DBG("roar_vio_rtp_close(vio=%p) = %i", vio, ret);
 
  return ret;
 }
