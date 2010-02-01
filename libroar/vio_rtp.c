@@ -48,6 +48,8 @@ static const struct {
 static int _info2pt (struct roar_audio_info * info) {
  int i;
 
+ ROAR_DBG("_info2pt(info=%p{.codec=%s(%i), .bits=%i, .rate=%i, .channels=%i}) = ?", info, roar_codec2str(info->codec), info->codec, info->bits, info->rate, info->channels);
+
  for (i = 0; _g_rtp_pt[i].pt != -1; i++) {
   if ( info->codec    == _g_rtp_pt[i].info.codec    &&
        info->bits     == _g_rtp_pt[i].info.bits     &&
@@ -57,6 +59,7 @@ static int _info2pt (struct roar_audio_info * info) {
   }
  }
 
+ ROAR_DBG("_info2pt(info=%p{.codec=%s(%i), .bits=%i, .rate=%i, .channels=%i}) = -1", info, roar_codec2str(info->codec), info->codec, info->bits, info->rate, info->channels);
  return -1;
 }
 
