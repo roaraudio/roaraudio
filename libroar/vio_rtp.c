@@ -163,21 +163,21 @@ ssize_t roar_vio_rtp_write   (struct roar_vio_calls * vio, void *buf, size_t cou
   return len_have ? len_have : ret;
  }
 
- if ( self->tx == NULL ) {
-  if ( roar_buffer_new(&(self->tx), len_need) == -1 )
+ if ( self->io == NULL ) {
+  if ( roar_buffer_new(&(self->io), len_need) == -1 )
    return -1;
 
   len_have = len_need;
  } else {
-  if ( roar_buffer_get_len(self->tx, &len_have) == -1 )
+  if ( roar_buffer_get_len(self->io, &len_have) == -1 )
    return -1;
 
   if ( len_have < len_need ) {
-   if ( roar_buffer_set_len(self->tx, len_need) == -1 ) {
-    if ( roar_buffer_free(self->tx) == -1 )
+   if ( roar_buffer_set_len(self->io, len_need) == -1 ) {
+    if ( roar_buffer_free(self->io) == -1 )
      return -1;
 
-    self->tx = NULL;
+    self->io = NULL;
     return roar_vio_rtp_write(vio, buf, count); // restart ower self from the beginning with no buffer
    }
   }
@@ -185,7 +185,7 @@ ssize_t roar_vio_rtp_write   (struct roar_vio_calls * vio, void *buf, size_t cou
 
  ROAR_DBG("roar_vio_rtp_write(vio=%p, buf=%p, count=%llu) = ?", vio, buf, (long long unsigned)count);
 
- if ( roar_buffer_get_data(self->tx, &(data.vp)) == -1 )
+ if ( roar_buffer_get_data(self->io, &(data.vp)) == -1 )
   return -1;
 
  memset(data.vp, 0, len_need);
@@ -303,8 +303,8 @@ int     roar_vio_rtp_close   (struct roar_vio_calls * vio) {
 
  ret = roar_vio_close(self->vio);
 
- if ( self->tx != NULL )
-  if ( roar_buffer_free(self->tx) == -1 )
+ if ( self->io != NULL )
+  if ( roar_buffer_free(self->io) == -1 )
    ret = -1;
 
  roar_mm_free(self);
