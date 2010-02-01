@@ -55,6 +55,10 @@ int roar_vio_open_rtp        (struct roar_vio_calls * calls, struct roar_vio_cal
  self->header.version      = 2;
  self->header.payload_type = ROAR_RTP_PT_UNKNOWN;
 
+ // TODO: init with random values:
+ //       Sequence Number 
+ //       SSRC
+
  memset(calls, 0, sizeof(struct roar_vio_calls));
 
  calls->inst               = self;
@@ -116,6 +120,8 @@ ssize_t roar_vio_rtp_write   (struct roar_vio_calls * vio, void *buf, size_t cou
 
  memset(data.vp, 0, len_need);
 
+ self->header.seq_num++;
+
  data.cp[0]   = 2;
  data.cp[0]  |= self->header.csrc_count   << 4;
  data.cp[1]  |= self->header.payload_type << 1;
@@ -161,6 +167,8 @@ int     roar_vio_rtp_sync    (struct roar_vio_calls * vio) {
 
 int     roar_vio_rtp_ctl     (struct roar_vio_calls * vio, int cmd, void * data) {
  struct roar_rtp_inst * self = vio->inst;
+ struct roar_stream          * s  = NULL;
+ struct roar_stream_server   * ss = NULL;
 
  ROAR_DBG("roar_vio_rtp_ctl(vio=%p, cmd=%i, data=%p) = ?", vio, cmd, data);
 
@@ -170,6 +178,12 @@ int     roar_vio_rtp_ctl     (struct roar_vio_calls * vio, int cmd, void * data)
  ROAR_DBG("roar_vio_rtp_ctl(vio=%p, cmd=%i, data=%p) = ?", vio, cmd, data);
 
  switch (cmd) {
+  case ROAR_VIO_CTL_SET_SSTREAM:
+    s = ROAR_STREAM(ss = data);
+   break;
+  case ROAR_VIO_CTL_SET_STREAM:
+    s = ROAR_STREAM(data);
+   break;
   case ROAR_VIO_CTL_GET_NEXT:
     *(struct roar_vio_calls **)data = self->vio;
     return 0;
@@ -181,6 +195,11 @@ int     roar_vio_rtp_ctl     (struct roar_vio_calls * vio, int cmd, void * data)
  }
 
  ROAR_DBG("roar_vio_rtp_ctl(vio=%p, cmd=%i, data=%p) = ?", vio, cmd, data);
+
+ if ( s != NULL ) {
+  roar_vio_ctl(self->vio, cmd, data);
+  return 0;
+ }
 
  return roar_vio_ctl(self->vio, cmd, data);
 }
