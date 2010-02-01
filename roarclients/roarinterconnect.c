@@ -118,7 +118,8 @@ int parse_type (char * type) {
   switch (ret & MT_MASK) {
    case MT_ROAR:   ret |= ST_BIDIR;    break;
    case MT_ESD:    ret |= ST_FILTER;   break;
-   case MT_SIMPLE: ret |= ST_TRANSMIT; break;
+   case MT_SIMPLE: ret |= ST_TRANSMIT; break; // we use ST_TRANSMIT because ST_BIDIR is
+                                              // very unlike to be configured at the server side.
    default:
      return MT_NONE|ST_NONE; // error case
     break;
@@ -243,6 +244,10 @@ int main (int argc, char * argv[]) {
 #endif
   case MT_SIMPLE:
     switch (type & ST_MASK) {
+     case ST_BIDIR:
+       tmp = -1;
+       localdir = ROAR_DIR_BIDIR;
+      break;
      case ST_TRANSMIT:
        tmp = SHUT_RD;
        localdir = ROAR_DIR_MONITOR;
@@ -264,7 +269,9 @@ int main (int argc, char * argv[]) {
      rport = 4712;
     }
     rfh = roar_socket_connect(remote, rport);
-    ROAR_SHUTDOWN(rfh, tmp);
+    if ( tmp != -1 ) {
+     ROAR_SHUTDOWN(rfh, tmp);
+    }
    break;
   default:
     fprintf(stderr, "Error: unknown/not supported server type\n");
