@@ -203,7 +203,7 @@ int     roar_vio_open_default (struct roar_vio_calls * calls, struct roar_vio_de
      return -1;
    break;
   case ROAR_VIO_DEF_TYPE_SOCKET:
-     if ( roar_vio_open_def_socket(calls, def) == -1 )
+     if ( roar_vio_open_def_socket(calls, def, opts) == -1 )
       return -1;
    break;
   case ROAR_VIO_DEF_TYPE_FH:

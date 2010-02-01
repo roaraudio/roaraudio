@@ -38,13 +38,23 @@
 #define _CAN_OPERATE
 #endif
 
-int     roar_vio_open_def_socket          (struct roar_vio_calls * calls, struct roar_vio_defaults * def) {
+int     roar_vio_open_def_socket          (struct roar_vio_calls * calls, struct roar_vio_defaults * def, char * opts) {
 #ifdef _CAN_OPERATE
  int       fh  = -1;
  socklen_t len =  0;
+ int       listening  = 0;
+ int       one_client = 0;
+ int       client;
 
  if ( calls == NULL || def == NULL )
   return -1;
+
+ if ( opts != NULL ) {
+  if ( strstr(opts, "listen") != NULL ) {
+   listening  = 1;
+   one_client = 1;
+  }
+ }
 
  if ( def->type != ROAR_VIO_DEF_TYPE_SOCKET )
   return -1;
@@ -131,9 +141,32 @@ int     roar_vio_open_def_socket          (struct roar_vio_calls * calls, struct
  if ( fh == -1 )
   return -1;
 
- if ( connect(fh, &(def->d.socket.sa.sa), len) == -1 ) {
-  close(fh);
-  return -1;
+ if ( listening ) {
+  if ( bind(fh, &(def->d.socket.sa.sa), len) == -1 ) {
+   close(fh);
+   return -1;
+  }
+
+  if ( listen(fh, one_client ? 1 : 16) == -1 ) {
+   close(fh);
+   return -1;
+  }
+
+  if ( one_client ) {
+   client = accept(fh, NULL, NULL);
+   close(fh);
+
+   if ( client == -1 ) {
+    return -1;
+   }
+
+   fh = client;
+  }
+ } else {
+  if ( connect(fh, &(def->d.socket.sa.sa), len) == -1 ) {
+   close(fh);
+   return -1;
+  }
  }
 
  if ( roar_vio_open_fh_socket(calls, fh) == -1 ) {
