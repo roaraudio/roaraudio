@@ -34,6 +34,44 @@
 
 #include "libroar.h"
 
+static const struct {
+ int pt;
+ struct roar_audio_info info;
+} _g_rtp_pt[] = {
+ {ROAR_RTP_PT_A_PCMU,      {.codec = ROAR_CODEC_MULAW,    .bits =  8, .rate =  8000, .channels = 1}},
+ {ROAR_RTP_PT_A_PCMA,      {.codec = ROAR_CODEC_ALAW,     .bits =  8, .rate =  8000, .channels = 1}},
+ {ROAR_RTP_PT_A_L16_441_2, {.codec = ROAR_CODEC_PCM_S_BE, .bits = 16, .rate = 44100, .channels = 2}},
+ {ROAR_RTP_PT_A_L16_441_1, {.codec = ROAR_CODEC_PCM_S_BE, .bits = 16, .rate = 44100, .channels = 1}},
+ {-1, {-1, -1, -1}}
+};
+
+static int _info2pt (struct roar_audio_info * info) {
+ int i;
+
+ for (i = 0; _g_rtp_pt[i].pt != -1; i++) {
+  if ( info->codec    == _g_rtp_pt[i].info.codec    &&
+       info->bits     == _g_rtp_pt[i].info.bits     &&
+       info->rate     == _g_rtp_pt[i].info.rate     &&
+       info->channels == _g_rtp_pt[i].info.channels ) {
+   return _g_rtp_pt[i].pt;
+  }
+ }
+
+ return -1;
+}
+
+static const struct roar_audio_info * _pt2info (int pt) {
+ int i;
+
+ for (i = 0; _g_rtp_pt[i].pt != -1; i++) {
+  if ( _g_rtp_pt[i].pt == pt ) {
+   return &(_g_rtp_pt[i].info);
+  }
+ }
+
+ return NULL;
+}
+
 int roar_vio_open_rtp        (struct roar_vio_calls * calls, struct roar_vio_calls * dst,
                               char * dstr, struct roar_vio_defaults * odef) {
  struct roar_rtp_inst * self = NULL;
@@ -197,6 +235,7 @@ int     roar_vio_rtp_ctl     (struct roar_vio_calls * vio, int cmd, void * data)
  ROAR_DBG("roar_vio_rtp_ctl(vio=%p, cmd=%i, data=%p) = ?", vio, cmd, data);
 
  if ( s != NULL ) {
+  self->header.payload_type = _info2pt(&(s->info));
   roar_vio_ctl(self->vio, cmd, data);
   return 0;
  }
