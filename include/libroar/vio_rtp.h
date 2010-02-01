@@ -96,7 +96,7 @@ struct roar_rtp_header {
  int version;
  int flags;
  int csrc_count;
- int playload_type;
+ int payload_type;
  uint16_t seq_num;
  uint32_t ts;
  uint32_t ssrc;
