@@ -99,6 +99,8 @@ ssize_t roar_vio_read (struct roar_vio_calls * vio, void *buf, size_t count) {
 }
 
 ssize_t roar_vio_write(struct roar_vio_calls * vio, void *buf, size_t count) {
+ ROAR_DBG("roar_vio_write(vio=%p, buf=%p, count=%u) = ?", vio, buf, (unsigned int)count);
+
  if ( vio == NULL )
   return -1;
 
@@ -109,6 +111,8 @@ ssize_t roar_vio_write(struct roar_vio_calls * vio, void *buf, size_t count) {
 }
 
 off_t   roar_vio_lseek(struct roar_vio_calls * vio, off_t offset, int whence) {
+ ROAR_DBG("roar_vio_lseek(vio=%p, offset=%u, whence=%i) = ?", vio, (unsigned int)offset, whence);
+
  if ( vio == NULL )
   return -1;
 
@@ -119,6 +123,8 @@ off_t   roar_vio_lseek(struct roar_vio_calls * vio, off_t offset, int whence) {
 }
 
 int     roar_vio_nonblock(struct roar_vio_calls * vio, int state) {
+ ROAR_DBG("roar_vio_nonblock(vio=%p, state=%i) = ?", vio, state);
+
  if ( vio == NULL )
   return -1;
 
@@ -129,6 +135,8 @@ int     roar_vio_nonblock(struct roar_vio_calls * vio, int state) {
 }
 
 int     roar_vio_sync    (struct roar_vio_calls * vio) {
+ ROAR_DBG("roar_vio_sync(vio=%p) = ?", vio);
+
  if ( vio == NULL )
   return -1;
 
@@ -139,6 +147,8 @@ int     roar_vio_sync    (struct roar_vio_calls * vio) {
 }
 
 int     roar_vio_ctl     (struct roar_vio_calls * vio, int cmd, void * data) {
+ ROAR_DBG("roar_vio_ctl(vio=%p, cmd=%i, data=%p) = ?", vio, cmd, data);
+
  if ( vio == NULL )
   return -1;
 
@@ -151,6 +161,8 @@ int     roar_vio_ctl     (struct roar_vio_calls * vio, int cmd, void * data) {
 }
 
 int     roar_vio_close    (struct roar_vio_calls * vio) {
+ ROAR_DBG("roar_vio_close(vio=%p) = ?", vio);
+
  if ( vio == NULL )
   return -1;
 
