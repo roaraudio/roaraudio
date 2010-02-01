@@ -111,7 +111,7 @@ int     roar_vio_stack_ctl     (struct roar_vio_calls * vio, int cmd, void * dat
    break;
  }
 
- return -1;
+ return roar_vio_ctl(((struct roar_vio_stack*)(vio->inst))->cur, cmd, data);
 }
 
 
