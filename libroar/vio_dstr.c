@@ -100,6 +100,10 @@ grep '^#define ROAR_VIO_DSTR_OBJT_' vio_dstr.h | cut -d' ' -f2 | while read objt
       {ROAR_VIO_DEF_TYPE_EOL}},
  {ROAR_VIO_DSTR_OBJT_ICY,        "icy",
       {ROAR_VIO_DEF_TYPE_EOL}},
+ {ROAR_VIO_DSTR_OBJT_RTP2,       "rtp2",
+      {ROAR_VIO_DEF_TYPE_EOL}},
+ {ROAR_VIO_DSTR_OBJT_RTP,        "rtp",
+      {ROAR_VIO_DEF_TYPE_EOL}},
 
  {ROAR_VIO_DSTR_OBJT_GZIP,       "gzip",
       {ROAR_VIO_DEF_TYPE_EOL}},
@@ -393,6 +397,7 @@ int     roar_vio_dstr_set_defaults(struct roar_vio_dstr_chain * chain, int len, 
      tmp[0] = 1;
    case ROAR_VIO_DSTR_OBJT_PASS:
    case ROAR_VIO_DSTR_OBJT_RE:
+   case ROAR_VIO_DSTR_OBJT_RTP2: // we currently only forward the defs
    case ROAR_VIO_DSTR_OBJT_GZIP:
    case ROAR_VIO_DSTR_OBJT_BZIP2:
    case ROAR_VIO_DSTR_OBJT_PGP:
@@ -689,6 +694,11 @@ int     roar_vio_dstr_build_chain(struct roar_vio_dstr_chain * chain, struct roa
      break;
     case ROAR_VIO_DSTR_OBJT_ICY:
       if ( roar_vio_open_proto(tc, prev, c->dst, ROAR_VIO_PROTO_P_ICY, c->def) == -1 ) {
+       _ret(-1);
+      }
+     break;
+    case ROAR_VIO_DSTR_OBJT_RTP2:
+      if ( roar_vio_open_rtp(tc, prev, c->dst, c->def) == -1 ) {
        _ret(-1);
       }
      break;
