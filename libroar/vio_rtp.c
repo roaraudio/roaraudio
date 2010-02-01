@@ -59,7 +59,7 @@ int roar_vio_open_rtp        (struct roar_vio_calls * calls, struct roar_vio_cal
 
  calls->inst               = self;
 // calls->read               = roar_vio_rtp_read;
-// calls->write              = roar_vio_rtp_write;
+ calls->write              = roar_vio_rtp_write;
 // calls->lseek              = roar_vio_rtp_lseek;
  calls->nonblock           = roar_vio_rtp_nonblock;
  calls->sync               = roar_vio_rtp_sync;
