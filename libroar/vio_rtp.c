@@ -139,6 +139,30 @@ ssize_t roar_vio_rtp_write   (struct roar_vio_calls * vio, void *buf, size_t cou
 
  ROAR_DBG("roar_vio_rtp_write(vio=%p, buf=%p, count=%llu) = ?", vio, buf, (long long unsigned)count);
 
+ if ( self->mtu < (sizeof(struct roar_rtp_header) + self->bpf) )
+  return -1;
+
+ if ( len_need > self->mtu ) {
+  len_have = 0;
+  ret      = 0;
+
+  while (count) {
+   len_need = self->mtu - sizeof(struct roar_rtp_header);
+
+   if ( count < len_need )
+    len_need = count;
+
+   if ( (ret = roar_vio_rtp_write(vio, buf, len_need)) == -1 )
+    break;
+
+   len_have += ret;
+   buf      += ret;
+   count    -= ret;
+  }
+
+  return len_have ? len_have : ret;
+ }
+
  if ( self->tx == NULL ) {
   if ( roar_buffer_new(&(self->tx), len_need) == -1 )
    return -1;
