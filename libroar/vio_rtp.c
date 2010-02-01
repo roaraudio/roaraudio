@@ -184,15 +184,15 @@ ssize_t roar_vio_rtp_read    (struct roar_vio_calls * vio, void *buf, size_t cou
  self->header.payload_type = (data.cp[1] & 0xFE) >> 1;
 
  // TODO: check old seqnum < new seqnum
- self->header.seq_num      = data.u16[1];
+ self->header.seq_num      = ROAR_NET2HOST16(data.u16[1]);
 
  // TODO: check timestamp:
- self->header.ts           = data.u32[1];
+ self->header.ts           = ROAR_NET2HOST32(data.u32[1]);
 
- self->header.ssrc         = data.u32[2];
+ self->header.ssrc         = ROAR_NET2HOST32(data.u32[2]);
 
  for (i = 0; i < self->header.csrc_count; i++) {
-  self->header.csrc[i]     = data.u32[3+i];
+  self->header.csrc[i]     = ROAR_NET2HOST16(data.u32[3+i]);
  }
 
  dataoffset   = 3*4 + self->header.csrc_count*4;
@@ -285,13 +285,13 @@ ssize_t roar_vio_rtp_write   (struct roar_vio_calls * vio, void *buf, size_t cou
  data.cp[0]  |= self->header.csrc_count   << 4;
  data.cp[1]  |= self->header.payload_type << 1;
 
- data.u16[1]  = self->header.seq_num;
+ data.u16[1]  = ROAR_HOST2NET16(self->header.seq_num);
 
- data.u32[1]  = self->header.ts;
- data.u32[2]  = self->header.ssrc;
+ data.u32[1]  = ROAR_HOST2NET32(self->header.ts);
+ data.u32[2]  = ROAR_HOST2NET32(self->header.ssrc);
 
  for (i = 0; i < self->header.csrc_count; i++) {
-  data.u32[3+i] = self->header.csrc[i];
+  data.u32[3+i] = ROAR_HOST2NET32(self->header.csrc[i]);
  }
 
  dataoffset   = 3*4 + self->header.csrc_count*4;
