@@ -189,7 +189,9 @@ int     roar_vio_dstr_init_defaults_c (struct roar_vio_defaults * def, int type,
 }
 
 #ifndef ROAR_WITHOUT_VIO_DSTR
-int     roar_vio_open_default (struct roar_vio_calls * calls, struct roar_vio_defaults * def) {
+int     roar_vio_open_default (struct roar_vio_calls * calls, struct roar_vio_defaults * def, char * opts) {
+ ROAR_DBG("roar_vio_open_default(calls=%p, def=%p, opts='%s') = ?", calls, def, opts);
+
  if ( calls == NULL || def == NULL )
   return -1;
 
@@ -629,7 +631,13 @@ int     roar_vio_dstr_build_chain(struct roar_vio_dstr_chain * chain, struct roa
    _ret(-1);
   }
 
-  if ( roar_vio_open_default(tc, def) == -1 ) {
+  if ( chain->opts == NULL ) {
+   if ( chain[1].type != ROAR_VIO_DSTR_OBJT_EOL ) {
+    chain->opts = chain[1].opts;
+   }
+  }
+
+  if ( roar_vio_open_default(tc, def, chain->opts) == -1 ) {
    _ret(-1);
   }
 
