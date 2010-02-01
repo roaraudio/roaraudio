@@ -108,7 +108,7 @@ int roar_vio_open_rtp        (struct roar_vio_calls * calls, struct roar_vio_cal
  memset(calls, 0, sizeof(struct roar_vio_calls));
 
  calls->inst               = self;
-// calls->read               = roar_vio_rtp_read;
+ calls->read               = roar_vio_rtp_read;
  calls->write              = roar_vio_rtp_write;
 // calls->lseek              = roar_vio_rtp_lseek;
  calls->nonblock           = roar_vio_rtp_nonblock;
@@ -121,7 +121,96 @@ int roar_vio_open_rtp        (struct roar_vio_calls * calls, struct roar_vio_cal
  return 0;
 }
 
-ssize_t roar_vio_rtp_read    (struct roar_vio_calls * vio, void *buf, size_t count);
+ssize_t roar_vio_rtp_read    (struct roar_vio_calls * vio, void *buf, size_t count) {
+ struct roar_rtp_inst * self = vio->inst;
+ size_t len_need = self->mtu * 4 + sizeof(struct roar_rtp_header); // we hope to never get pkgs with size > 4*mtu
+ size_t len_have;
+ size_t have = 0;
+ ssize_t ret;
+ union {
+  void     * vp;
+  char     * cp;
+  uint16_t * u16;
+  uint32_t * u32;
+ } data;
+ size_t  dataoffset;
+ int     i;
+
+ ROAR_DBG("roar_vio_rtp_read(vio=%p, buf=%p, count=%llu) = ?", vio, buf, (long long unsigned)count);
+
+ if ( self->rx_decoded != NULL ) {
+  // handle this case and set to NULL if the buffer is empty
+  // set have;
+  // increment buf, decrement count
+ }
+
+ if ( count == 0 )
+  return have;
+
+ if ( self->io == NULL ) {
+  if ( roar_buffer_new(&(self->io), len_need) == -1 )
+   return have ? have : -1;
+
+  len_have = len_need;
+ } else {
+  if ( roar_buffer_get_len(self->io, &len_have) == -1 )
+   return have ? have : -1;
+
+  if ( len_have < len_need ) {
+   if ( roar_buffer_set_len(self->io, len_need) == -1 ) {
+    if ( roar_buffer_free(self->io) == -1 )
+     return have ? have : -1;
+
+    self->io = NULL;
+    if ( have != 0 ) {
+     return have;
+    } else {
+     return roar_vio_rtp_read(vio, buf, count); // restart ower self from the beginning with no buffer
+    }
+   }
+  }
+ }
+
+ if ( roar_buffer_get_data(self->io, &(data.vp)) == -1 )
+  return have ? have : -1;
+
+ if ( (ret = roar_vio_read(self->vio, data.vp, len_need)) == -1 )
+  return have ? have : -1;
+
+ if ( (data.cp[0] && 0x02) == 0x02 ) /* version check */
+  return have ? have : -1;
+
+ self->header.csrc_count   = (data.cp[0] & 0xF0) >> 4;
+ self->header.payload_type = (data.cp[1] & 0xFE) >> 1;
+
+ // TODO: check old seqnum < new seqnum
+ self->header.seq_num      = data.u16[1];
+
+ // TODO: check timestamp:
+ self->header.ts           = data.u32[1];
+
+ self->header.ssrc         = data.u32[2];
+
+ for (i = 0; i < self->header.csrc_count; i++) {
+  self->header.csrc[i]     = data.u32[3+i];
+ }
+
+ dataoffset   = 3*4 + self->header.csrc_count*4;
+
+ ret     -= dataoffset;
+ data.vp += dataoffset;
+
+ if ( ret <= count ) {
+  memcpy(buf, data.vp, ret);
+  ROAR_DBG("roar_vio_rtp_read(vio=%p, buf=%p, count=?) = %llu", vio, buf, (long long unsigned)(have+ret));
+  return have + ret;
+ } else {
+ }
+
+ ROAR_DBG("roar_vio_rtp_read(vio=%p, buf=%p, count=?) = -1", vio, buf);
+ return -1;
+}
+
 ssize_t roar_vio_rtp_write   (struct roar_vio_calls * vio, void *buf, size_t count) {
  struct roar_rtp_inst * self = vio->inst;
  size_t len_need = count + sizeof(struct roar_rtp_header); // this is a bit more than we need
