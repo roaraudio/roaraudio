@@ -238,6 +238,17 @@ int     roar_vio_rtp_ctl     (struct roar_vio_calls * vio, int cmd, void * data)
  ROAR_DBG("roar_vio_rtp_ctl(vio=%p, cmd=%i, data=%p) = ?", vio, cmd, data);
 
  if ( s != NULL ) {
+  switch (s->info.codec) {
+   case ROAR_CODEC_PCM_S_LE:
+   case ROAR_CODEC_PCM_S_PDP:
+     s->info.codec = ROAR_CODEC_PCM_S_BE;
+    break;
+   case ROAR_CODEC_PCM_U_LE:
+   case ROAR_CODEC_PCM_U_PDP:
+     s->info.codec = ROAR_CODEC_PCM_U_BE;
+    break;
+  }
+
   self->header.payload_type = _info2pt(&(s->info));
   roar_vio_ctl(self->vio, cmd, data);
   return 0;
