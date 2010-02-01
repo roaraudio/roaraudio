@@ -526,9 +526,12 @@ test_lib_defmake () {
 
  [ "$subdir" = '%' ] && subdir=''
 
+ envlib=`echo "$lib" | cut -d/ -f1 | tr A-Z.+- a-z___`
+
  if [ "$lib" != '--' ]
  then
-  eval _no="\$no_lib_$lib";
+  echo "EVAL: _no=\$no_lib_$envlib" >&5
+  eval _no="\$no_lib_$envlib";
   $MINIMAL && _no='XXX'
 
   if [ "$_no" != '' ]
@@ -537,14 +540,45 @@ test_lib_defmake () {
     echo "LIB($name) IS DISABLED BY USER" >&5
    [ "$subdir" != '' ] && \
     echo "subdir_$subdir=" >&4
-   echo "lib_$lib=" >&4
+   echo "lib_$envlib=" >&4
    return;
   fi
  fi
 
- LIBS=$($PKG_CONFIG --silence-errors --libs $lib 2> /dev/null)
+ lib="$lib/"
+
+ libn=`echo $lib | cut -d/ -f1`
+ is_fatal=`echo $lib | cut -d/ -f2`
+
+ lib="$libn"
+
+# echo "is_fatal(i)=$is_fatal" >&5
+
+ if [ "$is_fatal" = '' -o "$is_fatal" = 'no' -o "$is_fatal" = 'false' ]
+ then
+  is_fatal=false
+ else
+  is_fatal=true
+  shift; # maybe we have a pkg name, not a lib
+ fi
+
+ echo "LIB($name) HAS FATAL FLAG SET TO $is_fatal" >&5
+
+# echo "is_fatal(b)=$is_fatal" >&5
+
+ LIBS=$($PKG_CONFIG --silence-errors --cflags --libs $lib 2> /dev/null)
  if [ "$?" != '0' ]
  then
+  if $is_fatal
+  then
+   echo "checking for $name... no (fatal config errors)"
+   echo "LIB($name) HAS FATAL ERRORS" >&5
+   echo "LIB($name) NOT FOUND" >&5
+   [ "$subdir" != '' ] && \
+    echo "subdir_$subdir=" >&4
+   echo "lib_$envlib=" >&4
+   return
+  fi
   LIBS="-l$lib"
  fi
 
@@ -557,14 +591,14 @@ test_lib_defmake () {
   [ "$subdir" != '' ] && \
    echo "$subdir_var=$subdir" >&4
   [ "$lib" != 'c' ] && \
-   echo "lib_$lib=$LIBS" >&4
+   echo "lib_$envlib=$LIBS" >&4
   [ "$lib" != 'c' ] && \
-   eval "lib_$lib='$LIBS'"
+   eval "lib_$envlib='$LIBS'"
  else
   [ "$subdir" != '' ] && \
    echo "subdir_$subdir=" >&4
   [ "$lib" != 'c' ] && \
-   echo "lib_$lib=" >&4
+   echo "lib_$envlib=" >&4
  fi
  echo >&5
  echo >&5
@@ -798,7 +832,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.234 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.235 $ of RoarAudio
  */
 
 EOF
@@ -955,6 +989,7 @@ test_lib_defmake ROAR_HAVE_LIBSENDFILE   %            sendfile      sendfile   -
 test_lib_defmake ROAR_HAVE_LIBSOCKET     %            libsocket     socket     -- sys/socket.h
 test_lib_defmake ROAR_HAVE_LIBWSOCK32    %            WinSockP0     wsock32    -- winsock2.h
 test_lib_defmake ROAR_HAVE_LIBWS2_32     %            WinSockP1     ws2_32     -- winsock2.h
+test_lib_defmake ROAR_HAVE_GTK_P_2_0     %            GTK+2.0       gtk+-2.0/t -- gtk/gtk.h gdk/gdkkeysyms.h
 
 echo >&3
 
