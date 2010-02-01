@@ -107,6 +107,9 @@ struct roar_rtp_inst {
  struct roar_vio_calls * vio;
  struct roar_rtp_header header;
  struct roar_buffer    * tx;
+ struct roar_audio_info  info;
+ size_t                  mtu;
+ int                     bpf; // byte per frame
 };
 
 int roar_vio_open_rtp        (struct roar_vio_calls * calls, struct roar_vio_calls * dst,

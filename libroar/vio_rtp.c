@@ -92,12 +92,17 @@ int roar_vio_open_rtp        (struct roar_vio_calls * calls, struct roar_vio_cal
  memset(self, 0, sizeof(struct roar_rtp_inst));
 
  self->vio                 = dst;
+ self->bpf                 = 0;
+ self->mtu                 = 768;
+
+ memset(&(self->info), 0, sizeof(struct roar_audio_info));
 
  self->header.version      = 2;
  self->header.payload_type = ROAR_RTP_PT_UNKNOWN;
 
  // TODO: init with random values:
  //       Sequence Number 
+ //       ts
  //       SSRC
 
  memset(calls, 0, sizeof(struct roar_vio_calls));
@@ -185,7 +190,11 @@ ssize_t roar_vio_rtp_write   (struct roar_vio_calls * vio, void *buf, size_t cou
  if ( (ret = roar_vio_write(self->vio, data.vp, count+dataoffset)) == -1 )
   return -1;
 
- return ret - dataoffset;
+ len_have = ret - dataoffset;
+
+ self->header.ts += len_have / self->bpf;
+
+ return len_have;
 }
 
 off_t   roar_vio_rtp_lseek   (struct roar_vio_calls * vio, off_t offset, int whence);
@@ -249,7 +258,12 @@ int     roar_vio_rtp_ctl     (struct roar_vio_calls * vio, int cmd, void * data)
     break;
   }
 
+  memcpy(&(self->info), &(s->info), sizeof(struct roar_audio_info));
+
   self->header.payload_type = _info2pt(&(s->info));
+
+  self->bpf                 = s->info.channels * s->info.bits / 8;
+
   roar_vio_ctl(self->vio, cmd, data);
   return 0;
  }
