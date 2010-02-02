@@ -47,7 +47,16 @@ static void * _roardl2ldl (struct roar_dl_lhandle * lhandle) {
 #endif
 
 struct roar_dl_lhandle * roar_dl_open(const char * filename, int flags, int ra_init) {
- return NULL;
+ struct roar_dl_lhandle * ret = NULL;
+
+ if ( ret == NULL )
+  return NULL;
+
+ if ( ra_init ) {
+  roar_dl_ra_init(ret, NULL);
+ }
+
+ return ret;
 }
 
 int                      roar_dl_close(struct roar_dl_lhandle * lhandle) {
