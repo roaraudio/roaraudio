@@ -40,6 +40,20 @@
 #define ROAR_DL_HANDLE_DEFAULT          ((struct roar_dl_lhandle*)(void*)0)
 #define ROAR_DL_HANDLE_NEXT             ((struct roar_dl_lhandle*)(void*)1)
 
+#define ROAR_DL_FN_DSTR                 0
+#define ROAR_DL_FN_CDRIVER              1
+#define ROAR_DL_FN_TRANSCODER           2
+#define ROAR_DL_FN_DRIVER               3
+#define ROAR_DL_FN_SOURCE               4
+#define ROAR_DL_FN_FILTER               5
+#define ROAR_DL_FN_FF                   6 /* file format */
+#define ROAR_DL_FN_AUTH                 7
+#define ROAR_DL_FN_BRIDGE               8
+#define ROAR_DL_FN_ROARDSCHED           9
+#define ROAR_DL_FN_APPSCHED            10
+//#define ROAR_DL_FN_               9
+#define ROAR_DL_FN_MAX                  16
+
 struct roar_dl_lhandle {
 #if defined(ROAR_HAVE_LIBDL)
  void * handle;
@@ -54,8 +68,9 @@ struct roar_dl_librarypara {
 };
 
 struct roar_dl_libraryinst {
- int version;
- size_t len;
+ int      version;
+ size_t   len;
+ int    (*func[ROAR_DL_FN_MAX])(struct roar_dl_librarypara * para, struct roar_dl_libraryinst * lib);
 };
 
 struct roar_dl_lhandle * roar_dl_open(const char * filename, int flags, int ra_init);
