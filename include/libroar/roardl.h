@@ -64,14 +64,6 @@
                             struct roar_dl_libraryinst *                                          \
                              _##lib##_roaraudio_library_init(struct roar_dl_librarypara * para)   \
 
-struct roar_dl_lhandle {
-#if defined(ROAR_HAVE_LIBDL)
- void * handle;
-#else
- char dummy[8];
-#endif
-};
-
 struct roar_dl_librarypara {
  int version;
  size_t len;
@@ -80,7 +72,18 @@ struct roar_dl_librarypara {
 struct roar_dl_libraryinst {
  int      version;
  size_t   len;
+ int    (*unload)(struct roar_dl_librarypara * para, struct roar_dl_libraryinst * lib);
  int    (*func[ROAR_DL_FN_MAX])(struct roar_dl_librarypara * para, struct roar_dl_libraryinst * lib);
+};
+
+struct roar_dl_lhandle {
+ struct roar_dl_librarypara * para;
+ struct roar_dl_libraryinst * lib;
+#if defined(ROAR_HAVE_LIBDL)
+ void * handle;
+#else
+ char dummy[8];
+#endif
 };
 
 struct roar_dl_lhandle * roar_dl_open(const char * filename, int flags, int ra_init);

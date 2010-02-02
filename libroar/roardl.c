@@ -60,6 +60,14 @@ struct roar_dl_lhandle * roar_dl_open(const char * filename, int flags, int ra_i
 }
 
 int                      roar_dl_close(struct roar_dl_lhandle * lhandle) {
+ if ( lhandle == ROAR_DL_HANDLE_DEFAULT )
+  return -1;
+ if ( lhandle == ROAR_DL_HANDLE_NEXT )
+  return -1;
+
+ if ( lhandle->lib != NULL && lhandle->lib->unload != NULL )
+  lhandle->lib->unload(lhandle->para, lhandle->lib);
+
 #if defined(ROAR_HAVE_LIBDL)
  return dlclose(_roardl2ldl(lhandle));
 #else
