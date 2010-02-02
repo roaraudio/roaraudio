@@ -52,7 +52,17 @@
 #define ROAR_DL_FN_ROARDSCHED           9
 #define ROAR_DL_FN_APPSCHED            10
 //#define ROAR_DL_FN_               9
-#define ROAR_DL_FN_MAX                  16
+#define ROAR_DL_FN_MAX                 16
+
+#define ROAR_DL_LIBPARA_VERSION         0
+#define ROAR_DL_LIBINST_VERSION         0
+
+#define ROAR_DL_PLUGIN(lib) struct roar_dl_libraryinst *                                          \
+                             _roaraudio_library_init(struct roar_dl_librarypara * para) {         \
+                              return _##lib##_roaraudio_library_init(para);                       \
+                            }                                                                     \
+                            struct roar_dl_libraryinst *                                          \
+                             _##lib##_roaraudio_library_init(struct roar_dl_librarypara * para)   \
 
 struct roar_dl_lhandle {
 #if defined(ROAR_HAVE_LIBDL)

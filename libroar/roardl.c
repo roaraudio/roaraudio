@@ -80,6 +80,8 @@ int                      roar_dl_ra_init(struct roar_dl_lhandle * lhandle, const
  char name[80] = _SUFFIX;
  struct roar_dl_libraryinst * (*func)(struct roar_dl_librarypara * para);
  struct roar_dl_libraryinst * lib;
+ struct roar_dl_librarypara * para = NULL;
+ int i;
 
  if ( (void*)lhandle < (void*)128 && prefix == NULL )
   return -1;
@@ -94,10 +96,21 @@ int                      roar_dl_ra_init(struct roar_dl_lhandle * lhandle, const
  if ( (func = roar_dl_getsym(lhandle, name, -1)) == NULL )
   return -1;
 
- lib = func(NULL);
+ lib = func(para);
 
  if ( lib == NULL )
   return -1;
+
+ if ( lib->version != ROAR_DL_LIBINST_VERSION )
+  return -1;
+
+ if ( sizeof(struct roar_dl_libraryinst) > lib->len )
+  return -1;
+
+ for (i = 0; i < ROAR_DL_FN_MAX; i++) {
+  if ( lib->func[i] != NULL )
+   lib->func[i](para, lib);
+ }
 
  // do something with lib here.
 
