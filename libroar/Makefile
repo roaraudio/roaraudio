@@ -9,7 +9,7 @@ VIO_BRIDGE=vio_bio.o vio_stdio.o
 VIO=$(VIO_META) $(VIO_BRIDGE) vio_cmd.o vio_magic.o vio_pipe.o vio_socket.o vio_stack.o vio_jumbo.o vio_proto.o vio_dstr.o vio_tantalos.o vio_rtp.o
 OBJS=libroar.o config.o debug.o basic.o stream.o simple.o auth.o socket.o ctl.o buffer.o meta.o file.o acl.o cdrom.o pinentry.o sshaskpass.o $(VIO) stack.o slp.o nnode.o
 
-DEFINES        = -DDEBUG
+#DEFINES        = -DDEBUG
 INCLUDE = -I../include -I../include/libroar
 CFLAGS += -g -Wall -O2 $(DEFINES) $(INCLUDE) $(INCPATH) $(SHARED_CF) $(fPIC)
 LDFLAGS = -g $(SHARED) $(LDPATH)
