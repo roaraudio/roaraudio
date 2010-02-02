@@ -89,8 +89,13 @@
 #endif
 #endif
 
+#if defined(ROAR_HAVE_LIBDL)
+#include <dlfcn.h>
+#endif
+
 #include "error.h"
 #include "config.h"
+#include "roardl.h"
 #include "debug.h"
 #include "memmgr.h"
 #include "stack.h"
