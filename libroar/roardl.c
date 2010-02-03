@@ -130,12 +130,15 @@ int                      roar_dl_ra_init(struct roar_dl_lhandle * lhandle, const
  if ( prefix != NULL ) {
   strcpy(name, "_");
   strcat(name, prefix);
-  strcat(name, "_");
   strcat(name, _SUFFIX);
  }
 
+ ROAR_DBG("roar_dl_ra_init(lhandle=%p, prefix='%s'): name='%s'", lhandle, prefix, name);
+
  if ( (func = roar_dl_getsym(lhandle, name, -1)) == NULL )
   return -1;
+
+ ROAR_DBG("roar_dl_ra_init(lhandle=%p, prefix='%s'): func=%p", lhandle, prefix, func);
 
  lib = func(para);
 
