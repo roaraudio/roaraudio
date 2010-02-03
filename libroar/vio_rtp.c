@@ -63,6 +63,7 @@ static int _info2pt (struct roar_audio_info * info) {
  return -1;
 }
 
+#if 0
 static const struct roar_audio_info * _pt2info (int pt) {
  int i;
 
@@ -74,6 +75,7 @@ static const struct roar_audio_info * _pt2info (int pt) {
 
  return NULL;
 }
+#endif
 
 int roar_vio_open_rtp        (struct roar_vio_calls * calls, struct roar_vio_calls * dst,
                               char * dstr, struct roar_vio_defaults * odef) {
