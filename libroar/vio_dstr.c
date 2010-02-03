@@ -461,6 +461,7 @@ int     roar_vio_dstr_parse_opts(struct roar_vio_dstr_chain * chain) {
 }
 
 int     roar_vio_dstr_set_defaults(struct roar_vio_dstr_chain * chain, int len, struct roar_vio_defaults * def, int dnum) {
+ struct _roar_vio_dstr_type * type;
  struct roar_vio_dstr_chain * c, * next;
  int i;
  int tmp[8];
@@ -683,9 +684,20 @@ int     roar_vio_dstr_set_defaults(struct roar_vio_dstr_chain * chain, int len, 
       return -1;
     break;
    default:
-    // TODO: FIXME: add code to use functions from type struct
-    _roar_vio_dstr_init_otherlibs();
-    return -1;
+     if ( (type = roar_vio_dstr_get_by_type(c->type)) == NULL ) {
+      return -1;
+     }
+
+     if ( type->setdef == NULL )
+      _roar_vio_dstr_init_otherlibs();
+
+     if ( type->setdef == NULL ) {
+      return -1;
+     }
+
+     if ( type->setdef(c, next) == -1 ) {
+      return -1;
+     }
   }
 
   if ( next != NULL ) {
@@ -712,6 +724,7 @@ int     roar_vio_dstr_set_defaults(struct roar_vio_dstr_chain * chain, int len, 
 
 int     roar_vio_dstr_build_chain(struct roar_vio_dstr_chain * chain, struct roar_vio_calls * calls,
                                   struct roar_vio_calls * vio) {
+ struct _roar_vio_dstr_type * type;
  struct roar_vio_dstr_chain * c;
  struct roar_vio_defaults   * def;
  struct roar_vio_calls      * tc, * prev;
@@ -839,9 +852,20 @@ int     roar_vio_dstr_build_chain(struct roar_vio_dstr_chain * chain, struct roa
       _ret(-1);
      break;
     default:
-      // TODO: FIXME: add code to use functions from type struct
-      _roar_vio_dstr_init_otherlibs();
-      _ret(-1);
+      if ( (type = roar_vio_dstr_get_by_type(c->type)) == NULL ) {
+       _ret(-1);
+      }
+
+      if ( type->openvio == NULL )
+       _roar_vio_dstr_init_otherlibs();
+
+      if ( type->openvio == NULL ) {
+       _ret(-1);
+      }
+
+      if ( type->openvio(tc, prev, c) == -1 ) {
+       _ret(-1);
+      }
    }
 
    prev = tc;
