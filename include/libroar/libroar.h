@@ -113,6 +113,7 @@
 #include "vio_jumbo.h"
 #include "vio_pipe.h"
 #include "vio_socket.h"
+#include "vio_winsock.h"
 #include "vio_proto.h"
 #include "vio_rtp.h"
 #include "vio_select.h"

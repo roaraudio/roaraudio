@@ -99,15 +99,6 @@ int     roar_vio_basic_sync    (struct roar_vio_calls * vio);
 int     roar_vio_basic_ctl     (struct roar_vio_calls * vio, int cmd, void * data);
 int     roar_vio_basic_close   (struct roar_vio_calls * vio);
 
-#ifdef ROAR_TARGET_WIN32
-ssize_t roar_vio_winsock_read    (struct roar_vio_calls * vio, void *buf, size_t count);
-ssize_t roar_vio_winsock_write   (struct roar_vio_calls * vio, void *buf, size_t count);
-int     roar_vio_winsock_nonblock(struct roar_vio_calls * vio, int state);
-int     roar_vio_winsock_sync    (struct roar_vio_calls * vio);
-int     roar_vio_winsock_ctl     (struct roar_vio_calls * vio, int cmd, void * data);
-int     roar_vio_winsock_close   (struct roar_vio_calls * vio);
-#endif
-
 // null
 // this is a read and write in one!
 ssize_t roar_vio_null_rw    (struct roar_vio_calls * vio, void *buf, size_t count);
