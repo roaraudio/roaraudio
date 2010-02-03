@@ -37,6 +37,8 @@
 
 #include "libroar.h"
 
+#define ROAR_DL_FLAG_DEFAUTS           -1
+
 #define ROAR_DL_HANDLE_DEFAULT          ((struct roar_dl_lhandle*)(void*)0)
 #define ROAR_DL_HANDLE_NEXT             ((struct roar_dl_lhandle*)(void*)1)
 
