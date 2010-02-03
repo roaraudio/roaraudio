@@ -35,7 +35,7 @@
 #include "libroar.h"
 
 #ifndef ROAR_WITHOUT_VIO_DSTR
-struct {
+struct _roar_vio_dstr_type {
  int    id;
  char * name;
  int (* setdef) (struct roar_vio_dstr_chain * cur,   struct roar_vio_dstr_chain * next);
@@ -211,18 +211,56 @@ int     roar_vio_dstr_get_type(char * str) {
  return -1;
 }
 
-char *  roar_vio_dstr_get_name(int type) {
+struct _roar_vio_dstr_type * roar_vio_dstr_get_by_type (int type) {
  int i;
 
  for (i = 0; _roar_vio_dstr_objs[i].id != ROAR_VIO_DSTR_OBJT_EOL; i++) {
   if ( _roar_vio_dstr_objs[i].id == type )
-   return _roar_vio_dstr_objs[i].name;
+   return &(_roar_vio_dstr_objs[i]);
  }
+
+ return NULL;
+}
+
+char *  roar_vio_dstr_get_name(int type) {
+ struct _roar_vio_dstr_type * ret;
+
+ if ( (ret = roar_vio_dstr_get_by_type(type)) != NULL )
+  return ret->name;
 
  if ( type == ROAR_VIO_DSTR_OBJT_EOL )
   return "<<EOL>>";
 
  return NULL;
+}
+
+int     roar_vio_dstr_register_type(int   type,
+                                    char *name,
+                                    int (*setdef) (struct roar_vio_dstr_chain * cur,
+                                                   struct roar_vio_dstr_chain * next),
+                                    int (*openvio)(struct roar_vio_calls      * calls,
+                                                   struct roar_vio_calls      * dst,
+                                                   struct roar_vio_dstr_chain * cur)) {
+ struct _roar_vio_dstr_type * ret;
+
+ if ( (ret = roar_vio_dstr_get_by_type(type)) == NULL ) /* we can currently not register new types */
+  return -1;
+
+
+ // check if things are allready set, we do not want to allow overwrite here.
+ if ( setdef != NULL && ret->setdef != NULL )
+  return -1;
+
+ if ( openvio != NULL && ret->openvio != NULL )
+  return -1;
+
+ if ( setdef != NULL )
+  ret->setdef = setdef;
+
+ if ( openvio != NULL )
+  ret->openvio = openvio;
+
+ return 0;
 }
 
 static void _roar_vio_dstr_init_otherlibs (void) {

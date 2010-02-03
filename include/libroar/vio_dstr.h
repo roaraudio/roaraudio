@@ -173,6 +173,14 @@ struct roar_vio_dstr_chain {
 int     roar_vio_dstr_get_type(char * str);
 char *  roar_vio_dstr_get_name(int type);
 
+int     roar_vio_dstr_register_type(int   type,
+                                    char *name,
+                                    int (*setdef) (struct roar_vio_dstr_chain * cur,
+                                                   struct roar_vio_dstr_chain * next),
+                                    int (*openvio)(struct roar_vio_calls      * calls,
+                                                   struct roar_vio_calls      * dst,
+                                                   struct roar_vio_dstr_chain * cur));
+
 int     roar_vio_dstr_init_defaults (struct roar_vio_defaults * def, int type, int o_flags, mode_t o_mode);
 int     roar_vio_dstr_init_defaults_c (struct roar_vio_defaults * def, int type, struct roar_vio_defaults * odef, int o_flags);
 
