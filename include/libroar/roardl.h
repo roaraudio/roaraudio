@@ -68,6 +68,21 @@
                             struct roar_dl_libraryinst *                                          \
                              _##lib##_roaraudio_library_init(struct roar_dl_librarypara * para)   \
 
+#define ROAR_DL_PLUGIN_START(xlib) ROAR_DL_PLUGIN(xlib) {                                         \
+                                     static int _inited = 0;                                      \
+                                     static struct roar_dl_libraryinst lib;                       \
+                                     if ( _inited )                                               \
+                                      return &lib;                                                \
+                                     memset(&lib, 0, sizeof(lib));                                \
+                                     lib.version = ROAR_DL_LIBINST_VERSION;                       \
+                                     lib.len     = sizeof(lib);                                   \
+                                     do
+
+#define ROAR_DL_PLUGIN_END          while(0);                                                     \
+                                    _inited = 1;                                                  \
+                                    return &lib;                                                  \
+                                   }
+
 struct roar_dl_librarypara {
  int version;
  size_t len;
