@@ -37,6 +37,27 @@
 
 #include "libroardsp.h"
 
+#define ROARDSP_CHAN_NONE                 0
+#define ROARDSP_CHAN_FRONT_LEFT           1
+#define ROARDSP_CHAN_FRONT_RIGHT          2
+#define ROARDSP_CHAN_SIDE_LEFT            3
+#define ROARDSP_CHAN_SIDE_RIGHT           4
+#define ROARDSP_CHAN_BACK_LEFT            5
+#define ROARDSP_CHAN_BACK_RIGHT           6
+#define ROARDSP_CHAN_FRONT_CENTER         7
+#define ROARDSP_CHAN_SIDE_CENTER          8
+#define ROARDSP_CHAN_BACK_CENTER          9
+
+#define ROARDSP_CHAN_LEFT                 ROARDSP_CHAN_FRONT_LEFT
+#define ROARDSP_CHAN_RIGHT                ROARDSP_CHAN_FRONT_RIGHT
+#define ROARDSP_CHAN_CENTER               ROARDSP_CHAN_FRONT_CENTER
+#define ROARDSP_CHAN_MONO                 ROARDSP_CHAN_CENTER
+
+#define ROARDSP_CHAN_MS_MID               10
+#define ROARDSP_CHAN_MS_SIDE              11
+
+#define ROARDSP_CHAN_LFE                  12
+
 #endif
 
 //ll
