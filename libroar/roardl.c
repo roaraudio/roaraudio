@@ -119,8 +119,13 @@ int                      roar_dl_ra_init(struct roar_dl_lhandle * lhandle, const
  struct roar_dl_librarypara * para = NULL;
  int i;
 
- if ( (void*)lhandle < (void*)128 && prefix == NULL )
-  return -1;
+ if ( (void*)lhandle < (void*)128 ) {
+  if ( prefix == NULL )
+   return -1;
+ } else {
+  para = lhandle->para;
+ }
+
 
  if ( prefix != NULL ) {
   strcpy(name, "_");
