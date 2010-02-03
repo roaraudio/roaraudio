@@ -12,7 +12,7 @@ Things we should do:
  * (0.3 W/N/-) do a lot work on the manpages
  * (0.3 W/N/-) publish IDs used in proto as public domain
  * (0.3 O/h/P) Check for things needed to be done to support newer versions of CELT
- * (0.3 O/N/-) Clean libroardsp headers
+ * (0.3 W/L/-) Clean libroardsp headers
  * (0.3 O/N/-) Implement ALSA support
  * (0.3 O/L/-) Implement support for ICY Meta Data
  * (1.0 W/h/-) impelemnt RTS/SDP/SAP
