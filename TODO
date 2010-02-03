@@ -1,27 +1,46 @@
 Things we need to do:
- * (0.3) add _working_ resampling code
- * (1.0) add support for sync streams
+ * (0.3 O/H/-) add _working_ resampling code
+ * (1.0 O/L/-) add support for sync streams
 
 Things we should do:
- * (*.*) add a lot other things
- * (0.3) add DSTR driver
- * (0.3) do not install .cvsignore files
- * (0.3) better tests for libspeex{,dsp}-dev
- * (0.3) autotool like config options
- * (0.3) add support to to roard to auto select a sync stream
- * (0.3) do a lot work on the manpages
- * (0.3) publish IDs used in proto as public domain
- * (0.3) Check for things needed to be done to support newer versions of CELT
- * (0.3) Clean libroardsp headers
- * (0.3) Implement ALSA support
- * (0.3) Implement support for ICY Meta Data
- * (1.0) impelemnt RTS/SDP/SAP
- * (1.0) add RAUM support
- * (1.0) replace OpenBSD's aucat
- * (1.0) add internal memory management
- * (?.?) Better support for mixer streams
+ * (*.* */*/*) add a lot other things
+ * (0.3 O/L/-) add DSTR driver
+ * (0.3 n/h/-) do not install .cvsignore files
+ * (0.3 O/n/-) better tests for libspeex{,dsp}-dev
+ * (0.3 O/L/-) autotool like config options
+ * (0.3 O/N/-) add support to to roard to auto select a sync stream
+ * (0.3 W/N/-) do a lot work on the manpages
+ * (0.3 W/N/-) publish IDs used in proto as public domain
+ * (0.3 O/h/P) Check for things needed to be done to support newer versions of CELT
+ * (0.3 O/N/-) Clean libroardsp headers
+ * (0.3 O/N/-) Implement ALSA support
+ * (0.3 O/L/-) Implement support for ICY Meta Data
+ * (1.0 W/h/-) impelemnt RTS/SDP/SAP
+ * (1.0 W/L/-) add RAUM support
+ * (1.0 O/l/-) replace OpenBSD's aucat
+ * (1.0 W/L/-) add internal memory management
+ * (?.? O/N/-) Better support for mixer streams
 
 Things it would be nice to have:
- * (1.0) add better support for ReplayGain.
- * (1.1) add code to handle streams with more than ROAR_MAX_CHANNELS channels
- * (1.1) add support for multiple mixers per type
+ * (1.0 O/l/-) add better support for ReplayGain.
+ * (1.1 O/l/-) add code to handle streams with more than ROAR_MAX_CHANNELS channels
+ * (1.1 O/L/-) add support for multiple mixers per type
+
+Legent:
+ * (Version State/Priory/Flags) Description
+
+States:
+ O = Open
+ W = WIP
+ n = will no fix (fix in a diffrent way)
+
+Priority:
+ l = very low
+ L = low
+ N = normal
+ h = high
+ H = very high
+
+Flags:
+ - = NONE
+ P = Patch
