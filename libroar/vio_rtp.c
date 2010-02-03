@@ -330,8 +330,9 @@ int     roar_vio_rtp_sync    (struct roar_vio_calls * vio) {
 
 int     roar_vio_rtp_ctl     (struct roar_vio_calls * vio, int cmd, void * data) {
  struct roar_rtp_inst * self = vio->inst;
- struct roar_stream          * s  = NULL;
- struct roar_stream_server   * ss = NULL;
+ struct roar_stream          * s    = NULL;
+ struct roar_stream_server   * ss   = NULL;
+ struct roar_audio_info      * info = NULL;
 
  ROAR_DBG("roar_vio_rtp_ctl(vio=%p, cmd=%i, data=%p) = ?", vio, cmd, data);
 
@@ -343,9 +344,14 @@ int     roar_vio_rtp_ctl     (struct roar_vio_calls * vio, int cmd, void * data)
  switch (cmd) {
   case ROAR_VIO_CTL_SET_SSTREAM:
     s = ROAR_STREAM(ss = data);
+    info = &(s->info);
    break;
   case ROAR_VIO_CTL_SET_STREAM:
     s = ROAR_STREAM(data);
+    info = &(s->info);
+   break;
+  case ROAR_VIO_CTL_SET_AUINFO:
+    info = data;
    break;
   case ROAR_VIO_CTL_GET_NEXT:
     *(struct roar_vio_calls **)data = self->vio;
@@ -359,23 +365,23 @@ int     roar_vio_rtp_ctl     (struct roar_vio_calls * vio, int cmd, void * data)
 
  ROAR_DBG("roar_vio_rtp_ctl(vio=%p, cmd=%i, data=%p) = ?", vio, cmd, data);
 
- if ( s != NULL ) {
-  switch (s->info.codec) {
+ if ( info != NULL ) {
+  switch (info->codec) {
    case ROAR_CODEC_PCM_S_LE:
    case ROAR_CODEC_PCM_S_PDP:
-     s->info.codec = ROAR_CODEC_PCM_S_BE;
+     info->codec = ROAR_CODEC_PCM_S_BE;
     break;
    case ROAR_CODEC_PCM_U_LE:
    case ROAR_CODEC_PCM_U_PDP:
-     s->info.codec = ROAR_CODEC_PCM_U_BE;
+     info->codec = ROAR_CODEC_PCM_U_BE;
     break;
   }
 
-  memcpy(&(self->info), &(s->info), sizeof(struct roar_audio_info));
+  memcpy(&(self->info), info, sizeof(struct roar_audio_info));
 
-  self->header.payload_type = _info2pt(&(s->info));
+  self->header.payload_type = _info2pt(info);
 
-  self->bpf                 = s->info.channels * s->info.bits / 8;
+  self->bpf                 = info->channels * info->bits / 8;
 
   roar_vio_ctl(self->vio, cmd, data);
   return 0;
