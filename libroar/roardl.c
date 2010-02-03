@@ -49,6 +49,28 @@ static void * _roardl2ldl (struct roar_dl_lhandle * lhandle) {
 struct roar_dl_lhandle * roar_dl_open(const char * filename, int flags, int ra_init) {
  struct roar_dl_lhandle * ret = NULL;
 
+ // early errors just return.
+
+ if ( flags != ROAR_DL_FLAG_DEFAUTS )
+  return NULL;
+
+ if ( (ret = roar_mm_malloc(sizeof(struct roar_dl_lhandle))) == NULL )
+  return NULL;
+
+ memset(ret, 0, sizeof(struct roar_dl_lhandle));
+
+#if defined(ROAR_HAVE_LIBDL)
+ ret->handle = dlopen(filename, RTLD_NOW);
+
+ if ( ret->handle == NULL ) {
+  roar_mm_free(ret);
+  return NULL;
+ }
+#else
+ roar_mm_free(ret);
+ return NULL;
+#endif
+
  if ( ret == NULL )
   return NULL;
 
@@ -60,6 +82,8 @@ struct roar_dl_lhandle * roar_dl_open(const char * filename, int flags, int ra_i
 }
 
 int                      roar_dl_close(struct roar_dl_lhandle * lhandle) {
+ int ret = -1;
+
  if ( lhandle == ROAR_DL_HANDLE_DEFAULT )
   return -1;
  if ( lhandle == ROAR_DL_HANDLE_NEXT )
@@ -69,10 +93,14 @@ int                      roar_dl_close(struct roar_dl_lhandle * lhandle) {
   lhandle->lib->unload(lhandle->para, lhandle->lib);
 
 #if defined(ROAR_HAVE_LIBDL)
- return dlclose(_roardl2ldl(lhandle));
+ ret = dlclose(_roardl2ldl(lhandle));
 #else
- return -1;
+ ret = -1;
 #endif
+
+ roar_mm_free(lhandle);
+
+ return ret;
 }
 
 void                   * roar_dl_getsym(struct roar_dl_lhandle * lhandle, const char * sym, int type) {
