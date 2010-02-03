@@ -83,6 +83,8 @@
                                     return &lib;                                                  \
                                    }
 
+#define ROAR_DL_PLUGIN_REG(fn, func) (lib.func[(fn)] = (func))
+
 struct roar_dl_librarypara {
  int version;
  size_t len;
