@@ -53,7 +53,7 @@
 
 // filter CTLs:
 
-#define ROARDSP_FCTL_FREQ             1 /* float */
+#define ROARDSP_FCTL_FREQ             1 /* float   */
 #define ROARDSP_FCTL_TIME             2
 #define ROARDSP_FCTL_MUL              3 /* int32_t */
 #define ROARDSP_FCTL_DIV              4 /* int32_t */
@@ -62,7 +62,7 @@
 #define ROARDSP_FCTL_PHASE            7
 #define ROARDSP_FCTL_Q                8 /* int32_t */
 #define ROARDSP_FCTL_MODE             9 /* int32_t */
-#define ROARDSP_FCTL_PACKET_SIZE     10 /* size_t */
+#define ROARDSP_FCTL_PACKET_SIZE     10 /* size_t  */
 
 // consts for filter flags:
 #define ROARDSP_FFLAG_NONE            0x0000
