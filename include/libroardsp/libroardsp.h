@@ -1,7 +1,7 @@
 //libroardsp.h:
 
 /*
- *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008, 2009
+ *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008-2010
  *
  *  This file is part of libroardsp a part of RoarAudio,
  *  a cross-platform sound system for both, home and professional use.
@@ -49,6 +49,8 @@ __BEGIN_DECLS
 #include "point.h"
 #include "remove.h"
 #include "rms.h"
+#include "filter.h"
+#include "filterchain.h"
 #include "transcode.h"
 #include "vio_transcode.h"
 
