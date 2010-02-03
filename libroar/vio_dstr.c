@@ -224,6 +224,14 @@ char *  roar_vio_dstr_get_name(int type) {
 
  return NULL;
 }
+
+static void _roar_vio_dstr_init_otherlibs (void) {
+ roar_dl_ra_init(ROAR_DL_HANDLE_DEFAULT, "libroardsp");
+ roar_dl_ra_init(ROAR_DL_HANDLE_DEFAULT, "libroareio");
+ roar_dl_ra_init(ROAR_DL_HANDLE_DEFAULT, "libroarlight");
+ roar_dl_ra_init(ROAR_DL_HANDLE_DEFAULT, "libroarmidi");
+}
+
 #endif
 
 int     roar_vio_dstr_init_defaults (struct roar_vio_defaults * def, int type, int o_flags, mode_t o_mode) {
@@ -637,6 +645,8 @@ int     roar_vio_dstr_set_defaults(struct roar_vio_dstr_chain * chain, int len, 
       return -1;
     break;
    default:
+    // TODO: FIXME: add code to use functions from type struct
+    _roar_vio_dstr_init_otherlibs();
     return -1;
   }
 
@@ -791,6 +801,8 @@ int     roar_vio_dstr_build_chain(struct roar_vio_dstr_chain * chain, struct roa
       _ret(-1);
      break;
     default:
+      // TODO: FIXME: add code to use functions from type struct
+      _roar_vio_dstr_init_otherlibs();
       _ret(-1);
    }
 
