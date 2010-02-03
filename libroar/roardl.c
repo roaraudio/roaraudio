@@ -120,9 +120,7 @@ int                      roar_dl_ra_init(struct roar_dl_lhandle * lhandle, const
    lib->func[i](para, lib);
  }
 
- // do something with lib here.
-
- return -1;
+ return 0;
 }
 
 //ll
