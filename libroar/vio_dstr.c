@@ -55,6 +55,8 @@ grep '^#define ROAR_VIO_DSTR_OBJT_' vio_dstr.h | cut -d' ' -f2 | while read objt
       {ROAR_VIO_DEF_TYPE_EOL}},
  {ROAR_VIO_DSTR_OBJT_RE,         "re",
       {ROAR_VIO_DEF_TYPE_EOL}},
+ {ROAR_VIO_DSTR_OBJT_JUMBO,      "jumbo", /* TODO */
+      {ROAR_VIO_DEF_TYPE_EOL}},
  {ROAR_VIO_DSTR_OBJT_EXEC,       "exec",
       {ROAR_VIO_DEF_TYPE_EOL}},
 
@@ -126,6 +128,17 @@ grep '^#define ROAR_VIO_DSTR_OBJT_' vio_dstr.h | cut -d' ' -f2 | while read objt
       {ROAR_VIO_DEF_TYPE_EOL}},
  {ROAR_VIO_DSTR_OBJT_SSLTLS,     "ssltls",
       {ROAR_VIO_DEF_TYPE_EOL}},
+
+ {ROAR_VIO_DSTR_OBJT_TRANSCODE,  "transcode", /* TODO  */
+      {ROAR_VIO_DEF_TYPE_EOL}},
+
+ {ROAR_VIO_DSTR_OBJT_RAUM,       "raum",      /* TODO */
+      {ROAR_VIO_DEF_TYPE_EOL}},
+ {ROAR_VIO_DSTR_OBJT_OGG,        "ogg",       /* TODO */
+      {ROAR_VIO_DEF_TYPE_EOL}},
+ {ROAR_VIO_DSTR_OBJT_TAR,        "tar",       /* TODO */
+      {ROAR_VIO_DEF_TYPE_EOL}},
+
 
  {ROAR_VIO_DSTR_OBJT_MAGIC,      "magic",
       {ROAR_VIO_DEF_TYPE_EOL}},

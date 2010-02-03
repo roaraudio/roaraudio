@@ -51,6 +51,8 @@
 #define ROAR_VIO_DSTR_OBJGT_COMP          0x0400 /* compression */
 #define ROAR_VIO_DSTR_OBJGT_CRYPT         0x0500
 #define ROAR_VIO_DSTR_OBJGT_PROTO         0x0600 /* protocolls like HTTP and Gopher */
+#define ROAR_VIO_DSTR_OBJGT_CONTENT       0x0700 /* things changeing the content of the data */
+#define ROAR_VIO_DSTR_OBJGT_MUX           0x0800 /* muxers and demuxers */
 #define ROAR_VIO_DSTR_OBJGT_SPECAL        0xff00
 
 #define ROAR_VIO_DSTR_OBJT_EOL           -1
@@ -64,6 +66,7 @@
 /* some space to add memory FHs and the like */
 #define ROAR_VIO_DSTR_OBJT_PASS           (0x10|ROAR_VIO_DSTR_OBJGT_GEN)
 #define ROAR_VIO_DSTR_OBJT_RE             (0x11|ROAR_VIO_DSTR_OBJGT_GEN)
+#define ROAR_VIO_DSTR_OBJT_JUMBO          (0x12|ROAR_VIO_DSTR_OBJGT_GEN)
 #define ROAR_VIO_DSTR_OBJT_EXEC           (0x20|ROAR_VIO_DSTR_OBJGT_GEN)
 
 #define ROAR_VIO_DSTR_OBJT_SOCKET         (0x01|ROAR_VIO_DSTR_OBJGT_SOCKET)
@@ -108,6 +111,12 @@
 #define ROAR_VIO_DSTR_OBJT_SSL3           (0x23|ROAR_VIO_DSTR_OBJGT_CRYPT)
 #define ROAR_VIO_DSTR_OBJT_TLS            (0x2a|ROAR_VIO_DSTR_OBJGT_CRYPT)
 #define ROAR_VIO_DSTR_OBJT_SSLTLS         ROAR_VIO_DSTR_OBJT_TLS
+
+#define ROAR_VIO_DSTR_OBJT_TRANSCODE      (0x10|ROAR_VIO_DSTR_OBJGT_CONTENT)
+
+#define ROAR_VIO_DSTR_OBJT_RAUM           (0x11|ROAR_VIO_DSTR_OBJGT_MUX)
+#define ROAR_VIO_DSTR_OBJT_OGG            (0x12|ROAR_VIO_DSTR_OBJGT_MUX)
+#define ROAR_VIO_DSTR_OBJT_TAR            (0x13|ROAR_VIO_DSTR_OBJGT_MUX)
 
 #define ROAR_VIO_DSTR_OBJT_MAGIC          (0x01|ROAR_VIO_DSTR_OBJGT_SPECAL)
 #define ROAR_VIO_DSTR_OBJT_TANTALOS       (0x02|ROAR_VIO_DSTR_OBJGT_SPECAL)
