@@ -69,7 +69,7 @@ int roardsp_str2chan(char * str) {
  return -1;
 }
 
-int    roardsp_chanlist2str(int * list, size_t len, char * str, size_t strlen) {
+int    roardsp_chanlist2str(char * list, size_t len, char * str, size_t strlen) {
  int i;
 
  if ( list == NULL && len > 0 )
