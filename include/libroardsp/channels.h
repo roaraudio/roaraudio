@@ -59,9 +59,20 @@
 
 #define ROARDSP_CHAN_LFE                  12
 
+#define ROARDSP_CHANMAP_IN                0
+#define ROARDSP_CHANMAP_OUT               1
+#define ROARDSP_CHANMAP_MAP               2
+
+struct roardsp_chanmap {
+ char in [ROAR_MAX_CHANNELS];
+ char out[ROAR_MAX_CHANNELS];
+ char map[ROAR_MAX_CHANNELS];
+};
 
 char * roardsp_chan2str (int chan);
 int    roardsp_str2chan(char * str);
+
+int roardsp_chanmap_calc(struct roardsp_chanmap * map, int what, int err_on_none);
 
 #endif
 
