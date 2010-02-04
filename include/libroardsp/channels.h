@@ -37,6 +37,34 @@
 
 #include "libroardsp.h"
 
+/* Channel map:
+ * Standard marix:
+ *
+ *       # Left       | Center       | Right       #
+ * ======#============#==============#=============#
+ * Front # FRONT_LEFT | FRONT_CENTER | FRONT_RIGHT #
+ *       # LEFT       | CENTER/MONO  | RIGHT       #
+ * ------#------------+--------------+-------------#
+ * Side  # SIDE_LEFT  | SIDE_CENTER  | SIDE_RIGH   #
+ * ------#------------+--------------+-------------#
+ * Back  # BACK_LEFT  | BACK_CENTER  | BACK_RIGHT  #
+ * ======#============#==============#=============#
+ *
+ *
+ * Low Frequency Effects:
+ *
+ *  LFE is location independ.
+ *
+ *
+ * Mid-Side (MS):
+ *
+ * Mid   = Left + Right
+ * Side  = Left - Right
+ * Left  = (Mid + Side) / 2
+ * Right = (Mid - Side) / 2
+ *
+ */
+
 #define ROARDSP_CHAN_EOL                 -1
 #define ROARDSP_CHAN_NONE                 0
 #define ROARDSP_CHAN_FRONT_LEFT           1
