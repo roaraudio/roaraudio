@@ -37,6 +37,7 @@
 
 #include "libroardsp.h"
 
+#define ROARDSP_CHAN_EOL                 -1
 #define ROARDSP_CHAN_NONE                 0
 #define ROARDSP_CHAN_FRONT_LEFT           1
 #define ROARDSP_CHAN_FRONT_RIGHT          2
@@ -57,6 +58,10 @@
 #define ROARDSP_CHAN_MS_SIDE              11
 
 #define ROARDSP_CHAN_LFE                  12
+
+
+char * roardsp_chan2str (int chan);
+int    roardsp_str2chan(char * str);
 
 #endif
 
