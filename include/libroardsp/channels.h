@@ -72,6 +72,8 @@ struct roardsp_chanmap {
 char * roardsp_chan2str (int chan);
 int    roardsp_str2chan(char * str);
 
+int    roardsp_chanlist2str(int * list, size_t len, char * str, size_t strlen);
+
 int roardsp_chanmap_calc(struct roardsp_chanmap * map, int what, int err_on_none);
 
 #endif

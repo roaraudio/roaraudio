@@ -69,6 +69,35 @@ int roardsp_str2chan(char * str) {
  return -1;
 }
 
+int    roardsp_chanlist2str(int * list, size_t len, char * str, size_t strlen) {
+ int i;
+
+ if ( list == NULL && len > 0 )
+  return -1;
+
+ if ( (str == NULL || strlen == 0) && len > 0 )
+  return -1;
+
+ if ( len == 0 ) {
+  if ( str != NULL && strlen > 0 )
+   *str = 0;
+
+  return 0;
+ }
+
+ // TODO: FIXME: do not ignore strlen from here
+ *str = 0;
+
+ for (i = 0; i < len; i++) {
+  if ( i != 0 )
+   strcat(str, ",");
+
+  strcat(str, roardsp_chan2str(list[i]));
+ }
+
+ return 0;
+}
+
 int roardsp_chanmap_calc(struct roardsp_chanmap * map, int what, int err_on_none) {
  int a, b;
 
