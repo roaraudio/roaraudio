@@ -45,11 +45,15 @@
  * Front # FRONT_LEFT | FRONT_CENTER | FRONT_RIGHT #
  *       # LEFT       | CENTER/MONO  | RIGHT       #
  * ------#------------+--------------+-------------#
- * Side  # SIDE_LEFT  | SIDE_CENTER  | SIDE_RIGH   #
+ * Side  # SIDE_LEFT  | SIDE_CENTER$ | SIDE_RIGH   #
  * ------#------------+--------------+-------------#
  * Back  # BACK_LEFT  | BACK_CENTER  | BACK_RIGHT  #
  * ======#============#==============#=============#
- *
+ * $ = Side Center has null-vector possion and because of this
+ *     arg(Pos) is undefined. This means that the channel does
+ *     not have a defined phase and therefor does can not exist.
+ *     we include it just to have the matrix complet.
+ * 
  *
  * Low Frequency Effects:
  *
