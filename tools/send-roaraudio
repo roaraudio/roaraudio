@@ -13,6 +13,19 @@ SSH_OPTS=''
 while [ "$1" != '' ]
 do
  case "$1" in
+  '-h'|'--help')
+  echo "Usage: $0 [OPTIONS] host..."
+  echo
+cat <<HELP
+ -h --help                        - Show this help
+    --remote-dir=DIR              - Set dir on remote site
+    --build={true|false}          - build on remote site?
+    --configure={true,false}      - configure on remote site?
+    --test={true,false}           - test on remote site?
+    --port=PORT                   - Set port of remote site
+HELP
+   exit 0;
+  ;;
   '--remote-dir='*)
    REMOTEDIR=`echo "$1" | cut -d= -f2`
   ;;
