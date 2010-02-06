@@ -162,6 +162,9 @@ do
    echo '--incpath DIR               - Add DIR to search list for headers'
    echo '--addpath DIR               - Add DIR/lib to lib, DIR/include to header search list'
    echo
+   echo '--cc CC                     - Set name of C compiler (CC) to CC'
+   echo '--ranlib RANLIB             - Set name of ranlib (RANLIB) to RANLIB'
+   echo
    echo '--cdrom DEV                 - Set default CDRum device'
    echo '--tty DEV                   - Set default TTY'
    echo '--oss-dev DEV               - Set default OSS device'
@@ -202,6 +205,8 @@ do
    echo '--without-comp-clients      - Disable build of clients'
    echo '--without-comp-doc          - Disable build of documentation'
    echo '--without-comp-comp-bins    - Disable build of compatibility binarys'
+   echo
+   echo '--without-dcomp-COMP        - Disable build of roard'\''s component COMP'
    echo
    echo '--without-meta-data         - Disable support for Meta Data'
    echo
@@ -832,7 +837,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.235 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.236 $ of RoarAudio
  */
 
 EOF
