@@ -430,6 +430,30 @@ do
    PREFIX_COMP_BINS="$2"
    shift;
   ;;
+####################################
+# autof* options block:
+  '--prefix=*')
+   PREFIX=$(echo "$1" | cut -d= -f2)
+  ;;
+  '--prefix-bin=*')
+   PREFIX_BIN=$(echo "$1" | cut -d= -f2)
+  ;;
+  '--prefix-lib=*')
+   PREFIX_LIB=$(echo "$1" | cut -d= -f2)
+  ;;
+  '--prefix-inc=*')
+   PREFIX_INC=$(echo "$1" | cut -d= -f2)
+  ;;
+  '--prefix-man=*')
+   PREFIX_MAN=$(echo "$1" | cut -d= -f2)
+  ;;
+  '--prefix-comp-libs='*)
+   PREFIX_COMP_LIBS=$(echo "$1" | cut -d= -f2)
+  ;;
+  '--prefix-comp-bins='*)
+   PREFIX_COMP_BINS=$(echo "$1" | cut -d= -f2)
+  ;;
+####################################
   '--mmcu')
    MMCU="$2"
    shift;
@@ -837,7 +861,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.236 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.237 $ of RoarAudio
  */
 
 EOF
