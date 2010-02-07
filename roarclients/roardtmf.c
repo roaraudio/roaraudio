@@ -127,6 +127,7 @@ int main (int argc, char * argv[]) {
  void * buf;
  size_t samples;
  size_t len;
+ char   c;
 
  for (i = 1; i < argc; i++) {
   k = argv[i];
@@ -175,11 +176,15 @@ int main (int argc, char * argv[]) {
   return 1;
  }
 
- while (*tones != 0 ) {
-  if ( calc(buf, len, rate, *tones) == -1 )
+ while ( (c = *tones) != 0 ) {
+  tones++;
+
+  if ( c == ' ' || c == '+' || c == '.' || c == '_' )
+   continue;
+
+  if ( calc(buf, len, rate, c) == -1 )
    return 5;
   roar_vio_write(&stream, buf, len);
-  tones++;
  }
 
  roar_vio_close(&stream);
