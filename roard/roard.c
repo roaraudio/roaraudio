@@ -125,7 +125,7 @@ void usage (void) {
 #endif
 
 #ifndef ROAR_WITHOUT_DCOMP_RDTCS
- printf("\nRadio Date and Transmitter Control System Options:\n\n");
+ printf("\nRadio Data and Transmitter Control System Options:\n\n");
  printf(" --rds-pi   PI         - Sets the RDS Programme Identification (PI)\n"
         " --rds-ps   PS         - Sets the RDS Programme Service Name (PS)\n"
         " --rds-pty  PTY        - Sets the RDS Programme Type (PTY)\n"
