@@ -43,6 +43,7 @@ void * roar_mm_calloc(size_t nmemb, size_t size);
 void * roar_mm_malloc(size_t size);
 void   roar_mm_free(void *ptr);
 void * roar_mm_realloc(void *ptr, size_t size);
+char * roar_mm_strdup(const char *s);
 
 /*
  * TODO: we need some functions to control the pre-alloc
@@ -54,6 +55,7 @@ void * roar_mm_realloc(void *ptr, size_t size);
 #define roar_mm_malloc(size)        malloc((size))
 #define roar_mm_free(ptr)           free((ptr))
 #define roar_mm_realloc(ptr, size)  realloc((ptr), (size))
+#define roar_mm_strdup(str)         strdup((str))
 #endif
 
 #endif
