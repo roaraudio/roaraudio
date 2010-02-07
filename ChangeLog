@@ -1,4 +1,4 @@
-v. 0.3beta4 - ?
+v. 0.3beta4 - Sat Feb 06 2010 26:02 CET
 	* Applyed patches for Debian
 	* updated roarify to load libs of correct version
 	* updated list of supported versions (complibs)
