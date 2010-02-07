@@ -5,7 +5,7 @@ TARGETS_IO=roarcat roarcatplay roarcatvio roarbidir roarmon roarmonhttp roarradi
 TARGETS_CTL=roarctl roarlight roarinterconnect
 TARGETS_DSP=roarfilt roarvumeter
 TARGETS_MISC=roarsockconnect roarphone roarshout
-TARGETS_M=
+TARGETS_M=roardtmf
 
 TARGETS=$(TARGETS_IO) $(TARGETS_CTL) $(TARGETS_DSP) $(TARGETS_MISC) $(TARGETS_DEVEL) $(TARGETS_EXAMPLE) $(TARGETS_TESTS) $(TARGETS_M)
 TOOLS=roarify
@@ -63,6 +63,8 @@ roarsin: roarsin.o
 	${CC} ${LDFLAGS} -o roarsin roarsin.o $(LIBROARDSP)
 roarvumeter: roarvumeter.o
 	${CC} ${LDFLAGS} -o roarvumeter roarvumeter.o $(LIBROAR) $(LIBROARDSP) $(lib_m)
+roardtmf: roardtmf.o
+	${CC} ${LDFLAGS} -o roardtmf roardtmf.o $(LIBROAR) $(lib_m)
 roarsockconnect: roarsockconnect.o
 	$L
 roartypes: roartypes.o
