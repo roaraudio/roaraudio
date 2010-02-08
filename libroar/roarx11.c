@@ -34,4 +34,71 @@
 
 #include "libroar.h"
 
+struct roar_x11_connection * roar_x11_connect(char * display) {
+#ifdef ROAR_HAVE_LIBX11
+ struct roar_x11_connection * con;
+
+ if ( (con = roar_mm_malloc(sizeof(struct roar_x11_connection))) == NULL )
+  return NULL;
+
+ if ( (con->display = XOpenDisplay(display)) == NULL ) {
+  roar_mm_free(con);
+  return NULL;
+ }
+
+ return con;
+#else
+ return NULL;
+#endif
+}
+
+int roar_x11_disconnect(struct roar_x11_connection * con) {
+#ifdef ROAR_HAVE_LIBX11
+ int ret;
+
+ if ( con == NULL )
+  return -1;
+
+ ret = XCloseDisplay(con->display);
+
+ roar_mm_free(con);
+
+ return ret;
+#else
+ return -1;
+#endif
+}
+
+int roar_x11_set_prop(struct roar_x11_connection * con, const char * key, const char * val) {
+#ifdef ROAR_HAVE_LIBX11
+ Atom a;
+
+ if ( con == NULL )
+  return -1;
+
+ a = XInternAtom(con->display, key, False);
+
+ XChangeProperty(con->display, RootWindow(con->display, 0), a, XA_STRING, 8, PropModeReplace, (const unsigned char*) val, strlen(val)+1);
+
+ return 0;
+#else
+ return -1;
+#endif
+}
+
+int roar_x11_delete_prop(struct roar_x11_connection * con, const char * key) {
+#ifdef ROAR_HAVE_LIBX11
+ Atom a;
+ if ( con == NULL )
+  return -1;
+
+ a = XInternAtom(con->display, key, False);
+ XDeleteProperty(con->display, RootWindow(con->display, 0), a);
+
+ return 0;
+#else
+ return -1;
+#endif
+}
+
 //ll

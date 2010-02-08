@@ -37,6 +37,20 @@
 
 #include "libroar.h"
 
+struct roar_x11_connection {
+#ifdef ROAR_HAVE_LIBX11
+ Display * display;
+#else
+ char dummy[8];
+#endif
+};
+
+struct roar_x11_connection * roar_x11_connect(char * display);
+int roar_x11_disconnect(struct roar_x11_connection * con);
+
+int roar_x11_set_prop(struct roar_x11_connection * con, const char * key, const char * val);
+int roar_x11_delete_prop(struct roar_x11_connection * con, const char * key);
+
 #endif
 
 //ll

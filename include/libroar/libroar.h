@@ -93,6 +93,11 @@
 #include <dlfcn.h>
 #endif
 
+#ifdef ROAR_HAVE_LIBX11
+#include <X11/Xlib.h>
+#include <X11/Xatom.h>
+#endif
+
 #include "error.h"
 #include "config.h"
 #include "roardl.h"
