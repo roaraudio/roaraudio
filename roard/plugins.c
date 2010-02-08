@@ -24,20 +24,62 @@
 
 #include "roard.h"
 
+#define MAX_PLUGINS    8
+
+static struct roar_dl_lhandle * g_plugins[MAX_PLUGINS];
+
+static struct roar_dl_lhandle ** _find_free(void) {
+ int i;
+
+ for (i = 0; i < MAX_PLUGINS; i++) {
+  if ( g_plugins[i] == NULL )
+   return &(g_plugins[i]);
+ }
+
+ return NULL;
+}
+
 int plugins_preinit  (void) {
+ memset(g_plugins, 0, sizeof(g_plugins));
+
  return 0;
 }
 
 int plugins_init  (void) {
+ int i;
+
+ for (i = 0; i < MAX_PLUGINS; i++) {
+  if ( g_plugins[i] != NULL ) {
+   roar_dl_ra_init(g_plugins[i], NULL);
+  }
+ }
+
  return 0;
 }
 
 int plugins_free  (void) {
+ int i;
+
+ for (i = 0; i < MAX_PLUGINS; i++) {
+  if ( g_plugins[i] != NULL ) {
+   roar_dl_close(g_plugins[i]);
+  }
+ }
+
  return 0;
 }
 
 int plugins_load  (const char * filename) {
- return -1;
+ struct roar_dl_lhandle ** next = _find_free();
+
+ if ( next == NULL )
+  return -1;
+
+ *next = roar_dl_open(filename, -1, 0 /* we delay this until plugins_init() */);
+ if ( *next == NULL )
+  return -1;
+
+ return 0;
 }
 
 //ll
