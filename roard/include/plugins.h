@@ -27,10 +27,11 @@
 
 #include <roaraudio.h>
 
-int plugins_init  (void);
-int plugins_free  (void);
+int plugins_preinit  (void);
+int plugins_init     (void);
+int plugins_free     (void);
 
-int plugins_load  (const char * filename);
+int plugins_load     (const char * filename);
 
 #endif
 

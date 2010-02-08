@@ -998,6 +998,11 @@ int main (void) {
  }
 #endif
 
+ if ( plugins_preinit() == -1 ) {
+  ROAR_ERR("Can not pre-init plugins!");
+  return 1;
+ }
+
 #ifdef ROAR_SUPPORT_LISTEN
 #ifndef ROAR_TARGET_WIN32
  sock_addr = ROAR_DEFAULT_SOCK_GLOBAL;
@@ -1517,6 +1522,10 @@ int main (void) {
  }
 #endif
 
+ if ( plugins_init() == -1 ) {
+  ROAR_ERR("Can not initialize plugins");
+ }
+
 #ifdef ROAR_SUPPORT_LISTEN
  if ( add_listen(sock_addr, port, sock_type, sock_user, sock_grp, sock_proto, sock_dir, &sock_info) != 0 ) {
   ROAR_ERR("Can not open listen socket!");
@@ -1749,6 +1758,8 @@ void cleanup_listen_socket (int terminate) {
 
 void clean_quit_prep (void) {
  cleanup_listen_socket(0);
+
+ plugins_free();
 
 #ifndef ROAR_WITHOUT_DCOMP_SOURCES
  sources_free();

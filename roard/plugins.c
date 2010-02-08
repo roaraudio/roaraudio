@@ -24,9 +24,20 @@
 
 #include "roard.h"
 
-int plugins_init  (void);
-int plugins_free  (void);
+int plugins_preinit  (void) {
+ return 0;
+}
 
-int plugins_load  (const char * filename);
+int plugins_init  (void) {
+ return 0;
+}
+
+int plugins_free  (void) {
+ return 0;
+}
+
+int plugins_load  (const char * filename) {
+ return -1;
+}
 
 //ll
