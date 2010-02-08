@@ -84,7 +84,7 @@
                                     return &lib;                                                  \
                                    }
 
-#define ROAR_DL_PLUGIN_REG(fn, func) (lib.func[(fn)] = (func))
+#define ROAR_DL_PLUGIN_REG(fn, funcptr) (lib.func[(fn)] = (funcptr))
 #define ROAR_DL_PLUGIN_REG_UNLOAD(func) (lib.unload = (func))
 
 struct roar_dl_librarypara {
