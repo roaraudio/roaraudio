@@ -151,6 +151,10 @@ int                      roar_dl_ra_init(struct roar_dl_lhandle * lhandle, const
  if ( sizeof(struct roar_dl_libraryinst) > lib->len )
   return -1;
 
+ if ( !((void*)lhandle < (void*)128) ) {
+  lhandle->lib = lib;
+ }
+
  for (i = 0; i < ROAR_DL_FN_MAX; i++) {
   if ( lib->func[i] != NULL )
    lib->func[i](para, lib);
