@@ -105,8 +105,10 @@ int plugins_load  (const char * filename) {
   return -1;
 
  next->lhandle = roar_dl_open(filename, -1, 0 /* we delay this until plugins_init() */);
- if ( next->lhandle == NULL )
+ if ( next->lhandle == NULL ) {
+  ROAR_ERR("plugins_load(filename='%s'): can not load plugin: %s", filename, roar_dl_errstr(NULL));
   return -1;
+ }
 
  return 0;
 }
