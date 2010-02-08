@@ -107,6 +107,7 @@ int g_verbose;
 #include "rdtcs.h"
 #include "waveform.h"
 #include "lib.h"
+#include "plugins.h"
 
 
 int alive;
