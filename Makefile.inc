@@ -8,7 +8,7 @@ COMMON_VERSION  = $(COMMON_V_MM).$(COMMON_V_REV)
 # libroar:
 LIBROAR_V       = $(COMMON_VERSION)
 NETLIBS         = $(lib_dnet) $(lib_wsock32) $(lib_ws2_32)
-AUXLIBS         = $(lib_slp) $(lib_ssl) $(lib_sendfile) $(lib_dl)
+AUXLIBS         = $(lib_slp) $(lib_ssl) $(lib_sendfile) $(lib_dl) $(lib_x11)
 LIBROAR_NS      = $(AUXLIBS) $(NETLIBS)
 LIBROAR         = -lroar $(LIBROAR_NS)
 
