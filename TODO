@@ -7,14 +7,13 @@ Things we should do:
  * (0.3 O/L/-) add DSTR driver
  * (0.3 n/h/-) do not install .cvsignore files
  * (0.3 O/n/-) better tests for libspeex{,dsp}-dev
- * (0.3 O/L/-) autotool like config options
  * (0.3 O/N/-) add support to to roard to auto select a sync stream
  * (0.3 W/N/-) do a lot work on the manpages
  * (0.3 W/N/-) publish IDs used in proto as public domain
  * (0.3 O/h/P) Check for things needed to be done to support newer versions of CELT
  * (0.3 W/L/-) Clean libroardsp headers
- * (0.3 O/N/-) Implement ALSA support
- * (0.3 O/L/-) Implement support for ICY Meta Data
+ * (0.3 W/N/-) Implement ALSA support
+ * (0.3 W/L/-) Implement support for ICY Meta Data
  * (1.0 W/h/-) impelemnt RTS/SDP/SAP
  * (1.0 W/L/-) add RAUM support
  * (1.0 O/l/-) replace OpenBSD's aucat
@@ -32,7 +31,7 @@ Legent:
 States:
  O = Open
  W = WIP
- n = will no fix (fix in a diffrent way)
+ n = will not fix (fix in a diffrent way)
 
 Priority:
  l = very low
