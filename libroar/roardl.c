@@ -163,4 +163,12 @@ int                      roar_dl_ra_init(struct roar_dl_lhandle * lhandle, const
  return 0;
 }
 
+char *                   roar_dl_errstr(struct roar_dl_lhandle * lhandle) {
+#if defined(ROAR_HAVE_LIBDL)
+ return dlerror();
+#else
+ return NULL;
+#endif
+}
+
 //ll

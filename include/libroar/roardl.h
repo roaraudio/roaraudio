@@ -116,6 +116,8 @@ void                   * roar_dl_getsym(struct roar_dl_lhandle * lhandle, const 
 
 int                      roar_dl_ra_init(struct roar_dl_lhandle * lhandle, const char * prefix);
 
+char *                   roar_dl_errstr(struct roar_dl_lhandle * lhandle);
+
 #endif
 
 //ll
