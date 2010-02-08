@@ -1,7 +1,7 @@
 //vio_proto.h:
 
 /*
- *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2009
+ *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2009-2010
  *
  *  This file is part of libroar a part of RoarAudio,
  *  a cross-platform sound system for both, home and professional use.
@@ -49,6 +49,11 @@ struct roar_vio_proto {
  struct {
   struct roar_buffer * buffer;
  } reader, writer;
+ struct {
+  size_t metaint;
+  size_t leftint;
+  struct roar_buffer * mdbuf;
+ } metadata;
 };
 
 int roar_vio_proto_init_def  (struct roar_vio_defaults * def, char * dstr, int proto, struct roar_vio_defaults * odef);
