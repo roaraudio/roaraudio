@@ -861,7 +861,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.237 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.238 $ of RoarAudio
  */
 
 EOF
@@ -1176,6 +1176,23 @@ then
  echo yes
 else
  $FSYNC && echo '#define ROAR_FDATASYNC fsync' >&3
+ echo no
+fi
+
+
+#test_func_defmake ROAR_HAVE_STRCASESTR strcasestr 'strcasestr("", "")'       -- string.h
+echo -n 'checking for strcasestr()... '
+
+echo '#define _GNU_SOURCE' > $TF_C
+echo '#include <string.h>' >> $TF_C
+echo 'int main (void) { strcasestr("", ""); return 0; }' >> $TF_C
+
+if $CCTF 2> /dev/null;
+then
+ echo '#define ROAR_HAVE_STRCASESTR' >&3
+ NEED_GNU_SOURCE=true
+ echo yes
+else
  echo no
 fi
 
