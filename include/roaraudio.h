@@ -263,6 +263,12 @@ int _ROAR_MLOCK(const void *addr, size_t len);
 #endif
 #endif
 
+#ifdef ROAR_HAVE_STRCASESTR
+#define _roar_strcasestr(a,b) strcasestr((a), (b))
+#else
+#define _roar_strcasestr(a,b) NULL
+#endif
+
 #if BYTE_ORDER == BIG_ENDIAN && !defined(ROAR_TARGET_WIN32)
 
 #ifdef ROAR_TARGET_WIN32
