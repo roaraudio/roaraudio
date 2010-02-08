@@ -34,6 +34,10 @@
 
 #include "libroar.h"
 
+#if defined(ROAR_HAVE_LIBDL) && !defined(RTLD_NEXT)
+#define RTLD_NEXT ((void *) -1L)
+#endif
+
 #if defined(ROAR_HAVE_LIBDL)
 static void * _roardl2ldl (struct roar_dl_lhandle * lhandle) {
  if ( lhandle == ROAR_DL_HANDLE_DEFAULT )
