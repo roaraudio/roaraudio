@@ -66,7 +66,7 @@ int plugins_free  (void) {
   }
  }
 
- return 0;
+ return plugins_preinit();
 }
 
 int plugins_load  (const char * filename) {
