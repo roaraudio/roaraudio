@@ -157,11 +157,11 @@ int net_get_new_client (struct roard_listen * lsock) {
     ROAR_DBG("net_get_new_client(*): CONNECT execed sucessfully");
    break;
 #endif
+#endif
   case ROAR_PROTO_SIMPLE:
     if ( emul_simple_on_connect(client, lsock) == -1 )
      return -1;
    break;
-#endif
   default:
     // OS independiend code to close the socket:
     if ( roar_vio_open_fh_socket(&vio, fh) == -1 )
