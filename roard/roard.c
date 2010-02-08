@@ -62,6 +62,11 @@ void usage (void) {
 #endif
        );
 
+ printf("\nPlugin Options:\n\n");
+ printf(
+        " --plugin-load FILE    - Load plugin FILE\n"
+       );
+
  printf("\nAudio Options:\n\n");
  printf(
         " -R  --rate   RATE     - Set server rate\n"
@@ -1132,6 +1137,11 @@ int main (void) {
    ROAR_ERR("--pidfile not supported");
    i++;
 #endif
+
+  } else if ( strcmp(k, "--plugin-load") == 0 ) {
+   if ( plugins_load(argv[++i]) == -1 ) {
+    ROAR_ERR("Can not load plugin");
+   }
 
   } else if ( strcmp(k, "--list-cf") == 0 ) {
    print_codecfilterlist();
