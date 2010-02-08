@@ -16,7 +16,7 @@ include ../Makefile.inc
 #DEFINES        = -DMONITOR_LATENCY
 INCLUDE   = -I../include -I./include
 CFLAGS   += -g -Wall -O2 $(DEFINES) $(INCLUDE) $(INCPATH)
-LDFLAGS   = -g -L../lib/ $(LDPATH)
+LDFLAGS   = -g -rdynamic -L../lib/ $(LDPATH)
 DRVLIBS   = $(lib_esd) $(lib_ossaudio) $(lib_ao) $(lib_shout) $(lib_sndio) $(lib_winmm)
 CODECLIBS = $(lib_vorbisfile) $(lib_vorbisenc) $(lib_vorbis) $(lib_celt) $(lib_fishsound) $(lib_speex) $(lib_speexdsp)
 CONTLIBS  = $(lib_oggz) $(lib_sndfile) $(lib_ogg) $(lib_raum)
