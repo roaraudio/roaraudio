@@ -53,6 +53,7 @@
 #define ROAR_DL_FN_BRIDGE               8
 #define ROAR_DL_FN_ROARDSCHED           9
 #define ROAR_DL_FN_APPSCHED            10
+#define ROAR_DL_FN_PROTO               11
 //#define ROAR_DL_FN_               9
 #define ROAR_DL_FN_MAX                 16
 
@@ -84,6 +85,7 @@
                                    }
 
 #define ROAR_DL_PLUGIN_REG(fn, func) (lib.func[(fn)] = (func))
+#define ROAR_DL_PLUGIN_REG_UNLOAD(func) (lib.unload = (func))
 
 struct roar_dl_librarypara {
  int version;
