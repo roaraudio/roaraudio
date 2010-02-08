@@ -60,7 +60,13 @@ struct roar_dl_lhandle * roar_dl_open(const char * filename, int flags, int ra_i
  memset(ret, 0, sizeof(struct roar_dl_lhandle));
 
 #if defined(ROAR_HAVE_LIBDL)
- ret->handle = dlopen(filename, RTLD_NOW);
+ flags  = RTLD_NOW;
+
+#ifdef RTLD_DEEPBIND
+ flags |= RTLD_DEEPBIND;
+#endif
+
+ ret->handle = dlopen(filename, flags);
 
  if ( ret->handle == NULL ) {
   roar_mm_free(ret);
