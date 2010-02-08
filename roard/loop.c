@@ -111,6 +111,8 @@ int main_loop (int driver, DRIVER_USERDATA_T driver_inst, struct roar_audio_info
   // a break
 */
 
+  if ( plugins_update() == -1 )
+   alive = 0;
 
   ROAR_DBG("main_loop(*): sending output data...");
 

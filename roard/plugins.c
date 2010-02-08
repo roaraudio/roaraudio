@@ -26,14 +26,20 @@
 
 #define MAX_PLUGINS    8
 
-static struct roar_dl_lhandle * g_plugins[MAX_PLUGINS];
+static struct _roard_plugin {
+ struct roar_dl_lhandle     * lhandle;
+ struct roard_plugins_sched * sched;
+} g_plugins[MAX_PLUGINS];
+static struct _roard_plugin * _pp = NULL;
 
-static struct roar_dl_lhandle ** _find_free(void) {
+static struct _roard_plugin * _find_free(void) {
  int i;
 
  for (i = 0; i < MAX_PLUGINS; i++) {
-  if ( g_plugins[i] == NULL )
+  if ( g_plugins[i].lhandle == NULL ) {
+   memset(&(g_plugins[i]), 0, sizeof(struct _roard_plugin));
    return &(g_plugins[i]);
+  }
  }
 
  return NULL;
@@ -49,8 +55,15 @@ int plugins_init  (void) {
  int i;
 
  for (i = 0; i < MAX_PLUGINS; i++) {
-  if ( g_plugins[i] != NULL ) {
-   roar_dl_ra_init(g_plugins[i], NULL);
+  if ( g_plugins[i].lhandle != NULL ) {
+   _pp = &(g_plugins[i]);
+
+   roar_dl_ra_init(g_plugins[i].lhandle, NULL);
+
+   if ( g_plugins[i].sched->init != NULL )
+    g_plugins[i].sched->init();
+
+   _pp = NULL;
   }
  }
 
@@ -61,23 +74,48 @@ int plugins_free  (void) {
  int i;
 
  for (i = 0; i < MAX_PLUGINS; i++) {
-  if ( g_plugins[i] != NULL ) {
-   roar_dl_close(g_plugins[i]);
+  if ( g_plugins[i].lhandle != NULL ) {
+   if ( g_plugins[i].sched->free != NULL )
+    g_plugins[i].sched->free();
+
+   roar_dl_close(g_plugins[i].lhandle);
   }
  }
 
  return plugins_preinit();
 }
 
+int plugins_update   (void) {
+ int ret = 0;
+ int i;
+
+ for (i = 0; i < MAX_PLUGINS; i++)
+  if ( g_plugins[i].lhandle != NULL )
+   if ( g_plugins[i].sched->update != NULL )
+    if ( g_plugins[i].sched->update() == -1 )
+     ret = -1;
+
+ return ret;
+}
+
 int plugins_load  (const char * filename) {
- struct roar_dl_lhandle ** next = _find_free();
+ struct _roard_plugin * next = _find_free();
 
  if ( next == NULL )
   return -1;
 
- *next = roar_dl_open(filename, -1, 0 /* we delay this until plugins_init() */);
- if ( *next == NULL )
+ next->lhandle = roar_dl_open(filename, -1, 0 /* we delay this until plugins_init() */);
+ if ( next->lhandle == NULL )
   return -1;
+
+ return 0;
+}
+
+int plugins_reg_sched(struct roard_plugins_sched * sched) {
+ if ( _pp == NULL )
+  return -1;
+
+ _pp->sched = sched;
 
  return 0;
 }

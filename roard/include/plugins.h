@@ -27,11 +27,20 @@
 
 #include <roaraudio.h>
 
+struct roard_plugins_sched {
+ int (*init)(void);
+ int (*free)(void);
+ int (*update)(void);
+};
+
 int plugins_preinit  (void);
 int plugins_init     (void);
 int plugins_free     (void);
+int plugins_update   (void);
 
 int plugins_load     (const char * filename);
+
+int plugins_reg_sched(struct roard_plugins_sched * sched);
 
 #endif
 
