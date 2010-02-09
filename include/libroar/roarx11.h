@@ -46,10 +46,11 @@ struct roar_x11_connection {
 };
 
 struct roar_x11_connection * roar_x11_connect(char * display);
-int roar_x11_disconnect(struct roar_x11_connection * con);
+int    roar_x11_disconnect(struct roar_x11_connection * con);
 
-int roar_x11_set_prop(struct roar_x11_connection * con, const char * key, const char * val);
-int roar_x11_delete_prop(struct roar_x11_connection * con, const char * key);
+int    roar_x11_set_prop(struct roar_x11_connection * con, const char * key, const char * val);
+int    roar_x11_delete_prop(struct roar_x11_connection * con, const char * key);
+char * roar_x11_get_prop(struct roar_x11_connection * con, const char * key);
 
 #endif
 

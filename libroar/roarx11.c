@@ -101,4 +101,43 @@ int roar_x11_delete_prop(struct roar_x11_connection * con, const char * key) {
 #endif
 }
 
+char * roar_x11_get_prop(struct roar_x11_connection * con, const char * key) {
+ unsigned long   nitems;
+ unsigned long   nbytes_after;
+ unsigned char * prop = NULL;
+ char          * ret = NULL;
+ int             actual_format;
+ Atom            actual_type;
+ Atom            a;
+
+ a = XInternAtom(con->display, key, False);
+
+ if ( XGetWindowProperty(con->display, RootWindow(con->display, 0), a,
+                         0, 256, False, XA_STRING, &actual_type,
+                         &actual_format, &nitems, &nbytes_after, &prop) != Success ) {
+  if ( prop != NULL )
+   XFree(prop);
+
+  return NULL;
+ }
+
+ if ( prop == NULL )
+  return NULL;
+
+ if (actual_type != XA_STRING) {
+  XFree(prop);
+
+  return NULL;
+ }
+
+ ret = roar_mm_malloc(nitems+1);
+
+ memcpy(ret, prop, nitems);
+ ret[nitems] = 0;
+
+ XFree(prop);
+
+ return ret;
+}
+
 //ll

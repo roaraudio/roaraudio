@@ -1,7 +1,7 @@
 //basic.c:
 
 /*
- *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008
+ *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008-2010
  *
  *  This file is part of libroar a part of RoarAudio,
  *  a cross-platform sound system for both, home and professional use.
@@ -48,6 +48,9 @@ int roar_connect_raw (char * server) {
 #ifdef ROAR_HAVE_LIBDNET
  struct stat decnet_stat;
 #endif
+#ifdef ROAR_HAVE_LIBX11
+ struct roar_x11_connection * x11con;
+#endif
 
  roar_errno = ROAR_ERROR_UNKNOWN;
 
@@ -59,6 +62,15 @@ int roar_connect_raw (char * server) {
 
  if ( server == NULL && (roar_server = getenv("ROAR_SERVER")) != NULL )
   server = roar_server;
+
+#ifdef ROAR_HAVE_LIBX11
+ if ( server == NULL ) {
+  if ( (x11con = roar_x11_connect(NULL)) != NULL ) {
+   server = roar_x11_get_prop(x11con, "ROAR_SERVER");
+   roar_x11_disconnect(x11con);
+  }
+ }
+#endif
 
 #if !defined(ROAR_TARGET_WIN32) && !defined(ROAR_TARGET_MICROCONTROLLER)
  if ( server == NULL && (i = readlink("/etc/roarserver", user_sock, 79)) != -1 ) {
