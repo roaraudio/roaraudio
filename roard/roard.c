@@ -167,6 +167,9 @@ void usage (void) {
 #ifdef ROAR_HAVE_LIBSLP
         "     --slp             - Enable OpenSLP support\n"
 #endif
+#ifdef ROAR_HAVE_LIBX11
+        "     --x11             - Enable X11 support\n"
+#endif
         " --jumbo-mtu MTU       - Sets the MTU for Jumbo Packets\n"
         " -G  GROUP             - Sets the group for the UNIX Domain Socket, (default: %s)\n"
         "                         You need the permissions to change the GID\n"
@@ -768,6 +771,28 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
  return 0;
 }
 
+// X11:
+#ifdef ROAR_HAVE_LIBX11
+int register_x11 (int unreg, char * sockname) {
+ struct roar_x11_connection * x11con = NULL;
+ int ret = 0;
+
+ if ( (x11con = roar_x11_connect(NULL)) == NULL )
+  return -1;
+
+ if ( unreg ) {
+  if ( roar_x11_delete_prop(x11con, "ROAR_SERVER") == -1 )
+   ret = -1;
+ } else {
+  if ( roar_x11_set_prop(x11con, "ROAR_SERVER", sockname) == -1 )
+   ret = -1;
+ }
+
+ roar_x11_disconnect(x11con);
+
+ return ret;
+}
+#endif
 
 // SLP:
 void register_slp_callback(SLPHandle hslp, SLPError errcode, void * cookie) {
@@ -920,6 +945,9 @@ int main (void) {
 #endif
 #ifdef ROAR_HAVE_LIBSLP
  int    reg_slp   = 0;
+#endif
+#ifdef ROAR_HAVE_LIBX11
+ int    reg_x11   = 0;
 #endif
 #ifdef ROAR_HAVE_CHROOT
  char * chrootdir = NULL;
@@ -1448,9 +1476,18 @@ int main (void) {
 #ifdef ROAR_HAVE_LIBSLP
    reg_slp = 1;
 #else
-    ROAR_ERR("No OpenSLP support compiled in!");
-    return 1;
+   ROAR_ERR("No OpenSLP support compiled in!");
+   return 1;
 #endif
+
+  } else if ( strcmp(k, "--x11") == 0 ) {
+#ifdef ROAR_HAVE_LIBX11
+   reg_x11 = 1;
+#else
+   ROAR_ERR("No X11 support compiled in!");
+   return 1;
+#endif
+
 
   } else if ( strcmp(k, "--jumbo-mtu") == 0 ) {
    g_config->jumbo_mtu = atoi(argv[++i]);
@@ -1724,6 +1761,12 @@ int main (void) {
  }
 #endif
 
+#ifdef ROAR_HAVE_LIBX11
+ if ( reg_x11 ) {
+  register_x11(0, sock_addr);
+ }
+#endif
+
  // start main loop...
  main_loop(drvid, drvinst, &sa, sysclocksync);
 
@@ -1741,6 +1784,10 @@ void cleanup_listen_socket (int terminate) {
  // Deregister from SLP:
 #ifdef ROAR_HAVE_LIBSLP
  register_slp(1, NULL);
+#endif
+
+#ifdef ROAR_HAVE_LIBX11
+ register_x11(1, NULL);
 #endif
 
 #ifdef ROAR_SUPPORT_LISTEN
