@@ -36,7 +36,11 @@
 
 struct roar_x11_connection * roar_x11_connect(char * display) {
 #ifdef ROAR_HAVE_LIBX11
+ struct roar_libroar_config * config = roar_libroar_get_config();
  struct roar_x11_connection * con;
+
+ if ( display == NULL )
+  display = config->x11.display;
 
  if ( (con = roar_mm_malloc(sizeof(struct roar_x11_connection))) == NULL )
   return NULL;

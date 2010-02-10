@@ -52,8 +52,8 @@ struct roar_libroar_config * roar_libroar_get_config_ptr(void) {
 
   if ( home != NULL ) {
    snprintf(authfile, 1023, "%s/.roarauth", home);
-   authfile[1023]  = 0;
-   config.authfile = authfile;
+   authfile[1023]     = 0;
+   config.authfile    = authfile;
   }
 
   inited++;
@@ -244,6 +244,8 @@ int    roar_libroar_config_parse(char * txt, char * delm) {
   } else if ( !strcmp(k, "set-authfile") ) {
    strncpy(config->authfile, v, 1023);
    config->authfile[1023] = 0;
+  } else if ( !strcmp(k, "x11-display") ) {
+   config->x11.display = v;
   } else {
    ROAR_WARN("roar_libroar_config_parse(*): Unknown option: %s", k);
   }

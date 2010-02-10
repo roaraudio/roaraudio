@@ -1,5 +1,6 @@
 v. 0.3beta5 - ?
 	* added tool roardtmf
+	* Support to store server address in X11's root window propertys
 
 v. 0.3beta4 - Sat Feb 06 2010 26:02 CET
 	* Applyed patches for Debian

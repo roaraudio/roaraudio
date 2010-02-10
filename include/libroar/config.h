@@ -92,6 +92,9 @@ struct roar_libroar_config {
  } codecs;
  struct roar_audio_info info;
  char * authfile;
+ struct {
+  char * display;
+ } x11;
 };
 
 struct roar_libroar_config * roar_libroar_get_config_ptr(void);
