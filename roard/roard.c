@@ -34,7 +34,11 @@ char * pidfile = NULL;
 #endif
 
 #if defined(ROAR_HAVE_SETGID) || defined(ROAR_HAVE_SETUID)
- int    setids    = 0;
+int    setids    = 0;
+#endif
+
+#ifdef ROAR_HAVE_LIBX11
+char * x11display = NULL;
 #endif
 
 #ifdef ROAR_HAVE_MAIN_ARGS
@@ -136,6 +140,14 @@ void usage (void) {
         " --rds-pty  PTY        - Sets the RDS Programme Type (PTY)\n"
         " --rds-tp              - Sets the RDS Traffic Programme (TP) flag\n"
         " --rds-ct              - Enables sending of RDS Clock Time (CT)\n"
+       );
+#endif
+
+#ifdef ROAR_HAVE_LIBX11
+ printf("\nX11 Options:\n\n");
+ printf(
+        " --x11-display DISPLAY - Set display for X11\n"
+        " --display DISPLAY     - Set display for X11\n"
        );
 #endif
 
@@ -777,7 +789,7 @@ int register_x11 (int unreg, char * sockname) {
  struct roar_x11_connection * x11con = NULL;
  int ret = 0;
 
- if ( (x11con = roar_x11_connect(NULL)) == NULL )
+ if ( (x11con = roar_x11_connect(x11display)) == NULL )
   return -1;
 
  if ( unreg ) {
@@ -1351,6 +1363,15 @@ int main (void) {
 #else
    // we can safely ignore the disable
 #endif
+
+  } else if ( strcmp(k, "--x11-display") == 0 || strcmp(k, "--display") == 0 ) {
+#ifdef ROAR_HAVE_LIBX11
+   x11display = argv[++i];
+#else
+   ROAR_ERR("No X11 support compiled in!");
+   return 1;
+#endif
+
 
   } else if ( strcmp(k, "-p") == 0 || strcmp(k, "--port") == 0 ) {
    // This is only usefull in INET not UNIX mode.
