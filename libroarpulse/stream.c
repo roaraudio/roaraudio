@@ -141,7 +141,9 @@ pa_context* pa_stream_get_context(pa_stream *p) {
 }
 
 /** Return the device (sink input or source output) index this stream is connected to */
-uint32_t pa_stream_get_index(pa_stream *s);
+uint32_t pa_stream_get_index(pa_stream *s) {
+ return 0;
+}
 
 /** Connect the stream to a sink */
 int pa_stream_connect_playback(
