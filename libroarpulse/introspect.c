@@ -73,6 +73,9 @@ pa_operation* pa_context_get_server_info(pa_context *c, pa_server_info_cb_t cb, 
 
  memset(&painfo, 0, sizeof(painfo));
 
+ if ( roar_pa_auinfo2sspec(&(painfo.sample_spec), &(stream.info)) == -1 )
+  return roar_pa_op_new_done();
+
  painfo.user_name           = "(none)";
  painfo.host_name           = pa_context_get_server(c);
  painfo.server_version      = pa_get_library_version();
