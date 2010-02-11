@@ -51,8 +51,8 @@ pa_simple* pa_simple_new(
     int *error                          /**< A pointer where the error code is stored when the routine returns NULL. It is OK to pass NULL here. */
     ) {
  struct roarpulse_simple * s = malloc(sizeof(struct roarpulse_simple));
+ struct roar_audio_info info;
  int roar_dir;
- int codec = -1;
  struct roar_meta meta;
 
  if ( !s )
@@ -67,7 +67,10 @@ pa_simple* pa_simple_new(
   return NULL;
  }
 
- codec = roar_codec_pulse2roar(ss->format);
+ if ( roar_pa_sspec2auinfo(&info, ss) == -1 ) {
+  free(s);
+  return NULL;
+ }
 
  if ( !server )
   server = getenv("PULSE_SERVER");
@@ -77,8 +80,8 @@ pa_simple* pa_simple_new(
   return NULL;
  }
 
- s->data_fh = roar_simple_new_stream_obj(&(s->con), &(s->stream), ss->rate, ss->channels,
-                  16 /* does PulseAudio support something diffrent? */, codec, roar_dir);
+ s->data_fh = roar_simple_new_stream_obj(&(s->con), &(s->stream), info.rate, info.channels,
+                  info.bits, info.codec, roar_dir);
 
  if ( s->data_fh == -1 ) {
   roar_disconnect(&(s->con));
