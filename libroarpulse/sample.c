@@ -38,4 +38,40 @@
 
 #include <libroarpulse/libroarpulse.h>
 
+/** Return the amount of bytes playback of a second of audio with the specified sample type takes */
+size_t pa_bytes_per_second(const pa_sample_spec *spec);
+
+/** Return the size of a frame with the specific sample type */
+size_t pa_frame_size(const pa_sample_spec *spec);
+
+/** Return the size of a sample with the specific sample type */
+size_t pa_sample_size(const pa_sample_spec *spec);
+
+/** Calculate the time the specified bytes take to play with the specified sample type */
+pa_usec_t pa_bytes_to_usec(uint64_t length, const pa_sample_spec *spec);
+
+/** Calculates the number of bytes that are required for the specified time. \since 0.9 */
+size_t pa_usec_to_bytes(pa_usec_t t, const pa_sample_spec *spec);
+
+/** Return non-zero when the sample type specification is valid */
+int pa_sample_spec_valid(const pa_sample_spec *spec);
+
+/** Return non-zero when the two sample type specifications match */
+int pa_sample_spec_equal(const pa_sample_spec*a, const pa_sample_spec*b);
+
+/** Return a descriptive string for the specified sample format. \since 0.8 */
+const char *pa_sample_format_to_string(pa_sample_format_t f);
+
+/** Parse a sample format text. Inverse of pa_sample_format_to_string() */
+pa_sample_format_t pa_parse_sample_format(const char *format);
+
+/** Maximum required string length for pa_sample_spec_snprint() */
+#define PA_SAMPLE_SPEC_SNPRINT_MAX 32
+
+/** Pretty print a sample type specification to a string */
+char* pa_sample_spec_snprint(char *s, size_t l, const pa_sample_spec *spec);
+
+/** Pretty print a byte size value. (i.e. "2.5 MiB") */
+char* pa_bytes_snprint(char *s, size_t l, unsigned v);
+
 //ll
