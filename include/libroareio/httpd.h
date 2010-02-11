@@ -89,7 +89,7 @@ struct roar_httpd {
  struct roar_vio_calls * client;
  struct roar_vio_calls   viostore[1];
  struct roar_buffer * header;
- struct roar_buffer * output;
+ struct roar_buffer * iobuffer;
 };
 
 struct roar_httpd * roar_http_new(struct roar_vio_calls * client, int (*cb_eoh)(struct roar_httpd * httpd));
