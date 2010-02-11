@@ -56,6 +56,8 @@ char * roar_pa_find_server (char * server);
 
 pa_operation *roar_pa_operation_new(pa_operation_state_t initstate);
 
+#define roar_pa_op_new_done() roar_pa_operation_new(PA_OPERATION_DONE)
+
 #endif
 
 //ll
