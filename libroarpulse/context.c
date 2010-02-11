@@ -264,7 +264,7 @@ pa_operation* pa_context_set_default_sink(pa_context *c, const char *name, pa_co
   c->errnum = PA_ERR_NOTSUPPORTED;
 
  if ( cb != NULL )
-  cb(c, 0, userdata);
+  cb(c, strcasecmp(name, ROAR_PA_DEFAULT_SINK) == 0 ? 1 : 0, userdata);
 
  return roar_pa_operation_new(PA_OPERATION_DONE);
 }
@@ -275,7 +275,7 @@ pa_operation* pa_context_set_default_source(pa_context *c, const char *name, pa_
   c->errnum = PA_ERR_NOTSUPPORTED;
 
  if ( cb != NULL )
-  cb(c, 0, userdata);
+  cb(c, strcasecmp(name, ROAR_PA_DEFAULT_SOURCE) == 0 ? 1 : 0, userdata);
 
  return roar_pa_operation_new(PA_OPERATION_DONE);
 }

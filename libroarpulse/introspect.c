@@ -80,8 +80,8 @@ pa_operation* pa_context_get_server_info(pa_context *c, pa_server_info_cb_t cb, 
  painfo.host_name           = pa_context_get_server(c);
  painfo.server_version      = pa_get_library_version();
  painfo.server_name         = "pulseaudio";
- painfo.default_sink_name   = NULL;
- painfo.default_source_name = NULL;
+ painfo.default_sink_name   = ROAR_PA_DEFAULT_SINK;
+ painfo.default_source_name = ROAR_PA_DEFAULT_SOURCE;
  painfo.cookie              = 0x524F4152;
  painfo.cookie             ^= (client.pid & 0xFF) | (client.uid & 0xFF) << 8 | (client.gid & 0xFF) << 16;
 
