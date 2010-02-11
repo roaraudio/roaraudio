@@ -1,5 +1,8 @@
 TARGETS=libroarpulse.so libroarpulseinfo
-OBJS=libroarpulse.o simple.o util.o context.o xmalloc.o version.o operation.o
+OBJS_ROAR   = libroarpulse.o
+OBJS_STD    = util.o context.o xmalloc.o version.o operation.o
+OBJS_SIMPLE = simple.o
+OBJS=$(OBJS_ROAR) $(OBJS_SIMPLE) $(OBJS_STD)
 
 include ../Makefile.conf
 include ../Makefile.inc
