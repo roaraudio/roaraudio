@@ -55,6 +55,7 @@ struct pa_context {
  char * server;
  char * name;
  int state;
+ int errnum;
  struct {
   struct _roar_pa_cb_st set_name;
   struct _roar_pa_cb_st state_change;
@@ -85,6 +86,8 @@ pa_context *pa_context_new_with_proplist(pa_mainloop_api *mainloop, const char *
  c->refc  = 1;
 
  c->state = PA_CONTEXT_UNCONNECTED;
+
+ c->errnum = PA_OK;
 
  return NULL;
 }
@@ -122,8 +125,11 @@ int pa_context_connect(
  if ( c == NULL )
   return -1;
 
- if ( c->state != PA_CONTEXT_UNCONNECTED )
+ if ( c->state != PA_CONTEXT_UNCONNECTED ) {
+  c->errnum = PA_ERR_BADSTATE;
+  pa_context_set_state(c, PA_CONTEXT_FAILED);
   return -1;
+ }
 
  // we do currently not support to spawn a daemon, so we ignore flags and api.
 
@@ -131,6 +137,7 @@ int pa_context_connect(
 
  if ( roar_simple_connect(&(c->con), (char*)server,
                           c->name != NULL ? c->name : "libroarpulse [pa_context_connect()]") == -1 ) {
+  c->errnum = PA_ERR_CONNECTIONREFUSED;
   pa_context_set_state(c, PA_CONTEXT_FAILED);
   return -1;
  }
@@ -176,7 +183,12 @@ void pa_context_set_state(pa_context *c, pa_context_state_t st) {
 }
 
 /** Return the error number of the last failed operation */
-int pa_context_errno(pa_context *c);
+int pa_context_errno(pa_context *c) {
+ if ( c == NULL )
+  return PA_ERR_INVALID;
+
+ return c->errnum;
+}
 
 /** Return non-zero if some data is pending to be written to the connection */
 int pa_context_is_pending(pa_context *c) {
@@ -203,10 +215,33 @@ pa_operation* pa_context_drain(pa_context *c, pa_context_notify_cb_t cb, void *u
 /** Tell the daemon to exit. The returned operation is unlikely to
  * complete succesfully, since the daemon probably died before
  * returning a success notification */
-pa_operation* pa_context_exit_daemon(pa_context *c, pa_context_success_cb_t cb, void *userdata);
+pa_operation* pa_context_exit_daemon(pa_context *c, pa_context_success_cb_t cb, void *userdata) {
+ int s = 1;
+
+ if ( c == NULL )
+  return NULL;
+
+ if ( c->state == PA_CONTEXT_READY ) {
+  if ( roar_exit(&(c->con)) == -1 ) {
+   c->errnum = PA_ERR_INTERNAL;
+   s = 0;
+  }
+ } else {
+  c->errnum = PA_ERR_BADSTATE;
+  s = 0;
+ }
+
+ if ( cb != NULL )
+  cb(c, s, userdata);
+
+ return NULL;
+}
 
 /** Set the name of the default sink. \since 0.4 */
 pa_operation* pa_context_set_default_sink(pa_context *c, const char *name, pa_context_success_cb_t cb, void *userdata) {
+ if ( c != NULL )
+  c->errnum = PA_ERR_NOTSUPPORTED;
+
  if ( cb != NULL )
   cb(c, 0, userdata);
 
@@ -215,6 +250,9 @@ pa_operation* pa_context_set_default_sink(pa_context *c, const char *name, pa_co
 
 /** Set the name of the default source. \since 0.4 */
 pa_operation* pa_context_set_default_source(pa_context *c, const char *name, pa_context_success_cb_t cb, void *userdata) {
+ if ( c != NULL )
+  c->errnum = PA_ERR_NOTSUPPORTED;
+
  if ( cb != NULL )
   cb(c, 0, userdata);
 
@@ -238,8 +276,14 @@ pa_operation* pa_context_set_name(pa_context *c, const char *name, pa_context_su
  if ( c == NULL )
   return NULL;
 
- if ( c->state != PA_CONTEXT_UNCONNECTED )
+ if ( c->state != PA_CONTEXT_UNCONNECTED ) {
+  c->errnum = PA_ERR_BADSTATE;
+
+  if ( cb != NULL )
+   cb(c, 0, userdata);
+
   return NULL;
+ }
 
  c->name = roar_mm_strdup(name);
  c->cb.set_name.cb.scb   = cb;
