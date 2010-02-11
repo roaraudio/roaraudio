@@ -38,24 +38,107 @@
 
 #include <libroarpulse/libroarpulse.h>
 
+struct pa_stream {
+ size_t refc;
+ pa_context * c;
+ struct roar_vio_calls vio;
+ struct roar_stream stream;
+ pa_stream_state_t state;
+ struct {
+  pa_stream_notify_cb_t   change_state;
+  void                  * change_state_ud;
+ } cb;
+};
+
+typedef void pa_proplist;
+void pa_stream_set_state(pa_stream *s, pa_stream_state_t st);
+
+pa_stream* pa_stream_new_with_proplist(
+        pa_context *c                     ,
+        const char *name                  ,
+        const pa_sample_spec *ss          ,
+        const pa_channel_map *map         ,
+        pa_proplist *p                    );
+
 /** Create a new, unconnected stream with the specified name and sample type */
 pa_stream* pa_stream_new(
         pa_context *c                     /**< The context to create this stream in */,
         const char *name                  /**< A name for this stream */,
         const pa_sample_spec *ss          /**< The desired sample format */,
-        const pa_channel_map *map         /**< The desired channel map, or NULL for default */);
+        const pa_channel_map *map         /**< The desired channel map, or NULL for default */) {
+ return pa_stream_new_with_proplist(c, name, ss, map, NULL);
+}
+
+pa_stream* pa_stream_new_with_proplist(
+        pa_context *c                     ,
+        const char *name                  ,
+        const pa_sample_spec *ss          ,
+        const pa_channel_map *map         ,
+        pa_proplist *p                    ) {
+ pa_stream * s;
+
+ if ( p != NULL )
+  return NULL;
+
+ if ( (s = roar_mm_malloc(sizeof(pa_stream))) == NULL )
+  return NULL;
+
+ memset(s, 0, sizeof(pa_stream));
+
+ if ( roar_pa_sspec2auinfo(&(s->stream.info), ss) == -1 ) {
+  roar_mm_free(s);
+  return NULL;
+ }
+
+ s->state = PA_STREAM_UNCONNECTED;
+ s->c     = c;
+ pa_context_ref(c);
+
+ return s;
+}
+
+static void _pa_stream_free(pa_stream * s) {
+ pa_stream_disconnect(s);
+ pa_context_unref(s->c);
+ roar_mm_free(s);
+}
 
 /** Decrease the reference counter by one */
-void pa_stream_unref(pa_stream *s);
+void pa_stream_unref(pa_stream *s) {
+ if ( s == NULL )
+  return;
+
+ s->refc--;
+
+ if (s->refc < 1 )
+  _pa_stream_free(s);
+}
 
 /** Increase the reference counter by one */
-pa_stream *pa_stream_ref(pa_stream *s);
+pa_stream *pa_stream_ref(pa_stream *s) {
+ if ( s == NULL )
+  return NULL;
+
+ s->refc++;
+
+ return s;
+}
 
 /** Return the current state of the stream */
-pa_stream_state_t pa_stream_get_state(pa_stream *p);
+pa_stream_state_t pa_stream_get_state(pa_stream *p) {
+ if ( p == NULL )
+  return PA_STREAM_FAILED;
+
+ return p->state;
+}
 
 /** Return the context this stream is attached to */
-pa_context* pa_stream_get_context(pa_stream *p);
+pa_context* pa_stream_get_context(pa_stream *p) {
+ if ( p == NULL )
+  return NULL;
+
+ return p->c;
+}
 
 /** Return the device (sink input or source output) index this stream is connected to */
 uint32_t pa_stream_get_index(pa_stream *s);
@@ -77,7 +160,19 @@ int pa_stream_connect_record(
         pa_stream_flags_t flags       /**< Additional flags, or 0 for default */);
 
 /** Disconnect a stream from a source/sink */
-int pa_stream_disconnect(pa_stream *s);
+int pa_stream_disconnect(pa_stream *s) {
+ if ( s == NULL )
+  return -1;
+
+ if ( s->state != PA_STREAM_READY )
+  return -1;
+
+ roar_vio_close(&(s->vio));
+
+ pa_stream_set_state(s, PA_STREAM_TERMINATED);
+
+ return 0;
+}
 
 /** Write some data to the server (for playback sinks), if free_cb is
  * non-NULL this routine is called when all data has been written out
@@ -124,7 +219,24 @@ pa_operation* pa_stream_drain(pa_stream *s, pa_stream_success_cb_t cb, void *use
 pa_operation* pa_stream_update_timing_info(pa_stream *p, pa_stream_success_cb_t cb, void *userdata);
 
 /** Set the callback function that is called whenever the state of the stream changes */
-void pa_stream_set_state_callback(pa_stream *s, pa_stream_notify_cb_t cb, void *userdata);
+void pa_stream_set_state_callback(pa_stream *s, pa_stream_notify_cb_t cb, void *userdata) {
+ if ( s == NULL )
+  return;
+
+ s->cb.change_state    = cb;
+ s->cb.change_state_ud = userdata;
+}
+
+void pa_stream_set_state(pa_stream *s, pa_stream_state_t st) {
+ if ( s == NULL )
+  return;
+
+ s->state = st;
+
+ if ( s->cb.change_state == NULL ) {
+  s->cb.change_state(s, s->cb.change_state_ud);
+ }
+}
 
 /** Set the callback function that is called when new data may be
  * written to the stream. */
