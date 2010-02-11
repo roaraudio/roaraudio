@@ -6,7 +6,7 @@ SLIB=libroareio$(SHARED_SUFFIX)
 TARGETS=$(SLIB) libroareio.a
 DRIVER=driver.o driver_oss.o esdfw.a
 FF=ff_ssdp.o
-OBJS=libroareio.o $(DRIVER) $(FF)
+OBJS=libroareio.o $(DRIVER) $(FF) httpd.o
 
 #DEFINES        = -DDEBUG
 INCLUDE = -I../include -I../include/libroareio

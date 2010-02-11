@@ -1,7 +1,7 @@
-//libroareio.h:
+//httpd.h:
 
 /*
- *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2009
+ *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2010
  *
  *  This file is part of libroareio a part of RoarAudio,
  *  a cross-platform sound system for both, home and professional use.
@@ -32,13 +32,10 @@
  *  them with any software that uses libesd, libartsc or libpulse*.
  */
 
-#ifndef _LIBROAREIO_H_
-#define _LIBROAREIO_H_
+#ifndef _LIBROAREIO_HTTPD_H_
+#define _LIBROAREIO_HTTPD_H_
 
-#include <roaraudio.h>
-#include "driver.h"
-#include "ff_ssdp.h"
-#include "httpd.h"
+#include "libroareio.h"
 
 #endif
 
