@@ -121,12 +121,14 @@ static struct {
  pa_sample_format_t format;
  const char * name;
 } _roar_pa_format[] = {
- {PA_SAMPLE_U8,     "u8"   },
- {PA_SAMPLE_ALAW,   "aLaw" },
- {PA_SAMPLE_ULAW,   "uLaw" },
- {PA_SAMPLE_S16LE,  "s16le"},
- {PA_SAMPLE_S16BE,  "s16be"},
- {PA_SAMPLE_INVALID, NULL  }
+ {PA_SAMPLE_U8,        "u8"       },
+ {PA_SAMPLE_ALAW,      "aLaw"     },
+ {PA_SAMPLE_ULAW,      "uLaw"     },
+ {PA_SAMPLE_S16LE,     "s16le"    },
+ {PA_SAMPLE_S16BE,     "s16be"    },
+ {PA_SAMPLE_FLOAT32LE, "float32le"},
+ {PA_SAMPLE_FLOAT32BE, "float32be"},
+ {PA_SAMPLE_INVALID,   NULL       }
 };
 
 const char *pa_sample_format_to_string(pa_sample_format_t f) {
