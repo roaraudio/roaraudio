@@ -111,21 +111,73 @@ static struct {
  pa_sample_format_t format;
  const char * name;
 } _roar_pa_format[] = {
- {PA_SAMPLE_INVALID, NULL}
+ {PA_SAMPLE_U8,     "u8"   },
+ {PA_SAMPLE_ALAW,   "aLaw" },
+ {PA_SAMPLE_ULAW,   "uLaw" },
+ {PA_SAMPLE_S16LE,  "s16le"},
+ {PA_SAMPLE_S16BE,  "s16be"},
+ {PA_SAMPLE_INVALID, NULL  }
 };
 
-const char *pa_sample_format_to_string(pa_sample_format_t f);
+const char *pa_sample_format_to_string(pa_sample_format_t f) {
+ int i;
+
+ for (i = 0; _roar_pa_format[i].name != NULL; i++)
+  if ( _roar_pa_format[i].format == f )
+   return _roar_pa_format[i].name;
+
+ return NULL;
+}
 
 /** Parse a sample format text. Inverse of pa_sample_format_to_string() */
-pa_sample_format_t pa_parse_sample_format(const char *format);
+pa_sample_format_t pa_parse_sample_format(const char *format) {
+ int i;
+
+ for (i = 0; _roar_pa_format[i].name != NULL; i++)
+  if ( !strcasecmp(_roar_pa_format[i].name, format) )
+   return _roar_pa_format[i].format;
+
+ return PA_SAMPLE_INVALID;
+}
 
 /** Maximum required string length for pa_sample_spec_snprint() */
 #define PA_SAMPLE_SPEC_SNPRINT_MAX 32
 
 /** Pretty print a sample type specification to a string */
-char* pa_sample_spec_snprint(char *s, size_t l, const pa_sample_spec *spec);
+char* pa_sample_spec_snprint(char *s, size_t l, const pa_sample_spec *spec) {
+ if ( s == NULL || l == 0 || spec == NULL )
+  return NULL;
+
+ if ( pa_sample_spec_valid(spec) ) {
+  snprintf(s, l, "%s %uch %uHz", pa_sample_format_to_string(spec->format), spec->channels, spec->rate);
+ } else {
+  snprintf(s, l, "Invalid");
+ }
+
+ return s;
+}
 
 /** Pretty print a byte size value. (i.e. "2.5 MiB") */
-char* pa_bytes_snprint(char *s, size_t l, unsigned v);
+char* pa_bytes_snprint(char *s, size_t l, unsigned v) {
+ double val = v;
+ int    i;
+ const char pre[] = "KMGTP";
+
+ if ( v <= 1024 ) {
+  snprintf(s, l, "%u B", v);
+  return s;
+ }
+
+ for (i = 0; pre[i] != 0; i++) {
+  val /= 1024;
+  if ( val <= 1024 ) {
+   snprintf(s, l, "%0.1f %ciB", val, pre[i]);
+   return s;
+  }
+ }
+
+ snprintf(s, l, "%0.1f %ciB", val*1024., pre[i-1]);
+ return s;
+}
 
 //ll
