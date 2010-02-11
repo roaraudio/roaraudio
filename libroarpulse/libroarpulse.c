@@ -42,4 +42,44 @@ int roar_codec_pulse2roar (int codec) {
  return ROAR_CODEC_DEFAULT;
 }
 
+int roar_pa_sspec2auinfo (pa_sample_spec * ss, struct roar_audio_info * info) {
+ if ( ss == NULL || info == NULL )
+  return -1;
+
+ info->rate     = ss->rate;
+ info->channels = ss->channels;
+
+ switch (ss->format) {
+  case PA_SAMPLE_U8:
+    info->bits  = 8;
+    info->codec = ROAR_CODEC_PCM_U_LE;
+   break;
+  case PA_SAMPLE_ALAW:
+    info->bits  = 8;
+    info->codec = ROAR_CODEC_ALAW;
+   break;
+  case PA_SAMPLE_ULAW:
+    info->bits  = 8;
+    info->codec = ROAR_CODEC_MULAW;
+   break;
+  case PA_SAMPLE_S16LE:
+    info->bits  = 16;
+    info->codec = ROAR_CODEC_PCM_S_LE;
+   break;
+  case PA_SAMPLE_S16BE:
+    info->bits  = 16;
+    info->codec = ROAR_CODEC_PCM_S_BE;
+   break;
+  // invalid and not supported ones follow:
+  case PA_SAMPLE_INVALID:
+  case PA_SAMPLE_MAX:
+  case PA_SAMPLE_FLOAT32LE:
+  case PA_SAMPLE_FLOAT32BE:
+    return -1;
+   break;
+ }
+
+ return 0;
+}
+
 //ll

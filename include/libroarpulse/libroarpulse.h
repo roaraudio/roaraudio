@@ -50,6 +50,8 @@
 
 int roar_codec_pulse2roar (int codec);
 
+int roar_pa_sspec2auinfo (pa_sample_spec * ss, struct roar_audio_info * info);
+
 #endif
 
 //ll
