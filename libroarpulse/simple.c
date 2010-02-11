@@ -50,7 +50,7 @@ pa_simple* pa_simple_new(
     const pa_buffer_attr *attr,         /**< Buffering attributes, or NULL for default */
     int *error                          /**< A pointer where the error code is stored when the routine returns NULL. It is OK to pass NULL here. */
     ) {
- struct roarpulse_simple * s = malloc(sizeof(struct roarpulse_simple));
+ struct roarpulse_simple * s = roar_mm_malloc(sizeof(struct roarpulse_simple));
  struct roar_audio_info info;
  int roar_dir;
  struct roar_meta meta;
@@ -63,12 +63,12 @@ pa_simple* pa_simple_new(
  } else if ( dir == PA_STREAM_RECORD ) {
   roar_dir = ROAR_DIR_RECORD;
  } else {
-  free(s);
+  roar_mm_free(s);
   return NULL;
  }
 
  if ( roar_pa_sspec2auinfo(&info, ss) == -1 ) {
-  free(s);
+  roar_mm_free(s);
   return NULL;
  }
 
@@ -76,7 +76,7 @@ pa_simple* pa_simple_new(
   server = getenv("PULSE_SERVER");
 
  if ( roar_simple_connect(&(s->con), (char*)server, (char*)name) == -1 ) {
-  free(s);
+  roar_mm_free(s);
   return NULL;
  }
 
@@ -84,7 +84,7 @@ pa_simple* pa_simple_new(
                                      info.rate, info.channels,
                                      info.bits, info.codec, roar_dir) == -1 ) {
   roar_disconnect(&(s->con));
-  free(s);
+  roar_mm_free(s);
   return NULL;
  }
 
@@ -108,7 +108,7 @@ void pa_simple_free(pa_simple *s) {
  roar_vio_close(&(ss->vio));
  roar_disconnect(&(ss->con));
 
- free(s);
+ roar_mm_free(s);
 }
 
 /** Write some data to the server */
