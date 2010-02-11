@@ -57,7 +57,7 @@ pa_operation* pa_context_get_sink_info_by_name(pa_context *c, const char *name, 
  if ( roar_pa_auinfo2sspec(&(painfo.sample_spec), &(stream.info)) == -1 )
   return roar_pa_op_new_done();
 
-// pa_channel_map_init_auto(&(painfo.channel_map), stream.info.channels, PA_CHANNEL_MAP_DEFAULT);
+ pa_channel_map_init_auto(&(painfo.channel_map), stream.info.channels, PA_CHANNEL_MAP_DEFAULT);
 // pa_cvolume_init(&(painfo.volume));
 
  painfo.name                = ROAR_PA_DEFAULT_SINK;

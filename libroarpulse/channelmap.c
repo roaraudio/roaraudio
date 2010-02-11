@@ -42,14 +42,38 @@
 pa_channel_map* pa_channel_map_init(pa_channel_map *m);
 
 /** Initialize the specified channel map for monoaural audio and return a pointer to it */
-pa_channel_map* pa_channel_map_init_mono(pa_channel_map *m);
+pa_channel_map* pa_channel_map_init_mono(pa_channel_map *m) {
+ m->channels = 1;
+ m->map[0]   = PA_CHANNEL_POSITION_MONO;
+
+ return m;
+}
 
 /** Initialize the specified channel map for stereophonic audio and return a pointer to it */
-pa_channel_map* pa_channel_map_init_stereo(pa_channel_map *m);
+pa_channel_map* pa_channel_map_init_stereo(pa_channel_map *m) {
+ m->channels = 2;
+ m->map[0]   = PA_CHANNEL_POSITION_LEFT;
+ m->map[1]   = PA_CHANNEL_POSITION_RIGHT;
+
+ return m;
+}
 
 /** Initialize the specified channel map for the specified number
  * of channels using default labels and return a pointer to it. */
-pa_channel_map* pa_channel_map_init_auto(pa_channel_map *m, unsigned channels, pa_channel_map_def_t def);
+pa_channel_map* pa_channel_map_init_auto(pa_channel_map *m, unsigned channels, pa_channel_map_def_t def) {
+ if ( m == NULL || channels == 0 )
+  return NULL;
+
+ switch (channels) {
+  case 1: return pa_channel_map_init_mono(m);   break;
+  case 2: return pa_channel_map_init_stereo(m); break;
+ }
+
+ switch (def) {
+  default:
+    return NULL;
+ }
+}
 
 /** Return a text label for the specified channel position */
 const char* pa_channel_position_to_string(pa_channel_position_t pos);
