@@ -42,7 +42,7 @@ int roar_codec_pulse2roar (int codec) {
  return ROAR_CODEC_DEFAULT;
 }
 
-int roar_pa_sspec2auinfo (pa_sample_spec * ss, struct roar_audio_info * info) {
+int roar_pa_sspec2auinfo (struct roar_audio_info * info, const pa_sample_spec * ss) {
  if ( ss == NULL || info == NULL )
   return -1;
 
