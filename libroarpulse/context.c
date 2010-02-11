@@ -231,7 +231,7 @@ pa_operation* pa_context_exit_daemon(pa_context *c, pa_context_success_cb_t cb, 
  int s = 1;
 
  if ( c == NULL )
-  return NULL;
+  return roar_pa_operation_new(PA_OPERATION_DONE);
 
  if ( c->state == PA_CONTEXT_READY ) {
   if ( roar_exit(&(c->con)) == -1 ) {
@@ -246,7 +246,7 @@ pa_operation* pa_context_exit_daemon(pa_context *c, pa_context_success_cb_t cb, 
  if ( cb != NULL )
   cb(c, s, userdata);
 
- return NULL;
+ return roar_pa_operation_new(PA_OPERATION_DONE);
 }
 
 /** Set the name of the default sink. \since 0.4 */
@@ -257,7 +257,7 @@ pa_operation* pa_context_set_default_sink(pa_context *c, const char *name, pa_co
  if ( cb != NULL )
   cb(c, 0, userdata);
 
- return NULL;
+ return roar_pa_operation_new(PA_OPERATION_DONE);
 }
 
 /** Set the name of the default source. \since 0.4 */
@@ -268,7 +268,7 @@ pa_operation* pa_context_set_default_source(pa_context *c, const char *name, pa_
  if ( cb != NULL )
   cb(c, 0, userdata);
 
- return NULL;
+ return roar_pa_operation_new(PA_OPERATION_DONE);
 }
 
 /** Returns 1 when the connection is to a local daemon. Returns negative when no connection has been made yet. \since 0.5 */
@@ -286,7 +286,7 @@ int pa_context_is_local(pa_context *c) {
 /** Set a different application name for context on the server. \since 0.5 */
 pa_operation* pa_context_set_name(pa_context *c, const char *name, pa_context_success_cb_t cb, void *userdata) {
  if ( c == NULL )
-  return NULL;
+  return roar_pa_operation_new(PA_OPERATION_DONE);
 
  if ( c->state != PA_CONTEXT_UNCONNECTED ) {
   c->errnum = PA_ERR_BADSTATE;
@@ -294,7 +294,7 @@ pa_operation* pa_context_set_name(pa_context *c, const char *name, pa_context_su
   if ( cb != NULL )
    cb(c, 0, userdata);
 
-  return NULL;
+  return roar_pa_operation_new(PA_OPERATION_DONE);
  }
 
  if ( c->name != NULL )
@@ -304,7 +304,7 @@ pa_operation* pa_context_set_name(pa_context *c, const char *name, pa_context_su
  c->cb.set_name.cb.scb   = cb;
  c->cb.set_name.userdata = userdata;
 
- return NULL;
+ return roar_pa_operation_new(PA_OPERATION_DONE);
 }
 
 /** Return the server name this context is connected to. \since 0.7 */
