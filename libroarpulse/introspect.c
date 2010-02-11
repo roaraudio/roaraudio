@@ -38,4 +38,134 @@
 
 #include <libroarpulse/libroarpulse.h>
 
+/** Get information about a sink by its name */
+pa_operation* pa_context_get_sink_info_by_name(pa_context *c, const char *name, pa_sink_info_cb_t cb, void *userdata);
+
+/** Get information about a sink by its index */
+pa_operation* pa_context_get_sink_info_by_index(pa_context *c, uint32_t id, pa_sink_info_cb_t cb, void *userdata);
+
+/** Get the complete sink list */
+pa_operation* pa_context_get_sink_info_list(pa_context *c, pa_sink_info_cb_t cb, void *userdata);
+
+/** Get information about a source by its name */
+pa_operation* pa_context_get_source_info_by_name(pa_context *c, const char *name, pa_source_info_cb_t cb, void *userdata);
+
+/** Get information about a source by its index */
+pa_operation* pa_context_get_source_info_by_index(pa_context *c, uint32_t id, pa_source_info_cb_t cb, void *userdata);
+
+/** Get the complete source list */
+pa_operation* pa_context_get_source_info_list(pa_context *c, pa_source_info_cb_t cb, void *userdata);
+
+/** Get some information about the server */
+pa_operation* pa_context_get_server_info(pa_context *c, pa_server_info_cb_t cb, void *userdata);
+
+/** Get some information about a module by its index */
+pa_operation* pa_context_get_module_info(pa_context *c, uint32_t idx, pa_module_info_cb_t cb, void *userdata);
+
+/** Get the complete list of currently loaded modules */
+pa_operation* pa_context_get_module_info_list(pa_context *c, pa_module_info_cb_t cb, void *userdata);
+
+/** Get information about a client by its index */
+pa_operation* pa_context_get_client_info(pa_context *c, uint32_t idx, pa_client_info_cb_t cb, void *userdata);
+
+/** Get the complete client list */
+pa_operation* pa_context_get_client_info_list(pa_context *c, pa_client_info_cb_t cb, void *userdata);
+
+/** Get some information about a sink input by its index */
+pa_operation* pa_context_get_sink_input_info(pa_context *c, uint32_t idx, pa_sink_input_info_cb_t cb, void *userdata);
+
+/** Get the complete sink input list */
+pa_operation* pa_context_get_sink_input_info_list(pa_context *c, pa_sink_input_info_cb_t cb, void *userdata);
+
+/** Get information about a source output by its index */
+pa_operation* pa_context_get_source_output_info(pa_context *c, uint32_t idx, pa_source_output_info_cb_t cb, void *userdata);
+
+/** Get the complete list of source outputs */
+pa_operation* pa_context_get_source_output_info_list(pa_context *c, pa_source_output_info_cb_t cb, void *userdata);
+
+/** Set the volume of a sink device specified by its index */
+pa_operation* pa_context_set_sink_volume_by_index(pa_context *c, uint32_t idx, const pa_cvolume *volume, pa_context_success_cb_t cb, void *userdata);
+
+/** Set the volume of a sink device specified by its name */
+pa_operation* pa_context_set_sink_volume_by_name(pa_context *c, const char *name, const pa_cvolume *volume, pa_context_success_cb_t cb, void *userdata);
+
+/** Set the mute switch of a sink device specified by its index \since 0.8 */
+pa_operation* pa_context_set_sink_mute_by_index(pa_context *c, uint32_t idx, int mute, pa_context_success_cb_t cb, void *userdata);
+
+/** Set the mute switch of a sink device specified by its name \since 0.8 */
+pa_operation* pa_context_set_sink_mute_by_name(pa_context *c, const char *name, int mute, pa_context_success_cb_t cb, void *userdata);
+
+/** Set the volume of a sink input stream */
+pa_operation* pa_context_set_sink_input_volume(pa_context *c, uint32_t idx, const pa_cvolume *volume, pa_context_success_cb_t cb, void *userdata);
+
+/** Set the volume of a source device specified by its index \since 0.8 */
+pa_operation* pa_context_set_source_volume_by_index(pa_context *c, uint32_t idx, const pa_cvolume *volume, pa_context_success_cb_t cb, void *userdata);
+
+/** Set the volume of a source device specified by its name \since 0.8 */
+pa_operation* pa_context_set_source_volume_by_name(pa_context *c, const char *name, const pa_cvolume *volume, pa_context_success_cb_t cb, void *userdata);
+
+/** Set the mute switch of a source device specified by its index \since 0.8 */
+pa_operation* pa_context_set_source_mute_by_index(pa_context *c, uint32_t idx, int mute, pa_context_success_cb_t cb, void *userdata);
+
+/** Set the mute switch of a source device specified by its name \since 0.8 */
+pa_operation* pa_context_set_source_mute_by_name(pa_context *c, const char *name, int mute, pa_context_success_cb_t cb, void *userdata);
+
+/** Get daemon memory block statistics */
+pa_operation* pa_context_stat(pa_context *c, pa_stat_info_cb_t cb, void *userdata);
+
+/** Get information about a sample by its name */
+pa_operation* pa_context_get_sample_info_by_name(pa_context *c, const char *name, pa_sample_info_cb_t cb, void *userdata);
+
+/** Get information about a sample by its index */
+pa_operation* pa_context_get_sample_info_by_index(pa_context *c, uint32_t idx, pa_sample_info_cb_t cb, void *userdata);
+
+/** Get the complete list of samples stored in the daemon. */
+pa_operation* pa_context_get_sample_info_list(pa_context *c, pa_sample_info_cb_t cb, void *userdata);
+
+/** Kill a client. \since 0.5 */
+pa_operation* pa_context_kill_client(pa_context *c, uint32_t idx, pa_context_success_cb_t cb, void *userdata);
+
+/** Kill a sink input. \since 0.5 */
+pa_operation* pa_context_kill_sink_input(pa_context *c, uint32_t idx, pa_context_success_cb_t cb, void *userdata);
+
+/** Kill a source output. \since 0.5 */
+pa_operation* pa_context_kill_source_output(pa_context *c, uint32_t idx, pa_context_success_cb_t cb, void *userdata);
+
+/** Load a module. \since 0.5 */
+pa_operation* pa_context_load_module(pa_context *c, const char*name, const char *argument, pa_context_index_cb_t cb, void *userdata);
+
+/** Unload a module. \since 0.5 */
+pa_operation* pa_context_unload_module(pa_context *c, uint32_t idx, pa_context_success_cb_t cb, void *userdata);
+
+
+/** Get info about a specific autoload entry. \since 0.6 */
+pa_operation* pa_context_get_autoload_info_by_name(pa_context *c, const char *name, pa_autoload_type_t type, pa_autoload_info_cb_t cb, void *userdata);
+
+/** Get info about a specific autoload entry. \since 0.6 */
+pa_operation* pa_context_get_autoload_info_by_index(pa_context *c, uint32_t idx, pa_autoload_info_cb_t cb, void *userdata);
+
+/** Get the complete list of autoload entries. \since 0.5 */
+pa_operation* pa_context_get_autoload_info_list(pa_context *c, pa_autoload_info_cb_t cb, void *userdata);
+
+/** Add a new autoload entry. \since 0.5 */
+pa_operation* pa_context_add_autoload(pa_context *c, const char *name, pa_autoload_type_t type, const char *module, const char*argument, pa_context_index_cb_t, void* userdata);
+
+/** Remove an autoload entry. \since 0.6 */
+pa_operation* pa_context_remove_autoload_by_name(pa_context *c, const char *name, pa_autoload_type_t type, pa_context_success_cb_t cb, void* userdata);
+
+/** Remove an autoload entry. \since 0.6 */
+pa_operation* pa_context_remove_autoload_by_index(pa_context *c, uint32_t idx, pa_context_success_cb_t cb, void* userdata);
+
+/** Move the specified sink input to a different sink. \since 0.9.5 */
+pa_operation* pa_context_move_sink_input_by_name(pa_context *c, uint32_t idx, char *sink_name, pa_context_success_cb_t cb, void* userdata);
+
+/** Move the specified sink input to a different sink. \since 0.9.5 */
+pa_operation* pa_context_move_sink_input_by_index(pa_context *c, uint32_t idx, uint32_t sink_idx, pa_context_success_cb_t cb, void* userdata);
+
+/** Move the specified source output to a different source. \since 0.9.5 */
+pa_operation* pa_context_move_source_output_by_name(pa_context *c, uint32_t idx, char *source_name, pa_context_success_cb_t cb, void* userdata);
+
+/** Move the specified source output to a different source. \since 0.9.5 */
+pa_operation* pa_context_move_source_output_by_index(pa_context *c, uint32_t idx, uint32_t source_idx, pa_context_success_cb_t cb, void* userdata);
+
 //ll
