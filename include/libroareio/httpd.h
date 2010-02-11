@@ -38,6 +38,8 @@
 #include "libroareio.h"
 
 #define _ROAR_EIO_HTTPD_VERSION(major,minor) ((major)<<8|(minor))
+#define _ROAR_EIO_HTTPD_VERSION_MAJOR(x)     ((x)>>8)
+#define _ROAR_EIO_HTTPD_VERSION_MINOR(x)     ((x)&0xFF)
 
 #define ROAR_HTTPD_VERSION_HTTP09    _ROAR_EIO_HTTPD_VERSION(0,9)
 #define ROAR_HTTPD_VERSION_HTTP10    _ROAR_EIO_HTTPD_VERSION(1,0)
@@ -60,6 +62,10 @@
 #define ROAR_HTTPD_STATUS_NOT_IMPL   501
 #define ROAR_HTTPD_STATUS_VERNOTSUP  505
 
+#define ROAR_HTTPD_STATE_REQ           1
+#define ROAR_HTTPD_STATE_EOH           2
+#define ROAR_HTTPD_STATE_RESP          3
+
 struct roar_httpd_request {
  int method;
  char * resource;
@@ -76,8 +82,9 @@ struct roar_httpd_response {
 };
 
 struct roar_httpd {
- struct roar_httpd_request;
- struct roar_httpd_response;
+ int state;
+ struct roar_httpd_request  request;
+ struct roar_httpd_response response;
  int (*cb_eoh)(struct roar_httpd * httpd);
  struct roar_vio_calls * client;
  struct roar_vio_calls   viostore[1];
