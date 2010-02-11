@@ -174,6 +174,15 @@ void pa_context_disconnect(pa_context *c) {
  pa_context_set_state(c, PA_CONTEXT_TERMINATED);
 }
 
+struct roar_connection * roar_pa_context_get_con(pa_context * c) {
+ if ( c == NULL )
+  return NULL;
+
+ if ( c->state != PA_CONTEXT_READY )
+  return NULL;
+
+ return &(c->con);
+}
 
 
 /** Set a callback function that is called whenever the context status changes */
