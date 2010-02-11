@@ -44,6 +44,7 @@ struct pa_stream {
  struct roar_vio_calls vio;
  struct roar_stream stream;
  pa_stream_state_t state;
+ pa_sample_spec    sspec;
  struct {
   pa_stream_notify_cb_t   change_state;
   void                  * change_state_ud;
@@ -84,6 +85,8 @@ pa_stream* pa_stream_new_with_proplist(
   return NULL;
 
  memset(s, 0, sizeof(pa_stream));
+
+ memcpy(&(s->sspec), ss, sizeof(pa_sample_spec));
 
  if ( roar_pa_sspec2auinfo(&(s->stream.info), ss) == -1 ) {
   roar_mm_free(s);
@@ -312,7 +315,12 @@ int pa_stream_get_latency(pa_stream *s, pa_usec_t *r_usec, int *negative);
 const pa_timing_info* pa_stream_get_timing_info(pa_stream *s);
 
 /** Return a pointer to the stream's sample specification. \since 0.6 */
-const pa_sample_spec* pa_stream_get_sample_spec(pa_stream *s);
+const pa_sample_spec* pa_stream_get_sample_spec(pa_stream *s) {
+ if ( s == NULL )
+  return NULL;
+
+ return &(s->sspec);
+}
 
 /** Return a pointer to the stream's channel map. \since 0.8 */
 const pa_channel_map* pa_stream_get_channel_map(pa_stream *s);
