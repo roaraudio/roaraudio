@@ -82,4 +82,20 @@ int roar_pa_sspec2auinfo (struct roar_audio_info * info, const pa_sample_spec * 
  return 0;
 }
 
+char * roar_pa_find_server (char * server) {
+ struct roar_x11_connection * x11con;
+
+ if ( server == NULL )
+  server = getenv("PULSE_SERVER");
+
+ if ( server == NULL ) {
+  if ( (x11con = roar_x11_connect(NULL)) != NULL ) {
+   server = roar_x11_get_prop(x11con, "PULSE_SERVER");
+   roar_x11_disconnect(x11con);
+  }
+ }
+
+ return server;
+}
+
 //ll
