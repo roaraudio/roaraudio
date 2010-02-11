@@ -38,16 +38,34 @@
 
 #include <libroarpulse/libroarpulse.h>
 
+struct _roar_pa_cb_st {
+ union {
+  pa_context_success_cb_t scb;
+  pa_context_notify_cb_t  ncb;
+ } cb;
+ void * userdata;
+};
+
+#define _call_cbs(x,c,s) ((x).cb.scb == NULL ? (void)0 : (x).cb.scb((c), (s), (x).userdata))
+#define _call_cbn(x,c)   ((x).cb.ncb == NULL ? (void)0 : (x).cb.ncb((c), (x).userdata))
+
 struct pa_context {
  size_t refc;
  struct roar_connection con;
  char * server;
+ char * name;
  int state;
+ struct {
+  struct _roar_pa_cb_st set_name;
+  struct _roar_pa_cb_st state_change;
+ } cb;
 };
 
 // older versions:
 typedef void pa_proplist;
 pa_context *pa_context_new_with_proplist(pa_mainloop_api *mainloop, const char *name, pa_proplist *proplist);
+
+void pa_context_set_state(pa_context *c, pa_context_state_t st);
 
 pa_context *pa_context_new(pa_mainloop_api *mainloop, const char *name) {
  return pa_context_new_with_proplist(mainloop, name, NULL);
@@ -76,6 +94,9 @@ static void _context_free(pa_context *c) {
 
  if ( c->server != NULL )
   roar_mm_free(c->server);
+
+ if ( c->name != NULL )
+  roar_mm_free(c->name);
 
  roar_mm_free(c);
 }
@@ -108,13 +129,16 @@ int pa_context_connect(
 
  server = roar_pa_find_server((char*)server);
 
- if ( roar_simple_connect(&(c->con), (char*)server, "libroarpulse [pa_context_connect()]") == -1 ) {
-  c->state = PA_CONTEXT_FAILED;
+ if ( roar_simple_connect(&(c->con), (char*)server,
+                          c->name != NULL ? c->name : "libroarpulse [pa_context_connect()]") == -1 ) {
+  pa_context_set_state(c, PA_CONTEXT_FAILED);
   return -1;
  }
 
  c->server = roar_mm_strdup(server);
- c->state  = PA_CONTEXT_READY;
+ pa_context_set_state(c, PA_CONTEXT_READY);
+
+ _call_cbs(c->cb.set_name, c, 1);
 
  return 0;
 }
@@ -128,7 +152,119 @@ void pa_context_disconnect(pa_context *c) {
 
  roar_disconnect(&(c->con));
 
- c->state = PA_CONTEXT_TERMINATED;
+ pa_context_set_state(c, PA_CONTEXT_TERMINATED);
 }
+
+
+
+/** Set a callback function that is called whenever the context status changes */
+void pa_context_set_state_callback(pa_context *c, pa_context_notify_cb_t cb, void *userdata) {
+ if ( c == NULL )
+  return;
+
+ c->cb.state_change.cb.ncb   = cb;
+ c->cb.state_change.userdata = userdata;
+}
+
+void pa_context_set_state(pa_context *c, pa_context_state_t st) {
+ if ( c == NULL )
+  return;
+
+ c->state = st;
+
+ _call_cbn(c->cb.state_change, c);
+}
+
+/** Return the error number of the last failed operation */
+int pa_context_errno(pa_context *c);
+
+/** Return non-zero if some data is pending to be written to the connection */
+int pa_context_is_pending(pa_context *c) {
+ return 0;
+}
+
+/** Return the current context status */
+pa_context_state_t pa_context_get_state(pa_context *c) {
+ if ( c == NULL )
+  return PA_CONTEXT_FAILED;
+
+ return c->state;
+}
+
+/** Drain the context. If there is nothing to drain, the function returns NULL */
+pa_operation* pa_context_drain(pa_context *c, pa_context_notify_cb_t cb, void *userdata) {
+
+ if ( cb != NULL )
+  cb(c, userdata);
+
+ return NULL;
+}
+
+/** Tell the daemon to exit. The returned operation is unlikely to
+ * complete succesfully, since the daemon probably died before
+ * returning a success notification */
+pa_operation* pa_context_exit_daemon(pa_context *c, pa_context_success_cb_t cb, void *userdata);
+
+/** Set the name of the default sink. \since 0.4 */
+pa_operation* pa_context_set_default_sink(pa_context *c, const char *name, pa_context_success_cb_t cb, void *userdata) {
+ if ( cb != NULL )
+  cb(c, 0, userdata);
+
+ return NULL;
+}
+
+/** Set the name of the default source. \since 0.4 */
+pa_operation* pa_context_set_default_source(pa_context *c, const char *name, pa_context_success_cb_t cb, void *userdata) {
+ if ( cb != NULL )
+  cb(c, 0, userdata);
+
+ return NULL;
+}
+
+/** Returns 1 when the connection is to a local daemon. Returns negative when no connection has been made yet. \since 0.5 */
+int pa_context_is_local(pa_context *c) {
+ if ( c == NULL )
+  return -1;
+
+ if ( c->state != PA_CONTEXT_READY )
+  return -1;
+
+ // how is /local/ defined?
+ return 0;
+}
+
+/** Set a different application name for context on the server. \since 0.5 */
+pa_operation* pa_context_set_name(pa_context *c, const char *name, pa_context_success_cb_t cb, void *userdata) {
+ if ( c == NULL )
+  return NULL;
+
+ if ( c->state != PA_CONTEXT_UNCONNECTED )
+  return NULL;
+
+ c->name = roar_mm_strdup(name);
+ c->cb.set_name.cb.scb   = cb;
+ c->cb.set_name.userdata = userdata;
+
+ return NULL;
+}
+
+/** Return the server name this context is connected to. \since 0.7 */
+const char* pa_context_get_server(pa_context *c) {
+ if ( c == NULL )
+  return NULL;
+
+ return c->server;
+}
+
+/** Return the protocol version of the library. \since 0.8 */
+uint32_t pa_context_get_protocol_version(pa_context *c) {
+ return 0;
+}
+
+/** Return the protocol version of the connected server. \since 0.8 */
+uint32_t pa_context_get_server_protocol_version(pa_context *c) {
+ return 0;
+}
+
 
 //ll
