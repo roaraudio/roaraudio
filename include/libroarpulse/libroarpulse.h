@@ -54,6 +54,8 @@ int roar_pa_sspec2auinfo (struct roar_audio_info * info, const pa_sample_spec * 
 
 char * roar_pa_find_server (char * server);
 
+pa_operation *roar_pa_operation_new(pa_operation_state_t initstate);
+
 #endif
 
 //ll
