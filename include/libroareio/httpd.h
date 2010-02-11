@@ -37,6 +37,58 @@
 
 #include "libroareio.h"
 
+#define _ROAR_EIO_HTTPD_VERSION(major,minor) ((major)<<8|(minor))
+
+#define ROAR_HTTPD_VERSION_HTTP09    _ROAR_EIO_HTTPD_VERSION(0,9)
+#define ROAR_HTTPD_VERSION_HTTP10    _ROAR_EIO_HTTPD_VERSION(1,0)
+#define ROAR_HTTPD_VERSION_HTTP11    _ROAR_EIO_HTTPD_VERSION(1,1)
+
+#define ROAR_HTTPD_METHOD_NONE       0
+#define ROAR_HTTPD_METHOD_GET        1
+#define ROAR_HTTPD_METHOD_POST       2
+#define ROAR_HTTPD_METHOD_PUT        3
+#define ROAR_HTTPD_METHOD_HEAD       4
+#define ROAR_HTTPD_METHOD_DELETE     5
+#define ROAR_HTTPD_METHOD_TRACE      6
+#define ROAR_HTTPD_METHOD_OPTIONS    7
+#define ROAR_HTTPD_METHOD_CONNECT    8
+//#define ROAR_HTTPD_METHOD_       9
+
+#define ROAR_HTTPD_STATUS_OK         200
+#define ROAR_HTTPD_STATUS_NOT_FOUND  404
+#define ROAR_HTTPD_STATUS_INTSERVERR 500
+#define ROAR_HTTPD_STATUS_NOT_IMPL   501
+#define ROAR_HTTPD_STATUS_VERNOTSUP  505
+
+struct roar_httpd_request {
+ int method;
+ char * resource;
+ char * query_string;
+ int version;
+ struct roar_keyval * header;
+};
+
+struct roar_httpd_response {
+ int version;
+ int status;
+ struct roar_vio_calls * file;
+ struct roar_keyval    * header;
+};
+
+struct roar_httpd {
+ struct roar_httpd_request;
+ struct roar_httpd_response;
+ int (*cb_eoh)(struct roar_httpd * httpd);
+ struct roar_vio_calls * client;
+ struct roar_vio_calls   viostore[1];
+ struct roar_buffer * header;
+ struct roar_buffer * output;
+};
+
+struct roar_httpd * roar_http_new(struct roar_vio_calls * client, int (*cb_eoh)(struct roar_httpd * httpd));
+int                 roar_http_free(struct roar_httpd * httpd);
+int                 roar_http_update(struct roar_httpd * httpd);
+
 #endif
 
 //ll
