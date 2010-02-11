@@ -38,6 +38,15 @@
 
 #include <libroarpulse/libroarpulse.h>
 
+struct _roar_pa_stream_cb {
+ union {
+  pa_stream_notify_cb_t  ncb;
+  pa_stream_request_cb_t rcb;
+  pa_stream_success_cb_t scb;
+ } cb;
+ void * userdata;
+};
+
 struct pa_stream {
  size_t refc;
  pa_context * c;
@@ -46,8 +55,7 @@ struct pa_stream {
  pa_stream_state_t state;
  pa_sample_spec    sspec;
  struct {
-  pa_stream_notify_cb_t   change_state;
-  void                  * change_state_ud;
+  struct _roar_pa_stream_cb change_state;
  } cb;
 };
 
@@ -228,8 +236,8 @@ void pa_stream_set_state_callback(pa_stream *s, pa_stream_notify_cb_t cb, void *
  if ( s == NULL )
   return;
 
- s->cb.change_state    = cb;
- s->cb.change_state_ud = userdata;
+ s->cb.change_state.cb.ncb    = cb;
+ s->cb.change_state.userdata  = userdata;
 }
 
 void pa_stream_set_state(pa_stream *s, pa_stream_state_t st) {
@@ -238,8 +246,8 @@ void pa_stream_set_state(pa_stream *s, pa_stream_state_t st) {
 
  s->state = st;
 
- if ( s->cb.change_state == NULL ) {
-  s->cb.change_state(s, s->cb.change_state_ud);
+ if ( s->cb.change_state.cb.ncb == NULL ) {
+  s->cb.change_state.cb.ncb(s, s->cb.change_state.userdata);
  }
 }
 
