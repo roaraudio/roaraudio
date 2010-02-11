@@ -60,6 +60,7 @@ struct pa_context {
   struct _roar_pa_cb_st set_name;
   struct _roar_pa_cb_st state_change;
  } cb;
+ pa_mainloop_api * mainloop;
 };
 
 // older versions:
@@ -89,7 +90,13 @@ pa_context *pa_context_new_with_proplist(pa_mainloop_api *mainloop, const char *
 
  c->errnum = PA_OK;
 
- return NULL;
+ if ( name != NULL ) {
+  c->name = roar_mm_strdup(name);
+ }
+
+ c->mainloop = mainloop;
+
+ return c;
 }
 
 static void _context_free(pa_context *c) {
@@ -284,6 +291,9 @@ pa_operation* pa_context_set_name(pa_context *c, const char *name, pa_context_su
 
   return NULL;
  }
+
+ if ( c->name != NULL )
+  roar_mm_free(c->name);
 
  c->name = roar_mm_strdup(name);
  c->cb.set_name.cb.scb   = cb;
