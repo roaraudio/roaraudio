@@ -39,7 +39,42 @@
 #include <libroarpulse/libroarpulse.h>
 
 /** Get information about a sink by its name */
-pa_operation* pa_context_get_sink_info_by_name(pa_context *c, const char *name, pa_sink_info_cb_t cb, void *userdata);
+pa_operation* pa_context_get_sink_info_by_name(pa_context *c, const char *name, pa_sink_info_cb_t cb, void *userdata) {
+ struct roar_stream stream;
+ pa_sink_info painfo;
+
+ if ( c == NULL || cb == NULL )
+  return roar_pa_op_new_done();
+
+ memset(&painfo, 0, sizeof(painfo));
+
+ if ( !!strcasecmp(name, ROAR_PA_DEFAULT_SINK) )
+  return roar_pa_op_new_done();
+
+ if ( roar_server_oinfo(roar_pa_context_get_con(c), &stream) == -1 )
+  return roar_pa_op_new_done();
+
+ if ( roar_pa_auinfo2sspec(&(painfo.sample_spec), &(stream.info)) == -1 )
+  return roar_pa_op_new_done();
+
+// pa_channel_map_init_auto(&(painfo.channel_map), stream.info.channels, PA_CHANNEL_MAP_DEFAULT);
+// pa_cvolume_init(&(painfo.volume));
+
+ painfo.name                = ROAR_PA_DEFAULT_SINK;
+ painfo.index               = 0;
+ painfo.description         = "RoarAudio default mixer";
+ painfo.owner_module        = PA_INVALID_INDEX;
+ painfo.mute                = 0;
+ painfo.monitor_source      = 0;
+ painfo.monitor_source_name = ROAR_PA_DEFAULT_SOURCE;
+ painfo.latency             = 0;
+ painfo.driver              = "Waveform Mixer Core";
+// painfo.pa_sink_flags_t     = 0;
+
+ cb(c, &painfo, 1, userdata);
+
+ return roar_pa_op_new_done();
+}
 
 /** Get information about a sink by its index */
 pa_operation* pa_context_get_sink_info_by_index(pa_context *c, uint32_t id, pa_sink_info_cb_t cb, void *userdata);
@@ -62,7 +97,7 @@ pa_operation* pa_context_get_server_info(pa_context *c, pa_server_info_cb_t cb, 
  struct roar_client client;
  pa_server_info painfo;
 
- if ( c == NULL )
+ if ( c == NULL || cb == NULL )
   return roar_pa_op_new_done();
 
  if ( roar_server_oinfo(roar_pa_context_get_con(c), &stream) == -1 )
@@ -85,9 +120,7 @@ pa_operation* pa_context_get_server_info(pa_context *c, pa_server_info_cb_t cb, 
  painfo.cookie              = 0x524F4152;
  painfo.cookie             ^= (client.pid & 0xFF) | (client.uid & 0xFF) << 8 | (client.gid & 0xFF) << 16;
 
- if ( cb != NULL ) {
-  cb(c, &painfo, userdata);
- }
+ cb(c, &painfo, userdata);
 
  return roar_pa_op_new_done();
 }
