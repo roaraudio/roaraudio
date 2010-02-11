@@ -73,10 +73,20 @@ size_t pa_sample_size(const pa_sample_spec *spec) {
 }
 
 /** Calculate the time the specified bytes take to play with the specified sample type */
-pa_usec_t pa_bytes_to_usec(uint64_t length, const pa_sample_spec *spec);
+pa_usec_t pa_bytes_to_usec(uint64_t length, const pa_sample_spec *spec) {
+ if ( spec == NULL )
+  return 0;
+
+ return (pa_usec_t) (((double) length/pa_frame_size(spec)*1000000)/spec->rate);
+}
 
 /** Calculates the number of bytes that are required for the specified time. \since 0.9 */
-size_t pa_usec_to_bytes(pa_usec_t t, const pa_sample_spec *spec);
+size_t pa_usec_to_bytes(pa_usec_t t, const pa_sample_spec *spec) {
+ if ( spec == NULL )
+  return 0;
+
+ return (size_t) (((double) t * spec->rate / 1000000))*pa_frame_size(spec);
+}
 
 /** Return non-zero when the sample type specification is valid */
 int pa_sample_spec_valid(const pa_sample_spec *spec) {
