@@ -1,4 +1,4 @@
-//*.c:
+//xmalloc.c:
 
 /*
  *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2010
@@ -37,5 +37,65 @@
  */
 
 #include <libroarpulse/libroarpulse.h>
+
+/** Allocate the specified number of bytes, just like malloc() does. However, in case of OOM, terminate */
+void* pa_xmalloc(size_t l) {
+ return roar_mm_malloc(l);
+}
+
+/** Same as pa_xmalloc(), but initialize allocated memory to 0 */
+void *pa_xmalloc0(size_t l) {
+ void * data = roar_mm_malloc(l);
+
+ if ( data == NULL )
+  return NULL;
+
+ memset(data, 0, l);
+
+ return data;
+}
+
+/**  The combination of pa_xmalloc() and realloc() */
+void *pa_xrealloc(void *ptr, size_t size) {
+ return roar_mm_realloc(ptr, size);
+}
+
+/** Free allocated memory */
+void pa_xfree(void *p) {
+ return roar_mm_free(p);
+}
+
+/** Duplicate the specified string, allocating memory with pa_xmalloc() */
+char *pa_xstrdup(const char *s) {
+ return roar_mm_strdup(s);
+}
+
+/** Duplicate the specified string, but truncate after l characters */
+char *pa_xstrndup(const char *s, size_t l) {
+ size_t i;
+ char * data;
+
+ for (i = 0; i < l && s[i] != 0; i++);
+
+ if ( (data = roar_mm_malloc(i+1)) == NULL )
+  return NULL;
+
+ memcpy(data, s, i);
+ data[i] = 0;
+
+ return data;
+}
+
+/** Duplicate the specified memory block */
+void* pa_xmemdup(const void *p, size_t l) {
+ void * data = roar_mm_malloc(l);
+
+ if ( data == NULL )
+  return NULL;
+
+ memcpy(data, p, l);
+
+ return data;
+}
 
 //ll
