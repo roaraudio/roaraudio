@@ -75,6 +75,46 @@ int roar_pa_sspec2auinfo (struct roar_audio_info * info, const pa_sample_spec * 
   case PA_SAMPLE_MAX:
   case PA_SAMPLE_FLOAT32LE:
   case PA_SAMPLE_FLOAT32BE:
+  default:
+    return -1;
+   break;
+ }
+
+ return 0;
+}
+
+int roar_pa_auinfo2sspec (pa_sample_spec * ss, const struct roar_audio_info * info) {
+ if ( ss == NULL || info == NULL )
+  return -1;
+
+ ss->rate       = info->rate;
+ ss->channels   = info->channels;
+
+ switch (info->codec) {
+  case ROAR_CODEC_ALAW:
+    ss->format = PA_SAMPLE_ALAW;
+   break;
+  case ROAR_CODEC_MULAW:
+    ss->format = PA_SAMPLE_ULAW;
+   break;
+  case ROAR_CODEC_PCM_S_LE:
+    if ( info->bits != 16 )
+     return -1;
+    ss->format = PA_SAMPLE_S16LE;
+   break;
+  case ROAR_CODEC_PCM_S_BE:
+    if ( info->bits != 16 )
+     return -1;
+    ss->format = PA_SAMPLE_S16BE;
+   break;
+  case ROAR_CODEC_PCM_U_LE:
+  case ROAR_CODEC_PCM_U_BE:
+  case ROAR_CODEC_PCM_U_PDP:
+    if ( info->bits != 8 )
+     return -1;
+    ss->format = PA_SAMPLE_U8;
+   break;
+  default:
     return -1;
    break;
  }
