@@ -1,5 +1,5 @@
 TARGETS=libroarpulse.so libroarpulseinfo
-OBJS=libroarpulse.o simple.o util.o context.o xmalloc.o version.o
+OBJS=libroarpulse.o simple.o util.o context.o xmalloc.o version.o operation.o
 
 include ../Makefile.conf
 include ../Makefile.inc
