@@ -38,4 +38,63 @@
 
 #include <libroarpulse/libroarpulse.h>
 
+/** An asynchronous operation object */
+struct pa_operation {
+ size_t refc;
+ pa_operation_state_t state;
+};
+
+pa_operation *roar_pa_operation_new(pa_operation_state_t initstate) {
+ pa_operation * o = roar_mm_malloc(sizeof(pa_operation));
+
+ if ( o == NULL )
+  return NULL;
+
+ memset(o, 0, sizeof(pa_operation));
+
+ o->refc = 1;
+
+ o->state = initstate;
+
+ return o;
+}
+
+static void _operation_free(pa_operation *o) {
+ roar_mm_free(o);
+}
+
+/** Increase the reference count by one */
+pa_operation *pa_operation_ref(pa_operation *o) {
+ if ( o == NULL )
+  return NULL;
+
+ o->refc++;
+
+ return o;
+}
+
+/** Decrease the reference count by one */
+void pa_operation_unref(pa_operation *o) {
+ if ( o == NULL )
+  return;
+
+ o->refc--;
+
+ if ( o->refc < 1 )
+  _operation_free(o);
+}
+
+/** Cancel the operation. Beware! This will not necessarily cancel the execution of the operation on the server side. */
+void pa_operation_cancel(pa_operation *o) {
+ // we ignore this
+}
+
+/** Return the current status of the operation */
+pa_operation_state_t pa_operation_get_state(pa_operation *o) {
+ if ( o == NULL )
+  return -1;
+
+ return o->state;
+}
+
 //ll
