@@ -57,7 +57,37 @@ pa_operation* pa_context_get_source_info_by_index(pa_context *c, uint32_t id, pa
 pa_operation* pa_context_get_source_info_list(pa_context *c, pa_source_info_cb_t cb, void *userdata);
 
 /** Get some information about the server */
-pa_operation* pa_context_get_server_info(pa_context *c, pa_server_info_cb_t cb, void *userdata);
+pa_operation* pa_context_get_server_info(pa_context *c, pa_server_info_cb_t cb, void *userdata) {
+ struct roar_stream stream;
+ struct roar_client client;
+ pa_server_info painfo;
+
+ if ( c == NULL )
+  return roar_pa_op_new_done();
+
+ if ( roar_server_oinfo(roar_pa_context_get_con(c), &stream) == -1 )
+  return roar_pa_op_new_done();
+
+ if ( roar_get_client(roar_pa_context_get_con(c), &client, 0) == -1 )
+  return roar_pa_op_new_done();
+
+ memset(&painfo, 0, sizeof(painfo));
+
+ painfo.user_name           = "(none)";
+ painfo.host_name           = pa_context_get_server(c);
+ painfo.server_version      = pa_get_library_version();
+ painfo.server_name         = "pulseaudio";
+ painfo.default_sink_name   = NULL;
+ painfo.default_source_name = NULL;
+ painfo.cookie              = 0x524F4152;
+ painfo.cookie             ^= (client.pid & 0xFF) | (client.uid & 0xFF) << 8 | (client.gid & 0xFF) << 16;
+
+ if ( cb != NULL ) {
+  cb(c, &painfo, userdata);
+ }
+
+ return roar_pa_op_new_done();
+}
 
 /** Get some information about a module by its index */
 pa_operation* pa_context_get_module_info(pa_context *c, uint32_t idx, pa_module_info_cb_t cb, void *userdata);
