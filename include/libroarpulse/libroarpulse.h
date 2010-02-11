@@ -45,6 +45,9 @@
 
 #include <libroarpulse/simple.h>
 
+#define ROAR_PA_DEFAULT_SINK   "RoarAudio_default_sink"
+#define ROAR_PA_DEFAULT_SOURCE "RoarAudio_default_source"
+
 // POSIX does not clearly specify what happens on NULL
 #define ROAR_STRDUP(x) ((x) == NULL ? NULL : strdup((x)))
 
