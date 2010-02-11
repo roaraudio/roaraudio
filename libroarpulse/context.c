@@ -149,7 +149,12 @@ int pa_context_connect(
   return -1;
  }
 
- c->server = roar_mm_strdup(server);
+ if ( server == NULL ) {
+  c->server = NULL;
+ } else {
+  c->server = roar_mm_strdup(server);
+ }
+
  pa_context_set_state(c, PA_CONTEXT_READY);
 
  _call_cbs(c->cb.set_name, c, 1);
