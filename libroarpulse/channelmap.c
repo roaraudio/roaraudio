@@ -75,14 +75,120 @@ pa_channel_map* pa_channel_map_init_auto(pa_channel_map *m, unsigned channels, p
  }
 }
 
+static struct {
+ pa_channel_position_t pos;
+ char * name;
+} _roar_po_chanpos[] = {
+ {PA_CHANNEL_POSITION_INVALID,               "invalid"                    },
+ {PA_CHANNEL_POSITION_MONO,                  "mono"                       },
+ {PA_CHANNEL_POSITION_LEFT,                  "left"                       },
+ {PA_CHANNEL_POSITION_RIGHT,                 "right"                      },
+ {PA_CHANNEL_POSITION_CENTER,                "center"                     },
+ {PA_CHANNEL_POSITION_FRONT_LEFT,            "front-left"                 },
+ {PA_CHANNEL_POSITION_FRONT_RIGHT,           "front-right"                },
+ {PA_CHANNEL_POSITION_FRONT_CENTER,          "front-center"               },
+ {PA_CHANNEL_POSITION_REAR_CENTER,           "rear-center"                },
+ {PA_CHANNEL_POSITION_REAR_LEFT,             "rear-left"                  },
+ {PA_CHANNEL_POSITION_REAR_RIGHT,            "rear-right"                 },
+ {PA_CHANNEL_POSITION_LFE,                   "lfe"                        },
+ {PA_CHANNEL_POSITION_SUBWOOFER,             "subwoofer"                  },
+ {PA_CHANNEL_POSITION_FRONT_LEFT_OF_CENTER,  "front-left-of-center"       },
+ {PA_CHANNEL_POSITION_FRONT_RIGHT_OF_CENTER, "front-right-of-center"      },
+ {PA_CHANNEL_POSITION_SIDE_LEFT,             "side-left"                  },
+ {PA_CHANNEL_POSITION_SIDE_RIGHT,            "side-right"                 },
+ {PA_CHANNEL_POSITION_AUX0,                  "aux0"                       },
+ {PA_CHANNEL_POSITION_AUX1,                  "aux1"                       },
+ {PA_CHANNEL_POSITION_AUX2,                  "aux2"                       },
+ {PA_CHANNEL_POSITION_AUX3,                  "aux3"                       },
+ {PA_CHANNEL_POSITION_AUX4,                  "aux4"                       },
+ {PA_CHANNEL_POSITION_AUX5,                  "aux5"                       },
+ {PA_CHANNEL_POSITION_AUX6,                  "aux6"                       },
+ {PA_CHANNEL_POSITION_AUX7,                  "aux7"                       },
+ {PA_CHANNEL_POSITION_AUX8,                  "aux8"                       },
+ {PA_CHANNEL_POSITION_AUX9,                  "aux9"                       },
+ {PA_CHANNEL_POSITION_AUX10,                 "aux10"                      },
+ {PA_CHANNEL_POSITION_AUX11,                 "aux11"                      },
+ {PA_CHANNEL_POSITION_AUX12,                 "aux12"                      },
+ {PA_CHANNEL_POSITION_AUX13,                 "aux13"                      },
+ {PA_CHANNEL_POSITION_AUX14,                 "aux14"                      },
+ {PA_CHANNEL_POSITION_AUX15,                 "aux15"                      },
+ {PA_CHANNEL_POSITION_AUX16,                 "aux16"                      },
+ {PA_CHANNEL_POSITION_AUX17,                 "aux17"                      },
+ {PA_CHANNEL_POSITION_AUX18,                 "aux18"                      },
+ {PA_CHANNEL_POSITION_AUX19,                 "aux19"                      },
+ {PA_CHANNEL_POSITION_AUX20,                 "aux20"                      },
+ {PA_CHANNEL_POSITION_AUX21,                 "aux21"                      },
+ {PA_CHANNEL_POSITION_AUX22,                 "aux22"                      },
+ {PA_CHANNEL_POSITION_AUX23,                 "aux23"                      },
+ {PA_CHANNEL_POSITION_AUX24,                 "aux24"                      },
+ {PA_CHANNEL_POSITION_AUX25,                 "aux25"                      },
+ {PA_CHANNEL_POSITION_AUX26,                 "aux26"                      },
+ {PA_CHANNEL_POSITION_AUX27,                 "aux27"                      },
+ {PA_CHANNEL_POSITION_AUX28,                 "aux28"                      },
+ {PA_CHANNEL_POSITION_AUX29,                 "aux29"                      },
+ {PA_CHANNEL_POSITION_AUX30,                 "aux30"                      },
+ {PA_CHANNEL_POSITION_AUX31,                 "aux31"                      },
+ {PA_CHANNEL_POSITION_TOP_CENTER,            "top-center"                 },
+ {PA_CHANNEL_POSITION_TOP_FRONT_LEFT,        "top-front-left"             },
+ {PA_CHANNEL_POSITION_TOP_FRONT_RIGHT,       "top-front-right"            },
+ {PA_CHANNEL_POSITION_TOP_FRONT_CENTER,      "top-front-center"           },
+ {PA_CHANNEL_POSITION_TOP_REAR_LEFT,         "top-rear-left"              },
+ {PA_CHANNEL_POSITION_TOP_REAR_RIGHT,        "top-rear-right"             },
+ {PA_CHANNEL_POSITION_TOP_REAR_CENTER,       "top-rear-center"            },
+ {PA_CHANNEL_POSITION_MAX,                   "max"                        },
+ {PA_CHANNEL_POSITION_INVALID, NULL}
+};
+
 /** Return a text label for the specified channel position */
-const char* pa_channel_position_to_string(pa_channel_position_t pos);
+const char* pa_channel_position_to_string(pa_channel_position_t pos) {
+ int i;
+
+ for (i = 0; _roar_po_chanpos[i].name != NULL; i++)
+  if ( _roar_po_chanpos[i].pos == pos )
+   return _roar_po_chanpos[i].name;
+
+ return NULL;
+}
 
 /** The maximum length of strings returned by pa_channel_map_snprint() */
 #define PA_CHANNEL_MAP_SNPRINT_MAX 336
 
 /** Make a humand readable string from the specified channel map */
-char* pa_channel_map_snprint(char *s, size_t l, const pa_channel_map *map);
+char* pa_channel_map_snprint(char *s, size_t l, const pa_channel_map *map) {
+ const char * g;
+ char * c = s;
+ int i;
+ size_t len;
+ size_t todo = l;
+
+ if ( map == NULL || s == NULL || l == 0 )
+  return NULL;
+
+ *c = 0;
+
+ for (i = 0; i < map->channels; i++) {
+  g = pa_channel_position_to_string(map->map[i]);
+
+  if ( g == NULL )
+   return NULL;
+
+  len = strlen(g);
+
+  if ( (len + 1) < todo ) {
+   memcpy(c, g, len);
+   c[len] = ',';
+   c    += len + 1;
+   todo -= len + 1;
+  } else {
+   return NULL;
+  }
+ }
+
+ c[-1]  = 0;
+ s[l-1] = 0;
+
+ return s;
+}
 
 /** Parse a channel position list into a channel map structure. \since 0.8.1 */
 pa_channel_map *pa_channel_map_parse(pa_channel_map *map, const char *s);
