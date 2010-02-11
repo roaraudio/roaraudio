@@ -72,8 +72,7 @@ pa_simple* pa_simple_new(
   return NULL;
  }
 
- if ( !server )
-  server = getenv("PULSE_SERVER");
+ server = roar_pa_find_server((char*)server);
 
  if ( roar_simple_connect(&(s->con), (char*)server, (char*)name) == -1 ) {
   roar_mm_free(s);
