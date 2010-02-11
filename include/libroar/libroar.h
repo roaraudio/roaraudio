@@ -100,6 +100,7 @@
 
 #include "error.h"
 #include "config.h"
+#include "keyval.h"
 #include "roardl.h"
 #include "debug.h"
 #include "memmgr.h"
