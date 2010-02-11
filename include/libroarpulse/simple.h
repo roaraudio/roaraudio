@@ -1,7 +1,7 @@
 //simple.h:
 
 /*
- *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008
+ *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008-2010
  *  The code (may) include prototypes and comments (and maybe
  *  other code fragements) from libpulse*. They are mostly copyrighted by:
  *  Lennart Poettering <poettering@users.sourceforge.net> and
@@ -44,7 +44,7 @@
 struct roarpulse_simple {
  struct roar_connection con;
  struct roar_stream     stream;
- int data_fh;
+ struct roar_vio_calls  vio;
 };
 
 #endif

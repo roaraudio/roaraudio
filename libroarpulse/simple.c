@@ -1,7 +1,7 @@
 //simple.c:
 
 /*
- *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008
+ *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008-2010
  *  The code (may) include prototypes and comments (and maybe
  *  other code fragements) from libpulse*. They are mostly copyrighted by:
  *  Lennart Poettering <poettering@users.sourceforge.net> and
@@ -80,10 +80,9 @@ pa_simple* pa_simple_new(
   return NULL;
  }
 
- s->data_fh = roar_simple_new_stream_obj(&(s->con), &(s->stream), info.rate, info.channels,
-                  info.bits, info.codec, roar_dir);
-
- if ( s->data_fh == -1 ) {
+ if ( roar_vio_simple_new_stream_obj(&(s->vio), &(s->con), &(s->stream),
+                                     info.rate, info.channels,
+                                     info.bits, info.codec, roar_dir) == -1 ) {
   roar_disconnect(&(s->con));
   free(s);
   return NULL;
@@ -106,7 +105,7 @@ void pa_simple_free(pa_simple *s) {
  if ( !s )
   return;
 
- close(ss->data_fh);
+ roar_vio_close(&(ss->vio));
  roar_disconnect(&(ss->con));
 
  free(s);
@@ -118,7 +117,7 @@ int pa_simple_write(pa_simple *s, const void*data, size_t length, int *error) {
  if ( !s )
   return -1;
 
- return write(ss->data_fh, (char*) data, length);
+ return roar_vio_write(&(ss->vio), (char*) data, length);
 }
 
 /** Wait until all data already written is played by the daemon */
@@ -138,7 +137,7 @@ int pa_simple_read(pa_simple *s, void*data, size_t length, int *error) {
  if ( !s )
   return -1;
 
- return read(ss->data_fh, data, length);
+ return roar_vio_read(&(ss->vio), data, length);
 }
 
 /** Return the playback latency. \since 0.5 */
@@ -157,7 +156,7 @@ int pa_simple_flush(pa_simple *s, int *error) {
   return -1;
 
 #ifdef ROAR_FDATASYNC
- return ROAR_FDATASYNC(ss->data_fh);
+ return roar_vio_sync(&(ss->vio));
 #else
  return 0;
 #endif
