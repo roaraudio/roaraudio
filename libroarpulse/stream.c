@@ -169,6 +169,16 @@ uint32_t pa_stream_get_index(pa_stream *s) {
  return 0;
 }
 
+static int _roar_pa_stream_open (pa_stream *s,
+                                 const char *dev,
+                                 const pa_buffer_attr *attr,
+                                 pa_stream_flags_t flags,
+                                 pa_cvolume *volume,
+                                 pa_stream *sync_stream,
+                                 pa_stream_direction_t dir) {
+ return -1;
+}
+
 /** Connect the stream to a sink */
 int pa_stream_connect_playback(
         pa_stream *s                  /**< The stream to connect to a sink */,
@@ -176,14 +186,18 @@ int pa_stream_connect_playback(
         const pa_buffer_attr *attr    /**< Buffering attributes, or NULL for default */,
         pa_stream_flags_t flags       /**< Additional flags, or 0 for default */,
         pa_cvolume *volume            /**< Initial volume, or NULL for default */,
-        pa_stream *sync_stream        /**< Synchronize this stream with the specified one, or NULL for a standalone stream*/);
+        pa_stream *sync_stream        /**< Synchronize this stream with the specified one, or NULL for a standalone stream*/) {
+ return _roar_pa_stream_open(s, dev, attr, flags, volume, sync_stream, PA_STREAM_PLAYBACK);
+}
 
 /** Connect the stream to a source */
 int pa_stream_connect_record(
         pa_stream *s                  /**< The stream to connect to a source */ ,
         const char *dev               /**< Name of the source to connect to, or NULL for default */,
         const pa_buffer_attr *attr    /**< Buffer attributes, or NULL for default */,
-        pa_stream_flags_t flags       /**< Additional flags, or 0 for default */);
+        pa_stream_flags_t flags       /**< Additional flags, or 0 for default */) {
+ return _roar_pa_stream_open(s, dev, attr, flags, NULL, NULL, PA_STREAM_RECORD);
+}
 
 /** Disconnect a stream from a source/sink */
 int pa_stream_disconnect(pa_stream *s) {
