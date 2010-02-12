@@ -223,11 +223,44 @@ int pa_stream_write(
 int pa_stream_peek(
         pa_stream *p                 /**< The stream to use */,
         const void **data            /**< Pointer to pointer that will point to data */,
-        size_t *length              /**< The length of the data read */);
+        size_t *length              /**< The length of the data read */) {
+ if ( data == NULL || length == NULL )
+  return -1;
+
+ *data   = NULL;
+ *length = 0;
+
+ if ( p == NULL )
+  return -1;
+
+ if ( p->iobuffer == NULL )
+  return 0;
+
+ if ( roar_buffer_get_len(p->iobuffer, length) == -1 ) {
+  *length = 0;
+  return -1;
+ }
+
+ if ( roar_buffer_get_data(p->iobuffer, (void**)data) == -1 ) {
+  *length = 0;
+  *data   = NULL;
+  return -1;
+ }
+
+ return 0;
+}
 
 /** Remove the current fragment on record streams. It is invalid to do this without first
  * calling pa_stream_peek(). \since 0.8 */
-int pa_stream_drop(pa_stream *p);
+int pa_stream_drop(pa_stream *p) {
+ if ( p == NULL )
+  return -1;
+
+ if ( p->iobuffer == NULL )
+  return -1;
+
+ return roar_buffer_next(&(p->iobuffer));
+}
 
 /** Return the nember of bytes that may be written using pa_stream_write() */
 size_t pa_stream_writable_size(pa_stream *p) {
