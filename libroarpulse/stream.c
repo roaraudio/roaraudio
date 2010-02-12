@@ -213,7 +213,58 @@ int pa_stream_write(
         size_t length            /**< The length of the data to write */,
         pa_free_cb_t free_cb     /**< A cleanup routine for the data or NULL to request an internal copy */,
         int64_t offset,          /**< Offset for seeking, must be 0 for upload streams */
-        pa_seek_mode_t seek      /**< Seek mode, must be PA_SEEK_RELATIVE for upload streams */);
+        pa_seek_mode_t seek      /**< Seek mode, must be PA_SEEK_RELATIVE for upload streams */) {
+ struct roar_buffer * buf;
+ void               * bufdata;
+
+ // TODO: implement seeking in output buffer
+
+ if ( p == NULL )
+  return -1;
+
+ if ( offset != 0 || seek != PA_SEEK_RELATIVE )
+  return -1;
+
+ if ( data == NULL ) {
+  if ( length == 0 ) {
+   if ( free_cb != NULL )
+    free_cb(NULL);
+
+   return 0;
+  } else {
+   return -1;
+  }
+ }
+
+ // seems we have a valid write from here.
+
+ if ( roar_buffer_new(&buf, length) == -1 ) {
+  if ( free_cb != NULL )
+   free_cb((void*)data);
+
+  return -1;
+ }
+
+ if ( roar_buffer_get_data(buf, &bufdata) == -1 ) {
+  if ( free_cb != NULL )
+   free_cb((void*)data);
+
+  return -1;
+ }
+
+ memcpy(bufdata, data, length);
+ if ( free_cb != NULL )
+  free_cb((void*)data);
+
+ if ( p->iobuffer == NULL ) {
+  p->iobuffer = buf;
+ } else {
+  if ( roar_buffer_add(p->iobuffer, buf) == -1 )
+   return -1;
+ }
+
+ return 0;
+}
 
 /** Read the next fragment from the buffer (for recording).
  * data will point to the actual data and length will contain the size
