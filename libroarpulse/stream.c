@@ -54,6 +54,11 @@ struct pa_stream {
  struct roar_stream stream;
  pa_stream_state_t state;
  pa_sample_spec    sspec;
+ struct roar_buffer * iobuffer;
+ struct {
+  size_t size;
+  size_t num;
+ } fragments;
  struct {
   struct _roar_pa_stream_cb change_state;
   struct _roar_pa_stream_cb write;
@@ -105,6 +110,9 @@ pa_stream* pa_stream_new_with_proplist(
   roar_mm_free(s);
   return NULL;
  }
+
+ s->fragments.num  = 4;
+ s->fragments.size = 2048;
 
  s->state = PA_STREAM_UNCONNECTED;
  s->c     = c;
@@ -222,10 +230,39 @@ int pa_stream_peek(
 int pa_stream_drop(pa_stream *p);
 
 /** Return the nember of bytes that may be written using pa_stream_write() */
-size_t pa_stream_writable_size(pa_stream *p);
+size_t pa_stream_writable_size(pa_stream *p) {
+ struct roar_buffer_stats stats;
+
+ if ( p == NULL )
+  return 0;
+
+ if ( p->iobuffer == NULL )
+  return 0;
+
+ if ( roar_buffer_ring_stats(p->iobuffer, &stats) == -1 )
+  return 0;
+
+ if ( stats.parts > p->fragments.num )
+  return 0;
+
+ return (p->fragments.num - stats.parts)*p->fragments.size;
+}
 
 /** Return the number of bytes that may be read using pa_stream_read() \since 0.8 */
-size_t pa_stream_readable_size(pa_stream *p);
+size_t pa_stream_readable_size(pa_stream *p) {
+ struct roar_buffer_stats stats;
+
+ if ( p == NULL )
+  return 0;
+
+ if ( p->iobuffer == NULL )
+  return 0;
+
+ if ( roar_buffer_ring_stats(p->iobuffer, &stats) == -1 )
+  return 0;
+
+ return stats.bytes;
+}
 
 /** Drain a playback stream. Use this for notification when the buffer is empty */
 pa_operation* pa_stream_drain(pa_stream *s, pa_stream_success_cb_t cb, void *userdata);
