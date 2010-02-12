@@ -176,7 +176,45 @@ static int _roar_pa_stream_open (pa_stream *s,
                                  pa_cvolume *volume,
                                  pa_stream *sync_stream,
                                  pa_stream_direction_t dir) {
- return -1;
+ struct roar_connection * con;
+
+ if ( s == NULL )
+  return -1;
+
+ if ( attr != NULL || flags != 0 || volume != NULL || sync_stream != NULL ) {
+  pa_stream_set_state(s, PA_STREAM_FAILED);
+  return -1;
+ }
+
+ if ( (con = roar_pa_context_get_con(s->c)) == NULL ) {
+  pa_stream_set_state(s, PA_STREAM_FAILED);
+  return -1;
+ }
+
+ switch (dir) {
+  case PA_STREAM_PLAYBACK:
+    s->stream.dir = ROAR_DIR_PLAY;
+   break;
+  case PA_STREAM_RECORD:
+    s->stream.dir = ROAR_DIR_MONITOR;
+   break;
+  default:
+    pa_stream_set_state(s, PA_STREAM_FAILED);
+    return -1;
+   break;
+ }
+
+ if ( roar_vio_simple_new_stream_obj(&(s->vio), con, &(s->stream),
+                                     s->stream.info.rate, s->stream.info.channels,
+                                     s->stream.info.bits, s->stream.info.codec,
+                                     s->stream.dir) == -1 ) {
+  pa_stream_set_state(s, PA_STREAM_FAILED);
+  return -1;
+ }
+
+ pa_stream_set_state(s, PA_STREAM_READY);
+
+ return 0;
 }
 
 /** Connect the stream to a sink */
