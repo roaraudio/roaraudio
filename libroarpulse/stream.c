@@ -467,7 +467,22 @@ pa_operation* pa_stream_drain(pa_stream *s, pa_stream_success_cb_t cb, void *use
  * pa_stream_get_timing_info() to get access to the raw timing data,
  * or pa_stream_get_time() or pa_stream_get_latency() to get cleaned
  * up values. */
-pa_operation* pa_stream_update_timing_info(pa_stream *p, pa_stream_success_cb_t cb, void *userdata);
+pa_operation* pa_stream_update_timing_info(pa_stream *p, pa_stream_success_cb_t cb, void *userdata) {
+ int suc = 1;
+
+ if ( p == NULL )
+  return NULL;
+
+ if ( roar_get_stream(roar_pa_context_get_con(p->c), &(p->stream), p->stream.id) == -1 ) {
+  suc = 0;
+ }
+
+ if ( cb != NULL ) {
+  cb(p, suc, userdata);
+ }
+
+ return roar_pa_op_new_done();
+}
 
 /** Set the callback function that is called whenever the state of the stream changes */
 void pa_stream_set_state_callback(pa_stream *s, pa_stream_notify_cb_t cb, void *userdata) {
