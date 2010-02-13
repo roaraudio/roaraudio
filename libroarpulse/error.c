@@ -38,4 +38,6 @@
 
 #include <libroarpulse/libroarpulse.h>
 
+const char*pa_strerror(int error);
+
 //ll
