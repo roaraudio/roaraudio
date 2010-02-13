@@ -39,22 +39,92 @@
 #include <libroarpulse/libroarpulse.h>
 
 /** Return non-zero when *a == *b */
-int pa_cvolume_equal(const pa_cvolume *a, const pa_cvolume *b);
+int pa_cvolume_equal(const pa_cvolume *a, const pa_cvolume *b) {
+ int i;
+
+ if ( a == b )
+  return 1;
+
+ if ( a == NULL || b == NULL )
+  return 0;
+
+ if ( a->channels != b->channels )
+  return 0;
+
+ for (i = 0; i < a->channels; i++)
+  if ( a->values[i] != b->values[i] )
+   return 0;
+
+ return 1;
+}
 
 /** Set the volume of all channels to the specified parameter */
-pa_cvolume* pa_cvolume_set(pa_cvolume *a, unsigned channels, pa_volume_t v);
+pa_cvolume* pa_cvolume_set(pa_cvolume *a, unsigned channels, pa_volume_t v) {
+ int i;
+
+ if ( a == NULL )
+  return NULL;
+
+ if ( channels > PA_CHANNELS_MAX )
+  return NULL;
+
+ a->channels = channels;
+
+ for (i = 0; i < channels; i++) {
+  a->values[i] = v;
+ }
+
+ return a;
+}
 
 /** Pretty print a volume structure */
 char *pa_cvolume_snprint(char *s, size_t l, const pa_cvolume *c);
 
 /** Return the average volume of all channels */
-pa_volume_t pa_cvolume_avg(const pa_cvolume *a);
+pa_volume_t pa_cvolume_avg(const pa_cvolume *a) {
+ int64_t sum = 0;
+ int i;
+
+#ifndef PA_VOLUME_INVALID
+#define PA_VOLUME_INVALID ((pa_volume_t) UINT32_MAX)
+#endif
+
+ if ( a == NULL )
+  return PA_VOLUME_INVALID;
+
+ for (i = 0; i < a->channels; i++)
+  sum += a->values[i];
+
+ return sum/a->channels;
+}
 
 /** Return TRUE when the passed cvolume structure is valid, FALSE otherwise */
-int pa_cvolume_valid(const pa_cvolume *v);
+int pa_cvolume_valid(const pa_cvolume *v) {
+ if ( v == NULL )
+  return 0;
+
+ if ( v->channels <= 0 )
+  return 0;
+
+ if ( v->channels > PA_CHANNELS_MAX )
+  return 0;
+
+ return 1;
+}
 
 /** Return non-zero if the volume of all channels is equal to the specified value */
-int pa_cvolume_channels_equal_to(const pa_cvolume *a, pa_volume_t v);
+int pa_cvolume_channels_equal_to(const pa_cvolume *a, pa_volume_t v) {
+ int i;
+
+ if ( a == NULL )
+  return 0;
+
+ for (i = 0; i < a->channels; i++)
+  if ( a->values[i] != v )
+   return 0;
+
+ return 1;
+}
 
 /** Multiply two volumes specifications, return the result. This uses PA_VOLUME_NORM as neutral element of multiplication. This is only valid for software volumes! */
 pa_volume_t pa_sw_volume_multiply(pa_volume_t a, pa_volume_t b);
