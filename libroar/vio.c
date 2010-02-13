@@ -339,6 +339,9 @@ int     roar_vio_basic_ctl     (struct roar_vio_calls * vio, int cmd, void * dat
   case ROAR_VIO_CTL_GET_FH:
   case ROAR_VIO_CTL_GET_READ_FH:
   case ROAR_VIO_CTL_GET_WRITE_FH:
+  case ROAR_VIO_CTL_GET_SELECT_FH:
+  case ROAR_VIO_CTL_GET_SELECT_READ_FH:
+  case ROAR_VIO_CTL_GET_SELECT_WRITE_FH:
     ROAR_DBG("roar_vio_basic_ctl(vio=%p, cmd=ROAR_VIO_CTL_GET_*FH(0x%.8x), data=%p) = 0 // fh=%i", vio, cmd, data, roar_vio_get_fh(vio));
     *(int*)data = roar_vio_get_fh(vio);
     return 0;

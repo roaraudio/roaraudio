@@ -49,9 +49,30 @@ int     roar_vio_winsock_nonblock(struct roar_vio_calls * vio, int state) {
 int     roar_vio_winsock_sync    (struct roar_vio_calls * vio) {
  return 0;
 }
+
 int     roar_vio_winsock_ctl     (struct roar_vio_calls * vio, int cmd, void * data) {
+ if ( vio == NULL || cmd == -1 )
+  return -1;
+
+ ROAR_DBG("roar_vio_winsock_ctl(vio=%p, cmd=0x%.8x, data=%p) = ?", vio, cmd, data);
+
+ switch (cmd) {
+  case ROAR_VIO_CTL_GET_SELECT_FH:
+  case ROAR_VIO_CTL_GET_SELECT_READ_FH:
+  case ROAR_VIO_CTL_GET_SELECT_WRITE_FH:
+    ROAR_DBG("roar_vio_winsock_ctl(vio=%p, cmd=ROAR_VIO_CTL_GET_SELECT_*FH(0x%.8x), data=%p) = 0 // fh=%i", vio, cmd, data, roar_vio_get_fh(vio));
+    *(int*)data = roar_vio_get_fh(vio);
+    return 0;
+   break;
+  case ROAR_VIO_CTL_SET_NOSYNC:
+    vio->sync = NULL;
+    return 0;
+   break;
+ }
+
  return -1;
 }
+
 int     roar_vio_winsock_close   (struct roar_vio_calls * vio) {
 
  closesocket(roar_vio_get_fh(vio));
