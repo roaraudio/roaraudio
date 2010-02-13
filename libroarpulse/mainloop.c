@@ -38,26 +38,81 @@
 
 #include <libroarpulse/libroarpulse.h>
 
+struct pa_mainloop {
+ pa_mainloop_api api;
+ pa_poll_func    poll_func;
+ void          * poll_userdata;
+ int             quit;
+ int             quitval;
+};
+
 /** Allocate a new main loop object */
-pa_mainloop *pa_mainloop_new(void);
+pa_mainloop *pa_mainloop_new(void) {
+ pa_mainloop * m = roar_mm_malloc(sizeof(pa_mainloop));
+
+ if ( m == NULL )
+  return NULL;
+
+ memset(m, 0, sizeof(pa_mainloop));
+
+ m->api.userdata = m;
+
+ return m;
+}
 
 /** Free a main loop object */
-void pa_mainloop_free(pa_mainloop* m);
+void pa_mainloop_free(pa_mainloop* m) {
+ if ( m == NULL )
+  return;
+
+ roar_mm_free(m);
+}
 
 /** Prepare for a single iteration of the main loop. Returns a negative value
 on error or exit request. timeout specifies a maximum timeout for the subsequent
 poll, or -1 for blocking behaviour. .*/
-int pa_mainloop_prepare(pa_mainloop *m, int timeout);
+int pa_mainloop_prepare(pa_mainloop *m, int timeout) {
+ if ( m == NULL )
+  return -1;
+
+ m->quit = 1;
+
+ if ( m->quit )
+  return -2;
+
+ return -1;
+}
 
 /** Execute the previously prepared poll. Returns a negative value on error.*/
-int pa_mainloop_poll(pa_mainloop *m);
+int pa_mainloop_poll(pa_mainloop *m) {
+ if ( m == NULL )
+  return -1;
+
+ if ( m->quit )
+  return -2;
+
+ return -1;
+}
 
 /** Dispatch timeout, io and deferred events from the previously executed poll. Returns
 a negative value on error. On success returns the number of source dispatched. */
-int pa_mainloop_dispatch(pa_mainloop *m);
+int pa_mainloop_dispatch(pa_mainloop *m) {
+ if ( m == NULL )
+  return -1;
+
+ if ( m->quit )
+  return -2;
+
+ return -1;
+}
 
 /** Return the return value as specified with the main loop's quit() routine. */
-int pa_mainloop_get_retval(pa_mainloop *m);
+int pa_mainloop_get_retval(pa_mainloop *m) {
+ if ( m == NULL )
+  return -1;
+
+ return m->quitval;
+}
 
 /** Run a single iteration of the main loop. This is a convenience function
 for pa_mainloop_prepare(), pa_mainloop_poll() and pa_mainloop_dispatch().
@@ -65,24 +120,74 @@ Returns a negative value on error or exit request. If block is nonzero,
 block for events if none are queued. Optionally return the return value as
 specified with the main loop's quit() routine in the integer variable retval points
 to. On success returns the number of sources dispatched in this iteration. */
-int pa_mainloop_iterate(pa_mainloop *m, int block, int *retval);
+int pa_mainloop_iterate(pa_mainloop *m, int block, int *retval) {
+ int r;
+
+ if ( m == NULL )
+  return -1;
+
+ r = pa_mainloop_prepare(m, block ? -1 : 0);
+
+ if ( r > 0 )
+  r = pa_mainloop_poll(m);
+
+ if ( r > 0 )
+  r = pa_mainloop_dispatch(m);
+
+ if ( r == -2 && retval != NULL ) {
+  *retval = m->quitval;
+ }
+
+ return r;
+}
 
 /** Run unlimited iterations of the main loop object until the main loop's quit() routine is called. */
-int pa_mainloop_run(pa_mainloop *m, int *retval);
+int pa_mainloop_run(pa_mainloop *m, int *retval) {
+ int r = 1;
+
+ if ( m == NULL )
+  return -1;
+
+ while (!(m->quit) && r > 0) {
+  r = pa_mainloop_iterate(m, 1, retval);
+ }
+
+ if ( r == -2 )
+  return 1;
+
+ if ( r < 0 )
+  return -1;
+
+ return 0;
+}
 
 /** Return the abstract main loop abstraction layer vtable for this main loop. */
-pa_mainloop_api* pa_mainloop_get_api(pa_mainloop*m);
+pa_mainloop_api* pa_mainloop_get_api(pa_mainloop*m) {
+ if ( m == NULL )
+  return NULL;
+
+ return &(m->api);
+}
 
 /** Shutdown the main loop */
-void pa_mainloop_quit(pa_mainloop *m, int r);
+void pa_mainloop_quit(pa_mainloop *m, int r) {
+ if ( m == NULL )
+  return;
+
+ m->quitval = r;
+ m->quit    = 1;
+}
 
 /** Interrupt a running poll (for threaded systems) */
 void pa_mainloop_wakeup(pa_mainloop *m);
 
-/** Generic prototype of a poll() like function */
-typedef int (*pa_poll_func)(struct pollfd *ufds, unsigned long nfds, int timeout, void*userdata);
-
 /** Change the poll() implementation */
-void pa_mainloop_set_poll_func(pa_mainloop *m, pa_poll_func poll_func, void *userdata);
+void pa_mainloop_set_poll_func(pa_mainloop *m, pa_poll_func poll_func, void *userdata) {
+ if ( m == NULL )
+  return;
+
+ m->poll_func     = poll_func;
+ m->poll_userdata = userdata;
+}
 
 //ll
