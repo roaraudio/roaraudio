@@ -192,7 +192,7 @@ static void _roar_pa_stream_ioecb(pa_mainloop_api     * ea,
 
  switch (s->dir) {
   case PA_STREAM_PLAYBACK:
-    while ( s->iobuffer != NULL ) {
+    if ( s->iobuffer != NULL ) {
      if ( roar_buffer_get_data(s->iobuffer, &data) == -1 )
       return;
 
@@ -215,6 +215,12 @@ static void _roar_pa_stream_ioecb(pa_mainloop_api     * ea,
     if ( s->iobuffer == NULL ) {
      ROAR_DBG("_roar_pa_stream_ioecb(*): disable IO events");
      ea->io_enable(e, PA_IO_EVENT_HANGUP|PA_IO_EVENT_ERROR);
+
+     if ( s->cb.write.cb.rcb != NULL )
+      s->cb.write.cb.rcb(s, pa_stream_writable_size(s), s->cb.write.userdata);
+
+     if ( s->cb.drain.cb.scb != NULL )
+      s->cb.drain.cb.scb(s, 1, s->cb.drain.userdata);
     }
    break;
   case PA_STREAM_RECORD:
@@ -429,6 +435,7 @@ int pa_stream_write(
   }
  }
 
+ ROAR_DBG("pa_stream_write(p=%p, data=%p, length=%llu, free_cb=%p, offset=%lli, seek=%i) = 0", p, data, (long long unsigned int) length, free_cb, offset, seek);
  return 0;
 }
 
