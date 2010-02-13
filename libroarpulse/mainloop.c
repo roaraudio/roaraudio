@@ -46,6 +46,14 @@ struct pa_mainloop {
  int             quitval;
 };
 
+struct pa_io_event {
+ pa_mainloop_api *api;
+ int fd;
+ pa_io_event_flags_t events;
+ pa_io_event_cb_t cb;
+ void *userdata;
+};
+
 /** Allocate a new main loop object */
 pa_mainloop *pa_mainloop_new(void) {
  pa_mainloop * m = roar_mm_malloc(sizeof(pa_mainloop));
