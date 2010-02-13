@@ -582,7 +582,9 @@ pa_operation* pa_stream_cork(pa_stream *s, int b, pa_stream_success_cb_t cb, voi
 /** Flush the playback buffer of this stream. Most of the time you're
  * better off using the parameter delta of pa_stream_write() instead of this
  * function. Available on both playback and recording streams. \since 0.3 */
-pa_operation* pa_stream_flush(pa_stream *s, pa_stream_success_cb_t cb, void *userdata);
+pa_operation* pa_stream_flush(pa_stream *s, pa_stream_success_cb_t cb, void *userdata) {
+ return pa_stream_drain(s, cb, userdata); // where is the differance to drain?
+}
 /** Reenable prebuffering as specified in the pa_buffer_attr
  * structure. Available for playback streams only. \since 0.6 */
 pa_operation* pa_stream_prebuf(pa_stream *s, pa_stream_success_cb_t cb, void *userdata);
