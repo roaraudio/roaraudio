@@ -38,21 +38,89 @@
 
 #include <libroarpulse/libroarpulse.h>
 
+#define MAX_IO_EVENTS    8
+
+struct pa_io_event {
+ int used;
+ pa_mainloop_api *api;
+ int fd;
+ pa_io_event_flags_t events;
+ pa_io_event_cb_t cb;
+ void *userdata;
+ pa_io_event_destroy_cb_t destroy;
+};
+
 struct pa_mainloop {
  pa_mainloop_api api;
  pa_poll_func    poll_func;
  void          * poll_userdata;
  int             quit;
  int             quitval;
+ pa_io_event     io_event[MAX_IO_EVENTS];
 };
 
-struct pa_io_event {
- pa_mainloop_api *api;
- int fd;
- pa_io_event_flags_t events;
- pa_io_event_cb_t cb;
- void *userdata;
-};
+// IO EVENTS:
+static void _roar_pa_io_enable(pa_io_event* e, pa_io_event_flags_t events);
+
+/** Create a new IO event source object */
+static pa_io_event* _roar_pa_io_new(pa_mainloop_api*a, int fd,
+                                    pa_io_event_flags_t events, pa_io_event_cb_t cb, void *userdata) {
+ pa_mainloop * mainloop = a->userdata;
+ pa_io_event * ret = NULL;
+ int i;
+
+ for (i = 0; i < MAX_IO_EVENTS; i++) {
+  if ( mainloop->io_event[i].used == 0 ) {
+   ret = &(mainloop->io_event[i]);
+  }
+ }
+
+ if ( ret == NULL )
+  return NULL;
+
+ ret->used = 1;
+
+ ret->api      = a;
+ ret->fd       = fd;
+ ret->cb       = cb;
+ ret->userdata = userdata;
+
+ // Callbacks:
+ ret->destroy  = NULL;
+
+ _roar_pa_io_enable(ret, events);
+
+ return ret;
+}
+/** Enable or disable IO events on this object */ 
+static void _roar_pa_io_enable(pa_io_event* e, pa_io_event_flags_t events) {
+ if ( e == NULL )
+  return;
+
+ e->events = events;
+}
+
+/** Free a IO event source object */
+static void _roar_pa_io_free(pa_io_event* e) {
+ if ( e == NULL )
+  return;
+
+ if ( e->destroy != NULL )
+  e->destroy(e->api, e, e->userdata);
+
+ e->used = 0;
+}
+/** Set a function that is called when the IO event source is destroyed. Use this to free the userdata argument if required */
+static void _roar_pa_io_set_destroy(pa_io_event *e, pa_io_event_destroy_cb_t cb) {
+ if ( e == NULL )
+  return;
+
+ e->destroy = cb;
+}
+
+
+
+// API:
 
 /** Allocate a new main loop object */
 pa_mainloop *pa_mainloop_new(void) {
@@ -63,7 +131,11 @@ pa_mainloop *pa_mainloop_new(void) {
 
  memset(m, 0, sizeof(pa_mainloop));
 
- m->api.userdata = m;
+ m->api.userdata       = m;
+ m->api.io_new         = _roar_pa_io_new;
+ m->api.io_enable      = _roar_pa_io_enable;
+ m->api.io_free        = _roar_pa_io_free;
+ m->api.io_set_destroy = _roar_pa_io_set_destroy;
 
  return m;
 }
