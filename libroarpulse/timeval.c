@@ -38,4 +38,11 @@
 
 #include <libroarpulse/libroarpulse.h>
 
+struct timeval *pa_gettimeofday(struct timeval *tv);
+pa_usec_t pa_timeval_diff(const struct timeval *a, const struct timeval *b);
+int pa_timeval_cmp(const struct timeval *a, const struct timeval *b);
+pa_usec_t pa_timeval_age(const struct timeval *tv);
+struct timeval* pa_timeval_add(struct timeval *tv, pa_usec_t v);
+
+
 //ll
