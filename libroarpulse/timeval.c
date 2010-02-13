@@ -53,7 +53,27 @@ struct timeval *pa_gettimeofday(struct timeval *tv) {
 pa_usec_t pa_timeval_diff(const struct timeval *a, const struct timeval *b);
 int pa_timeval_cmp(const struct timeval *a, const struct timeval *b);
 pa_usec_t pa_timeval_age(const struct timeval *tv);
-struct timeval* pa_timeval_add(struct timeval *tv, pa_usec_t v);
+struct timeval* pa_timeval_add(struct timeval *tv, pa_usec_t v) {
+ unsigned long long int secs;
+
+ if ( tv == NULL )
+  return NULL;
+
+ secs = v/1000000LLU;
+
+ tv->tv_sec += secs;
+
+ v -= secs*1000000LLU;
+
+ tv->tv_usec += v;
+
+ while ( tv->tv_usec > 1000000LLU ) {
+  tv->tv_usec -= 1000000LLU;
+  tv->tv_sec  += 1;
+ }
+
+ return tv;
+}
 
 
 //ll
