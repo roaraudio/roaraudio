@@ -198,8 +198,12 @@ static int _roar_pa_stream_open (pa_stream *s,
  int fh;
  int ctl = -1;
 
+ ROAR_DBG("_roar_pa_stream_open(s=%p, dev='%s', attr=%p, flags=%i, volume=%p, sync_stream=%p, dir=%i) = ?", s, dev, attr, flags, volume, sync_stream, dir);
+
  if ( s == NULL )
   return -1;
+
+ volume = NULL;
 
  if ( attr != NULL || flags != 0 || volume != NULL || sync_stream != NULL ) {
   pa_stream_set_state(s, PA_STREAM_FAILED);
