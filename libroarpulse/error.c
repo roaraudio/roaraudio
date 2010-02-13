@@ -38,6 +38,42 @@
 
 #include <libroarpulse/libroarpulse.h>
 
-const char*pa_strerror(int error);
+
+static const struct {
+ int error;
+ const char * name;
+} _roar_pa_errors[] = {
+ {PA_OK,                       "OK"                             },
+ {PA_ERR_ACCESS,               "Access denied"                  },
+ {PA_ERR_COMMAND,              "Unknown command"                },
+ {PA_ERR_INVALID,              "Invalid argument"               },
+ {PA_ERR_EXIST,                "Entity exists"                  },
+ {PA_ERR_NOENTITY,             "No such entity"                 },
+ {PA_ERR_CONNECTIONREFUSED,    "Connection refused"             },
+ {PA_ERR_PROTOCOL,             "Protocol error"                 },
+ {PA_ERR_TIMEOUT,              "Timeout"                        },
+ {PA_ERR_AUTHKEY,              "No authorization key"           },
+ {PA_ERR_INTERNAL,             "Internal error"                 },
+ {PA_ERR_CONNECTIONTERMINATED, "Connection terminated"          },
+ {PA_ERR_KILLED,               "Entity killed"                  },
+ {PA_ERR_INVALIDSERVER,        "Invalid server"                 },
+ {PA_ERR_MODINITFAILED,        "Module initalization failed"    },
+ {PA_ERR_BADSTATE,             "Bad state"                      },
+ {PA_ERR_NODATA,               "No data"                        },
+ {PA_ERR_VERSION,              "Incompatible protocol version"  },
+ {PA_ERR_TOOLARGE,             "Too large"                      },
+ {PA_ERR_MAX,                  "MAX"                            },
+ {-1, NULL}
+};
+
+const char * pa_strerror(int error) {
+ int i;
+
+ for (i = 0; _roar_pa_errors[i].name != NULL; i++)
+  if ( _roar_pa_errors[i].error == error )
+   return _roar_pa_errors[i].name;
+
+ return NULL;
+}
 
 //ll
