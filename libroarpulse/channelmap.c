@@ -191,7 +191,48 @@ char* pa_channel_map_snprint(char *s, size_t l, const pa_channel_map *map) {
 }
 
 /** Parse a channel position list into a channel map structure. \since 0.8.1 */
-pa_channel_map *pa_channel_map_parse(pa_channel_map *map, const char *s);
+pa_channel_map *pa_channel_map_parse(pa_channel_map *map, const char *s) {
+ int i;
+ char * c;
+ size_t len;
+ pa_channel_position_t * v;
+
+ if ( map == NULL )
+  return NULL;
+
+ map->channels = 0;
+
+ if ( s == NULL )
+  return map;
+
+ while (*s != 0) {
+  c = strstr(s, ",");
+
+  if ( c == NULL ) {
+   len = strlen(s);
+  } else {
+   len = c - s;
+  }
+
+  v = &(map->map[map->channels++]);
+
+  *v = PA_CHANNEL_POSITION_INVALID;
+
+  for (i = 0; *v != PA_CHANNEL_POSITION_INVALID && _roar_po_chanpos[i].name != NULL; i++) {
+   if ( !strncasecmp(_roar_po_chanpos[i].name, s, len) && _roar_po_chanpos[i].name[len] == 0 ) {
+    *v = _roar_po_chanpos[i].pos;
+   }
+  }
+
+  if ( c == NULL ) {
+   break;
+  } else {
+   s = c + 1;
+  }
+ }
+
+ return map;
+}
 
 /** Compare two channel maps. Return 1 if both match. */
 int pa_channel_map_equal(const pa_channel_map *a, const pa_channel_map *b);
