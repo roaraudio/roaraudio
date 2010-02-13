@@ -1,6 +1,6 @@
 TARGETS=libroarpulse.so libroarpulseinfo
 OBJS_ROAR   = libroarpulse.o
-OBJS_STD    = util.o error.o timeval.o context.o xmalloc.o version.o operation.o introspect.o sample.o channelmap.o stream.o
+OBJS_STD    = util.o error.o timeval.o context.o xmalloc.o version.o operation.o introspect.o sample.o channelmap.o stream.o volume.o
 OBJS_SIMPLE = simple.o
 OBJS=$(OBJS_ROAR) $(OBJS_SIMPLE) $(OBJS_STD)
 
