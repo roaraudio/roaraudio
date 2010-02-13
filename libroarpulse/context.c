@@ -184,6 +184,12 @@ struct roar_connection * roar_pa_context_get_con(pa_context * c) {
  return &(c->con);
 }
 
+pa_mainloop_api * roar_pa_context_get_api(pa_context * c) {
+ if ( c == NULL )
+  return NULL;
+
+ return c->mainloop;
+}
 
 /** Set a callback function that is called whenever the context status changes */
 void pa_context_set_state_callback(pa_context *c, pa_context_notify_cb_t cb, void *userdata) {
