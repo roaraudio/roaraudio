@@ -48,13 +48,14 @@ struct _roar_pa_stream_cb {
 };
 
 struct pa_stream {
- size_t refc;
- pa_context * c;
- struct roar_vio_calls vio;
- struct roar_stream stream;
- pa_stream_state_t state;
- pa_sample_spec    sspec;
- struct roar_buffer * iobuffer;
+ size_t                  refc;
+ pa_context            * c;
+ struct roar_vio_calls   vio;
+ struct roar_stream      stream;
+ pa_stream_state_t       state;
+ pa_sample_spec          sspec;
+ pa_io_event           * io_event;
+ struct roar_buffer    * iobuffer;
  struct {
   size_t size;
   size_t num;
@@ -177,6 +178,10 @@ static int _roar_pa_stream_open (pa_stream *s,
                                  pa_stream *sync_stream,
                                  pa_stream_direction_t dir) {
  struct roar_connection * con;
+ pa_mainloop_api * api;
+ pa_io_event_flags_t event_flags = PA_IO_EVENT_HANGUP;
+ int fh;
+ int ctl = -1;
 
  if ( s == NULL )
   return -1;
@@ -194,9 +199,13 @@ static int _roar_pa_stream_open (pa_stream *s,
  switch (dir) {
   case PA_STREAM_PLAYBACK:
     s->stream.dir = ROAR_DIR_PLAY;
+    ctl           = ROAR_VIO_CTL_GET_SELECT_WRITE_FH;
+    event_flags  |= PA_IO_EVENT_OUTPUT;
    break;
   case PA_STREAM_RECORD:
     s->stream.dir = ROAR_DIR_MONITOR;
+    ctl           = ROAR_VIO_CTL_GET_SELECT_READ_FH;
+    event_flags  |= PA_IO_EVENT_INPUT;
    break;
   default:
     pa_stream_set_state(s, PA_STREAM_FAILED);
@@ -210,6 +219,14 @@ static int _roar_pa_stream_open (pa_stream *s,
                                      s->stream.dir) == -1 ) {
   pa_stream_set_state(s, PA_STREAM_FAILED);
   return -1;
+ }
+
+ api = roar_pa_context_get_api(s->c);
+
+ if ( api != NULL && api->io_new != NULL ) {
+  if ( roar_vio_ctl(&(s->vio), ctl, &fh) != -1 ) {
+   s->io_event = api->io_new(api, fh, event_flags, NULL, s);
+  }
  }
 
  pa_stream_set_state(s, PA_STREAM_READY);
@@ -239,11 +256,22 @@ int pa_stream_connect_record(
 
 /** Disconnect a stream from a source/sink */
 int pa_stream_disconnect(pa_stream *s) {
+ pa_mainloop_api * api;
+
  if ( s == NULL )
   return -1;
 
  if ( s->state != PA_STREAM_READY )
   return -1;
+
+ if ( s->io_event != NULL ) {
+  api = roar_pa_context_get_api(s->c);
+
+  if ( api != NULL && api->io_free != NULL ) {
+   api->io_free(s->io_event);
+   s->io_event = NULL;
+  }
+ }
 
  roar_vio_close(&(s->vio));
 
