@@ -118,7 +118,7 @@ pa_stream* pa_stream_new_with_proplist(
 
  ROAR_DBG("pa_stream_new_with_proplist(c=%p, name='%s', ss=%p, map=%p, p=%p) = ?", c, name, ss, map, p);
 
- s->fragments.num  = 8;
+ s->fragments.num  = 4;
  s->fragments.size = 2048;
 
  s->state = PA_STREAM_UNCONNECTED;
@@ -192,7 +192,7 @@ static void _roar_pa_stream_ioecb(pa_mainloop_api     * ea,
 
  switch (s->dir) {
   case PA_STREAM_PLAYBACK:
-    if ( s->iobuffer != NULL ) {
+    while ( s->iobuffer != NULL ) {
      if ( roar_buffer_get_data(s->iobuffer, &data) == -1 )
       return;
 
@@ -201,6 +201,8 @@ static void _roar_pa_stream_ioecb(pa_mainloop_api     * ea,
 
      if ( (ret = roar_vio_write(&(s->vio), data, len)) == -1 )
       return;
+
+     ROAR_DBG("_roar_pa_stream_ioecb(*): vio write() = %lli", (long long int) ret);
 
      // TODO: handle errors
      if ( ret == len ) {
@@ -211,6 +213,7 @@ static void _roar_pa_stream_ioecb(pa_mainloop_api     * ea,
     }
 
     if ( s->iobuffer == NULL ) {
+     ROAR_DBG("_roar_pa_stream_ioecb(*): disable IO events");
      ea->io_enable(e, PA_IO_EVENT_HANGUP|PA_IO_EVENT_ERROR);
     }
    break;
@@ -421,6 +424,7 @@ int pa_stream_write(
  if ( p->io_event != NULL ) {
   api = roar_pa_context_get_api(p->c);
   if ( api != NULL ) {
+   ROAR_DBG("pa_stream_write(*): enable IO events");
    api->io_enable(p->io_event, PA_IO_EVENT_OUTPUT|PA_IO_EVENT_HANGUP|PA_IO_EVENT_ERROR);
   }
  }
