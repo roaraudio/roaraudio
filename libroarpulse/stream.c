@@ -612,13 +612,32 @@ pa_operation* pa_stream_set_name(pa_stream *s, const char *name, pa_stream_succe
  * desirable to deal better with bad estimations of transport
  * latencies, but may have strange effects if the application is not
  * able to deal with time going 'backwards'. \since 0.6 */
-int pa_stream_get_time(pa_stream *s, pa_usec_t *r_usec);
+int pa_stream_get_time(pa_stream *s, pa_usec_t *r_usec) {
+ if ( s == NULL || r_usec == NULL )
+  return -1;
+
+ *r_usec = s->stream.pos * 1000000 / s->stream.info.rate / s->stream.info.channels;
+
+ return 0;
+}
 
 /** Return the total stream latency. This function is based on
  * pa_stream_get_time(). In case the stream is a monitoring stream the
  * result can be negative, i.e. the captured samples are not yet
  * played. In this case *negative is set to 1. \since 0.6 */
-int pa_stream_get_latency(pa_stream *s, pa_usec_t *r_usec, int *negative);
+int pa_stream_get_latency(pa_stream *s, pa_usec_t *r_usec, int *negative) {
+ // TODO: Fix this:
+ // sinks: lateny of stream, mixer, output...
+ // sources: mixer, output, negative
+
+ if ( r_usec != NULL )
+  *r_usec = 0;
+
+ if ( negative != NULL )
+  *negative = 0;
+
+ return 0;
+}
 
 /** Return the latest raw timing data structure. The returned pointer
  * points to an internal read-only instance of the timing
