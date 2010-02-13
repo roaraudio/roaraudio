@@ -56,6 +56,7 @@ struct pa_stream {
  pa_sample_spec          sspec;
  pa_io_event           * io_event;
  pa_timing_info          timinginfo;
+ pa_buffer_attr          bufattr;
  struct roar_buffer    * iobuffer;
  struct {
   size_t size;
@@ -247,6 +248,14 @@ static int _roar_pa_stream_open (pa_stream *s,
    s->io_event = api->io_new(api, fh, event_flags, _roar_pa_stream_ioecb, s);
   }
  }
+
+ // TODO: update s->fragments.
+
+ s->bufattr.maxlength = s->fragments.size * s->fragments.num;
+ s->bufattr.tlength   = s->fragments.size;
+ s->bufattr.prebuf    = 0;
+ s->bufattr.minreq    = 1;
+ s->bufattr.fragsize  = s->fragments.size;
 
  pa_stream_set_state(s, PA_STREAM_READY);
 
@@ -670,6 +679,11 @@ const pa_channel_map* pa_stream_get_channel_map(pa_stream *s);
 /** Return the buffer metrics of the stream. Only valid after the
  * stream has been connected successfuly and if the server is at least
  * PulseAudio 0.9. \since 0.9.0 */
-const pa_buffer_attr* pa_stream_get_buffer_attr(pa_stream *s);
+const pa_buffer_attr* pa_stream_get_buffer_attr(pa_stream *s) {
+ if ( s == NULL )
+  return NULL;
+
+ return &(s->bufattr);
+}
 
 //ll
