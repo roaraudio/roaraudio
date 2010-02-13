@@ -218,7 +218,7 @@ pa_channel_map *pa_channel_map_parse(pa_channel_map *map, const char *s) {
 
   *v = PA_CHANNEL_POSITION_INVALID;
 
-  for (i = 0; *v != PA_CHANNEL_POSITION_INVALID && _roar_po_chanpos[i].name != NULL; i++) {
+  for (i = 0; *v == PA_CHANNEL_POSITION_INVALID && _roar_po_chanpos[i].name != NULL; i++) {
    if ( !strncasecmp(_roar_po_chanpos[i].name, s, len) && _roar_po_chanpos[i].name[len] == 0 ) {
     *v = _roar_po_chanpos[i].pos;
    }
