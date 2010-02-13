@@ -111,12 +111,6 @@ pa_stream* pa_stream_new_with_proplist(
 
  ROAR_DBG("pa_stream_new_with_proplist(c=%p, name='%s', ss=%p, map=%p, p=%p) = ?", c, name, ss, map, p);
 
- if ( roar_pa_sspec2auinfo(&(s->stream.info), ss) == -1 ) {
-  roar_mm_free(s);
-  ROAR_DBG("pa_stream_new_with_proplist(c=%p, name='%s', ss=%p, map=%p, p=%p) = NULL // invalid format", c, name, ss, map, p);
-  return NULL;
- }
-
  s->fragments.num  = 4;
  s->fragments.size = 2048;
 
@@ -226,6 +220,11 @@ static int _roar_pa_stream_open (pa_stream *s,
     pa_stream_set_state(s, PA_STREAM_FAILED);
     return -1;
    break;
+ }
+
+ if ( roar_pa_sspec2auinfo(&(s->stream.info), &(s->sspec)) == -1 ) {
+  pa_stream_set_state(s, PA_STREAM_FAILED);
+  return -1;
  }
 
  if ( roar_vio_simple_new_stream_obj(&(s->vio), con, &(s->stream),
@@ -454,6 +453,8 @@ pa_operation* pa_stream_update_timing_info(pa_stream *p, pa_stream_success_cb_t 
 
 /** Set the callback function that is called whenever the state of the stream changes */
 void pa_stream_set_state_callback(pa_stream *s, pa_stream_notify_cb_t cb, void *userdata) {
+ ROAR_DBG("pa_stream_set_state_callback(s=%p, cb=%p, userdata=%p) = ?", s, cb, userdata);
+
  if ( s == NULL )
   return;
 
@@ -465,11 +466,15 @@ void pa_stream_set_state(pa_stream *s, pa_stream_state_t st) {
  if ( s == NULL )
   return;
 
+ ROAR_DBG("pa_stream_set_state(s=%p, st=%i): State: %i->%i", s, st, s->state, st);
+
  s->state = st;
 
- if ( s->cb.change_state.cb.ncb == NULL ) {
+ if ( s->cb.change_state.cb.ncb != NULL ) {
+  ROAR_DBG("pa_stream_set_state(s=%p, st=%i): calling callback at %p", s, st, s->cb.change_state.cb.ncb);
   s->cb.change_state.cb.ncb(s, s->cb.change_state.userdata);
  }
+ ROAR_DBG("pa_stream_set_state(s=%p, st=%i) = (void)", s, st);
 }
 
 /** Set the callback function that is called when new data may be
