@@ -97,6 +97,8 @@ pa_stream* pa_stream_new_with_proplist(
         pa_proplist *p                    ) {
  pa_stream * s;
 
+ ROAR_DBG("pa_stream_new_with_proplist(c=%p, name='%s', ss=%p, map=%p, p=%p) = ?", c, name, ss, map, p);
+
  if ( p != NULL )
   return NULL;
 
@@ -107,8 +109,11 @@ pa_stream* pa_stream_new_with_proplist(
 
  memcpy(&(s->sspec), ss, sizeof(pa_sample_spec));
 
+ ROAR_DBG("pa_stream_new_with_proplist(c=%p, name='%s', ss=%p, map=%p, p=%p) = ?", c, name, ss, map, p);
+
  if ( roar_pa_sspec2auinfo(&(s->stream.info), ss) == -1 ) {
   roar_mm_free(s);
+  ROAR_DBG("pa_stream_new_with_proplist(c=%p, name='%s', ss=%p, map=%p, p=%p) = NULL // invalid format", c, name, ss, map, p);
   return NULL;
  }
 
@@ -118,6 +123,8 @@ pa_stream* pa_stream_new_with_proplist(
  s->state = PA_STREAM_UNCONNECTED;
  s->c     = c;
  pa_context_ref(c);
+
+ ROAR_DBG("pa_stream_new_with_proplist(c=%p, name='%s', ss=%p, map=%p, p=%p) = ?", c, name, ss, map, p);
 
  return s;
 }
@@ -168,6 +175,14 @@ pa_context* pa_stream_get_context(pa_stream *p) {
 /** Return the device (sink input or source output) index this stream is connected to */
 uint32_t pa_stream_get_index(pa_stream *s) {
  return 0;
+}
+
+static void _roar_pa_stream_ioecb(pa_mainloop_api     * ea,
+                                  pa_io_event         * e,
+                                  int                   fd,
+                                  pa_io_event_flags_t   events,
+                                  void                * userdata) {
+ ROAR_DBG("_roar_pa_stream_ioecb(*) = (void)");
 }
 
 static int _roar_pa_stream_open (pa_stream *s,
@@ -225,7 +240,7 @@ static int _roar_pa_stream_open (pa_stream *s,
 
  if ( api != NULL && api->io_new != NULL ) {
   if ( roar_vio_ctl(&(s->vio), ctl, &fh) != -1 ) {
-   s->io_event = api->io_new(api, fh, event_flags, NULL, s);
+   s->io_event = api->io_new(api, fh, event_flags, _roar_pa_stream_ioecb, s);
   }
  }
 
