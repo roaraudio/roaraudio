@@ -55,6 +55,7 @@ struct pa_stream {
  pa_stream_state_t       state;
  pa_sample_spec          sspec;
  pa_io_event           * io_event;
+ pa_timing_info          timinginfo;
  struct roar_buffer    * iobuffer;
  struct {
   size_t size;
@@ -477,6 +478,24 @@ pa_operation* pa_stream_update_timing_info(pa_stream *p, pa_stream_success_cb_t 
   suc = 0;
  }
 
+ // p->timinginfo
+ pa_gettimeofday(&(p->timinginfo.timestamp)); // we should interpolate between time before call and after
+
+ p->timinginfo.synchronized_clocks    = 0;
+ p->timinginfo.sink_usec              = 0;
+ p->timinginfo.source_usec            = 0;
+ p->timinginfo.transport_usec         = 0;
+ p->timinginfo.playing                = p->iobuffer != NULL;
+ p->timinginfo.write_index_corrupt    = 1;
+ p->timinginfo.write_index            = p->stream.pos * pa_frame_size(&(p->sspec));
+ p->timinginfo.read_index_corrupt     = 1;
+ p->timinginfo.read_index             = p->stream.pos * pa_frame_size(&(p->sspec));
+#if 0 /* newer versions */
+ p->timinginfo.configured_sink_usec   = p->timinginfo.sink_usec;
+ p->timinginfo.configured_source_usec = p->timinginfo.source_usec;
+ p->timinginfo.since_underrun         = 0;
+#endif
+
  if ( cb != NULL ) {
   cb(p, suc, userdata);
  }
@@ -609,7 +628,12 @@ int pa_stream_get_latency(pa_stream *s, pa_usec_t *r_usec, int *negative);
  * write_index member field (and only this field) is updated on each
  * pa_stream_write() call, not just when a timing update has been
  * recieved. \since 0.8 */
-const pa_timing_info* pa_stream_get_timing_info(pa_stream *s);
+const pa_timing_info* pa_stream_get_timing_info(pa_stream *s) {
+ if ( s == NULL )
+  return NULL;
+
+ return &(s->timinginfo);
+}
 
 /** Return a pointer to the stream's sample specification. \since 0.6 */
 const pa_sample_spec* pa_stream_get_sample_spec(pa_stream *s) {
