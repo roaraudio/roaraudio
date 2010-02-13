@@ -67,7 +67,11 @@ struct pa_stream {
   struct _roar_pa_stream_cb overflow;
   struct _roar_pa_stream_cb underflow;
   struct _roar_pa_stream_cb latency;
+  struct _roar_pa_stream_cb drain;
  } cb;
+ struct {
+  pa_operation * drain;
+ } op;
 };
 
 typedef void pa_proplist;
@@ -443,7 +447,21 @@ size_t pa_stream_readable_size(pa_stream *p) {
 }
 
 /** Drain a playback stream. Use this for notification when the buffer is empty */
-pa_operation* pa_stream_drain(pa_stream *s, pa_stream_success_cb_t cb, void *userdata);
+pa_operation* pa_stream_drain(pa_stream *s, pa_stream_success_cb_t cb, void *userdata) {
+ if ( s == NULL )
+  return NULL;
+
+ s->cb.drain.cb.scb   = cb;
+ s->cb.drain.userdata = userdata;
+
+ if ( s->op.drain == NULL ) {
+  s->op.drain = roar_pa_operation_new(PA_OPERATION_RUNNING);
+ }
+
+ pa_operation_ref(s->op.drain);
+
+ return s->op.drain;
+}
 
 /** Request a timing info structure update for a stream. Use
  * pa_stream_get_timing_info() to get access to the raw timing data,
