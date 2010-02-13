@@ -57,6 +57,7 @@ struct pa_stream {
  pa_io_event           * io_event;
  pa_timing_info          timinginfo;
  pa_buffer_attr          bufattr;
+ pa_stream_direction_t   dir;
  struct roar_buffer    * iobuffer;
  struct {
   size_t size;
@@ -117,7 +118,7 @@ pa_stream* pa_stream_new_with_proplist(
 
  ROAR_DBG("pa_stream_new_with_proplist(c=%p, name='%s', ss=%p, map=%p, p=%p) = ?", c, name, ss, map, p);
 
- s->fragments.num  = 4;
+ s->fragments.num  = 8;
  s->fragments.size = 2048;
 
  s->state = PA_STREAM_UNCONNECTED;
@@ -182,6 +183,43 @@ static void _roar_pa_stream_ioecb(pa_mainloop_api     * ea,
                                   int                   fd,
                                   pa_io_event_flags_t   events,
                                   void                * userdata) {
+ pa_stream * s = userdata;
+ void * data;
+ size_t len;
+ size_t ret;
+
+ ROAR_DBG("_roar_pa_stream_ioecb(*) = ?");
+
+ switch (s->dir) {
+  case PA_STREAM_PLAYBACK:
+    if ( s->iobuffer != NULL ) {
+     if ( roar_buffer_get_data(s->iobuffer, &data) == -1 )
+      return;
+
+     if ( roar_buffer_get_len(s->iobuffer, &len) == -1 )
+      return;
+
+     if ( (ret = roar_vio_write(&(s->vio), data, len)) == -1 )
+      return;
+
+     // TODO: handle errors
+     if ( ret == len ) {
+      roar_buffer_next(&(s->iobuffer));
+     } else {
+      roar_buffer_set_offset(s->iobuffer, ret);
+     }
+    }
+
+    if ( s->iobuffer == NULL ) {
+     ea->io_enable(e, PA_IO_EVENT_HANGUP|PA_IO_EVENT_ERROR);
+    }
+   break;
+  case PA_STREAM_RECORD:
+   break;
+  default:
+   return;
+ }
+
  ROAR_DBG("_roar_pa_stream_ioecb(*) = (void)");
 }
 
@@ -194,7 +232,7 @@ static int _roar_pa_stream_open (pa_stream *s,
                                  pa_stream_direction_t dir) {
  struct roar_connection * con;
  pa_mainloop_api * api;
- pa_io_event_flags_t event_flags = PA_IO_EVENT_HANGUP;
+ pa_io_event_flags_t event_flags = PA_IO_EVENT_HANGUP|PA_IO_EVENT_ERROR;
  int fh;
  int ctl = -1;
 
@@ -214,6 +252,8 @@ static int _roar_pa_stream_open (pa_stream *s,
   pa_stream_set_state(s, PA_STREAM_FAILED);
   return -1;
  }
+
+ s->dir = dir;
 
  switch (dir) {
   case PA_STREAM_PLAYBACK:
@@ -326,8 +366,11 @@ int pa_stream_write(
         pa_free_cb_t free_cb     /**< A cleanup routine for the data or NULL to request an internal copy */,
         int64_t offset,          /**< Offset for seeking, must be 0 for upload streams */
         pa_seek_mode_t seek      /**< Seek mode, must be PA_SEEK_RELATIVE for upload streams */) {
+ pa_mainloop_api    * api;
  struct roar_buffer * buf;
  void               * bufdata;
+
+ ROAR_DBG("pa_stream_write(p=%p, data=%p, length=%llu, free_cb=%p, offset=%lli, seek=%i) = ?", p, data, (long long unsigned int) length, free_cb, offset, seek);
 
  // TODO: implement seeking in output buffer
 
@@ -373,6 +416,13 @@ int pa_stream_write(
  } else {
   if ( roar_buffer_add(p->iobuffer, buf) == -1 )
    return -1;
+ }
+
+ if ( p->io_event != NULL ) {
+  api = roar_pa_context_get_api(p->c);
+  if ( api != NULL ) {
+   api->io_enable(p->io_event, PA_IO_EVENT_OUTPUT|PA_IO_EVENT_HANGUP|PA_IO_EVENT_ERROR);
+  }
  }
 
  return 0;
@@ -429,18 +479,34 @@ int pa_stream_drop(pa_stream *p) {
 size_t pa_stream_writable_size(pa_stream *p) {
  struct roar_buffer_stats stats;
 
- if ( p == NULL )
-  return 0;
+ ROAR_DBG("pa_stream_writable_size(p=%p) = ?", p);
 
- if ( p->iobuffer == NULL )
+ if ( p == NULL ) {
+  ROAR_DBG("pa_stream_writable_size(p=%p) = 0", p);
   return 0;
+ }
 
- if ( roar_buffer_ring_stats(p->iobuffer, &stats) == -1 )
+ if ( p->iobuffer == NULL ) {
+  ROAR_DBG("pa_stream_writable_size(p=%p) = %llu", p, (long long unsigned)(p->fragments.num*p->fragments.size));
+  return p->fragments.num * p->fragments.size / 2;
+ }
+
+ if ( roar_buffer_ring_stats(p->iobuffer, &stats) == -1 ) {
+  ROAR_DBG("pa_stream_writable_size(p=%p) = 0", p);
   return 0;
+ }
 
- if ( stats.parts > p->fragments.num )
+ ROAR_DBG("pa_stream_writable_size(p=%p): stats={.parts=%i, .bytes=%i, ...}", p, stats.parts, stats.bytes);
+
+ if ( stats.parts > p->fragments.num ) {
+  ROAR_DBG("pa_stream_writable_size(p=%p) = 0", p);
   return 0;
+ }
 
+ if ( stats.parts > (p->fragments.num/2) )
+  stats.parts = p->fragments.num / 2;
+
+ ROAR_DBG("pa_stream_writable_size(p=%p) = %llu", p, (long long unsigned)((p->fragments.num - stats.parts)*p->fragments.size));
  return (p->fragments.num - stats.parts)*p->fragments.size;
 }
 
