@@ -38,4 +38,40 @@
 
 #include <libroarpulse/libroarpulse.h>
 
+/** Return non-zero when *a == *b */
+int pa_cvolume_equal(const pa_cvolume *a, const pa_cvolume *b);
+
+/** Set the volume of all channels to the specified parameter */
+pa_cvolume* pa_cvolume_set(pa_cvolume *a, unsigned channels, pa_volume_t v);
+
+/** Pretty print a volume structure */
+char *pa_cvolume_snprint(char *s, size_t l, const pa_cvolume *c);
+
+/** Return the average volume of all channels */
+pa_volume_t pa_cvolume_avg(const pa_cvolume *a);
+
+/** Return TRUE when the passed cvolume structure is valid, FALSE otherwise */
+int pa_cvolume_valid(const pa_cvolume *v);
+
+/** Return non-zero if the volume of all channels is equal to the specified value */
+int pa_cvolume_channels_equal_to(const pa_cvolume *a, pa_volume_t v);
+
+/** Multiply two volumes specifications, return the result. This uses PA_VOLUME_NORM as neutral element of multiplication. This is only valid for software volumes! */
+pa_volume_t pa_sw_volume_multiply(pa_volume_t a, pa_volume_t b);
+
+/** Multiply to per-channel volumes and return the result in *dest. This is only valid for software volumes! */
+pa_cvolume *pa_sw_cvolume_multiply(pa_cvolume *dest, const pa_cvolume *a, const pa_cvolume *b);
+
+/** Convert a decibel value to a volume. This is only valid for software volumes! \since 0.4 */
+pa_volume_t pa_sw_volume_from_dB(double f);
+
+/** Convert a volume to a decibel value. This is only valid for software volumes! \since 0.4 */
+double pa_sw_volume_to_dB(pa_volume_t v);
+
+/** Convert a linear factor to a volume. This is only valid for software volumes! \since 0.8 */
+pa_volume_t pa_sw_volume_from_linear(double v);
+
+/** Convert a volume to a linear factor. This is only valid for software volumes! \since 0.8 */
+double pa_sw_volume_to_linear(pa_volume_t v);
+
 //ll
