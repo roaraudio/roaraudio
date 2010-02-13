@@ -38,7 +38,18 @@
 
 #include <libroarpulse/libroarpulse.h>
 
-struct timeval *pa_gettimeofday(struct timeval *tv);
+struct timeval *pa_gettimeofday(struct timeval *tv) {
+#ifdef ROAR_HAVE_GETTIMEOFDAY
+ if ( gettimeofday(tv, NULL) == -1 ) {
+  return NULL;
+ } else {
+  return tv;
+ }
+#else
+ return NULL;
+#endif
+}
+
 pa_usec_t pa_timeval_diff(const struct timeval *a, const struct timeval *b);
 int pa_timeval_cmp(const struct timeval *a, const struct timeval *b);
 pa_usec_t pa_timeval_age(const struct timeval *tv);
