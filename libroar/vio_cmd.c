@@ -562,6 +562,7 @@ int     roar_vio_cmd_ctl     (struct roar_vio_calls * vio, int cmd, void * data)
     return -1;
    break;
   case ROAR_VIO_CTL_GET_READ_FH:
+  case ROAR_VIO_CTL_GET_SELECT_READ_FH:
 //    if ( !state->reader.opened ) {
      //for (i = 0; i < 128; i++)
       roar_vio_cmd_read(vio, buf, 0);

@@ -221,6 +221,7 @@ int     roar_vio_pipe_ctl     (struct roar_vio_calls * vio, int cmd, void * data
 
  switch (cmd) {
   case ROAR_VIO_CTL_GET_FH:
+  case ROAR_VIO_CTL_GET_SELECT_FH:
     if ( self->type == ROAR_VIO_PIPE_TYPE_SOCKET ) {
      *(int*)data = self->b.p[ROAR_VIO_PIPE_S(self,vio)];
      return 0;
@@ -229,6 +230,7 @@ int     roar_vio_pipe_ctl     (struct roar_vio_calls * vio, int cmd, void * data
     }
    break;
   case ROAR_VIO_CTL_GET_READ_FH:
+  case ROAR_VIO_CTL_GET_SELECT_READ_FH:
     switch (self->type) {
      case ROAR_VIO_PIPE_TYPE_SOCKET:
        *(int*)data = self->b.p[ROAR_VIO_PIPE_S(self,vio)];
@@ -240,6 +242,7 @@ int     roar_vio_pipe_ctl     (struct roar_vio_calls * vio, int cmd, void * data
       break;
     }
   case ROAR_VIO_CTL_GET_WRITE_FH:
+  case ROAR_VIO_CTL_GET_SELECT_WRITE_FH:
     switch (self->type) {
      case ROAR_VIO_PIPE_TYPE_SOCKET:
        *(int*)data = self->b.p[ROAR_VIO_PIPE_S(self,vio)];
