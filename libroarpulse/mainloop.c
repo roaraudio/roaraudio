@@ -48,6 +48,8 @@ struct pollfd {
  int fd;
  short events, revents;
 };
+
+typedef int nfds_t;
 #endif
 
 struct pa_io_event {
