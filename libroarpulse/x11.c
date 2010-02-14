@@ -38,6 +38,10 @@
 
 #include <libroarpulse/libroarpulse.h>
 
+#ifndef ROAR_HAVE_LIBX11
+typedef void Display;
+#endif
+
 void pa_x11_set_prop(Display *d, const char *name, const char *data) {
  struct roar_x11_connection * x11con = roar_x11_connect_display(d);
 
