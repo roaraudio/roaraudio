@@ -1,0 +1,13 @@
+#!/bin/sh
+
+NAME='audiooss'
+RNAME=''
+
+ARGS_PASS_NON_OPTS=true
+ARGS_END_OPTS_ON_NON_OPT=true
+
+ast2roar_help --help <<__EOF__
+Usage: audiooss.r command [command_options]
+__EOF__
+
+#ll
