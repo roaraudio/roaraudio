@@ -74,15 +74,13 @@ static void _roar_pa_signal_iocb(
  pa_signal_event * se;
 #ifdef ROAR_HAVE_PIPE
  int sig;
-#endif
  size_t ret;
 
-#ifdef ROAR_HAVE_PIPE
  ret = read(fd, &sig, sizeof(sig));
-#endif
 
  if ( ret != sizeof(sig) )
   return;
+#endif
 
  if ( sig >= MAX_SIG )
   return;
