@@ -4,13 +4,12 @@ NAME='esddsp'
 RNAME=''
 
 ARGS_IGNORE_OPTS='-m:false --mixer:false'
-ARGS_ENV_OPTS='-s:ROAR_SERVER --server:ROAR_SERVER'
+ARGS_ENV_OPTS='-s:ROAR_SERVER --server:ROAR_SERVER -n:ROAR_OSS_CLIENT_NAME --name:ROAR_OSS_CLIENT_NAME'
 ARGS_PASS_NON_OPTS=true
 ARGS_END_OPTS_ON_NON_OPT=true
 
 #esddsp [options] player arguments
 #-h, --help                show brief help
-#-n, --name=NAME           use name to identify player to esd
 #-v, --verbose             show parameters
 #--mmap                    use memory mapping emulation
 #                          (useful for games like quake)
