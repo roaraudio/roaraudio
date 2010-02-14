@@ -861,7 +861,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.239 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.240 $ of RoarAudio
  */
 
 EOF
@@ -1037,6 +1037,7 @@ test_lib_defmake ROAR_HAVE_H_POLL        %            poll.h        c          -
 test_lib_defmake ROAR_HAVE_H_MMSYSTEM    %            mmsystem.h    c          -- windows.h mmsystem.h
 test_lib_defmake ROAR_HAVE_H_ESD         libroaresd   esd.h         c          -- esd.h
 test_lib_defmake ROAR_HAVE_H_ARTSC       libroararts  artsc.h       c          -- kde/artsc/artsc.h
+test_lib_defmake ROAR_HAVE_H_ICONV       %            iconv.h       c          -- iconv.h
 MINIMAL=$OLD_MINIMAL
 
 echo >&3
