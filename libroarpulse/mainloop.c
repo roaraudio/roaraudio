@@ -126,6 +126,11 @@ static void _roar_pa_io_set_destroy(pa_io_event *e, pa_io_event_destroy_cb_t cb)
 
 // API:
 
+void _roar_pa_mainloop_quit(pa_mainloop_api*a, int retval) {
+ pa_mainloop * m = a->userdata;
+ pa_mainloop_quit(m, retval);
+}
+
 /** Allocate a new main loop object */
 pa_mainloop *pa_mainloop_new(void) {
  pa_mainloop * m = roar_mm_malloc(sizeof(pa_mainloop));
@@ -138,6 +143,9 @@ pa_mainloop *pa_mainloop_new(void) {
  memset(m, 0, sizeof(pa_mainloop));
 
  m->api.userdata       = m;
+
+ m->api.quit           = _roar_pa_mainloop_quit;
+
  m->api.io_new         = _roar_pa_io_new;
  m->api.io_enable      = _roar_pa_io_enable;
  m->api.io_free        = _roar_pa_io_free;
