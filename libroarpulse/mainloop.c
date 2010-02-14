@@ -166,6 +166,8 @@ int pa_mainloop_prepare(pa_mainloop *m, int timeout) {
  short events;
  int i;
 
+ ROAR_DBG("pa_mainloop_prepare(m=%p, timeout=%i) = ?", m, timeout);
+
  if ( m == NULL )
   return -1;
 
@@ -201,12 +203,16 @@ int pa_mainloop_prepare(pa_mainloop *m, int timeout) {
 
  m->poll_timeout = timeout;
 
+ ROAR_DBG("pa_mainloop_prepare(m=%p, timeout=%i) = 0", m, timeout);
  return 0;
 }
 
 /** Execute the previously prepared poll. Returns a negative value on error.*/
 int pa_mainloop_poll(pa_mainloop *m) {
  int ret;
+ int alive = 1;
+
+ ROAR_DBG("pa_mainloop_poll(m=%p) = ?", m);
 
  if ( m == NULL )
   return -1;
@@ -214,12 +220,19 @@ int pa_mainloop_poll(pa_mainloop *m) {
  if ( m->quit )
   return -2;
 
- if ( m->poll_func != NULL ) {
-  ret = m->poll_func(m->pollfd, m->pollfds, m->poll_timeout, m->poll_userdata);
- } else {
-  ret = poll(m->pollfd, m->pollfds, m->poll_timeout);
+ while (alive) {
+  if ( m->poll_func != NULL ) {
+   ret = m->poll_func(m->pollfd, m->pollfds, m->poll_timeout, m->poll_userdata);
+  } else {
+   ret = poll(m->pollfd, m->pollfds, m->poll_timeout);
+  }
+
+  if ( ret != -1 || ( errno != EAGAIN && errno != EINTR ) ) {
+   alive = 0;
+  }
  }
 
+ ROAR_DBG("pa_mainloop_poll(m=%p) = %i", m, ret);
  return ret;
 }
 
@@ -228,8 +241,9 @@ a negative value on error. On success returns the number of source dispatched. *
 int pa_mainloop_dispatch(pa_mainloop *m) {
  pa_io_event_flags_t events;
  int count = 0;
-
  int i, h;
+
+ ROAR_DBG("pa_mainloop_dispatch(m=%p) = ?", m);
 
  if ( m == NULL )
   return -1;
@@ -264,6 +278,7 @@ int pa_mainloop_dispatch(pa_mainloop *m) {
   }
  }
 
+ ROAR_DBG("pa_mainloop_dispatch(m=%p) = %i", m, count);
  return count;
 }
 
