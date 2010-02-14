@@ -84,6 +84,8 @@ static void _roar_pa_signal_iocb(pa_mainloop_api   * a,
  if ( !se->used )
   return;
 
+ ROAR_DBG("_roar_pa_signal_iocb(*): sig=%s(%i), se->cb=%p", strsignal(sig), sig, se->cb);
+
  if ( se->cb != NULL )
   se->cb(_roar_pa_signal.api, se, sig, se->userdata);
 }
