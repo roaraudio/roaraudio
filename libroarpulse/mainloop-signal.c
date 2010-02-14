@@ -38,4 +38,83 @@
 
 #include <libroarpulse/libroarpulse.h>
 
+#define MAX_SIG 64 /* there is no way to find out */
+
+typedef void (*pa_signal_cb_t) (pa_mainloop_api *api, pa_signal_event*e, int sig, void *userdata);
+
+struct pa_signal_event {
+ int used;
+ int sig;
+ pa_signal_cb_t cb;
+ void * userdata;
+};
+
+static int _roar_pa_signal_inited = 0;
+
+static struct {
+ pa_mainloop_api * api;
+ pa_signal_event sig[MAX_SIG];
+} _roar_pa_signal;
+
+static void _roar_pa_signal_handler (int sig) {
+ pa_signal_event * e = &(_roar_pa_signal.sig[sig]);
+
+ if ( e->cb != NULL )
+  e->cb(_roar_pa_signal.api, e, sig, e->userdata);
+}
+
+/** Initialize the UNIX signal subsystem and bind it to the specified main loop */
+int pa_signal_init(pa_mainloop_api *api) {
+
+ if ( _roar_pa_signal_inited )
+  return -1;
+
+ memset(&_roar_pa_signal, 0, sizeof(_roar_pa_signal));
+
+ _roar_pa_signal.api = api;
+
+ _roar_pa_signal_inited = 1;
+
+ return 0;
+}
+
+/** Cleanup the signal subsystem */
+void pa_signal_done(void) {
+ _roar_pa_signal_inited = 0;
+}
+
+/** Create a new UNIX signal event source object */
+pa_signal_event* pa_signal_new(int sig, pa_signal_cb_t callback, void *userdata) {
+ if ( !_roar_pa_signal_inited )
+  return NULL;
+
+ if ( sig >= MAX_SIG )
+  return NULL;
+
+ _roar_pa_signal.sig[sig].used     = 1;
+ _roar_pa_signal.sig[sig].sig      = sig;
+ _roar_pa_signal.sig[sig].cb       = callback;
+ _roar_pa_signal.sig[sig].userdata = userdata;
+
+ signal(sig, _roar_pa_signal_handler);
+
+ return &(_roar_pa_signal.sig[sig]);
+}
+
+/** Free a UNIX signal event source object */
+void pa_signal_free(pa_signal_event *e) {
+ if ( !_roar_pa_signal_inited )
+  return;
+
+ if ( e == NULL )
+  return;
+
+ signal(e->sig, SIG_DFL);
+
+ e->used = 0;
+}
+
+/** Set a function that is called when the signal event source is destroyed. Use this to free the userdata argument if required */
+void pa_signal_set_destroy(pa_signal_event *e, void (*callback) (pa_mainloop_api *api, pa_signal_event*e, void *userdata));
+
 //ll
