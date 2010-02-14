@@ -8,8 +8,19 @@ ARGS_ENV_OPTS='-s:ROAR_SERVER --server:ROAR_SERVER -n:ROAR_OSS_CLIENT_NAME --nam
 ARGS_PASS_NON_OPTS=true
 ARGS_END_OPTS_ON_NON_OPT=true
 
+ast2roar_help -h --help <<__EOF__
+esddsp.r - attempt to reroute audio device to RoarAudio
+
+esddsp.r [options] player arguments
+
+options:
+-h, --help                show brief help
+-s, --server=HOST:PORT    contact esd server on host at port
+-m, --mixer               enable mixer support
+-n, --name=NAME           use name to identify player to esd
+__EOF__
+
 #esddsp [options] player arguments
-#-h, --help                show brief help
 #-v, --verbose             show parameters
 #--mmap                    use memory mapping emulation
 #                          (useful for games like quake)
