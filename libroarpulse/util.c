@@ -69,4 +69,37 @@ ROAR_HAVE_TYPE_PA_PATH_GET_FILENAME pa_path_get_filename(const char *p) {
 
 }
 
+/** Return the current username in the specified string buffer. */
+char *pa_get_user_name(char *s, size_t l);
+
+/** Return the current hostname in the specified buffer. */
+char *pa_get_host_name(char *s, size_t l);
+
+/** Return the fully qualified domain name in s */
+char *pa_get_fqdn(char *s, size_t l);
+
+/** Return the home directory of the current user */
+char *pa_get_home_dir(char *s, size_t l) {
+ char * home = getenv("HOME");
+
+ if ( home == NULL )
+  return NULL;
+
+ strncpy(s, home, l);
+
+ s[l-1] = 0;
+
+ return s;
+}
+
+/** Wait t milliseconds */
+int pa_msleep(unsigned long t) {
+#ifdef ROAR_TARGET_WIN32
+ Sleep(t);
+#else
+ usleep(1000*t);
+#endif
+ return 0;
+}
+
 //ll
