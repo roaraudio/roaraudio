@@ -54,24 +54,32 @@ static int _roar_pa_signal_inited = 0;
 static struct {
  pa_mainloop_api * api;
  pa_signal_event sig[MAX_SIG];
+#ifdef ROAR_HAVE_PIPE
  int pipefh[2];
  pa_io_event * io_event;
+#endif
 } _roar_pa_signal;
 
-static void _roar_pa_signal_handler (int sig) {
- write(_roar_pa_signal.pipefh[1], &sig, sizeof(sig));
-}
-
-static void _roar_pa_signal_iocb(pa_mainloop_api   * a,
+static void _roar_pa_signal_iocb(
+#ifndef ROAR_HAVE_PIPE
+                                 int                 sig
+#else
+                                 pa_mainloop_api   * a,
                                  pa_io_event       * e,
                                  int                 fd,
                                  pa_io_event_flags_t f,
-                                 void *userdata         ) {
+                                 void *userdata
+#endif
+                                ) {
  pa_signal_event * se;
+#ifdef ROAR_HAVE_PIPE
  int sig;
+#endif
  size_t ret;
 
+#ifdef ROAR_HAVE_PIPE
  ret = read(fd, &sig, sizeof(sig));
+#endif
 
  if ( ret != sizeof(sig) )
   return;
@@ -90,6 +98,14 @@ static void _roar_pa_signal_iocb(pa_mainloop_api   * a,
   se->cb(_roar_pa_signal.api, se, sig, se->userdata);
 }
 
+static void _roar_pa_signal_handler (int sig) {
+#ifdef ROAR_HAVE_PIPE
+ write(_roar_pa_signal.pipefh[1], &sig, sizeof(sig));
+#else
+ _roar_pa_signal_iocb(_roar_pa_signal.api, sig);
+#endif
+}
+
 /** Initialize the UNIX signal subsystem and bind it to the specified main loop */
 int pa_signal_init(pa_mainloop_api *api) {
 
@@ -100,10 +116,12 @@ int pa_signal_init(pa_mainloop_api *api) {
 
  _roar_pa_signal.api = api;
 
+#ifdef ROAR_HAVE_PIPE
  if ( pipe(_roar_pa_signal.pipefh) == -1 )
   return -1;
 
  _roar_pa_signal.io_event = api->io_new(api, _roar_pa_signal.pipefh[0], PA_IO_EVENT_INPUT, _roar_pa_signal_iocb, NULL);
+#endif
 
  _roar_pa_signal_inited = 1;
 
