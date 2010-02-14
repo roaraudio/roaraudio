@@ -155,6 +155,10 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
  int socks[2]; // for socketpair()
 #endif
 
+ // make valgrind happy
+ memset(&socket_addr, 0, sizeof(socket_addr));
+ memset(&mes,         0, sizeof(mes));
+
  roar_debug_warn_sysio("roar_simple_new_stream_obj", "roar_vio_simple_new_stream_obj", NULL);
 
  if ( config != NULL ) {
