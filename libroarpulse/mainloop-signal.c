@@ -57,10 +57,28 @@ static struct {
 } _roar_pa_signal;
 
 static void _roar_pa_signal_handler (int sig) {
- pa_signal_event * e = &(_roar_pa_signal.sig[sig]);
+ pa_signal_event * e;
+
+ ROAR_DBG("_roar_pa_signal_handler(sig=%s(%i)) = ?", strsignal(sig), sig);
+
+ if ( sig >= MAX_SIG )
+  return;
+
+ e = &(_roar_pa_signal.sig[sig]);
+
+ if ( !e->used )
+  return;
+
+ ROAR_DBG("_roar_pa_signal_handler(sig=%s(%i)): signal is used", strsignal(sig), sig);
+
+ ROAR_DBG("_roar_pa_signal_handler(sig=%s(%i)): callback at %p", strsignal(sig), sig, e->cb);
+
+ ROAR_DBG("_roar_pa_signal_handler(sig=%s(%i)): api=%p, userdata=%p", strsignal(sig), sig, _roar_pa_signal.api, e->userdata);
 
  if ( e->cb != NULL )
   e->cb(_roar_pa_signal.api, e, sig, e->userdata);
+
+ ROAR_DBG("_roar_pa_signal_handler(sig=%s(%i)) = (void)", strsignal(sig), sig);
 }
 
 /** Initialize the UNIX signal subsystem and bind it to the specified main loop */
