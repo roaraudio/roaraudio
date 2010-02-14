@@ -3,6 +3,8 @@
 OUT="$1"
 IN="$2"
 
+ARGS_END_OPTS_ON_NON_OPT=false
+
 [ -r $IN ] || exit 1;
 
 . ./$IN
@@ -101,6 +103,10 @@ _E_O_F_
  if $ARGS_PASS_NON_OPTS
  then
   echo '   _args="$_args $k";';
+  if $ARGS_END_OPTS_ON_NON_OPT
+  then
+   echo '   break;';
+  fi
  else
   echo '   echo "Unknown option" >&2;';
   echo '   exit 1;';
