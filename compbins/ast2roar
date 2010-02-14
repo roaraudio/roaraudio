@@ -76,6 +76,20 @@ _E_O_F_
   echo '  ;;';
  done
 
+ for o in $ARGS_ENV_OPTS
+ do
+  on=`echo $o | cut -d: -f1`
+  or=`echo $o | cut -d: -f2`
+  echo "  '$on')";
+  echo "   export $or=\"\$1\"";
+  echo '   shift;';
+  echo '  ;;';
+  echo "  '$on='*)";
+  echo '   _para=`echo "$k" | cut -d= -f2`;';
+  echo "   export $or=\"\$_para\"";
+  echo '  ;;';
+ done
+
  cat <<_E_O_F_
   '-'*)
    echo "Unknown option" >&2;
@@ -87,7 +101,6 @@ _E_O_F_
  if $ARGS_PASS_NON_OPTS
  then
   echo '   _args="$_args $k";';
-  echo '   shift;';
  else
   echo '   echo "Unknown option" >&2;';
   echo '   exit 1;';
