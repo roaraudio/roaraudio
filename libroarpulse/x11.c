@@ -38,8 +38,52 @@
 
 #include <libroarpulse/libroarpulse.h>
 
-void pa_x11_set_prop(Display *d, const char *name, const char *data);
-void pa_x11_del_prop(Display *d, const char *name);
-char* pa_x11_get_prop(Display *d, const char *name, char *p, size_t l);
+void pa_x11_set_prop(Display *d, const char *name, const char *data) {
+ struct roar_x11_connection * x11con = roar_x11_connect_display(d);
+
+ if ( x11con == NULL )
+  return;
+
+ roar_x11_set_prop(x11con, name, data);
+
+ roar_x11_disconnect(x11con);
+}
+
+void pa_x11_del_prop(Display *d, const char *name) {
+ struct roar_x11_connection * x11con = roar_x11_connect_display(d);
+
+ if ( x11con == NULL )
+  return;
+
+ roar_x11_delete_prop(x11con, name);
+
+ roar_x11_disconnect(x11con);
+}
+
+char* pa_x11_get_prop(Display *d, const char *name, char *p, size_t l) {
+ struct roar_x11_connection * x11con = roar_x11_connect_display(d);
+ char * val;
+ size_t len;
+
+ if ( x11con == NULL )
+  return NULL;
+
+ val = roar_x11_get_prop(x11con, name);
+
+ roar_x11_disconnect(x11con);
+
+ if ( val == NULL )
+  return NULL;
+
+ len = strlen(val);
+
+ if ( (l - 1) < len )
+  len = l - 1;
+
+ memcpy(p, val, len);
+ p[len] = 0;
+
+ return p;
+}
 
 //ll
