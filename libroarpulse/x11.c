@@ -38,4 +38,8 @@
 
 #include <libroarpulse/libroarpulse.h>
 
+void pa_x11_set_prop(Display *d, const char *name, const char *data);
+void pa_x11_del_prop(Display *d, const char *name);
+char* pa_x11_get_prop(Display *d, const char *name, char *p, size_t l);
+
 //ll
