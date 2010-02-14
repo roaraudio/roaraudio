@@ -130,6 +130,8 @@ static void _roar_pa_io_set_destroy(pa_io_event *e, pa_io_event_destroy_cb_t cb)
 pa_mainloop *pa_mainloop_new(void) {
  pa_mainloop * m = roar_mm_malloc(sizeof(pa_mainloop));
 
+ ROAR_DBG("pa_mainloop_new() = ?");
+
  if ( m == NULL )
   return NULL;
 
@@ -141,15 +143,20 @@ pa_mainloop *pa_mainloop_new(void) {
  m->api.io_free        = _roar_pa_io_free;
  m->api.io_set_destroy = _roar_pa_io_set_destroy;
 
+ ROAR_DBG("pa_mainloop_new() = %p", m);
  return m;
 }
 
 /** Free a main loop object */
 void pa_mainloop_free(pa_mainloop* m) {
+ ROAR_DBG("pa_mainloop_free(m=%p) = ?", m);
+
  if ( m == NULL )
   return;
 
  roar_mm_free(m);
+
+ ROAR_DBG("pa_mainloop_free(m=%p) = (void)", m);
 }
 
 /** Prepare for a single iteration of the main loop. Returns a negative value
@@ -277,12 +284,14 @@ to. On success returns the number of sources dispatched in this iteration. */
 int pa_mainloop_iterate(pa_mainloop *m, int block, int *retval) {
  int r;
 
+ ROAR_DBG("pa_mainloop_iterate(m=%p, block=%i, retval=%p) = ?", m, block, retval);
+
  if ( m == NULL )
   return -1;
 
  r = pa_mainloop_prepare(m, block ? -1 : 0);
 
- if ( r > 0 )
+ if ( r >= 0 )
   r = pa_mainloop_poll(m);
 
  if ( r > 0 )
@@ -292,6 +301,7 @@ int pa_mainloop_iterate(pa_mainloop *m, int block, int *retval) {
   *retval = m->quitval;
  }
 
+ ROAR_DBG("pa_mainloop_iterate(m=%p, block=%i, retval=%p) = %i", m, block, retval, r);
  return r;
 }
 
@@ -299,12 +309,16 @@ int pa_mainloop_iterate(pa_mainloop *m, int block, int *retval) {
 int pa_mainloop_run(pa_mainloop *m, int *retval) {
  int r = 1;
 
+ ROAR_DBG("pa_mainloop_run(m=%p, retval=%p) = ?", m, retval);
+
  if ( m == NULL )
   return -1;
 
  while (!(m->quit) && r > 0) {
   r = pa_mainloop_iterate(m, 1, retval);
  }
+
+ ROAR_DBG("pa_mainloop_run(m=%p, retval=%p): r=%i", m, retval, r);
 
  if ( r == -2 )
   return 1;
