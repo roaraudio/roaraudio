@@ -37,9 +37,18 @@
  */
 
 #include <libroarpulse/libroarpulse.h>
+#ifdef ROAR_HAVE_H_POLL
 #include <poll.h>
+#endif
 
 #define MAX_IO_EVENTS    8
+
+#ifndef ROAR_HAVE_H_POLL
+struct pollfd {
+ int fd;
+ short events, revents;
+};
+#endif
 
 struct pa_io_event {
  int used;
@@ -232,7 +241,11 @@ int pa_mainloop_poll(pa_mainloop *m) {
   if ( m->poll_func != NULL ) {
    ret = m->poll_func(m->pollfd, m->pollfds, m->poll_timeout, m->poll_userdata);
   } else {
+#ifdef ROAR_HAVE_H_POLL
    ret = poll(m->pollfd, m->pollfds, m->poll_timeout);
+#else
+   ret = -1;
+#endif
   }
 
   if ( ret != -1 || ( errno != EAGAIN && errno != EINTR ) ) {
