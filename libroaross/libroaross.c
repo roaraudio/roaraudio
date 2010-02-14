@@ -248,6 +248,9 @@ static struct session * _open_session (char * server, char * name) {
  if ( _session.refc == 0 ) {
 
   if ( name == NULL )
+   name = getenv("ROAR_OSS_CLIENT_NAME");
+
+  if ( name == NULL )
    name = "libroaross client";
 
   if ( roar_simple_connect(&(_session.con), server, name) == -1 )
