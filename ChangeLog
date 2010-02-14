@@ -1,6 +1,8 @@
 v. 0.3beta5 - ?
 	* added tool roardtmf
 	* Support to store server address in X11's root window propertys
+	* some small fixes
+	* wrote a lot more libroarpulse code, some async API clients work now
 
 v. 0.3beta4 - Sat Feb 06 2010 26:02 CET
 	* Applyed patches for Debian
