@@ -37,6 +37,9 @@
  */
 
 #include <libroarpulse/libroarpulse.h>
+#ifdef ROAR_HAVE_H_ICONV
+#include <iconv.h>
+#endif
 
 /** Test if the specified strings qualifies as valid UTF8. Return the string if so, otherwise NULL */
 const char *pa_utf8_valid(const char *str);
@@ -44,10 +47,72 @@ const char *pa_utf8_valid(const char *str);
 /** Filter all invalid UTF8 characters from the specified string, returning a new fully UTF8 valid string. Don't forget to free the returned string with pa_xfree() */
 char *pa_utf8_filter(const char *str);
 
+static char * _roar_pa_iconv(const char * str, const char * from, const char * to) {
+#ifdef ROAR_HAVE_H_ICONV
+ iconv_t cd;
+ char   * out;
+ char   * ip, * op;
+ size_t   il,   ol;
+ size_t inlen;
+ size_t outlen;
+ size_t ret;
+
+ if ( str == NULL )
+  return NULL;
+
+ if ( from == NULL )
+  from = "";
+
+ if ( to == NULL )
+  to = "";
+
+ inlen = strlen(str);
+
+ outlen = inlen * 1.2;
+
+ if ( (out = pa_xmalloc(outlen)) == NULL )
+  return NULL;
+
+ if ( (cd = iconv_open(from, to)) == (iconv_t)(-1) )
+  return NULL;
+
+ while (1) {
+  ip = (char*) str;
+  op = out;
+  il = inlen;
+  ol = outlen;
+
+  ret = iconv(cd, &ip, &il, &op, &ol);
+
+  if ( ret != (size_t)-1 )
+   break;
+
+  if ( errno != E2BIG ) {
+   pa_xfree(out);
+   out = NULL;
+   break;
+  }
+
+  outlen += il * 1.2;
+  out = pa_xrealloc(out, outlen);
+ }
+
+ iconv_close(cd);
+
+ return out;
+#else
+ return NULL;
+#endif
+}
+
 /** Convert a UTF-8 string to the current locale. Free the string using pa_xfree(). */
-char* pa_utf8_to_locale (const char *str);
+char* pa_utf8_to_locale (const char *str) {
+ return _roar_pa_iconv(str, "UTF-8", NULL);
+}
 
 /** Convert a string in the current locale to UTF-8. Free the string using pa_xfree(). */
-char* pa_locale_to_utf8 (const char *str);
+char* pa_locale_to_utf8 (const char *str) {
+ return _roar_pa_iconv(str, NULL, "UTF-8");
+}
 
 //ll
