@@ -16,10 +16,13 @@ IN="$2"
 
 while [ -n "\$1" ]
 do
- k="\$1"
+ k="\$1";
  shift;
 
  case "\$k" in
+  '--')
+   break;
+  ;;
 _E_O_F_
 
  for o in $ARGS_IGNORE_OPTS
@@ -94,6 +97,21 @@ _E_O_F_
   ;;
  esac;
 done
+
+_E_O_F_
+
+ if $ARGS_PASS_NON_OPTS
+ then
+  echo '_args="$_args $*";';
+ else
+  echo 'if [ "$*" != '' ]';
+  echo 'then';
+  echo ' echo "Unknown option" >&2;';
+  echo ' exit 1;';
+  echo 'fi';
+ fi
+
+ cat <<_E_O_F_
 
 exec $RNAME \$_args
 _E_O_F_
