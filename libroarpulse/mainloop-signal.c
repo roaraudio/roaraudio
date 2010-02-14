@@ -54,31 +54,38 @@ static int _roar_pa_signal_inited = 0;
 static struct {
  pa_mainloop_api * api;
  pa_signal_event sig[MAX_SIG];
+ int pipefh[2];
+ pa_io_event * io_event;
 } _roar_pa_signal;
 
 static void _roar_pa_signal_handler (int sig) {
- pa_signal_event * e;
+ write(_roar_pa_signal.pipefh[1], &sig, sizeof(sig));
+}
 
- ROAR_DBG("_roar_pa_signal_handler(sig=%s(%i)) = ?", strsignal(sig), sig);
+static void _roar_pa_signal_iocb(pa_mainloop_api   * a,
+                                 pa_io_event       * e,
+                                 int                 fd,
+                                 pa_io_event_flags_t f,
+                                 void *userdata         ) {
+ pa_signal_event * se;
+ int sig;
+ size_t ret;
+
+ ret = read(fd, &sig, sizeof(sig));
+
+ if ( ret != sizeof(sig) )
+  return;
 
  if ( sig >= MAX_SIG )
   return;
 
- e = &(_roar_pa_signal.sig[sig]);
+ se = &(_roar_pa_signal.sig[sig]);
 
- if ( !e->used )
+ if ( !se->used )
   return;
 
- ROAR_DBG("_roar_pa_signal_handler(sig=%s(%i)): signal is used", strsignal(sig), sig);
-
- ROAR_DBG("_roar_pa_signal_handler(sig=%s(%i)): callback at %p", strsignal(sig), sig, e->cb);
-
- ROAR_DBG("_roar_pa_signal_handler(sig=%s(%i)): api=%p, userdata=%p", strsignal(sig), sig, _roar_pa_signal.api, e->userdata);
-
- if ( e->cb != NULL )
-  e->cb(_roar_pa_signal.api, e, sig, e->userdata);
-
- ROAR_DBG("_roar_pa_signal_handler(sig=%s(%i)) = (void)", strsignal(sig), sig);
+ if ( se->cb != NULL )
+  se->cb(_roar_pa_signal.api, se, sig, se->userdata);
 }
 
 /** Initialize the UNIX signal subsystem and bind it to the specified main loop */
@@ -91,6 +98,11 @@ int pa_signal_init(pa_mainloop_api *api) {
 
  _roar_pa_signal.api = api;
 
+ if ( pipe(_roar_pa_signal.pipefh) == -1 )
+  return -1;
+
+ _roar_pa_signal.io_event = api->io_new(api, _roar_pa_signal.pipefh[0], PA_IO_EVENT_INPUT, _roar_pa_signal_iocb, NULL);
+
  _roar_pa_signal_inited = 1;
 
  return 0;
@@ -98,6 +110,14 @@ int pa_signal_init(pa_mainloop_api *api) {
 
 /** Cleanup the signal subsystem */
 void pa_signal_done(void) {
+ int i;
+
+ for (i = 0; i < MAX_SIG; i++) {
+  _roar_pa_signal.sig[i].used = 0;
+ }
+
+ _roar_pa_signal.api->io_free(_roar_pa_signal.io_event);
+
  _roar_pa_signal_inited = 0;
 }
 
