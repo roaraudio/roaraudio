@@ -1,0 +1,31 @@
+#!/bin/sh
+
+NAME='artsdsp'
+RNAME=''
+
+ARGS_IGNORE_OPTS='-s:false --single-threaded:false'
+ARGS_ENV_OPTS='-n:ROAR_OSS_CLIENT_NAME --name:ROAR_OSS_CLIENT_NAME'
+ARGS_PASS_NON_OPTS=true
+ARGS_END_OPTS_ON_NON_OPT=true
+
+ast2roar_help -h --help <<__EOF__
+artsdsp.r - attempt to reroute audio device to RoarAudio
+
+artsdsp.r [options] application arguments
+
+options:
+-h, --help                show brief help
+-n, --name=NAME           use name to identify player to artsd
+-s, --single-threaded     use the single-threaded version
+__EOF__
+
+#artsdsp - attempt to reroute audio device to artsd
+#
+#artsdsp [options] application arguments
+#
+#options:
+#-m, --mmap                emulate memory mapping (i.e. for quake)
+#-v, --verbose             show parameters
+#-V, --version             show version
+
+#ll
