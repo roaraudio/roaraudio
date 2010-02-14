@@ -102,7 +102,7 @@ static void _roar_pa_signal_handler (int sig) {
 #ifdef ROAR_HAVE_PIPE
  write(_roar_pa_signal.pipefh[1], &sig, sizeof(sig));
 #else
- _roar_pa_signal_iocb(_roar_pa_signal.api, sig);
+ _roar_pa_signal_iocb(sig);
 #endif
 }
 
@@ -136,7 +136,9 @@ void pa_signal_done(void) {
   _roar_pa_signal.sig[i].used = 0;
  }
 
+#ifdef ROAR_HAVE_PIPE
  _roar_pa_signal.api->io_free(_roar_pa_signal.io_event);
+#endif
 
  _roar_pa_signal_inited = 0;
 }
