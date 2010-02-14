@@ -1,0 +1,32 @@
+#!/bin/sh
+
+NAME='padsp'
+RNAME=''
+
+ARGS_ENV_OPTS='-s:ROAR_SERVER -n:ROAR_OSS_CLIENT_NAME'
+ARGS_PASS_NON_OPTS=true
+ARGS_END_OPTS_ON_NON_OPT=true
+
+ast2roar_help -h <<__EOF__
+padsp.r - redirect OSS audio devices to RoarAudio
+
+padsp.r [options] application [arguments]
+
+options:
+        -h                  show brief help
+        -s <host>[:<port>]  contact a specific PulseAudio server
+        -n <name>           client name to report to the server
+__EOF__
+
+#/usr/bin/padsp - redirect OSS audio devices to PulseAudio
+#
+#/usr/bin/padsp [options] application [arguments]
+#
+#options:
+#       -m <name>           stream name to report to the server
+#       -M                  disable /dev/mixer emulation
+#       -S                  disable /dev/sndstat emulation
+#       -D                  disable /dev/dsp emulation
+#       -d                  enable debug output
+
+#ll
