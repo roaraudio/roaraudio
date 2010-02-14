@@ -37,6 +37,7 @@
  */
 
 #include <libroarpulse/libroarpulse.h>
+#include <poll.h>
 
 #define MAX_IO_EVENTS    8
 
@@ -54,9 +55,12 @@ struct pa_mainloop {
  pa_mainloop_api api;
  pa_poll_func    poll_func;
  void          * poll_userdata;
+ int             poll_timeout;
  int             quit;
  int             quitval;
  pa_io_event     io_event[MAX_IO_EVENTS];
+ struct pollfd   pollfd[MAX_IO_EVENTS];
+ nfds_t          pollfds;
 };
 
 // IO EVENTS:
@@ -152,38 +156,108 @@ void pa_mainloop_free(pa_mainloop* m) {
 on error or exit request. timeout specifies a maximum timeout for the subsequent
 poll, or -1 for blocking behaviour. .*/
 int pa_mainloop_prepare(pa_mainloop *m, int timeout) {
+ short events;
+ int i;
+
  if ( m == NULL )
   return -1;
-
- m->quit = 1;
 
  if ( m->quit )
   return -2;
 
- return -1;
+ m->pollfds = 0;
+
+ for (i = 0; i < MAX_IO_EVENTS; i++) {
+  if ( m->io_event[i].used ) {
+   events = 0;
+
+   if ( m->io_event[i].events & PA_IO_EVENT_INPUT )
+    events |= POLLIN;
+
+   if ( m->io_event[i].events & PA_IO_EVENT_OUTPUT )
+    events |= POLLOUT;
+
+   if ( m->io_event[i].events & PA_IO_EVENT_HANGUP )
+    events |= POLLHUP;
+
+   if ( m->io_event[i].events & PA_IO_EVENT_ERROR )
+    events |= POLLERR;
+
+   if ( events == 0 )
+    continue;
+
+   m->pollfd[m->pollfds].fd     = m->io_event[i].fd;
+   m->pollfd[m->pollfds].events = events;
+   m->pollfds++;
+  }
+ }
+
+ m->poll_timeout = timeout;
+
+ return 0;
 }
 
 /** Execute the previously prepared poll. Returns a negative value on error.*/
 int pa_mainloop_poll(pa_mainloop *m) {
+ int ret;
+
  if ( m == NULL )
   return -1;
 
  if ( m->quit )
   return -2;
 
- return -1;
+ if ( m->poll_func != NULL ) {
+  ret = m->poll_func(m->pollfd, m->pollfds, m->poll_timeout, m->poll_userdata);
+ } else {
+  ret = poll(m->pollfd, m->pollfds, m->poll_timeout);
+ }
+
+ return ret;
 }
 
 /** Dispatch timeout, io and deferred events from the previously executed poll. Returns
 a negative value on error. On success returns the number of source dispatched. */
 int pa_mainloop_dispatch(pa_mainloop *m) {
+ pa_io_event_flags_t events;
+ int count = 0;
+
+ int i, h;
+
  if ( m == NULL )
   return -1;
 
  if ( m->quit )
   return -2;
 
- return -1;
+ for (i = 0; i < m->pollfds; i++) {
+  if ( m->pollfd[i].revents != 0 ) {
+   for (h = 0; h < MAX_IO_EVENTS; h++) {
+    if ( m->io_event[h].fd == m->pollfd[i].fd ) {
+     events = PA_IO_EVENT_NULL;
+
+     if ( m->pollfd[i].revents & POLLIN )
+      events |= PA_IO_EVENT_INPUT;
+
+     if ( m->pollfd[i].revents & POLLOUT )
+      events |= PA_IO_EVENT_OUTPUT;
+
+     if ( m->pollfd[i].revents & POLLHUP )
+      events |= PA_IO_EVENT_HANGUP;
+
+     if ( m->pollfd[i].revents & POLLERR )
+      events |= PA_IO_EVENT_ERROR;
+
+     if ( m->io_event[h].cb != NULL )
+      m->io_event[h].cb(&(m->api), &(m->io_event[h]), m->pollfd[i].fd, events, m->io_event[h].userdata);
+
+     count++;
+    }
+   }
+  }
+ }
+
+ return count;
 }
 
 /** Return the return value as specified with the main loop's quit() routine. */
