@@ -3,11 +3,24 @@
 OUT="$1"
 IN="$2"
 
+HELPFILE=`tempfile -p $$- -s .help`
+HELPOPTS=''
+
 ARGS_END_OPTS_ON_NON_OPT=false
 
-[ -r $IN ] || exit 1;
+ast2roar_help() {
+ HELPOPTS="$*"
 
-. ./$IN
+ cat > $HELPFILE
+}
+
+if [ -r $IN ]
+then
+ . ./$IN
+else
+ rm $HELPFILE
+ exit 1;
+fi
 
 {
  echo '#!/bin/sh'
@@ -26,6 +39,17 @@ do
    break;
   ;;
 _E_O_F_
+
+ if [ "$HELPOPTS" != '' ]
+ then
+  _opts=`echo "$HELPOPTS" | sed "s/^/\'/; s/$/\'/; s/ /\'\|\'/g"`
+  echo "  $_opts)";
+  echo '   cat <<__AST2ROAR__END_OF_HELP_TEXT__'
+  cat $HELPFILE
+  echo '__AST2ROAR__END_OF_HELP_TEXT__'
+  echo '   exit 0;'
+  echo '  ;;';
+ fi
 
  for o in $ARGS_IGNORE_OPTS
  do
@@ -140,6 +164,8 @@ _E_O_F_
 } > $OUT
 
 chmod a+rx $OUT
+
+rm $HELPFILE
 
 exit 0;
 
