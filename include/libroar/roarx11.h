@@ -37,8 +37,15 @@
 
 #include "libroar.h"
 
+#ifdef ROAR_HAVE_LIBX11
+#define _ROAR_X11_DISPLAY Display
+#else
+#define _ROAR_X11_DISPLAY void
+#endif
+
 struct roar_x11_connection {
 #ifdef ROAR_HAVE_LIBX11
+ int close;
  Display * display;
 #else
  char dummy[8];
@@ -46,6 +53,7 @@ struct roar_x11_connection {
 };
 
 struct roar_x11_connection * roar_x11_connect(char * display);
+struct roar_x11_connection * roar_x11_connect_display(_ROAR_X11_DISPLAY * display);
 int    roar_x11_disconnect(struct roar_x11_connection * con);
 
 #define roar_x11_get_display(con) ((con) == NULL ? NULL : (con)->display)

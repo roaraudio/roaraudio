@@ -50,6 +50,27 @@ struct roar_x11_connection * roar_x11_connect(char * display) {
   return NULL;
  }
 
+ con->close = 1;
+
+ return con;
+#else
+ return NULL;
+#endif
+}
+
+struct roar_x11_connection * roar_x11_connect_display(_ROAR_X11_DISPLAY * display) {
+#ifdef ROAR_HAVE_LIBX11
+ struct roar_x11_connection * con;
+
+ if ( display == NULL )
+  return NULL;
+
+ if ( (con = roar_mm_malloc(sizeof(struct roar_x11_connection))) == NULL )
+  return NULL;
+
+ con->close   = 0;
+ con->display = display;
+
  return con;
 #else
  return NULL;
@@ -58,12 +79,13 @@ struct roar_x11_connection * roar_x11_connect(char * display) {
 
 int roar_x11_disconnect(struct roar_x11_connection * con) {
 #ifdef ROAR_HAVE_LIBX11
- int ret;
+ int ret = 0;
 
  if ( con == NULL )
   return -1;
 
- ret = XCloseDisplay(con->display);
+ if ( con->close )
+  ret = XCloseDisplay(con->display);
 
  roar_mm_free(con);
 
