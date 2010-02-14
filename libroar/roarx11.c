@@ -106,6 +106,7 @@ int roar_x11_delete_prop(struct roar_x11_connection * con, const char * key) {
 }
 
 char * roar_x11_get_prop(struct roar_x11_connection * con, const char * key) {
+#ifdef ROAR_HAVE_LIBX11
  unsigned long   nitems;
  unsigned long   nbytes_after;
  unsigned char * prop = NULL;
@@ -142,6 +143,9 @@ char * roar_x11_get_prop(struct roar_x11_connection * con, const char * key) {
  XFree(prop);
 
  return ret;
+#else
+ return NULL;
+#endif
 }
 
 //ll
