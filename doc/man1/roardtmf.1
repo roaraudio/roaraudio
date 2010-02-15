@@ -1,0 +1,45 @@
+.\" roardtmf.1:
+
+.TH "roardtmf" "1" "February 2010" "RoarAudio" "System User's Manual: roardtmf"
+
+.SH NAME
+
+roardtmf \- Generate DTMF (telephone touch tones) for RoarAudio
+
+.SH SYNOPSIS
+
+roardtmf [OPTIONS]... PHONE NUMBER
+
+.SH DESCRIPTION
+
+This tool generates DTMF (telephone touch tones) signals and send them to
+the RoarAudio sound server.
+
+In addition to the DTMF digits (0-9, A-D, * and #) space, period (.) and plus (+)
+are accepted and ignored so you can copy and past the phone number from any application
+easily.
+
+.SH "OPTIONS"
+
+.TP
+\fB--server SERVER\fR
+Set server hostname
+
+.TP
+\fB--rate   RATE\fR
+Set sample rate
+
+.TP
+\fB--help\fR
+Show this help
+
+.SH "SEE ALSO"
+\fBroartips\fR(7),
+\fBlibroar\fR(7),
+\fBRoarAudio\fR(7).
+
+.SH "HISTORY"
+
+For history information see \fBRoarAudio\fR(7).
+
+.\" ll
