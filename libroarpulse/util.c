@@ -102,4 +102,60 @@ int pa_msleep(unsigned long t) {
  return 0;
 }
 
+/* Format the specified data as a hexademical string */
+char *pa_hexstr(const uint8_t* d, size_t dlength, char *s, size_t slength) {
+ const char table[] = "0123456789abcdef";
+ char * p = s;
+ size_t i;
+
+ for (i = 0; i < dlength && slength > 2; i++, slength -= 2, d++) {
+  *(p++) = table[*d >>    4];
+  *(p++) = table[*d &  0x0F];
+ }
+
+ *p = 0;
+
+ return s;
+}
+
+/* Parse a hexadecimal string as created by pa_hexstr() to a BLOB */
+size_t pa_parsehex(const char *p, uint8_t *d, size_t dlength) {
+ size_t have = 0;
+ register int low_nibble = 0;
+ register char c;
+
+ if ( dlength == 0 )
+  return 0;
+
+ for (; (c = *p); p++) {
+  if ( c >= '0' && c <= '9' ) {
+   c -= '0';
+  } else if ( c >= 'a' && c <= 'f' ) {
+   c -= 'a' - 10;
+  } else if ( c >= 'A' && c <= 'F' ) {
+   c -= 'A' - 10;
+  } else {
+   return (size_t)-1;
+  }
+
+  if ( low_nibble ) {
+   *d |= c & 0x0F;
+   low_nibble = 0;
+
+   d++;
+   have++;
+   dlength--;
+
+   if ( dlength == 0 )
+    return have;
+  } else {
+   *d = (c & 0x0F) << 4;
+   low_nibble = 1;
+  }
+ }
+
+ return have;
+}
+
+
 //ll
