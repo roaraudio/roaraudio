@@ -14,7 +14,7 @@ include ../Makefile.inc
 #DEFINES        = -DDEBUG
 INCLUDE = -I../include -I../include/libroarpulse
 CFLAGS += -g -Wall -O2 $(DEFINES) $(INCLUDE) $(INCPATH) $(SHARED_CF) $(fPIC)
-LDFLAGS = -g $(LDPATH) -L../lib/
+LDFLAGS = -g $(LDPATH) -L../lib/ -L.
 LIBS    = $(LIBROAR)
 
 all: ${TARGETS}
@@ -26,7 +26,7 @@ new: clean all
 $(LIB_STDAPI): ${OBJS_STDAPI}
 	${CC} ${LDFLAGS} $(SHARED) -Wl,-soname,$(LIB_STDAPI).$(COMMON_V_MAJOR) -o $(LIB_STDAPI) ${OBJS_STDAPI} ${LIBS}
 
-$(LIB_SIMPLE): ${OBJS_SIMPLE}
+$(LIB_SIMPLE): ${OBJS_SIMPLE} $(LIB_STDAPI)
 	${CC} ${LDFLAGS} $(SHARED) -Wl,-soname,$(LIB_SIMPLE).$(COMMON_V_MAJOR) -o $(LIB_SIMPLE) ${OBJS_SIMPLE} ${LIBS} -lroarpulse
 
 
