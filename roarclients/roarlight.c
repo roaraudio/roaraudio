@@ -123,14 +123,8 @@ int main (int argc, char * argv[]) {
   }
  }
 
- if ( roar_connect(&con, server) == -1 ) {
+ if ( roar_simple_connect(&con, server, "roarlight") == -1 ) {
   fprintf(stderr, "Error: Can not connect to server\n");
-  return 1;
- }
-
- if ( roar_identify(&con, "roarlight") == -1 ) {
-  fprintf(stderr, "Error: Can not identify to server\n");
-  roar_disconnect(&con);
   return 1;
  }
 

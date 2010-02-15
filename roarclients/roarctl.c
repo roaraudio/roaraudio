@@ -848,13 +848,8 @@ int main (int argc, char * argv[]) {
 
  // connect
 
- if ( roar_connect(&con, server) == -1 ) {
+ if ( roar_simple_connect(&con, server, "roarctl") == -1 ) {
   fprintf(stderr, "Error: Can not connect to server\n");
-  return 1;
- }
-
- if ( roar_identify(&con, "roarctl") == -1 ) {
-  fprintf(stderr, "Error: Can not identify to server\n");
   return 1;
  }
 
