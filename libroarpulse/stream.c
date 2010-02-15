@@ -183,6 +183,7 @@ static void _roar_pa_stream_ioecb(pa_mainloop_api     * ea,
                                   int                   fd,
                                   pa_io_event_flags_t   events,
                                   void                * userdata) {
+ struct roar_buffer * buf;
  pa_stream * s = userdata;
  void * data;
  size_t len;
@@ -224,6 +225,35 @@ static void _roar_pa_stream_ioecb(pa_mainloop_api     * ea,
     }
    break;
   case PA_STREAM_RECORD:
+    if ( roar_buffer_new(&buf, s->fragments.size) == -1 )
+     return;
+
+    if ( roar_buffer_get_data(buf, &data) == -1 ) {
+     roar_buffer_free(buf);
+     return;
+    }
+
+    if ( (ret = roar_vio_read(&(s->vio), data, s->fragments.size)) < 1 ) {
+     roar_buffer_free(buf);
+     return;
+    }
+
+    if ( roar_buffer_set_len(buf, ret) == -1 ) { // bad error
+     roar_buffer_free(buf);
+     return;
+    }
+
+    if ( s->iobuffer == NULL ) {
+     s->iobuffer = buf;
+    } else {
+     if ( roar_buffer_add(s->iobuffer, buf) == -1 ) {
+      roar_buffer_free(buf);
+      return;
+     }
+    }
+
+    if ( s->cb.read.cb.rcb != NULL )
+     s->cb.read.cb.rcb(s, pa_stream_readable_size(s), s->cb.read.userdata);
    break;
   default:
    return;
