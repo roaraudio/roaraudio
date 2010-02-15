@@ -61,14 +61,14 @@ struct tone {
 };
 
 void usage (void) {
- printf("roarcatvio [OPTIONS]... [FILE]\n");
+ printf("roardtmf [OPTIONS]... PHONE NUMBER\n");
 
  printf("\nOptions:\n\n");
 
  printf("  --server SERVER    - Set server hostname\n"
         "  --rate   RATE      - Set sample rate\n"
-        "  --bits   BITS      - Set bits per sample\n"
-        "  --codec  CODEC     - Set the codec\n"
+//        "  --bits   BITS      - Set bits per sample\n"
+//        "  --codec  CODEC     - Set the codec\n"
         "  --help             - Show this help\n"
        );
 
