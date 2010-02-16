@@ -18,7 +18,8 @@
  *
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with this software; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ *  the Free Software Foundation, 51 Franklin Street, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  *
  *  NOTE: Even though this file is LGPLed it (may) include GPLed files
  *  so the license of this file is/may therefore downgraded to GPL.

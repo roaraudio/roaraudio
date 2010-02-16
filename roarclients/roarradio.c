@@ -18,7 +18,8 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this software; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ *  the Free Software Foundation, 51 Franklin Street, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  *
  */
 
@@ -141,7 +142,7 @@ int main (int argc, char * argv[]) {
 
       fprintf(http, "GET %s HTTP/1.1\r\n", file);
       fprintf(http, "Host: %s\r\n", host);
-      fprintf(http, "User-Agent: roarradio $Revision: 1.6 $\r\n");
+      fprintf(http, "User-Agent: roarradio $Revision: 1.7 $\r\n");
       fprintf(http, "Connection: close\r\n");
       fprintf(http, "\r\n");
       fflush(http);

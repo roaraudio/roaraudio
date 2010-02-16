@@ -18,7 +18,8 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this software; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ *  the Free Software Foundation, 51 Franklin Street, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  *
  */
 
@@ -45,7 +46,7 @@ void print_header (int codec, int rate, int channels) {
  printf("Content-type: %s\r\n", mime);
  printf("ice-audio-info: ice-samplerate=%i;ice-channels=%i\r\n", rate, channels);
  printf("icy-pub:0\r\n");
- printf("Server: RoarAudio (roarmonhttp $Revision: 1.16 $)\r\n");
+ printf("Server: RoarAudio (roarmonhttp $Revision: 1.17 $)\r\n");
  printf("\r\n");
 
  fflush(stdout);
