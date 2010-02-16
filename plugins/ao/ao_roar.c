@@ -10,7 +10,7 @@
  *
  *  This file is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
+ *  the Free Software Foundation; either version 2, or (at your opinion)
  *  any later version.
  *
  *  RoarAudio is distributed in the hope that it will be useful,
