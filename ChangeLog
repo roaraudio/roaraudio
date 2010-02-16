@@ -6,6 +6,7 @@ v. 0.3beta5 - ?
 	* added compbins for esddsp, artsdsp, audiooss, padsp
 	* splited libroarpulse and libroarpulse-simple
 	* upgraded some code to use VIO
+	* more updates for Debian
 
 v. 0.3beta4 - Sat Feb 06 2010 26:02 CET
 	* Applyed patches for Debian
