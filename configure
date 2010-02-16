@@ -861,7 +861,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.240 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.241 $ of RoarAudio
  */
 
 EOF
@@ -1387,6 +1387,20 @@ then
  echo 'const char *'
 else
  echo '#define ROAR_HAVE_TYPE_PA_PATH_GET_FILENAME char *' >&3
+ echo 'char *'
+fi
+
+echo -n 'checking for type of pa_utf8_valid()... '
+echo '#include <pulse/pulseaudio.h>'  >  $TF_C
+echo '#include <string.h>'           >> $TF_C
+echo 'int main (void) { return 0; } const char *pa_utf8_valid(const char *str) { return NULL; }'  >> $TF_C
+
+if $CCTF 2> /dev/null;
+then
+ echo '#define ROAR_HAVE_TYPE_PA_UTF8_VALID const char *' >&3
+ echo 'const char *'
+else
+ echo '#define ROAR_HAVE_TYPE_PA_UTF8_VALID char *' >&3
  echo 'char *'
 fi
 
