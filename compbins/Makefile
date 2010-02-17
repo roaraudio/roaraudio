@@ -8,6 +8,8 @@ TARGETS=$(TARGETS_ESD) $(TARGETS_ARTS) $(TARGETS_NAS) $(TARGETS_YIFF) $(TARGETS_
 include ../Makefile.conf
 include ../Makefile.inc
 
+.SUFFIXES: .a .r .bat
+
 all: ${TARGETS}
 	cp $(cp_v) ${TARGETS} ../lib/
 clean:
@@ -16,3 +18,5 @@ new: clean all
 
 .a.r:
 	./ast2roar $@ $<
+.a.bat:
+	./ast2roar --dos $@ $<

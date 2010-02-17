@@ -1,5 +1,14 @@
 #!/bin/sh
 
+DOS=false
+SECTIONC=0
+
+if [ "$1" = '--dos' ]
+then
+ DOS=true;
+ shift;
+fi
+
 OUT="$1"
 IN="$2"
 
@@ -14,6 +23,7 @@ ast2roar_help() {
  cat > $HELPFILE
 }
 
+
 if [ -r $IN ]
 then
  . ./$IN
@@ -23,11 +33,26 @@ else
 fi
 
 {
- echo '#!/bin/sh'
+ $DOS && echo '@ECHO OFF'
+ $DOS || echo '#!/bin/sh'
  echo
 
- echo "_args='$ARGS_ADD_OPTS';"
- cat <<_E_O_F_
+ $DOS && echo "SET _ARGS=$ARGS_ADD_OPTS"
+ $DOS || echo "_args='$ARGS_ADD_OPTS';"
+
+ if $DOS
+ then
+  cat <<_E_O_F_
+
+:mloop
+IF "x%1" == "x" GOTO mloopend
+SET k=%1
+SHIFT
+
+IF "%k%" == "--" GOTO mloopend
+_E_O_F_
+ else
+  cat <<_E_O_F_
 
 while [ -n "\$1" ]
 do
@@ -39,43 +64,72 @@ do
    break;
   ;;
 _E_O_F_
+ fi
 
  if [ "$HELPOPTS" != '' ]
  then
-  _opts=`echo "$HELPOPTS" | sed "s/^/\'/; s/$/\'/; s/ /\'\|\'/g"`
-  echo "  $_opts)";
-  echo '   cat <<__AST2ROAR__END_OF_HELP_TEXT__'
-  cat $HELPFILE
-  echo '__AST2ROAR__END_OF_HELP_TEXT__'
-  echo '   exit 0;'
-  echo '  ;;';
+  if $DOS
+  then
+   for o in $HELPOPTS
+   do
+    echo "IF \"%k%\" == \"$o\" GOTO help"
+   done
+  else
+   _opts=`echo "$HELPOPTS" | sed "s/^/\'/; s/$/\'/; s/ /\'\|\'/g"`
+   echo "  $_opts)";
+   echo '   cat <<__AST2ROAR__END_OF_HELP_TEXT__'
+   cat $HELPFILE
+   echo '__AST2ROAR__END_OF_HELP_TEXT__'
+   echo '   exit 0;'
+   echo '  ;;';
+  fi
  fi
 
  for o in $ARGS_IGNORE_OPTS
  do
   on=`echo $o | cut -d: -f1`
   oa=`echo $o | cut -d: -f2`
-  echo "  '$on')";
-  if $oa
+  if $DOS
   then
-   echo '   shift;';
+   if $oa
+   then
+    echo "IF \"%k%\" == \"$on\" GOTO nextshift"
+   else
+    echo "IF \"%k%\" == \"$on\" GOTO next"
+   fi
+  else
+   echo "  '$on')";
+   if $oa
+   then
+    echo '   shift;';
+   fi
+   echo '  ;;';
   fi
-  echo '  ;;';
  done
 
  for o in $ARGS_PASS_OPTS
  do
   on=`echo $o | cut -d: -f1`
   oa=`echo $o | cut -d: -f2`
-  echo "  '$on')";
-  if $oa
+  if $DOS
   then
-   echo '   _args="$_args '"$on"' $1";';
-   echo '   shift;';
+   if $oa
+   then
+    echo 'IF "%k%" == "'"$on"'" GOTO passval';
+   else
+    echo 'IF "%k%" == "'"$on"'" GOTO pass';
+   fi
   else
-   echo '   _args="$_args '"$on"'";';
+   echo "  '$on')";
+   if $oa
+   then
+    echo '   _args="$_args '"$on"' $1";';
+    echo '   shift;';
+   else
+    echo '   _args="$_args '"$on"'";';
+   fi
+   echo '  ;;';
   fi
-  echo '  ;;';
  done
 
  for o in $ARGS_MAP_OPTS
@@ -83,84 +137,208 @@ _E_O_F_
   on=`echo $o | cut -d: -f1`
   oa=`echo $o | cut -d: -f2`
   or=`echo $o | cut -d: -f3`
-  echo "  '$on')";
-  if $oa
+  if $DOS
   then
-   echo '   _args="$_args '"$or"' $1";';
-   echo '   shift;';
+   sec=sec$SECTIONC
+   SECTIONC=`expr $SECTIONC + 1`
+   if $oa
+   then
+    cat <<_E_O_F_
+IF NOT "%k%" == "$on" GOTO ${sec}end
+SET _ARGV=%_ARGV% $or %1
+GOTO nextshift
+:${sec}end
+
+_E_O_F_
+   else
+    cat <<_E_O_F_
+IF NOT "%k%" == "$on" GOTO ${sec}end
+SET _ARGV=%_ARGV% $or
+GOTO next
+:${sec}end
+
+_E_O_F_
+   fi
   else
-   echo '   _args="$_args '"$or"'";';
+   echo "  '$on')";
+   if $oa
+   then
+    echo '   _args="$_args '"$or"' $1";';
+    echo '   shift;';
+   else
+    echo '   _args="$_args '"$or"'";';
+   fi
+   echo '  ;;';
   fi
-  echo '  ;;';
  done
 
  for o in $ARGS_DEEQ_OPTS
  do
-  echo "  '$o='*)";
-  echo '   _para=`echo "$k" | cut -d= -f2`;';
-  echo '   _args="$_args '"$o"' $_para";';
-  echo '  ;;';
+  if $DOS
+  then
+   echo "REM IGNORED DEEQ: $o";
+   echo "Warning: can not compile DEEQ as target does not support DEEQ: $o" >&2
+  else
+   echo "  '$o='*)";
+   echo '   _para=`echo "$k" | cut -d= -f2`;';
+   echo '   _args="$_args '"$o"' $_para";';
+   echo '  ;;';
+  fi
  done
 
  for o in $ARGS_ENV_OPTS
  do
   on=`echo $o | cut -d: -f1`
   or=`echo $o | cut -d: -f2`
-  echo "  '$on')";
-  echo "   export $or=\"\$1\"";
-  echo '   shift;';
-  echo '  ;;';
-  echo "  '$on='*)";
-  echo '   _para=`echo "$k" | cut -d= -f2`;';
-  echo "   export $or=\"\$_para\"";
-  echo '  ;;';
+  if $DOS
+  then
+   sec=sec$SECTIONC
+   SECTIONC=`expr $SECTIONC + 1`
+   cat <<_E_O_F_
+IF NOT "%k%" == "$on" GOTO ${sec}end
+SET $or=%1
+GOTO nextshift
+:${sec}end
+_E_O_F_
+  else
+   echo "  '$on')";
+   echo "   export $or=\"\$1\"";
+   echo '   shift;';
+   echo '  ;;';
+   echo "  '$on='*)";
+   echo '   _para=`echo "$k" | cut -d= -f2`;';
+   echo "   export $or=\"\$_para\"";
+   echo '  ;;';
+  fi
  done
 
- cat <<_E_O_F_
+ if $DOS
+ then
+  : # we ignore this here and handle in the next section
+ else
+  cat <<_E_O_F_
   '-'*)
    echo "Unknown option" >&2;
    exit 1;
   ;;
   *)
 _E_O_F_
+ fi
 
  if $ARGS_PASS_NON_OPTS
  then
-  echo '   _args="$_args $k";';
-  if $ARGS_END_OPTS_ON_NON_OPT
+  if $DOS
   then
-   echo '   break;';
+   echo "Warning: can not compile unknown options check in as target does not support it" >&2
+   echo "REM IGNORED UNKNOWN OPTION CHECK"
+   if $ARGS_END_OPTS_ON_NON_OPT
+   then
+    cat <<_E_O_F_
+SET _ARGV=%_ARGV% %k%
+GOTO mloopend
+_E_O_F_
+   else
+    echo 'GOTO addshift';
+   fi
+  else
+   echo '   _args="$_args $k";';
+   if $ARGS_END_OPTS_ON_NON_OPT
+   then
+    echo '   break;';
+   fi
   fi
  else
-  echo '   echo "Unknown option" >&2;';
-  echo '   exit 1;';
+  if $DOS
+  then
+   echo 'GOTO erruopt'
+  else
+   echo '   echo "Unknown option" >&2;';
+   echo '   exit 1;';
+  fi
  fi
 
- cat <<_E_O_F_
+ if $DOS
+ then
+  cat <<_E_O_F_
+
+GOTO next
+:pass
+SET _ARGV=%_ARGV% %k%
+GOTO next
+:passval
+SET _ARGV=%_ARGV% %k%
+:addshift
+SET _ARGV=%_ARGV% %1
+:nextshift
+SHIFT
+
+:next
+GOTO mloop
+:mloopend
+
+_E_O_F_
+ else
+  cat <<_E_O_F_
   ;;
  esac;
 done
 
 _E_O_F_
+ fi
 
  if $ARGS_PASS_NON_OPTS
  then
-  echo '_args="$_args $*";';
+  $DOS && echo "SET _ARGS=%_ARGS% %1 %2 %3 %4 %5 %6 %7 %8 %9"
+  $DOS || echo '_args="$_args $*";';
  else
-  echo 'if [ "$*" != '' ]';
-  echo 'then';
-  echo ' echo "Unknown option" >&2;';
-  echo ' exit 1;';
-  echo 'fi';
+  if $DOS
+  then
+   echo 'IF "%1%2%3%4%5%6%7%8%9" GOTO erruopt'
+  else
+   echo 'if [ "$*" != '' ]';
+   echo 'then';
+   echo ' echo "Unknown option" >&2;';
+   echo ' exit 1;';
+   echo 'fi';
+  fi
  fi
 
- cat <<_E_O_F_
+ if $DOS
+ then
+  cat <<_E_O_F_
+
+$RNAME %_ARGS%
+
+GOTO end
+
+:erruopt
+ECHO Unknown option
+EXIT 1
+GOTO end
+
+:help
+_E_O_F_
+  if [ "$HELPOPTS" != '' ]
+  then
+   sed 's/^$/./; s/^/echo /; s/</#/g; s/>/#/g;' $HELPFILE
+  fi
+  cat <<_E_O_F_
+GOTO end
+
+:end
+
+_E_O_F_
+ else
+  cat <<_E_O_F_
 
 exec $RNAME \$_args
+
 _E_O_F_
+ fi
 
  echo
- echo '#ll'
+ $DOS && echo 'REM ll'
+ $DOS || echo '#ll'
 } > $OUT
 
 chmod a+rx $OUT
