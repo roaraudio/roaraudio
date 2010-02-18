@@ -121,7 +121,7 @@ fi
 [ "$ROARD_DRIVER_OPTIONS" = '' ] && ROARD_DRIVER_OPTIONS='sync'
 ROARD_OPTS="-oP -oO $ROARD_DRIVER_OPTIONS $ROARD_OPTS"
 
-if [ "$USER_LIST" = '' ]
+if [ "$ROARD_USER" = '' ]
 then
  for _u in $USER_LIST
  do
@@ -133,10 +133,10 @@ then
   fi
  done
 else
- _r=`id -un "$USER_LIST" 2> /dev/null`
- if [ "$_r" != "$USER_LIST" ]
+ _r=`id -un "$ROARD_USER" 2> /dev/null`
+ if [ "$_r" != "$ROARD_USER" ]
  then
-  echo "Error starting RoarAudio: can not find configured user $USER_LIST" >&2
+  echo "Error starting RoarAudio: can not find configured user $ROARD_USER" >&2
   echo "Hint: re-configure user in /etc/default/$NAME (see ROARD_USER)" >&2
   exit 1;
  fi
