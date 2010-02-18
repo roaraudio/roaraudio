@@ -128,7 +128,7 @@ then
   _r=`id -un $_u 2> /dev/null`
   if [ "$_u" = "$_r" ]
   then
-   USER_LIST="$_u";
+   ROARD_USER="$_u";
    break;
   fi
  done
