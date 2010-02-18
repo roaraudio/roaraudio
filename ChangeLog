@@ -7,6 +7,7 @@ v. 0.3beta5 - ?
 	* splited libroarpulse and libroarpulse-simple
 	* upgraded some code to use VIO
 	* more updates for Debian
+	* fixed init script for Debian and Debian like systems
 
 v. 0.3beta4 - Sat Feb 06 2010 26:02 CET
 	* Applyed patches for Debian
