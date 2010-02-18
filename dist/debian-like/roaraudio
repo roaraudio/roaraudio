@@ -43,8 +43,12 @@ ROARCTL=/usr/bin/roarctl
 NAME=roaraudio
 DESC="RoarAudio"
 
-PIDFILE=/var/run/`basename $DAEMON`.pid
+DAEMON_BN=`basename $DAEMON`
+
+PIDFILE=/var/run/$DAEMON_BN.pid
 SCRIPTNAME=/etc/init.d/$NAME
+
+USER_LIST="$DAEMON_BN roard roar nobody";
 
 # Gracefully exit if the package has been removed.
 test -x $DAEMON || exit 0;
@@ -117,9 +121,32 @@ fi
 [ "$ROARD_DRIVER_OPTIONS" = '' ] && ROARD_DRIVER_OPTIONS='sync'
 ROARD_OPTS="-oP -oO $ROARD_DRIVER_OPTIONS $ROARD_OPTS"
 
+if [ "$USER_LIST" = '' ]
+then
+ for _u in $USER_LIST
+ do
+  _r=`id -un $_u 2> /dev/null`
+  if [ "$_u" = "$_r" ]
+  then
+   USER_LIST="$_u";
+   break;
+  fi
+ done
+else
+ _r=`id -un "$USER_LIST" 2> /dev/null`
+ if [ "$_r" != "$USER_LIST" ]
+ then
+  echo "Error starting RoarAudio: can not find configured user $USER_LIST" >&2
+  echo "Hint: re-configure user in /etc/default/$NAME (see ROARD_USER)" >&2
+  exit 1;
+ fi
+fi
+
 if [ "$ROARD_USER" = '' ]
 then
- ROARD_OPTS="--setuid -U roard $ROARD_OPTS"
+ echo "Error starting RoarAudio: can not find any user to run roard as." >&2
+ echo "Hint: configure user in /etc/default/$NAME explicitly (see ROARD_USER)" >&2
+ exit 1;
 else
  ROARD_OPTS="--setuid -U $ROARD_USER $ROARD_OPTS"
 fi
