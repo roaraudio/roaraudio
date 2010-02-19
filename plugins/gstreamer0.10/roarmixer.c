@@ -306,6 +306,8 @@ void            gst_roarmixer_set_volume         (GstRoarMixer * mixer,
   m.mixer[i] = volumes[i];
  }
 
+ m.scale = 65535;
+
  roar_set_vol(&(mixer->con), roartrack->stream_id, &m, channels);
 }
 
@@ -333,8 +335,15 @@ void            gst_roarmixer_get_volume         (GstRoarMixer * mixer,
  }
 
  for (i = 0; i < channels; i++) {
-  volumes[i] = m.mixer[i];
+  if ( m.scale == 65535 ) {
+   volumes[i] = m.mixer[i];
+  } else {
+   volumes[i] = m.mixer[i] * 65535. / (float) m.scale; // we do not hanle precides scaling here
+                                                       // as it does not matter:
+                                                       // we never write those values back to roard.
+  }
  }
+
 }
 void            gst_roarmixer_set_record         (GstRoarMixer * mixer,
                                                  GstMixerTrack * track,
