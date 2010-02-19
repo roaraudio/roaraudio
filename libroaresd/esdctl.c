@@ -199,6 +199,7 @@ esd_info_t *esd_get_all_info( int esd ) {
  struct roar_connection con[1];
  struct roar_mixer_settings mixer;
  int channels;
+ float fs;
  esd_player_info_t * new_player, * cur = NULL; // = NULL to avoid gcc warning
 
  roar_connect_fh(con, esd);
@@ -249,14 +250,15 @@ esd_info_t *esd_get_all_info( int esd ) {
     ROAR_ERR("esd_get_all_info(*): can not get stream mixer info");
     new_player->left_vol_scale = new_player->right_vol_scale = 256;
    } else {
+    fs = mixer.scale / 257;
     if ( channels == 1 ) {
-     new_player->left_vol_scale = new_player->right_vol_scale = mixer.mixer[0] == 65536 ? 256 : mixer.mixer[0] / 256;
+     new_player->left_vol_scale = new_player->right_vol_scale = mixer.mixer[0] == mixer.scale ? 256 : mixer.mixer[0] / fs;
     } else {
      if ( channels != 2 ) {
       ROAR_ERR("esd_get_all_info(*): server seems to run in > 2 channel mode. ignoring any but the first two channels!");
      }
-     new_player->left_vol_scale  = mixer.mixer[0] == 65536 ? 256 : mixer.mixer[0] / 256;
-     new_player->right_vol_scale = mixer.mixer[1] == 65536 ? 256 : mixer.mixer[1] / 256;
+     new_player->left_vol_scale  = mixer.mixer[0] == mixer.scale ? 256 : mixer.mixer[0] / fs;
+     new_player->right_vol_scale = mixer.mixer[1] == mixer.scale ? 256 : mixer.mixer[1] / fs;
     }
    }
 
@@ -336,8 +338,9 @@ int esd_set_stream_pan( int esd, int stream_id,
 
  roar_connect_fh(&con, esd);
 
- mixer.mixer[0] = left_scale  == 256 ? 65535 : left_scale  * 256;
- mixer.mixer[1] = right_scale == 256 ? 65535 : right_scale * 256;
+ mixer.scale    = 256;
+ mixer.mixer[0] = left_scale;
+ mixer.mixer[1] = right_scale;
 
  ROAR_DBG("esd_set_stream_pan(esd=%i, stream_id=%i, left_scale=%i, right_scale=%i) = ?", 
                 esd, stream_id, left_scale, right_scale);
