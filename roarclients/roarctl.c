@@ -446,12 +446,14 @@ int display_mixer (struct roar_connection * con, int stream) {
 
  fs = (float)mixer.scale / 100.;
 
- printf("Mixer ReplayGain      : %i/%i (%.2f%%" _DB ")\n", mixer.rpg_mul, mixer.rpg_div,
-                                                         100.*(float)mixer.rpg_mul/((float)mixer.rpg_div)
+ if ( channels ) { // we hide RPG info for zero-channel streams
+  printf("Mixer ReplayGain      : %i/%i (%.2f%%" _DB ")\n", mixer.rpg_mul, mixer.rpg_div,
+                                                          100.*(float)mixer.rpg_mul/((float)mixer.rpg_div)
 #ifdef ROAR_HAVE_LIBM
-                          , 20*log10f((float)mixer.rpg_mul/(float)mixer.rpg_div)
+                           , 20*log10f((float)mixer.rpg_mul/(float)mixer.rpg_div)
 #endif
-       );
+        );
+ }
 
  for (i = 0; i < channels; i++)
   printf("Mixer volume chan %2i  : %i/%i (%.2f%%" _DB ")\n", i, mixer.mixer[i], mixer.scale,
