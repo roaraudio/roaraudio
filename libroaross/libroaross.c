@@ -701,9 +701,9 @@ static int _ioctl_mixer (struct handle * handle, long unsigned int req, void * v
  if ( o_sid != -1 ) {
   // set/get volume
   if ( o_w ) {
-   mixer.scale    = 65535;
-   mixer.mixer[0] = ( *ip       & 0xFF)*65535/OSS_VOLUME_SCALE;
-   mixer.mixer[1] = ((*ip >> 8) & 0xFF)*65535/OSS_VOLUME_SCALE;
+   mixer.scale    = OSS_VOLUME_SCALE;
+   mixer.mixer[0] = ( *ip       & 0xFF);
+   mixer.mixer[1] = ((*ip >> 8) & 0xFF);
    if ( roar_set_vol(&(handle->session->con), o_sid, &mixer, 2) == -1 ) {
     errno = EIO;
     return -1;

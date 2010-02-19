@@ -44,12 +44,12 @@ int    sio_setvol (struct sio_hdl * hdl, unsigned vol) {
  if ( vol > SIO_MAXVOL )
   return 0;
 
- mixer.scale   = 65535;
+ mixer.scale   = SIO_MAXVOL;
  mixer.rpg_mul = 1;
  mixer.rpg_div = 1;
 
  for (i = 0; i < hdl->info.channels; i++)
-  mixer.mixer[i] = vol*65535/SIO_MAXVOL;
+  mixer.mixer[i] = vol;
 
  if ( roar_set_vol(&(hdl->con), roar_stream_get_id(&(hdl->stream)), &mixer, hdl->info.channels) == -1 )
   return 0;
