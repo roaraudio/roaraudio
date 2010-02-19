@@ -27,6 +27,7 @@
 
 #include <roaraudio.h>
 #include <roaraudio/units.h>
+#include <libroardsp/libroardsp.h>
 
 #if defined(ROAR_HAVE_SETGID) && defined(ROAR_HAVE_SETUID)
 #define _POSIX_USERS
@@ -297,11 +298,14 @@ void list_streams (struct roar_connection * con) {
  int i;
  int num;
  int id[ROAR_STREAMS_MAX];
+ char chanmap[ROAR_MAX_CHANNELS];
  struct roar_stream s;
  struct roar_stream_info info;
- char flags[1024];
- char name[1024];
+ char buffer[1024];
+ char * flags = buffer;
+ char * name  = buffer;
  char * infotext;
+ size_t len;
 
 
  if ( (num = roar_list_streams(con, id, ROAR_STREAMS_MAX)) == -1 ) {
@@ -416,6 +420,19 @@ void list_streams (struct roar_connection * con) {
      strcat(flags, "enhance ");
 
     printf("Flags                 : %s\n", flags);
+   }
+  }
+
+  if ( g_verbose ) {
+   len = ROAR_MAX_CHANNELS;
+   if ( roar_stream_get_chanmap(con, &s, chanmap, &len) == -1 ) {
+    fprintf(stderr, "Error: can not get stream channel map\n");
+   } else {
+    if ( roardsp_chanlist2str(chanmap, len, buffer, 1024) == -1 ) {
+     fprintf(stderr, "Error: can not convert channel map into string\n");
+    } else {
+     printf("Channel Map           : %s\n", buffer);
+    }
    }
   }
 

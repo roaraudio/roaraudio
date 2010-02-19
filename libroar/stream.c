@@ -481,6 +481,71 @@ int roar_stream_get_name (struct roar_connection * con, struct roar_stream * s, 
  return 0;
 }
 
+int roar_stream_get_chanmap (struct roar_connection * con, struct roar_stream * s, char * map, size_t * len) {
+ struct roar_message m;
+ uint16_t * data = (uint16_t *) m.data;
+
+ ROAR_DBG("roar_stream_get_chanmap(con=%p, s=%p, map=%p, len=%p) = ?", con, s, map, len);
+
+ if ( con == NULL || s == NULL || map == NULL || len == NULL )
+  return -1;
+
+ if ( *len == 0 )
+  return -1;
+
+ memset(&m, 0, sizeof(m));
+
+ m.cmd     = ROAR_CMD_GET_STREAM_PARA;
+ m.stream  = s->id;
+ m.datalen = 2*2;
+
+ data[0] = 0; // Version and reserved
+ data[1] = ROAR_STREAM_PARA_CHANMAP;
+
+ data[0] = ROAR_HOST2NET16(data[0]);
+ data[1] = ROAR_HOST2NET16(data[1]);
+
+ if ( roar_req(con, &m, NULL) == -1 )
+  return -1;
+
+ ROAR_DBG("roar_stream_get_chanmap(con=%p, s=%p{.id=%i}, map=%p, len=%p) = ?", con, s, s->id, map, len);
+
+ if ( m.cmd != ROAR_CMD_OK )
+  return -1;
+
+ ROAR_DBG("roar_stream_get_chanmap(con=%p, s=%p{.id=%i}, map=%p, len=%p) = ?", con, s, s->id, map, len);
+
+ if ( m.datalen < 4 )
+  return -1;
+
+ data[0] = ROAR_NET2HOST16(data[0]);
+ data[1] = ROAR_NET2HOST16(data[1]);
+
+ ROAR_DBG("roar_stream_get_chanmap(con=%p, s=%p{.id=%i}, map=%p, len=%p) = ?", con, s, s->id, map, len);
+
+ if ( data[0] != 0 || data[1] != ROAR_STREAM_PARA_CHANMAP )
+  return -1;
+
+ ROAR_DBG("roar_stream_get_chanmap(con=%p, s=%p{.id=%i}, map=%p, len=%p) = ?", con, s, s->id, map, len);
+
+ m.datalen -= 4;
+
+ if ( m.datalen > *len )
+  return -1;
+
+ ROAR_DBG("roar_stream_get_chanmap(con=%p, s=%p{.id=%i}, map=%p, len=%p) = ?", con, s, s->id, map, len);
+
+ memcpy(map, &(m.data[4]), m.datalen);
+
+ *len = m.datalen;
+
+ ROAR_DBG("roar_stream_get_chanmap(con=%p, s=%p{.id=%i}, map=%p, len=%p) = 0", con, s, s->id, map, len);
+ return 0;
+}
+
+int roar_stream_set_chanmap (struct roar_connection * con, struct roar_stream * s, char * map, size_t   len);
+
+
 int roar_stream_set_flags (struct roar_connection * con, struct roar_stream * s, int flags, int reset) {
  struct roar_message m;
  uint16_t * data = (uint16_t *) m.data;

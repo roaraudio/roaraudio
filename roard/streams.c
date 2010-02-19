@@ -315,6 +315,9 @@ int streams_set_dir    (int id, int dir, int defaults) {
   switch (streams_get_subsys(id)) {
    case ROAR_SUBSYS_WAVEFORM:
      streams_set_mixer_stream(id, g_waveform_mixer.stream);
+     roardsp_chanlist_init(ss->chanmap.in,  ROAR_STREAM(ss)->info.channels, ROARDSP_CHANLIST_MAP_ROARAUDIO);
+     roardsp_chanlist_init(ss->chanmap.out, ROAR_STREAM(ss)->info.channels, ROARDSP_CHANLIST_MAP_ROARAUDIO);
+     roardsp_chanmap_calc(&(ss->chanmap), ROARDSP_CHANMAP_MAP, 0);
     break;
 #ifndef ROAR_WITHOUT_DCOMP_MIDI
    case ROAR_SUBSYS_MIDI:

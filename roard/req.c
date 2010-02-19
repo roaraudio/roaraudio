@@ -635,6 +635,21 @@ int req_on_get_stream_para (int client, struct roar_message * mes, char * data) 
     d[1] = ROAR_HOST2NET16(d[1]);
    break;
 
+  case ROAR_STREAM_PARA_CHANMAP:
+    if ( streams_get(mes->stream, &ss) == -1 ) {
+     ROAR_WARN("req_on_get_stream_para(*): request on non existing (or other error?) stream %i", mes->stream);
+     return -1;
+    }
+
+    s = ROAR_STREAM(ss);
+
+    memcpy(&(mes->data[4]), ss->chanmap.in, s->info.channels);
+    mes->datalen = 2*2 + s->info.channels;
+
+    d[0] = ROAR_HOST2NET16(d[0]);
+    d[1] = ROAR_HOST2NET16(d[1]);
+   break;
+
   default:
     ROAR_WARN("req_on_get_stream_para(*): unsupported command: %i", d[1]);
     return -1;
