@@ -326,6 +326,27 @@ int roardsp_chanmap_calc(struct roardsp_chanmap * map, int what, int err_on_none
      }
     }
    break;
+  case ROARDSP_CHANMAP_INVMAP:
+    memset(map->map, (char)-1, sizeof(map->map));
+
+    for (a = 0; a < ROAR_MAX_CHANNELS; a++) {
+     if ( map->out[a] == ROARDSP_CHAN_NONE )
+      continue;
+
+     for (b = 0; b < ROAR_MAX_CHANNELS; b++) {
+      if ( map->out[a] == map->in[b] ) {
+       map->map[a] = b;
+       break;
+      }
+     }
+     if ( b == ROAR_MAX_CHANNELS ) { // src not found in dest
+      if ( err_on_none )
+       return -1;
+
+      map->map[a] = -1;
+     }
+    }
+   break;
   case ROARDSP_CHANMAP_IN:
   case ROARDSP_CHANMAP_OUT:
   default:

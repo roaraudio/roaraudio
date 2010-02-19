@@ -103,6 +103,7 @@
 #define ROARDSP_CHANMAP_IN                0
 #define ROARDSP_CHANMAP_OUT               1
 #define ROARDSP_CHANMAP_MAP               2
+#define ROARDSP_CHANMAP_INVMAP            3
 
 struct roardsp_chanmap {
  char in [ROAR_MAX_CHANNELS];
