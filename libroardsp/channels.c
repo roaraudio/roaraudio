@@ -99,6 +99,205 @@ int    roardsp_chanlist2str(char * list, size_t len, char * str, size_t strlen) 
  return 0;
 }
 
+int    roardsp_chanlist_init(char * list, int channels, int map) {
+ if ( channels == 0 )
+  return 0;
+
+ if ( list == NULL )
+  return -1;
+
+ if ( channels > ROAR_MAX_CHANNELS )
+  return -1;
+
+ // test for common maps:
+ if ( channels == 1 ) {
+  list[0] = ROARDSP_CHAN_MONO;
+  return 0;
+ }
+
+ if ( channels == 2 ) {
+  list[0] = ROARDSP_CHAN_LEFT;
+  list[1] = ROARDSP_CHAN_RIGHT;
+  return 0;
+ }
+
+ // test for specific maps:
+ switch (map) {
+  case ROARDSP_CHANLIST_MAP_ROARAUDIO:
+  case ROARDSP_CHANLIST_MAP_FLAC:
+    if ( map == ROARDSP_CHANLIST_MAP_FLAC && channels > 6 ) {
+     // FLAC only has a fixed mapping for up to 6 channels.
+     return -1;
+    }
+
+    switch (channels) {
+     // FLAC or RoarAudio:
+     case 3:
+       list[0] = ROARDSP_CHAN_LEFT;
+       list[1] = ROARDSP_CHAN_RIGHT;
+       list[2] = ROARDSP_CHAN_CENTER;
+      break;
+     case 4:
+       list[0] = ROARDSP_CHAN_FRONT_LEFT;
+       list[1] = ROARDSP_CHAN_FRONT_RIGHT;
+       list[2] = ROARDSP_CHAN_BACK_LEFT;
+       list[3] = ROARDSP_CHAN_BACK_RIGHT;
+      break;
+     case 5:
+       list[0] = ROARDSP_CHAN_FRONT_LEFT;
+       list[1] = ROARDSP_CHAN_FRONT_RIGHT;
+       list[2] = ROARDSP_CHAN_CENTER;
+       list[3] = ROARDSP_CHAN_BACK_LEFT;
+       list[4] = ROARDSP_CHAN_BACK_RIGHT;
+      break;
+     case 6:
+       list[0] = ROARDSP_CHAN_FRONT_LEFT;
+       list[1] = ROARDSP_CHAN_FRONT_RIGHT;
+       list[2] = ROARDSP_CHAN_CENTER;
+       list[3] = ROARDSP_CHAN_LFE;
+       list[4] = ROARDSP_CHAN_BACK_LEFT;
+       list[5] = ROARDSP_CHAN_BACK_RIGHT;
+      break;
+     // RoarAudio:
+     case 7:
+       list[0] = ROARDSP_CHAN_FRONT_LEFT;
+       list[1] = ROARDSP_CHAN_FRONT_RIGHT;
+       list[2] = ROARDSP_CHAN_CENTER;
+       list[3] = ROARDSP_CHAN_LFE;
+       list[4] = ROARDSP_CHAN_SIDE_LEFT;
+       list[5] = ROARDSP_CHAN_SIDE_RIGHT;
+       list[6] = ROARDSP_CHAN_BACK_CENTER;
+      break;
+     case 8:
+       list[0] = ROARDSP_CHAN_FRONT_LEFT;
+       list[1] = ROARDSP_CHAN_FRONT_RIGHT;
+       list[2] = ROARDSP_CHAN_CENTER;
+       list[3] = ROARDSP_CHAN_LFE;
+       list[4] = ROARDSP_CHAN_SIDE_LEFT;
+       list[5] = ROARDSP_CHAN_SIDE_RIGHT;
+       list[6] = ROARDSP_CHAN_BACK_LEFT;
+       list[7] = ROARDSP_CHAN_BACK_RIGHT;
+      break;
+     default:
+       return -1;
+      break;
+    }
+   break;
+  case ROARDSP_CHANLIST_MAP_VORBIS:
+    switch (channels) {
+     case 3:
+       list[0] = ROARDSP_CHAN_LEFT;
+       list[1] = ROARDSP_CHAN_CENTER;
+       list[2] = ROARDSP_CHAN_RIGHT;
+      break;
+     case 4:
+       list[0] = ROARDSP_CHAN_FRONT_LEFT;
+       list[1] = ROARDSP_CHAN_FRONT_RIGHT;
+       list[2] = ROARDSP_CHAN_BACK_LEFT;
+       list[3] = ROARDSP_CHAN_BACK_RIGHT;
+      break;
+     case 5:
+       list[0] = ROARDSP_CHAN_FRONT_LEFT;
+       list[1] = ROARDSP_CHAN_CENTER;
+       list[2] = ROARDSP_CHAN_FRONT_RIGHT;
+       list[3] = ROARDSP_CHAN_BACK_LEFT;
+       list[4] = ROARDSP_CHAN_BACK_RIGHT;
+      break;
+     case 6:
+       list[0] = ROARDSP_CHAN_FRONT_LEFT;
+       list[1] = ROARDSP_CHAN_CENTER;
+       list[2] = ROARDSP_CHAN_FRONT_RIGHT;
+       list[3] = ROARDSP_CHAN_BACK_LEFT;
+       list[4] = ROARDSP_CHAN_BACK_RIGHT;
+       list[5] = ROARDSP_CHAN_LFE;
+      break;
+     case 7:
+       list[0] = ROARDSP_CHAN_FRONT_LEFT;
+       list[1] = ROARDSP_CHAN_CENTER;
+       list[2] = ROARDSP_CHAN_FRONT_RIGHT;
+       list[3] = ROARDSP_CHAN_SIDE_LEFT;
+       list[4] = ROARDSP_CHAN_SIDE_RIGHT;
+       list[5] = ROARDSP_CHAN_BACK_CENTER;
+       list[6] = ROARDSP_CHAN_LFE;
+      break;
+     case 8:
+       list[0] = ROARDSP_CHAN_FRONT_LEFT;
+       list[1] = ROARDSP_CHAN_CENTER;
+       list[2] = ROARDSP_CHAN_FRONT_RIGHT;
+       list[3] = ROARDSP_CHAN_SIDE_LEFT;
+       list[4] = ROARDSP_CHAN_SIDE_RIGHT;
+       list[5] = ROARDSP_CHAN_BACK_LEFT;
+       list[6] = ROARDSP_CHAN_BACK_RIGHT;
+       list[7] = ROARDSP_CHAN_LFE;
+      break;
+     default:
+       return -1;
+      break;
+    }
+   break;
+  case ROARDSP_CHANLIST_MAP_OSS:
+    switch (channels) {
+     case 8:
+       list[7] = ROARDSP_CHAN_BACK_RIGHT;
+     case 7:
+       list[6] = ROARDSP_CHAN_BACK_LEFT;
+     case 6:
+       list[5] = ROARDSP_CHAN_SIDE_RIGHT;
+     case 5:
+       list[4] = ROARDSP_CHAN_SIDE_LEFT;
+     case 4:
+       list[3] = ROARDSP_CHAN_LFE;
+     case 3:
+       list[2] = ROARDSP_CHAN_CENTER;
+       list[1] = ROARDSP_CHAN_RIGHT;
+       list[0] = ROARDSP_CHAN_LEFT;
+      break;
+     default:
+       return -1;
+      break;
+    }
+   break;
+  case ROARDSP_CHANLIST_MAP_ALSA:
+    // we guess: L,R,BL,BR,C,LFE,SL,SR (really, just guessing, see ALSA plugin of libao)
+    switch (channels) {
+     case 8:
+       list[7] = ROARDSP_CHAN_BACK_RIGHT;
+     case 7:
+       list[6] = ROARDSP_CHAN_BACK_LEFT;
+     case 6:
+       list[5] = ROARDSP_CHAN_LFE;
+     case 5:
+       list[4] = ROARDSP_CHAN_CENTER;
+     case 4:
+       list[3] = ROARDSP_CHAN_BACK_RIGHT;
+     case 3:
+       list[2] = ROARDSP_CHAN_BACK_LEFT;
+       list[1] = ROARDSP_CHAN_RIGHT;
+       list[0] = ROARDSP_CHAN_LEFT;
+      break;
+     default:
+       return -1;
+      break;
+    }
+   break;
+  case ROARDSP_CHANLIST_MAP_RIFF_WAVE:
+    // here we are again, guessing:  L,R,C,LFE,BL,BR,CL,CR,BC,SL,SR
+    // strange, C, LFE on 4 channel file?
+    // return -1 to be sure....
+    switch (channels) {
+     default:
+       return -1;
+      break;
+    }
+   break;
+  default:
+    return -1;
+   break;
+ }
+
+ return 0;
+}
+
 int roardsp_chanmap_calc(struct roardsp_chanmap * map, int what, int err_on_none) {
  int a, b;
 

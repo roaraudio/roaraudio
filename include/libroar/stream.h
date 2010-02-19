@@ -120,6 +120,9 @@ int roar_stream_send_data (struct roar_connection * con, struct roar_stream * s,
 int roar_stream_get_info (struct roar_connection * con, struct roar_stream * s, struct roar_stream_info * info);
 int roar_stream_get_name (struct roar_connection * con, struct roar_stream * s, char * name, size_t len);
 
+int roar_stream_get_chanmap (struct roar_connection * con, struct roar_stream * s, char * map, size_t * len);
+int roar_stream_set_chanmap (struct roar_connection * con, struct roar_stream * s, char * map, size_t   len);
+
 int roar_stream_set_flags (struct roar_connection * con, struct roar_stream * s, int flags, int reset);
 
 int roar_stream_s2m     (struct roar_stream * s, struct roar_message * m);

@@ -92,6 +92,14 @@
 
 #define ROARDSP_CHAN_LFE                  12
 
+#define ROARDSP_CHANLIST_MAP_ROARAUDIO    0
+#define ROARDSP_CHANLIST_MAP_VORBIS       1
+#define ROARDSP_CHANLIST_MAP_FLAC         2
+#define ROARDSP_CHANLIST_MAP_RIFF_WAVE    3
+#define ROARDSP_CHANLIST_MAP_OSS          4
+#define ROARDSP_CHANLIST_MAP_ALSA         5
+#define ROARDSP_CHANLIST_MAP_ESD          6
+
 #define ROARDSP_CHANMAP_IN                0
 #define ROARDSP_CHANMAP_OUT               1
 #define ROARDSP_CHANMAP_MAP               2
@@ -106,6 +114,8 @@ char * roardsp_chan2str (int chan);
 int    roardsp_str2chan(char * str);
 
 int    roardsp_chanlist2str(char * list, size_t len, char * str, size_t strlen);
+
+int    roardsp_chanlist_init(char * list, int channels, int map);
 
 int roardsp_chanmap_calc(struct roardsp_chanmap * map, int what, int err_on_none);
 
