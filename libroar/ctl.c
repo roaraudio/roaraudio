@@ -245,8 +245,9 @@ int roar_get_vol      (struct roar_connection * con, int id, struct roar_mixer_s
 
  m.cmd     = ROAR_CMD_GET_VOL;
  m.datalen = 2*2;
- info[0] = 0;
- info[1] = ROAR_HOST2NET16(id);
+ m.stream  = id;
+
+ info[0]   = ROAR_HOST2NET16(1);
 
  if ( roar_req(con, &m, NULL) == -1 )
   return -1;
@@ -254,7 +255,7 @@ int roar_get_vol      (struct roar_connection * con, int id, struct roar_mixer_s
  if ( m.cmd != ROAR_CMD_OK )
   return -1;
 
- if ( info[0] != 0 )
+ if ( ROAR_NET2HOST16(info[0]) != 1 )
   return -1;
 
  info[1] = ROAR_NET2HOST16(info[1]);
@@ -265,12 +266,12 @@ int roar_get_vol      (struct roar_connection * con, int id, struct roar_mixer_s
  if ( info[1] > ROAR_MAX_CHANNELS )
   return -1;
 
- mixer->scale   = 65535;
- mixer->rpg_mul = 1;
- mixer->rpg_div = 1;
+ mixer->scale   = ROAR_NET2HOST16(info[2]);
+ mixer->rpg_mul = ROAR_NET2HOST16(info[3]);
+ mixer->rpg_div = ROAR_NET2HOST16(info[4]);
 
  for (i = 0; i < info[1]; i++)
-  mixer->mixer[i] = ROAR_NET2HOST16(info[i+2]);
+  mixer->mixer[i] = ROAR_NET2HOST16(info[i+5]);
 
  return 0;
 }

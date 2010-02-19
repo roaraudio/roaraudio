@@ -807,6 +807,7 @@ int req_on_set_vol (int client, struct roar_message * mes, char * data) {
 
 int req_on_get_vol (int client, struct roar_message * mes, char * data) {
  uint16_t * info = (uint16_t *) mes->data;
+ uint16_t   version = -1;
  int stream;
  struct roar_stream_server * s;
  int i;
@@ -815,13 +816,27 @@ int req_on_get_vol (int client, struct roar_message * mes, char * data) {
  ROAR_DBG("req_on_get_vol(*) = ?");
  ROAR_DBG("req_on_get_vol(*): mes->datalen=%i", mes->datalen);
 
- if ( mes->datalen < (2*2) )
+ if ( mes->datalen < 2 ) {
   return -1;
+ }
 
- if ( info[0] != 0 ) // version
-  return -1;
+ version = ROAR_NET2HOST16(info[0]);
 
- stream = ROAR_NET2HOST16(info[1]);
+ switch (version) {
+  case 0:
+    if ( mes->datalen < (2*2) )
+     return -1;
+
+    stream = ROAR_NET2HOST16(info[1]);
+   break;
+  case 1:
+    stream = mes->stream;
+   break;
+  default:
+    return -1;
+   break;
+ }
+
  ROAR_DBG("req_on_get_vol(*): stream=%i", stream);
 
  // TODO: change this code.
@@ -840,13 +855,33 @@ int req_on_get_vol (int client, struct roar_message * mes, char * data) {
 
  // ok, we have everything
 
- info[0] = 0;
- info[1] = ROAR_HOST2NET16(chans = ROAR_STREAM(s)->info.channels);
+ info[0] = ROAR_HOST2NET16(version);
 
- for (i = 0; i < chans; i++)
-  info[2+i] = ROAR_HOST2NET16(s->mixer.mixer[i]);
+ switch (version) {
+  case 0:
+    info[1] = ROAR_HOST2NET16(chans = ROAR_STREAM(s)->info.channels);
 
- mes->datalen = (2 + chans)*2;
+    for (i = 0; i < chans; i++)
+     info[2+i] = ROAR_HOST2NET16(s->mixer.mixer[i]);
+
+     mes->datalen = (2 + chans)*2;
+   break;
+  case 1:
+    info[1] = ROAR_HOST2NET16(chans = ROAR_STREAM(s)->info.channels);
+    info[2] = ROAR_HOST2NET16(s->mixer.scale);
+    info[3] = ROAR_HOST2NET16(s->mixer.rpg_mul);
+    info[4] = ROAR_HOST2NET16(s->mixer.rpg_div);
+
+    for (i = 0; i < chans; i++)
+     info[5+i] = ROAR_HOST2NET16(s->mixer.mixer[i]);
+
+     mes->datalen = (5 + chans)*2;
+   break;
+  default:
+    return -1;
+   break;
+ }
+
  mes->cmd = ROAR_CMD_OK;
 
  return 0;

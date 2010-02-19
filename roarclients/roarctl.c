@@ -428,9 +428,10 @@ void list_streams (struct roar_connection * con) {
 }
 
 int display_mixer (struct roar_connection * con, int stream) {
- int channels;
  struct roar_mixer_settings mixer;
+ int channels;
  int i;
+ float fs;
 
  if ( roar_get_vol(con, stream, &mixer, &channels) == -1 ) {
   fprintf(stderr, "Error: can not get stream mixer info\n");
@@ -443,11 +444,20 @@ int display_mixer (struct roar_connection * con, int stream) {
 #define _DB ""
 #endif
 
- for (i = 0; i < channels; i++)
-  printf("Mixer volume chan %2i  : %i (%.2f%%" _DB ")\n", i, mixer.mixer[i],
-                           (float)mixer.mixer[i]/655.35f
+ fs = (float)mixer.scale / 100.;
+
+ printf("Mixer ReplayGain      : %i/%i (%.2f%%" _DB ")\n", mixer.rpg_mul, mixer.rpg_div,
+                                                         100.*(float)mixer.rpg_mul/((float)mixer.rpg_div)
 #ifdef ROAR_HAVE_LIBM
-                          , 20*log10f((float)mixer.mixer[i]/65535.f)
+                          , 20*log10f((float)mixer.rpg_mul/(float)mixer.rpg_div)
+#endif
+       );
+
+ for (i = 0; i < channels; i++)
+  printf("Mixer volume chan %2i  : %i/%i (%.2f%%" _DB ")\n", i, mixer.mixer[i], mixer.scale,
+                           (float)mixer.mixer[i]/fs
+#ifdef ROAR_HAVE_LIBM
+                          , 20*log10f((float)mixer.mixer[i]/(float)mixer.scale)
 #endif
         );
 
