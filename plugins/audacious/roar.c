@@ -388,8 +388,9 @@ int roar_chk_metadata(void) {
 
 
 void roar_get_volume(int *l, int *r) {
- int channels;
  struct roar_mixer_settings mixer;
+ int channels;
+ float fs;
 
  if ( !(g_inst.state & STATE_CONNECTED) )
   return;
@@ -399,11 +400,13 @@ void roar_get_volume(int *l, int *r) {
   return;
  }
 
+ fs = (float)mixer.scale/100.;
+
  if ( channels == 1 ) {
-  *l = *r = mixer.mixer[0]/655.35;
+  *l = *r = mixer.mixer[0]/fs;
  } else {
-  *l = mixer.mixer[0]/655.35;
-  *r = mixer.mixer[1]/655.35;
+  *l = mixer.mixer[0]/fs;
+  *r = mixer.mixer[1]/fs;
  }
 }
 
@@ -413,8 +416,10 @@ void roar_set_volume(int l, int r) {
  if ( !(g_inst.state & STATE_CONNECTED) )
   return;
 
- mixer.mixer[0] = l * 655.35;
- mixer.mixer[1] = r * 655.35;
+ mixer.mixer[0] = l;
+ mixer.mixer[1] = r;
+
+ mixer.scale    = 100;
 
  roar_set_vol(&(g_inst.con), g_inst.stream.id, &mixer, 2);
 }
