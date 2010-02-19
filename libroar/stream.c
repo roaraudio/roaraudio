@@ -543,7 +543,41 @@ int roar_stream_get_chanmap (struct roar_connection * con, struct roar_stream * 
  return 0;
 }
 
-int roar_stream_set_chanmap (struct roar_connection * con, struct roar_stream * s, char * map, size_t   len);
+int roar_stream_set_chanmap (struct roar_connection * con, struct roar_stream * s, char * map, size_t   len) {
+ struct roar_message m;
+ uint16_t * data = (uint16_t *) m.data;
+
+ if ( con == NULL || s == NULL || map == NULL )
+  return -1;
+
+ if ( len == 0 )
+  return 0;
+
+ memset(&m, 0, sizeof(m));
+
+ m.cmd     = ROAR_CMD_SET_STREAM_PARA;
+ m.stream  = s->id;
+ m.datalen = 2*2 + len;
+
+ if ( m.datalen > sizeof(m.data) )
+  return -1;
+
+ data[0] = 0; // Version and reserved
+ data[1] = ROAR_STREAM_PARA_CHANMAP;
+
+ data[0] = ROAR_HOST2NET16(data[0]);
+ data[1] = ROAR_HOST2NET16(data[1]);
+
+ memcpy(&(m.data[4]), map, len);
+
+ if ( roar_req(con, &m, NULL) == -1 )
+  return -1;
+
+ if ( m.cmd != ROAR_CMD_OK )
+  return -1;
+
+ return 0;
+}
 
 
 int roar_stream_set_flags (struct roar_connection * con, struct roar_stream * s, int flags, int reset) {
