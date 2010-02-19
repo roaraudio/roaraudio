@@ -736,9 +736,11 @@ int req_on_attach      (int client, struct roar_message * mes, char * data) {
 }
 
 int req_on_set_vol (int client, struct roar_message * mes, char * data) {
- uint16_t * info = (uint16_t *) mes->data;
- int stream;
  struct roar_stream_server * s;
+ uint16_t * info = (uint16_t *) mes->data;
+ uint16_t   version;
+ uint16_t   scale = 65535;
+ int stream;
  int i;
  int chans;
 
@@ -748,10 +750,21 @@ int req_on_set_vol (int client, struct roar_message * mes, char * data) {
  if ( mes->datalen < (4*2) )
   return -1;
 
- if ( info[0] != 0 ) // version
-  return -1;
+ version = ROAR_NET2HOST16(info[0]);
+ ROAR_DBG("req_on_set_vol(*): version=%i", (int)version);
 
- stream = ROAR_NET2HOST16(info[1]);
+ switch (version) {
+  case 0:
+    stream = ROAR_NET2HOST16(info[1]);
+   break;
+  case 1:
+    stream = mes->stream;
+    scale  = ROAR_NET2HOST16(info[1]);
+   break;
+  default:
+    return -1;
+   break;
+ }
  ROAR_DBG("req_on_set_vol(*): stream=%i", stream);
 
  // TODO: change this code.
@@ -784,6 +797,8 @@ int req_on_set_vol (int client, struct roar_message * mes, char * data) {
    ROAR_DBG("req_on_set_vol(*): channel %i: %i", i, ROAR_NET2HOST16(info[i+3]));
   }
 
+  s->mixer.scale = scale;
+
   ROAR_DBG("req_on_set_vol(*): mixer changed!");
 
  } else if ( info[2] == ROAR_SET_VOL_ONE ) {
@@ -792,6 +807,8 @@ int req_on_set_vol (int client, struct roar_message * mes, char * data) {
    return -1;
 
   s->mixer.mixer[ROAR_NET2HOST16(info[3])] = ROAR_NET2HOST16(info[4]);
+
+  s->mixer.scale = scale;
  } else {
   return -1;
  }

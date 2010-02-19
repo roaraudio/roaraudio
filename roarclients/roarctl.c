@@ -434,7 +434,7 @@ int display_mixer (struct roar_connection * con, int stream) {
  float fs;
 
  if ( roar_get_vol(con, stream, &mixer, &channels) == -1 ) {
-  fprintf(stderr, "Error: can not get stream mixer info\n");
+  fprintf(stderr, "Error: can not get stream mixer info for stream %i\n", stream);
   return -1;
  }
 
@@ -464,11 +464,13 @@ int display_mixer (struct roar_connection * con, int stream) {
  return 0;
 }
 
-static unsigned int set_mixer_parse_volume (char * k, int len) {
+static unsigned int set_mixer_parse_volume (char * k, int len, uint16_t scale) {
+ float fs = scale;
+
  switch (k[len - 1]) {
   case '%':
     k[len - 1] = 0;
-    return (atof(k)*65535.f)/100;
+    return (atof(k)*fs)/100.;
    break;
 #ifdef ROAR_HAVE_LIBM
   case 'b':
@@ -478,7 +480,7 @@ static unsigned int set_mixer_parse_volume (char * k, int len) {
      return 0;
 
     k[len - 2] = 0;
-    return powf(10, atof(k)/20.f)*65535.f;
+    return powf(10, atof(k)/20.f)*fs;
    break;
 #endif
  }
@@ -487,6 +489,7 @@ static unsigned int set_mixer_parse_volume (char * k, int len) {
 }
 
 int set_mixer (struct roar_connection * con, int * cur, int max, char * arg[]) {
+ uint16_t scale = 65535;
  int chans = 0;
  int id;
  int i;
@@ -505,10 +508,14 @@ int set_mixer (struct roar_connection * con, int * cur, int max, char * arg[]) {
  k = arg[++(*cur)];
 
  if ( roar_get_vol(con, id, &old_mixer, &old_chans) == -1 ) {
-  fprintf(stderr, "Error: can not get stream mixer info\n");
+  fprintf(stderr, "Error: can not get stream mixer info for stream %i\n", id);
   return -1;
  }
 
+ if ( !strcmp(arg[*cur + 1], "scale") ) {
+  (*cur)++; // 'scale'
+  scale = atoi(arg[++(*cur)]);
+ }
 
 // TODO: clean up code here as the % vs. abs code is very duplicate...
 
@@ -521,7 +528,7 @@ int set_mixer (struct roar_connection * con, int * cur, int max, char * arg[]) {
   k   = arg[++(*cur)];
   len = strlen(k);
 
-  vol_mono = set_mixer_parse_volume(k, len);
+  vol_mono = set_mixer_parse_volume(k, len, scale);
 
   for (i = 0; i < old_chans; i++)
    mixer.mixer[i] = vol_mono;
@@ -537,12 +544,12 @@ int set_mixer (struct roar_connection * con, int * cur, int max, char * arg[]) {
   k   = arg[++(*cur)];
   len = strlen(k);
 
-  vol_l = set_mixer_parse_volume(k, len);
+  vol_l = set_mixer_parse_volume(k, len, scale);
 
   k   = arg[++(*cur)];
   len = strlen(k);
 
-  vol_r = set_mixer_parse_volume(k, len);
+  vol_r = set_mixer_parse_volume(k, len, scale);
 
   vol_mono = (vol_l + vol_r) / 2;
 
@@ -596,11 +603,11 @@ int set_mixer (struct roar_connection * con, int * cur, int max, char * arg[]) {
    k   = arg[++(*cur)];
    len = strlen(k);
 
-   mixer.mixer[i] = set_mixer_parse_volume(k, len);
+   mixer.mixer[i] = set_mixer_parse_volume(k, len, scale);
   }
  }
 
- mixer.scale = 65535;
+ mixer.scale = scale;
 
  return roar_set_vol(con, id, &mixer, chans);
 }

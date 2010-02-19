@@ -220,8 +220,9 @@ int roar_set_vol      (struct roar_connection * con, int id, struct roar_mixer_s
 
  m.cmd     = ROAR_CMD_SET_VOL;
  m.datalen = (3 + channels) * 2;
- info[0] = 0;
- info[1] = ROAR_HOST2NET16(id);
+ m.stream  = id;
+ info[0] = ROAR_HOST2NET16(1);
+ info[1] = ROAR_HOST2NET16(mixer->scale);
  info[2] = ROAR_HOST2NET16(ROAR_SET_VOL_ALL);
 
  for (i = 0; i < channels; i++)
