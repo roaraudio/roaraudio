@@ -331,7 +331,7 @@ int streams_set_dir    (int id, int dir, int defaults) {
   }
 
   memcpy(ss->chanmap.out, ss->chanmap.in, sizeof(ss->chanmap.out));
-  roardsp_chanmap_calc(&(ss->chanmap), ROARDSP_CHANMAP_MAP, 0); // MAP and INVMAP are the same when in==out
+  streams_set_map(id, NULL, 0);
  } else {
   streams_set_mixer_stream(id, id);
  }
