@@ -1111,7 +1111,7 @@ int streams_fill_mixbuffer2 (int id, struct roar_audio_info * info) {
  ss->is_new = 0;
 
  // check channel map:
- if ( roardsp_chanmap_mappcm(indata, indata, inlen, stream_info->channels, ss->chanmap.map, stream_info->bits) == -1 ) {
+ if ( roardsp_chanmap_mappcm(indata, indata, inlen, stream_info->channels, &(ss->chanmap), stream_info->bits) == -1 ) {
   if ( bufbuf != NULL )
    roar_buffer_free(bufbuf);
   return -1;
