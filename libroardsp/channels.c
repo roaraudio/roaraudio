@@ -24,6 +24,7 @@
  */
 
 #include "libroardsp.h"
+#include "roaraudio/units.h"
 
 static struct {
  int id;
@@ -390,6 +391,154 @@ int roardsp_chanmap_calc(struct roardsp_chanmap * map, int what, int err_on_none
  }
 
  return 0;
+}
+
+int roardsp_chanmap_mappcm8 (char    * out, char    * in, size_t len, size_t chans, char * map) {
+ char buf[ROAR_MAX_CHANNELS];
+ size_t frame;
+ size_t c;
+
+ if ( len == 0 )
+  return 0;
+
+ if ( out == NULL || in == NULL || map == NULL )
+  return -1;
+
+ if ( chans > ROAR_MAX_CHANNELS )
+  return -1;
+
+ if ( in == out ) {
+  for (frame = 0; frame < len/(chans*_8BIT); frame++) {
+   memset(buf, 0, sizeof(buf));
+
+   for (c = 0; c < chans; c++) {
+    buf[map[c]*_8BIT] = in[c];
+   }
+
+   memcpy(out, buf, chans*_8BIT);
+
+   in  += chans;
+   out += chans;
+  }
+ } else {
+  memset(out, 0, len); // silance channels we do not use
+  for (frame = 0; frame < len/(chans*_8BIT); frame++) {
+   for (c = 0; c < chans; c++) {
+    out[map[c]*_8BIT] = in[c];
+   }
+   in  += chans;
+   out += chans;
+  }
+ }
+
+ return 0;
+}
+
+int roardsp_chanmap_mappcm16(int16_t * out, int16_t * in, size_t len, size_t chans, char * map) {
+ int16_t buf[ROAR_MAX_CHANNELS];
+ size_t frame;
+ size_t c;
+
+ if ( len == 0 )
+  return 0;
+
+ if ( out == NULL || in == NULL || map == NULL )
+  return -1;
+
+ if ( chans > ROAR_MAX_CHANNELS )
+  return -1;
+
+ if ( in == out ) {
+  for (frame = 0; frame < len/(chans*_16BIT); frame++) {
+   memset(buf, 0, sizeof(buf));
+
+   for (c = 0; c < chans; c++) {
+    buf[map[c]*_16BIT] = in[c];
+   }
+
+   memcpy(out, buf, chans*_16BIT);
+
+   in  += chans;
+   out += chans;
+  }
+ } else {
+  memset(out, 0, len); // silance channels we do not use
+  for (frame = 0; frame < len/(chans*_16BIT); frame++) {
+   for (c = 0; c < chans; c++) {
+    out[map[c]*_16BIT] = in[c];
+   }
+   in  += chans;
+   out += chans;
+  }
+ }
+
+ return 0;
+}
+
+int roardsp_chanmap_mappcm24(void    * out, void    * in, size_t len, size_t chans, char * map) {
+ return -1;
+}
+
+int roardsp_chanmap_mappcm32(int32_t * out, int32_t * in, size_t len, size_t chans, char * map) {
+ int32_t buf[ROAR_MAX_CHANNELS];
+ size_t frame;
+ size_t c;
+
+ if ( len == 0 )
+  return 0;
+
+ if ( out == NULL || in == NULL || map == NULL )
+  return -1;
+
+ if ( chans > ROAR_MAX_CHANNELS )
+  return -1;
+
+ if ( in == out ) {
+  for (frame = 0; frame < len/(chans*_32BIT); frame++) {
+   memset(buf, 0, sizeof(buf));
+
+   for (c = 0; c < chans; c++) {
+    buf[map[c]*_32BIT] = in[c];
+   }
+
+   memcpy(out, buf, chans*_32BIT);
+
+   in  += chans;
+   out += chans;
+  }
+ } else {
+  memset(out, 0, len); // silance channels we do not use
+  for (frame = 0; frame < len/(chans*_32BIT); frame++) {
+   for (c = 0; c < chans; c++) {
+    out[map[c]*_32BIT] = in[c];
+   }
+   in  += chans;
+   out += chans;
+  }
+ }
+
+ return 0;
+}
+
+int roardsp_chanmap_mappcm  (void    * out, void    * in, size_t len, size_t chans, char * map, int bits) {
+ if ( len == 0 )
+  return 0;
+
+ if ( out == NULL || in == NULL || map == NULL )
+  return -1;
+
+ if ( chans > ROAR_MAX_CHANNELS )
+  return -1;
+
+ switch (bits) {
+  case  8: return roardsp_chanmap_mappcm8(out, in, len, chans, map);  break;
+  case 16: return roardsp_chanmap_mappcm16(out, in, len, chans, map); break;
+  case 24: return roardsp_chanmap_mappcm24(out, in, len, chans, map); break;
+  case 32: return roardsp_chanmap_mappcm32(out, in, len, chans, map); break;
+  default:
+    return -1;
+   break;
+ }
 }
 
 //ll
