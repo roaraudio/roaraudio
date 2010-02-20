@@ -29,6 +29,7 @@ int waveform_init  (void) {
  struct roar_stream_server * ss;
  struct roar_stream        *  s;
  int                          i;
+ char                      cmap[ROAR_MAX_CHANNELS];
 
  if ( (g_waveform_mixer.stream = add_mixer(ROAR_SUBSYS_WAVEFORM, _MIXER_NAME("Waveform"), &ss)) == -1 )
   return -1;
@@ -39,9 +40,8 @@ int waveform_init  (void) {
 
  memcpy(&(s->info), g_sa, sizeof(struct roar_audio_info));
 
- roardsp_chanlist_init(ss->chanmap.in,   s->info.channels, ROARDSP_CHANLIST_MAP_ROARAUDIO);
- memcpy(ss->chanmap.out, ss->chanmap.in, sizeof(ss->chanmap.out));
- streams_set_map(g_waveform_mixer.stream, NULL, 0);
+ roardsp_chanlist_init(cmap,   s->info.channels, ROARDSP_CHANLIST_MAP_ROARAUDIO);
+ streams_set_map(g_waveform_mixer.stream, cmap, s->info.channels);
 
  ss->state = ROAR_STREAMSTATE_OLD;
 

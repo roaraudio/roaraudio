@@ -45,6 +45,7 @@ int midi_init_config(void) {
 
 int midi_init (void) {
  struct roar_stream_server * ss;
+ char cmap[16];
  int i;
 
  midi_config.inited = 0;
@@ -70,9 +71,8 @@ int midi_init (void) {
   ROAR_WARN("Can not create MIDI mixer");
  }
 
- roardsp_chanlist_init(ss->chanmap.in,   16, ROARDSP_CHANLIST_MAP_MIDI);
- memcpy(ss->chanmap.out, ss->chanmap.in, sizeof(ss->chanmap.out));
- streams_set_map(g_midi_mixer.stream, NULL, 0);
+ roardsp_chanlist_init(cmap,   16, ROARDSP_CHANLIST_MAP_MIDI);
+ streams_set_map(g_midi_mixer.stream, cmap, 16);
 
  ss->state = ROAR_STREAMSTATE_OLD;
 
