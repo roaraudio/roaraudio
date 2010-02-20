@@ -954,16 +954,20 @@ int streams_set_map      (int id, char * map, size_t len) {
  if ( map != NULL ) {
   if ( ROAR_STREAM(ss)->info.channels != len )
    return -1;
-
-  memcpy(ss->chanmap.in, map, len);
  }
 
  switch (ssdir) {
   case STREAM_DIR_IN:
+    if ( map != NULL )
+     memcpy(ss->chanmap.in, map, len);
+
     roardsp_chanmap_calc(&(ss->chanmap), ROARDSP_CHANMAP_MAP, 0);
    break;
   case STREAM_DIR_OUT:
-    roardsp_chanmap_calc(&(ss->chanmap), ROARDSP_CHANMAP_INVMAP, 0);
+    if ( map != NULL )
+     memcpy(ss->chanmap.out, map, len);
+
+    roardsp_chanmap_calc(&(ss->chanmap), ROARDSP_CHANMAP_MAP, 0);
    break;
  }
 
