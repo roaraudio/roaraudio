@@ -69,6 +69,11 @@ int midi_init (void) {
  if ( (g_midi_mixer.stream = add_mixer(ROAR_SUBSYS_MIDI, _MIXER_NAME("MIDI"), &ss)) == -1 ) {
   ROAR_WARN("Can not create MIDI mixer");
  }
+
+ roardsp_chanlist_init(ss->chanmap.in,   16, ROARDSP_CHANLIST_MAP_MIDI);
+ memcpy(ss->chanmap.out, ss->chanmap.in, sizeof(ss->chanmap.out));
+ streams_set_map(g_midi_mixer.stream, NULL, 0);
+
  ss->state = ROAR_STREAMSTATE_OLD;
 
  for (i = 0; i < ROAR_STREAMS_MAX; i++) {
