@@ -91,6 +91,7 @@ int roardsp_str2chan(char * str) {
 }
 
 int    roardsp_chanlist2str(char * list, size_t len, char * str, size_t strlen) {
+ char * name;
  int i;
 
  if ( list == NULL && len > 0 )
@@ -113,7 +114,13 @@ int    roardsp_chanlist2str(char * list, size_t len, char * str, size_t strlen) 
   if ( i != 0 )
    strcat(str, ",");
 
-  strcat(str, roardsp_chan2str(list[i]));
+  name = roardsp_chan2str(list[i]);
+
+  if ( name == NULL ) {
+   strcat(str, "<<<INVALID>>>");
+  } else {
+   strcat(str, name);
+  }
  }
 
  return 0;
