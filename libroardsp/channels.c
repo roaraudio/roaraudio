@@ -530,6 +530,16 @@ int roardsp_chanmap_mappcm  (void    * out, void    * in, size_t len, size_t cha
  if ( chans > ROAR_MAX_CHANNELS )
   return -1;
 
+#if 0
+ { int i;
+  printf("---- BEGIN MAP ----\n");
+  for (i = 0; i < chans; i++) {
+   printf("MAP: %i->%i\n", i, map[i]);
+  }
+  printf("---- END MAP ----\n");
+ }
+#endif
+
  switch (bits) {
   case  8: return roardsp_chanmap_mappcm8(out, in, len, chans, map);  break;
   case 16: return roardsp_chanmap_mappcm16(out, in, len, chans, map); break;
