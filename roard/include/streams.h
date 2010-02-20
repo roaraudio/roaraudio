@@ -52,6 +52,11 @@
 #define ROAR_STREAM_CTL_TYPE_FLOAT  0x00020000
 #define ROAR_STREAM_CTL_TYPE_FPI100 0x00030000 /* fix point integter int/100 */
 
+#define STREAM_DIR_NONE             0x00
+#define STREAM_DIR_IN               0x01
+#define STREAM_DIR_OUT              0x02
+#define STREAM_DIR_BIDIR            (STREAM_DIR_IN|STREAM_DIR_OUT)
+
 struct roar_stream_server {
  struct roar_stream _stream;
  unsigned int pos_abs;
@@ -106,6 +111,7 @@ int streams_set_mixer_stream(int id, int mixer);
 int streams_get_mixer_stream(int id, int mixer);
 
 int streams_get_subsys (int id);
+int streams_get_ssdir  (int id);
 
 int streams_new_virtual (int parent, struct roar_stream_server ** stream);
 
@@ -131,6 +137,8 @@ char * streams_get_name  (int id);
 
 int streams_calc_delay   (int id);
 int streams_set_mixer    (int id);
+
+int streams_set_map      (int id, char * map, size_t len);
 
 int streams_ctl          (int id, int_least32_t cmd, void * data);
 

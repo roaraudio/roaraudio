@@ -317,7 +317,7 @@ int streams_set_dir    (int id, int dir, int defaults) {
      streams_set_mixer_stream(id, g_waveform_mixer.stream);
      roardsp_chanlist_init(ss->chanmap.in,  ROAR_STREAM(ss)->info.channels, ROARDSP_CHANLIST_MAP_ROARAUDIO);
      roardsp_chanlist_init(ss->chanmap.out, ROAR_STREAM(ss)->info.channels, ROARDSP_CHANLIST_MAP_ROARAUDIO);
-     roardsp_chanmap_calc(&(ss->chanmap), ROARDSP_CHANMAP_MAP, 0);
+     roardsp_chanmap_calc(&(ss->chanmap), ROARDSP_CHANMAP_MAP, 0); // MAP and INVMAP are the same when in==out
     break;
 #ifndef ROAR_WITHOUT_DCOMP_MIDI
    case ROAR_SUBSYS_MIDI:
@@ -408,6 +408,46 @@ int streams_get_subsys (int id) {
    break;
   case ROAR_DIR_THRU:
     return streams_get_subsys(ROAR_STREAM(ss)->pos_rel_id);
+   break;
+ }
+
+ return -1;
+}
+
+int streams_get_ssdir  (int id) {
+ struct roar_stream_server * ss;
+
+ _CHECK_SID(id);
+
+ if ( (ss = g_streams[id]) == NULL )
+  return -1;
+
+ switch (ROAR_STREAM(ss)->dir) {
+  case ROAR_DIR_PLAY:
+  case ROAR_DIR_MIDI_IN:
+  case ROAR_DIR_LIGHT_IN:
+  case ROAR_DIR_RAW_IN:
+  case ROAR_DIR_COMPLEX_IN:
+    return STREAM_DIR_IN;
+   break;
+  case ROAR_DIR_RECORD:
+  case ROAR_DIR_MONITOR:
+  case ROAR_DIR_OUTPUT:
+  case ROAR_DIR_MIDI_OUT:
+  case ROAR_DIR_LIGHT_OUT:
+  case ROAR_DIR_RAW_OUT:
+  case ROAR_DIR_COMPLEX_OUT:
+    return STREAM_DIR_OUT;
+   break;
+  case ROAR_DIR_MIXING:
+    return STREAM_DIR_NONE;
+   break;
+  case ROAR_DIR_FILTER:
+  case ROAR_DIR_BIDIR:
+    return STREAM_DIR_BIDIR;
+   break;
+  case ROAR_DIR_THRU:
+    return streams_get_ssdir(ROAR_STREAM(ss)->pos_rel_id);
    break;
  }
 
@@ -894,6 +934,38 @@ int streams_set_mixer    (int id) {
   return 0;
 
  return driver_set_volume(id, &(ss->mixer));
+}
+
+int streams_set_map      (int id, char * map, size_t len) {
+ struct roar_stream_server * ss;
+ int ssdir;
+
+ _CHECK_SID(id);
+
+ if ( (ss = g_streams[id]) == NULL )
+  return -1;
+
+ ssdir = streams_get_ssdir(id);
+ if ( ssdir != STREAM_DIR_IN && ssdir != STREAM_DIR_OUT )
+  return -1;
+
+ if ( map != NULL ) {
+  if ( ROAR_STREAM(ss)->info.channels != len )
+   return -1;
+
+  memcpy(ss->chanmap.in, map, len);
+ }
+
+ switch (ssdir) {
+  case STREAM_DIR_IN:
+    roardsp_chanmap_calc(&(ss->chanmap), ROARDSP_CHANMAP_MAP, 0);
+   break;
+  case STREAM_DIR_OUT:
+    roardsp_chanmap_calc(&(ss->chanmap), ROARDSP_CHANMAP_INVMAP, 0);
+   break;
+ }
+
+ return 0;
 }
 
 int streams_ctl          (int id, int_least32_t cmd, void * data) {

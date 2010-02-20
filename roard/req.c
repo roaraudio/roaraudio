@@ -663,30 +663,48 @@ int req_on_set_stream_para (int client, struct roar_message * mes, char * data) 
  uint16_t * d = (uint16_t *) mes->data;
  int i;
 
- if ( mes->datalen != 8 )
+ if ( mes->datalen < 2*2 )
   return -1;
 
- for (i = 0; i < mes->datalen/2; i++) {
+ for (i = 0; i < 2; i++) {
   d[i] = ROAR_NET2HOST16(d[i]);
  }
 
- if ( d[0] != 0 || d[1] != ROAR_STREAM_PARA_FLAGS ) {
-  ROAR_WARN("req_on_set_stream_para(*): unsupported command version: %i, %i", d[0], d[1]);
+ if ( d[0] != 0 )
   return -1;
+
+ switch (d[1]) {
+  case ROAR_STREAM_PARA_FLAGS:
+    if ( mes->datalen != 2*4 )
+     return -1;
+
+    d[2] = ROAR_NET2HOST16(d[2]);
+    d[3] = ROAR_NET2HOST16(d[3]);
+
+    ROAR_DBG("req_on_set_stream_para(*): request seems to be valid");
+
+    if ( d[2] == ROAR_RESET_FLAG ) {
+     if ( streams_reset_flag(mes->stream, d[3]) == -1 )
+      return -1;
+    } else {
+     if ( streams_set_flag(mes->stream, d[3]) == -1 )
+      return -1;
+    }
+   break;
+  case ROAR_STREAM_PARA_CHANMAP:
+    if ( streams_set_map(mes->stream, &(mes->data[4]), mes->datalen - 4) == -1 )
+     return -1;
+   break;
+  default:
+    ROAR_WARN("req_on_set_stream_para(*): unsupported command version: %i, %i", d[0], d[1]);
+    return -1;
+   break;
  }
 
  mes->cmd     = ROAR_CMD_OK;
  mes->datalen = 0;
 
- ROAR_DBG("req_on_set_stream_para(*): request seems to be valid");
-
- if ( d[2] == ROAR_RESET_FLAG ) {
-  return streams_reset_flag(mes->stream, d[3]);
- } else {
-  return streams_set_flag(mes->stream, d[3]);
- }
-
- return -1;
+ return 0;
 }
 
 int req_on_kick (int client, struct roar_message * mes, char * data) {
