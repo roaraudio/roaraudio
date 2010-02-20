@@ -92,6 +92,24 @@
 
 #define ROARDSP_CHAN_LFE                  12
 
+// MIDI Channels:
+#define ROARDSP_CHAN_MIDI0                64
+#define ROARDSP_CHAN_MIDI1                65
+#define ROARDSP_CHAN_MIDI2                66
+#define ROARDSP_CHAN_MIDI3                67
+#define ROARDSP_CHAN_MIDI4                68
+#define ROARDSP_CHAN_MIDI5                69
+#define ROARDSP_CHAN_MIDI6                70
+#define ROARDSP_CHAN_MIDI7                71
+#define ROARDSP_CHAN_MIDI8                72
+#define ROARDSP_CHAN_MIDI9                73
+#define ROARDSP_CHAN_MIDI10               74
+#define ROARDSP_CHAN_MIDI11               75
+#define ROARDSP_CHAN_MIDI12               76
+#define ROARDSP_CHAN_MIDI13               77
+#define ROARDSP_CHAN_MIDI14               78
+#define ROARDSP_CHAN_MIDI15               79
+
 #define ROARDSP_CHANLIST_MAP_ROARAUDIO    0
 #define ROARDSP_CHANLIST_MAP_VORBIS       1
 #define ROARDSP_CHANLIST_MAP_FLAC         2
@@ -99,6 +117,7 @@
 #define ROARDSP_CHANLIST_MAP_OSS          4
 #define ROARDSP_CHANLIST_MAP_ALSA         5
 #define ROARDSP_CHANLIST_MAP_ESD          6
+#define ROARDSP_CHANLIST_MAP_MIDI         7
 
 #define ROARDSP_CHANMAP_IN                0
 #define ROARDSP_CHANMAP_OUT               1

@@ -30,7 +30,9 @@ static struct {
  char * name;
  char * sn;
 } _g_chans[] = {
+ // general:
  {ROARDSP_CHAN_NONE,           "NONE",           "NONE"           },
+ // waveform:
  {ROARDSP_CHAN_FRONT_LEFT,     "FRONT_LEFT",     "FL"             },
  {ROARDSP_CHAN_FRONT_RIGHT,    "FRONT_RIGHT",    "FR"             },
  {ROARDSP_CHAN_SIDE_LEFT,      "SIDE_LEFT",      "SL"             },
@@ -47,6 +49,23 @@ static struct {
  {ROARDSP_CHAN_MS_MID,         "MS_MID",         "MID"            },
  {ROARDSP_CHAN_MS_SIDE,        "MS_SIDE",        "SIDE"           },
  {ROARDSP_CHAN_LFE,            "LFE",            "LFE"            },
+ // midi:
+ {ROARDSP_CHAN_MIDI0,           "MIDI0",         NULL             },
+ {ROARDSP_CHAN_MIDI1,           "MIDI1",         NULL             },
+ {ROARDSP_CHAN_MIDI2,           "MIDI2",         NULL             },
+ {ROARDSP_CHAN_MIDI3,           "MIDI3",         NULL             },
+ {ROARDSP_CHAN_MIDI4,           "MIDI4",         NULL             },
+ {ROARDSP_CHAN_MIDI5,           "MIDI5",         NULL             },
+ {ROARDSP_CHAN_MIDI6,           "MIDI6",         NULL             },
+ {ROARDSP_CHAN_MIDI7,           "MIDI7",         NULL             },
+ {ROARDSP_CHAN_MIDI8,           "MIDI8",         NULL             },
+ {ROARDSP_CHAN_MIDI9,           "MIDI9",         NULL             },
+ {ROARDSP_CHAN_MIDI10,          "MIDI10",        NULL             },
+ {ROARDSP_CHAN_MIDI11,          "MIDI11",        NULL             },
+ {ROARDSP_CHAN_MIDI12,          "MIDI12",        NULL             },
+ {ROARDSP_CHAN_MIDI13,          "MIDI13",        NULL             },
+ {ROARDSP_CHAN_MIDI14,          "MIDI14",        NULL             },
+ {ROARDSP_CHAN_MIDI15,          "MIDI15",        NULL             },
  {ROARDSP_CHAN_EOL, NULL, NULL}
 };
 
@@ -64,7 +83,8 @@ int roardsp_str2chan(char * str) {
  int i;
 
  for (i = 0; _g_chans[i].id != ROARDSP_CHAN_EOL; i++)
-  if ( !strcasecmp(_g_chans[i].name, str) || !strcasecmp(_g_chans[i].sn, str) )
+  if ( !strcasecmp(_g_chans[i].name, str) ||
+       (_g_chans[i].sn != NULL && !strcasecmp(_g_chans[i].sn, str)) )
    return _g_chans[i].id;
 
  return -1;
@@ -100,6 +120,8 @@ int    roardsp_chanlist2str(char * list, size_t len, char * str, size_t strlen) 
 }
 
 int    roardsp_chanlist_init(char * list, int channels, int map) {
+ int i;
+
  if ( channels == 0 )
   return 0;
 
@@ -108,6 +130,12 @@ int    roardsp_chanlist_init(char * list, int channels, int map) {
 
  if ( channels > ROAR_MAX_CHANNELS )
   return -1;
+
+ if ( map == ROARDSP_CHANLIST_MAP_MIDI ) {
+  for (i = 0; i < channels; i++) {
+   list[i] = i+ROARDSP_CHAN_MIDI0;
+  }
+ }
 
  // test for common maps:
  if ( channels == 1 ) {
