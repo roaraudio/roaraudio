@@ -412,7 +412,7 @@ int roardsp_chanmap_mappcm8 (char    * out, char    * in, size_t len, size_t cha
    memset(buf, 0, sizeof(buf));
 
    for (c = 0; c < chans; c++) {
-    buf[map[c]*_8BIT] = in[c];
+    buf[map[c]] = in[c];
    }
 
    memcpy(out, buf, chans*_8BIT);
@@ -424,7 +424,7 @@ int roardsp_chanmap_mappcm8 (char    * out, char    * in, size_t len, size_t cha
   memset(out, 0, len); // silance channels we do not use
   for (frame = 0; frame < len/(chans*_8BIT); frame++) {
    for (c = 0; c < chans; c++) {
-    out[map[c]*_8BIT] = in[c];
+    out[map[c]] = in[c];
    }
    in  += chans;
    out += chans;
@@ -453,7 +453,7 @@ int roardsp_chanmap_mappcm16(int16_t * out, int16_t * in, size_t len, size_t cha
    memset(buf, 0, sizeof(buf));
 
    for (c = 0; c < chans; c++) {
-    buf[map[c]*_16BIT] = in[c];
+    buf[map[c]] = in[c];
    }
 
    memcpy(out, buf, chans*_16BIT);
@@ -465,7 +465,7 @@ int roardsp_chanmap_mappcm16(int16_t * out, int16_t * in, size_t len, size_t cha
   memset(out, 0, len); // silance channels we do not use
   for (frame = 0; frame < len/(chans*_16BIT); frame++) {
    for (c = 0; c < chans; c++) {
-    out[map[c]*_16BIT] = in[c];
+    out[map[c]] = in[c];
    }
    in  += chans;
    out += chans;
@@ -498,7 +498,7 @@ int roardsp_chanmap_mappcm32(int32_t * out, int32_t * in, size_t len, size_t cha
    memset(buf, 0, sizeof(buf));
 
    for (c = 0; c < chans; c++) {
-    buf[map[c]*_32BIT] = in[c];
+    buf[map[c]] = in[c];
    }
 
    memcpy(out, buf, chans*_32BIT);
@@ -510,7 +510,7 @@ int roardsp_chanmap_mappcm32(int32_t * out, int32_t * in, size_t len, size_t cha
   memset(out, 0, len); // silance channels we do not use
   for (frame = 0; frame < len/(chans*_32BIT); frame++) {
    for (c = 0; c < chans; c++) {
-    out[map[c]*_32BIT] = in[c];
+    out[map[c]] = in[c];
    }
    in  += chans;
    out += chans;
