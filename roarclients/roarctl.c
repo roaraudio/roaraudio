@@ -533,7 +533,8 @@ int set_mixer (struct roar_connection * con, int * cur, int max, char * arg[]) {
 
  if ( !strcmp(arg[*cur + 1], "scale") ) {
   (*cur)++; // 'scale'
-  scale = atoi(arg[++(*cur)]);
+  (*cur)++;
+  scale = set_mixer_parse_volume(arg[*cur], strlen(arg[*cur]), 65535);
  }
 
 // TODO: clean up code here as the % vs. abs code is very duplicate...
