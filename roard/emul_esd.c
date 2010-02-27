@@ -384,8 +384,9 @@ int emul_esd_on_stream_pan (int client, struct emul_esd_command * cmd, void * da
  stream = _ESD2ROAR(stream);
 
  if ( streams_get(stream, &ss) != -1 ) {
-  ss->mixer.mixer[0] = left  == 256 ? 65535 : left  * 256;
-  ss->mixer.mixer[1] = right == 256 ? 65535 : right * 256;
+  ss->mixer.scale    = 256;
+  ss->mixer.mixer[0] = left;
+  ss->mixer.mixer[1] = right;
   if ( streams_set_mixer(stream) != -1 )
    ok = 1;
  }
@@ -466,7 +467,7 @@ int emul_esd_on_all_info   (int client, struct emul_esd_command * cmd, void * da
       if ( ss->mixer.mixer[0] == ss->mixer.scale ) {
        left = right = 256;
       } else {
-       left = right = ss->mixer.mixer[0] / 256;
+       left = right = ss->mixer.mixer[0] * 256 / ss->mixer.scale;
       }
       format |= ESD_MONO;
      break;
@@ -474,13 +475,13 @@ int emul_esd_on_all_info   (int client, struct emul_esd_command * cmd, void * da
       if ( ss->mixer.mixer[0] == ss->mixer.scale ) {
        left = 256;
       } else {
-       left = ss->mixer.mixer[0] / 256;
+       left = ss->mixer.mixer[0] * 256 / ss->mixer.scale;
       }
 
       if ( ss->mixer.mixer[1] == ss->mixer.scale ) {
        right = 256;
       } else {
-       right = ss->mixer.mixer[1] / 256;
+       right = ss->mixer.mixer[1] * 256 / ss->mixer.scale;
       }
 
       format |= ESD_STEREO;
