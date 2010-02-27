@@ -8,6 +8,7 @@ v. 0.3beta5 - ?
 	* upgraded some code to use VIO
 	* more updates for Debian
 	* fixed init script for Debian and Debian like systems
+	* fixed some mixer stuff, a lot things work better now
 
 v. 0.3beta4 - Sat Feb 06 2010 26:02 CET
 	* Applyed patches for Debian
