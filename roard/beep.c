@@ -103,13 +103,13 @@ int beep_start (int client, struct roar_beep * beep) {
   beep->vol  = ROAR_BEEP_DEFAULT_VOL;
 
  if ( beep->time == 0 )
-  beep->time = 512; // 512ms
+  beep->time = ROAR_BEEP_DEFAULT_TIME;
 
  if ( beep->freq == 0 )
-  beep->freq = 440;
+  beep->freq = ROAR_BEEP_DEFAULT_FREQ;
 
  if ( beep->type == 0 )
-  beep->type = ROAR_BEEP_TYPE_DEFAULT;
+  beep->type = ROAR_BEEP_DEFAULT_TYPE;
 
  // x, y, z location '0' is allready centered.
 
