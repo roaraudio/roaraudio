@@ -800,6 +800,9 @@ int req_on_set_vol (int client, struct roar_message * mes, char * data) {
  }
  ROAR_DBG("req_on_set_vol(*): stream=%i", stream);
 
+ if ( scale == 0 )
+  return -1;
+
  // TODO: change this code.
  //       we should not directly change the stream object but use some stream_*()-func
  //       for that job.
