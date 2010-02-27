@@ -96,11 +96,12 @@ int beep_start (int client, struct roar_beep * beep) {
  struct roar_stream        *   s;
  struct roar_buffer        * buf;
  int stream;
+ int i;
 
  ROAR_DBG("beep_start(client=%i, beep=%p) = ?", client, beep);
 
  if ( beep->vol  == 0 )
-  beep->vol  = ROAR_BEEP_MAX_VOL;
+  beep->vol  = ROAR_BEEP_DEFAULT_VOL;
 
  if ( beep->time == 0 )
   beep->time = 512; // 512ms
@@ -151,6 +152,11 @@ int beep_start (int client, struct roar_beep * beep) {
 
  s->info.channels = 1;
  s->info.bits     = 8;
+
+ for (i = 0; i < s->info.channels; i++) {
+  ss->mixer.mixer[i] = beep->vol;
+  ss->mixer.scale    = ROAR_BEEP_MAX_VOL;
+ }
 
  if ( streams_set_dir(stream, ROAR_DIR_PLAY, 1) == -1 ) {
   streams_delete(stream);

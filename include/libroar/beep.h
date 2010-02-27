@@ -41,6 +41,8 @@
 #define ROAR_BEEP_MAX_VOL 65535
 #define ROAR_BEEP_MAX_POS 32767
 
+#define ROAR_BEEP_DEFAULT_VOL (ROAR_BEEP_MAX_VOL/4)
+
 #define ROAR_BEEP_TYPE_DEFAULT            0
 #define ROAR_BEEP_TYPE_CBELL              1
 #define ROAR_BEEP_TYPE_XBELL              2
