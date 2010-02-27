@@ -321,10 +321,10 @@ struct roar_audio_info {
 
 struct roar_mixer_settings {
  //unsigned      channels;
- roar_intm16   scale;
- roar_intm16   rpg_mul; // rpg = ReplayGain
- roar_intm16   rpg_div;
- roar_intm16   mixer[ROAR_MAX_CHANNELS];
+ uint16_t   scale;
+ uint16_t   rpg_mul; // rpg = ReplayGain
+ uint16_t   rpg_div;
+ uint16_t   mixer[ROAR_MAX_CHANNELS];
 };
 
 #define ROAR_MIXER(x) ((struct roar_mixer_settings *)x)
