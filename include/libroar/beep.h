@@ -38,6 +38,24 @@
 
 #include "libroar.h"
 
+#define ROAR_BEEP_MAX_VOL 65535
+#define ROAR_BEEP_MAX_POS 32767
+
+#define ROAR_BEEP_TYPE_DEFAULT            0
+#define ROAR_BEEP_TYPE_CBELL              1
+#define ROAR_BEEP_TYPE_XBELL              2
+#define ROAR_BEEP_TYPE_ERROR              3
+
+struct roar_beep {
+ uint16_t vol;
+ uint16_t time;
+ uint16_t freq;
+ uint16_t type;
+ int16_t  x, y, z;
+};
+
+int roar_beep(struct roar_connection * con, const struct roar_beep * beep);
+
 #endif
 
 //ll
