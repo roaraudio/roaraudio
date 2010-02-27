@@ -33,6 +33,7 @@ int main (void) {
   { "roar_message",        sizeof(struct roar_message)        },
   { "roar_stream",         sizeof(struct roar_stream)         },
   { "roar_stream_server",  sizeof(struct roar_stream_server)  },
+  { "roar_mixer_settings", sizeof(struct roar_mixer_settings) },
   { "roar_sample",         sizeof(struct roar_sample)         },
   { "roar_client",         sizeof(struct roar_client)         },
   { "roard_config",        sizeof(struct roard_config)        },
