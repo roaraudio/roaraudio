@@ -26,7 +26,59 @@
 #include "roard.h"
 
 int beep_start (int client, struct roar_beep * beep) {
- return -1;
+ struct roar_stream_server * ss;
+ struct roar_stream        *  s;
+ int stream;
+
+ if ( beep->vol  == 0 )
+  beep->vol  = ROAR_BEEP_MAX_VOL;
+
+ if ( beep->time == 0 )
+  beep->time = 512; // 512ms
+
+ if ( beep->freq == 0 )
+  beep->freq = 440;
+
+ if ( beep->type == 0 )
+  beep->type = ROAR_BEEP_TYPE_DEFAULT;
+
+ // x, y, z location '0' is allready centered.
+
+ // TODO: remove the following lions as soon as we support non zero values
+ if ( beep->z != 0 )
+  return -1;
+
+ if ( beep->y != 0 )
+  return -1;
+
+ if ( beep->x != 0 )
+  return -1;
+
+ if ((stream = streams_new()) == -1 )
+  return -1;
+
+ if ( client_stream_add(client, stream) == -1 ) {
+  streams_delete(stream);
+  return -1;
+ }
+
+ if ( streams_get(stream, &ss) == -1 ) {
+  streams_delete(stream);
+  return -1;
+ }
+
+ s = ROAR_STREAM(ss);
+
+ memcpy(&(s->info), g_sa, sizeof(s->info));
+
+ s->info.channels = 1;
+
+ if ( streams_set_dir(stream, ROAR_DIR_PLAY, 1) == -1 ) {
+  streams_delete(stream);
+  return -1;
+ }
+
+ return stream;
 }
 
 //ll
