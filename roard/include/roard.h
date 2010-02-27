@@ -107,6 +107,7 @@ int g_verbose;
 #include "raw.h"
 #include "rdtcs.h"
 #include "waveform.h"
+#include "beep.h"
 #include "lib.h"
 #include "plugins.h"
 
