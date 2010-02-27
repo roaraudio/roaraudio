@@ -970,7 +970,39 @@ int req_on_add_data (int client, struct roar_message * mes, char * data) {
 }
 
 int req_on_beep        (int client, struct roar_message * mes, char * data) {
- return -1;
+ struct roar_beep bs;
+ int16_t * info = (int16_t*)mes->data;
+ int stream;
+
+ memset(&bs, 0, sizeof(bs));
+
+ if ( mes->datalen > 0 ) {
+  if ( mes->datalen < 2 )
+   return -1;
+
+  if ( ROAR_NET2HOST16(info[0]) != 0 ) /* version */
+   return -1;
+
+  if ( mes->datalen != 8*2 )
+   return -1;
+
+  bs.vol  = ROAR_NET2HOST16(info[1]);
+  bs.time = ROAR_NET2HOST16(info[2]);
+  bs.freq = ROAR_NET2HOST16(info[3]);
+  bs.type = ROAR_NET2HOST16(info[4]);
+  bs.x    = ROAR_NET2HOST16(info[5]);
+  bs.y    = ROAR_NET2HOST16(info[6]);
+  bs.z    = ROAR_NET2HOST16(info[7]);
+ }
+
+ if ( (stream = beep_start(client, &bs)) == -1 )
+  return -1;
+
+ mes->stream  = stream;
+ mes->cmd     = ROAR_CMD_OK_STOP;
+ mes->datalen = 0;
+
+ return 0;
 }
 
 //ll
