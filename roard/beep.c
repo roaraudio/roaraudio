@@ -25,4 +25,8 @@
 
 #include "roard.h"
 
+int beep_start (int client, struct roar_beep * beep) {
+ return -1;
+}
+
 //ll

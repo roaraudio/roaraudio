@@ -28,6 +28,8 @@
 
 #include <roaraudio.h>
 
+int beep_start (int client, struct roar_beep * beep);
+
 #endif
 
 //ll
