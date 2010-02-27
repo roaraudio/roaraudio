@@ -62,6 +62,11 @@ int beep_start (int client, struct roar_beep * beep) {
   return -1;
  }
 
+ if ( streams_set_name(stream, "Beep Source") == -1 ) {
+  streams_delete(stream);
+  return -1;
+ }
+
  if ( streams_get(stream, &ss) == -1 ) {
   streams_delete(stream);
   return -1;
