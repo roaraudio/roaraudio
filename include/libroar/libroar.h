@@ -142,6 +142,7 @@
 #include "sshaskpass.h"
 #include "roarslp.h"
 #include "roarx11.h"
+#include "beep.h"
 
 // some basic macros:
 #define ROAR_MAX2(a,b) ((a) > (b) ? (a) : (b))
