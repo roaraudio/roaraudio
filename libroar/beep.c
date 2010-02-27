@@ -35,4 +35,38 @@
 
 #include "libroar.h"
 
+int roar_beep(struct roar_connection * con, const struct roar_beep * beep) {
+ struct roar_message m;
+ int16_t * data = (int16_t*)m.data;
+
+ if ( con == NULL )
+  return -1;
+
+ memset(&m, 0, sizeof(m));
+
+ m.cmd = ROAR_CMD_BEEP;
+
+ if ( beep == NULL ) {
+  m.datalen = 0;
+ } else {
+  m.datalen = 8*2;
+  data[0]   = ROAR_HOST2NET16(0); // version
+  data[1]   = ROAR_HOST2NET16(beep->vol);
+  data[2]   = ROAR_HOST2NET16(beep->time);
+  data[3]   = ROAR_HOST2NET16(beep->freq);
+  data[4]   = ROAR_HOST2NET16(beep->type);
+  data[5]   = ROAR_HOST2NET16(beep->x);
+  data[6]   = ROAR_HOST2NET16(beep->y);
+  data[7]   = ROAR_HOST2NET16(beep->z);
+ }
+
+ if ( roar_req(con, &m, NULL) != 0 )
+  return -1;
+
+ if ( m.cmd != ROAR_CMD_OK )
+  return -1;
+
+ return m.stream;
+}
+
 //ll
