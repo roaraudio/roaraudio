@@ -96,7 +96,6 @@ int beep_start (int client, struct roar_beep * beep) {
  struct roar_stream        *   s;
  struct roar_buffer        * buf;
  int stream;
- int i;
 
  ROAR_DBG("beep_start(client=%i, beep=%p) = ?", client, beep);
 
@@ -119,9 +118,6 @@ int beep_start (int client, struct roar_beep * beep) {
   return -1;
 
  if ( beep->y != 0 )
-  return -1;
-
- if ( beep->x != 0 )
   return -1;
 
  ROAR_DBG("beep_start(client=%i, beep=%p) = ?", client, beep);
@@ -150,13 +146,18 @@ int beep_start (int client, struct roar_beep * beep) {
 
  memcpy(&(s->info), g_sa, sizeof(s->info));
 
- s->info.channels = 1;
+ s->info.channels = 2;
  s->info.bits     = 8;
 
- for (i = 0; i < s->info.channels; i++) {
-  ss->mixer.mixer[i] = beep->vol;
-  ss->mixer.scale    = ROAR_BEEP_MAX_VOL;
- }
+ ss->mixer.mixer[0] = beep->x > 0 ?
+                        ((long)beep->vol * ((long)ROAR_BEEP_MAX_POS - (long)beep->x)/(long)ROAR_BEEP_MAX_POS) :
+                        beep->vol;
+ ss->mixer.mixer[1] = beep->x < 0 ?
+                        ((long)beep->vol * ((long)ROAR_BEEP_MAX_POS + (long)beep->x)/(long)ROAR_BEEP_MAX_POS) :
+                        beep->vol;
+ ss->mixer.scale    = ROAR_BEEP_MAX_VOL;
+
+ ROAR_DBG("beep_start(client=%i, beep=%p): beep->x=%i, ss->mixer.mixer[] = {%u, %u}", client, beep, beep->x, ss->mixer.mixer[0], ss->mixer.mixer[1]);
 
  if ( streams_set_dir(stream, ROAR_DIR_PLAY, 1) == -1 ) {
   streams_delete(stream);
