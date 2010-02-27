@@ -969,4 +969,8 @@ int req_on_add_data (int client, struct roar_message * mes, char * data) {
  return 0;
 }
 
+int req_on_beep        (int client, struct roar_message * mes, char * data) {
+ return -1;
+}
+
 //ll

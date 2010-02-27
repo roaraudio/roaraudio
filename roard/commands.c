@@ -70,6 +70,8 @@ struct roar_command g_commands[COMMAND_MAX_COMMANDS] = {
 
   {ROAR_CMD_ADD_DATA,     _NAME("ADD_DATA"),     req_on_add_data},
 
+  {ROAR_CMD_BEEP,         _NAME("BEEP"),         req_on_beep},
+
   {ROAR_CMD_EOL,          _NAME("END OF LIST"),  NULL}
  };
 
