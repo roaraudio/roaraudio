@@ -104,6 +104,7 @@
 #endif
 
 // NOTE: we need this macro in some of our header files.
+// TODO: This is oubslute, we will remove it soon.
 #if INT_MAX >= 32767
 #define roar_intm16  int
 #define roar_uintm16 unsigned int
