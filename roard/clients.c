@@ -244,6 +244,8 @@ int clients_check_all (void) {
 
      if ( fh > max_fh )
       max_fh = fh;
+    } else if ( fh == -2 ) {
+     streams_check(g_clients[i]->streams[j]);
     }
 
     have_stream = 1;
@@ -302,9 +304,7 @@ int clients_check_all (void) {
 
    if ( (fh = streams_get_fh(g_clients[i]->streams[j])) != -1 ) {
     ROAR_DBG("clients_check_all(*): client=%i, stream=%i: fh=%i", i, j, fh);
-    if ( fh == -2 ) {
-     streams_check(g_clients[i]->streams[j]);
-    } else if ( FD_ISSET(fh, &r) ) {
+    if ( fh > -1 && FD_ISSET(fh, &r) ) {
      streams_check(g_clients[i]->streams[j]);
     }
    }
