@@ -27,9 +27,6 @@
 #define _DRIVER_ROAR_H_
 
 int driver_roar_open_vio(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh, struct roar_stream_server * sstream);
-int driver_roar_close(DRIVER_USERDATA_T   inst);
-int driver_roar_pause(DRIVER_USERDATA_T   inst, int newstate);
-int driver_roar_flush(DRIVER_USERDATA_T   inst);
 
 #endif
 

@@ -1,7 +1,7 @@
 //driver_raor.c:
 
 /*
- *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008
+ *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008-2010
  *
  *  This file is part of roard a part of RoarAudio,
  *  a cross-platform sound system for both, home and professional use.
@@ -45,17 +45,11 @@ int driver_roar_open_vio(struct roar_vio_calls * inst, char * device, struct roa
   }
  }
 
- if ( (fh = roar_simple_stream(info->rate, info->channels, info->bits, info->codec, device, dir, "roard")) == -1 ) {
+ if ( roar_vio_simple_stream(inst, info->rate, info->channels, info->bits, info->codec, device, dir, "roard") == -1 ) {
   return -1;
  }
 
- roar_vio_set_fh(inst, fh);
-
  return 0;
-}
-
-int driver_roar_close(DRIVER_USERDATA_T   inst) {
- return roar_simple_close(roar_vio_get_fh((struct roar_vio_calls *)inst));
 }
 
 //ll
