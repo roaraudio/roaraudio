@@ -48,14 +48,20 @@ struct roar_codecfilter g_codecfilter[] = {
  _PCM_FILTER(ROAR_CODEC_PCM_U_LE),
  _PCM_FILTER(ROAR_CODEC_PCM_U_BE),
  _PCM_FILTER(ROAR_CODEC_PCM_U_PDP),
+#ifndef ROAR_WITHOUT_DCOMP_MIDI
  _DUMMY_FILTER(ROAR_CODEC_MIDI, "MIDI", "Native MIDI Support",
                ROAR_CODECFILTER_READ|ROAR_CODECFILTER_WRITE|ROAR_CODECFILTER_PRETHRU_NN, ROAR_SUBSYS_MIDI, NULL),
+#endif
+#ifndef ROAR_WITHOUT_DCOMP_LIGHT
  {ROAR_CODEC_DMX512,      "DMX512", "Native DMX512 Support", NULL, NULL,
                           ROAR_CODECFILTER_READ|ROAR_CODECFILTER_WRITE|ROAR_CODECFILTER_PRETHRU_NN, ROAR_SUBSYS_LIGHT,
                                           NULL, NULL, NULL, NULL, NULL, NULL, cf_alaw_delay, NULL},
+#endif
+#ifndef ROAR_WITHOUT_DCOMP_RDTCS
  {ROAR_CODEC_RDS,         "RDS", "Native RDS Support", NULL, NULL,
                           ROAR_CODECFILTER_WRITE|ROAR_CODECFILTER_PRETHRU_NN, ROAR_SUBSYS_RDTCS,
                                           NULL, NULL, NULL, NULL, NULL, NULL, cf_alaw_delay, NULL},
+#endif
 
 /*
 #ifdef ROAR_HAVE_LIBSNDFILE
