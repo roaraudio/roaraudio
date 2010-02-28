@@ -52,7 +52,7 @@ struct roar_driver g_driver[] = {
 #endif
 #ifdef ROAR_HAVE_LIBAO
  { "ao", "libao audio driver", "DRIVER", DRV_FLAG_NONE, ROAR_SUBSYS_WAVEFORM,
-   NULL, driver_ao_close, driver_ao_open_vio},
+   NULL, NULL, driver_ao_open_vio},
 #endif
 #ifdef ROAR_HAVE_LIBSHOUT
  {"shout", "libshout streaming", "http://user:pw@host:port/mount.ogg", DRV_FLAG_NONE, ROAR_SUBSYS_WAVEFORM,

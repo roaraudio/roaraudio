@@ -108,13 +108,14 @@ int driver_ao_open_vio(struct roar_vio_calls * inst, char * device, struct roar_
  memset(inst, 0, sizeof(struct roar_vio_calls));
  inst->inst  = (void*) aodevice;
  inst->write = driver_ao_write;
+ inst->close = driver_ao_close;
 
  return 0;
 }
 
-int driver_ao_close(DRIVER_USERDATA_T   inst) {
+int driver_ao_close(struct roar_vio_calls * vio) {
 
- ao_close((ao_device*)(((struct roar_vio_calls *)inst)->inst));
+ ao_close((ao_device*)vio->inst);
 
  driver_ao_uninit();
 

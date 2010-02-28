@@ -27,8 +27,8 @@
 #define _DRIVER_AO_H_
 
 int driver_ao_open_vio(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh, struct roar_stream_server * sstream);
-int driver_ao_close(DRIVER_USERDATA_T   inst);
 ssize_t driver_ao_write(struct roar_vio_calls * vio, void *buf, size_t count);
+int driver_ao_close(struct roar_vio_calls * vio);
 
 #endif
 
