@@ -25,7 +25,7 @@
 
 #include "roard.h"
 
-#ifndef ROAR_WITHOUT_DCOMP_PWMLED
+#if !defined(ROAR_WITHOUT_DCOMP_PWMLED) && !defined(ROAR_WITHOUT_VIO_DSTR)
 
 int driver_pwmled_open_vio  (struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh, struct roar_stream_server * sstream) {
  struct roar_vio_defaults def;

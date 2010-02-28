@@ -71,7 +71,7 @@ struct roar_driver g_driver[] = {
  {"dmx", "DMX512 driver", "/dev/dmx", DRV_FLAG_FHSEC, ROAR_SUBSYS_LIGHT,
   NULL, NULL, driver_dmx_open_vio},
 #endif
-#ifndef ROAR_WITHOUT_DCOMP_PWMLED
+#if !defined(ROAR_WITHOUT_DCOMP_PWMLED) && !defined(ROAR_WITHOUT_VIO_DSTR)
  {"pwmled", "PWM LED driver", "/dev/ttyS0", DRV_FLAG_FHSEC, ROAR_SUBSYS_LIGHT,
   NULL, NULL, driver_pwmled_open_vio},
 #endif
