@@ -56,7 +56,7 @@ struct roar_driver g_driver[] = {
 #endif
 #ifdef ROAR_HAVE_LIBSHOUT
  {"shout", "libshout streaming", "http://user:pw@host:port/mount.ogg", DRV_FLAG_NONE, ROAR_SUBSYS_WAVEFORM,
-  NULL, driver_shout_close, driver_shout_open_vio},
+  NULL, NULL, driver_shout_open_vio},
 #endif
 #ifdef ROAR_HAVE_LIBSNDIO
  {"sndio", "OpenBSD sndio", "/dev/audio, /tmp/aucat-<uid>/default", DRV_FLAG_NONE, ROAR_SUBSYS_WAVEFORM|ROAR_SUBSYS_MIDI,

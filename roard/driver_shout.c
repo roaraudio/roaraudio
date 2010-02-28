@@ -42,16 +42,6 @@ int     driver_shout_open_vio(struct roar_vio_calls * inst, char * device, struc
  char * a;
  shout_t * shout;
 
-/*
- if ( info->codec == ROAR_CODEC_DEFAULT )
-  info->codec = ROAR_CODEC_OGG_VORBIS;
-
- if ( info->codec != ROAR_CODEC_OGG_VORBIS ) {
-  ROAR_ERR("This driver only supports Ogg/Vorbis, current codec is %s", roar_codec2str(info->codec));
-  return -1;
- }
-*/
-
  switch (info->codec) {
   case ROAR_CODEC_DEFAULT:
     info->codec = ROAR_CODEC_OGG_VORBIS;
@@ -63,7 +53,7 @@ int     driver_shout_open_vio(struct roar_vio_calls * inst, char * device, struc
     // ok, no errors here
    break;
   default:
-    ROAR_ERR("This driver only supports Ogg/Vorbis, current codec is %s", roar_codec2str(info->codec));
+    ROAR_ERR("This driver only supports Ogg/* (most common is Ogg/Vorbis), current codec is %s", roar_codec2str(info->codec));
     return -1;
    break;
  }
@@ -210,13 +200,14 @@ int     driver_shout_open_vio(struct roar_vio_calls * inst, char * device, struc
  memset(inst, 0, sizeof(struct roar_vio_calls));
  inst->inst  = (void*)shout;
  inst->write = driver_shout_write;
+ inst->close = driver_shout_close;
 
  return 0;
 }
 
-int     driver_shout_close(DRIVER_USERDATA_T   inst) {
+int     driver_shout_close(struct roar_vio_calls * vio) {
 
- shout_close((shout_t *)((struct roar_vio_calls *)inst)->inst);
+ shout_close((shout_t *)vio->inst);
 
  if ( _driver_shout_usage_counter-- == 1 )
   shout_shutdown();

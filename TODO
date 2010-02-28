@@ -15,7 +15,7 @@ Things we should do:
  * (0.3 O/L/-) fix libroaryiff
  * (0.3 W/H/-) Get into Debian
  * (0.3 W/N/-) Clean and update libroarpulse
- * (0.3 W/h/-) Cleanup driver: DMX, ESD, Roar, Shout
+ * (0.3 W/h/-) Cleanup driver: DMX, ESD, Roar
  * (0.3 W/N/-) Implement ALSA support
  * (0.3 W/L/-) Implement support for ICY Meta Data
  * (1.0 W/h/-) impelemnt RTS/SDP/SAP
