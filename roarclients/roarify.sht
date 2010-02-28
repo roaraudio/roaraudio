@@ -9,11 +9,15 @@ usage() {
  echo
  echo "Options:"
  echo " --help               - This help"
+ echo " --print-env-bash     - Print needed ENVs in bash mode"
  echo " --server SERVER      - Sets server to SERVER"
  echo " --load   MODULE      - Force loading of MODULE"
 }
 
 CMD=false
+
+print_env=false
+print_mode=none
 
 while [ "$1" != '' ]
 do
@@ -38,6 +42,10 @@ do
    usage;
    exit 0;
   ;;
+  '--print-env-bash')
+   print_env=true
+   print_mode=bash
+  ;;
   '-'*)
    echo "$0: Error: Unknown option: $k" >&2
    usage >&2;
@@ -53,6 +61,23 @@ done
 export LD_PRELOAD="%%%PREFIX_LIB%%%/libroar.so.%%%VERSION%%% %%%PREFIX_LIB%%%/libroaross.so.%%%VERSION%%% $LD_PRELOAD"
 export LD_LIBRARY_PATH='%%%PREFIX_COMP_LIBS%%%'":$LD_LIBRARY_PATH"
 export PATH='%%%PREFIX_COMP_BINS%%%'":$PATH"
+
+if $print_env
+then
+ case "$print_mode" in
+  'bash')
+   [ "$ROAR_SERVER" != '' ] && echo "ROAR_SERVER='$ROAR_SERVER'"
+   echo "LD_PRELOAD='$LD_PRELOAD'"
+   echo "LD_LIBRARY_PATH='$LD_LIBRARY_PATH'"
+   echo "PATH='$PATH'"
+  ;;
+  *)
+   echo "Error: unknown print env mode: $print_mode" >&2
+   exit 1;
+  ;;
+ esac
+ exit 0;
+fi
 
 exec -- "$CMD" "$@"
 
