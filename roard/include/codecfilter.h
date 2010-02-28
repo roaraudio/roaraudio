@@ -127,6 +127,7 @@ int codecfilter_delay(CODECFILTER_USERDATA_T   inst, int codecfilter, uint_least
 int codecfilter_ctl  (CODECFILTER_USERDATA_T   inst, int codecfilter, int_least32_t cmd, void * data);
 
 int codecfilter_delay_fulldyn(CODECFILTER_USERDATA_T   inst, uint_least32_t * delay);
+int codecfilter_delay_zero(CODECFILTER_USERDATA_T   inst, uint_least32_t * delay);
 
 
 // codecfilter without a own .h:
@@ -138,7 +139,6 @@ int cf_alaw_close(CODECFILTER_USERDATA_T   inst);
 
 int cf_alaw_read(CODECFILTER_USERDATA_T   inst, char * buf, int len);
 int cf_alaw_write(CODECFILTER_USERDATA_T   inst, char * buf, int len);
-int cf_alaw_delay(CODECFILTER_USERDATA_T   inst, uint_least32_t * delay);
 
 int cf_mulaw_open(CODECFILTER_USERDATA_T * inst, int codec,
                                             struct roar_stream_server * info,

@@ -38,7 +38,7 @@
 
 #define _PCM_FILTER(codec) _DUMMY_FILTER(codec, "PCM", "Native PCM Support", \
                                          ROAR_CODECFILTER_READ|ROAR_CODECFILTER_WRITE|ROAR_CODECFILTER_PRETHRU_NN, \
-                                         ROAR_SUBSYS_WAVEFORM, cf_alaw_delay)
+                                         ROAR_SUBSYS_WAVEFORM, codecfilter_delay_zero)
 
 struct roar_codecfilter g_codecfilter[] = {
  _DUMMY_FILTER(-1, "null", "null codec filter", ROAR_CODECFILTER_NONE, ROAR_SUBSYS_NONE, NULL),
@@ -55,12 +55,12 @@ struct roar_codecfilter g_codecfilter[] = {
 #ifndef ROAR_WITHOUT_DCOMP_LIGHT
  {ROAR_CODEC_DMX512,      "DMX512", "Native DMX512 Support", NULL, NULL,
                           ROAR_CODECFILTER_READ|ROAR_CODECFILTER_WRITE|ROAR_CODECFILTER_PRETHRU_NN, ROAR_SUBSYS_LIGHT,
-                                          NULL, NULL, NULL, NULL, NULL, NULL, cf_alaw_delay, NULL},
+                                          NULL, NULL, NULL, NULL, NULL, NULL, codecfilter_delay_zero, NULL},
 #endif
 #ifndef ROAR_WITHOUT_DCOMP_RDTCS
  {ROAR_CODEC_RDS,         "RDS", "Native RDS Support", NULL, NULL,
                           ROAR_CODECFILTER_WRITE|ROAR_CODECFILTER_PRETHRU_NN, ROAR_SUBSYS_RDTCS,
-                                          NULL, NULL, NULL, NULL, NULL, NULL, cf_alaw_delay, NULL},
+                                          NULL, NULL, NULL, NULL, NULL, NULL, codecfilter_delay_zero, NULL},
 #endif
 
 /*
@@ -102,7 +102,7 @@ struct roar_codecfilter g_codecfilter[] = {
 #else
   NULL,
 #endif
-  cf_alaw_read, NULL, cf_alaw_delay, NULL},
+  cf_alaw_read, NULL, codecfilter_delay_zero, NULL},
 #endif
 
 #ifdef ROAR_SUPPORT_MULAW
@@ -119,7 +119,7 @@ struct roar_codecfilter g_codecfilter[] = {
 #else
   NULL,
 #endif
-  cf_mulaw_read, NULL, cf_alaw_delay, NULL},
+  cf_mulaw_read, NULL, codecfilter_delay_zero, NULL},
 #endif
 
 #ifndef ROAR_WITHOUT_CF_CMD
@@ -393,6 +393,13 @@ int codecfilter_ctl  (CODECFILTER_USERDATA_T   inst, int codecfilter, int_least3
 int codecfilter_delay_fulldyn(CODECFILTER_USERDATA_T   inst, uint_least32_t * delay) {
  *delay = 0; // just to be sure
  return -1;
+}
+
+int codecfilter_delay_zero(CODECFILTER_USERDATA_T   inst, uint_least32_t * delay) {
+ // this codec does not create any addition latency.
+
+ *delay = 0;
+ return 0;
 }
 
 //ll
