@@ -1,7 +1,7 @@
 //driver_esd.c:
 
 /*
- *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008
+ *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008-2010
  *
  *  This file is part of roard a part of RoarAudio,
  *  a cross-platform sound system for both, home and professional use.
@@ -32,79 +32,40 @@
  8 and 16 bits per sample. so we use inst as an array of two ints: 0: fh, 1: are we in 8 bit mode?
 */
 
-int driver_esd_open_sysio(DRIVER_USERDATA_T * inst, char * device, struct roar_audio_info * info) {
+int driver_esd_open_vio(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh, struct roar_stream_server * sstream) {
  esd_format_t format = ESD_STREAM | ESD_PLAY;
  char name[80] = "roard";
- int * di = malloc(sizeof(int)*2);
-
- if ( di == NULL )
-  return -1;
-
- *inst = (DRIVER_USERDATA_T)di;
-
- format |= info->bits     == 16 ? ESD_BITS16 : ESD_BITS8;
- format |= info->channels ==  2 ? ESD_STEREO : ESD_MONO;
-
- di[1] = info->bits == 8;
-
- di[0] = esd_play_stream_fallback(format, info->rate, device, name);
-
- shutdown(di[0], SHUT_RD);
-
- if ( di[0] == -1 ) {
-  free(di);
-  *inst = NULL;
-  return -1;
- }
-
- return 0;
-}
-
-int driver_esd_open_vio(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh, struct roar_stream_server * sstream) {
 
  if ( fh != -1 )
   return -1;
 
- inst->read     = driver_esd_read;
- inst->write    = driver_esd_write;
- inst->nonblock = driver_esd_nonblock;
- inst->sync     = driver_esd_sync;
+ if ( info->bits >= 16 ) {
+  info->bits  = 16;
+  format     |= ESD_BITS16;
+  info->codec = ROAR_CODEC_PCM_S;
+ } else if ( info->bits < 16 ) {
+  info->bits  =  8;
+  format     |= ESD_BITS8;
+  info->codec = ROAR_CODEC_PCM_U;
+ }
 
- return driver_esd_open_sysio(&(inst->inst), device, info);
+ if ( info->channels >= 2 ) {
+  info->channels  = 2;
+  format         |= ESD_STEREO;
+ } else {
+  info->channels  = 1;
+  format         |= ESD_MONO;
+ }
+
+ fh = esd_play_stream_fallback(format, info->rate, device, name);
+
+ shutdown(fh, SHUT_RD);
+
+ roar_vio_set_fh(inst, fh);
+
+ return 0;
 }
 
-int driver_esd_close(DRIVER_USERDATA_T   inst) {
- int fh;
-
- inst = ((struct roar_vio_calls *)inst)->inst;
-
- fh = *(int*)inst;
-
- free((void*)inst);
-
- return esd_close(fh);
-}
-
-ssize_t driver_esd_write(struct roar_vio_calls * inst, void * buf, size_t len) {
- int * di = (int*)((struct roar_vio_calls *)inst)->inst;
-
- if ( di[1] )
-  roar_conv_codec_s2u8(buf, buf, len);
-
- return write(di[0], buf, len);
-}
-
-ssize_t driver_esd_read(struct roar_vio_calls * inst, void * buf, size_t len) {
- return read(*(int*)((struct roar_vio_calls *)inst)->inst, buf, len);
-}
-
-int driver_esd_nonblock(struct roar_vio_calls * vio, int state) {
- return roar_socket_nonblock(*(int*)vio->inst, state);
-}
-
-int driver_esd_sync    (struct roar_vio_calls * vio) {
- return ROAR_FDATASYNC(*(int*)vio->inst);
-}
 
 #endif
 //ll
