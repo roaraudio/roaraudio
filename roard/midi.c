@@ -56,6 +56,8 @@ int midi_init (void) {
    if ( midi_cb_init() == -1 ) {
     ROAR_WARN("Can not initialize MIDI subsystem component CB");
    }
+  } else {
+   g_midi_cb.console = -1;
   }
 #endif
 
