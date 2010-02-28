@@ -762,24 +762,40 @@ int roar_conv_endian      (void * out, void * in, int samples, int from, int to,
   }
   return 0;
  } else {
-  if ( bits == 16 ) {
-   // in this case we can only have LE vs. BE, so, only need to swap:
-   ROAR_DBG("roar_conv_endian(*): Doing 16 bit byteswap");
-   return roar_conv_endian_16(out, in, samples);
-  } else if ( bits == 24 ) {
-   if ( (from == ROAR_CODEC_LE || from == ROAR_CODEC_BE) && (to == ROAR_CODEC_LE || to == ROAR_CODEC_BE) ) {
-    return roar_conv_endian_24(out, in, samples);
-   } else { // what the hell is PDP eddines in 24 bit mode?
-    return -1;
-   }
-  } else if ( bits == 32 ) {
-   if ( (from == ROAR_CODEC_LE || from == ROAR_CODEC_BE) && (to == ROAR_CODEC_LE || to == ROAR_CODEC_BE) ) {
-    return roar_conv_endian_32(out, in, samples);
-   } else { // need to handle 32 PDP eddines here?
-    return -1;
-   }
-  } else {
-   return -1;
+  switch (bits) {
+   case 16:
+     // in this case we can only have LE vs. BE, so, only need to swap:
+     ROAR_DBG("roar_conv_endian(*): Doing 16 bit byteswap");
+     return roar_conv_endian_16(out, in, samples);
+    break;
+   case 24:
+     if ( (from == ROAR_CODEC_LE || from == ROAR_CODEC_BE) && (to == ROAR_CODEC_LE || to == ROAR_CODEC_BE) ) {
+      return roar_conv_endian_24(out, in, samples);
+     } else { // what the hell is PDP eddines in 24 bit mode?
+      return -1;
+     }
+    break;
+   case 32:
+    if ( (from == ROAR_CODEC_LE || from == ROAR_CODEC_BE) && (to == ROAR_CODEC_LE || to == ROAR_CODEC_BE) ) {
+     return roar_conv_endian_32(out, in, samples);
+    } else { // need to handle 32 PDP eddines here?
+     if ( from == ROAR_CODEC_BE )
+      if ( roar_conv_endian_32(out, in, samples) == -1 )
+       return -1;
+
+     if ( roar_conv_endian_16(out, in, samples*2) == -1 )
+      return -1;
+
+     if ( to == ROAR_CODEC_BE )
+      if ( roar_conv_endian_32(out, in, samples) == -1 )
+       return -1;
+
+     return 0;
+    }
+    break;
+   default:
+     return -1;
+    break;
   }
  }
 
