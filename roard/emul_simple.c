@@ -25,6 +25,8 @@
 
 #include "roard.h"
 
+#ifndef ROAR_MINIMAL
+
 int emul_simple_on_connect  (int client, struct roard_listen * lsock) {
  struct roar_stream_server * ss;
  struct roar_stream        *  s;
@@ -70,5 +72,7 @@ int emul_simple_on_connect  (int client, struct roard_listen * lsock) {
 
  return 0;
 }
+
+#endif
 
 //ll
