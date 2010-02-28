@@ -39,6 +39,8 @@ struct roar_driver g_driver[] = {
  { "raw",  "RAW driver", "/some/file", DRV_FLAG_FHSEC,
    ROAR_SUBSYS_WAVEFORM|ROAR_SUBSYS_MIDI|ROAR_SUBSYS_LIGHT|ROAR_SUBSYS_RAW|ROAR_SUBSYS_COMPLEX,
    NULL, NULL, driver_raw_open_vio},
+#endif
+#ifndef ROAR_WITHOUT_VIO_DSTR
  { "dstr", "VIO DSTR driver", "/some/file", DRV_FLAG_FHSEC,
    ROAR_SUBSYS_WAVEFORM|ROAR_SUBSYS_MIDI|ROAR_SUBSYS_LIGHT|ROAR_SUBSYS_RAW|ROAR_SUBSYS_COMPLEX,
    NULL, NULL, driver_dstr_open_vio},

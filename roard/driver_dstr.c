@@ -25,6 +25,7 @@
 
 #include "roard.h"
 
+#ifndef ROAR_WITHOUT_VIO_DSTR
 int driver_dstr_open_vio  (struct roar_vio_calls * inst,
                            char * device,
                            struct roar_audio_info * info,
@@ -51,5 +52,6 @@ int driver_dstr_open_vio  (struct roar_vio_calls * inst,
 
  return 0;
 }
+#endif
 
 //ll
