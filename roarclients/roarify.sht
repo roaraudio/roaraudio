@@ -66,10 +66,10 @@ if $print_env
 then
  case "$print_mode" in
   'bash')
-   [ "$ROAR_SERVER" != '' ] && echo "ROAR_SERVER='$ROAR_SERVER'"
-   echo "LD_PRELOAD='$LD_PRELOAD'"
-   echo "LD_LIBRARY_PATH='$LD_LIBRARY_PATH'"
-   echo "PATH='$PATH'"
+   [ "$ROAR_SERVER" != '' ] && echo "ROAR_SERVER='$ROAR_SERVER'; export ROAR_SERVER;"
+   echo "LD_PRELOAD='$LD_PRELOAD'; export LD_PRELOAD;"
+   echo "LD_LIBRARY_PATH='$LD_LIBRARY_PATH'; export LD_LIBRARY_PATH;"
+   echo "PATH='$PATH'; export PATH;"
   ;;
   *)
    echo "Error: unknown print env mode: $print_mode" >&2
