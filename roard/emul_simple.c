@@ -25,7 +25,7 @@
 
 #include "roard.h"
 
-#ifndef ROAR_MINIMAL
+#ifndef ROAR_WITHOUT_DCOMP_EMUL_SIMPLE
 
 int emul_simple_on_connect  (int client, struct roard_listen * lsock) {
  struct roar_stream_server * ss;
