@@ -35,8 +35,9 @@
 
 #include "libroar.h"
 
-static int roar_debug_stderr_mode = ROAR_DEBUG_MODE_SYSIO;
-static int roar_debug_stderr_fh   = ROAR_STDERR;
+static int                     roar_debug_stderr_mode = ROAR_DEBUG_MODE_SYSIO;
+static int                     roar_debug_stderr_fh   = ROAR_STDERR;
+static struct roar_vio_calls * roar_debug_stderr_vio  = NULL;
 
 void roar_debug_warn_sysio_real(char * func, char * newfunc, char * info) {
  struct roar_libroar_config * config = roar_libroar_get_config();
@@ -54,6 +55,10 @@ void   roar_debug_set_stderr_fh(int fh) {
  roar_debug_stderr_fh = fh;
 }
 
+void   roar_debug_set_stderr_vio(struct roar_vio_calls * vio) {
+ roar_debug_stderr_vio = vio;
+}
+
 void   roar_debug_set_stderr_mode(int mode) {
  roar_debug_stderr_mode = mode;
 }
@@ -69,6 +74,9 @@ struct roar_vio_calls * roar_debug_get_stderr(void) {
     roar_vio_open_fh(&STDERR, roar_debug_stderr_fh);
 
     return &STDERR;
+   break;
+  case ROAR_DEBUG_MODE_VIO:
+    return roar_debug_stderr_vio;
    break;
   default:
     return NULL;

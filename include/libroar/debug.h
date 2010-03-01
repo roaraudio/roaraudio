@@ -63,6 +63,7 @@ void roar_debug_warn_sysio_real(char * func, char * newfunc, char * info);
 struct roar_vio_calls; // will be declared later in vio.h
 
 void   roar_debug_set_stderr_fh(int fh);
+void   roar_debug_set_stderr_vio(struct roar_vio_calls * vio);
 void   roar_debug_set_stderr_mode(int mode);
 
 struct roar_vio_calls * roar_debug_get_stderr(void);
