@@ -1,7 +1,7 @@
 //roaraudio.h:
 
 /*
- *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008, 2009
+ *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008-2010
  *
  *  This file is part of RoarAudio,
  *  a cross-platform sound system for both, home and professional use.
@@ -233,17 +233,17 @@ __BEGIN_DECLS
 #else
 
 #ifdef DEBUG
- #define ROAR_DBG(format, args...)  fprintf(ROAR_DEBUG_OUTFH, ROAR_DBG_FULLPREFIX "DEBUG: " format "\n", __LINE__, ## args)
+ #define ROAR_DBG(format, args...)  roar_debug_msg_simple(ROAR_DBG_FULLPREFIX "DEBUG: " format "\n", __LINE__, ## args)
 #else
  #define ROAR_DBG(format, args...)
 #endif
 
-#define ROAR_ERR(format, args...)  fprintf(ROAR_DEBUG_OUTFH, ROAR_DBG_FULLPREFIX "Error: "   format "\n", __LINE__, ## args)
-#define ROAR_WARN(format, args...) fprintf(ROAR_DEBUG_OUTFH, ROAR_DBG_FULLPREFIX "Warning: " format "\n", __LINE__, ## args)
+#define ROAR_ERR(format, args...)  roar_debug_msg_simple(ROAR_DBG_FULLPREFIX "Error: "   format "\n", __LINE__, ## args)
+#define ROAR_WARN(format, args...) roar_debug_msg_simple(ROAR_DBG_FULLPREFIX "Warning: " format "\n", __LINE__, ## args)
 
 // INFO function:
 #ifdef ROAR_DBG_INFOVAR
- #define ROAR_INFO(format, level, args...) if ( (ROAR_DBG_INFOVAR) >= (level) ) fprintf(ROAR_DEBUG_OUTFH, ROAR_DBG_FULLPREFIX "Info: " format "\n", __LINE__, ## args)
+ #define ROAR_INFO(format, level, args...) if ( (ROAR_DBG_INFOVAR) >= (level) ) roar_debug_msg_simple(ROAR_DBG_FULLPREFIX "Info: " format "\n", __LINE__, ## args)
 #else
  #define ROAR_INFO(format, level, args...)
 #endif
