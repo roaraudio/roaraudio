@@ -11,6 +11,9 @@ v. 0.3beta5 - ?
 	* fixed some mixer stuff, a lot things work better now
 	* added support for notify beeps
 	* updated drivers
+	* updated ROAR_{ERR,WARN,INFO,DBG}()
+	* added syslog support
+	* updated test suit
 
 v. 0.3beta4 - Sat Feb 06 2010 26:02 CET
 	* Applyed patches for Debian
