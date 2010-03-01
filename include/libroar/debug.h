@@ -1,7 +1,7 @@
 //debug.h:
 
 /*
- *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2009
+ *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2009-2010
  *
  *  This file is part of libroar a part of RoarAudio,
  *  a cross-platform sound system for both, home and professional use.
@@ -56,6 +56,8 @@ struct roar_vio_calls; // will be declared later in vio.h
 void   roar_debug_set_stderr_fh(int fh);
 
 struct roar_vio_calls * roar_debug_get_stderr(void);
+
+void roar_debug_msg_simple(const char *format, ...);
 
 #endif
 
