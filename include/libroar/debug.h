@@ -42,6 +42,15 @@
 #define ROAR_WARNING_ONCE        1
 #define ROAR_WARNING_ALWAYS      2
 
+#define ROAR_DEBUG_TYPE_ERROR    1
+#define ROAR_DEBUG_TYPE_WARNING  2
+#define ROAR_DEBUG_TYPE_INFO     3
+#define ROAR_DEBUG_TYPE_DEBUG    4
+
+#define ROAR_DEBUG_MODE_SYSIO    0
+#define ROAR_DEBUG_MODE_VIO      1
+#define ROAR_DEBUG_MODE_SYSLOG   2
+
 #if 1
 #define roar_debug_warn_sysio(f,n,i) roar_debug_warn_sysio_real((f),(n),(i))
 #else
@@ -54,10 +63,13 @@ void roar_debug_warn_sysio_real(char * func, char * newfunc, char * info);
 struct roar_vio_calls; // will be declared later in vio.h
 
 void   roar_debug_set_stderr_fh(int fh);
+void   roar_debug_set_stderr_mode(int mode);
 
 struct roar_vio_calls * roar_debug_get_stderr(void);
 
 void roar_debug_msg_simple(const char *format, ...);
+
+void roar_debug_msg(int type, unsigned long int line, char * file, char * prefix, char * format, ...);
 
 #endif
 

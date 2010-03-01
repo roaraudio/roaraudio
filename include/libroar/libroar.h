@@ -54,6 +54,10 @@
 #include <signal.h>
 #endif
 
+#ifdef ROAR_HAVE_SYSLOG
+#include <syslog.h>
+#endif
+
 #ifdef ROAR_HAVE_BSDSOCKETS
 
 #ifndef ROAR_TARGET_WIN32
