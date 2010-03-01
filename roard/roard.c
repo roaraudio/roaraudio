@@ -1704,7 +1704,11 @@ int main (void) {
 
 #ifdef ROAR_HAVE_FORK
  if ( daemon ) {
+#ifdef ROAR_HAVE_SYSLOG
+  roar_debug_set_stderr_mode(ROAR_DEBUG_MODE_SYSLOG);
+#else
   roar_debug_set_stderr_fh(-1);
+#endif
 
   close(ROAR_STDIN );
   close(ROAR_STDOUT);
