@@ -50,6 +50,13 @@
 
 void roar_debug_warn_sysio_real(char * func, char * newfunc, char * info);
 
+// Error handle:
+struct roar_vio_calls; // will be declared later in vio.h
+
+void   roar_debug_set_stderr_fh(int fh);
+
+struct roar_vio_calls * roar_debug_get_stderr(void);
+
 #endif
 
 //ll

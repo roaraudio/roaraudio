@@ -35,6 +35,8 @@
 
 #include "libroar.h"
 
+static int roar_debug_stderr_fh = ROAR_STDERR;
+
 void roar_debug_warn_sysio_real(char * func, char * newfunc, char * info) {
  struct roar_libroar_config * config = roar_libroar_get_config();
 
@@ -45,6 +47,21 @@ void roar_debug_warn_sysio_real(char * func, char * newfunc, char * info) {
    ROAR_WARN("%s(*): This function is obsolete. Please use %s(...). %s", func, newfunc, info == NULL ? "" : info);
   }
  }
+}
+
+void   roar_debug_set_stderr_fh(int fh) {
+ roar_debug_stderr_fh = fh;
+}
+
+struct roar_vio_calls * roar_debug_get_stderr(void) {
+ static struct roar_vio_calls STDERR;
+
+ if ( roar_debug_stderr_fh == -1 )
+  return NULL;
+
+ roar_vio_open_fh(&STDERR, roar_debug_stderr_fh);
+
+ return &STDERR;
 }
 
 //ll
