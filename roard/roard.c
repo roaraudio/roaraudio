@@ -1704,6 +1704,8 @@ int main (void) {
 
 #ifdef ROAR_HAVE_FORK
  if ( daemon ) {
+  roar_debug_set_stderr_fh(-1);
+
   close(ROAR_STDIN );
   close(ROAR_STDOUT);
   close(ROAR_STDERR);
