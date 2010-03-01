@@ -861,7 +861,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.243 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.244 $ of RoarAudio
  */
 
 EOF
@@ -1097,6 +1097,9 @@ test_func_defmake ROAR_HAVE_ALARM     alarm     'alarm(0)'                   -- 
 test_func_defmake ROAR_HAVE_TIME      time      'time((void*)0)'             -- time.h
 test_func_defmake ROAR_HAVE_KILL      kill      'kill(0,0)'                  -- sys/types.h signal.h
 test_func_defmake ROAR_HAVE_UNAME     uname     'uname((void*)0)'            -- sys/utsname.h
+test_func_defmake ROAR_HAVE_SYSLOG    syslog    'syslog(0, "")'              -- syslog.h
+test_func_defmake ROAR_HAVE_OPENLOG   openlog   'openlog("", 0, 0)'          -- syslog.h
+test_func_defmake ROAR_HAVE_CLOSELOG  closelog  'closelog()'                 -- syslog.h
 
 echo -n 'checking for basic IO calls... '
 
