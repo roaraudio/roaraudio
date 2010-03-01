@@ -233,17 +233,17 @@ __BEGIN_DECLS
 #else
 
 #ifdef DEBUG
- #define ROAR_DBG(format, args...)  roar_debug_msg_simple(ROAR_DBG_FULLPREFIX "DEBUG: " format "\n", __LINE__, ## args)
+ #define ROAR_DBG(format, args...)  roar_debug_msg(ROAR_DEBUG_TYPE_DEBUG, __LINE__, __FILE__, ROAR_DBG_PREFIX, format, ## args)
 #else
  #define ROAR_DBG(format, args...)
 #endif
 
-#define ROAR_ERR(format, args...)  roar_debug_msg_simple(ROAR_DBG_FULLPREFIX "Error: "   format "\n", __LINE__, ## args)
-#define ROAR_WARN(format, args...) roar_debug_msg_simple(ROAR_DBG_FULLPREFIX "Warning: " format "\n", __LINE__, ## args)
+#define ROAR_ERR(format, args...)  roar_debug_msg(ROAR_DEBUG_TYPE_ERROR, __LINE__, __FILE__, ROAR_DBG_PREFIX, format, ## args)
+#define ROAR_WARN(format, args...) roar_debug_msg(ROAR_DEBUG_TYPE_WARNING, __LINE__, __FILE__, ROAR_DBG_PREFIX, format, ## args)
 
 // INFO function:
 #ifdef ROAR_DBG_INFOVAR
- #define ROAR_INFO(format, level, args...) if ( (ROAR_DBG_INFOVAR) >= (level) ) roar_debug_msg_simple(ROAR_DBG_FULLPREFIX "Info: " format "\n", __LINE__, ## args)
+ #define ROAR_INFO(format, level, args...) if ( (ROAR_DBG_INFOVAR) >= (level) ) roar_debug_msg(ROAR_DEBUG_TYPE_INFO, __LINE__, __FILE__, ROAR_DBG_PREFIX, format, ## args)
 #else
  #define ROAR_INFO(format, level, args...)
 #endif
