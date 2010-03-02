@@ -85,12 +85,16 @@ void roar_write(void *ptr, int length) {
  ROAR_DBG("roar_write(ptr=%p, length=%i) = (void)", ptr, length);
 
  while (length) {
-  if ( (r = roar_vio_write(&(g_inst.vio), ptr, length >= 1764*2 ? 1764*2 : length)) != -1 ) {
+  if ( (r = roar_vio_write(&(g_inst.vio), ptr, length >= 1764*4 ? 1764*4 : length)) != -1 ) {
    g_inst.written   += r;
    ptr              += r;
    length           -= r;
   } else {
-   return;
+   if ( errno == EAGAIN ) {
+    xmms_usleep(1000);
+   } else {
+    return;
+   }
   }
  }
 }
