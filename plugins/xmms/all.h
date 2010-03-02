@@ -86,8 +86,6 @@ struct xmms_roar_out {
  struct {
   int                server_type;
   int                port;
-  int              * proxy_type;
-  char             * proxy;
   char             * player_name;
  } cfg;
 } g_inst;
