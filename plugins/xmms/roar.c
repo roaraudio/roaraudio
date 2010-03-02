@@ -177,8 +177,10 @@ void roar_close(void) {
  g_inst.state |= STATE_PLAYING;
  g_inst.state -= STATE_PLAYING;
 
- if ( was_playing )
+ if ( was_playing ) {
   roar_vio_close(&(g_inst.vio));
+  usleep(10000); // give the server 10ms of extra time
+ }
 
  g_inst.written = 0;
  ROAR_DBG("roar_close(void) = (void)");
