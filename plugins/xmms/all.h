@@ -75,7 +75,7 @@ struct xmms_roar_out {
  char              * server;
  struct roar_connection con;
  struct roar_stream     stream;
- int                 data_fh;
+ struct roar_vio_calls  vio;
  long unsigned int   written;
  long unsigned int   bps;
  int                 session;
