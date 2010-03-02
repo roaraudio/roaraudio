@@ -66,7 +66,7 @@ int driver_ao_open_vio(struct roar_vio_calls * inst, char * device, struct roar_
  format.rate        = info->rate;
 
  if ( info->bits == 8 ) {
-  ROAR_WARN("This is the libao driver in 8 bit mode, It's not known to me if I need to provide data in signed or in unsigned mode. If your musik sounds strange try -oO codec=pcm_s_le or -oO codec=pcm_u_le");
+  ROAR_WARN("This is the libao driver in 8 bit mode, It's not known to me if I need to provide data in signed or in unsigned mode. If your musik sounds strange try -oO codec=pcm_s_le or -oO codec=pcm_u_be");
 /* NOTE: the following is only true for EsounD driver, not for OSS driver, don't know for the others
   switch (info->codec) {
    case ROAR_CODEC_PCM_U_LE:
