@@ -153,7 +153,7 @@ int roar_open(AFormat fmt, int rate, int nch) {
   g_inst.state -= STATE_CONNECTED;
   if ( !(g_inst.state & STATE_NORECONNECT) ) {
    g_inst.state |= STATE_NORECONNECT;
-   usleep(100000);
+   xmms_usleep(100000);
    return roar_open(fmt, rate, nch);
   } else {
    g_inst.state -= STATE_NORECONNECT;
@@ -179,7 +179,7 @@ void roar_close(void) {
 
  if ( was_playing ) {
   roar_vio_close(&(g_inst.vio));
-  usleep(10000); // give the server 10ms of extra time
+  xmms_usleep(10000); // give the server 10ms of extra time
  }
 
  g_inst.written = 0;
