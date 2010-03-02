@@ -320,8 +320,11 @@ void roar_get_volume(int *l, int *r) {
  struct roar_mixer_settings mixer;
  float fs;
 
- if ( !(g_inst.state & STATE_CONNECTED) )
+ if ( !(g_inst.state & STATE_CONNECTED) || !(g_inst.state & STATE_PLAYING) ) {
+  *l = g_inst.mixer.l;
+  *r = g_inst.mixer.r;
   return;
+ }
 
  if ( roar_get_vol(&(g_inst.con), g_inst.stream.id, &mixer, &channels) == -1 ) {
   *l = *r = 100;
@@ -349,6 +352,9 @@ void roar_set_volume(int l, int r) {
 
  g_inst.mixer.l = l;
  g_inst.mixer.r = r;
+
+ if ( !(g_inst.state & STATE_PLAYING) )
+  return;
 
  mixer.mixer[0] = l;
  mixer.mixer[1] = r;
