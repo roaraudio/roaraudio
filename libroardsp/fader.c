@@ -73,6 +73,32 @@ int roar_fader_set_startstop(struct roar_fader_state * state, ssize_t start, ssi
  return 0;
 }
 
+int roar_fader_has_started  (struct roar_fader_state * state) {
+ if ( state == NULL )
+  return -1;
+
+ if ( state->start == -1 )
+  return 0;
+
+ if ( state->start <= state->pcmoffset )
+  return 1;
+
+ return 0;
+}
+
+int roar_fader_has_ended    (struct roar_fader_state * state) {
+ if ( state == NULL )
+  return -1;
+
+ if ( state->stop == -1 )
+  return 0;
+
+ if ( state->stop > state->pcmoffset )
+  return 1;
+
+ return 0;
+}
+
 int roar_fader_calcpcm_i16n(struct roar_fader_state * state, int16_t * data, size_t frames, int channels) {
  _CHECK_CALCPCM();
 
