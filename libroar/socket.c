@@ -678,12 +678,19 @@ int roar_socket_open (int mode, int type, char * host, int port) {
 
 int roar_socket_open_fork  (int mode, char * host, int port) {
 #if !defined(ROAR_TARGET_WIN32) && !defined(ROAR_TARGET_MICROCONTROLLER)
+ char * daemonimage;
  int socks[2];
  int r;
  char fhstr[8];
 
  if ( mode == MODE_LISTEN )
   return -1;
+
+ // TODO: FIXME: we should move this into the config structure.
+ daemonimage = getenv("ROAR_DAEMONIMAGE");
+
+ if ( daemonimage == NULL || *daemonimage == 0 )
+  daemonimage = "roard";
 
  if ( socketpair(AF_UNIX, SOCK_STREAM, 0, socks) == -1 ) {
   return -1;
@@ -705,7 +712,7 @@ int roar_socket_open_fork  (int mode, char * host, int port) {
 
   snprintf(fhstr, 7, "%i", socks[1]);
 
-  execlp("roard", "roard", "--no-listen", "--client-fh", fhstr, (char*)NULL);
+  execlp(daemonimage, daemonimage, "--no-listen", "--client-fh", fhstr, (char*)NULL);
 
   // we are still alive?
   ROAR_ERR("roar_socket_open_fork(*): alive after exec(), that's bad!");
