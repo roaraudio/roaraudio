@@ -96,6 +96,17 @@ int roar_x11_disconnect(struct roar_x11_connection * con) {
 #endif
 }
 
+int    roar_x11_flush(struct roar_x11_connection * con) {
+#ifdef ROAR_HAVE_LIBX11
+ if ( con == NULL )
+  return -1;
+
+ return XFlush(con->display);
+#else
+ return -1;
+#endif
+}
+
 int roar_x11_set_prop(struct roar_x11_connection * con, const char * key, const char * val) {
 #ifdef ROAR_HAVE_LIBX11
  Atom a;
