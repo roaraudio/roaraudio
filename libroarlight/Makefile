@@ -20,7 +20,7 @@ clean:
 new: clean all
 
 $(SLIB): ${OBJS}
-	${CC} ${LDFLAGS} -Wl,-soname,$(SLIB).$(COMMON_VERSION) -o $(SLIB) ${OBJS} ${LIBS}
+	${CC} ${LDFLAGS} -Wl,-soname,$(SLIB).$(LIBROARLIGHT_V) -o $(SLIB) ${OBJS} ${LIBS}
 libroarlight.a: ${OBJS}
 	${AR} cru libroarlight.a ${OBJS}
 	${RANLIB} libroarlight.a

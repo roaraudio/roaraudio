@@ -20,7 +20,7 @@ clean:
 new: clean all
 
 $(SLIB): ${OBJS}
-	${CC} ${LDFLAGS} -Wl,-soname,$(SLIB).$(COMMON_VERSION) -o $(SLIB) ${OBJS} ${LIBS}
+	${CC} ${LDFLAGS} -Wl,-soname,$(SLIB).$(LIBROARMIDI_V) -o $(SLIB) ${OBJS} ${LIBS}
 libroarmidi.a: ${OBJS}
 	${AR} cru libroarmidi.a ${OBJS}
 	${RANLIB} libroarmidi.a

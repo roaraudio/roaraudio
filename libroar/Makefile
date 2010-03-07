@@ -23,7 +23,7 @@ clean:
 new: clean all
 
 $(SLIB): ${OBJS}
-	${CC} ${LDFLAGS} -Wl,-soname,$(SLIB).$(COMMON_VERSION) -o $(SLIB) ${OBJS} ${LIBS}
+	${CC} ${LDFLAGS} -Wl,-soname,$(SLIB).$(LIBROAR_V) -o $(SLIB) ${OBJS} ${LIBS}
 libroar.a: ${OBJS}
 	${AR} cru libroar.a ${OBJS}
 	${RANLIB} libroar.a
