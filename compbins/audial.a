@@ -1,0 +1,23 @@
+#!/bin/sh
+
+NAME='audial'
+RNAME='roardtmf'
+
+ARGS_MAP_OPTS='-a:true:--server'
+ARGS_PASS_NON_OPTS=true
+
+# usage: audial [-options] [dialing_string]
+# dialing options:
+#     -s spacing           spacing between digits in milliseconds (default 100)
+#     -p pause     duration of pause "," in milliseconds (default 400)
+#     -d duration          duration of digit in milliseconds (default 100)
+#     -v volume      output volume in percent (default 100)
+#     legal digits in the dialing_string are: 0123456789abcd*#,
+#     all others are ignored
+# recognition options:
+#     -r             enable recognition mode
+#     -m             use microphone line level
+#     -g gain        input gain in percent (default 95)
+#     -t time        how long to listen in seconds (default forever)
+
+#ll

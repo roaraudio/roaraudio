@@ -1,0 +1,25 @@
+#!/bin/sh
+
+NAME='dtmfdial'
+RNAME='roardtmf'
+
+ARGS_MAP_OPTS='--output-dev:true:--server --speed:true:--rate'
+ARGS_PASS_NON_OPTS=true
+
+# usage: dial [options] number ...
+#  Valid options with their default values are:
+#    Duration options:
+#      --tone-time   100
+#      --silent-time 50
+#      --sleep-time  500
+#    Audio output  options:
+#      --use-audio   1
+#      --bufsize     4096
+#      --bits        8
+#    Audio generation options:
+#      --table-size  256
+#      --volume      100
+#      --left        0
+#      --right       0
+
+#ll
