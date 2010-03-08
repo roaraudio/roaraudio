@@ -90,6 +90,7 @@ struct roar_stream_server {
  struct roar_vio_calls * viop;
  int mixer_stream;
  struct roardsp_chanmap chanmap;
+ int role;
 } * g_streams[ROAR_STREAMS_MAX];
 
 int streams_thru_num;
@@ -109,6 +110,8 @@ int streams_get_dir    (int id);
 
 int streams_set_mixer_stream(int id, int mixer);
 int streams_get_mixer_stream(int id, int mixer);
+
+int streams_set_role   (int id, int role);
 
 int streams_get_subsys (int id);
 int streams_get_ssdir  (int id);

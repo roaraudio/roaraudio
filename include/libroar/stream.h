@@ -75,6 +75,19 @@ int    roar_str2dir (char * name);
 #define ROAR_STREAMSTATE_OLD        3
 #define ROAR_STREAMSTATE_CLOSING    4
 
+// PA currently defines: video, music, game, event, phone, animation, production, a11y
+// RA includes         : YES    YES    YES   YES    YES    NO         NO          NO
+
+#define ROAR_ROLE_UNKNOWN          -1
+#define ROAR_ROLE_NONE              0
+#define ROAR_ROLE_MUSIC             1
+#define ROAR_ROLE_VIDEO             2
+#define ROAR_ROLE_GAME              3
+#define ROAR_ROLE_EVENT             4
+#define ROAR_ROLE_BEEP              5
+#define ROAR_ROLE_PHONE             6
+#define ROAR_ROLE_BACKGROUND_MUSIC  7
+
 struct roar_stream_info {
  int block_size;
  int pre_underruns;
@@ -85,6 +98,7 @@ struct roar_stream_info {
  uint_least32_t delay;
  int state;
  int mixer;
+ int role;
 };
 
 int roar_stream_connect (struct roar_connection * con, struct roar_stream * s, int dir);
@@ -132,6 +146,9 @@ int    roar_str2codec (char * codec);
 char * roar_codec2str (int    codec);
 
 char * roar_streamstate2str(int streamstate);
+
+int    roar_str2role  (char * role);
+char * roar_role2str  (int    role);
 
 #endif
 

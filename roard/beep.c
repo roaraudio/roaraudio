@@ -164,6 +164,11 @@ int beep_start (int client, struct roar_beep * beep) {
   return -1;
  }
 
+ if ( streams_set_role(stream, ROAR_ROLE_BEEP) == -1 ) {
+  streams_delete(stream);
+  return -1;
+ }
+
  if ( (buf = beep_fill_buffer(beep, &(s->info))) == NULL ) {
   streams_delete(stream);
   return -1;

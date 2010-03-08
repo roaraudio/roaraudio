@@ -106,6 +106,7 @@ int streams_new    (void) {
    s->outputbuffer    = NULL;
    s->prethru         = NULL;
    s->mixer_stream    = -1;
+   s->role            = ROAR_ROLE_UNKNOWN;
 
    s->mixer.scale     = 65535;
    s->mixer.rpg_mul   = 1;
@@ -373,6 +374,19 @@ int streams_get_mixer_stream(int id, int mixer) {
   return -1;
 
  return ss->mixer_stream;
+}
+
+int streams_set_role   (int id, int role) {
+ struct roar_stream_server * ss;
+
+ _CHECK_SID(id);
+
+ if ( (ss = g_streams[id]) == NULL )
+  return -1;
+
+ ss->role = role;
+
+ return 0;
 }
 
 int streams_get_subsys (int id) {

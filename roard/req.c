@@ -595,7 +595,7 @@ int req_on_get_stream_para (int client, struct roar_message * mes, char * data) 
 
     audio_info = &(s->info);
 
-    mes->datalen = 2*11;
+    mes->datalen = 2*12;
 
     d[ 2] = ROAR_OUTPUT_CALC_OUTBUFSIZE(audio_info);
     d[ 3] = ss->pre_underruns;
@@ -606,6 +606,7 @@ int req_on_get_stream_para (int client, struct roar_message * mes, char * data) 
     d[ 8] = ss->state;
     d[ 9] = (ss->flags & 0xFFFF0000) >> 16;
     d[10] = ss->mixer_stream;
+    d[11] = ss->role;
 
     ROAR_DBG("req_on_get_stream_para(*): ss->driver_id=%i", ss->driver_id);
 

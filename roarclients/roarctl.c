@@ -383,6 +383,9 @@ void list_streams (struct roar_connection * con) {
     if ( g_verbose > 1 )
      printf("Stream state          : %s\n",   roar_streamstate2str(info.state));
 
+    if ( g_verbose > 1 )
+     printf("Stream role           : %s\n",   roar_role2str(info.role));
+
     *flags = 0;
     if ( info.flags & ROAR_FLAG_PRIMARY )
      strcat(flags, "primary ");

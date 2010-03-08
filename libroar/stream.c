@@ -393,6 +393,7 @@ int roar_stream_get_info (struct roar_connection * con, struct roar_stream * s, 
 
  memset(info, 0, sizeof(struct roar_stream_info));
  info->mixer = -1;
+ info->role  = ROAR_ROLE_UNKNOWN;
 
  info->block_size     = data[2];
  info->pre_underruns  = data[3];
@@ -418,6 +419,12 @@ int roar_stream_get_info (struct roar_connection * con, struct roar_stream * s, 
   return 0;
  } else {
   info->mixer         = data[10];
+ }
+
+ if ( m.datalen < 12*2 ) {
+  return 0;
+ } else {
+  info->role          = data[11];
  }
 
  return 0;
@@ -853,6 +860,43 @@ char * roar_streamstate2str(int streamstate) {
   case ROAR_STREAMSTATE_OLD:     return "old";     break;
   case ROAR_STREAMSTATE_CLOSING: return "closing"; break;
  }
+
+ return "unknown";
+}
+
+struct {
+ int    role;
+ char * name;
+} _libroar_role[] = {
+ {ROAR_ROLE_UNKNOWN,          "unknown"         },
+ {ROAR_ROLE_NONE,             "none"            },
+ {ROAR_ROLE_MUSIC,            "music"           },
+ {ROAR_ROLE_VIDEO,            "video"           },
+ {ROAR_ROLE_GAME,             "game"            },
+ {ROAR_ROLE_EVENT,            "event"           },
+ {ROAR_ROLE_BEEP,             "beep"            },
+ {ROAR_ROLE_PHONE,            "phone"           },
+ {ROAR_ROLE_BACKGROUND_MUSIC, "background music"},
+ {ROAR_ROLE_BACKGROUND_MUSIC, "background_music"}, // alias
+ {-1, NULL}
+};
+
+int    roar_str2role  (char * role) {
+ int i;
+
+ for (i = 0; _libroar_role[i].name != NULL; i++)
+  if ( !strcasecmp(_libroar_role[i].name, role) )
+   return _libroar_role[i].role;
+
+ return ROAR_ROLE_UNKNOWN;
+}
+
+char * roar_role2str  (int    role) {
+ int i;
+
+ for (i = 0; _libroar_role[i].name != NULL; i++)
+  if ( _libroar_role[i].role == role )
+   return _libroar_role[i].name;
 
  return "unknown";
 }
