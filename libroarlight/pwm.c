@@ -80,7 +80,7 @@ int roar_light_pwm_send(struct roar_lpwm_state * state, struct roar_vio_calls * 
  if ( len == 0 )
   return 0;
 
- if ( (buf = malloc(len)) == NULL )
+ if ( (buf = roar_mm_malloc(len)) == NULL )
   return -1;
 
  buf16 = (int16_t *) buf;
@@ -117,11 +117,11 @@ int roar_light_pwm_send(struct roar_lpwm_state * state, struct roar_vio_calls * 
  }
 
  if ( roar_vio_write(vio, buf, len) != (ssize_t)len ) {
-  free(buf);
+  roar_mm_free(buf);
   return -1;
  }
 
- free(buf);
+ roar_mm_free(buf);
 
  return 0;
 }
