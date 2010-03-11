@@ -87,7 +87,7 @@ struct roar_stream {
  int care_pos;
 
  uint32_t pos;
- uint32_t pos_rel_id;
+ uint32_t pos_rel_id; // TODO: why is this not int?
 
  struct roar_audio_info info;
 
