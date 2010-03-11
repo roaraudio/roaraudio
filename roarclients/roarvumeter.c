@@ -71,7 +71,7 @@ int vumeter16bit2ch (struct roar_vio_calls * vio, int samples, int16_t * buf, in
  int beat_detection = mode & MODE_BEAT;
  char * beat[2]     = {"     ", "Beat!"};
  char * dbeat       = beat[0];
- int have_beat;
+ int     have_beat  = 0;
  int16_t beat_val, beat_old;
 
  if ( beat_detection ) {

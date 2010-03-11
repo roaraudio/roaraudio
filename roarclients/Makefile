@@ -15,7 +15,7 @@ include ../Makefile.inc
 
 #DEFINES        = -DDEBUG
 INCLUDE    = -I../include -I./include
-CFLAGS    += -g -Wall -O2 $(DEFINES) $(INCLUDE) $(INCPATH)
+CFLAGS    += -g -Wall -Wextra -O2 $(DEFINES) $(INCLUDE) $(INCPATH)
 LDFLAGS    = -g -L../lib/ $(LDPATH)
 LIBS       = $(LIBROAR)
 SHOUTLIBS  = $(lib_shout) $(LIBS)

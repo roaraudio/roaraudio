@@ -326,9 +326,9 @@ void list_streams (struct roar_connection * con) {
   if ( roar_stream_get_name(con, &s, name, 1024) == 0 )
    printf("Stream name           : %s\n", name);
 
-  if ( s.pos_rel_id == -1 ) {
+  if ( (int)s.pos_rel_id == -1 ) {
    printf("Relativ position id   : none (stream not synchronized)\n");
-  } else if ( s.pos_rel_id == id[i] ) {
+  } else if ( (int)s.pos_rel_id == id[i] ) {
    printf("Relativ position id   : %i (self synchronized)\n", s.pos_rel_id);
   } else {
    printf("Relativ position id   : %i (synchronized)\n", s.pos_rel_id);

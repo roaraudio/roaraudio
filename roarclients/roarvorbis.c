@@ -85,7 +85,7 @@ int update_stream (struct roar_connection * con, struct roar_stream * s, int * o
 
  if ( *out == -1 ) {
   need_new_stream = 1;
- } else if ( info->rate != vi->rate || info->channels != vi->channels ) {
+ } else if ( info->rate != (uint16_t)vi->rate || info->channels != (uint16_t)vi->channels ) {
   need_new_stream = 1;
  }
 

@@ -46,7 +46,7 @@ void print_header (int codec, int rate, int channels) {
  printf("Content-type: %s\r\n", mime);
  printf("ice-audio-info: ice-samplerate=%i;ice-channels=%i\r\n", rate, channels);
  printf("icy-pub:0\r\n");
- printf("Server: RoarAudio (roarmonhttp $Revision: 1.17 $)\r\n");
+ printf("Server: RoarAudio (roarmonhttp $Revision: 1.18 $)\r\n");
  printf("\r\n");
 
  fflush(stdout);
@@ -122,7 +122,7 @@ int stream (int dest, int src) {
      }
     }
 
-    if ( todo == len ) { // we wrote all of the pkg
+    if ( (ssize_t)todo == len ) { // we wrote all of the pkg
      if ( roar_buffer_next(&ring) == -1 )
       return -1;
     } else {

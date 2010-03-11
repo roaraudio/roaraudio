@@ -33,7 +33,7 @@ int main (void) {
  int16_t out[BUF_MAX];
  size_t il = 10;
  size_t ol = 20;
- int i;
+ size_t i;
  int tmp;
 
  for (i = 0; i < il; i++) {
