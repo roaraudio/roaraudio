@@ -848,7 +848,7 @@ ssize_t write(int fd, const void *buf, size_t count) {
  struct roar_roardmx_message roardmxmsg;
  struct pointer * pointer;
  ssize_t ret;
- int i;
+ size_t i;
 
  _init();
 

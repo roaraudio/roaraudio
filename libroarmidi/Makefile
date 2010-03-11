@@ -8,7 +8,7 @@ OBJS=libroarmidi.o
 
 #DEFINES        = -DDEBUG
 INCLUDE = -I../include -I../include/libroarmidi
-CFLAGS += -g -Wall -O2 $(DEFINES) $(INCLUDE) $(INCPATH) $(SHARED_CF) $(fPIC)
+CFLAGS += -g -Wall -Wextra -O2 $(DEFINES) $(INCLUDE) $(INCPATH) $(SHARED_CF) $(fPIC)
 LDFLAGS = -g $(SHARED) -L../lib/ $(LDPATH)
 LIBS    = $(LIBROARMIDI_NS)
 
