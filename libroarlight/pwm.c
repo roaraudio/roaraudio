@@ -116,7 +116,7 @@ int roar_light_pwm_send(struct roar_lpwm_state * state, struct roar_vio_calls * 
   state->fill  -= 8;
  }
 
- if ( roar_vio_write(vio, buf, len) != len ) {
+ if ( roar_vio_write(vio, buf, len) != (ssize_t)len ) {
   free(buf);
   return -1;
  }

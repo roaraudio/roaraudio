@@ -94,7 +94,7 @@ int roar_roardmx_message_send(struct roar_roardmx_message * mes, struct roar_vio
 
  mes->data[2] = mes->length;
 
- return roar_vio_write(vio, mes->data, mes->length + 3) == (mes->length + 3) ? 0 : -1;
+ return roar_vio_write(vio, mes->data, mes->length + 3) == (ssize_t)(mes->length + 3) ? 0 : -1;
 }
 
 int roar_roardmx_message_recv(struct roar_roardmx_message * mes, struct roar_vio_calls * vio) {
@@ -117,7 +117,7 @@ int roar_roardmx_message_recv(struct roar_roardmx_message * mes, struct roar_vio
 
  mes->length = mes->data[2];
 
- if ( roar_vio_read(vio, &(mes->data[3]), mes->length) != mes->length )
+ if ( roar_vio_read(vio, &(mes->data[3]), mes->length) != (ssize_t)mes->length )
   return -1;
 
  return 0;
