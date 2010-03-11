@@ -145,6 +145,7 @@
 #include "pinentry.h"
 #include "sshaskpass.h"
 #include "roarslp.h"
+#include "display.h"
 #include "roarx11.h"
 #include "beep.h"
 

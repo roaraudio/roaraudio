@@ -1,4 +1,4 @@
-//roarx11.h:
+//display.h:
 
 /*
  *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2010
@@ -33,51 +33,17 @@
  *  them with any software that uses libesd, libartsc or libpulse*.
  */
 
-#ifndef _LIBROARX11_H_
-#define _LIBROARX11_H_
+#ifndef _LIBROARDISPLAY_H_
+#define _LIBROARDISPLAY_H_
 
 #include "libroar.h"
 
-#ifdef ROAR_HAVE_LIBX11
-#define _ROAR_X11_DISPLAY Display
-#define _ROAR_X11_WINDOW  Window
-#else
-#define _ROAR_X11_DISPLAY void
-#define _ROAR_X11_WINDOW  uint_least32_t
-#endif
+#define ROAR_DISPLAY_TYPE_NONE        0
+#define ROAR_DISPLAY_TYPE_X11         1
 
-struct roar_x11_connection {
-#ifdef ROAR_HAVE_LIBX11
- int close;
- Display * display;
-#else
- char dummy[8];
-#endif
-};
-
-#define ROAR_X11_MAX_WIN_PER_INFO 4
-
-struct roar_display_info_x11 {
+struct roar_display_info {
  int type;
- int socktype;
- char * host;
- int display;
- int screen;
- int wins;
- _ROAR_X11_WINDOW window[ROAR_X11_MAX_WIN_PER_INFO];
 };
-
-struct roar_x11_connection * roar_x11_connect(char * display);
-struct roar_x11_connection * roar_x11_connect_display(_ROAR_X11_DISPLAY * display);
-int    roar_x11_disconnect(struct roar_x11_connection * con);
-
-#define roar_x11_get_display(con) ((con) == NULL ? NULL : (con)->display)
-
-int    roar_x11_flush(struct roar_x11_connection * con);
-
-int    roar_x11_set_prop(struct roar_x11_connection * con, const char * key, const char * val);
-int    roar_x11_delete_prop(struct roar_x11_connection * con, const char * key);
-char * roar_x11_get_prop(struct roar_x11_connection * con, const char * key);
 
 #endif
 
