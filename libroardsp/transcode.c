@@ -56,7 +56,7 @@ int roar_xcoder_init(struct roar_xcoder * state, int encoder, struct roar_audio_
  memset(state, 0, sizeof(struct roar_xcoder));
 
  for (i = 0; g_xcoders[i].codec != -1; i++) {
-  if ( g_xcoders[i].codec == info->codec ) {
+  if ( g_xcoders[i].codec == (int)info->codec ) {
    state->entry = &(g_xcoders[i]);
    break;
   }
@@ -140,7 +140,7 @@ int roar_xcoder_proc_packet(struct roar_xcoder * state, void * buf, size_t len) 
  if ( state->backend == NULL )
   return -1;
 
- if ( state->packet_len > 0 && state->packet_len != len )
+ if ( state->packet_len > 0 && state->packet_len != (ssize_t)len )
   return -1;
 
  ROAR_DBG("roar_xcoder_proc_packet(state=%p, buf=%p, len=%lu) = ?", state, buf, (unsigned long)len);
@@ -182,7 +182,7 @@ int roar_xcoder_proc       (struct roar_xcoder * state, void * buf, size_t len) 
  ROAR_DBG("roar_xcoder_proc(state=%p, buf=%p, len=%lu): state->packet_len=%li", state, buf, (unsigned long)len, (long int) state->packet_len);
 
  if ( state->iobuffer == NULL ) {
-  while ( len >= state->packet_len ) {
+  while ( (ssize_t)len >= state->packet_len ) {
    if ( roar_xcoder_proc_packet(state, buf, state->packet_len) == -1 ) {
     ROAR_DBG("roar_xcoder_proc(state=%p, buf=%p, len=%lu) = -1 // roar_xcoder_proc_packet() error", state, buf, (unsigned long)len);
     return -1;
@@ -270,7 +270,7 @@ int roar_xcoder_proc       (struct roar_xcoder * state, void * buf, size_t len) 
      return -1;
     }
 
-    if ( curlen < state->packet_len ) { // this should not happen...
+    if ( (ssize_t)curlen < state->packet_len ) { // this should not happen...
      roar_buffer_free(bufbuf);
      return -1;
     }

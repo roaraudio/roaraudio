@@ -1490,7 +1490,7 @@ int roardsp_conv_mulaw2pcm16 (int16_t * out, char * in, size_t len) {
 
 int roardsp_conv_pcm162mulaw (char * out, int16_t * in, size_t len) {
 #ifdef ROAR_SUPPORT_MULAW_RW
- int i;
+ unsigned int i;
 
  for (i = 0; i < len; i++) {
   out[i] = _roardsp_pcm142mulaw[(in[i] + 32768) >> 2];

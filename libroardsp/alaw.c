@@ -807,7 +807,7 @@ int roardsp_conv_alaw2pcm16 (int16_t * out, char * in, size_t len) {
 
 int roardsp_conv_pcm162alaw (char * out, int16_t * in, size_t len) {
 #ifdef ROAR_SUPPORT_ALAW_RW
- int i;
+ unsigned int i;
 
  for (i = 0; i < len; i++) {
   out[i] = _roardsp_pcm132alaw[(in[i] + 32768) >> 3];
