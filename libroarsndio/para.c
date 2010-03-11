@@ -147,11 +147,11 @@ int    sio_getpar (struct sio_hdl * hdl, struct sio_par * par) {
 
 int    sio_getcap (struct sio_hdl * hdl, struct sio_cap * cap) {
  struct roar_stream s;
- int i;
- int bytes;
- int sign;
- int le;
- unsigned mask = 0;
+ unsigned int i;
+ unsigned int bytes;
+ unsigned int sign;
+ unsigned int le;
+ unsigned int mask = 0;
 
  if ( cap == NULL )
   return 0;

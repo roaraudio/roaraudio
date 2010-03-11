@@ -36,7 +36,7 @@
 
 int    sio_setvol (struct sio_hdl * hdl, unsigned vol) {
  struct roar_mixer_settings mixer;
- int i;
+ unsigned int i;
 
  if ( hdl == NULL )
   return 0;

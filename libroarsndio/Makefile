@@ -8,7 +8,7 @@ OBJS=libroarsndio.o para.o stream.o events.o volume.o midi.o
 
 #DEFINES        = -DDEBUG
 INCLUDE = -I../include -I../include/libroarsndio
-CFLAGS += -g -Wall -O2 $(DEFINES) $(INCLUDE) $(INCPATH) $(SHARED_CF) $(fPIC)
+CFLAGS += -g -Wall -Wextra -O2 $(DEFINES) $(INCLUDE) $(INCPATH) $(SHARED_CF) $(fPIC)
 LDFLAGS = -g $(SHARED) $(LDPATH) -L../lib/
 LIBS    = $(LIBROAR)
 
