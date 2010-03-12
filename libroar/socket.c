@@ -478,6 +478,9 @@ int roar_socket_open (int mode, int type, char * host, int port) {
  int i;
  int ret;
 #endif
+#ifdef ROAR_HAVE_UNIX
+ int abstract = 0;
+#endif
 #if defined(ROAR_HAVE_IPV4) || defined(ROAR_HAVE_IPV6) || defined(ROAR_HAVE_UNIX) || defined(ROAR_HAVE_IPX)
  union {
   struct sockaddr     sa;
@@ -517,6 +520,9 @@ int roar_socket_open (int mode, int type, char * host, int port) {
    type = ROAR_SOCKET_TYPE_UNIX;
   } else if ( strcmp(host, "+fork") == 0 ) {
    type = ROAR_SOCKET_TYPE_FORK;
+  } else if ( strcmp(host, "+abstract") == 0 ) {
+   type = ROAR_SOCKET_TYPE_UNIX;
+   abstract = 1;
   } else if ( strstr(host, "::") != NULL ) {
    type = ROAR_SOCKET_TYPE_DECNET;
   } else if ( host[strlen(host)-1] == ')' ) {
@@ -615,7 +621,13 @@ int roar_socket_open (int mode, int type, char * host, int port) {
  } else if ( type == ROAR_SOCKET_TYPE_UNIX ) {
 #ifdef ROAR_HAVE_UNIX
   socket_addr.un.sun_family = AF_UNIX;
-  strncpy(socket_addr.un.sun_path, host, sizeof(socket_addr.un.sun_path) - 1);
+
+  if ( abstract ) {
+   memset(socket_addr.un.sun_path, 0, sizeof(socket_addr.un.sun_path));
+   snprintf(socket_addr.un.sun_path+1, sizeof(socket_addr.un.sun_path)-1, "RoarAudio/UNIX/Abstract/%i", abstract);
+  } else {
+   strncpy(socket_addr.un.sun_path, host, sizeof(socket_addr.un.sun_path) - 1);
+  }
 
   fh = roar_socket_new_unix();
 
