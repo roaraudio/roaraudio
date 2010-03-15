@@ -2,7 +2,7 @@ Source: roaraudio
 Priority: extra
 Maintainer: Michael Stapelberg <michael@stapelberg.de>
 Build-Depends: debhelper (>= 7.0.50~), libdnet-dev, libesd0-dev, libao-dev, libfishsound1-dev, libvorbis-dev, libspeex-dev, libshout3-dev, libsndfile1-dev, liboggz2-dev, libslp-dev, libpulse-dev, liby-dev, libartsc0-dev, libspeexdsp-dev, audacious-plugins-dev
-Standards-Version: 3.8.3
+Standards-Version: 3.8.4
 Section: libs
 Homepage: http://roaraudio.keep-cool.org/
 
