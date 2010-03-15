@@ -1,0 +1,94 @@
+Source: roaraudio
+Priority: extra
+Maintainer: Michael Stapelberg <michael@stapelberg.de>
+Build-Depends: debhelper (>= 7.0.50~), libdnet-dev, libesd0-dev, libao-dev, libfishsound1-dev, libvorbis-dev, libspeex-dev, libshout3-dev, libsndfile1-dev, liboggz2-dev, libslp-dev, libpulse-dev, liby-dev, libartsc0-dev, libspeexdsp-dev
+Standards-Version: 3.8.3
+Section: libs
+Homepage: http://roaraudio.keep-cool.org/
+
+Package: libroar0
+Section: libs
+Architecture: any
+Suggests: bzip2, gnupg, openssh-client, roaraudio
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: foundation libraries for the roaraudio sound server and clients
+ RoarAudio is a server for audio mixing. Its main purpose is to mix audio from
+ different clients before sending it to its outputs (for example a soundcard).
+ It is completely network transparent (UNIX sockets, TCP/IP, DECnet) and
+ supports many common codecs like Ogg Vorbis, Speex or FLAC.
+ .
+ This packet consists of the following libraries:
+  libroar: The RoarAudio main library. It contains code for talking to roard,
+   virtual IO functions useful not only for audio applications, memory
+   management functions like buffers, lists, stacks.
+ .
+  libroardsp: Digital Signal Processing library. It contains code to work with
+  PCM signals including simple filters, converters and code to work with some
+  (realtime) codecs.
+ .
+  libroareio: This is the RoarAudio Extended IO library. It contains code for
+  talking to extended IO. Currently it contains code to talk to soundcards
+  without roard. This is not meant to be used by other applications directly.
+ .
+  libroarlight: Light Control support library. It contains code to support
+  the usage of the light control subsystem.
+ .
+  libroarmidi: MIDI subsystem support library. It contains code to support
+  the usage of the MIDI subsystem.
+
+Package: libroar-dev
+Section: libdevel
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libroar0 (= ${binary:Version})
+Description: header files and documentation for the roar audio libraries
+ RoarAudio is a server for audio mixing. Its main purpose is to mix audio from
+ different clients before sending it to its outputs (for example a soundcard).
+ It is completely network transparent (UNIX sockets, TCP/IP, DECnet) and
+ supports many common codecs like Ogg Vorbis, Speex or FLAC.
+ .
+ This packet consists of the following libraries:
+  libroar: The RoarAudio main library. It contains code for talking to roard,
+   virtual IO functions useful not only for audio applications, memory
+   management functions like buffers, lists, stacks.
+ .
+  libroardsp: Digital Signal Processing library. It contains code to work with
+  PCM signals including simple filters, converters and code to work with some
+  (realtime) codecs.
+ .
+  libroareio: This is the RoarAudio Extended IO library. It contains code for
+  talking to extended IO. Currently it contains code to talk to soundcards
+  without roard. This is not meant to be used by other applications directly.
+ .
+  libroarlight: Light Control support library. It contains code to support
+  the usage of the light control subsystem.
+ .
+  libroarmidi: MIDI subsystem support library. It contains code to support
+  the usage of the MIDI subsystem.
+
+Package: roaraudio
+Section: sound
+Architecture: any
+Suggests: roaraudio-extra, libroar-compat, socat
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: sound server for audio mixing
+ RoarAudio is a server for audio mixing. Its main purpose is to mix audio from
+ different clients before sending it to its outputs (for example a soundcard).
+ It is completely network transparent (UNIX sockets, TCP/IP, DECnet) and
+ supports many common codecs like Ogg Vorbis, Speex or FLAC.
+
+Package: roaraudio-extra
+Section: sound
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Suggests: wget
+Description: extra utilities for roaraudio
+ Utilities which are not necessary for running roaraudio and which need
+ extra dependencies are in this package (like roarshout and roarvorbis).
+
+Package: libroar-compat
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: drop-in replacements for other sound libraries
+ To get programs which use the EsounD (ESD), aRts, OpenBSD sndio, PulseAudio
+ or YIFF API running, you can install this package and replace the appropriate libraries.
