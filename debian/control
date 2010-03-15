@@ -9,7 +9,8 @@ Homepage: http://roaraudio.keep-cool.org/
 Package: libroar0
 Section: libs
 Architecture: any
-Suggests: bzip2, gnupg, openssh-client, roaraudio
+Recommends: roaraudio-server
+Suggests: bzip2, gnupg, openssh-client, libmuroar0
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: foundation libraries for the roaraudio sound server and clients
  RoarAudio is a server for audio mixing. Its main purpose is to mix audio from
@@ -68,6 +69,7 @@ Description: header files and documentation for the roar audio libraries
 Package: roaraudio
 Section: sound
 Architecture: any
+Provides: roaraudio-server
 Suggests: roaraudio-extra, libroar-compat, socat
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: sound server for audio mixing
