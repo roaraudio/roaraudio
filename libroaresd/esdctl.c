@@ -277,12 +277,19 @@ esd_info_t *esd_get_all_info( int esd ) {
 }
 
 /* retrieve all information from server, and update until unsubsribed or closed */
-esd_info_t *esd_subscribe_all_info( int esd );
+esd_info_t *esd_subscribe_all_info( int esd ) {
+ return NULL; // Not yet implemented in upstream esd
+}
 
 /* call to update the info structure with new information, and call callbacks */
 esd_info_t *esd_update_info( int esd, esd_info_t *info,
-                             esd_update_info_callbacks_t *callbacks );
-esd_info_t *esd_unsubscribe_info( int esd );
+                             esd_update_info_callbacks_t *callbacks ) {
+ return NULL; // Not yet implemented in upstream esd
+}
+
+esd_info_t *esd_unsubscribe_info( int esd ) {
+ return NULL; // Not yet implemented in upstream esd
+}
 
 /* release all memory allocated for the esd info structure */
 void esd_free_all_info( esd_info_t *info ) {
