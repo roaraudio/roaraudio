@@ -1,7 +1,7 @@
 Source: roaraudio
 Priority: extra
 Maintainer: Michael Stapelberg <michael@stapelberg.de>
-Build-Depends: debhelper (>= 7.0.50~), libdnet-dev, libesd0-dev, libao-dev, libfishsound1-dev, libvorbis-dev, libspeex-dev, libshout3-dev, libsndfile1-dev, liboggz2-dev, libslp-dev, libpulse-dev, liby-dev, libartsc0-dev, libspeexdsp-dev
+Build-Depends: debhelper (>= 7.0.50~), libdnet-dev, libesd0-dev, libao-dev, libfishsound1-dev, libvorbis-dev, libspeex-dev, libshout3-dev, libsndfile1-dev, liboggz2-dev, libslp-dev, libpulse-dev, liby-dev, libartsc0-dev, libspeexdsp-dev, audacious-plugins-dev
 Standards-Version: 3.8.3
 Section: libs
 Homepage: http://roaraudio.keep-cool.org/
@@ -70,7 +70,7 @@ Package: roaraudio
 Section: sound
 Architecture: any
 Provides: roaraudio-server
-Suggests: roaraudio-extra, libroar-compat, socat
+Suggests: roaraudio-extra, libroar-compat, socat, roaraudio-plugin-libao
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: sound server for audio mixing
  RoarAudio is a server for audio mixing. Its main purpose is to mix audio from
@@ -94,3 +94,19 @@ Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: drop-in replacements for other sound libraries
  To get programs which use the EsounD (ESD), aRts, OpenBSD sndio, PulseAudio
  or YIFF API running, you can install this package and replace the appropriate libraries.
+
+Package: roaraudio-plugin-audacious
+Section: sound
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, audacious
+Description: audacious RoarAudio plugin
+ This is a plugin for audacious which allows audacious to use RoarAudio as output.
+
+Package: roaraudio-plugin-libao
+Section: sound
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libao2
+Suggests: vorbis-tools
+Description: libao RoarAudio plugin
+ This is a plugin for libao2 which allows libao2 and all libao2 based
+ applications to use RoarAudio as output.
