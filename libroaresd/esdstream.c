@@ -109,9 +109,38 @@ int esd_monitor_stream( esd_format_t format, int rate,
 }
 /* int esd_monitor_stream_fallback( esd_format_t format, int rate ); */
 int esd_record_stream( esd_format_t format, int rate,
-                       const char *host, const char *name );
+                       const char *host, const char *name ) {
+ int channels;
+ int bits;
+ int codec = ROAR_CODEC_DEFAULT;
+
+ ROAR_DBG("esd_record_stream(format=%x, rate=%i, host='%s', name='%s') = ?", format, rate, host, name);
+
+ if ( (format & ESD_BITS16) ) {
+  bits  = 16;
+ } else {
+  bits  = 8;
+  codec = CODEC_DEF_8BIT;
+ }
+
+ if ( (format & ESD_MONO) ) {
+  channels = 1;
+ } else {
+  channels = 2;
+ }
+
+ return roar_simple_record(rate, channels, bits, codec, (char*)host, (char*)name);
+}
 int esd_record_stream_fallback( esd_format_t format, int rate,
-                                const char *host, const char *name );
+                                const char *host, const char *name ) {
+ int r;
+
+ if ( (r = esd_record_stream(format, rate, host, name)) != -1 ) {
+  return r;
+ }
+
+ return esd_record_stream(format, rate, "+fork", name);
+}
 int esd_filter_stream( esd_format_t format, int rate,
                        const char *host, const char *name ) {
  int channels;
