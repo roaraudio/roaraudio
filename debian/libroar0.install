@@ -1,0 +1,5 @@
+usr/lib/libroar.so.*
+usr/lib/libroardsp.so.*
+usr/lib/libroareio.so.*
+usr/lib/libroarlight.so.*
+usr/lib/libroarmidi.so.*

@@ -1,0 +1,8 @@
+usr/lib/libroaresd.so.*
+usr/lib/libroarartsc.so.*
+usr/lib/libroarpulse*.so.*
+usr/lib/libroaryiff.so.*
+usr/lib/libroaross.so.*
+usr/lib/libroarsndio.so.*
+usr/lib/roaraudio/compbins/*
+usr/lib/roaraudio/complibs/*
