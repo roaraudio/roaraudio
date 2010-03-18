@@ -294,7 +294,9 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
 
   if ( roar_stream_passfh(con, s, socks[0]) == -1 ) {
    roar_kick(con, ROAR_OT_STREAM, s->id); // we do not need to check for errors
-                                          // as we return -1 in both whys
+                                          // as we return -1 anyway.
+   close(socks[0]);
+   close(socks[1]);
    return -1;
   }
 
