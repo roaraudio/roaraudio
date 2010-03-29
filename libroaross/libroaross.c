@@ -243,10 +243,21 @@ static int _open_dummy (void) {
 }
 
 static struct session * _open_session (char * server, char * name) {
+ struct session * ses = &_session;
+ int new_session = getenv("ROAR_OSS_NEW_SESSION") == NULL ? 0 : 1;
+
  ROAR_DBG("_open_session(server='%s', name='%s') = ?", server, name);
  ROAR_DBG("_open_session(server='%s', name='%s'): _session.refc=%i", server, name, _session.refc);
 
- if ( _session.refc == 0 ) {
+ if ( new_session ) {
+  ses = malloc(sizeof(struct session));
+  if ( ses == NULL )
+   return NULL;
+
+  memset(ses, 0, sizeof(struct session));
+ }
+
+ if ( ses->refc == 0 ) {
 
   if ( name == NULL )
    name = getenv("ROAR_OSS_CLIENT_NAME");
@@ -254,19 +265,25 @@ static struct session * _open_session (char * server, char * name) {
   if ( name == NULL )
    name = "libroaross client";
 
-  if ( roar_simple_connect(&(_session.con), server, name) == -1 )
+  if ( roar_simple_connect(&(ses->con), server, name) == -1 ) {
+   if ( new_session )
+    free(ses);
+
    return NULL;
+  }
 
-  _find_volume_sid(&_session);
+  _find_volume_sid(ses);
 
-  if ( getenv("ROAR_OSS_KEEP_SESSION") != NULL )
-   _session.refc++;
+  if ( !new_session ) {
+   if ( getenv("ROAR_OSS_KEEP_SESSION") != NULL )
+    ses->refc++;
+  }
  }
 
- _session.refc++;
+ ses->refc++;
 
- ROAR_DBG("_open_session(server='%s', name='%s') = %p", server, name, &_session);
- return &_session;
+ ROAR_DBG("_open_session(server='%s', name='%s') = %p", server, name, ses);
+ return ses;
 }
 
 static void _close_session(struct session * session) {
@@ -280,6 +297,9 @@ static void _close_session(struct session * session) {
  if ( session->refc == 0 ) {
   roar_disconnect(&(session->con));
  }
+
+ if ( session != &_session )
+  free(session);
 }
 
 static struct handle * _open_handle(struct session * session) {
