@@ -43,6 +43,22 @@
 #define ROAR_VIO_SELECT_WRITE       0x02
 #define ROAR_VIO_SELECT_EXCEPT      0x04
 
+struct roar_vio_select_internal {
+ int action;
+ int fh[3];
+};
+
+struct roar_vio_select {
+ struct roar_vio_calls * vio;
+ int eventsq;
+ int eventsa;
+ struct roar_vio_select_internal internal;
+};
+
+struct roar_vio_selectctl {
+ int strategy;
+};
+
 #endif
 
 //ll
