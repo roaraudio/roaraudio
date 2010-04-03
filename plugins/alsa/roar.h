@@ -56,6 +56,7 @@ struct roar_alsa_pcm {
  struct roar_stream     stream;
  struct roar_vio_calls  stream_vio;
  int                    stream_opened;
+ size_t                 writec;
 };
 
 #endif

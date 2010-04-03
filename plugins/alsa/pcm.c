@@ -82,13 +82,16 @@ static int roar_hw_constraint(struct roar_alsa_pcm * self) {
 }
 
 static int roar_pcm_dummy (snd_pcm_ioplug_t * io) {
- ROAR_DBG("roar_pcm_dummy(*) = ?");
+ ROAR_DBG("roar_pcm_dummy(*) = 0");
  return 0;
 }
 
 static snd_pcm_sframes_t roar_pcm_pointer(snd_pcm_ioplug_t *io) {
+ struct roar_alsa_pcm * self = io->private_data;
+
  ROAR_DBG("roar_pcm_pointer(*) = ?");
- return 0;
+
+ return snd_pcm_bytes_to_frames(io->pcm, self->writec);
 }
 
 // TODO: FIXME: add support for reading data!
@@ -98,13 +101,20 @@ static snd_pcm_sframes_t roar_pcm_transfer(snd_pcm_ioplug_t *io,
                                         snd_pcm_uframes_t size) {
  struct roar_alsa_pcm * self = io->private_data;
  char * buf;
+ size_t len = size * self->info.channels * self->info.bits / 8;
+ ssize_t ret;
 
  ROAR_DBG("roar_pcm_transfer(*) = ?");
+ ROAR_DBG("roar_pcm_transfer(*): len=%lu", (long unsigned int) len);
 
  buf = (char *)areas->addr + (areas->first + areas->step * offset) / 8;
 
- roar_vio_write(&(self->stream_vio), buf, size * self->info.channels * self->info.bits / 8);
+ ret = roar_vio_write(&(self->stream_vio), buf, len);
 
+ if ( ret != -1 )
+  self->writec += ret;
+
+ ROAR_DBG("roar_pcm_transfer(*) = %lli", (long long int)size);
  return size;
 }
 
@@ -123,6 +133,7 @@ static int roar_pcm_prepare(snd_pcm_ioplug_t *io) {
   self->stream_opened = 0;
  }
 
+#if 0
  if ( roar_stream_new(&(self->stream), self->info.rate, self->info.channels, self->info.bits, self->info.codec) == -1 ) {
   return -EINVAL;
  }
@@ -130,10 +141,18 @@ static int roar_pcm_prepare(snd_pcm_ioplug_t *io) {
  if ( roar_stream_connect(&(self->roar.con), &(self->stream), io->stream == SND_PCM_STREAM_PLAYBACK ? ROAR_DIR_PLAY : ROAR_DIR_MONITOR) == -1 ) {
   return -EINVAL;
  }
+#endif
+ if ( roar_vio_simple_new_stream_obj(&(self->stream_vio), &(self->roar.con), &(self->stream),
+                                     self->info.rate, self->info.channels, self->info.bits, self->info.codec,
+                                     io->stream == SND_PCM_STREAM_PLAYBACK ? ROAR_DIR_PLAY : ROAR_DIR_MONITOR
+                                    ) == -1 ) {
+  return -EINVAL;
+ }
 
  self->stream_opened = 1;
 
- return -ENOSYS;
+ ROAR_DBG("roar_pcm_prepare(*) = 0");
+ return 0;
 }
 
 static int roar_pcm_hw_params(snd_pcm_ioplug_t *io, snd_pcm_hw_params_t *params) {
@@ -169,6 +188,7 @@ static int roar_pcm_hw_params(snd_pcm_ioplug_t *io, snd_pcm_hw_params_t *params)
     return-EINVAL;
  }
 
+ ROAR_DBG("roar_pcm_hw_params(*) = 0");
  return 0;
 }
 
@@ -196,6 +216,11 @@ static snd_pcm_ioplug_callback_t roar_pcm_callback = {
     .poll_revents           = NULL,
     .prepare                = roar_pcm_prepare,
     .hw_params              = roar_pcm_hw_params,
+    .hw_free                = NULL,
+    .sw_params              = NULL,
+    .pause                  = NULL,
+    .resume                 = NULL,
+    .dump                   = NULL,
     .close                  = roar_pcm_close,
 };
 
@@ -260,6 +285,8 @@ SND_PCM_PLUGIN_DEFINE_FUNC(roar) {
   return ret;
  }
 
+ *pcmp = self->io.pcm;
+
  ROAR_DBG("SND_PCM_PLUGIN_DEFINE_FUNC(roar) = 0");
 
  return 0;
@@ -268,6 +295,7 @@ SND_PCM_PLUGIN_DEFINE_FUNC(roar) {
 SND_PCM_PLUGIN_SYMBOL(roar);
 
 int __snd_pcm_roar_open_dlsym_pcm_001 (void) {
+ ROAR_DBG("__snd_pcm_roar_open_dlsym_pcm_001(void) = 0");
  return 0;
 }
 
