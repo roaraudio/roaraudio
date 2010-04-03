@@ -133,15 +133,6 @@ static int roar_pcm_prepare(snd_pcm_ioplug_t *io) {
   self->stream_opened = 0;
  }
 
-#if 0
- if ( roar_stream_new(&(self->stream), self->info.rate, self->info.channels, self->info.bits, self->info.codec) == -1 ) {
-  return -EINVAL;
- }
-
- if ( roar_stream_connect(&(self->roar.con), &(self->stream), io->stream == SND_PCM_STREAM_PLAYBACK ? ROAR_DIR_PLAY : ROAR_DIR_MONITOR) == -1 ) {
-  return -EINVAL;
- }
-#endif
  if ( roar_vio_simple_new_stream_obj(&(self->stream_vio), &(self->roar.con), &(self->stream),
                                      self->info.rate, self->info.channels, self->info.bits, self->info.codec,
                                      io->stream == SND_PCM_STREAM_PLAYBACK ? ROAR_DIR_PLAY : ROAR_DIR_MONITOR
