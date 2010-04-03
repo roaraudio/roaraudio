@@ -1028,7 +1028,8 @@ IOCTL() {
    case SNDCTL_COPR_RUN: nosys_reqname = "SNDCTL_COPR_RUN"; break;
    case SNDCTL_COPR_SENDMSG: nosys_reqname = "SNDCTL_COPR_SENDMSG"; break;
    case SNDCTL_COPR_RCVMSG: nosys_reqname = "SNDCTL_COPR_RCVMSG"; break;
-   case SNDCTL_DSP_SPEED: nosys_reqname = "SNDCTL_DSP_SPEED"; break;
+   case SNDCTL_DSP_GETCAPS: nosys_reqname = "SNDCTL_DSP_GETCAPS"; break;
+   default: nosys_reqname = "<<<UNKNOWN>>>"; break;
 /*
    case : nosys_reqname = ""; break;
    case : nosys_reqname = ""; break;
@@ -1041,7 +1042,9 @@ IOCTL() {
      switch (__request) {
       case SNDCTL_DSP_RESET:
       case SNDCTL_DSP_POST:
+      case SNDCTL_DSP_SYNC: // ignore for the moment.
       case SNDCTL_DSP_SETFRAGMENT: // any fragments should be ok for us...
+      case SNDCTL_DSP_SETTRIGGER: // we should implement this using PAUSE flag.
         return 0;
        break;
       case SNDCTL_DSP_SPEED:
