@@ -64,7 +64,7 @@ static int roar_hw_constraint(struct roar_alsa_pcm * self) {
         1, ROAR_MAX_CHANNELS)) < 0 )
   return ret;
 
- if ( (ret = snd_pcm_ioplug_set_param_minmax(io, SND_PCM_IOPLUG_HW_RATE, 8000, 48000)) < 0 )
+ if ( (ret = snd_pcm_ioplug_set_param_minmax(io, SND_PCM_IOPLUG_HW_RATE, 8000, 192000)) < 0 )
   return ret;
 
  if ( (ret = snd_pcm_ioplug_set_param_minmax(io, SND_PCM_IOPLUG_HW_PERIOD_BYTES, 1, 4294967295U)) < 0 )
