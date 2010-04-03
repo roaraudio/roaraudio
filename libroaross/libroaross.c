@@ -134,6 +134,8 @@ static struct {
 #endif
  off_t   (*lseek)(int fildes, off_t offset, int whence);
  FILE   *(*fopen)(const char *path, const char *mode);
+ int     (*dup)(int oldfd);
+ int     (*dup2)(int oldfd, int newfd);
 } _os;
 
 static struct {
@@ -179,6 +181,8 @@ static void _init_os (void) {
 #endif
  _os.lseek = dlsym(REAL_LIBC, "lseek");
  _os.fopen = dlsym(REAL_LIBC, "fopen");
+ _os.dup   = dlsym(REAL_LIBC, "dup");
+ _os.dup2  = dlsym(REAL_LIBC, "dup2");
 }
 
 static void _init_ptr (void) {
@@ -364,6 +368,22 @@ static struct pointer * _open_pointer(struct handle * handle) {
   return NULL;
 
  ret->handle = handle;
+
+ return ret;
+}
+
+static struct pointer * _attach_pointer(struct handle * handle, int fh) {
+ struct pointer * ret = _get_pointer_by_fh(-1);
+
+ if ( ret == NULL )
+  return NULL;
+
+ if ( (ret->fh = fh) == -1 )
+  return NULL;
+
+ ret->handle = handle;
+
+ handle->refc++;
 
  return ret;
 }
@@ -1143,6 +1163,47 @@ IOCTL() {
 #endif
 }
 
+int dup(int oldfd) {
+ struct pointer * pointer;
+ int ret;
+
+ _init();
+
+ ret = _os.dup(oldfd);
+
+ if (ret == -1)
+  return -1;
+
+ if ( (pointer = _get_pointer_by_fh(oldfd)) != NULL ) {
+  if ( _attach_pointer(pointer->handle, ret) == NULL ) {
+   _os.close(ret);
+   return -1;
+  }
+ }
+
+ return ret;
+}
+
+int dup2(int oldfd, int newfd) {
+ struct pointer * pointer;
+ int ret;
+
+ _init();
+
+ ret = _os.dup2(oldfd, newfd);
+
+ if (ret == -1)
+  return -1;
+
+ if ( (pointer = _get_pointer_by_fh(oldfd)) != NULL ) {
+  if ( _attach_pointer(pointer->handle, ret) == NULL ) {
+   _os.close(ret);
+   return -1;
+  }
+ }
+
+ return ret;
+}
 
 // -------------------------------------
 // emulated stdio functions follow:
