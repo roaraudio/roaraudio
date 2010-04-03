@@ -873,6 +873,7 @@ ssize_t write(int fd, const void *buf, size_t count) {
  _init();
 
  if ( (pointer = _get_pointer_by_fh(fd)) != NULL ) {
+  ROAR_DBG("write(fd=%i, buf=%p, count=%lu) = ? // pointer write", fd, buf, (long unsigned int) count);
   switch (pointer->handle->type) {
    case HT_STREAM:
      if ( pointer->handle->stream_opened == 0 ) {
@@ -988,6 +989,7 @@ IOCTL() {
  struct pointer * pointer;
  struct handle  * handle;
  int * ip = NULL;
+ size_t tmp;
  audio_buf_info * bi;
  count_info     * ci;
 #ifdef __FIXME__
@@ -1085,19 +1087,20 @@ IOCTL() {
         return 0;
        break;
       case SNDCTL_DSP_GETOPTR:
+        ROAR_DBG("ioctl(__fd=%i, __request=0x%lX): writec=%lu", __fd, (long unsigned int) __request, (long unsigned int) handle->writec);
         ci = argp;
         memset(ci, 0, sizeof(*ci));
         ci->bytes  = handle->writec;
-        ci->blocks = ci->bytes / _get_stream_buffersize(handle);
-        ci->ptr    = 0;
+        ci->blocks = ci->bytes / (tmp = _get_stream_buffersize(handle));
+        ci->ptr    = ci->bytes % tmp;
         return 0;
        break;
       case SNDCTL_DSP_GETIPTR:
         ci = argp;
         memset(ci, 0, sizeof(*ci));
         ci->bytes  = handle->readc;
-        ci->blocks = ci->bytes / _get_stream_buffersize(handle);
-        ci->ptr    = 0;
+        ci->blocks = ci->bytes / (tmp = _get_stream_buffersize(handle));
+        ci->ptr    = ci->bytes % tmp;
         return 0;
        break;
 #ifdef SNDCTL_DSP_GETPLAYVOL
