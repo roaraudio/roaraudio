@@ -14,6 +14,8 @@ v. 0.3beta5 - ?
 	* updated ROAR_{ERR,WARN,INFO,DBG}()
 	* added syslog support
 	* updated test suit
+	* done a lot work on libroaross
+	* fixed segfault in ALSA plugin
 
 v. 0.3beta4 - Sat Feb 06 2010 26:02 CET
 	* Applyed patches for Debian

@@ -4,7 +4,6 @@ Things we need to do:
 
 Things we should do:
  * (*.* */*/*) add a lot other things
- * (0.3 O/L/-) add DSTR driver
  * (0.3 n/h/-) do not install .cvsignore files
  * (0.3 O/n/-) better tests for libspeex{,dsp}-dev
  * (0.3 O/N/-) add support to to roard to auto select a sync stream
@@ -24,7 +23,6 @@ Things we should do:
  * (?.? O/N/-) Better support for mixer streams
 
 Things it would be nice to have:
- * (1.0 O/l/-) add better support for ReplayGain.
  * (1.1 O/l/-) add code to handle streams with more than ROAR_MAX_CHANNELS channels
  * (1.1 O/L/-) add support for multiple mixers per type
 
