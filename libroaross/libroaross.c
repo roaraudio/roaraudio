@@ -672,8 +672,8 @@ static int _ioctl_mixer (struct handle * handle, long unsigned int req, void * v
 */
  }
  if ( name != NULL ) {
-  ROAR_DBG("_ioctl_mixer(handle=%p, req=%lu, ip=%p): unspported mixer command %s", handle, req, ip, name);
-  ROAR_DBG("_ioctl_mixer(handle=%p, req=%lu, ip=%p) = -1 // errno = ENOSYS", handle, req, ip);
+  ROAR_DBG("_ioctl_mixer(handle=%p, req=0x%lX, ip=%p): unspported mixer command %s", handle, req, ip, name);
+  ROAR_DBG("_ioctl_mixer(handle=%p, req=0x%lX, ip=%p) = -1 // errno = ENOSYS", handle, req, ip);
   errno = ENOSYS;
   return -1;
  }
@@ -793,9 +793,9 @@ static int _ioctl_mixer (struct handle * handle, long unsigned int req, void * v
    break;
  }
 
- ROAR_DBG("_ioctl_mixer(handle=%p, req=%lu, ip=%p): unknown mixer CTL", handle, req, ip);
+ ROAR_DBG("_ioctl_mixer(handle=%p, req=0x%lX, ip=%p): unknown mixer CTL", handle, req, ip);
 // _os.ioctl(-1, req, ip);
- ROAR_DBG("_ioctl_mixer(handle=%p, req=%lu, ip=%p) = -1 // errno = ENOSYS", handle, req, ip);
+ ROAR_DBG("_ioctl_mixer(handle=%p, req=0x%lX, ip=%p) = -1 // errno = ENOSYS", handle, req, ip);
  errno = ENOSYS;
  return -1;
 }
@@ -1001,7 +1001,7 @@ IOCTL() {
 
  _init();
 
-// ROAR_DBG("ioctl(__fd=%i, __request=%lu) = ?", __fd, (long unsigned int) __request);
+// ROAR_DBG("ioctl(__fd=%i, __request=0x%lX) = ?", __fd, (long unsigned int) __request);
 
 #ifdef va_argp
  va_start (args, ioctl_lastarg);
@@ -1009,11 +1009,11 @@ IOCTL() {
  va_end (args);
 #endif
 
-// ROAR_DBG("ioctl(__fd=%i, __request=%lu): argp=%p", __fd, (long unsigned int) __request, argp);
+// ROAR_DBG("ioctl(__fd=%i, __request=0x%lX): argp=%p", __fd, (long unsigned int) __request, argp);
 
  if ( (pointer = _get_pointer_by_fh(__fd)) != NULL ) {
   ip = argp;
-//  ROAR_DBG("ioctl(__fd=%i, __request=%lu): ip=%p", __fd, (long unsigned int) __request, ip);
+//  ROAR_DBG("ioctl(__fd=%i, __request=0x%lx): ip=%p", __fd, (long unsigned int) __request, ip);
 #ifdef __FIXME__
   switch ((handle = pointer->handle)->type) {
    case SOUND_PCM_READ_RATE: nosys_reqname = "SOUND_PCM_READ_RATE"; break;
@@ -1051,12 +1051,12 @@ IOCTL() {
        break;
       case SNDCTL_DSP_SPEED:
         handle->stream.info.rate = *ip;
-        ROAR_DBG("ioctl(__fd=%i, __request=%lu): rate=%i", __fd, (long unsigned int) __request, *ip);
+        ROAR_DBG("ioctl(__fd=%i, __request=0x%lX): rate=%i", __fd, (long unsigned int) __request, *ip);
         return 0;
        break;
       case SNDCTL_DSP_CHANNELS:
         handle->stream.info.channels = *ip;
-        ROAR_DBG("ioctl(__fd=%i, __request=%lu): channels=%i", __fd, (long unsigned int) __request, *ip);
+        ROAR_DBG("ioctl(__fd=%i, __request=0x%lX): channels=%i", __fd, (long unsigned int) __request, *ip);
         return 0;
        break;
       case SNDCTL_DSP_STEREO:
@@ -1068,11 +1068,11 @@ IOCTL() {
         return 0;
        break;
       case SNDCTL_DSP_SETFMT:
-        ROAR_DBG("ioctl(__fd=%i, __request=%lu): fmt=0x%x", __fd, (long unsigned int) __request, *ip);
+        ROAR_DBG("ioctl(__fd=%i, __request=0x%lX): fmt=0x%x", __fd, (long unsigned int) __request, *ip);
         return _ioctl_stream_format(handle, *ip);
        break;
       case SNDCTL_DSP_GETFMTS:
-//        ROAR_DBG("ioctl(__fd=%i, __request=%lu): ip=%p", __fd, (long unsigned int) __request, ip);
+//        ROAR_DBG("ioctl(__fd=%i, __request=0x%lX): ip=%p", __fd, (long unsigned int) __request, ip);
         *ip = _ioctl_stream_format_list();
         return 0;
        break;
@@ -1115,9 +1115,9 @@ IOCTL() {
 #endif
       default:
 #ifdef __FIXME__
-        ROAR_DBG("ioctl(__fd=%i, __request=%lu (%s)) = -1 // errno = ENOSYS", __fd, (long unsigned int) __request, nosys_reqname);
+        ROAR_DBG("ioctl(__fd=%i, __request=0x%lX (%s)) = -1 // errno = ENOSYS", __fd, (long unsigned int) __request, nosys_reqname);
 #else
-        ROAR_DBG("ioctl(__fd=%i, __request=%lu) = -1 // errno = ENOSYS", __fd, (long unsigned int) __request);
+        ROAR_DBG("ioctl(__fd=%i, __request=0x%lX) = -1 // errno = ENOSYS", __fd, (long unsigned int) __request);
 #endif
         errno = ENOSYS;
         return -1;
@@ -1127,8 +1127,8 @@ IOCTL() {
      return _ioctl_mixer(handle, __request, argp);
     break;
    default:
-     ROAR_DBG("ioctl(__fd=%i, __request=%lu): unknown handle type: no ioctl()s supported", __fd, (long unsigned int) __request);
-     ROAR_DBG("ioctl(__fd=%i, __request=%lu) = -1 // errno = ENOSYS", __fd, (long unsigned int) __request);
+     ROAR_DBG("ioctl(__fd=%i, __request=0x%lX): unknown handle type: no ioctl()s supported", __fd, (long unsigned int) __request);
+     ROAR_DBG("ioctl(__fd=%i, __request=0x%lX) = -1 // errno = ENOSYS", __fd, (long unsigned int) __request);
      errno = EINVAL;
      return -1;
     break;
