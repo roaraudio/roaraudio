@@ -104,6 +104,7 @@
 #define HT_MIDI       4 /* MIDI device */
 #define HT_DMX        5 /* DMX512/DMX4Linux device */
 #define HT_VIO        6 /* General VIO object */
+#define HT_STATIC     7 /* Static file */
 
 struct session {
  int refc;
@@ -123,6 +124,12 @@ struct handle {
  size_t                stream_buffersize;
  size_t                readc, writec;
  size_t                pos;
+ union {
+  struct {
+   char * data;
+   size_t len;
+  } sf;
+ } userdata;
 };
 
 static struct {
@@ -171,28 +178,52 @@ static struct pointer {
 } _ptr[_MAX_POINTER];
 
 
+static char _sf__dev_sndstat[] =
+ "Sound Driver:RoarAudio\n"
+ "Config options: 0\n"
+ "\n"
+ "Installed drivers:\n"
+ "Type 10: RoarAudio emulation\n"
+ "\n"
+ "Card config:\n"
+ "\n"
+ "Audio devices:\n"
+ "0: RoarAudio OSS emulation (DUPLEX)\n"
+ "\n"
+ "Midi devices:\n"
+ "0: RoarAudio OSS emulation MIDI\n"
+ "\n"
+ "Timers:\n"
+ "\n"
+ "Mixers:\n"
+ "0: RoarAudio OSS emulation Mixer\n"
+;
+
 static struct devices {
   char * prefix;
   int type;
+  size_t len;
+  void * userdata;
 } _device_list[] = {
- {"/dev/dsp",           HT_WAVEFORM},
- {"/dev/audio",         HT_WAVEFORM},
- {"/dev/sound/dsp",     HT_WAVEFORM},
- {"/dev/sound/audio",   HT_WAVEFORM},
- {"/dev/mixer",         HT_MIXER},
- {"/dev/sound/mixer",   HT_MIXER},
- {"/dev/midi",          HT_MIDI},
- {"/dev/rmidi",         HT_MIDI},
- {"/dev/sound/midi",    HT_MIDI},
- {"/dev/sound/rmidi",   HT_MIDI},
- {"/dev/dmx",           HT_DMX},
- {"/dev/misc/dmx",      HT_DMX},
- {"/dev/dmxin",         HT_DMX},
- {"/dev/misc/dmxin",    HT_DMX},
+ {"/dev/dsp",           HT_WAVEFORM,  0, NULL},
+ {"/dev/audio",         HT_WAVEFORM,  0, NULL},
+ {"/dev/sound/dsp",     HT_WAVEFORM,  0, NULL},
+ {"/dev/sound/audio",   HT_WAVEFORM,  0, NULL},
+ {"/dev/mixer",         HT_MIXER,     0, NULL},
+ {"/dev/sound/mixer",   HT_MIXER,     0, NULL},
+ {"/dev/midi",          HT_MIDI,      0, NULL},
+ {"/dev/rmidi",         HT_MIDI,      0, NULL},
+ {"/dev/sound/midi",    HT_MIDI,      0, NULL},
+ {"/dev/sound/rmidi",   HT_MIDI,      0, NULL},
+ {"/dev/dmx",           HT_DMX,       0, NULL},
+ {"/dev/misc/dmx",      HT_DMX,       0, NULL},
+ {"/dev/dmxin",         HT_DMX,       0, NULL},
+ {"/dev/misc/dmxin",    HT_DMX,       0, NULL},
+ {"/dev/sndstat",       HT_STATIC,    sizeof(_sf__dev_sndstat)-1, _sf__dev_sndstat},
 #ifdef ROAR_DEFAULT_OSS_DEV
- {ROAR_DEFAULT_OSS_DEV, HT_WAVEFORM},
+ {ROAR_DEFAULT_OSS_DEV, HT_WAVEFORM,  0, NULL},
 #endif
- {NULL, HT_NONE},
+ {NULL, HT_NONE, 0, NULL},
 };
 
 static void _init_os (void) {
@@ -344,7 +375,10 @@ static struct handle * _open_handle(struct session * session) {
 
  handle->refc = 1;
  handle->session = session;
- session->refc++; // TODO: better warp this
+
+ if ( session != NULL )
+  session->refc++; // TODO: better warp this
+
  handle->type = HT_NONE;
  handle->stream_dir = ROAR_DIR_PLAY;
  roar_stream_new(&(handle->stream), ROAR_RATE_DEFAULT, ROAR_CHANNELS_DEFAULT, ROAR_BITS_DEFAULT, ROAR_CODEC_DEFAULT);
@@ -461,9 +495,13 @@ static int _open_file (const char *pathname, int flags) {
  if ( ptr == NULL )
   return -2;
 
- if ( (session = _open_session(NULL, NULL)) == NULL ) {
-  ROAR_DBG("_open_file(pathname='%s', flags=0x%x) = -1", pathname, flags);
-  return -1;
+ if ( ptr->type == HT_STATIC || ptr->type == HT_VIO ) { // non-session handles
+  session = NULL;
+ } else {
+  if ( (session = _open_session(NULL, NULL)) == NULL ) {
+   ROAR_DBG("_open_file(pathname='%s', flags=0x%x) = -1", pathname, flags);
+   return -1;
+  }
  }
 
  if ( (handle = _open_handle(session)) == NULL ) {
@@ -488,6 +526,7 @@ static int _open_file (const char *pathname, int flags) {
        handle->stream_dir = ROAR_DIR_LIGHT_OUT;
       break;
      case HT_MIXER:
+     case HT_STATIC:
       break;
      default:
        ROAR_DBG("_open_file(pathname='%s', flags=0x%x) = -1", pathname, flags);
@@ -505,6 +544,9 @@ static int _open_file (const char *pathname, int flags) {
      case HT_DMX:
        handle->stream_dir = ROAR_DIR_LIGHT_IN;
       break;
+     case HT_MIXER:
+     case HT_STATIC:
+      break;
      default:
        ROAR_DBG("_open_file(pathname='%s', flags=0x%x) = -1", pathname, flags);
        return -1;
@@ -514,6 +556,9 @@ static int _open_file (const char *pathname, int flags) {
     switch (ptr->type) {
      case HT_WAVEFORM:
        handle->stream_dir = ROAR_DIR_BIDIR;
+      break;
+     case HT_MIXER:
+     case HT_STATIC:
       break;
      default:
        ROAR_DBG("_open_file(pathname='%s', flags=0x%x) = -1", pathname, flags);
@@ -538,6 +583,10 @@ static int _open_file (const char *pathname, int flags) {
     handle->stream.info.bits     = ROAR_LIGHT_BITS;
     handle->stream.info.channels = 512;
     handle->stream.info.codec    = ROAR_CODEC_ROARDMX;
+   break;
+  case HT_STATIC:
+    handle->userdata.sf.len      = ptr->len;
+    handle->userdata.sf.data     = ptr->userdata;
    break;
  }
 
@@ -985,6 +1034,8 @@ ssize_t read(int fd, void *buf, size_t count) {
  _init();
 
  if ( (pointer = _get_pointer_by_fh(fd)) != NULL ) {
+  ROAR_DBG("read(fd=%i, buf=%p, count=%lu) = ? // pointer read", fd, buf, (long unsigned int)count);
+
   switch (pointer->handle->type) {
    case HT_STREAM:
      if ( pointer->handle->stream_opened == 0 ) {
@@ -999,6 +1050,18 @@ ssize_t read(int fd, void *buf, size_t count) {
       pointer->handle->readc += ret;
      return ret;
     break;
+   case HT_STATIC:
+     ROAR_DBG("read(fd=%i, buf=%p, count=%lu) = ? // type=HT_STATIC", fd, buf, (long unsigned int)count);
+     ret = pointer->handle->pos + count; // calc the end of the read
+
+     if ( ret > (ssize_t)pointer->handle->userdata.sf.len ) {
+      count = pointer->handle->userdata.sf.len - pointer->handle->pos;
+     }
+
+     memcpy(buf, pointer->handle->userdata.sf.data + pointer->handle->pos, count);
+     pointer->handle->pos += count;
+     return count;
+    break;
    default:
      errno = EINVAL;
      return -1;
@@ -1011,6 +1074,7 @@ ssize_t read(int fd, void *buf, size_t count) {
 
 off_t lseek(int fildes, off_t offset, int whence) {
  struct pointer * pointer;
+ ssize_t tmp;
 
  _init();
 
@@ -1034,6 +1098,37 @@ off_t lseek(int fildes, off_t offset, int whence) {
     break;
    case HT_VIO:
      return roar_vio_lseek(&(pointer->handle->stream_vio), offset, whence);
+    break;
+   case HT_STATIC:
+     switch (whence) {
+      case SEEK_SET:
+        if ( offset < 0 || offset > (ssize_t)pointer->handle->userdata.sf.len ) {
+         errno = EINVAL;
+         return -1;
+        }
+        pointer->handle->pos  = offset;
+       break;
+      case SEEK_CUR:
+        tmp = pointer->handle->pos + offset;
+        if ( tmp < 0 || tmp > (ssize_t)pointer->handle->userdata.sf.len ) {
+         errno = EINVAL;
+         return -1;
+        }
+        pointer->handle->pos = tmp;
+       break;
+      case SEEK_END:
+        tmp = pointer->handle->userdata.sf.len + offset;
+        if ( tmp < 0 || tmp > (ssize_t)pointer->handle->userdata.sf.len ) {
+         errno = EINVAL;
+         return -1;
+        }
+        pointer->handle->pos = tmp;
+       break;
+      default:
+        errno = EINVAL;
+        return -1;
+       break;
+     }
     break;
    default:
      errno = EINVAL;
