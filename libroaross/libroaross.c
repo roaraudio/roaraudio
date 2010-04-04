@@ -354,6 +354,8 @@ static struct handle * _open_handle(struct session * session) {
 }
 
 static void _close_handle(struct handle * handle) {
+ int need_close = 0;
+
  if (handle == NULL)
   return;
 
@@ -362,12 +364,24 @@ static void _close_handle(struct handle * handle) {
  ROAR_DBG("_close_handle(handle=%p): handle->refc=%i", handle, handle->refc);
 
  if ( handle->refc == 0 ) {
-  if ( handle->stream_opened )
+  switch (handle->type) {
+   case HT_VIO:
+     need_close = 1;
+    break;
+   case HT_STREAM:
+     if ( handle->stream_opened )
+      need_close = 1;
+    break;
+  }
+
+  if ( need_close )
    roar_vio_close(&(handle->stream_vio));
 
-  handle->session->refc--;
+  if ( handle->session != NULL ) {
+   handle->session->refc--;
 
-  _close_session(handle->session);
+   _close_session(handle->session);
+  }
 
   roar_mm_free(handle);
  }
@@ -899,19 +913,20 @@ ssize_t write(int fd, const void *buf, size_t count) {
  if ( (pointer = _get_pointer_by_fh(fd)) != NULL ) {
   ROAR_DBG("write(fd=%i, buf=%p, count=%lu) = ? // pointer write", fd, buf, (long unsigned int) count);
   switch (pointer->handle->type) {
-   case HT_STREAM:
+   case HT_STREAM: // handle stream specific stuff
      if ( pointer->handle->stream_opened == 0 ) {
       if ( _open_stream(pointer->handle) == -1 ) {
        errno = EIO;
        return -1;
       }
      }
+   case HT_VIO: // from here we only look at the VIO object of streams, or handle simple VIOs
      ret = roar_vio_write(&(pointer->handle->stream_vio), (char*)buf, count);
      if ( ret > 0 )
       pointer->handle->writec += ret;
      return ret;
     break;
-   case HT_DMX:
+   case HT_DMX: // DMX need specal handling as we need to convert the protocol
      if ( pointer->handle->stream_opened == 0 ) {
       if ( _open_stream(pointer->handle) == -1 ) {
        errno = EIO;
@@ -941,7 +956,7 @@ ssize_t write(int fd, const void *buf, size_t count) {
      pointer->handle->pos += count;
      return count;
     break;
-   default:
+   default: // we don't know what to do with other types
      errno = EINVAL;
      return -1;
     break;
@@ -958,20 +973,24 @@ ssize_t read(int fd, void *buf, size_t count) {
  _init();
 
  if ( (pointer = _get_pointer_by_fh(fd)) != NULL ) {
-  if ( pointer->handle->type == HT_STREAM ) {
-   if ( pointer->handle->stream_opened == 0 ) {
-    if ( _open_stream(pointer->handle) == -1 ) {
-     errno = EIO;
+  switch (pointer->handle->type) {
+   case HT_STREAM:
+     if ( pointer->handle->stream_opened == 0 ) {
+      if ( _open_stream(pointer->handle) == -1 ) {
+       errno = EIO;
+       return -1;
+      }
+     }
+   case HT_VIO:
+     ret = roar_vio_read(&(pointer->handle->stream_vio), buf, count);
+     if ( ret > 0 )
+      pointer->handle->readc += ret;
+     return ret;
+    break;
+   default:
+     errno = EINVAL;
      return -1;
-    }
-   }
-   ret = roar_vio_read(&(pointer->handle->stream_vio), buf, count);
-   if ( ret > 0 )
-    pointer->handle->readc += ret;
-   return ret;
-  } else {
-   errno = EINVAL;
-   return -1;
+    break;
   }
  }
 
@@ -984,24 +1003,30 @@ off_t lseek(int fildes, off_t offset, int whence) {
  _init();
 
  if ( (pointer = _get_pointer_by_fh(fildes)) != NULL ) {
-  if ( pointer->handle->type == HT_DMX ) {
-   switch (whence) {
-    case SEEK_SET:
-      pointer->handle->pos  = offset;
-     break;
-    case SEEK_CUR:
-      pointer->handle->pos += offset;
-     break;
-    case SEEK_END:
-    default:
-      errno = EINVAL;
-      return -1;
-     break;
-   }
-   return pointer->handle->pos;
-  } else {
-   errno = EINVAL;
-   return -1;
+  switch (pointer->handle->type) {
+   case HT_DMX:
+     switch (whence) {
+      case SEEK_SET:
+        pointer->handle->pos  = offset;
+       break;
+      case SEEK_CUR:
+        pointer->handle->pos += offset;
+       break;
+      case SEEK_END:
+      default:
+        errno = EINVAL;
+        return -1;
+       break;
+     }
+     return pointer->handle->pos;
+    break;
+   case HT_VIO:
+     return roar_vio_lseek(&(pointer->handle->stream_vio), offset, whence);
+    break;
+   default:
+     errno = EINVAL;
+     return -1;
+    break;
   }
  }
 
