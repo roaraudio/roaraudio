@@ -97,12 +97,13 @@
 #define _MAX_POINTER  8
 
 // handle type:
-#define HT_NONE       0
-#define HT_STREAM     1
-#define HT_MIXER      2
-#define HT_WAVEFORM   3
-#define HT_MIDI       4
-#define HT_DMX        5
+#define HT_NONE       0 /* Unused object */
+#define HT_STREAM     1 /* Stream with no specal handling needed */
+#define HT_MIXER      2 /* Mixer device */
+#define HT_WAVEFORM   3 /* Waveform device */
+#define HT_MIDI       4 /* MIDI device */
+#define HT_DMX        5 /* DMX512/DMX4Linux device */
+#define HT_VIO        6 /* General VIO object */
 
 struct session {
  int refc;
