@@ -169,6 +169,31 @@ static struct pointer {
  struct handle * handle;
 } _ptr[_MAX_POINTER];
 
+
+static struct devices {
+  char * prefix;
+  int type;
+} _device_list[] = {
+ {"/dev/dsp",           HT_WAVEFORM},
+ {"/dev/audio",         HT_WAVEFORM},
+ {"/dev/sound/dsp",     HT_WAVEFORM},
+ {"/dev/sound/audio",   HT_WAVEFORM},
+ {"/dev/mixer",         HT_MIXER},
+ {"/dev/sound/mixer",   HT_MIXER},
+ {"/dev/midi",          HT_MIDI},
+ {"/dev/rmidi",         HT_MIDI},
+ {"/dev/sound/midi",    HT_MIDI},
+ {"/dev/sound/rmidi",   HT_MIDI},
+ {"/dev/dmx",           HT_DMX},
+ {"/dev/misc/dmx",      HT_DMX},
+ {"/dev/dmxin",         HT_DMX},
+ {"/dev/misc/dmxin",    HT_DMX},
+#ifdef ROAR_DEFAULT_OSS_DEV
+ {ROAR_DEFAULT_OSS_DEV, HT_WAVEFORM},
+#endif
+ {NULL, HT_NONE},
+};
+
 static void _init_os (void) {
  memset(&_os, 0, sizeof(_os));
 
@@ -407,34 +432,12 @@ static int _open_file (const char *pathname, int flags) {
  struct session * session;
  struct handle  * handle;
  struct pointer * pointer;
- struct {
-  char * prefix;
-  int type;
- } * ptr = NULL, p[] = {
-  {"/dev/dsp",           HT_WAVEFORM},
-  {"/dev/audio",         HT_WAVEFORM},
-  {"/dev/sound/dsp",     HT_WAVEFORM},
-  {"/dev/sound/audio",   HT_WAVEFORM},
-  {"/dev/mixer",         HT_MIXER},
-  {"/dev/sound/mixer",   HT_MIXER},
-  {"/dev/midi",          HT_MIDI},
-  {"/dev/rmidi",         HT_MIDI},
-  {"/dev/sound/midi",    HT_MIDI},
-  {"/dev/sound/rmidi",   HT_MIDI},
-  {"/dev/dmx",           HT_DMX},
-  {"/dev/misc/dmx",      HT_DMX},
-  {"/dev/dmxin",         HT_DMX},
-  {"/dev/misc/dmxin",    HT_DMX},
-#ifdef ROAR_DEFAULT_OSS_DEV
-  {ROAR_DEFAULT_OSS_DEV, HT_WAVEFORM},
-#endif
-  {NULL, HT_NONE},
- };
+ struct devices * ptr = NULL;
  int i;
 
- for (i = 0; p[i].prefix != NULL; i++) {
-  if ( !strcmp(pathname, p[i].prefix) ) {
-   ptr = &(p[i]);
+ for (i = 0; _device_list[i].prefix != NULL; i++) {
+  if ( !strcmp(pathname, _device_list[i].prefix) ) {
+   ptr = &(_device_list[i]);
   }
  }
 
