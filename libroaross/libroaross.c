@@ -450,6 +450,8 @@ static int _open_file (const char *pathname, int flags) {
  struct devices * ptr = NULL;
  int i;
 
+ ROAR_DBG("_open_file(pathname='%s', flags=0x%x) = ?", pathname, flags);
+
  for (i = 0; _device_list[i].prefix != NULL; i++) {
   if ( !strcmp(pathname, _device_list[i].prefix) ) {
    ptr = &(_device_list[i]);
@@ -460,11 +462,13 @@ static int _open_file (const char *pathname, int flags) {
   return -2;
 
  if ( (session = _open_session(NULL, NULL)) == NULL ) {
+  ROAR_DBG("_open_file(pathname='%s', flags=0x%x) = -1", pathname, flags);
   return -1;
  }
 
  if ( (handle = _open_handle(session)) == NULL ) {
   _close_session(session);
+  ROAR_DBG("_open_file(pathname='%s', flags=0x%x) = -1", pathname, flags);
   return -1;
  }
 
@@ -483,7 +487,10 @@ static int _open_file (const char *pathname, int flags) {
      case HT_DMX:
        handle->stream_dir = ROAR_DIR_LIGHT_OUT;
       break;
+     case HT_MIXER:
+      break;
      default:
+       ROAR_DBG("_open_file(pathname='%s', flags=0x%x) = -1", pathname, flags);
        return -1;
     }
    break;
@@ -499,6 +506,7 @@ static int _open_file (const char *pathname, int flags) {
        handle->stream_dir = ROAR_DIR_LIGHT_IN;
       break;
      default:
+       ROAR_DBG("_open_file(pathname='%s', flags=0x%x) = -1", pathname, flags);
        return -1;
     }
    break;
@@ -508,6 +516,7 @@ static int _open_file (const char *pathname, int flags) {
        handle->stream_dir = ROAR_DIR_BIDIR;
       break;
      default:
+       ROAR_DBG("_open_file(pathname='%s', flags=0x%x) = -1", pathname, flags);
        return -1;
     }
    break;
@@ -534,8 +543,11 @@ static int _open_file (const char *pathname, int flags) {
 
  if ( (pointer = _open_pointer(handle)) == NULL ) {
   _close_handle(handle);
+  ROAR_DBG("_open_file(pathname='%s', flags=0x%x) = -1", pathname, flags);
   return -1;
  }
+
+ ROAR_DBG("_open_file(pathname='%s', flags=0x%x) = %i", pathname, flags, pointer->fh);
 
  return pointer->fh;
 }
