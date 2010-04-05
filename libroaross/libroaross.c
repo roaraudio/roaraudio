@@ -1347,7 +1347,19 @@ int dup2(int oldfd, int newfd) {
 
 //roar_vio_to_stdio
 
+static int _vio_close    (struct roar_vio_calls * vio) {
+ int ret = 0;
+
+ if ( roar_vio_get_fh(vio) != -1 )
+  ret = close(roar_vio_get_fh(vio));
+
+ roar_mm_free(vio);
+
+ return ret;
+}
+
 FILE *fopen(const char *path, const char *mode) {
+ struct roar_vio_calls * vio;
  struct pointer * pointer;
  FILE  * fr;
  int     ret;
@@ -1397,6 +1409,7 @@ FILE *fopen(const char *path, const char *mode) {
     return NULL;
    break;
   default:       // return successfully opened pointer to caller
+#if 0
     if ( (pointer = _get_pointer_by_fh(ret)) != NULL ) {
      if ( (fr = roar_vio_to_stdio(&(pointer->handle->stream_vio), flags)) == NULL ) {
       errno = EIO;
@@ -1407,6 +1420,21 @@ FILE *fopen(const char *path, const char *mode) {
     } else {
      errno = EIO;
      return NULL;
+    }
+#endif
+    if ( (vio = roar_mm_malloc(sizeof(struct roar_vio_calls))) == NULL ) {
+     return NULL; // errno should be set correctly by roar_mm_malloc().
+    }
+
+    roar_vio_init_calls(vio);  // TODO: add error handling.
+    roar_vio_set_fh(vio, ret); // TODO: add error handling.
+    vio->close = _vio_close;
+    if ( (fr = roar_vio_to_stdio(vio, flags)) == NULL ) {
+     _vio_close(vio);
+     errno = EIO;
+     return NULL;
+    } else {
+     return fr;
     }
    break;
  }
