@@ -1409,19 +1409,6 @@ FILE *fopen(const char *path, const char *mode) {
     return NULL;
    break;
   default:       // return successfully opened pointer to caller
-#if 0
-    if ( (pointer = _get_pointer_by_fh(ret)) != NULL ) {
-     if ( (fr = roar_vio_to_stdio(&(pointer->handle->stream_vio), flags)) == NULL ) {
-      errno = EIO;
-      return NULL;
-     } else {
-      return fr;
-     }
-    } else {
-     errno = EIO;
-     return NULL;
-    }
-#endif
     if ( (vio = roar_mm_malloc(sizeof(struct roar_vio_calls))) == NULL ) {
      return NULL; // errno should be set correctly by roar_mm_malloc().
     }
