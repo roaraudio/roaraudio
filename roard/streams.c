@@ -75,6 +75,8 @@ int streams_new    (void) {
     return -1;
    }
 
+   memset(s, 0, sizeof(struct roar_stream_server));
+
    n->id         = i;
    n->fh         = -1;
    n->pos_rel_id = -1;
@@ -971,12 +973,16 @@ int streams_set_map      (int id, char * map, size_t len) {
  switch (ssdir) {
   case STREAM_DIR_IN:
   case STREAM_DIR_NONE:
+    memset(ss->chanmap.in, 0, sizeof(ss->chanmap.in));
+
     if ( map != NULL )
      memcpy(ss->chanmap.in, map, len);
 
     roardsp_chanmap_calc(&(ss->chanmap), ROARDSP_CHANMAP_MAP, 0);
    break;
   case STREAM_DIR_OUT:
+    memset(ss->chanmap.out, 0, sizeof(ss->chanmap.out));
+
     if ( map != NULL )
      memcpy(ss->chanmap.out, map, len);
 
