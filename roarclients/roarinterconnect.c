@@ -23,6 +23,10 @@
  *
  */
 
+// configure ROAR_INFO()
+int g_verbose = 0;
+#define ROAR_DBG_INFOVAR g_verbose
+
 #include <roaraudio.h>
 #include <libroareio/libroareio.h>
 
@@ -173,6 +177,8 @@ int main (int argc, char * argv[]) {
    channels = atoi(argv[++i]);
   } else if ( strcmp(k, "--codec") == 0 ) {
    codec = roar_str2codec(argv[++i]);
+  } else if ( strcmp(k, "--verbose") == 0 || strcmp(k, "-v") == 0 ) {
+   g_verbose++;
   } else if ( strcmp(k, "--help") == 0 ) {
    usage();
    return 0;
@@ -351,6 +357,8 @@ int main (int argc, char * argv[]) {
  }
 
  roar_disconnect(con);
+
+ ROAR_INFO("Stream ID: %i", 1, stream->id);
 
  return 0;
 }
