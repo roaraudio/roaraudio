@@ -63,6 +63,7 @@ void usage (void) {
         "  --chans  CHANNELS  - Set number of channels\n"
         "  --codec  CODEC     - Set the codec\n"
         "  --help             - Show this help\n"
+        "  --verbose -v       - Be verbose\n"
        );
 
  printf("\nPossible Types:\n\n");
