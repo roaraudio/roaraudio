@@ -478,6 +478,7 @@ do
  shift;
 done
 
+[ "$no_lib_yiff" != '' ] && no_lib_y2=true
 
 CCTF="false"
 
@@ -861,7 +862,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.244 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.245 $ of RoarAudio
  */
 
 EOF
