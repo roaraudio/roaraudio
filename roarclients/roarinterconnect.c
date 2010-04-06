@@ -24,6 +24,7 @@
  */
 
 #include <roaraudio.h>
+#include <libroareio/libroareio.h>
 
 #ifdef ROAR_HAVE_ESD
 #include <esd.h>
@@ -34,6 +35,7 @@
 #define MT_ROAR     0x10
 #define MT_ESD      0x20
 #define MT_SIMPLE   0x30
+#define MT_OSS      0x40
 #define MT_DEFAULT  MT_ROAR
 
 #define ST_NONE     0x00
@@ -63,6 +65,7 @@ void usage (void) {
  printf("  roar               - RoarAudio Server\n"
         "  esd                - EsounD Server\n"
         "  simple             - PulseAudio using simple protocol\n"
+        "  oss                - Open Sound System (OSS) device\n"
         "\n"
         "  bidir              - Connect bidirectional\n"
         "  filter             - Use local server as filter for remote server\n"
@@ -92,6 +95,9 @@ int parse_type (char * type) {
    } else if ( !strcmp(type, "simple") ) {
     ret -= ret & MT_MASK;
     ret += MT_SIMPLE;
+   } else if ( !strcmp(type, "oss") ) {
+    ret -= ret & MT_MASK;
+    ret += MT_OSS;
    } else if ( !strcmp(type, "bidir") ) {
     ret -= ret & ST_MASK;
     ret += ST_BIDIR;
@@ -121,6 +127,7 @@ int parse_type (char * type) {
    case MT_ESD:    ret |= ST_FILTER;   break;
    case MT_SIMPLE: ret |= ST_TRANSMIT; break; // we use ST_TRANSMIT because ST_BIDIR is
                                               // very unlike to be configured at the server side.
+   case MT_OSS:    ret |= ST_BIDIR;    break;
    default:
      return MT_NONE|ST_NONE; // error case
     break;
@@ -133,6 +140,8 @@ int parse_type (char * type) {
 int main (int argc, char * argv[]) {
  struct roar_connection con[1];
  struct roar_stream     stream[1];
+ struct roar_vio_calls  vio;
+ struct roar_audio_info info;
  int    rate     = 44100;
  int    bits     = 16;
  int    channels = 2;
@@ -196,6 +205,37 @@ int main (int argc, char * argv[]) {
        return 2;
     }
     rfh = roar_simple_stream(rate, channels, bits, codec, remote, tmp, "roarinterconnect");
+   break;
+  case MT_OSS:
+    switch (type & ST_MASK) {
+     case ST_BIDIR:
+       tmp      = ROAR_DIR_BIDIR;
+      break;
+     case ST_TRANSMIT:
+       tmp      = ROAR_DIR_PLAY;
+       localdir = ROAR_DIR_MONITOR;
+      break;
+     case ST_RECEIVE:
+       tmp      = ROAR_DIR_RECORD;
+       localdir = ROAR_DIR_PLAY;
+      break;
+     default:
+       fprintf(stderr, "Error: unknown stream type\n");
+       return 2;
+    }
+    info.rate     = rate;
+    info.channels = channels;
+    info.bits     = bits;
+    info.codec    = codec;
+    if ( roar_cdriver_oss(&vio, "OSS", remote, &info, tmp) == -1 ) {
+     fprintf(stderr, "Error: can not open OSS device %s\n", remote);
+     return 2;
+    }
+    if ( roar_vio_ctl(&vio, ROAR_VIO_CTL_GET_FH, &rfh) == -1 ) {
+     roar_vio_close(&vio);
+     fprintf(stderr, "Error: can not get filehandle for OSS device %s\n", remote);
+     return 2;
+    }
    break;
 #ifdef ROAR_HAVE_ESD
   case MT_ESD:
