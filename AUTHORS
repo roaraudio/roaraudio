@@ -14,3 +14,23 @@ OpenBSD  : janus
 
 --- Testers:
 Many people around the world.
+
+--- Compatibility layers are based on code/prototypes/... by:
+ * libroararts:
+  - Stefan Westerfeld <stefan@space.twc.de>
+  - ...and others?
+ * libroaresd:
+  - Eric B. Mitchell (aka 'Ricdude) <ericmit@ix.netcom.com>
+  - ...and others
+ * libroaross:
+  - IEEE/POSIX
+  - 4Front Technologies (Open Sound System)
+  - Operating system vendors
+  - ...and others
+ * libroarpulse:
+  - ...and others
+ * libroarsndio:
+  - 2008 Alexandre Ratchov <alex@caoua.org>
+ * libroaryiff:
+  - Tara Milana <learfox@twu.net>
+  - 1997-2003 WolfPack Entertainment
