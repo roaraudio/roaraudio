@@ -193,6 +193,27 @@ int req_on_new_stream  (int client, struct roar_message * mes, char * data) {
     ROAR_STREAM_SERVER(s)->codec_orgi = ROAR_STREAM_SERVER(source_stream)->codec_orgi;
 
    break;
+  case ROAR_DIR_FILTER:
+    info        = &(ROAR_STREAM(s)->info);
+
+    if ( ROAR_STREAM(s)->pos_rel_id == -1 ) {
+     source_info = g_sa;
+    } else {
+     if ( streams_get(ROAR_STREAM(s)->pos_rel_id, (struct roar_stream_server **)&source_stream) == -1 ) {
+      streams_delete(stream);
+      return -1;
+     }
+     source_info = &(ROAR_STREAM(source_stream)->info);
+    }
+
+    if ( info->channels != source_info->channels || info->bits != source_info->bits ||
+         info->codec    != source_info->codec    || info->rate != source_info->rate ) {
+     // the stream parameters don't match the one of the stream being filtered.
+     // -> delete and reject the stream.
+     streams_delete(stream);
+     return -1;
+    }
+   break;
  }
 
  ROAR_DBG("req_on_new_stream(client=%i, ...): returning (OK)...", client);
