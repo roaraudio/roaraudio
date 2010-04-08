@@ -1,7 +1,7 @@
 Source: roaraudio
 Priority: extra
 Maintainer: Michael Stapelberg <michael@stapelberg.de>
-Build-Depends: debhelper (>= 7.0.50~), libdnet-dev, libesd0-dev, libao-dev, libfishsound1-dev, libvorbis-dev, libspeex-dev, libshout3-dev, libsndfile1-dev, liboggz2-dev, libslp-dev, libpulse-dev, liby-dev, libartsc0-dev, libspeexdsp-dev, audacious-plugins-dev
+Build-Depends: debhelper (>= 5), libdnet-dev, libesd0-dev, libao-dev, libfishsound1-dev, libvorbis-dev, libspeex-dev, libshout3-dev, libsndfile1-dev, liboggz2-dev, libslp-dev, libpulse-dev, liby-dev, libartsc0-dev, libspeexdsp-dev, audacious-plugins-dev
 Standards-Version: 3.8.4
 Section: libs
 Homepage: http://roaraudio.keep-cool.org/
@@ -66,13 +66,21 @@ Description: header files and documentation for the roar audio libraries
   libroarmidi: MIDI subsystem support library. It contains code to support
   the usage of the MIDI subsystem.
 
+Package: roaraudio-dbg
+Section: debug
+Architecture: any
+Priority: extra
+Provides: libroar-dbg
+Depends: ${shlibs:Depends}, ${misc:Depends}, libroar-dev (= ${binary:Version})
+Description: RoarAudio sound server for audio mixing (debugging symbols)
+
 Package: roaraudio
 Section: sound
 Architecture: any
 Provides: roaraudio-server
 Suggests: roaraudio-extra, libroar-compat, socat, roaraudio-plugin-libao
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: sound server for audio mixing
+Description: RoarAudio sound server for audio mixing
  RoarAudio is a server for audio mixing. Its main purpose is to mix audio from
  different clients before sending it to its outputs (for example a soundcard).
  It is completely network transparent (UNIX sockets, TCP/IP, DECnet) and
