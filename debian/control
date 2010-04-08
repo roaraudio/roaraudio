@@ -40,6 +40,7 @@ Description: foundation libraries for the roaraudio sound server and clients
 Package: libroar-dev
 Section: libdevel
 Architecture: any
+Provides: libsndio-dev
 Depends: ${shlibs:Depends}, ${misc:Depends}, libroar0 (= ${binary:Version})
 Description: header files and documentation for the roar audio libraries
  RoarAudio is a server for audio mixing. Its main purpose is to mix audio from
@@ -70,7 +71,7 @@ Package: roaraudio-dbg
 Section: debug
 Architecture: any
 Priority: extra
-Provides: libroar-dbg
+Provides: libroar-dbg, libsndio-dbg
 Depends: ${shlibs:Depends}, ${misc:Depends}, libroar-dev (= ${binary:Version})
 Description: RoarAudio sound server for audio mixing (debugging symbols)
 
@@ -98,6 +99,7 @@ Description: extra utilities for roaraudio
 Package: libroar-compat
 Section: libs
 Architecture: any
+Provides: libsndio0
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: drop-in replacements for other sound libraries
  To get programs which use the EsounD (ESD), aRts, OpenBSD sndio, PulseAudio
