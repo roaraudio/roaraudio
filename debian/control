@@ -71,7 +71,7 @@ Package: roaraudio-dbg
 Section: debug
 Architecture: any
 Priority: extra
-Provides: libroar-dbg, libsndio-dbg
+Provides: libroar0-dbg, libsndio0-dbg
 Depends: ${shlibs:Depends}, ${misc:Depends}, libroar-dev (= ${binary:Version})
 Description: RoarAudio sound server for audio mixing (debugging symbols)
 
