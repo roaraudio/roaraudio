@@ -105,6 +105,13 @@ Description: drop-in replacements for other sound libraries
  To get programs which use the EsounD (ESD), aRts, OpenBSD sndio, PulseAudio
  or YIFF API running, you can install this package and replace the appropriate libraries.
 
+Package: roaraudio-plugin-xmms
+Section: sound
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, audacious
+Description: XMMS RoarAudio plugin
+ This is a plugin for XMMS which allows XMMS to use RoarAudio as output.
+
 Package: roaraudio-plugin-audacious
 Section: sound
 Architecture: any
@@ -120,3 +127,23 @@ Suggests: vorbis-tools
 Description: libao RoarAudio plugin
  This is a plugin for libao2 which allows libao2 and all libao2 based
  applications to use RoarAudio as output.
+
+Package: roaraudio-suite
+Section: sound
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, roaraudio, roaraudio-extra, libroar-compat, roaraudio-plugin-libao
+Recommends: libmuroar0, roaraudio-plugin-xmms | roaraudio-plugin-audacious
+Suggests: muroard
+Description: A collection of the most needed RoarAudio packages
+ This is a collection of the most needed RoarAudio related packages.
+
+Package: roaraudio-suite-dev
+Section: sound
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, roaraudio-suite, libroar-dev, roaraudio-dbg
+Recommends: libmuroar-dev, libmuroar0-dbg
+Suggests: muroard-dbg
+Description: A collection of the most needed RoarAudio packages (development packages)
+ This is a collection of the most needed RoarAudio related packages.
+ .
+ This package contains the development packages.
