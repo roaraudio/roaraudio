@@ -1,7 +1,7 @@
 //ctl.c:
 
 /*
- *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008
+ *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008-2010
  *
  *  This file is part of libroar a part of RoarAudio,
  *  a cross-platform sound system for both, home and professional use.
@@ -502,6 +502,8 @@ int    roar_str2proto (char * proto) {
   return ROAR_PROTO_ICY;
  } else if ( !strcasecmp(proto, "simple") ) {
   return ROAR_PROTO_SIMPLE;
+ } else if ( !strcasecmp(proto, "rsound") ) {
+  return ROAR_PROTO_RSOUND;
  }
 
  return -1;
@@ -516,6 +518,7 @@ char * roar_proto2str (int    proto) {
   case ROAR_PROTO_GOPHER:    return "gopher";    break;
   case ROAR_PROTO_ICY:       return "ICY";       break;
   case ROAR_PROTO_SIMPLE:    return "Simple";    break;
+  case ROAR_PROTO_RSOUND:    return "RSound";    break;
   default:
     return "(unknown)";
  }
