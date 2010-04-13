@@ -34,7 +34,10 @@ int emul_rsound_new_client  (int client, int data);
 int emul_rsound_on_connect  (int fh, struct roard_listen * lsock) {
  int oldfh = emul_rsound_lastcon;
  int client;
- char buf[8] = {0, 0, 0, 0, 0, 1, 0, 0};
+ union {
+  int32_t i[2];
+  char c[8];
+ } buf;
 
  if ( emul_rsound_lastcon == -1 ) {
   emul_rsound_lastcon = fh;
@@ -63,7 +66,10 @@ int emul_rsound_on_connect  (int fh, struct roard_listen * lsock) {
    return -1;
   }
 
-  ROAR_NETWORK_WRITE(oldfh, buf, 8);
+  buf.i[0] = ROAR_HOST2NET32(0);
+  buf.i[1] = ROAR_HOST2NET32(512);
+
+  ROAR_NETWORK_WRITE(oldfh, buf.c, 8);
 
   return client;
  }
