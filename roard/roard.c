@@ -215,6 +215,9 @@ static void list_proto (void) {
 #ifndef ROAR_WITHOUT_DCOMP_EMUL_SIMPLE
  printf("  simple        WM LRX - PulseAudio simple protocol\n");
 #endif
+#ifndef ROAR_WITHOUT_DCOMP_EMUL_RSOUND
+ printf("  rsound        W      - RSound emulation\n");
+#endif
 }
 
 #endif

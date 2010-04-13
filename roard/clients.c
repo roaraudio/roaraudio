@@ -404,6 +404,11 @@ int clients_check     (int id) {
    break;
 #endif
 #endif
+#ifndef ROAR_WITHOUT_DCOMP_EMUL_ESD
+  case ROAR_PROTO_RSOUND:
+    rv = clients_delete(id);
+   break;
+#endif
   default:
     rv = -1;
  }

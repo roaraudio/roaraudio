@@ -95,6 +95,20 @@ int net_get_new_client (struct roard_listen * lsock) {
 
  ROAR_DBG("net_get_new_client(void): fh = %i", fh);
 
+#ifndef ROAR_WITHOUT_DCOMP_EMUL_RSOUND
+ if ( lsock->proto == ROAR_PROTO_RSOUND ) {
+  client = emul_rsound_on_connect(fh, lsock);
+  switch (client) {
+   case -1: return -1; break;
+   case -2: return  0; break;
+   default: // TODO: write error handling
+     clients_get(client, &c);
+     fh = c->fh;
+    break;
+  }
+ } else {
+#endif
+
  client = clients_new();
 
  if ( clients_set_fh(client, fh) == -1 ) {
@@ -106,6 +120,9 @@ int net_get_new_client (struct roard_listen * lsock) {
   ROAR_DBG("net_get_new_client(void) = -1");
   return -1;
  }
+#ifndef ROAR_WITHOUT_DCOMP_EMUL_RSOUND
+ }
+#endif
 
  if ( clients_get(client, &c) != -1 ) {
 #ifdef SO_PEERCRED
@@ -163,6 +180,10 @@ int net_get_new_client (struct roard_listen * lsock) {
   case ROAR_PROTO_SIMPLE:
     if ( emul_simple_on_connect(client, lsock) == -1 )
      return -1;
+   break;
+#endif
+#ifndef ROAR_WITHOUT_DCOMP_EMUL_RSOUND
+  case ROAR_PROTO_RSOUND: // nothing to do here.
    break;
 #endif
   default:
