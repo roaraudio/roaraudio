@@ -36,6 +36,18 @@
 #define ROAR_RIFF_WAVE_CID_ALAW       0x0006
 #define ROAR_RIFF_WAVE_CID_MULAW      0x0007
 
+// Invalid but used by RSound:
+#define ROAR_RIFF_WAVE_CID_RSOUND     0x0000
+
+// Type is encoded in length by RSound using the following values:
+#define ROAR_RIFF_WAVE_RSID_S16_LE    0x0001
+#define ROAR_RIFF_WAVE_RSID_S16_BE    0x0002
+#define ROAR_RIFF_WAVE_RSID_U16_LE    0x0004
+#define ROAR_RIFF_WAVE_RSID_U16_BE    0x0008
+#define ROAR_RIFF_WAVE_RSID_U8        0x0010
+#define ROAR_RIFF_WAVE_RSID_S8        0x0020
+
+
 struct codecfilter_wave_inst {
  struct roar_stream_server *  stream;
  struct roar_stream_server * vstream;

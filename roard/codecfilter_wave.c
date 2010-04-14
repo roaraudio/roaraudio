@@ -114,6 +114,37 @@ int cf_wave_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
    case ROAR_RIFF_WAVE_CID_MULAW:
      codec = ROAR_CODEC_MULAW;
     break;
+   case ROAR_RIFF_WAVE_CID_RSOUND:
+     memcpy(&tmp16, tbuf+42, 2);
+     switch (ROAR_LE2HOST16(tmp16)) {
+      case ROAR_RIFF_WAVE_RSID_S16_LE:
+        s->info.bits = 16;
+        codec        = ROAR_CODEC_PCM_S_LE;
+       break;
+      case ROAR_RIFF_WAVE_RSID_S16_BE:
+        s->info.bits = 16;
+        codec        = ROAR_CODEC_PCM_U_BE;
+       break;
+      case ROAR_RIFF_WAVE_RSID_U16_LE:
+        s->info.bits = 16;
+        codec        = ROAR_CODEC_PCM_U_LE;
+       break;
+      case ROAR_RIFF_WAVE_RSID_U16_BE:
+        s->info.bits = 16;
+        codec        = ROAR_CODEC_PCM_U_BE;
+       break;
+      case ROAR_RIFF_WAVE_RSID_S8:
+        s->info.bits = 8;
+        codec        = ROAR_CODEC_PCM_S_LE;
+       break;
+      case ROAR_RIFF_WAVE_RSID_U8:
+        s->info.bits = 8;
+        codec        = ROAR_CODEC_PCM_U_LE;
+       break;
+      default:
+        return -1;
+     }
+    break;
    case ROAR_RIFF_WAVE_CID_IEEE_FLOAT:
    default:
      return -1;

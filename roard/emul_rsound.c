@@ -108,7 +108,7 @@ int emul_rsound_new_client  (int client, int data) {
 
  memcpy(&(s->info), g_sa, sizeof(struct roar_audio_info));
 
- ss->codec_orgi = s->info.codec = ROAR_CODEC_DEFAULT;
+ ss->codec_orgi = s->info.codec = ROAR_CODEC_RIFF_WAVE;
 
  if ( streams_set_dir(stream, ROAR_DIR_PLAY, 1) == -1 ) {
   clients_delete(client);
