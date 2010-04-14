@@ -17,6 +17,7 @@ v. 0.3beta5 - ?
 	* done a lot work on libroaross
 	* fixed segfault in ALSA plugin
 	* Added support for OSS to roarinterconnect(1)
+	* Added server side RSound Emulation
 
 v. 0.3beta4 - Sat Feb 06 2010 26:02 CET
 	* Applyed patches for Debian
