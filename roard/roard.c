@@ -65,6 +65,9 @@ void usage (void) {
 #ifdef SUPPORT_PIDFILE
         " --pidfile PIDFILE     - Write a pidfile at PIDFILE\n"
 #endif
+#ifdef ROAR_HAVE_SYSLOG
+        " --log-syslog          - Log Warnings, Errors, ... to syslog\n"
+#endif
        );
 
  printf("\nPlugin Options:\n\n");
@@ -1183,6 +1186,13 @@ int main (void) {
    ROAR_ERR("--pidfile not supported");
    i++;
 #endif
+  } else if ( strcmp(k, "--log-syslog") == 0 ) {
+#ifdef ROAR_HAVE_SYSLOG
+   roar_debug_set_stderr_mode(ROAR_DEBUG_MODE_SYSLOG);
+#else
+   ROAR_ERR("--log-syslog not supported");
+#endif
+
 
   } else if ( strcmp(k, "--plugin-load") == 0 ) {
    if ( plugins_load(argv[++i]) == -1 ) {
