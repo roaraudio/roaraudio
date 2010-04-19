@@ -98,6 +98,11 @@
 #include "driver_oss.h"
 #endif
 
+#ifdef ROAR_HAVE_LIBASOUND
+#include <alsa/asoundlib.h>
+#include "driver_alsa.h"
+#endif
+
 #ifdef ROAR_HAVE_LIBWINMM
 #include <windows.h>
 #include <mmsystem.h>
