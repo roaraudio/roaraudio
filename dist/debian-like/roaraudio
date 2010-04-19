@@ -66,7 +66,7 @@ fi
 
 [ "$ROARD" = 'YES' ] || exit 0;
 
-ROARD_OPTS="--daemon $ROARD_OPTS"
+ROARD_OPTS="--log-syslog --daemon $ROARD_OPTS"
 
 [ "$PIDFILE"        = ''       ] || ROARD_OPTS="--pidfile $PIDFILE $ROARD_OPTS"
 [ "$ROARD_REALTIME" = 'YES'    ] && ROARD_OPTS="--realtime $ROARD_OPTS"
