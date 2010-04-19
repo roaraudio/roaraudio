@@ -100,6 +100,22 @@ case "$ROARD_EMUL_ESD_AF" in
   ;;
 esac
 
+RSOUND_OPTS=''
+
+case "$ROARD_EMUL_ESD_AF" in
+  UNIX|unix)
+   RSOUND_OPTS="--new-sock --proto rsound -u -b /tmp/rsound"
+  ;;
+  TCP|tcp)
+   _host='localhost';
+   [ "$ROARD_HOST" = '' ]   || _host="$ROARD_HOST"
+   RSOUND_OPTS="--new-sock --proto rsound -t -b $_host -p 12345"
+  ;;
+  DECnet|DECNET|decnet)
+   RSOUND_OPTS="--new-sock --proto rsound -n -b ::rsound"
+  ;;
+esac
+
 [ "$ROARD_SOCKET" = '' ]  || ROARD_OPTS="--sock $ROARD_SOCKET $ROARD_OPTS"
 [ "$ROARD_PORT"   = '' ]  || ROARD_OPTS="--port $ROARD_PORT $ROARD_OPTS"
 
@@ -156,7 +172,7 @@ ROARD_OPTS="--setgid $ROARD_OPTS"
 
 [ "$ROARD_CHROOT" = '' ] || ROARD_OPTS="--chroot $ROARD_CHROOT $ROARD_OPTS"
 
-ROARD_OPTS="$ROARD_OPTS $ESD_OPTS"
+ROARD_OPTS="$ROARD_OPTS $ESD_OPTS $RSOUND_OPTS"
 
 set -e
 

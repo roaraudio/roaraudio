@@ -59,11 +59,20 @@ ROARD_SLP='NO'
 
 # --- [ EsounD Emulation ] ---
 
-# Listen socket for server side EsounD emulation::
+# Listen socket for server side EsounD emulation:
 # NONE   - Disable EsounD emulation
 # UNIX   - Local connections only
 # TCP    - Connections via TCP/IP
 ROARD_EMUL_ESD_AF='NONE'
+
+# --- [ RSound Emulation ] ---
+
+# Listen socket for server side RSound emulation:
+# NONE   - Disable RSound emulation
+# UNIX   - Local connections only
+# TCP    - Connections via TCP/IP
+# DECnet - Connections via DECnet
+ROARD_EMUL_RSOUND_AF='NONE'
 
 # --- [ Audio and Devices ] ---
 
