@@ -169,6 +169,7 @@ int roar_open(AFormat fmt, int rate, int nch) {
  g_inst.written = 0;
  g_inst.pause   = 0;
 
+ roar_stream_set_role(&(g_inst.con), &(g_inst.stream), ROAR_ROLE_MUSIC);
  roar_update_metadata();
  roar_set_volume(g_inst.mixer.l, g_inst.mixer.r);
 

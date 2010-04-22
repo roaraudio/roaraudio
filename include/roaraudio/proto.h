@@ -121,6 +121,7 @@
 #define ROAR_STREAM_PARA_FLAGS      2
 #define ROAR_STREAM_PARA_NAME       3
 #define ROAR_STREAM_PARA_CHANMAP    4
+#define ROAR_STREAM_PARA_ROLE       5
 
 struct roar_timeofday {
  int64_t  t_sec;   // secund part of system time

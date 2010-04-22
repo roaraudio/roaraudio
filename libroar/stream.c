@@ -598,9 +598,36 @@ int roar_stream_set_flags (struct roar_connection * con, struct roar_stream * s,
  m.pos     = 0;
 
  data[0] = 0; // Version and reserved
- data[1] = 2; // flags
+ data[1] = ROAR_STREAM_PARA_FLAGS; // flags
  data[2] = reset == ROAR_RESET_FLAG ? ROAR_RESET_FLAG : ROAR_SET_FLAG;
  data[3] = flags;
+
+ for (i = 0; i < m.datalen/2; i++) {
+  data[i] = ROAR_HOST2NET16(data[i]);
+ }
+
+ if ( roar_req(con, &m, NULL) == -1 )
+  return -1;
+
+ if ( m.cmd != ROAR_CMD_OK )
+  return -1;
+
+ return 0;
+}
+
+int roar_stream_set_role  (struct roar_connection * con, struct roar_stream * s, int role) {
+ struct roar_message m;
+ uint16_t * data = (uint16_t *) m.data;
+ int i;
+
+ m.cmd     = ROAR_CMD_SET_STREAM_PARA;
+ m.stream  = s->id;
+ m.datalen = 6;
+ m.pos     = 0;
+
+ data[0] = 0; // Version and reserved
+ data[1] = ROAR_STREAM_PARA_ROLE; // flags
+ data[2] = role;
 
  for (i = 0; i < m.datalen/2; i++) {
   data[i] = ROAR_HOST2NET16(data[i]);
@@ -878,6 +905,8 @@ struct {
  {ROAR_ROLE_PHONE,            "phone"           },
  {ROAR_ROLE_BACKGROUND_MUSIC, "background music"},
  {ROAR_ROLE_BACKGROUND_MUSIC, "background_music"}, // alias
+ {ROAR_ROLE_VOICE,            "voice"           },
+ {ROAR_ROLE_INSTRUMENT,       "instrument"      },
  {-1, NULL}
 };
 

@@ -717,6 +717,15 @@ int req_on_set_stream_para (int client, struct roar_message * mes, char * data) 
     if ( streams_set_map(mes->stream, &(mes->data[4]), mes->datalen - 4) == -1 )
      return -1;
    break;
+  case ROAR_STREAM_PARA_ROLE:
+    if ( mes->datalen != 2*3 )
+     return -1;
+
+    d[2] = ROAR_NET2HOST16(d[2]);
+
+    if ( streams_set_role(mes->stream, d[2]) == -1 )
+     return -1;
+   break;
   default:
     ROAR_WARN("req_on_set_stream_para(*): unsupported command version: %i, %i", d[0], d[1]);
     return -1;

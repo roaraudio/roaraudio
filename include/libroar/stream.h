@@ -87,6 +87,8 @@ int    roar_str2dir (char * name);
 #define ROAR_ROLE_BEEP              5
 #define ROAR_ROLE_PHONE             6
 #define ROAR_ROLE_BACKGROUND_MUSIC  7
+#define ROAR_ROLE_VOICE             8
+#define ROAR_ROLE_INSTRUMENT        9
 
 struct roar_stream_info {
  int block_size;
@@ -138,6 +140,8 @@ int roar_stream_get_chanmap (struct roar_connection * con, struct roar_stream * 
 int roar_stream_set_chanmap (struct roar_connection * con, struct roar_stream * s, char * map, size_t   len);
 
 int roar_stream_set_flags (struct roar_connection * con, struct roar_stream * s, int flags, int reset);
+
+int roar_stream_set_role  (struct roar_connection * con, struct roar_stream * s, int role);
 
 int roar_stream_s2m     (struct roar_stream * s, struct roar_message * m);
 int roar_stream_m2s     (struct roar_stream * s, struct roar_message * m);
