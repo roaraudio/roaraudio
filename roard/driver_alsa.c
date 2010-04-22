@@ -40,7 +40,7 @@ int driver_alsa_open_vio(struct roar_vio_calls * inst, char * device, struct roa
  char            * alsa_dev;
  int               rc;
  unsigned          buffer_time = 200000; // 200ms buffer
- snd_pcm_uframes_t frames      = 256; //ROAR_OUTPUT_BUFFER_SAMPLES; //256; // ALSA frames
+ snd_pcm_uframes_t frames      = ROAR_OUTPUT_BUFFER_SAMPLES; // ALSA frames
  snd_pcm_format_t  format      = SND_PCM_FORMAT_UNKNOWN; // If this isn't set further down, we pick 16 bit audio if we're using autoconf.
  uint16_t          channels    = info->channels;
  uint32_t          samplerate  = info->rate;
