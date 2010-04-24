@@ -1,7 +1,7 @@
 //codecfilter_wave.c:
 
 /*
- *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008
+ *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008-2010
  *
  *  This file is part of roard a part of RoarAudio,
  *  a cross-platform sound system for both, home and professional use.
@@ -74,6 +74,16 @@ int cf_wave_read(CODECFILTER_USERDATA_T   inst, char * buf, int len) {
   if (stream_vio_s_read(self->stream, tbuf, 44) != 44) {
    return -1;
   }
+
+  // test the header, is this really a RIFF WAVE stream?
+  if ( strncmp(tbuf, "RIFF", 4) != 0 )
+   return -1;
+
+  if ( strncmp(tbuf+8, "WAVEfmt ", 8) != 0 )
+   return -1;
+
+  if ( strncmp(tbuf+36, "data", 4) != 0 )
+   return -1;
 
   // TODO: write better code here!
 
