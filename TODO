@@ -6,7 +6,6 @@ Things we should do:
  * (*.* */*/*) add a lot other things
  * (0.3 n/h/-) do not install .cvsignore files
  * (0.3 O/H/-) Correct copyright statements
- * (0.3 O/L/-) add support for RSound protocol
  * (0.3 O/n/-) better tests for libspeex{,dsp}-dev
  * (0.3 O/N/-) add support to to roard to auto select a sync stream
  * (0.3 W/N/-) do a lot work on the manpages
