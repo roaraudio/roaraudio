@@ -399,7 +399,7 @@ do
    PASSWORD_API=false
    WITHOUT_VIO="$WITHOUT_VIO"' dstr cmd stdio'
    WITHOUT_CF="$WITHOUT_CF"' wave'
-   WITHOUT_DCOMP="$WITHOUT_DCOMP"' sources ssynth cb midi light raw rdtcs cdriver emul_esd emul_simple'
+   WITHOUT_DCOMP="$WITHOUT_DCOMP"' sources ssynth cb midi light raw rdtcs cdriver emul_esd emul_simple emul_rsound'
   ;;
   '--prefix')
    PREFIX="$2"
@@ -862,7 +862,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.246 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.247 $ of RoarAudio
  */
 
 EOF
