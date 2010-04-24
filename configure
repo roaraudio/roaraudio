@@ -92,6 +92,8 @@ WITHOUT_DCOMP=''
 HAVE_MAIN_ARGS=true
 
 MINIMAL=false
+BETA=true
+EXPERIMENTAL=true
 
 TARGET_WIN32=false
 TARGET_MICROCONTROLLER=false
@@ -218,6 +220,9 @@ do
    echo
    echo '--without-listen            - Disable listening sockets in roard'
    echo '                              This is the same as allways using --no-listen'
+   echo
+   echo '--without-beta              - Disable beta code'
+   echo '--without-experimental      - Disable experimental code'
    echo
    echo '--roard-cfreq FREQ          - Sets the cycle frequency of roard in Hz.'
    echo '--vorbis-bits BITS          - Sets bits per sample used by Vorbis code'
@@ -401,6 +406,13 @@ do
    WITHOUT_CF="$WITHOUT_CF"' wave'
    WITHOUT_DCOMP="$WITHOUT_DCOMP"' sources ssynth cb midi light raw rdtcs cdriver emul_esd emul_simple emul_rsound'
   ;;
+  '--without-beta')
+   BETA=false
+   EXPERIMENTAL=false
+  ;;
+  '--without-experimental')
+   EXPERIMENTAL=false
+  ;;
   '--prefix')
    PREFIX="$2"
    shift;
@@ -479,6 +491,21 @@ do
 done
 
 [ "$no_lib_yiff" != '' ] && no_lib_y2=true
+
+if $BETA
+then
+ :
+else
+ PASSWORD_API=false
+ WITHOUT_DCOMP="$WITHOUT_DCOMP"' cb midi rdtcs emul_rsound'
+fi
+
+if $EXPERIMENTAL
+then
+ :
+else
+ : # Add list of experimental things here.
+fi
 
 CCTF="false"
 
@@ -862,7 +889,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.247 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.248 $ of RoarAudio
  */
 
 EOF
@@ -908,6 +935,8 @@ EOF
  echo "#define ROAR_VORBIS_BITS     $VORBIS_BITS"
  echo
  $MINIMAL      && echo '#define ROAR_MINIMAL'
+ $BETA         && echo '#define ROAR_BETA'
+ $EXPERIMENTAL && echo '#define ROAR_EXPERIMENTAL'
  $ALAW         && echo '#define ROAR_SUPPORT_ALAW'
  $ALAW_RW      && echo '#define ROAR_SUPPORT_ALAW_RW'
  $MULAW        && echo '#define ROAR_SUPPORT_MULAW'
