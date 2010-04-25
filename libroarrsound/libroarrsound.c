@@ -259,7 +259,11 @@ size_t rsd_pointer (rsound_t *rd);
 size_t rsd_get_avail (rsound_t *rd);
 
 /* Aquires the latency at the moment for the audio stream. It is measured in bytes. Useful for syncing video and audio. */
-size_t rsd_delay (rsound_t *rd);
+size_t rsd_delay (rsound_t *rd) {
+ (void)rd;
+ return 0; // TODO: FIXME: write some code to read pos from server.
+}
+
 /* Will sleep until latency of stream reaches maximum allowed latency defined earlier by rsd_set_param - RSD_LATENCY
    Useful for hard headed blocking I/O design where user defined latency is needed. If rsd_set_param hasn't been set
    with RSD_LATENCY, this function will do nothing. */
