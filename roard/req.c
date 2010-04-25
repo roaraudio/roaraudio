@@ -342,8 +342,10 @@ int req_on_passfh      (int client, struct roar_message * mes, char * data) {
   return -1;
 
  if ( listening ) {
-  if ( get_listen(&lsock, NULL) == -1 )
+  if ( get_listen(&lsock, NULL) == -1 ) {
+   close(fh);
    return -1;
+  }
 
   lsock->socket = fh;
   lsock->proto  = d[2];
