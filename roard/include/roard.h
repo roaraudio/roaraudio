@@ -138,7 +138,7 @@ void on_sig_chld (int signum);
 void on_sig_usr1 (int signum);
 
 #ifdef ROAR_SUPPORT_LISTEN
-int get_listen(struct roard_listen * sock, char *** sockname);
+int get_listen(struct roard_listen ** sock, char *** sockname);
 #endif
 
 #ifdef ROAR_SUPPORT_LISTEN

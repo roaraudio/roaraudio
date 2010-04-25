@@ -314,7 +314,7 @@ int init_listening (void) {
  return 0;
 }
 
-int get_listen(struct roard_listen * sock, char *** sockname) {
+int get_listen(struct roard_listen ** sock, char *** sockname) {
  int i;
 
  if ( sock == NULL )
@@ -323,7 +323,7 @@ int get_listen(struct roard_listen * sock, char *** sockname) {
  for (i = 0; i < ROAR_MAX_LISTEN_SOCKETS; i++) {
   if ( g_listen[i].socket == -1 ) {
    server[i] = NULL;
-   sock = &(g_listen[i]);
+   *sock = &(g_listen[i]);
 
    if ( server != NULL )
     *sockname = &(server[i]);
