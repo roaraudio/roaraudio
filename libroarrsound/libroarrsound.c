@@ -103,6 +103,8 @@ int rsd_free (rsound_t *rd) {
 int rsd_set_param (rsound_t *rd, int option, void* param) {
  struct libroarrsound * self = (struct libroarrsound *)rd;
 
+ ROAR_DBG("rsd_set_param(rd=%p, option=%i, param=%p) = ?", rd, option, param);
+
  if ( self == NULL || param == NULL )
   return -1;
 
@@ -124,15 +126,18 @@ int rsd_set_param (rsound_t *rd, int option, void* param) {
   case RSD_FORMAT:
     self->rsound.format = *(int*)param;
     self->rsound.framesize = libroarrsound_fmt2fs(self->rsound.format);
+   break;
   default:
 /*
    RSD_BUFSIZE,
    RSD_LATENCY,
 */
+     ROAR_DBG("rsd_set_param(rd=%p, option=%i, param=%p) = -1", rd, option, param);
     return -1;
    break;
  }
 
+ ROAR_DBG("rsd_set_param(rd=%p, option=%i, param=%p) = 0", rd, option, param);
  return 0;
 }
 
