@@ -290,22 +290,67 @@ int req_on_con_stream  (int client, struct roar_message * mes, char * data) {
 }
 
 int req_on_passfh      (int client, struct roar_message * mes, char * data) {
- int fh;
  int sock = clients_get_fh(client);
+ int16_t * d = (int16_t*)data;
+ int fh;
+ int i;
 
  if ( (fh = roar_socket_recv_fh(sock, NULL, NULL)) == -1 )
   return -1;
 
- if ( client_stream_set_fh(client, mes->stream, fh) == -1 ) {
-  close(fh);
-  return 1;
+ if ( mes->stream != -1 ) { // stream pass:
+  if ( client_stream_set_fh(client, mes->stream, fh) == -1 ) {
+   close(fh);
+   return 1;
+  }
+
+  mes->datalen = 0;
+  mes->cmd     = ROAR_CMD_OK;
+
+  return 0;
  }
 
+// non-stream pass:
+
+/*
+ 0: Version,  16
+ 1: Flags,    16
+ 2: Protocol, 16
+ 3: Byteorder 16
+ Options...
+*/
+
+ if ( mes->datalen < 4*2 )
+  return -1;
+
+ for (i = 0; i < 4; i++) {
+  d[i] = ROAR_NET2HOST16(d[i]);
+ }
+
+ if ( d[0] != 0 ) // version
+  return -1;
+
+ if ( d[1] != 0 ) // flags
+  return -1;
+
+ if ( d[2] != ROAR_PROTO_ROARAUDIO ) // protocol
+  return -1;
+
+ if ( d[3] != ROAR_BYTEORDER_NETWORK ) // byte order
+  return -1;
+
+ if ( (client = clients_new()) == -1 )
+  return -1;
+
+ if ( clients_set_fh(client, fh) == -1 ) {
+  clients_delete(client);
+  return -1;
+ }
 
  mes->datalen = 0;
  mes->cmd     = ROAR_CMD_OK;
 
- return 0;
+ return -1;
 }
 
 #ifdef ROAR_SUPPORT_META
