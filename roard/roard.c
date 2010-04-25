@@ -325,8 +325,10 @@ int get_listen(struct roard_listen ** sock, char *** sockname) {
    server[i] = NULL;
    *sock = &(g_listen[i]);
 
-   if ( server != NULL )
+   if ( sockname != NULL )
     *sockname = &(server[i]);
+
+   return 0;
   }
  }
 
