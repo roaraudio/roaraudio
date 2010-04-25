@@ -2,6 +2,7 @@
 
 /*
  *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2010
+ *      Copyright (C) Hans-Kristian 'maister' Arntzen - 2010
  *
  *  This file is part of libroar a part of RoarAudio,
  *  a cross-platform sound system for both, home and professional use.
@@ -35,6 +36,49 @@
 
 #include "roar.h"
 
+// Equvivalent to prepare(). Starts a stream. Also needs to reset the writec since pointer() will do funny
+// things without it. Will be called several times during a program!
+static int roar_pcm_start (snd_pcm_ioplug_t * io) {
+ struct roar_alsa_pcm * self = io->private_data;
+
+ ROAR_DBG("roar_pcm_start(*) = ?");
+
+ // If start is called several times in a row, just ignore it.
+ if (self->stream_opened)
+  return 0;
+
+ if ( roar_vio_simple_stream( &(self->stream_vio), self->info.rate,
+                        self->info.channels, self->info.bits, self->info.codec,
+                        NULL, ROAR_DIR_PLAY, "ALSA plugin" ) == -1 ) {
+  return -EINVAL;
+ }
+
+ // Stream is now active, yay.
+ self->stream_opened = 1;
+ self->writec = 0;
+
+ return 0;
+}
+
+// Simply stopping the stream. Will need to be restarted to play more.
+// Will be called several times together with roar_pcm_start()
+static int roar_pcm_stop (snd_pcm_ioplug_t *io) {
+ struct roar_alsa_pcm * self = io->private_data;
+
+ ROAR_DBG("roar_pcm_stop(*) = ?");
+
+ // If this is called several times in a row, just ignore.
+ if ( !self->stream_opened )
+  return 0;
+
+ roar_vio_close(&(self->stream_vio));
+ self->stream_opened = 0;
+
+ ROAR_DBG("roar_pcm_stop(*) = 0");
+
+ return 0;
+}
+
 static int roar_hw_constraint(struct roar_alsa_pcm * self) {
  snd_pcm_ioplug_t *io = &(self->io);
  static const snd_pcm_access_t access_list[] = {
@@ -67,6 +111,7 @@ static int roar_hw_constraint(struct roar_alsa_pcm * self) {
  if ( (ret = snd_pcm_ioplug_set_param_minmax(io, SND_PCM_IOPLUG_HW_RATE, 8000, 192000)) < 0 )
   return ret;
 
+#if 0
  if ( (ret = snd_pcm_ioplug_set_param_minmax(io, SND_PCM_IOPLUG_HW_PERIOD_BYTES, 1, 4294967295U)) < 0 )
   return ret;
 
@@ -75,6 +120,17 @@ static int roar_hw_constraint(struct roar_alsa_pcm * self) {
 
  if ( (ret = snd_pcm_ioplug_set_param_minmax(io, SND_PCM_IOPLUG_HW_BUFFER_BYTES, 1, 4294967295U)) < 0 )
   return ret;
+#else
+ // We shouldn't let ALSA use extremely low or high values, it will kill a kitty most likely. :v
+ if ( (ret = snd_pcm_ioplug_set_param_minmax(io, SND_PCM_IOPLUG_HW_PERIOD_BYTES, 1 << 6, 1 << 18)) < 0 )
+  return ret;
+
+ if ( (ret = snd_pcm_ioplug_set_param_minmax(io, SND_PCM_IOPLUG_HW_PERIODS, 1, 1024)) < 0 )
+  return ret;
+
+ if ( (ret = snd_pcm_ioplug_set_param_minmax(io, SND_PCM_IOPLUG_HW_BUFFER_BYTES, 1 << 13, 1 << 24)) < 0 )
+  return ret;
+#endif
 
  ROAR_DBG("roar_hw_constraint(*) = 0");
 
@@ -86,6 +142,16 @@ static int roar_pcm_dummy (snd_pcm_ioplug_t * io) {
  return 0;
 }
 
+
+///////////////////////////////
+/// TODO: Needs to be implemented
+///////////////////////////////
+// This hacky hack should not be used, since apparently, using this, ALSA will think the audio buffer is always empty (?),
+// leading to completely broken blocking audio which will only work with audio players.
+// Will need a method to determine how much buffer data is available to write to the roar buffer without blocking.
+// We therefore also need to know the buffersize that ALSA uses.
+
+// Referring to alsa-lib/src/pcm/pcm_ioplug.c : snd_pcm_ioplug_hw_ptr_update
 static snd_pcm_sframes_t roar_pcm_pointer(snd_pcm_ioplug_t *io) {
  struct roar_alsa_pcm * self = io->private_data;
 
@@ -107,19 +173,36 @@ static snd_pcm_sframes_t roar_pcm_transfer(snd_pcm_ioplug_t *io,
  ROAR_DBG("roar_pcm_transfer(*) = ?");
  ROAR_DBG("roar_pcm_transfer(*): len=%lu", (long unsigned int) len);
 
+ // Weird ALSA stuff.
  buf = (char *)areas->addr + (areas->first + areas->step * offset) / 8;
 
  ret = roar_vio_write(&(self->stream_vio), buf, len);
 
- if ( ret != -1 )
+ if ( ret != -1 ) {
+  // We increment the written counter so that subsequent calls to pointer() will not cause
+  // the library to hang due to several quirks that ALSA uses to determine available size.
+  // This approach is bad, but is needed until pointer() is implemented correctly.
   self->writec += ret;
+ } else {
+  return -EIO;
+ }
 
  ROAR_DBG("roar_pcm_transfer(*) = %lli", (long long int)size);
  return size;
 }
 
+
+///////////////////////////////
+/// TODO: Needs to be implemented
+///////////////////////////////
 static int roar_pcm_delay(snd_pcm_ioplug_t *io, snd_pcm_sframes_t *delayp) {
+ (void)io;
+
  ROAR_DBG("roar_pcm_delay(*) = ?");
+
+ // TODO: We need to set *delayp the latency in frames.
+ *delayp = 0;
+
  return 0;
 }
 
@@ -128,6 +211,9 @@ static int roar_pcm_prepare(snd_pcm_ioplug_t *io) {
 
  ROAR_DBG("roar_pcm_prepare(*) = ?");
 
+ return roar_pcm_start(io);
+
+#if 0
  if ( self->stream_opened ) {
   roar_vio_close(&(self->stream_vio));
   self->stream_opened = 0;
@@ -144,10 +230,13 @@ static int roar_pcm_prepare(snd_pcm_ioplug_t *io) {
 
  ROAR_DBG("roar_pcm_prepare(*) = 0");
  return 0;
+#endif
 }
 
 static int roar_pcm_hw_params(snd_pcm_ioplug_t *io, snd_pcm_hw_params_t *params) {
  struct roar_alsa_pcm * self = io->private_data;
+
+ (void) params;
 
  ROAR_DBG("roar_pcm_hw_params(*) = ?");
 
@@ -196,9 +285,9 @@ static int roar_pcm_close (snd_pcm_ioplug_t * io) {
 }
 
 static snd_pcm_ioplug_callback_t roar_pcm_callback = {
-    .start                  = roar_pcm_dummy,
-    .stop                   = roar_pcm_dummy,
-    .drain                  = roar_pcm_dummy,
+    .start                  = roar_pcm_start,
+    .stop                   = roar_pcm_stop,
+    .drain                  = NULL,
     .pointer                = roar_pcm_pointer,
     .transfer               = roar_pcm_transfer,
     .delay                  = roar_pcm_delay,
@@ -222,6 +311,8 @@ SND_PCM_PLUGIN_DEFINE_FUNC(roar) {
  const char   * para;
  const char   * server = NULL;
  int            ret;
+
+ (void)root;
 
  ROAR_DBG("SND_PCM_PLUGIN_DEFINE_FUNC(roar) = ?");
 
