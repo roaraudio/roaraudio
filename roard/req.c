@@ -293,6 +293,8 @@ int req_on_passfh      (int client, struct roar_message * mes, char * data) {
  struct roar_client * c;
  int sock = clients_get_fh(client);
  int16_t * d = (int16_t*)mes->data;
+ struct roard_listen * lsock;
+ int listening;
  int fh;
  int i;
 
@@ -331,25 +333,38 @@ int req_on_passfh      (int client, struct roar_message * mes, char * data) {
  if ( d[0] != 0 ) // version
   return -1;
 
+ listening = d[1] & ROAR_CLIENTPASS_FLAG_LISTEN;
+
+ if ( listening )
+  d[1] -= ROAR_CLIENTPASS_FLAG_LISTEN;
+
  if ( d[1] != 0 ) // flags
   return -1;
 
- if ( d[2] != ROAR_PROTO_ROARAUDIO ) // protocol
-  return -1;
+ if ( listening ) {
+  if ( get_listen(&lsock, NULL) == -1 )
+   return -1;
 
- if ( d[3] != ROAR_BYTEORDER_NETWORK ) // byte order
-  return -1;
+  lsock->socket = fh;
+  lsock->proto  = d[2];
+ } else {
+  if ( d[2] != ROAR_PROTO_ROARAUDIO ) // protocol
+   return -1;
 
- if ( (client = clients_new()) == -1 )
-  return -1;
+  if ( d[3] != ROAR_BYTEORDER_NETWORK ) // byte order
+   return -1;
 
- if ( clients_set_fh(client, fh) == -1 ) {
-  clients_delete(client);
-  return -1;
- }
+  if ( (client = clients_new()) == -1 )
+   return -1;
 
- if ( clients_get(client, &c) != -1 ) {
-  roar_nnode_new_from_fh(&(c->nnode), fh, 1);
+  if ( clients_set_fh(client, fh) == -1 ) {
+   clients_delete(client);
+   return -1;
+  }
+
+  if ( clients_get(client, &c) != -1 ) {
+   roar_nnode_new_from_fh(&(c->nnode), fh, 1);
+  }
  }
 
  mes->datalen = 0;

@@ -58,6 +58,9 @@
 #define ROAR_BYTEORDER_NATIVE       ROAR_CODEC_PDP
 #endif
 
+#define ROAR_CLIENTPASS_FLAG_NONE    0x0000
+#define ROAR_CLIENTPASS_FLAG_LISTEN  0x0001
+
 #endif
 
 //ll
