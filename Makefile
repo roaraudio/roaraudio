@@ -1,7 +1,7 @@
 include Makefile.conf
 include Makefile.inc
 
-COMP_LIB=$(subdir_libroaresd) $(subdir_libroarsndio) $(subdir_libroaryiff) $(subdir_libroarpulse) $(subdir_libroararts) $(subdir_libroaross)
+COMP_LIB=$(subdir_libroaresd) $(subdir_libroarsndio) $(subdir_libroaryiff) $(subdir_libroarpulse) $(subdir_libroararts) $(subdir_libroaross) $(subdir_libroarrsound)
 
 SUBDIRS=$(comp_libs) $(comp_roard) $(comp_clients) $(comp_doc) $(comp_comp_bins) $(subdir_roarfish) $(COMP_LIB)
 

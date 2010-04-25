@@ -889,7 +889,7 @@ CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.248 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.249 $ of RoarAudio
  */
 
 EOF
@@ -1031,7 +1031,7 @@ test_lib_defmake ROAR_HAVE_LIBY2         libroaryiff  libyiff       Y2         -
 test_lib_defmake ROAR_HAVE_LIBARTSC      %            libartsc      artsc      -- kde/artsc/artsc.h
 test_lib_defmake ROAR_HAVE_LIBOSSAUDIO   %            libossaudio   ossaudio   -- sys/ioctl.h
 test_lib_defmake ROAR_HAVE_LIBSNDIO      %            libsndio      sndio      -- sndio.h
-test_lib_defmake ROAR_HAVE_LIBRSOUND     %            librsound     rsound     -- rsound.h
+test_lib_defmake ROAR_HAVE_LIBRSOUND     libroarrsound librsound    rsound     -- rsound.h
 test_lib_defmake ROAR_HAVE_LIBSSL        %            OpenSSL       ssl        -- openssl/bio.h openssl/evp.h
 test_lib_defmake ROAR_HAVE_LIBSLP        %            OpenSLP       slp        -- slp.h
 test_lib_defmake ROAR_HAVE_LIBUUID       %            libuuid       uuid       -- uuid/uuid.h
