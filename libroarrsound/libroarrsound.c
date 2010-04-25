@@ -111,9 +111,15 @@ int rsd_set_param (rsound_t *rd, int option, void* param) {
  switch ((enum settings)option) {
   // connection settings:
   case RSD_HOST:
+    if ( self->rsound.host != NULL )
+     roar_mm_free(self->rsound.host);
+
     self->rsound.host = roar_mm_strdup(param);
    break;
   case RSD_PORT:
+    if ( self->rsound.port != NULL )
+     roar_mm_free(self->rsound.port);
+
     self->rsound.port = roar_mm_strdup(param);
    break;
   // stream settings:
