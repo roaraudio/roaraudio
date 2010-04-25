@@ -314,6 +314,25 @@ int init_listening (void) {
  return 0;
 }
 
+int get_listen(struct roard_listen * sock, char *** sockname) {
+ int i;
+
+ if ( sock == NULL )
+  return -1;
+
+ for (i = 0; i < ROAR_MAX_LISTEN_SOCKETS; i++) {
+  if ( g_listen[i].socket == -1 ) {
+   server[i] = NULL;
+   sock = &(g_listen[i]);
+
+   if ( server != NULL )
+    *sockname = &(server[i]);
+  }
+ }
+
+ return -1;
+}
+
 int add_listen (char * addr, int port, int sock_type, char * user, char * group, int proto, int dir, struct roar_audio_info * info) {
 #if defined(ROAR_HAVE_SETGID) && defined(ROAR_HAVE_IO_POSIX)
  struct group   * grp  = NULL;

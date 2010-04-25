@@ -123,6 +123,10 @@ uint32_t g_pos; // current possition in output stream
 int g_standby;
 int g_autostandby;
 
+#ifdef ROAR_SUPPORT_LISTEN
+struct roard_listen;
+#endif
+
 int main_loop (int driver, DRIVER_USERDATA_T driver_inst, struct roar_audio_info * sa, int sysclocksync);
 void cleanup_listen_socket (int terminate);
 void clean_quit (void);
@@ -132,6 +136,10 @@ void on_sig_int (int signum);
 void on_sig_term (int signum);
 void on_sig_chld (int signum);
 void on_sig_usr1 (int signum);
+
+#ifdef ROAR_SUPPORT_LISTEN
+int get_listen(struct roard_listen * sock, char *** sockname);
+#endif
 
 #ifdef ROAR_SUPPORT_LISTEN
 struct roard_listen {
