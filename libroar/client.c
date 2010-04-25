@@ -35,4 +35,58 @@
 
 #include "libroar.h"
 
+int roar_client_new      (struct roar_client * client) {
+ int i;
+
+ if ( client == NULL )
+  return -1;
+
+ memset(client, 0, sizeof(struct roar_client));
+
+ client->fh          = -1;
+ client->pid         = -1;
+ client->uid         = -1;
+ client->gid         = -1;
+ client->proto       = ROAR_PROTO_ROARAUDIO;
+ client->byteorder   = ROAR_BYTEORDER_NETWORK;
+
+ for (i = 0; i < ROAR_CLIENTS_MAX_STREAMS_PER_CLIENT; i++)
+  client->streams[i] = -1;
+
+ return 0;
+}
+
+int roar_client_set_fh   (struct roar_client * client, int fh) {
+ if ( client == NULL )
+  return -1;
+
+ client->fh = fh;
+
+ return 0;
+}
+
+int roar_client_set_proto(struct roar_client * client, int proto, int byteorder) {
+ if ( client == NULL )
+  return -1;
+
+ client->proto = proto;
+
+ if ( byteorder != -1 ) {
+  client->byteorder = byteorder;
+ } else {
+  switch (proto) {
+   case ROAR_PROTO_ROARAUDIO:
+     client->byteorder = ROAR_BYTEORDER_NETWORK;
+    break;
+   default:
+     return -1;
+    break;
+  }
+ }
+
+ return 0;
+}
+
+int roar_client_pass     (struct roar_connection * con, struct roar_client * client);
+
 //ll
