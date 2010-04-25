@@ -23,3 +23,5 @@ libroaryiff.so		libY2.so
 libroaryiff.so		libY2.so.14
 libroaross.so   	liboss.so
 libroaross.so   	libossaudio.so
+libroarrsound.so        librsound.so
+libroarrsound.so        librsound.so.0
