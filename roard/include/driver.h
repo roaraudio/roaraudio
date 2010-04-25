@@ -98,6 +98,13 @@
 #include "driver_oss.h"
 #endif
 
+#ifdef ROAR_HAVE_LIBRSOUND
+#ifdef _DRV_NEED_RSOUND_H
+#include <rsound.h>
+#endif
+#include "driver_rsound.h"
+#endif
+
 #ifdef ROAR_HAVE_LIBASOUND
 #include <alsa/asoundlib.h>
 #include "driver_alsa.h"
