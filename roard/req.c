@@ -298,7 +298,7 @@ int req_on_passfh      (int client, struct roar_message * mes, char * data) {
  if ( (fh = roar_socket_recv_fh(sock, NULL, NULL)) == -1 )
   return -1;
 
- if ( (int16_t)mes->stream != -1 ) { // stream pass:
+ if ( mes->stream != -1 ) { // stream pass:
   if ( client_stream_set_fh(client, mes->stream, fh) == -1 ) {
    close(fh);
    return 1;
