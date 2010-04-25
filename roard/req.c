@@ -291,14 +291,14 @@ int req_on_con_stream  (int client, struct roar_message * mes, char * data) {
 
 int req_on_passfh      (int client, struct roar_message * mes, char * data) {
  int sock = clients_get_fh(client);
- int16_t * d = (int16_t*)data;
+ int16_t * d = (int16_t*)mes->data;
  int fh;
  int i;
 
  if ( (fh = roar_socket_recv_fh(sock, NULL, NULL)) == -1 )
   return -1;
 
- if ( mes->stream != -1 ) { // stream pass:
+ if ( (int16_t)mes->stream != -1 ) { // stream pass:
   if ( client_stream_set_fh(client, mes->stream, fh) == -1 ) {
    close(fh);
    return 1;
@@ -350,7 +350,7 @@ int req_on_passfh      (int client, struct roar_message * mes, char * data) {
  mes->datalen = 0;
  mes->cmd     = ROAR_CMD_OK;
 
- return -1;
+ return 0;
 }
 
 #ifdef ROAR_SUPPORT_META
