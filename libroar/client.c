@@ -87,6 +87,42 @@ int roar_client_set_proto(struct roar_client * client, int proto, int byteorder)
  return 0;
 }
 
-int roar_client_pass     (struct roar_connection * con, struct roar_client * client);
+int roar_client_pass     (struct roar_connection * con, struct roar_client * client, uint16_t flags) {
+ struct roar_message m;
+ int16_t * d = (int16_t *)m.data;
+ int confh;
+ int i;
+
+ m.cmd     = ROAR_CMD_PASSFH;
+ m.stream  =  -1; // client (non-stream) passs
+ m.pos     =   0;
+ m.datalen = 4*2;
+
+ d[0] = 0; // version
+ d[1] = flags;
+ d[2] = client->proto;
+ d[3] = client->byteorder;
+
+ for (i = 0; i < 4; i++)
+  d[i] = ROAR_HOST2NET16(d[i]);
+
+ if ( (confh = roar_get_connection_fh(con)) == -1 )
+  return -1;
+
+ if ( roar_send_message(con, &m, NULL) == -1 ) {
+  return -1;
+ }
+
+ if ( roar_socket_send_fh(confh, client->fh, NULL, 0) == -1 )
+  return -1;
+
+ if ( roar_recv_message(con, &m, NULL) == -1 )
+  return -1;
+
+ if ( m.cmd == ROAR_CMD_OK )
+  return 0;
+
+ return -1;
+}
 
 //ll
