@@ -137,13 +137,15 @@ int rsd_set_param (rsound_t *rd, int option, void* param) {
 }
 
 static int libroarrsound_connect (struct libroarrsound * self) {
- char * host = NULL;
+ char * host;
 
  if ( self->flags & LIBROARRSOUND_FLAGS_CONNECTED )
   return 0;
 
- if ( self->rsound.host != NULL )
-  host = self->rsound.host;
+ host = self->rsound.host;
+
+ if ( host == NULL )
+  host = getenv("RSD_SERVER");
 
  // FIXME: we currently ignore the port. :(
 
