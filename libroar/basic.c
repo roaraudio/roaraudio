@@ -389,6 +389,9 @@ int roar_vrecv_message(struct roar_vio_calls * vio, struct roar_message * mes, c
  mes->pos     = ROAR_NET2HOST32(*(uint32_t*)(buf+4));
  mes->datalen = ROAR_NET2HOST16(*(uint16_t*)(buf+8));
 
+ if ( (int16_t)mes->stream == -1 )
+  mes->stream = -1;
+
  ROAR_DBG("roar_recv_message(*): command=%i(%s)", mes->cmd,
            mes->cmd == ROAR_CMD_OK ? "OK" : (mes->cmd == ROAR_CMD_ERROR ? "ERROR" : "UNKNOWN"));
 
