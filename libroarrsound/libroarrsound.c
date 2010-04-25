@@ -272,6 +272,16 @@ void rsd_delay_wait(rsound_t *rd);
 
 /* Pauses or unpauses a stream. pause -> enable = 1
    This function essentially calls on start() and stop(). This behavior might be changed later. */
-int rsd_pause (rsound_t *rd, int enable);
+int rsd_pause (rsound_t *rd, int enable) {
+ struct libroarrsound * self = (struct libroarrsound *)rd;
+
+ if ( self == NULL )
+  return -1;
+
+ if ( !(self->flags & LIBROARRSOUND_FLAGS_STREAMING) )
+  return -1;
+
+ return roar_stream_set_flags(&(self->con), &(self->stream), ROAR_FLAG_PAUSE, enable ? ROAR_SET_FLAG : ROAR_RESET_FLAG);
+}
 
 //ll
