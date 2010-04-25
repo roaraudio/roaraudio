@@ -141,6 +141,28 @@ int roar_nnode_new_from_sockaddr(struct roar_nnode * nnode, struct sockaddr * ad
  return 0;
 }
 
+int roar_nnode_new_from_fh(struct roar_nnode * nnode, int fh, int remote) {
+ struct sockaddr_storage sa;
+ socklen_t               len = sizeof(sa);
+ int                     ret;
+
+ _CHECK(nnode);
+
+ if ( fh == -1 )
+  return -1;
+
+ if ( remote ) {
+  ret = getpeername(fh, (struct sockaddr*)&sa, &len);
+ } else {
+  ret = getsockname(fh, (struct sockaddr*)&sa, &len);
+ }
+
+ if ( ret == -1 )
+  return -1;
+
+ return roar_nnode_new_from_sockaddr(nnode, (struct sockaddr*)&sa, len);
+}
+
 int roar_nnode_free       (struct roar_nnode * nnode) {
  _CHECK(nnode);
 

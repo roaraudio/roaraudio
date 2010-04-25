@@ -53,6 +53,7 @@ struct roar_nnode {
 int roar_nnode_new        (struct roar_nnode * nnode, int socktype);
 int roar_nnode_new_from_af(struct roar_nnode * nnode, int af);
 int roar_nnode_new_from_sockaddr(struct roar_nnode * nnode, struct sockaddr * addr, socklen_t len);
+int roar_nnode_new_from_fh(struct roar_nnode * nnode, int fh, int remote);
 
 int roar_nnode_free       (struct roar_nnode * nnode);
 
