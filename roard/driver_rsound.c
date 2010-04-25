@@ -33,11 +33,14 @@ int     driver_rsound_open         (struct roar_vio_calls * inst, char * device,
  if ( fh != -1 )
   return -1;
 
- if ( rsd_init(&self) == -1 )
+ if ( rsd_init(&self) == -1 ) {
+  ROAR_DBG("driver_rsound_open(*): rsd_init(&self) failed.");
   return -1;
+ }
 
  if ( device != NULL ) {
   if ( rsd_set_param(self, RSD_HOST, device) == -1 ) {
+   ROAR_DBG("driver_rsound_open(*): rsd_set_param(self, RSD_HOST, device) failed.");
    rsd_free(self);
    return -1;
   }
@@ -45,6 +48,7 @@ int     driver_rsound_open         (struct roar_vio_calls * inst, char * device,
 
  tmp = info->channels;
  if ( rsd_set_param(self, RSD_CHANNELS, &tmp) == -1 ) {
+  ROAR_DBG("driver_rsound_open(*): rsd_set_param(self, RSD_CHANNELS, &tmp) failed.");
   rsd_free(self);
   return -1;
  }
@@ -56,6 +60,7 @@ int     driver_rsound_open         (struct roar_vio_calls * inst, char * device,
 
  tmp = info->rate;
  if ( rsd_set_param(self, RSD_SAMPLERATE, &tmp) == -1 ) {
+  ROAR_DBG("driver_rsound_open(*): rsd_set_param(self, RSD_SAMPLERATE, &tmp) failed.");
   rsd_free(self);
   return -1;
  }
@@ -95,6 +100,7 @@ int     driver_rsound_open         (struct roar_vio_calls * inst, char * device,
  }
 
  if ( tmp == -1 ) {
+  ROAR_DBG("driver_rsound_open(*): Codec/Bits not supported by RSound");
   rsd_free(self);
   return -1;
  }
@@ -102,6 +108,7 @@ int     driver_rsound_open         (struct roar_vio_calls * inst, char * device,
  tmp2 = tmp;
 
  if ( rsd_set_param(self, RSD_FORMAT, &tmp) == -1 ) {
+  ROAR_DBG("driver_rsound_open(*): rsd_set_param(self, RSD_FORMAT, &tmp={0x%x->0x%x}) failed.", tmp2, tmp);
   rsd_free(self);
   return -1;
  }
@@ -112,6 +119,7 @@ int     driver_rsound_open         (struct roar_vio_calls * inst, char * device,
  }
 
  if ( rsd_start(self) == -1 ) {
+  ROAR_DBG("driver_rsound_open(*): rsd_start(self) failed.");
   rsd_free(self);
   return -1;
  }
