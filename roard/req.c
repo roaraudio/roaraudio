@@ -290,6 +290,7 @@ int req_on_con_stream  (int client, struct roar_message * mes, char * data) {
 }
 
 int req_on_passfh      (int client, struct roar_message * mes, char * data) {
+ struct roar_client * c;
  int sock = clients_get_fh(client);
  int16_t * d = (int16_t*)mes->data;
  int fh;
@@ -345,6 +346,10 @@ int req_on_passfh      (int client, struct roar_message * mes, char * data) {
  if ( clients_set_fh(client, fh) == -1 ) {
   clients_delete(client);
   return -1;
+ }
+
+ if ( clients_get(client, &c) != -1 ) {
+  roar_nnode_new_from_fh(&(c->nnode), fh, 1);
  }
 
  mes->datalen = 0;
