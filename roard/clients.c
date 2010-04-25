@@ -131,11 +131,32 @@ int clients_get       (int id, struct roar_client ** client) {
 }
 
 int clients_set_fh    (int id, int    fh) {
+ struct roar_client * c;
+#ifdef SO_PEERCRED
+ struct ucred cred;
+ socklen_t cred_len = sizeof(cred);
+#endif
 
- if ( g_clients[id] == NULL )
+ if ( (c = g_clients[id]) == NULL )
   return -1;
 
- g_clients[id]->fh = fh;
+ c->fh = fh;
+
+#ifdef SO_PEERCRED
+ if (getsockopt(fh, SOL_SOCKET, SO_PEERCRED, &cred, &cred_len) != -1) {
+  if ( cred.pid != 0 ) {
+   c->pid = cred.pid;
+   c->uid = cred.uid;
+   c->gid = cred.gid;
+  }
+ } else {
+  ROAR_DBG("req_on_identify(): Can't get creds via SO_PEERCRED: %s", strerror(errno));
+ }
+#elif defined(ROAR_HAVE_GETPEEREID)
+ if (getpeereid(fh, &(c->uid), &(c->gid)) == -1) {
+  ROAR_DBG("req_on_identify(): Can't get creds via getpeereid(): %s", strerror(errno));
+ }
+#endif
 
  return 0;
 }

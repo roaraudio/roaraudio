@@ -83,10 +83,6 @@ int net_get_new_client (struct roard_listen * lsock) {
  int fh;
  int client;
  struct roar_client * c;
-#ifdef SO_PEERCRED
- struct ucred cred;
- socklen_t cred_len = sizeof(cred);
-#endif
  struct roar_vio_calls    vio;
  struct sockaddr_storage  addr;
  socklen_t                addrlen = sizeof(addr);
@@ -125,22 +121,6 @@ int net_get_new_client (struct roard_listen * lsock) {
 #endif
 
  if ( clients_get(client, &c) != -1 ) {
-#ifdef SO_PEERCRED
-  if (getsockopt(fh, SOL_SOCKET, SO_PEERCRED, &cred, &cred_len) != -1) {
-   if ( cred.pid != 0 ) {
-    c->pid = cred.pid;
-    c->uid = cred.uid;
-    c->gid = cred.gid;
-   }
-  } else {
-   ROAR_DBG("req_on_identify(): Can't get creds via SO_PEERCRED: %s", strerror(errno));
-  }
-#elif defined(ROAR_HAVE_GETPEEREID)
-  if (getpeereid(fh, &(c->uid), &(c->gid)) == -1) {
-   ROAR_DBG("req_on_identify(): Can't get creds via getpeereid(): %s", strerror(errno));
-  }
-#endif
-
   if ( roar_nnode_free(&(c->nnode)) == -1 )
    return -1;
 
