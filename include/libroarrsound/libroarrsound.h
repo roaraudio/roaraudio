@@ -35,6 +35,18 @@
 #include <roaraudio.h>
 #include <rsound.h>
 
+#define LIBROARRSOUND_FLAGS_NONE        0x00
+#define LIBROARRSOUND_FLAGS_CONNECTED   0x01
+#define LIBROARRSOUND_FLAGS_STREAMING   0x02
+
+struct libroarrsound {
+ rsound_t rsound;
+ int    flags;
+ struct roar_connection con;
+ struct roar_stream     stream;
+ struct roar_vio_calls  vio;
+};
+
 #endif
 
 //ll
