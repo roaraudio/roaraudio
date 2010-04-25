@@ -907,6 +907,9 @@ struct {
  {ROAR_ROLE_BACKGROUND_MUSIC, "background_music"}, // alias
  {ROAR_ROLE_VOICE,            "voice"           },
  {ROAR_ROLE_INSTRUMENT,       "instrument"      },
+ {ROAR_ROLE_RHYTHM,           "rhythm"          },
+ {ROAR_ROLE_CLICK,            "click",          },
+ {ROAR_ROLE_MIXED,            "mixed",          },
  {-1, NULL}
 };
 

@@ -89,6 +89,9 @@ int    roar_str2dir (char * name);
 #define ROAR_ROLE_BACKGROUND_MUSIC  7
 #define ROAR_ROLE_VOICE             8
 #define ROAR_ROLE_INSTRUMENT        9
+#define ROAR_ROLE_RHYTHM           10
+#define ROAR_ROLE_CLICK            11
+#define ROAR_ROLE_MIXED            12
 
 struct roar_stream_info {
  int block_size;
