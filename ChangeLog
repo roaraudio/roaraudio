@@ -18,6 +18,7 @@ v. 0.3beta5 - ?
 	* fixed segfault in ALSA plugin
 	* Added support for OSS to roarinterconnect(1)
 	* Added server side RSound Emulation
+	* Added libroarrsound, client side RSound Emulation
 	* Added ALSA driver
 
 v. 0.3beta4 - Sat Feb 06 2010 26:02 CET
