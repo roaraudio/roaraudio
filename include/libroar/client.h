@@ -54,6 +54,12 @@ struct roar_client {
  struct roar_nnode nnode;
 };
 
+int roar_client_new      (struct roar_client * client);
+int roar_client_set_fh   (struct roar_client * client, int fh);
+int roar_client_set_proto(struct roar_client * client, int proto, int byteorder);
+
+int roar_client_pass     (struct roar_connection * con, struct roar_client * client);
+
 #endif
 
 //ll
