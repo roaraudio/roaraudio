@@ -47,9 +47,10 @@ static int roar_pcm_start (snd_pcm_ioplug_t * io) {
  if (self->stream_opened)
   return 0;
 
- if ( roar_vio_simple_stream( &(self->stream_vio), self->info.rate,
-                        self->info.channels, self->info.bits, self->info.codec,
-                        NULL, ROAR_DIR_PLAY, "ALSA plugin" ) == -1 ) {
+ if ( roar_vio_simple_new_stream_obj(&(self->stream_vio), &(self->roar.con), &(self->stream),
+                                     self->info.rate, self->info.channels, self->info.bits, self->info.codec,
+                                     io->stream == SND_PCM_STREAM_PLAYBACK ? ROAR_DIR_PLAY : ROAR_DIR_MONITOR
+                                    ) == -1 ) {
   return -EINVAL;
  }
 
@@ -137,11 +138,6 @@ static int roar_hw_constraint(struct roar_alsa_pcm * self) {
  return 0;
 }
 
-static int roar_pcm_dummy (snd_pcm_ioplug_t * io) {
- ROAR_DBG("roar_pcm_dummy(*) = 0");
- return 0;
-}
-
 
 ///////////////////////////////
 /// TODO: Needs to be implemented
@@ -207,30 +203,9 @@ static int roar_pcm_delay(snd_pcm_ioplug_t *io, snd_pcm_sframes_t *delayp) {
 }
 
 static int roar_pcm_prepare(snd_pcm_ioplug_t *io) {
- struct roar_alsa_pcm * self = io->private_data;
-
  ROAR_DBG("roar_pcm_prepare(*) = ?");
 
  return roar_pcm_start(io);
-
-#if 0
- if ( self->stream_opened ) {
-  roar_vio_close(&(self->stream_vio));
-  self->stream_opened = 0;
- }
-
- if ( roar_vio_simple_new_stream_obj(&(self->stream_vio), &(self->roar.con), &(self->stream),
-                                     self->info.rate, self->info.channels, self->info.bits, self->info.codec,
-                                     io->stream == SND_PCM_STREAM_PLAYBACK ? ROAR_DIR_PLAY : ROAR_DIR_MONITOR
-                                    ) == -1 ) {
-  return -EINVAL;
- }
-
- self->stream_opened = 1;
-
- ROAR_DBG("roar_pcm_prepare(*) = 0");
- return 0;
-#endif
 }
 
 static int roar_pcm_hw_params(snd_pcm_ioplug_t *io, snd_pcm_hw_params_t *params) {
