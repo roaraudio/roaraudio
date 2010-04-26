@@ -86,12 +86,22 @@ static int roar_hw_constraint(struct roar_alsa_pcm * self) {
   SND_PCM_ACCESS_RW_INTERLEAVED
  };
  static const unsigned int formats[] = {
-  // TODO: add list of additioal formats we support
+  SND_PCM_FORMAT_S8,
   SND_PCM_FORMAT_U8,
   SND_PCM_FORMAT_A_LAW,
   SND_PCM_FORMAT_MU_LAW,
   SND_PCM_FORMAT_S16_LE,
   SND_PCM_FORMAT_S16_BE,
+  SND_PCM_FORMAT_U16_LE,
+  SND_PCM_FORMAT_U16_BE,
+  SND_PCM_FORMAT_S32_LE,
+  SND_PCM_FORMAT_S32_BE,
+  SND_PCM_FORMAT_U32_LE,
+  SND_PCM_FORMAT_U32_BE,
+  SND_PCM_FORMAT_S24_3LE,
+  SND_PCM_FORMAT_S24_3BE,
+  SND_PCM_FORMAT_U24_3LE,
+  SND_PCM_FORMAT_U24_3BE,
  };
  int ret;
 
@@ -219,6 +229,10 @@ static int roar_pcm_hw_params(snd_pcm_ioplug_t *io, snd_pcm_hw_params_t *params)
  self->info.rate     = io->rate;
 
  switch (io->format) {
+  case SND_PCM_FORMAT_S8:
+    self->info.codec = ROAR_CODEC_PCM_U_LE;
+    self->info.bits  = 8;
+   break;
   case SND_PCM_FORMAT_U8:
     self->info.codec = ROAR_CODEC_PCM_U_LE;
     self->info.bits  = 8;
@@ -238,6 +252,46 @@ static int roar_pcm_hw_params(snd_pcm_ioplug_t *io, snd_pcm_hw_params_t *params)
   case SND_PCM_FORMAT_S16_BE:
     self->info.codec = ROAR_CODEC_PCM_S_BE;
     self->info.bits  = 16;
+   break;
+  case SND_PCM_FORMAT_U16_LE:
+    self->info.codec = ROAR_CODEC_PCM_U_LE;
+    self->info.bits  = 16;
+   break;
+  case SND_PCM_FORMAT_U16_BE:
+    self->info.codec = ROAR_CODEC_PCM_U_BE;
+    self->info.bits  = 16;
+   break;
+  case SND_PCM_FORMAT_S32_LE:
+    self->info.codec = ROAR_CODEC_PCM_S_LE;
+    self->info.bits  = 32;
+   break;
+  case SND_PCM_FORMAT_S32_BE:
+    self->info.codec = ROAR_CODEC_PCM_S_BE;
+    self->info.bits  = 32;
+   break;
+  case SND_PCM_FORMAT_U32_LE:
+    self->info.codec = ROAR_CODEC_PCM_U_LE;
+    self->info.bits  = 32;
+   break;
+  case SND_PCM_FORMAT_U32_BE:
+    self->info.codec = ROAR_CODEC_PCM_U_BE;
+    self->info.bits  = 32;
+   break;
+  case SND_PCM_FORMAT_S24_3LE:
+    self->info.codec = ROAR_CODEC_PCM_S_LE;
+    self->info.bits  = 24;
+   break;
+  case SND_PCM_FORMAT_S24_3BE:
+    self->info.codec = ROAR_CODEC_PCM_S_BE;
+    self->info.bits  = 24;
+   break;
+  case SND_PCM_FORMAT_U24_3LE:
+    self->info.codec = ROAR_CODEC_PCM_U_LE;
+    self->info.bits  = 24;
+   break;
+  case SND_PCM_FORMAT_U24_3BE:
+    self->info.codec = ROAR_CODEC_PCM_U_BE;
+    self->info.bits  = 24;
    break;
   default:
     return-EINVAL;
