@@ -51,18 +51,19 @@ struct roar_client * g_clients[ROAR_CLIENTS_MAX];
 
 // basic functions
 
-int clients_init      (void);
-int clients_free      (void);
-int clients_new       (void);
-int clients_delete    (int id);
-int clients_set_fh    (int id, int    fh);
-int clients_set_pid   (int id, int    pid);
-int clients_set_uid   (int id, int    uid);
-int clients_set_gid   (int id, int    gid);
-int clients_set_name  (int id, char * name);
-int clients_set_proto (int id, int    proto);
-int clients_get       (int id, struct roar_client ** client);
-int clients_get_fh    (int id);
+int clients_init       (void);
+int clients_free       (void);
+int clients_new        (void);
+int clients_new_from_fh(int fh, int proto, int byteorder, int update_nnode);
+int clients_delete     (int id);
+int clients_set_fh     (int id, int    fh);
+int clients_set_pid    (int id, int    pid);
+int clients_set_uid    (int id, int    uid);
+int clients_set_gid    (int id, int    gid);
+int clients_set_name   (int id, char * name);
+int clients_set_proto  (int id, int    proto);
+int clients_get        (int id, struct roar_client ** client);
+int clients_get_fh     (int id);
 
 // network functions
 int clients_check_all  (void);

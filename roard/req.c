@@ -290,7 +290,6 @@ int req_on_con_stream  (int client, struct roar_message * mes, char * data) {
 }
 
 int req_on_passfh      (int client, struct roar_message * mes, char * data) {
- struct roar_client * c;
  int sock = clients_get_fh(client);
  int16_t * d = (int16_t*)mes->data;
  struct roard_listen * lsock;
@@ -350,23 +349,8 @@ int req_on_passfh      (int client, struct roar_message * mes, char * data) {
   lsock->socket = fh;
   lsock->proto  = d[2];
  } else {
-  if ( d[2] != ROAR_PROTO_ROARAUDIO ) // protocol
+  if ( clients_new_from_fh(fh, d[2], d[3], 1) == -1 )
    return -1;
-
-  if ( d[3] != ROAR_BYTEORDER_NETWORK ) // byte order
-   return -1;
-
-  if ( (client = clients_new()) == -1 )
-   return -1;
-
-  if ( clients_set_fh(client, fh) == -1 ) {
-   clients_delete(client);
-   return -1;
-  }
-
-  if ( clients_get(client, &c) != -1 ) {
-   roar_nnode_new_from_fh(&(c->nnode), fh, 1);
-  }
  }
 
  mes->datalen = 0;

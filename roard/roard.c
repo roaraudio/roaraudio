@@ -1562,7 +1562,7 @@ int main (void) {
    g_no_listen = 1;
 #endif
   } else if ( strcmp(k, "--client-fh") == 0 ) {
-   if ( clients_set_fh(clients_new(), atoi(argv[++i])) == -1 ) {
+   if ( clients_new_from_fh(atoi(argv[++i]), ROAR_PROTO_ROARAUDIO, ROAR_BYTEORDER_NETWORK, 1) == -1 ) {
     ROAR_ERR("main(*): Can not set client's fh");
     return 1;
    }

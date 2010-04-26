@@ -90,6 +90,35 @@ int clients_new (void) {
  return -1;
 }
 
+int clients_new_from_fh(int fh, int proto, int byteorder, int update_nnode) {
+ struct roar_client * c;
+ int client;
+
+ if ( fh == -1 )
+  return -1;
+
+ if ( proto != ROAR_PROTO_ROARAUDIO || byteorder != ROAR_BYTEORDER_NETWORK )
+  return -1;
+
+ if ( (client = clients_new()) == -1 )
+  return -1;
+
+ if ( clients_set_fh(client, fh) == -1 ) {
+  clients_delete(client);
+  return -1;
+ }
+
+ if ( update_nnode ) {
+  if ( clients_get(client, &c) != -1 ) {
+   if ( roar_nnode_free(&(c->nnode)) != -1 ) {
+    roar_nnode_new_from_fh(&(c->nnode), fh, 1);
+   }
+  }
+ }
+
+ return 0;
+}
+
 int clients_delete (int id) {
  int i;
  int close_client_fh = 1;
