@@ -29,7 +29,7 @@
  *  NOTE for uses of non-GPL (LGPL,...) software using libesd, libartsc
  *  or libpulse*:
  *  The libs libroaresd, libroararts and libroarpulse link this lib
- *  and are therefore GPL. Because of this it may be illigal to use
+ *  and are therefore GPL. Because of this it may be illegal to use
  *  them with any software that uses libesd, libartsc or libpulse*.
  */
 
@@ -44,7 +44,7 @@
  * 4) read answer from server
  * 5) if stage of server response is non-zero increment stage to server stage+1
  *    and repeat from step 2)
- * 6) check if we got an OK or an ERROR, return currect value
+ * 6) check if we got an OK or an ERROR, return correct value
  */
 
 /* The protocol:
@@ -63,7 +63,7 @@
  * if the server sends an zero size message back it means the server accepted our connection
  * and no additional stage is needed.
  * if the message type is OK the server accepted our auth.
- * if the message type is ERROR the server recjected us. we may try other auth methodes.
+ * if the message type is ERROR the server rejected us. we may try other auth methods.
  * if the server accepted our data and the stage is non-zero we need to continue with the next
  * stage of the auth.
  * if the server rejected us the auth type value of the response is a suggested next auth type
@@ -79,18 +79,18 @@
  *
  * --- COOKIE:
  * We send cookies for all stages the server ask us to provide a cookie.
- * if a cookie is wrong the server rejects us or aks us for another.
+ * if a cookie is wrong the server rejects us or asks us for another.
  * The cookie is send as binary data in the data block.
  *
  * --- TRUST:
- * We ask the server to auth us based on ower UID/GID/PID.
- * The server may reject this becasue we are not allowed or because it is not
+ * We ask the server to auth us based on our UID/GID/PID.
+ * The server may reject this because we are not allowed or because it is not
  * supported by the transport.
  * If we get rejected we may try to continue with IDENT then RHOST before we use NONE.
  * The data block is not used.
  *
  * --- PASSWORD:
- * This is technikly the same as COOKIE just that the cookie is limited to
+ * This is technically the same as COOKIE just that the cookie is limited to
  * printable ASCII chars and that the user should be asked to provide the password.
  * This may be done via a GUI popup window.
  *
@@ -99,8 +99,8 @@
  * The data block contains of two main parts:
  * The first part is a one byte long subtype.
  * The value must be 0x01 for username+password.
- * futur versions may define other types.
- * the secund part is the actual data block.
+ * future versions may define other types.
+ * the second part is the actual data block.
  * for username+password it is splited into two fields, both terminated with \0.
  * the first is the username the last one the password as clear text.
  * Example: char data[] = "\001MyUser\0MyPassword\0";
