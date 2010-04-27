@@ -27,6 +27,7 @@
 
 int req_on_noop        (int client, struct roar_message * mes, char * data) {
  mes->cmd     = ROAR_CMD_OK;
+ mes->pos     = g_pos;
  mes->datalen = 0;
  return 0;
 }
@@ -54,6 +55,7 @@ int req_on_identify    (int client, struct roar_message * mes, char * data) {
   c->name[max_len] = 0;
 
   mes->cmd     = ROAR_CMD_OK;
+  mes->pos     = g_pos;
   mes->datalen = 0;
 
   ROAR_DBG("req_on_identify(*): client=%i, pid=%i", client, c->pid);
@@ -67,6 +69,7 @@ int req_on_identify    (int client, struct roar_message * mes, char * data) {
 int req_on_auth        (int client, struct roar_message * mes, char * data) {
  // TODO: add code to support some auth.
  mes->cmd     = ROAR_CMD_OK;
+ mes->pos     = g_pos;
  mes->datalen = 0;
  return 0;
 }
@@ -74,6 +77,7 @@ int req_on_auth        (int client, struct roar_message * mes, char * data) {
 
 int req_on_whoami      (int client, struct roar_message * mes, char * data) {
  mes->cmd     = ROAR_CMD_OK;
+ mes->pos     = g_pos;
  mes->datalen = 1;
  mes->data[0] = client;
  return 0;
@@ -512,7 +516,8 @@ int req_on_server_oinfo    (int client, struct roar_message * mes, char * data) 
 
 
 int req_on_get_standby (int client, struct roar_message * mes, char * data) {
- mes->cmd = ROAR_CMD_OK;
+ mes->cmd     = ROAR_CMD_OK;
+ mes->pos     = g_pos;
  mes->datalen = 2;
 
  *((uint16_t*)mes->data) = ROAR_HOST2NET16((unsigned) g_standby);
@@ -527,6 +532,7 @@ int req_on_set_standby (int client, struct roar_message * mes, char * data) {
  g_standby = ROAR_NET2HOST16(*((uint16_t*)mes->data));
 
  mes->cmd     = ROAR_CMD_OK;
+ mes->pos     = g_pos;
  mes->datalen = 0;
 
  return 0;
@@ -539,6 +545,7 @@ int req_on_exit      (int client, struct roar_message * mes, char * data) {
   term = mes->data[0];
 
  mes->cmd     = ROAR_CMD_OK;
+ mes->pos     = g_pos;
  mes->datalen = 0;
 
  ROAR_DBG("req_on_exit(*): term=%i", term);
