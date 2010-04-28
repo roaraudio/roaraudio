@@ -100,7 +100,7 @@ int rsd_free (rsound_t *rd) {
  return ret;
 }
 
-int rsd_set_param (rsound_t *rd, int option, void* param) {
+int rsd_set_param (rsound_t *rd, enum settings option, void* param) {
  struct libroarrsound * self = (struct libroarrsound *)rd;
 
  ROAR_DBG("rsd_set_param(rd=%p, option=%i, param=%p) = ?", rd, option, param);
@@ -108,7 +108,7 @@ int rsd_set_param (rsound_t *rd, int option, void* param) {
  if ( self == NULL || param == NULL )
   return -1;
 
- switch ((enum settings)option) {
+ switch (option) {
   // connection settings:
   case RSD_HOST:
     if ( self->rsound.host != NULL )
