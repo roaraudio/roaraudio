@@ -31,7 +31,7 @@
 
 #include "libroarrsound.h"
 
-static size_t libroarrsound_fmt2fs (enum format format) {
+static size_t libroarrsound_fmt2fs (enum rsd_format format) {
  switch (format) {
   case RSD_S16_LE:
   case RSD_S16_BE:
@@ -100,7 +100,7 @@ int rsd_free (rsound_t *rd) {
  return ret;
 }
 
-int rsd_set_param (rsound_t *rd, enum settings option, void* param) {
+int rsd_set_param (rsound_t *rd, enum rsd_settings option, void* param) {
  struct libroarrsound * self = (struct libroarrsound *)rd;
 
  ROAR_DBG("rsd_set_param(rd=%p, option=%i, param=%p) = ?", rd, option, param);
