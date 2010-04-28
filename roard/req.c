@@ -319,10 +319,10 @@ int req_on_passfh      (int client, struct roar_message * mes, char * data) {
 // non-stream pass:
 
 /*
- 0: Version,  16
- 1: Flags,    16
- 2: Protocol, 16
- 3: Byteorder 16
+ 0: Version,   16
+ 1: Flags,     16
+ 2: Protocol,  16
+ 3: Byteorder, 16
  Options...
 */
 
