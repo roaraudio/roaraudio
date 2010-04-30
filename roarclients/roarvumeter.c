@@ -128,7 +128,9 @@ int vumeter16bit2ch (struct roar_vio_calls * vio, int samples, int16_t * buf, in
   fflush(stdout);
  }
 
- roardsp_filter_uninit(beat_lp);
+ if ( beat_detection ) {
+  roardsp_filter_uninit(beat_lp);
+ }
 
  return 0;
 }
