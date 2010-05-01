@@ -319,7 +319,7 @@ static int roar_pcm_close (snd_pcm_ioplug_t * io) {
 
  roar_disconnect(&(self->roar.con));
 
- free(self);
+ roar_mm_free(self);
 
  return 0;
 }
@@ -375,14 +375,14 @@ SND_PCM_PLUGIN_DEFINE_FUNC(roar) {
 
  errno = ENOSYS;
 
- if ( (self = malloc(sizeof(struct roar_alsa_pcm))) == NULL )
+ if ( (self = roar_mm_malloc(sizeof(struct roar_alsa_pcm))) == NULL )
   return -errno;
 
  memset(self, 0, sizeof(struct roar_alsa_pcm));
 
  errno = ENOSYS;
  if ( roar_simple_connect(&(self->roar.con), (char*)server, "ALSA Plugin") == -1 ) {
-  free(self);
+  roar_mm_free(self);
   return -errno;
  }
 
@@ -396,14 +396,14 @@ SND_PCM_PLUGIN_DEFINE_FUNC(roar) {
 
  if ( (ret = snd_pcm_ioplug_create(&(self->io), name, stream, mode)) < 0 ) {
   roar_disconnect(&(self->roar.con));
-  free(self);
+  roar_mm_free(self);
   return ret;
  }
 
  if ( (ret = roar_hw_constraint(self)) < 0 ) {
   snd_pcm_ioplug_delete(&(self->io));
   roar_disconnect(&(self->roar.con));
-  free(self);
+  roar_mm_free(self);
   return ret;
  }
 
