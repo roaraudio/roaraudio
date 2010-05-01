@@ -40,6 +40,7 @@
 // things without it. Will be called several times during a program!
 static int roar_pcm_start (snd_pcm_ioplug_t * io) {
  struct roar_alsa_pcm * self = io->private_data;
+ int                    fh;
 
  ROAR_DBG("roar_pcm_start(*) = ?");
 
@@ -52,6 +53,16 @@ static int roar_pcm_start (snd_pcm_ioplug_t * io) {
                                      io->stream == SND_PCM_STREAM_PLAYBACK ? ROAR_DIR_PLAY : ROAR_DIR_MONITOR
                                     ) == -1 ) {
   return -EINVAL;
+ }
+
+ if ( roar_vio_ctl(&(self->stream_vio), io->stream == SND_PCM_STREAM_PLAYBACK ?
+                                        ROAR_VIO_CTL_GET_SELECT_WRITE_FH : ROAR_VIO_CTL_GET_SELECT_READ_FH,
+                   &fh) != -1 ) {
+
+  io->poll_fd     = fh;
+  io->poll_events = io->stream == SND_PCM_STREAM_PLAYBACK ? POLLOUT : POLLIN;
+
+  snd_pcm_ioplug_reinit_status(io);
  }
 
  // Stream is now active, yay.
