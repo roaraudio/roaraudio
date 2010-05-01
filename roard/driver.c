@@ -68,6 +68,10 @@ struct roar_driver g_driver[] = {
  {"rsound", "RSound", "servername", DRV_FLAG_NONE, ROAR_SUBSYS_WAVEFORM,
   NULL, NULL, driver_rsound_open},
 #endif
+#ifdef _DRIVER_PORTAUDIO_CAN_OPERATE
+ {"portaudio", "PortAudio", "(none)", DRV_FLAG_NONE, ROAR_SUBSYS_WAVEFORM,
+  NULL, NULL, driver_portaudio_open},
+#endif
 #ifdef ROAR_HAVE_LIBASOUND
  {"alsa", "ALSA", "???", DRV_FLAG_NONE, ROAR_SUBSYS_WAVEFORM, NULL, NULL, driver_alsa_open_vio},
 #endif

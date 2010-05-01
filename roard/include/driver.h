@@ -105,6 +105,14 @@
 #include "driver_rsound.h"
 #endif
 
+#ifdef ROAR_HAVE_LIBPORTAUDIO
+#include <portaudio.h>
+#ifdef ROAR_HAVE_LIBPABLIO
+#include <pablio/pablio.h>
+#endif
+#include "driver_portaudio.h"
+#endif
+
 #ifdef ROAR_HAVE_LIBASOUND
 #include <alsa/asoundlib.h>
 #include "driver_alsa.h"
