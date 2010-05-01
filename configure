@@ -24,6 +24,7 @@ SHARED='-shared'
 SHARED_CF=''
 SHARED_SUFFIX='.so'
 fPIC=true
+Wextra=false
 MMCU=''
 PKG_CONFIG=false
 RUNTIME_DETECT=false
@@ -846,9 +847,24 @@ fi
 
 [ "$DEFAULT_GRP" = '' ] && DEFAULT_GRP='audio'
 
+CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
+
 if [ "$MMCU" != '' ]
 then
  CC="$CC -mmcu=$MMCU"
+fi
+
+# Check for -Wextra
+#Wextra
+echo -n "checking if compiler supports -Wextra... "
+echo 'int main (void) { return 0; }' > $TF_C
+if $CCTF -Wextra 2> /dev/null;
+then
+ echo yes
+ Wextra=true
+else
+ echo no
+ Wextra=false
 fi
 
 # now write the cc name to Makefile.conf
@@ -856,7 +872,8 @@ fi
  echo "SHARED=$SHARED"
  echo "SHARED_CF=$SHARED_CF"
  echo "SHARED_SUFFIX=$SHARED_SUFFIX"
- $fPIC && echo 'fPIC=-fPIC'
+ $fPIC   && echo 'fPIC=-fPIC'
+ $Wextra && echo 'Wextra=-Wextra'
  echo
  echo "CC=$CC"
  echo "RANLIB=$RANLIB"
@@ -883,14 +900,12 @@ fi
  echo "subdir_libroaross=libroaross" # this builds an empty file in case of not supported
 } >&4
 
-CCTF="$CC $LDPATH $INCPATH -Iinclude/ -o $TF_E $TF_C"
-
 {
  cat <<'EOF'
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.251 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.252 $ of RoarAudio
  */
 
 EOF

@@ -8,7 +8,7 @@ OBJS=libroarlight.o colors.o roardmx.o pwm.o
 
 #DEFINES        = -DDEBUG
 INCLUDE = -I../include -I../include/libroarlight
-CFLAGS += -g -Wall -Wextra -O2 $(DEFINES) $(INCLUDE) $(INCPATH) $(SHARED_CF) $(fPIC)
+CFLAGS += -g -Wall $(Wextra) -O2 $(DEFINES) $(INCLUDE) $(INCPATH) $(SHARED_CF) $(fPIC)
 LDFLAGS = -g $(SHARED) -L../lib/ $(LDPATH)
 LIBS    = $(LIBROARLIGHT_NS)
 

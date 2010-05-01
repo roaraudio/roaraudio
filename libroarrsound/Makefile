@@ -8,7 +8,7 @@ OBJS=libroarrsound.o
 
 #DEFINES        = -DDEBUG
 INCLUDE = -I../include -I../include/libroarrsound
-CFLAGS += -g -Wall -Wextra -O2 $(DEFINES) $(INCLUDE) $(INCPATH) $(SHARED_CF) $(fPIC)
+CFLAGS += -g -Wall $(Wextra) -O2 $(DEFINES) $(INCLUDE) $(INCPATH) $(SHARED_CF) $(fPIC)
 LDFLAGS = -g $(SHARED) $(LDPATH) -L../lib/
 LIBS    = $(LIBROAR)
 
