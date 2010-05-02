@@ -52,10 +52,16 @@ struct roar_message {
  uint32_t pos;
  int datalen;
  char data[LIBROAR_BUFFER_MSGDATA];
+ int16_t seq;
+ int32_t flags;
+ int32_t crc;
 };
 
 struct roar_connection {
  int __fh;
+ int32_t flags;
+ struct roar_vio_calls viocon;
+ struct roar_buffer * msgqueue;
 };
 
 

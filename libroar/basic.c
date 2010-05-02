@@ -369,8 +369,13 @@ int roar_vrecv_message(struct roar_vio_calls * vio, struct roar_message * mes, c
 
  ROAR_DBG("roar_recv_message(*): try to get a response form the server...");
 
- if ( data )
+ if ( mes == NULL )
+  return -1;
+
+ if ( data != NULL )
   *data = NULL;
+
+ memset(mes, 0, sizeof(struct roar_message));
 
  if ( roar_vio_read(vio, buf, _ROAR_MESS_BUF_LEN) != _ROAR_MESS_BUF_LEN ) {
   roar_errno = ROAR_ERROR_PROTO;
