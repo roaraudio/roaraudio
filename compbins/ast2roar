@@ -12,7 +12,14 @@ fi
 OUT="$1"
 IN="$2"
 
-HELPFILE=`tempfile -p $$- -s .help`
+if tempfile --help > /dev/null 2> /dev/null
+then
+ HELPFILE=`tempfile -p $$- -s .help`
+else
+ HELPFILE=tempfile-$$.help
+ touch $HELPFILE
+fi
+
 HELPOPTS=''
 
 ARGS_END_OPTS_ON_NON_OPT=false
