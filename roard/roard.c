@@ -1632,9 +1632,11 @@ int main (void) {
  }
 
 #ifdef ROAR_SUPPORT_LISTEN
- if ( add_listen(sock_addr, port, sock_type, sock_user, sock_grp, sock_proto, sock_dir, &sock_info) != 0 ) {
-  ROAR_ERR("Can not open listen socket!");
-  return 1;
+ if ( !g_no_listen ) {
+  if ( add_listen(sock_addr, port, sock_type, sock_user, sock_grp, sock_proto, sock_dir, &sock_info) != 0 ) {
+   ROAR_ERR("Can not open listen socket!");
+   return 1;
+  }
  }
 #endif
 
