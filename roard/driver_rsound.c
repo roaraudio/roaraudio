@@ -26,6 +26,8 @@
 #define _DRV_NEED_RSOUND_H
 #include "roard.h"
 
+#ifdef ROAR_HAVE_LIBRSOUND
+
 int     driver_rsound_open         (struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh, struct roar_stream_server * sstream) {
  rsound_t * self;
  int tmp, tmp2;
@@ -155,5 +157,7 @@ ssize_t driver_rsound_write        (struct roar_vio_calls * vio, void *buf, size
 
  return ret;
 }
+
+#endif
 
 //ll
