@@ -20,6 +20,6 @@ test-roard:
 	PREFIX_BIN=$(PREFIX_BIN) PREFIX_LIB=$(PREFIX_LIB) ./test-roard.sh
 sandbox-install:
 	mkdir sandbox
-	sh -c 'cd ..; DESTDIR=`pwd`/tests/sandbox make install'
+	sh -c 'cd ..; DESTDIR=`pwd`/tests/sandbox $(MAKE) install'
 sandbox-clean:
 	rm -rf sandbox/
