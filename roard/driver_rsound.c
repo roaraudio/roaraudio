@@ -87,6 +87,11 @@ int     driver_rsound_open         (struct roar_vio_calls * inst, char * device,
      case 16: tmp = RSD_S16_BE; break;
     }
    break;
+  case ROAR_CODEC_PCM_S_PDP:
+    switch (info->bits) {
+     case  8: tmp = RSD_S8;     break;
+    }
+   break;
   case ROAR_CODEC_PCM_U_LE:
     switch (info->bits) {
      case  8: tmp = RSD_U8;     break;
@@ -97,6 +102,11 @@ int     driver_rsound_open         (struct roar_vio_calls * inst, char * device,
     switch (info->bits) {
      case  8: tmp = RSD_U8;     break;
      case 16: tmp = RSD_U16_BE; break;
+    }
+   break;
+  case ROAR_CODEC_PCM_U_PDP:
+    switch (info->bits) {
+     case  8: tmp = RSD_U8;     break;
     }
    break;
  }
