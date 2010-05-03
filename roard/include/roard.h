@@ -84,11 +84,13 @@ int g_verbose;
 // listeing code:
 #define ROAR_MAX_LISTEN_SOCKETS  8
 
+// MFOI = Marked For Optional Include
+
 //#include "buffer.h"
-#include "codecfilter.h"
-#include "container_framework.h"
+#include "codecfilter.h" /* MFOI */
+#include "container_framework.h" /* MFOI */
 #include "client.h"
-#include "driver.h"
+#include "driver.h" /* MFOI */
 #include "output.h"
 #include "mixer.h"
 //#include "convert.h"
@@ -96,9 +98,9 @@ int g_verbose;
 #include "network.h"
 #include "commands.h"
 #include "req.h"
-#include "emul_esd.h"
-#include "emul_simple.h"
-#include "emul_rsound.h"
+#include "emul_esd.h" /* MFOI */
+#include "emul_simple.h" /* MFOI */
+#include "emul_rsound.h" /* MFOI */
 #include "sources.h"
 #include "sample.h"
 #include "meta.h"
