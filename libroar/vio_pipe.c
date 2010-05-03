@@ -325,13 +325,8 @@ ssize_t roar_vio_pipe_write   (struct roar_vio_calls * vio, void *buf, size_t co
      return -1;
     }
 
-    if ( roar_buffer_new(&next, count) == -1 )
+    if ( roar_buffer_new_data(&next, count, &data) == -1 )
      return -1;
-
-    if ( roar_buffer_get_data(next, &data) == -1 ) {
-     roar_buffer_free(next);
-     return -1;
-    }
 
     memcpy(data, buf, count);
 

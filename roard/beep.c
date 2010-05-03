@@ -72,11 +72,7 @@ struct roar_buffer * beep_fill_buffer (struct roar_beep * beep, struct roar_audi
 
  ROAR_DBG("beep_fill_buffer(beep=%p, info=%p) = ?", beep, info);
 
- if ( roar_buffer_new(&buf, samples) == -1 )
-  return NULL;
-
- if ( roar_buffer_get_data(buf, &data) == -1 ) {
-  roar_buffer_free(buf);
+ if ( roar_buffer_new_data(&buf, samples, &data) == -1 ) {
   ROAR_DBG("beep_fill_buffer(beep=%p, info=%p) = NULL", beep, info);
   return NULL;
  }

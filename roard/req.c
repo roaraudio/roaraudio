@@ -1033,13 +1033,11 @@ int req_on_add_data (int client, struct roar_message * mes, char * data) {
  struct roar_buffer * b;
  char               * buf;
 
- if ( roar_buffer_new(&b, mes->datalen) == -1 ) {
+ if ( roar_buffer_new_data(&b, mes->datalen, (void **)&buf) == -1 ) {
   ROAR_ERR("req_on_add_data(*): Can not alloc buffer space!");
   ROAR_DBG("req_on_add_data(*) = -1");
   return -1;
  }
-
- roar_buffer_get_data(b, (void **)&buf);
 
  if ( data == NULL ) {
   memcpy(buf, mes->data, mes->datalen);

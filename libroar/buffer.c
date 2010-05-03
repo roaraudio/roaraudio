@@ -35,23 +35,34 @@
 
 #include "libroar.h"
 
+// TODO: convert this to a macro.
+// TODO: but still provide a function->symbol
+// TODO: so we do not need to change SONAME-Version
+// TODO: Clean this up in next SONAME-Version
 int roar_buffer_new      (struct roar_buffer ** buf, size_t len) {
- void * data;
+ return roar_buffer_new_data(buf, len, NULL);
+}
 
- if ((data = roar_mm_malloc(len)) == NULL) {
+int roar_buffer_new_data (struct roar_buffer ** buf, size_t len, void ** data) {
+ void * bufdata;
+
+ if ((bufdata = roar_mm_malloc(len)) == NULL) {
   return -1;
  }
 
- if ( roar_buffer_new_no_ma(buf, len, data) == -1 ) {
-  roar_mm_free(data);
+ if ( roar_buffer_new_no_ma(buf, len, bufdata) == -1 ) {
+  roar_mm_free(bufdata);
   return -1;
  }
 
  if ( roar_buffer_set_flag(*buf, ROAR_BUFFER_FLAG_NOFREE, ROAR_BUFFER_RESET) == -1 ) {
   roar_buffer_free(*buf);
-  roar_mm_free(data);
+  roar_mm_free(bufdata);
   return -1;
  }
+
+ if ( data != NULL )
+  *data = bufdata;
 
  return 0;
 }

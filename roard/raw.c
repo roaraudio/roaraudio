@@ -44,13 +44,8 @@ int raw_check_stream  (int id) {
  if ( s->pos_rel_id == -1 )
   return -1;
 
- if ( roar_buffer_new(&buf, RAW_READ_LEN) == -1 )
+ if ( roar_buffer_new_data(&buf, RAW_READ_LEN, &data) == -1 )
   return -1;
-
- if ( roar_buffer_get_data(buf, &data) == -1 ) {
-  roar_buffer_free(buf);
-  return -1;
- }
 
  if ( (len = stream_vio_s_read(ss, data, RAW_READ_LEN)) < 1 ) {
   // this is len=0 -> eof OR len=-1 -> error

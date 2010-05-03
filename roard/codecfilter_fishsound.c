@@ -49,10 +49,7 @@ int cf_fishsound_decoded_float (FishSound * fsound, float ** pcm, long frames, v
                        sizeof(FishSoundInfo));
  }
 
- if ( roar_buffer_new(&buf, frames*stream->info.bits*stream->info.channels/8) == -1 )
-  return -1;
-
- if ( roar_buffer_get_data(buf, &data.v) == -1 )
+ if ( roar_buffer_new_data(&buf, frames*stream->info.bits*stream->info.channels/8, &data.v) == -1 )
   return -1;
 
  frames *= self->fsinfo.channels;

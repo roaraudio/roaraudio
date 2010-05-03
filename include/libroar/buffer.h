@@ -79,6 +79,8 @@ int roar_buffer_free     (struct roar_buffer *  buf);
 int roar_buffer_delete   (struct roar_buffer *  buf, struct roar_buffer ** next);
 int roar_buffer_add      (struct roar_buffer *  buf, struct roar_buffer *  next);
 
+int roar_buffer_new_data (struct roar_buffer ** buf, size_t len, void ** data);
+
 int roar_buffer_ring_new (struct roar_buffer ** buf, size_t len, int free_running);
 
 int roar_buffer_get_next (struct roar_buffer *  buf, struct roar_buffer ** next);

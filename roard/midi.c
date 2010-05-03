@@ -156,13 +156,11 @@ int midi_check_stream  (int id) {
     return -1;
  }
 
- if ( roar_buffer_new(&b, MIDI_READ_SIZE) == -1 ) {
+ if ( roar_buffer_new_data(&b, MIDI_READ_SIZE, (void**)&buf) == -1 ) {
   ROAR_ERR("midi_check_stream(*): Can not alloc buffer space!");
   ROAR_DBG("midi_check_stream(*) = -1");
   return -1;
  }
-
- roar_buffer_get_data(b, (void **)&buf);
 
  if ( (len = stream_vio_s_read(ss, buf, MIDI_READ_SIZE)) < 1 ) {
   streams_delete(id);
@@ -479,11 +477,7 @@ int midi_new_bufmes    (struct roar_buffer ** buf, struct midi_message ** mes) {
 
  *buf = (void*)(*mes = NULL);
 
- if ( roar_buffer_new(buf, sizeof(struct midi_message)) == -1 )
-  return -1;
-
- if ( roar_buffer_get_data(*buf, (void**)mes) == -1 ) {
-  roar_buffer_free(*buf);
+ if ( roar_buffer_new_data(buf, sizeof(struct midi_message), (void**)mes) == -1 ) {
   *buf = (void*)(*mes = NULL);
   return -1;
  }
