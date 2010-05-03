@@ -89,13 +89,13 @@ int     driver_rsound_open         (struct roar_vio_calls * inst, char * device,
    break;
   case ROAR_CODEC_PCM_U_LE:
     switch (info->bits) {
-     case  8: tmp = RSD_S8;     break;
+     case  8: tmp = RSD_U8;     break;
      case 16: tmp = RSD_U16_LE; break;
     }
    break;
   case ROAR_CODEC_PCM_U_BE:
     switch (info->bits) {
-     case  8: tmp = RSD_S8;     break;
+     case  8: tmp = RSD_U8;     break;
      case 16: tmp = RSD_U16_BE; break;
     }
    break;
