@@ -38,10 +38,18 @@
 
 #include "libroar.h"
 
-#define ROAR_VIO_SELECT_NONE        0x00
-#define ROAR_VIO_SELECT_READ        0x01
-#define ROAR_VIO_SELECT_WRITE       0x02
-#define ROAR_VIO_SELECT_EXCEPT      0x04
+#define ROAR_VIO_SELECT_NONE          0x00
+#define ROAR_VIO_SELECT_READ          0x01
+#define ROAR_VIO_SELECT_WRITE         0x02
+#define ROAR_VIO_SELECT_EXCEPT        0x04
+
+#define ROAR_VIO_SELECT_ACTION_NONE   0x00
+#define ROAR_VIO_SELECT_ACTION_SELECT 0x01
+#define ROAR_VIO_SELECT_ACTION_POLL   0x02
+#define ROAR_VIO_SELECT_ACTION_VIOS   0x04 /* VIO Select */
+
+#define ROAR_VIO_SELECT_SETVIO(d,v,q) ((d)->vio = (v)); ((d)->fh = -1); ((d)->eventsq = (q))
+#define ROAR_VIO_SELECT_SETSYSIO(d,f,q) ((d)->vio = NULL); ((d)->fh = (f)); ((d)->eventsq = (q))
 
 struct roar_vio_select_internal {
  int action;
@@ -50,14 +58,26 @@ struct roar_vio_select_internal {
 
 struct roar_vio_select {
  struct roar_vio_calls * vio;
+ int fh;
  int eventsq;
  int eventsa;
+ union {
+  int    si;
+  void * vp;
+ } ud;
  struct roar_vio_select_internal internal;
 };
 
 struct roar_vio_selectctl {
  int strategy;
 };
+
+struct roar_vio_selecttv {
+ int64_t sec;
+ int32_t nsec;
+};
+
+ssize_t roar_vio_select(struct roar_vio_select * vios, size_t len, struct roar_vio_selecttv * rtv, struct roar_vio_selectctl * ctl);
 
 #endif
 
