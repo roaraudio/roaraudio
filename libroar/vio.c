@@ -173,6 +173,14 @@ int     roar_vio_close    (struct roar_vio_calls * vio) {
  return vio->close(vio);
 }
 
+// specal commands:
+int     roar_vio_accept  (struct roar_vio_calls * calls, struct roar_vio_calls * dst) {
+ if (dst == NULL || calls == NULL)
+  return -1;
+
+ return roar_vio_ctl(dst, ROAR_VIO_CTL_ACCEPT, calls);
+}
+
 // converters:
 int     roar_vio_open_file     (struct roar_vio_calls * calls, char * filename, int flags, mode_t mode) {
 #ifdef _CAN_OPERATE
@@ -330,6 +338,7 @@ int     roar_vio_basic_sync    (struct roar_vio_calls * vio) {
 }
 
 int     roar_vio_basic_ctl     (struct roar_vio_calls * vio, int cmd, void * data) {
+ int fh;
 
  if ( vio == NULL || cmd == -1 )
   return -1;
@@ -349,6 +358,23 @@ int     roar_vio_basic_ctl     (struct roar_vio_calls * vio, int cmd, void * dat
    break;
   case ROAR_VIO_CTL_SET_NOSYNC:
     vio->sync = NULL;
+    return 0;
+   break;
+  case ROAR_VIO_CTL_ACCEPT:
+    fh = accept(roar_vio_get_fh(vio), NULL, 0);
+    if ( fh == -1 )
+     return -1;
+
+    // most proably a socket.
+    if ( roar_vio_open_fh_socket(data, fh) == -1 ) {
+#ifdef ROAR_TARGET_WIN32
+     closesocket(fh);
+#else
+     close(fh);
+#endif
+     return -1;
+    }
+
     return 0;
    break;
  }

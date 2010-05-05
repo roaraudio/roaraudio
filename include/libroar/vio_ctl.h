@@ -75,6 +75,7 @@
 #define ROAR_VIO_CTL_GET_SHUTDOWN        (ROAR_VIO_CTL_GENERIC|0x0140) /* shutdown(), need specs */
 #define ROAR_VIO_CTL_SET_NOSYNC          (ROAR_VIO_CTL_GENERIC|0x0150) /* delete call of vio sync() from object */
 #define ROAR_VIO_CTL_GET_NAME            (ROAR_VIO_CTL_GENERIC|ROAR_VIO_CTL_GET|0x0160) /* get name of VIO */
+#define ROAR_VIO_CTL_ACCEPT              (ROAR_VIO_CTL_GENERIC|0x0170) /* accept(), vio* */
 
 // get or set data format used for read and write calls, see below
 #define ROAR_VIO_CTL_GET_DATA_FORMAT   (ROAR_VIO_CTL_GENERIC|ROAR_VIO_CTL_GET|0x0170)
