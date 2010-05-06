@@ -231,6 +231,9 @@ static struct devices {
 static void _init_os (void) {
  memset(&_os, 0, sizeof(_os));
 
+ // if call roar_dl_getsym() here all applications will segfaul.
+ // why?
+
  _os.open   = dlsym(REAL_LIBC, "open");
  _os.close  = dlsym(REAL_LIBC, "close");
  _os.write  = dlsym(REAL_LIBC, "write");
