@@ -493,6 +493,23 @@ static int _open_file (const char *pathname, int flags) {
 
  ROAR_DBG("_open_file(pathname='%s', flags=0x%x) = ?", pathname, flags);
 
+/*
+ * Flags we ignore:
+ * O_DIRECT, O_APPEND, O_LARGEFILE, O_NOATIME, O_NOCTTY, O_TRUNC
+ */
+
+ if ( flags & O_ASYNC ) {
+  ROAR_DBG("_open_file(pathname='%s', flags=0x%x) = -1 // not supported O_ASYNC", pathname, flags);
+  errno = ENOSYS;
+  return -1;
+ }
+
+ if ( (flags & O_DIRECTORY) || (flags & O_EXCL) ) {
+  ROAR_DBG("_open_file(pathname='%s', flags=0x%x) = -1 // invalid flags (O_DIRECTORY or O_EXCL)", pathname, flags);
+  errno = EINVAL;
+  return -1;
+ }
+
  for (i = 0; _device_list[i].prefix != NULL; i++) {
   if ( !strcmp(pathname, _device_list[i].prefix) ) {
    ptr = &(_device_list[i]);
