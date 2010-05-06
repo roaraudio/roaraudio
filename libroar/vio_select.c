@@ -110,18 +110,21 @@ ssize_t roar_vio_select(struct roar_vio_select * vios, size_t len, struct roar_v
 
  for (i = 0; i < len; i++) {
   if ( vios[i].eventsq & ROAR_VIO_SELECT_READ ) {
+   ROAR_DBG("roar_vio_select(vios=%p, len=%llu, rtv=%p, ctl=%p): vios[i=%i] is READ, fh=%i", vios, (long long unsigned int)len, rtv, ctl, i, vios[i].internal.fh[0]);
    FD_SET(vios[i].internal.fh[0], &rfds);
    if ( vios[i].internal.fh[0] > max_fh )
     max_fh = vios[i].internal.fh[0];
   }
 
   if ( vios[i].eventsq & ROAR_VIO_SELECT_WRITE ) {
+   ROAR_DBG("roar_vio_select(vios=%p, len=%llu, rtv=%p, ctl=%p): vios[i=%i] is WRITE, fh=%i", vios, (long long unsigned int)len, rtv, ctl, i, vios[i].internal.fh[1]);
    FD_SET(vios[i].internal.fh[1], &wfds);
    if ( vios[i].internal.fh[1] > max_fh )
     max_fh = vios[i].internal.fh[1];
   }
 
   if ( vios[i].eventsq & ROAR_VIO_SELECT_EXCEPT ) {
+   ROAR_DBG("roar_vio_select(vios=%p, len=%llu, rtv=%p, ctl=%p): vios[i=%i] is EXCEPT, fh=%i", vios, (long long unsigned int)len, rtv, ctl, i, vios[i].internal.fh[2]);
    FD_SET(vios[i].internal.fh[2], &efds);
    if ( vios[i].internal.fh[2] > max_fh )
     max_fh = vios[i].internal.fh[2];
@@ -137,12 +140,17 @@ ssize_t roar_vio_select(struct roar_vio_select * vios, size_t len, struct roar_v
    tv.tv_usec = rtv->nsec / 1000;
   }
 
+
+ ROAR_DBG("roar_vio_select(vios=%p, len=%llu, rtv=%p, ctl=%p): Doing select() with max_fh=%i", vios, (long long unsigned int)len, rtv, ctl, max_fh);
  ret = select(max_fh + 1, &rfds, &wfds, &efds, &tv);
+ ROAR_DBG("roar_vio_select(vios=%p, len=%llu, rtv=%p, ctl=%p): select() returned %i", vios, (long long unsigned int)len, rtv, ctl, ret);
 
  // ret == -1 -> Error
  // ret ==  0 -> No data
- if ( ret < 1 )
+ if ( ret < 1 ) {
+  ROAR_DBG("roar_vio_select(vios=%p, len=%llu, rtv=%p, ctl=%p) = %lli", vios, (long long unsigned int)len, rtv, ctl, (long long int)ret);
   return ret;
+ }
 
  // set eventsa:
  for (i = 0; i < len; i++) {
