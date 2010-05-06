@@ -1351,11 +1351,11 @@ int select(int nfds, fd_set *readfds, fd_set *writefds,
  struct roar_vio_select * sv  = NULL;
  ssize_t ret;
  size_t num = 0;
- int idx;
+ size_t idx;
  int i;
  int i_r, i_w, i_e;
  int max_index = -1;
- volatile static int is_critical = 0;
+ static volatile int is_critical = 0;
 
  _init();
 
