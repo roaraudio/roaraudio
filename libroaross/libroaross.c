@@ -1349,6 +1349,8 @@ int select(int nfds, fd_set *readfds, fd_set *writefds,
            fd_set *exceptfds, struct timeval *timeout) {
  struct roar_vio_selecttv rtv;
  struct roar_vio_select * sv  = NULL;
+ struct pointer * pointer;
+ struct handle  * handle;
  ssize_t ret;
  size_t num = 0;
  size_t idx;
@@ -1423,8 +1425,30 @@ int select(int nfds, fd_set *readfds, fd_set *writefds,
 
   if ( i_r || i_w || i_e ) {
    // TODO: use VIO for pointers...
-   sv[idx].vio     = NULL;
-   sv[idx].fh      = i;
+   if ( (pointer = _get_pointer_by_fh(i)) != NULL ) {
+    handle = pointer->handle;
+    sv[idx].vio     = NULL;
+    sv[idx].fh      = -1;
+    switch (handle->type) {
+     case HT_DMX:
+     case HT_STREAM:
+       if ( ! handle->stream_opened ) {
+        // implement this as statichly return OK
+        errno = ENOSYS;
+        return -1;
+       }
+     case HT_VIO:
+       sv[idx].vio = &(handle->stream_vio);
+      break;
+     default: /* non supported type */
+       errno = EINVAL;
+       return -1;
+      break;
+    }
+   } else {
+    sv[idx].vio     = NULL;
+    sv[idx].fh      = i;
+   }
 
    sv[idx].ud.si   = i;
    sv[idx].eventsq = (i_r ? ROAR_VIO_SELECT_READ   : 0) |
