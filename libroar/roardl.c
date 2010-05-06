@@ -116,7 +116,11 @@ int                      roar_dl_close(struct roar_dl_lhandle * lhandle) {
 
 void                   * roar_dl_getsym(struct roar_dl_lhandle * lhandle, const char * sym, int type) {
 #if defined(ROAR_HAVE_LIBDL)
- return dlsym(_roardl2ldl(lhandle), sym);
+ void * ret = dlsym(_roardl2ldl(lhandle), sym);
+
+ ROAR_DBG("roar_dl_getsym(lhandle=%p, sym='%s', type=%i) = %p", lhandle, sym, type, ret);
+
+ return ret;
 #else
  return NULL;
 #endif
