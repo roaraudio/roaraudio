@@ -144,6 +144,8 @@ static struct {
  FILE   *(*fopen)(const char *path, const char *mode);
  int     (*dup)(int oldfd);
  int     (*dup2)(int oldfd, int newfd);
+ int     (*select)(int nfds, fd_set *readfds, fd_set *writefds,
+                   fd_set *exceptfds, struct timeval *timeout);
 } _os;
 
 static struct {
@@ -240,6 +242,7 @@ static void _init_os (void) {
  _os.fopen = dlsym(REAL_LIBC, "fopen");
  _os.dup   = dlsym(REAL_LIBC, "dup");
  _os.dup2  = dlsym(REAL_LIBC, "dup2");
+ _os.select= dlsym(REAL_LIBC, "select");
 }
 
 static void _init_ptr (void) {
@@ -256,6 +259,7 @@ static void _init (void) {
  if ( !inited ) {
   _init_os();
   _init_ptr();
+  roar_vio_select(NULL, 0, NULL, NULL);
   inited++;
  }
 }
@@ -1341,6 +1345,138 @@ int dup2(int oldfd, int newfd) {
  return ret;
 }
 
+int select(int nfds, fd_set *readfds, fd_set *writefds,
+           fd_set *exceptfds, struct timeval *timeout) {
+ struct roar_vio_selecttv rtv;
+ struct roar_vio_select * sv  = NULL;
+ ssize_t ret;
+ size_t num = 0;
+ int idx;
+ int i;
+ int i_r, i_w, i_e;
+ int max_index = -1;
+ volatile static int is_critical = 0;
+
+ _init();
+
+ if ( is_critical )
+  return _os.select(nfds, readfds, writefds, exceptfds, timeout);
+
+ ROAR_DBG("select(nfds=%i, readfds=%p, writefds=%p, exceptfds=%p, timeout=%p) = ?", nfds, readfds, writefds, exceptfds, timeout);
+
+ if ( nfds == 0 ) {
+  ROAR_DBG("select(nfds=%i, readfds=%p, writefds=%p, exceptfds=%p, timeout=%p) = 0", nfds, readfds, writefds, exceptfds, timeout);
+  return 0;
+ }
+
+ if ( readfds == NULL && writefds == NULL && exceptfds == NULL ) {
+  ROAR_DBG("select(nfds=%i, readfds=%p, writefds=%p, exceptfds=%p, timeout=%p) = 0", nfds, readfds, writefds, exceptfds, timeout);
+  return 0;
+ }
+
+ if ( timeout != NULL ) {
+  rtv.sec = timeout->tv_sec;
+  rtv.nsec = timeout->tv_usec*1000;
+ }
+
+ // count number of handles:
+ for (i = 0; i < nfds; i++) {
+  ROAR_DBG("select(nfds=%i, readfds=%p, writefds=%p, exceptfds=%p, timeout=%p): i=%i, EXISTS", nfds, readfds, writefds, exceptfds, timeout, i);
+  if ( (readfds   != NULL && FD_ISSET(i, readfds  )) ||
+       (writefds  != NULL && FD_ISSET(i, writefds )) ||
+       (exceptfds != NULL && FD_ISSET(i, exceptfds))
+     ) {
+   ROAR_DBG("select(nfds=%i, readfds=%p, writefds=%p, exceptfds=%p, timeout=%p): i=%i, EXISTS", nfds, readfds, writefds, exceptfds, timeout, i);
+   num++;
+   max_index = i;
+  }
+ }
+
+ if ( num == 0 ) {
+  ROAR_DBG("select(nfds=%i, readfds=%p, writefds=%p, exceptfds=%p, timeout=%p) = 0", nfds, readfds, writefds, exceptfds, timeout);
+  return 0;
+ }
+
+ nfds = max_index + 1;
+
+ // create sv;
+ sv = roar_mm_malloc(sizeof(struct roar_vio_select)*num);
+ if ( sv == NULL ) {
+  ROAR_DBG("select(nfds=%i, readfds=%p, writefds=%p, exceptfds=%p, timeout=%p) = -1", nfds, readfds, writefds, exceptfds, timeout);
+  return -1;
+ }
+
+ memset(sv, 0, sizeof(struct roar_vio_select)*num);
+
+ for (i = 0, idx = 0; i < nfds; i++) {
+  if ( idx >= num ) {
+   roar_mm_free(sv);
+   errno = EFAULT;
+   ROAR_DBG("select(nfds=%i, readfds=%p, writefds=%p, exceptfds=%p, timeout=%p) = -1 // i=%i, idx=%i, num=%i", nfds, readfds, writefds, exceptfds, timeout, i, (int)idx, (int)num);
+   return -1;
+  }
+  i_r = readfds   != NULL && FD_ISSET(i, readfds);
+  i_w = writefds  != NULL && FD_ISSET(i, writefds);
+  i_e = exceptfds != NULL && FD_ISSET(i, exceptfds);
+
+  ROAR_DBG("select(nfds=%i, readfds=%p, writefds=%p, exceptfds=%p, timeout=%p): i=%i, i_r=%i, i_w=%i, i_e=%i", nfds, readfds, writefds, exceptfds, timeout, i, i_r, i_w, i_e);
+
+  if ( i_r || i_w || i_e ) {
+   // TODO: use VIO for pointers...
+   sv[idx].vio     = NULL;
+   sv[idx].fh      = i;
+
+   sv[idx].ud.si   = i;
+   sv[idx].eventsq = (i_r ? ROAR_VIO_SELECT_READ   : 0) |
+                     (i_w ? ROAR_VIO_SELECT_WRITE  : 0) |
+                     (i_e ? ROAR_VIO_SELECT_EXCEPT : 0);
+   idx++;
+  }
+ }
+
+ is_critical++;
+ ret = roar_vio_select(sv, num, timeout == NULL ? NULL : &rtv, NULL);
+ is_critical--;
+
+ if ( ret < 1 ) {
+  roar_mm_free(sv);
+  ROAR_DBG("select(nfds=%i, readfds=%p, writefds=%p, exceptfds=%p, timeout=%p) = %i", nfds, readfds, writefds, exceptfds, timeout, (int)ret);
+  return ret;
+ }
+
+ // update readfds, writefds, exceptfds:
+ if ( readfds != NULL )
+  FD_ZERO(readfds);
+
+ if ( writefds != NULL )
+  FD_ZERO(writefds);
+
+ if ( exceptfds != NULL )
+  FD_ZERO(exceptfds);
+
+ for (idx = 0; idx < num; idx++) {
+  if ( sv[idx].eventsa == 0 )
+   continue;
+
+  if ( sv[idx].eventsa & ROAR_VIO_SELECT_READ )
+   if ( readfds != NULL )
+    FD_SET(sv[idx].ud.si, readfds);
+
+  if ( sv[idx].eventsa & ROAR_VIO_SELECT_WRITE )
+   if ( writefds != NULL )
+    FD_SET(sv[idx].ud.si, writefds);
+
+  if ( sv[idx].eventsa & ROAR_VIO_SELECT_EXCEPT )
+   if ( exceptfds != NULL )
+    FD_SET(sv[idx].ud.si, exceptfds);
+ }
+
+ roar_mm_free(sv);
+
+ ROAR_DBG("select(nfds=%i, readfds=%p, writefds=%p, exceptfds=%p, timeout=%p) = %i", nfds, readfds, writefds, exceptfds, timeout, (int)ret);
+ return ret;
+}
+
 // -------------------------------------
 // emulated stdio functions follow:
 // -------------------------------------
@@ -1360,7 +1496,6 @@ static int _vio_close    (struct roar_vio_calls * vio) {
 
 FILE *fopen(const char *path, const char *mode) {
  struct roar_vio_calls * vio;
- struct pointer * pointer;
  FILE  * fr;
  int     ret;
  int     r = 0, w = 0;
