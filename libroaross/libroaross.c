@@ -231,18 +231,18 @@ static struct devices {
 static void _init_os (void) {
  memset(&_os, 0, sizeof(_os));
 
- _os.open  = dlsym(REAL_LIBC, "open");
- _os.close = dlsym(REAL_LIBC, "close");
- _os.write = dlsym(REAL_LIBC, "write");
- _os.read  = dlsym(REAL_LIBC, "read");
+ _os.open   = dlsym(REAL_LIBC, "open");
+ _os.close  = dlsym(REAL_LIBC, "close");
+ _os.write  = dlsym(REAL_LIBC, "write");
+ _os.read   = dlsym(REAL_LIBC, "read");
 #ifndef IOCTL_IS_ALIAS
- _os.ioctl = dlsym(REAL_LIBC, "ioctl");
+ _os.ioctl  = dlsym(REAL_LIBC, "ioctl");
 #endif
- _os.lseek = dlsym(REAL_LIBC, "lseek");
- _os.fopen = dlsym(REAL_LIBC, "fopen");
- _os.dup   = dlsym(REAL_LIBC, "dup");
- _os.dup2  = dlsym(REAL_LIBC, "dup2");
- _os.select= dlsym(REAL_LIBC, "select");
+ _os.lseek  = dlsym(REAL_LIBC, "lseek");
+ _os.fopen  = dlsym(REAL_LIBC, "fopen");
+ _os.dup    = dlsym(REAL_LIBC, "dup");
+ _os.dup2   = dlsym(REAL_LIBC, "dup2");
+ _os.select = dlsym(REAL_LIBC, "select");
 }
 
 static void _init_ptr (void) {
