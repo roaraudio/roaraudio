@@ -139,6 +139,13 @@ int     roar_vio_stdio_ctl     (struct roar_vio_calls * vio, int cmd, void * dat
   return -1;
 
  switch (cmd) {
+  case ROAR_VIO_CTL_GET_NAME:
+    if ( data == NULL )
+     return -1;
+
+    *(char**)data = "stdio";
+    return 0;
+   break;
   case ROAR_VIO_CTL_GET_FH:
   case ROAR_VIO_CTL_GET_READ_FH:
   case ROAR_VIO_CTL_GET_WRITE_FH:

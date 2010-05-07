@@ -58,6 +58,13 @@ int     roar_vio_winsock_ctl     (struct roar_vio_calls * vio, int cmd, void * d
  ROAR_DBG("roar_vio_winsock_ctl(vio=%p, cmd=0x%.8x, data=%p) = ?", vio, cmd, data);
 
  switch (cmd) {
+  case ROAR_VIO_CTL_GET_NAME:
+    if ( data == NULL )
+     return -1;
+
+    *(char**)data = "winsock";
+    return 0;
+   break;
   case ROAR_VIO_CTL_GET_SELECT_FH:
   case ROAR_VIO_CTL_GET_SELECT_READ_FH:
   case ROAR_VIO_CTL_GET_SELECT_WRITE_FH:

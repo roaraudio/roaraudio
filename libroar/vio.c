@@ -346,6 +346,13 @@ int     roar_vio_basic_ctl     (struct roar_vio_calls * vio, int cmd, void * dat
  ROAR_DBG("roar_vio_basic_ctl(vio=%p, cmd=0x%.8x, data=%p) = ?", vio, cmd, data);
 
  switch (cmd) {
+  case ROAR_VIO_CTL_GET_NAME:
+    if ( data == NULL )
+     return -1;
+
+    *(char**)data = "basic";
+    return 0;
+   break;
   case ROAR_VIO_CTL_GET_FH:
   case ROAR_VIO_CTL_GET_READ_FH:
   case ROAR_VIO_CTL_GET_WRITE_FH:
@@ -452,6 +459,13 @@ int     roar_vio_pass_ctl     (struct roar_vio_calls * vio, int cmd, void * data
  ROAR_DBG("roar_vio_pass_ctl(vio=%p, cmd=0x%.8x, data=%p) = ?", vio, cmd, data);
 
  switch (cmd) {
+  case ROAR_VIO_CTL_GET_NAME:
+    if ( data == NULL )
+     return -1;
+
+    *(char**)data = "pass";
+    return 0;
+   break;
   case ROAR_VIO_CTL_GET_NEXT:
     *(struct roar_vio_calls **)data = vio->inst;
     return 0;

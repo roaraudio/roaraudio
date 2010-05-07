@@ -345,6 +345,13 @@ int     roar_vio_rtp_ctl     (struct roar_vio_calls * vio, int cmd, void * data)
  ROAR_DBG("roar_vio_rtp_ctl(vio=%p, cmd=%i, data=%p) = ?", vio, cmd, data);
 
  switch (cmd) {
+  case ROAR_VIO_CTL_GET_NAME:
+    if ( data == NULL )
+     return -1;
+
+    *(char**)data = "rtp";
+    return 0;
+   break;
   case ROAR_VIO_CTL_SET_SSTREAM:
     s = ROAR_STREAM(ss = data);
     info = &(s->info);

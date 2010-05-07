@@ -231,6 +231,13 @@ int     roar_vio_proto_ctl     (struct roar_vio_calls * vio, int cmd, void * dat
  ROAR_DBG("roar_vio_proto_ctl(vio=%p, cmd=0x%.8x, data=%p) = ?", vio, cmd, data);
 
  switch (cmd) {
+  case ROAR_VIO_CTL_GET_NAME:
+    if ( data == NULL )
+     return -1;
+
+    *(char**)data = "proto";
+    return 0;
+   break;
   case ROAR_VIO_CTL_GET_NEXT:
     *(struct roar_vio_calls **)data = self->next;
     return 0;
@@ -283,7 +290,7 @@ int roar_vio_open_proto_http   (struct roar_vio_calls * calls, struct roar_vio_c
 
  roar_vio_printf(dst, "GET /%s HTTP/1.1\r\n", file);
  roar_vio_printf(dst, "Host: %s\r\n", host);
- roar_vio_printf(dst, "User-Agent: roar_vio_open_proto_http() $Revision: 1.16 $\r\n");
+ roar_vio_printf(dst, "User-Agent: roar_vio_open_proto_http() $Revision: 1.17 $\r\n");
  roar_vio_printf(dst, "Connection: close\r\n");
  roar_vio_printf(dst, "\r\n");
 

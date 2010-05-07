@@ -221,6 +221,13 @@ int     roar_vio_pipe_ctl     (struct roar_vio_calls * vio, int cmd, void * data
   return -1;
 
  switch (cmd) {
+  case ROAR_VIO_CTL_GET_NAME:
+    if ( data == NULL )
+     return -1;
+
+    *(char**)data = "pipe";
+    return 0;
+   break;
   case ROAR_VIO_CTL_GET_FH:
   case ROAR_VIO_CTL_GET_SELECT_FH:
     if ( self->type == ROAR_VIO_PIPE_TYPE_SOCKET ) {
