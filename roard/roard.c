@@ -306,7 +306,6 @@ int init_listening (void) {
  memset(g_listen, 0, sizeof(g_listen));
 
  for (i = 0; i < ROAR_MAX_LISTEN_SOCKETS; i++) {
-  g_listen[i].socket = -1;
   g_listen[i].proto  = ROAR_PROTO_ROARAUDIO;
   server[i]          = NULL;
  }
@@ -321,7 +320,7 @@ int get_listen(struct roard_listen ** sock, char *** sockname) {
   return -1;
 
  for (i = 0; i < ROAR_MAX_LISTEN_SOCKETS; i++) {
-  if ( g_listen[i].socket == -1 ) {
+  if ( ! g_listen[i].used ) {
    server[i] = NULL;
    *sock = &(g_listen[i]);
 
@@ -351,7 +350,7 @@ int add_listen (char * addr, int port, int sock_type, char * user, char * group,
 
  if ( *addr != 0 ) {
   for (i = 0; i < ROAR_MAX_LISTEN_SOCKETS; i++) {
-   if ( g_listen[i].socket == -1 ) {
+   if ( ! g_listen[i].used ) {
     sockid = i;
     break;
    }
@@ -364,7 +363,7 @@ int add_listen (char * addr, int port, int sock_type, char * user, char * group,
 
   ROAR_DBG("add_listen(*): proto=0x%.4x", proto);
 
-  if ( (g_listen[sockid].socket = roar_socket_listen(sock_type, addr, port)) == -1 ) {
+  if ( roar_vio_open_socket_listen(&(g_listen[sockid].sock), sock_type, addr, port) == -1 ) {
 #ifdef ROAR_HAVE_UNIX
    if ( *addr == '/' ) {
     if ( (env_roar_proxy_backup = getenv("ROAR_PROXY")) != NULL ) {
@@ -377,7 +376,7 @@ int add_listen (char * addr, int port, int sock_type, char * user, char * group,
      return 1;
     } else {
      unlink(addr);
-     if ( (g_listen[sockid].socket = roar_socket_listen(sock_type, addr, port)) == -1 ) {
+     if ( roar_vio_open_socket_listen(&(g_listen[sockid].sock), sock_type, addr, port) == -1 ) {
       ROAR_ERR("Can not open listen socket: %s", strerror(errno));
       return 1;
      }
@@ -454,7 +453,9 @@ int add_listen (char * addr, int port, int sock_type, char * user, char * group,
    break;
  }
 
- server[sockid] = addr;
+ g_listen[sockid].used = 1;
+ server[sockid]        = addr;
+
  return 0;
 }
 #endif
@@ -1858,12 +1859,10 @@ void cleanup_listen_socket (int terminate) {
 
 #ifdef ROAR_SUPPORT_LISTEN
  for (i = 0; i < ROAR_MAX_LISTEN_SOCKETS; i++) {
-  if ( g_listen[i].socket != -1 ) {
-#ifdef ROAR_HAVE_IO_POSIX
-   close(g_listen[i].socket);
-#endif // #else is useless because we are in void context.
+  if ( g_listen[i].used  ) {
+   roar_vio_close(&(g_listen[i].sock));
 
-   g_listen[i].socket = -1;
+   g_listen[i].used = 0;
 
 #ifdef ROAR_HAVE_UNIX
    if ( server[i] != NULL )

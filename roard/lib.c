@@ -27,9 +27,13 @@
 
 int lib_run_bg(char * cmd, int infh, int outfh, int errfh, int * closefh, int lenclose) {
 #ifdef ROAR_HAVE_FORK
- pid_t child = fork();
+ pid_t child;
  int fh[3] = {-1, -1, -1};
  int i;
+
+ ROAR_WARN("lib_run_bg(cmd='%s', ...): This function should never be called. Contact devels.");
+
+ child = fork();
 
  if ( child == -1 ) {
   ROAR_ERR("lib_run_bg(*): Can not fork: %s", strerror(errno));
@@ -53,8 +57,8 @@ int lib_run_bg(char * cmd, int infh, int outfh, int errfh, int * closefh, int le
 
 #ifdef ROAR_SUPPORT_LISTEN
  for (i = 0; i < ROAR_MAX_LISTEN_SOCKETS; i++)
-  if ( g_listen[i].socket != -1 )
-   close(g_listen[i].socket); // listen socket.
+  if ( g_listen[i].used )
+   roar_vio_close(&(g_listen[i].sock)); // listen socket.
 #endif
 
 // this breaks the new driver interface

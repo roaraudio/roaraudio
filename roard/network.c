@@ -36,58 +36,50 @@
 #endif
 
 int net_check_listen  (void) {
-#ifdef _CAN_OPERATE
- int r;
- fd_set sl;
- struct timeval tv;
+ struct roar_vio_selecttv rtv;
+ struct roar_vio_select   sv[ROAR_MAX_LISTEN_SOCKETS];
+ size_t num = 0;
+ ssize_t ret;
  int i;
- int max_fh = -1;
-
- FD_ZERO(&sl);
 
  for (i = 0; i < ROAR_MAX_LISTEN_SOCKETS; i++) {
-  if ( g_listen[i].socket != -1 ) {
-   if ( g_listen[i].socket > max_fh )
-    max_fh = g_listen[i].socket;
-
-   FD_SET(g_listen[i].socket, &sl);
+  if ( g_listen[i].used ) {
+   ROAR_VIO_SELECT_SETVIO(&(sv[num]), &(g_listen[i].sock), ROAR_VIO_SELECT_READ);
+   sv[num].ud.si = i;
+   num++;
   }
  }
 
- if ( max_fh == -1 )
+ if ( num == 0 )
   return 0;
 
- tv.tv_sec  = 0;
- tv.tv_usec = 1;
+ rtv.sec  = 0;
+ rtv.nsec = 1000;
 
- if ((r = select(max_fh + 1, &sl, NULL, NULL, &tv)) > 0) {
-  ROAR_DBG("net_check_listen(void): We have a connection!");
-  for (i = 0; i < ROAR_MAX_LISTEN_SOCKETS; i++) {
-   if ( g_listen[i].socket != -1 ) {
-    if ( FD_ISSET(g_listen[i].socket, &sl) ) {
-     if ( net_get_new_client(&(g_listen[i])) == -1 )
-      return -1;
-    }
+ if ( (ret = roar_vio_select(sv, num, &rtv, NULL)) > 0 ) {
+  for (i = 0; i < num; i++) {
+   if ( sv[i].eventsa & ROAR_VIO_SELECT_READ ) {
+    if ( net_get_new_client(&(g_listen[sv[i].ud.si])) == -1 )
+     return -1;
    }
   }
  }
 
- return r;
-#else
- return -1;
-#endif
+ return ret;
 }
 
-#ifdef _CAN_OPERATE
 int net_get_new_client (struct roard_listen * lsock) {
  int fh;
  int client;
+ int socket;
  struct roar_client * c;
  struct roar_vio_calls    vio;
  struct sockaddr_storage  addr;
  socklen_t                addrlen = sizeof(addr);
 
- fh = accept(lsock->socket, (struct sockaddr*)&addr, &addrlen);
+ roar_vio_ctl(&(lsock->sock), ROAR_VIO_CTL_GET_FH, &socket);
+
+ fh = accept(socket, (struct sockaddr*)&addr, &addrlen);
 
  ROAR_DBG("net_get_new_client(void): fh = %i", fh);
 
@@ -179,7 +171,6 @@ int net_get_new_client (struct roard_listen * lsock) {
 
  return 0;
 }
-#endif
 
 #endif
 

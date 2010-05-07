@@ -145,7 +145,8 @@ int get_listen(struct roard_listen ** sock, char *** sockname);
 
 #ifdef ROAR_SUPPORT_LISTEN
 struct roard_listen {
- int socket;
+ int used;
+ struct roar_vio_calls sock;
  int proto;
  union {
   void * vp;

@@ -350,7 +350,8 @@ int req_on_passfh      (int client, struct roar_message * mes, char * data) {
    return -1;
   }
 
-  lsock->socket = fh;
+  roar_vio_open_fh_socket(&(lsock->sock), fh);
+  lsock->used   = 1;
   lsock->proto  = d[2];
  } else {
   if ( clients_new_from_fh(fh, d[2], d[3], 1) == -1 )
