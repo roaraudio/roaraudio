@@ -97,7 +97,7 @@ struct roar_stream_info {
  int block_size;
  int pre_underruns;
  int post_underruns;
- int codec;
+ unsigned int codec;
  uint32_t flags;
  char * driver;
  uint_least32_t delay;
