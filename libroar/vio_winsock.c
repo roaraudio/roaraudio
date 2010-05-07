@@ -52,6 +52,9 @@ int     roar_vio_winsock_sync    (struct roar_vio_calls * vio) {
 }
 
 int     roar_vio_winsock_ctl     (struct roar_vio_calls * vio, int cmd, void * data) {
+ int tmp;
+ int s_r = 0, s_w = 0;
+
  if ( vio == NULL || cmd == -1 )
   return -1;
 
