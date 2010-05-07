@@ -278,6 +278,8 @@ int anti_echo_speex16(int16_t * buf, int16_t * aebuf, size_t len, struct roar_au
 int anti_echo16(int16_t * buf, int16_t * aebuf, size_t len, struct roar_audio_info * info) {
  size_t i;
 
+ (void)info;
+
  switch (g_conf.antiecho) {
   case AE_NONE:
     return 0;

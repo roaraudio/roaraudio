@@ -199,6 +199,8 @@ const char * proc_name (pid_t pid) {
     strcpy(ret, r);
   }
  }
+#else
+ (void)pid;
 #endif
 
  return ret;

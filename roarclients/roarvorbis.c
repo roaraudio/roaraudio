@@ -178,12 +178,13 @@ int update_stream (struct roar_connection * con, struct roar_stream * s, int * o
 #endif
 
 int main (int argc, char * argv[]) {
- struct roar_vio_calls vclt;
- struct roar_vio_defaults def;
 #ifndef ROAR_HAVE_LIBVORBISFILE
+ (void)argc, (void)argv;
  fprintf(stderr, "Error: no Vorbis support!\n");
  return 1;
 #else
+ struct roar_vio_calls vclt;
+ struct roar_vio_defaults def;
  char * server   = NULL;
  char * file     = NULL;
  char * vcltfile = NULL;
