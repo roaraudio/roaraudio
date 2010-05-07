@@ -1537,6 +1537,8 @@ int fcntl(int fd, int cmd, ...) {
 
  _init();
 
+ ROAR_DBG("fcntl(fd=%i, cmd=%i, ...) = ?", fd, cmd);
+
  switch (cmd) {
   case F_DUPFD:
   case F_SETFD:
@@ -1595,18 +1597,23 @@ int fcntl(int fd, int cmd, ...) {
  if ( (pointer = _get_pointer_by_fh(fd)) == NULL ) {
   switch (type) {
    case NONE:
+     ROAR_DBG("fcntl(fd=%i, cmd=%i): fd is true sysio, pass call to kernel", fd, cmd);
      return _os.fcntl(fd, cmd);
     break;
    case LONG:
+     ROAR_DBG("fcntl(fd=%i, cmd=%i, arg=%li): fd is true sysio, pass call to kernel", fd, cmd, argl);
      return _os.fcntl(fd, cmd, argl);
     break;
    case POINTER:
+     ROAR_DBG("fcntl(fd=%i, cmd=%i, lock=%p): fd is true sysio, pass call to kernel", fd, cmd, vp);
      return _os.fcntl(fd, cmd, vp);
     break;
    default: /* make compiler happy */
     break;
   }
  }
+
+ ROAR_DBG("fcntl(fd=%i, cmd=%i, ...): fd is true pointer, handle internaly", fd, cmd);
 
  switch (cmd) {
   case F_DUPFD:
