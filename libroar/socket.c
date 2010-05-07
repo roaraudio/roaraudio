@@ -522,7 +522,9 @@ int roar_socket_open (int mode, int type, char * host, int port) {
    type = ROAR_SOCKET_TYPE_FORK;
   } else if ( strcmp(host, "+abstract") == 0 ) {
    type = ROAR_SOCKET_TYPE_UNIX;
+#ifdef ROAR_HAVE_UNIX
    abstract = 1;
+#endif
   } else if ( strstr(host, "::") != NULL ) {
    type = ROAR_SOCKET_TYPE_DECNET;
   } else if ( host[strlen(host)-1] == ')' ) {
