@@ -1203,21 +1203,21 @@ IOCTL() {
 //  ROAR_DBG("ioctl(__fd=%i, __request=0x%lx): ip=%p", __fd, (long unsigned int) __request, ip);
 #ifdef __FIXME__
   switch ((handle = pointer->handle)->type) {
-   case SOUND_PCM_READ_RATE: nosys_reqname = "SOUND_PCM_READ_RATE"; break;
+   case SOUND_PCM_READ_RATE: nosys_reqname     = "SOUND_PCM_READ_RATE";     break;
    case SOUND_PCM_READ_CHANNELS: nosys_reqname = "SOUND_PCM_READ_CHANNELS"; break;
-   case SOUND_PCM_READ_BITS: nosys_reqname = "SOUND_PCM_READ_BITS"; break;
-   case SOUND_PCM_READ_FILTER: nosys_reqname = "SOUND_PCM_READ_FILTER"; break;
-   case SNDCTL_COPR_RESET: nosys_reqname = "SNDCTL_COPR_RESET"; break;
-   case SNDCTL_COPR_LOAD: nosys_reqname = "SNDCTL_COPR_LOAD"; break;
-   case SNDCTL_COPR_HALT: nosys_reqname = "SNDCTL_COPR_HALT"; break;
-   case SNDCTL_COPR_RDATA: nosys_reqname = "SNDCTL_COPR_RDATA"; break;
-   case SNDCTL_COPR_RCODE: nosys_reqname = "SNDCTL_COPR_RCODE"; break;
-   case SNDCTL_COPR_WDATA: nosys_reqname = "SNDCTL_COPR_WDATA"; break;
-   case SNDCTL_COPR_WCODE: nosys_reqname = "SNDCTL_COPR_WCODE"; break;
-   case SNDCTL_COPR_RUN: nosys_reqname = "SNDCTL_COPR_RUN"; break;
-   case SNDCTL_COPR_SENDMSG: nosys_reqname = "SNDCTL_COPR_SENDMSG"; break;
-   case SNDCTL_COPR_RCVMSG: nosys_reqname = "SNDCTL_COPR_RCVMSG"; break;
-   case SNDCTL_DSP_GETCAPS: nosys_reqname = "SNDCTL_DSP_GETCAPS"; break;
+   case SOUND_PCM_READ_BITS: nosys_reqname     = "SOUND_PCM_READ_BITS";     break;
+   case SOUND_PCM_READ_FILTER: nosys_reqname   = "SOUND_PCM_READ_FILTER";   break;
+   case SNDCTL_COPR_RESET: nosys_reqname       = "SNDCTL_COPR_RESET";       break;
+   case SNDCTL_COPR_LOAD: nosys_reqname        = "SNDCTL_COPR_LOAD";        break;
+   case SNDCTL_COPR_HALT: nosys_reqname        = "SNDCTL_COPR_HALT";        break;
+   case SNDCTL_COPR_RDATA: nosys_reqname       = "SNDCTL_COPR_RDATA";       break;
+   case SNDCTL_COPR_RCODE: nosys_reqname       = "SNDCTL_COPR_RCODE";       break;
+   case SNDCTL_COPR_WDATA: nosys_reqname       = "SNDCTL_COPR_WDATA";       break;
+   case SNDCTL_COPR_WCODE: nosys_reqname       = "SNDCTL_COPR_WCODE";       break;
+   case SNDCTL_COPR_RUN: nosys_reqname         = "SNDCTL_COPR_RUN";         break;
+   case SNDCTL_COPR_SENDMSG: nosys_reqname     = "SNDCTL_COPR_SENDMSG";     break;
+   case SNDCTL_COPR_RCVMSG: nosys_reqname      = "SNDCTL_COPR_RCVMSG";      break;
+   case SNDCTL_DSP_GETCAPS: nosys_reqname      = "SNDCTL_DSP_GETCAPS";      break;
    default: nosys_reqname = "<<<UNKNOWN>>>"; break;
 /*
    case : nosys_reqname = ""; break;
