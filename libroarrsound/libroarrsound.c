@@ -52,6 +52,8 @@ static size_t libroarrsound_fmt2fs (enum rsd_format format) {
 int rsd_init (rsound_t **rd) {
  struct libroarrsound * self;
 
+ ROAR_DBG("rsd_init(rd=%p) = ?", rd);
+
  if ( rd == NULL )
   return -1;
 
@@ -160,11 +162,16 @@ static int libroarrsound_connect (struct libroarrsound * self) {
 
  // FIXME: we currently ignore the port. :(
 
- if ( roar_simple_connect(&(self->con), host, "libroarrsound client") == -1 )
+ ROAR_DBG("libroarrsound_connect(self=%p): try to connect to: %s", self, host);
+
+ if ( roar_simple_connect(&(self->con), host, "libroarrsound client") == -1 ) {
+  ROAR_DBG("libroarrsound_connect(self=%p) = -1 // can not connect to server", self);
   return -1;
+ }
 
  self->flags |= LIBROARRSOUND_FLAGS_CONNECTED;
 
+ ROAR_DBG("libroarrsound_connect(self=%p) = 0", self);
  return 0;
 }
 
@@ -176,16 +183,22 @@ int rsd_start (rsound_t *rd) {
  int bits  = 16;
  int codec;
 
+ ROAR_DBG("rsd_start(rd=%p) = ?", rd);
+
  if ( self == NULL )
   return -1;
 
  if ( self->flags & LIBROARRSOUND_FLAGS_STREAMING )
   return 0;
 
+ ROAR_DBG("rsd_start(rd=%p) = ?", rd);
+
  if ( !(self->flags & LIBROARRSOUND_FLAGS_CONNECTED) ) {
   if ( libroarrsound_connect(self) == -1 )
    return -1;
  }
+
+ ROAR_DBG("rsd_start(rd=%p) = ?", rd);
 
  switch (self->rsound.format) {
   case RSD_S16_LE:
@@ -213,11 +226,17 @@ int rsd_start (rsound_t *rd) {
    break;
  }
 
+ ROAR_DBG("rsd_start(rd=%p) = ?", rd);
+
  if ( roar_vio_simple_new_stream_obj(&(self->vio), &(self->con), &(self->stream),
                                      self->rsound.rate, self->rsound.channels, bits, codec, ROAR_DIR_PLAY) == -1 )
   return -1;
 
+ ROAR_DBG("rsd_start(rd=%p) = ?", rd);
+
  self->flags |= LIBROARRSOUND_FLAGS_STREAMING;
+
+ ROAR_DBG("rsd_start(rd=%p) = 0", rd);
 
  return 0;
 }
