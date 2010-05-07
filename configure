@@ -84,7 +84,7 @@ NO_LISTEN=false
 
 META_DATA=true
 
-WITHOUT_CF=''
+WITHOUT_CF='cmd'
 
 WITHOUT_VIO=''
 
@@ -905,7 +905,7 @@ fi
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.252 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.253 $ of RoarAudio
  */
 
 EOF
