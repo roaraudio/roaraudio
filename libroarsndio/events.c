@@ -53,6 +53,7 @@ int    sio_nfds   (struct sio_hdl * hdl) {
 
  return 1;
 #else
+ (void)hdl;
  return 0;
 #endif
 }
@@ -87,6 +88,7 @@ int    sio_pollfd (struct sio_hdl * hdl, struct pollfd * pfd, int events) {
 
  return num;
 #else
+ (void)hdl, (void)pfd, (void)events;
  return 0;
 #endif
 }
@@ -107,6 +109,7 @@ int    sio_revents(struct sio_hdl * hdl, struct pollfd * pfd) {
 
  return revents;
 #else
+ (void)hdl, (void)pfd;
  return 0;
 #endif
 }
