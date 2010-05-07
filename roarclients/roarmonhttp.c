@@ -1,7 +1,7 @@
 //roarmonhttp.c:
 
 /*
- *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008
+ *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008-2010
  *
  *  This file is part of roarclients a part of RoarAudio,
  *  a cross-platform sound system for both, home and professional use.
@@ -46,7 +46,7 @@ void print_header (int codec, int rate, int channels) {
  printf("Content-type: %s\r\n", mime);
  printf("ice-audio-info: ice-samplerate=%i;ice-channels=%i\r\n", rate, channels);
  printf("icy-pub:0\r\n");
- printf("Server: RoarAudio (roarmonhttp $Revision: 1.18 $)\r\n");
+ printf("Server: RoarAudio (roarmonhttp $Revision: 1.19 $)\r\n");
  printf("\r\n");
 
  fflush(stdout);
