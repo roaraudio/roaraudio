@@ -26,15 +26,9 @@
 #include "roard.h"
 #ifdef ROAR_HAVE_ESD
 
-/*
- We could use inst as our fh directly. But esd works with unsigned at 8 bits and
- signed at 16 bits per sample. (why???) so we need to convert because we get signed at both,
- 8 and 16 bits per sample. so we use inst as an array of two ints: 0: fh, 1: are we in 8 bit mode?
-*/
-
 int driver_esd_open_vio(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh, struct roar_stream_server * sstream) {
  esd_format_t format = ESD_STREAM | ESD_PLAY;
- char name[80] = "roard";
+ char name[] = "roard";
 
  if ( fh != -1 )
   return -1;
@@ -59,9 +53,8 @@ int driver_esd_open_vio(struct roar_vio_calls * inst, char * device, struct roar
 
  fh = esd_play_stream_fallback(format, info->rate, device, name);
 
- shutdown(fh, SHUT_RD);
-
  roar_vio_set_fh(inst, fh);
+ roar_vio_shutdown(inst, ROAR_VIO_SHUTDOWN_READ);
 
  return 0;
 }
