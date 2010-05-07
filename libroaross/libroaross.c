@@ -118,6 +118,7 @@ struct handle {
  int refc; // refrence counter
  struct session * session;
  int type;
+ int sysio_flags;
  struct roar_stream    stream;
  struct roar_vio_calls stream_vio;
  int                   stream_dir;
@@ -537,8 +538,9 @@ static int _open_file (const char *pathname, int flags) {
   return -1;
  }
 
- handle->type       = ptr->type;
- handle->stream_dir = -1;
+ handle->type        = ptr->type;
+ handle->sysio_flags = flags;
+ handle->stream_dir  = -1;
 
  switch (flags & (O_RDONLY|O_WRONLY|O_RDWR)) {
   case O_RDONLY:
@@ -1530,6 +1532,8 @@ int fcntl(int fd, int cmd, ...) {
  va_list ap;
  long argl = -1;
  void * vp = NULL;
+ int ret   = -1;
+ int diff;
 
  _init();
 
@@ -1604,8 +1608,62 @@ int fcntl(int fd, int cmd, ...) {
   }
  }
 
- errno = ENOSYS;
- return -1;
+ switch (cmd) {
+  case F_DUPFD:
+    ret = _os.fcntl(fd, F_DUPFD, argl);
+
+    if ( ret != -1 ) {
+     if ( _attach_pointer(pointer->handle, ret) == NULL ) {
+      _os.close(ret);
+      ret = -1;
+     }
+    }
+   break;
+  case F_SETFD:
+    if ( argl == 0 ) {
+     ret = 0;
+    } else {
+     errno = ENOSYS;
+     ret = -1;
+    }
+   break;
+  case F_GETFD:
+    ret = 0;
+   break;
+  case F_GETFL:
+    ret = pointer->handle->sysio_flags;
+   break;
+  case F_SETFL:
+    diff  = (int)argl ^ pointer->handle->sysio_flags;
+    diff &= (int)~(int)(O_DIRECT|O_APPEND|O_LARGEFILE|O_NOATIME|O_NOCTTY|O_TRUNC);
+    if ( diff == 0 ) { // only flags changed we ignore anyway.
+     pointer->handle->sysio_flags = (int)argl;
+     ret = 0;
+    } else {
+     errno = EINVAL;
+     ret = -1;
+    }
+   break;
+/* TODO: add support for those types:
+  case F_SETFD:
+  case F_SETOWN:
+  case F_SETSIG:
+  case F_SETLEASE:
+  case F_NOTIFY:
+  case F_GETOWN:
+  case F_GETSIG:
+  case F_GETLEASE:
+  case F_GETLK:
+  case F_SETLK:
+  case F_SETLKW:
+*/
+  default:
+    errno = ENOSYS;
+    ret = -1;
+   break;
+ }
+
+ return ret;
 }
 
 // -------------------------------------
