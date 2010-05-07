@@ -149,6 +149,7 @@ static struct {
  int     (*select)(int nfds, fd_set *readfds, fd_set *writefds,
                    fd_set *exceptfds, struct timeval *timeout);
  int     (*fcntl)(int fd, int cmd, ...);
+ int     (*access)(const char *pathname, int mode);
 } _os;
 
 static struct {
@@ -250,6 +251,7 @@ static void _init_os (void) {
  _os.dup2   = dlsym(REAL_LIBC, "dup2");
  _os.select = dlsym(REAL_LIBC, "select");
  _os.fcntl  = dlsym(REAL_LIBC, "fcntl");
+ _os.access = dlsym(REAL_LIBC, "access");
 }
 
 static void _init_ptr (void) {
@@ -1671,6 +1673,13 @@ int fcntl(int fd, int cmd, ...) {
  }
 
  return ret;
+}
+
+int access(const char *pathname, int mode) {
+
+ _init();
+
+ return _os.access(pathname, mode);
 }
 
 // -------------------------------------
