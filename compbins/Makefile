@@ -1,9 +1,10 @@
-TARGETS_ESD      = esdcat.r esdmon.r esdfilt.r esdplay.r esd.r esddsp.r
-TARGETS_ARTS     = artscat.r artsd.r artsplay.r artsdsp.r
-TARGETS_NAS      = auplay.r audial.r audiooss.r
-TARGETS_YIFF     = yplay.r yshutdown.r yiff.r
-TARGETS_PA       = pacat.r paplay.r padsp.r
-TARGETS_DTMFDIAL = dtmfdial.r
+SUFFIX           = .r
+TARGETS_ESD      = esdcat$(SUFFIX)  esdmon$(SUFFIX)    esdfilt$(SUFFIX)  esdplay$(SUFFIX) esd$(SUFFIX) esddsp$(SUFFIX)
+TARGETS_ARTS     = artscat$(SUFFIX) artsd$(SUFFIX)     artsplay$(SUFFIX) artsdsp$(SUFFIX)
+TARGETS_NAS      = auplay$(SUFFIX)  audial$(SUFFIX)    audiooss$(SUFFIX)
+TARGETS_YIFF     = yplay$(SUFFIX)   yshutdown$(SUFFIX) yiff$(SUFFIX)
+TARGETS_PA       = pacat$(SUFFIX)   paplay$(SUFFIX)    padsp$(SUFFIX)
+TARGETS_DTMFDIAL = dtmfdial$(SUFFIX)
 TARGETS=$(TARGETS_ESD) $(TARGETS_ARTS) $(TARGETS_NAS) $(TARGETS_YIFF) $(TARGETS_PA) $(TARGETS_DTMFDIAL)
 
 include ../Makefile.conf
