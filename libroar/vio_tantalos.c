@@ -37,6 +37,7 @@
 
 #define _LEN 1024
 
+#ifdef ROAR_HAVE_LIBSLP
 static struct roar_slp_cookie * roar_vio_open_get_cookie (int reinit) {
  static struct roar_slp_cookie   cookie;
  static int inited = 0;
@@ -49,6 +50,7 @@ static struct roar_slp_cookie * roar_vio_open_get_cookie (int reinit) {
 
  return &cookie;
 }
+#endif
 
 int     roar_vio_open_tantalos    (struct roar_vio_calls * calls, struct roar_vio_calls * dst,
                                    char * key, struct roar_vio_defaults * odef) {

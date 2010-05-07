@@ -259,6 +259,7 @@ int     roar_vio_proto_close   (struct roar_vio_calls * vio) {
 int roar_vio_open_proto_http   (struct roar_vio_calls * calls, struct roar_vio_calls * dst, char * host, char * file) {
  struct roar_vio_proto * self;
  struct roar_buffer * bufbuf;
+ void * vpbuf;
  char * buf;
  char * endofheader = NULL;
  char b0[80], b1[80];
@@ -273,14 +274,16 @@ int roar_vio_open_proto_http   (struct roar_vio_calls * calls, struct roar_vio_c
  self         = calls->inst;
  calls->write = NULL; // Disable write as we do not support this
 
- if ( roar_buffer_new_data(&bufbuf, 1024, &buf) == -1 )
+ if ( roar_buffer_new_data(&bufbuf, 1024, &vpbuf) == -1 )
   return -1;
+
+ buf = vpbuf;
 
  ROAR_DBG("roar_vio_open_proto_http(calls=%p, dst=%p, host='%s', file='%s') = ?", calls, dst, host, file);
 
  roar_vio_printf(dst, "GET /%s HTTP/1.1\r\n", file);
  roar_vio_printf(dst, "Host: %s\r\n", host);
- roar_vio_printf(dst, "User-Agent: roar_vio_open_proto_http() $Revision: 1.15 $\r\n");
+ roar_vio_printf(dst, "User-Agent: roar_vio_open_proto_http() $Revision: 1.16 $\r\n");
  roar_vio_printf(dst, "Connection: close\r\n");
  roar_vio_printf(dst, "\r\n");
 

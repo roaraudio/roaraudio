@@ -35,12 +35,16 @@
 
 #include "libroar.h"
 
+#if defined(ROAR_HAVE_LIBSLP) && defined(ROAR_HAVE_TIME)
+#define _CAN_OPERATE
+#endif
+
 SLPBoolean roar_slp_url_callback(SLPHandle        hslp,
                                  const char     * srvurl,
                                  unsigned short   lifetime,
                                  SLPError         errcode,
                                  void           * cookie) {
-#ifdef ROAR_HAVE_LIBSLP
+#ifdef _CAN_OPERATE
  struct roar_slp_cookie * self = cookie;
 
  ROAR_DBG("roar_slp_url_callback(*) = ?");
@@ -77,7 +81,7 @@ SLPBoolean roar_slp_url_callback(SLPHandle        hslp,
 }
 
 int roar_slp_search          (struct roar_slp_cookie * cookie, char * type) {
-#ifdef ROAR_HAVE_LIBSLP
+#ifdef _CAN_OPERATE
  SLPError err;
  SLPHandle hslp;
 
@@ -150,6 +154,7 @@ char * roar_slp_find_roard   (int nocache) {
 }
 
 int    roar_slp_find_roard_r (char * addr, size_t len, int nocache) {
+#ifdef _CAN_OPERATE
  static struct roar_slp_match    cache  = {"", 0};
         struct roar_slp_cookie   cookie;
  int                             offset = 0;
@@ -206,6 +211,9 @@ int    roar_slp_find_roard_r (char * addr, size_t len, int nocache) {
  ROAR_DBG("roar_slp_find_roard_r(*): addr='%s'", addr);
 
  return 0;
+#else
+ return -1;
+#endif
 }
 
 //ll

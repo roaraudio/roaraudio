@@ -58,7 +58,7 @@ int roar_socket_new_tcp (void) {
 #ifndef ROAR_TARGET_WIN32
  int opt = IPTOS_LOWDELAY;
 #endif
-#ifdef TCP_NODELAY
+#if defined(TCP_NODELAY) && !defined(ROAR_TARGET_WIN32)
  int t   = 1;
 #endif
 
@@ -69,7 +69,7 @@ int roar_socket_new_tcp (void) {
 #ifndef ROAR_TARGET_WIN32
  setsockopt(fh, IPPROTO_IP, IP_TOS, &opt, sizeof(int));
 #endif
-#ifdef TCP_NODELAY
+#if defined(TCP_NODELAY) && !defined(ROAR_TARGET_WIN32)
  setsockopt(fh, IPPROTO_TCP, TCP_NODELAY, &t, sizeof(int));
 #endif
 
@@ -475,8 +475,10 @@ int roar_socket_open (int mode, int type, char * host, int port) {
  int fh;
 #ifdef ROAR_HAVE_IPX
 #define _NEED_OBJ
- int i;
  int ret;
+#endif
+#ifdef ROAR_HAVE_IPX
+ unsigned int ipx_port;
 #endif
 #ifdef ROAR_HAVE_UNIX
  int abstract = 0;
@@ -502,7 +504,11 @@ int roar_socket_open (int mode, int type, char * host, int port) {
  struct hostent     * he;
 #endif
  //unsigned int host_div = 0;
+#ifdef ROAR_TARGET_WIN32
+ int PASCAL (*mode_func)(SOCKET,const struct sockaddr*,int) = connect; // default is to connect
+#else
  int (*mode_func)(int sockfd, const struct sockaddr *serv_addr, socklen_t addrlen) = connect; // default is to connect
+#endif
 #ifdef ROAR_HAVE_LIBDNET
 #define _NEED_OBJ
 #endif
@@ -648,9 +654,9 @@ int roar_socket_open (int mode, int type, char * host, int port) {
 
   obj[0] = 0;
 
-  if ( (ret = sscanf(host, "%8x.%12s(%x)", &socket_addr.ipx.sipx_network, obj,
-                               (unsigned int *)&socket_addr.ipx.sipx_port)) < 2 ) {
+  if ( (ret = sscanf(host, "%8x.%12s(%x)", &socket_addr.ipx.sipx_network, obj, &ipx_port)) < 2 ) {
    return -1;
+   socket_addr.ipx.sipx_port = ipx_port;
   } else if ( ret == 2 ) {
    socket_addr.ipx.sipx_port = port; // Network Byte Order?
   }
