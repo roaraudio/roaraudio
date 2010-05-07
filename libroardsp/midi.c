@@ -1,7 +1,7 @@
 //midi.c:
 
 /*
- *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - August 2008
+ *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - August 2008-2010
  *
  *  This file is part of libroardsp a part of RoarAudio,
  *  a cross-platform sound system for both, home and professional use.
@@ -205,8 +205,10 @@ int roar_midi_basic_init (struct roar_midi_basic_state * state) {
 
 int roar_midi_basic_play (struct roar_stream * stream, struct roar_midi_basic_state * state, char * notes) {
  struct roar_midi_basic_state is;
+#if 0
  char   cn[ROAR_MIDI_MAX_NOTENAME_LEN+1] = {0};
  int i;
+#endif
  int have = 0;
  struct roar_note_octave * n;
 
