@@ -1676,8 +1676,35 @@ int fcntl(int fd, int cmd, ...) {
 }
 
 int access(const char *pathname, int mode) {
+ struct devices * ptr = NULL;
+ int i;
 
  _init();
+
+ for (i = 0; _device_list[i].prefix != NULL; i++) {
+  if ( !strcmp(pathname, _device_list[i].prefix) ) {
+   ptr = &(_device_list[i]);
+  }
+ }
+
+ if ( ptr != NULL ) {
+  // the only flag we do not support is +x, which means
+  // we need to reject all requets with X_OK.
+  if ( mode & X_OK ) {
+   errno = EACCES;
+   return -1;
+  }
+
+  // in addition HT_STATIC files do not support write (+w)
+  // so we need to reject W_OK.
+  if ( ptr->type == HT_STATIC && (mode & W_OK) ) {
+   errno = EACCES;
+   return -1;
+  }
+
+  // Else the access is granted:
+  return 0;
+ }
 
  return _os.access(pathname, mode);
 }
