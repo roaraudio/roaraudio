@@ -75,6 +75,7 @@ int     roar_vio_close   (struct roar_vio_calls * vio);
 
 // specal commands:
 int     roar_vio_accept  (struct roar_vio_calls * calls, struct roar_vio_calls * dst);
+int     roar_vio_shutdown(struct roar_vio_calls * vio,   int how);
 
 // converters:
 int     roar_vio_open_file     (struct roar_vio_calls * calls, char * filename, int flags, mode_t mode);

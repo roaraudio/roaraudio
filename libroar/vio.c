@@ -181,6 +181,10 @@ int     roar_vio_accept  (struct roar_vio_calls * calls, struct roar_vio_calls *
  return roar_vio_ctl(dst, ROAR_VIO_CTL_ACCEPT, calls);
 }
 
+int     roar_vio_shutdown(struct roar_vio_calls * vio,   int how) {
+ return roar_vio_ctl(vio, ROAR_VIO_CTL_SHUTDOWN, &how);
+}
+
 // converters:
 int     roar_vio_open_file     (struct roar_vio_calls * calls, char * filename, int flags, mode_t mode) {
 #ifdef _CAN_OPERATE
@@ -338,7 +342,8 @@ int     roar_vio_basic_sync    (struct roar_vio_calls * vio) {
 }
 
 int     roar_vio_basic_ctl     (struct roar_vio_calls * vio, int cmd, void * data) {
- int fh;
+ int tmp;
+ int s_r = 0, s_w = 0;
 
  if ( vio == NULL || cmd == -1 )
   return -1;
@@ -368,21 +373,49 @@ int     roar_vio_basic_ctl     (struct roar_vio_calls * vio, int cmd, void * dat
     return 0;
    break;
   case ROAR_VIO_CTL_ACCEPT:
-    fh = accept(roar_vio_get_fh(vio), NULL, 0);
-    if ( fh == -1 )
+    tmp = accept(roar_vio_get_fh(vio), NULL, 0);
+    if ( tmp == -1 )
      return -1;
 
     // most proably a socket.
-    if ( roar_vio_open_fh_socket(data, fh) == -1 ) {
+    if ( roar_vio_open_fh_socket(data, tmp) == -1 ) {
 #ifdef ROAR_TARGET_WIN32
-     closesocket(fh);
+     closesocket(tmp);
 #else
-     close(fh);
+     close(tmp);
 #endif
      return -1;
     }
 
     return 0;
+   break;
+  case ROAR_VIO_CTL_SHUTDOWN:
+    tmp = *(int*)data;
+
+    if ( tmp & ROAR_VIO_SHUTDOWN_READ ) {
+     s_r = 1;
+     tmp -= ROAR_VIO_SHUTDOWN_READ;
+    }
+
+    if ( tmp & ROAR_VIO_SHUTDOWN_WRITE ) {
+     s_w = 1;
+     tmp -= ROAR_VIO_SHUTDOWN_WRITE;
+    }
+
+    if ( tmp != 0 ) /* we currently only support R and W shutdowns */
+     return -1;
+
+    if ( s_r && s_w ) {
+     tmp = SHUT_RDWR;
+    } else if ( s_r ) {
+     tmp = SHUT_RD;
+    } else if ( s_w ) {
+     tmp = SHUT_WR;
+    } else {
+     return 0; // nothing to do.
+    }
+
+    return shutdown(roar_vio_get_fh(vio), tmp);
    break;
  }
 

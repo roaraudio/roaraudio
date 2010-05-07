@@ -76,6 +76,7 @@
 #define ROAR_VIO_CTL_SET_NOSYNC          (ROAR_VIO_CTL_GENERIC|0x0150) /* delete call of vio sync() from object */
 #define ROAR_VIO_CTL_GET_NAME            (ROAR_VIO_CTL_GENERIC|ROAR_VIO_CTL_GET|0x0160) /* get name of VIO */
 #define ROAR_VIO_CTL_ACCEPT              (ROAR_VIO_CTL_GENERIC|0x0170) /* accept(), vio* */
+#define ROAR_VIO_CTL_SHUTDOWN            (ROAR_VIO_CTL_GENERIC|ROAR_VIO_CTL_SET|0x0174) /* shutdown(), int */
 
 // get or set data format used for read and write calls, see below
 #define ROAR_VIO_CTL_GET_DATA_FORMAT   (ROAR_VIO_CTL_GENERIC|ROAR_VIO_CTL_GET|0x0170)
@@ -107,6 +108,12 @@
 #define ROAR_VIO_CTL_GET_VOLUME    (ROAR_VIO_CTL_DRIVER|ROAR_VIO_CTL_GET|0x10)
 #define ROAR_VIO_CTL_SET_VOLUME    (ROAR_VIO_CTL_DRIVER|ROAR_VIO_CTL_SET|0x10)
 
+// consts for ROAR_VIO_CTL_SHUTDOWN:
+#define ROAR_VIO_SHUTDOWN_READ        0x1
+#define ROAR_VIO_SHUTDOWN_WRITE       0x2
+#define ROAR_VIO_SHUTDOWN_LISTEN      0x4 /* like close() on listen sock but allow padding requests */
+                                          /* to be accept()ed                                       */
+#define ROAR_VIO_SHUTDOWN_RW       (ROAR_VIO_SHUTDOWN_READ|ROAR_VIO_SHUTDOWN_WRITE)
 
 // Data format used for read/write():
 
