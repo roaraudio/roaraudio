@@ -1531,6 +1531,8 @@ int fcntl(int fd, int cmd, ...) {
  long argl = -1;
  void * vp = NULL;
 
+ _init();
+
  switch (cmd) {
   case F_DUPFD:
   case F_SETFD:
