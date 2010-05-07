@@ -58,6 +58,7 @@
 
 #include <sys/stat.h>
 #include <dlfcn.h>
+#include <stdarg.h>
 
 #if defined(RTLD_NEXT)
 #define REAL_LIBC RTLD_NEXT
@@ -146,6 +147,7 @@ static struct {
  int     (*dup2)(int oldfd, int newfd);
  int     (*select)(int nfds, fd_set *readfds, fd_set *writefds,
                    fd_set *exceptfds, struct timeval *timeout);
+ int     (*fcntl)(int fd, int cmd, ...);
 } _os;
 
 static struct {
@@ -246,6 +248,7 @@ static void _init_os (void) {
  _os.dup    = dlsym(REAL_LIBC, "dup");
  _os.dup2   = dlsym(REAL_LIBC, "dup2");
  _os.select = dlsym(REAL_LIBC, "select");
+ _os.fcntl  = dlsym(REAL_LIBC, "fcntl");
 }
 
 static void _init_ptr (void) {
@@ -1519,6 +1522,88 @@ int select(int nfds, fd_set *readfds, fd_set *writefds,
 
  ROAR_DBG("select(nfds=%i, readfds=%p, writefds=%p, exceptfds=%p, timeout=%p) = %i", nfds, readfds, writefds, exceptfds, timeout, (int)ret);
  return ret;
+}
+
+int fcntl(int fd, int cmd, ...) {
+ enum { NONE, UNKNOWN, LONG, POINTER } type = NONE;
+ struct pointer * pointer;
+ va_list ap;
+ long argl = -1;
+ void * vp = NULL;
+
+ switch (cmd) {
+  case F_DUPFD:
+  case F_SETFD:
+  case F_SETFL:
+  case F_SETOWN:
+  case F_SETSIG:
+  case F_SETLEASE:
+  case F_NOTIFY:
+    type = LONG;
+   break;
+  case F_GETFD:
+  case F_GETFL:
+  case F_GETOWN:
+  case F_GETSIG:
+  case F_GETLEASE:
+    type = NONE;
+   break;
+  case F_GETLK:
+  case F_SETLK:
+  case F_SETLKW:
+    type = POINTER;
+   break;
+/*
+  case F_EXLCK:
+  case F_GETLK64:
+  case F_SETLK64:
+  case F_SETLKW64:
+  case F_SHLCK:
+  case F_LINUX_SPECIFIC_BASE:
+  case F_INPROGRESS:
+*/
+  default:
+    type = UNKNOWN;
+ }
+
+ if ( type == UNKNOWN ) {
+  errno = EINVAL;
+  return -1;
+ }
+
+ if ( type != NONE ) {
+  va_start(ap, cmd);
+  switch (type) {
+   case LONG:
+     argl = va_arg(ap, long);
+    break;
+   case POINTER:
+     vp = va_arg(ap, void*);
+    break;
+   default: /* make compiler happy */
+    break;
+  }
+  va_end(ap);
+ }
+
+ if ( (pointer = _get_pointer_by_fh(fd)) == NULL ) {
+  switch (type) {
+   case NONE:
+     return _os.fcntl(fd, cmd);
+    break;
+   case LONG:
+     return _os.fcntl(fd, cmd, argl);
+    break;
+   case POINTER:
+     return _os.fcntl(fd, cmd, vp);
+    break;
+   default: /* make compiler happy */
+    break;
+  }
+ }
+
+ errno = ENOSYS;
+ return -1;
 }
 
 // -------------------------------------
