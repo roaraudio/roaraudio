@@ -1,7 +1,7 @@
 //libartsc.c:
 
 /*
- *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008
+ *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008-2010
  *  The code (may) include prototypes and comments (and maybe
  *  other code fragements) from libarts*. They are mostly copyrighted by:
  *  Stefan Westerfeld <stefan@space.twc.de>

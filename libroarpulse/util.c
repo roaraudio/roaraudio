@@ -1,7 +1,7 @@
 //util.c:
 
 /*
- *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008
+ *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008-2010
  *  The code (may) include prototypes and comments (and maybe
  *  other code fragements) from libpulse*. They are mostly copyrighted by:
  *  Lennart Poettering <poettering@users.sourceforge.net> and

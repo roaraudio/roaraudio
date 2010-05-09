@@ -1,7 +1,7 @@
 //libroarsndio.c:
 
 /*
- *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2009
+ *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2009-2010
  *  The code (may) include prototypes and comments (and maybe
  *  other code fragements) from EsounD.
  *  They are mostly copyrighted by Eric B. Mitchell (aka 'Ricdude)

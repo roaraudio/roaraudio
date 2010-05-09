@@ -1,7 +1,7 @@
 //roarradio.c:
 
 /*
- *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008
+ *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008-2010
  *
  *  This file is part of roarclients a part of RoarAudio,
  *  a cross-platform sound system for both, home and professional use.
@@ -142,7 +142,7 @@ int main (int argc, char * argv[]) {
 
       fprintf(http, "GET %s HTTP/1.1\r\n", file);
       fprintf(http, "Host: %s\r\n", host);
-      fprintf(http, "User-Agent: roarradio $Revision: 1.7 $\r\n");
+      fprintf(http, "User-Agent: roarradio $Revision: 1.8 $\r\n");
       fprintf(http, "Connection: close\r\n");
       fprintf(http, "\r\n");
       fflush(http);
