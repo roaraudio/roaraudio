@@ -34,6 +34,10 @@ int g_verbose = 0;
 #include <esd.h>
 #endif
 
+#if defined(ROAR_HAVE_OSS_BSD) || defined(ROAR_HAVE_OSS)
+#define _HAVE_OSS
+#endif
+
 #define MT_NONE     0x00
 #define MT_MASK     0xF0
 #define MT_ROAR     0x10
@@ -68,9 +72,13 @@ void usage (void) {
 
  printf("\nPossible Types:\n\n");
  printf("  roar               - RoarAudio Server\n"
+#ifdef ROAR_HAVE_ESD
         "  esd                - EsounD Server\n"
+#endif
         "  simple             - PulseAudio using simple protocol\n"
+#ifdef _HAVE_OSS
         "  oss                - Open Sound System (OSS) device\n"
+#endif
         "\n"
         "  bidir              - Connect bidirectional\n"
         "  filter             - Use local server as filter for remote server\n"
@@ -213,6 +221,7 @@ int main (int argc, char * argv[]) {
     }
     rfh = roar_simple_stream(rate, channels, bits, codec, remote, tmp, "roarinterconnect");
    break;
+#ifdef _HAVE_OSS
   case MT_OSS:
     switch (type & ST_MASK) {
      case ST_BIDIR:
@@ -244,6 +253,7 @@ int main (int argc, char * argv[]) {
      return 2;
     }
    break;
+#endif
 #ifdef ROAR_HAVE_ESD
   case MT_ESD:
     tmp = ESD_STREAM|ESD_PLAY;
