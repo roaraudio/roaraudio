@@ -905,7 +905,7 @@ fi
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.254 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.255 $ of RoarAudio
  */
 
 EOF
@@ -1054,9 +1054,9 @@ test_lib_defmake ROAR_HAVE_LIBSSL        %            OpenSSL       ssl        -
 test_lib_defmake ROAR_HAVE_LIBSLP        %            OpenSLP       slp        -- slp.h
 test_lib_defmake ROAR_HAVE_LIBUUID       %            libuuid       uuid       -- uuid/uuid.h
 test_lib_defmake ROAR_HAVE_LIBDNET       %            libdnet       dnet       -- sys/socket.h netdnet/dn.h netdnet/dnetdb.h
-test_lib_defmake ROAR_HAVE_BSDSOCKETS    %            BSDSockets    c          -- sys/types.h sys/socket.h
 OLD_MINIMAL=$MINIMAL
 MINIMAL=false
+test_lib_defmake ROAR_HAVE_BSDSOCKETS    %            BSDSockets    c          -- sys/types.h sys/socket.h
 test_lib_defmake ROAR_HAVE_UNIX          %            UNIX          c          -- sys/types.h sys/socket.h sys/un.h
 test_lib_defmake ROAR_HAVE_IPV4          %            IPv4          c          -- sys/types.h sys/socket.h 'netinet/in.h'
 MINIMAL=$OLD_MINIMAL
