@@ -1,7 +1,7 @@
 //gui.c:
 
 /*
- *      Copyright (C) Philipp 'ph3-der-loewe' Schafft    - 2008,
+ *      Copyright (C) Philipp 'ph3-der-loewe' Schafft    - 2008-2010,
  *                    Daniel Duntemann <dauxx@dauxx.org> - 2009
  *
  *  This file is part of the XMMS RoarAudio output plugin a part of RoarAudio,

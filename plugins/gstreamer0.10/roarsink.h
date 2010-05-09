@@ -1,8 +1,8 @@
 //roarsink.h:
 /* GStreamer
- * Copyright (C) <2005> Arwed v. Merkatz <v.merkatz@gmx.net>
- * Copyright (C) <2008> Philipp 'ph3-der-loewe' Schafft
- *                            <lion@lion.leolix.org>
+ * Copyright (C) <2005>      Arwed v. Merkatz <v.merkatz@gmx.net>
+ * Copyright (C) <2008-2010> Philipp 'ph3-der-loewe' Schafft
+ *                                    <lion@lion.leolix.org>
  *
  * roarsink.h: an RoarAudio audio sink
  *

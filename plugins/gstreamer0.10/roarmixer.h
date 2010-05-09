@@ -1,9 +1,8 @@
 //roarmixer.h:
 /* GStreamer
- * Copyright (C) <2005> Arwed v. Merkatz <v.merkatz@gmx.net>
- * Copyright (C) <2008> Philipp 'ph3-der-loewe' Schafft
- * Copyright (C) <2009> Philipp 'ph3-der-loewe' Schafft
- *                            <lion@lion.leolix.org>
+ * Copyright (C) <2005>      Arwed v. Merkatz <v.merkatz@gmx.net>
+ * Copyright (C) <2008-2010> Philipp 'ph3-der-loewe' Schafft
+ *                                    <lion@lion.leolix.org>
  *
  * roarmixer.h: an RoarAudio audio mixer
  *
