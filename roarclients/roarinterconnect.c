@@ -153,8 +153,10 @@ int parse_type (char * type) {
 int main (int argc, char * argv[]) {
  struct roar_connection con[1];
  struct roar_stream     stream[1];
+#ifdef _HAVE_OSS
  struct roar_vio_calls  vio;
  struct roar_audio_info info;
+#endif
  int    rate     = 44100;
  int    bits     = 16;
  int    channels = 2;
