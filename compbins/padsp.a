@@ -14,7 +14,7 @@ padsp.r [options] application [arguments]
 
 options:
         -h                  show brief help
-        -s <host>[:<port>]  contact a specific PulseAudio server
+        -s <host>[:<port>]  contact a specific RoarAudio server
         -n <name>           client name to report to the server
 __EOF__
 
