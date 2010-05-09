@@ -1,7 +1,7 @@
 //playback.c:
 
 /*
- *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - August 2008
+ *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008-2010
  *
  *  This file is part of libroaryiff a part of RoarAudio,
  *  a cross-platform sound system for both, home and professional use.
