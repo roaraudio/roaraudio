@@ -68,11 +68,17 @@
 #include <netinet/ip.h>
 #endif
 #include <sys/uio.h>
+
+#ifdef ROAR_HAVE_UNIX
+#include <sys/un.h>
 #endif
+#endif
+
 #ifdef ROAR_HAVE_LIBDNET
 #include <netdnet/dn.h>
 #include <netdnet/dnetdb.h>
 #endif
+
 #ifdef ROAR_HAVE_IPX
 #include <netipx/ipx.h>
 #endif
