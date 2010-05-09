@@ -5,7 +5,7 @@ TARGETS_NAS      = auplay$(SUFFIX)  audial$(SUFFIX)    audiooss$(SUFFIX)
 TARGETS_YIFF     = yplay$(SUFFIX)   yshutdown$(SUFFIX) yiff$(SUFFIX)
 TARGETS_PA       = pacat$(SUFFIX)   paplay$(SUFFIX)    padsp$(SUFFIX)
 TARGETS_DTMFDIAL = dtmfdial$(SUFFIX)
-TARGETS_RSOUND  = ross$(SUFFIX)
+TARGETS_RSOUND   = ross$(SUFFIX)    rsd$(SUFFIX)
 TARGETS=$(TARGETS_ESD) $(TARGETS_ARTS) $(TARGETS_NAS) $(TARGETS_YIFF) $(TARGETS_PA) $(TARGETS_DTMFDIAL) $(TARGETS_RSOUND)
 
 include ../Makefile.conf

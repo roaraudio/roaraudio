@@ -1,0 +1,34 @@
+#!/bin/sh
+
+NAME='rsd'
+RNAME='roard'
+
+ARGS_PASS_OPTS='-p:true --port:true --daemon:false --verbose:false -h:false --help:false'
+ARGS_MAP_OPTS='-d:true:-O --device:true:-O -b:true:-o --backend:true:-o -D:false:--daemon -v:false:--verbose --debug:false:--verbose --kill:false:--stop'
+ARGS_PASS_NON_OPTS=false
+
+#TODO: --single
+#--single: Only allows a single connection at a time.
+
+ast2roar_help -h --help <<__EOF__
+roard
+==========================================================================
+Usage: rsd [ -d/--device | -b/--backend | -p/--port | -D/--daemon | -v/--verbose | --debug | -h/--help | --kill ]
+
+-d/--device: Specifies an ALSA or OSS device to use.
+  Examples:
+   -d hw:1,0
+   -d /dev/audio
+
+-b/--backend: Specifies which audio backend to use.
+
+-D/--daemon: Runs as daemon.
+-p/--port: Defines which port to listen on.
+        Example: -p 18453.
+-v/--verbose: Enables verbosity
+-h/--help: Prints this help
+--debug: Enable more verbosity
+--kill: Cleanly shuts downs the running rsd process.
+__EOF__
+
+#ll
