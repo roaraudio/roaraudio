@@ -23,6 +23,7 @@ SYSNAME='unknown'
 SHARED='-shared'
 SHARED_CF=''
 SHARED_SUFFIX='.so'
+COMPBIN_SUFFIX='.r'
 fPIC=true
 Wextra=false
 MMCU=''
@@ -792,11 +793,13 @@ then
  echo "Adding win32 build arguments..."
  fPIC=false
  SHARED_SUFFIX='.dll'
+ COMPBIN_SUFFIX='.bat'
 elif $TARGET_CYGWIN
 then
  echo "Adding cygwin build arguments..."
  fPIC=false
  SHARED_SUFFIX='.dll'
+ COMPBIN_SUFFIX='.bat'
 fi
 
 echo -n 'checking if we cross compile... '
@@ -872,6 +875,7 @@ fi
  echo "SHARED=$SHARED"
  echo "SHARED_CF=$SHARED_CF"
  echo "SHARED_SUFFIX=$SHARED_SUFFIX"
+ echo "COMPBIN_SUFFIX=$COMPBIN_SUFFIX"
  $fPIC   && echo 'fPIC=-fPIC'
  $Wextra && echo 'Wextra=-Wextra'
  echo
@@ -905,7 +909,7 @@ fi
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.255 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.256 $ of RoarAudio
  */
 
 EOF

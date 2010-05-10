@@ -1,4 +1,3 @@
-SUFFIX           = .r
 TARGETS_ESD      = esdcat$(SUFFIX)  esdmon$(SUFFIX)    esdfilt$(SUFFIX)  esdplay$(SUFFIX) esd$(SUFFIX) esddsp$(SUFFIX)
 TARGETS_ARTS     = artscat$(SUFFIX) artsd$(SUFFIX)     artsplay$(SUFFIX) artsdsp$(SUFFIX)
 TARGETS_NAS      = auplay$(SUFFIX)  audial$(SUFFIX)    audiooss$(SUFFIX)
@@ -10,6 +9,8 @@ TARGETS=$(TARGETS_ESD) $(TARGETS_ARTS) $(TARGETS_NAS) $(TARGETS_YIFF) $(TARGETS_
 
 include ../Makefile.conf
 include ../Makefile.inc
+
+SUFFIX           = $(COMPBIN_SUFFIX)
 
 .SUFFIXES: .a .r .bat
 
