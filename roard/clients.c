@@ -457,6 +457,13 @@ int clients_check     (int id) {
 #ifndef ROAR_WITHOUT_DCOMP_EMUL_ESD
   case ROAR_PROTO_RSOUND:
     rv = emul_rsound_check_client(id, NULL);
+    if ( rv == 0 ) { // loop as long as we don't get an error.
+     while (rv == 0)
+      rv = emul_rsound_check_client(id, NULL);
+     rv = 0; // restore
+    } else { // in case of error delete the client
+     rv = clients_delete(id);
+    }
    break;
 #endif
   default:

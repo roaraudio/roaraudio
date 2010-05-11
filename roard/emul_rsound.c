@@ -39,6 +39,9 @@ int emul_rsound_on_connect  (int fh, struct roard_listen * lsock) {
   char c[16];
  } buf;
 
+ // TODO: add error handling
+ roar_socket_nonblock(fh, ROAR_SOCKET_NONBLOCK);
+
  if ( emul_rsound_lastcon == -1 ) {
   emul_rsound_lastcon = fh;
   return -2;
@@ -211,8 +214,10 @@ int emul_rsound_check_client(int client, struct roar_vio_calls * vio) {
   roar_vio_open_fh_socket(vio, clients_get_fh(client));
  }
 
+ // we get called in a loop, in case this fails no problem, just
+ // return -1, caller will delete us in case of real error.
  if ( emul_rsound_vrecv_msg(&msg, vio) == -1 )
-  return clients_delete(client);
+  return -1;
 
  if ( !strncmp(msg.datasp, "INFO", 4) ) {
   // TODO: add support for INFO
@@ -245,13 +250,14 @@ int emul_rsound_check_client(int client, struct roar_vio_calls * vio) {
   return emul_rsound_vsend_msg(&msg, vio);
  } else if ( !strncmp(msg.datasp, "NULL", 4) ) {
   // NULL is simular to NOOP
-  return 0;
  } else if ( !strncmp(msg.datasp, "STOP", 4) ) {
   // This is quit.
   return clients_delete(client);
  } else {
   return clients_delete(client);
  }
+
+ return 0;
 }
 #endif
 
