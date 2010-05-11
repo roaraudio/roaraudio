@@ -14,6 +14,7 @@ include ../Makefile.conf
 include ../Makefile.inc
 
 #DEFINES        = -DDEBUG
+DEFINES    = -DCOMMON_VERSION=\"$(COMMON_VERSION)\" -DPREFIX=\"$(PREFIX)\" -DPREFIX_LIB=\"$(PREFIX_LIB)\" -DPREFIX_INC=\"$(PREFIX_INC)\"
 INCLUDE    = -I../include -I./include
 CFLAGS    += -g -Wall $(Wextra) -O2 $(DEFINES) $(INCLUDE) $(INCPATH)
 LDFLAGS    = -g -L../lib/ $(LDPATH)

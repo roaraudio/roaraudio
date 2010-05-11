@@ -61,11 +61,14 @@ void usage (void) {
         "  --version          - Show version of library\n"
         "  --libs             - Show linker flags (-lxxx) needed to link library\n"
         "  --cflags           - Show compiler flags needed to link library\n"
+        "  --output-pc        - Output PC format\n"
+        "  --output-normal    - Output PC format\n"
        );
 
 }
 
 int main (int argc, char * argv[]) {
+ enum { NORMAL, PC } mode = NORMAL;
  int i, h;
  int cflags = 0;
  int libs   = 0;
@@ -86,6 +89,10 @@ int main (int argc, char * argv[]) {
    libs   = 1;
   } else if ( !strcmp(argv[i], "--cflags") ) {
    cflags = 1;
+  } else if ( !strcmp(argv[i], "--output-normal") ) {
+   mode = NORMAL;
+  } else if ( !strcmp(argv[i], "--output-pc") ) {
+   mode = PC;
   } else if ( flags_ptr == NULL ) {
    if ( !strncmp(argv[i], "lib", 3) )
     argv[i] += 3;
@@ -109,13 +116,40 @@ int main (int argc, char * argv[]) {
  if ( flags_ptr == NULL )
   flags_ptr = &(flags[0]);
 
- if ( cflags )
-  strcat(buf, flags_ptr->cflags);
+ switch (mode) {
+  case NORMAL:
+    if ( cflags )
+     strcat(buf, flags_ptr->cflags);
 
- if ( libs )
-  strcat(buf, flags_ptr->libs);
+    if ( libs )
+     strcat(buf, flags_ptr->libs);
 
- puts(buf);
+    puts(buf);
+   break;
+  case PC:
+    printf(
+           "prefix=%s\n"
+           "exec_prefix=${prefix}\n"
+           "libdir=%s\n"
+           "includedir=%s\n",
+           PREFIX, PREFIX_LIB, PREFIX_INC
+          );
+    printf("\n");
+    printf(
+           "Name: lib%s\n"
+//           "Description: $DESC$\n"
+           "Version: %s\n"
+           "Requires: libroar\n"
+           "Conflicts:\n"
+           "Libs: -L${libdir} %s\n"
+           "Cflags: -I${includedir} %s\n",
+           flags_ptr->name,
+           COMMON_VERSION,
+           flags_ptr->libs,
+           flags_ptr->cflags
+          );
+   break;
+ }
 
  return 0;
 }
