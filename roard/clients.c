@@ -456,7 +456,7 @@ int clients_check     (int id) {
 #endif
 #ifndef ROAR_WITHOUT_DCOMP_EMUL_ESD
   case ROAR_PROTO_RSOUND:
-    rv = clients_delete(id);
+    rv = emul_rsound_check_client(id, NULL);
    break;
 #endif
   default:

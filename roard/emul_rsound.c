@@ -131,6 +131,95 @@ int emul_rsound_new_client  (int client, int data) {
  return 0;
 }
 
+int emul_rsound_vrecv_msg(struct emul_rsound_msg * msg, struct roar_vio_calls * vio) {
+ ssize_t ret;
+ int     num;
+
+ if ( msg == NULL || vio == NULL )
+  return -1;
+
+ ret = roar_vio_read(vio, msg->header, EMUL_RSOUND_MSG_HEADER_LEN);
+
+ if ( ret != EMUL_RSOUND_MSG_HEADER_LEN )
+  return -1;
+
+ msg->header[ret] = 0;
+
+ if ( msg->header[0] != 'R' || msg->header[1] != 'S' || msg->header[2] != 'D' )
+  return -1;
+
+ if ( sscanf(&(msg->header[3]), "%5d", &num) != 1 )
+  return -1;
+
+ if ( num > EMUL_RSOUND_MSG_DATA_LEN )
+  return -1;
+
+ msg->datalen = num;
+
+ ret = roar_vio_read(vio, msg->data, num);
+
+ if ( ret != (ssize_t)num )
+  return -1;
+
+ msg->data[num] = 0;
+
+ msg->datasp   = msg->data;
+ msg->dataslen = msg->datalen;
+
+ for (num = 0; msg->data[num] == ' '; num++) {
+  msg->datasp++;
+  msg->dataslen--;
+ }
+
+ return 0;
+}
+
+int emul_rsound_vsend_msg(struct emul_rsound_msg * msg, struct roar_vio_calls * vio) {
+ ssize_t ret;
+
+ if ( msg == NULL || vio == NULL )
+  return -1;
+
+ snprintf(msg->header, EMUL_RSOUND_MSG_HEADER_LEN+1, "RSD%5d", msg->datalen);
+
+ ret = roar_vio_write(vio, msg->header, EMUL_RSOUND_MSG_HEADER_LEN);
+
+ if ( ret != EMUL_RSOUND_MSG_HEADER_LEN )
+  return -1;
+
+ ret = roar_vio_write(vio, msg->data, msg->datalen);
+
+ if ( ret != (ssize_t)msg->datalen )
+  return -1;
+
+ return 0;
+}
+
+int emul_rsound_check_client(int client, struct roar_vio_calls * vio) {
+ struct roar_vio_calls rvio;
+ struct emul_rsound_msg msg;
+
+ if ( vio == NULL ) {
+  vio = &rvio;
+  roar_vio_open_fh_socket(vio, clients_get_fh(client));
+ }
+
+ if ( emul_rsound_vrecv_msg(&msg, vio) == -1 )
+  return clients_delete(client);
+
+ if ( !strncmp(msg.datasp, "INFO", 4) ) {
+  // TODO: add support for INFO
+  return clients_delete(client);
+ } else if ( !strncmp(msg.datasp, "NULL", 4) ) {
+  // NULL is simular to NOOP
+  return 0;
+ } else if ( !strncmp(msg.datasp, "STOP", 4) ) {
+  // This is quit.
+  return clients_delete(client);
+ } else {
+  return clients_delete(client);
+ }
+}
 #endif
 
 //ll

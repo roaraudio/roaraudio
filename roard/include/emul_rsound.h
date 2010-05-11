@@ -30,7 +30,22 @@
 
 #ifndef ROAR_WITHOUT_DCOMP_EMUL_RSOUND
 
+#define EMUL_RSOUND_MSG_HEADER_LEN (3+5)
+#define EMUL_RSOUND_MSG_DATA_LEN   (64)
+
+struct emul_rsound_msg {
+ char header[EMUL_RSOUND_MSG_HEADER_LEN+1];
+ size_t datalen;
+ char data[EMUL_RSOUND_MSG_DATA_LEN+1];
+ char * datasp;
+ size_t dataslen;
+};
+
+int emul_rsound_vrecv_msg(struct emul_rsound_msg * msg, struct roar_vio_calls * vio);
+int emul_rsound_vsend_msg(struct emul_rsound_msg * msg, struct roar_vio_calls * vio);
+
 int emul_rsound_on_connect  (int fh, struct roard_listen * lsock);
+int emul_rsound_check_client(int client, struct roar_vio_calls * vio);
 
 #endif
 
