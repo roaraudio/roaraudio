@@ -139,7 +139,7 @@ int main (int argc, char * argv[]) {
            "Name: lib%s\n"
 //           "Description: $DESC$\n"
            "Version: %s\n"
-           "Requires: libroar\n"
+//           "Requires: libroar\n"
            "Conflicts:\n"
            "Libs: -L${libdir} %s\n"
            "Cflags: -I${includedir} %s\n",
