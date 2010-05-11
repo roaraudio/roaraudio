@@ -22,7 +22,8 @@ LIBS       = $(LIBROAR)
 SHOUTLIBS  = $(lib_shout) $(LIBS)
 VORBISLIBS = $(lib_vorbisfile) $(lib_vorbis) $(lib_ogg) $(LIBS)
 
-L          = $(CC) $(LDFLAGS) -o $@ $+ $(LIBS)
+LNL        = $(CC) $(LDFLAGS) -o $@ $+
+L          = $(LNL) $(LIBS)
 
 all: ${TARGETS} $(TOOLS)
 	cp $(cp_v) ${TARGETS} $(TOOLS) ../lib/
@@ -73,7 +74,7 @@ roartypes: roartypes.o
 roarsocktypes: roarsocktypes.o
 	$L
 roar-config: roar-config.o
-	$L
+	$(LNL)
 roarvorbis: roarvorbis.o
 	${CC} ${LDFLAGS} -o roarvorbis roarvorbis.o $(VORBISLIBS)
 roarshout: roarshout.o

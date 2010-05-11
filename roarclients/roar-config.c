@@ -103,7 +103,7 @@ int main (int argc, char * argv[]) {
    }
 
    if ( flags_ptr == NULL ) {
-    ROAR_ERR("Unknown lib: %s", argv[i]);
+    fprintf(stderr, "Unknown lib: %s", argv[i]);
     return 2;
    }
   } else {
