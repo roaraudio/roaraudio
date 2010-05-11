@@ -933,4 +933,55 @@ char * roar_role2str  (int    role) {
  return "unknown";
 }
 
+ssize_t roar_info2samplesize (struct roar_audio_info * info) {
+ if ( info == NULL )
+  return -1;
+
+ switch (info->codec) {
+  case ROAR_CODEC_PCM_S_LE:
+  case ROAR_CODEC_PCM_S_BE:
+  case ROAR_CODEC_PCM_S_PDP:
+  case ROAR_CODEC_PCM_U_LE:
+  case ROAR_CODEC_PCM_U_BE:
+  case ROAR_CODEC_PCM_U_PDP:
+    return info->bits;
+   break;
+  case ROAR_CODEC_ALAW:
+  case ROAR_CODEC_MULAW:
+    return 8;
+   break;
+  case ROAR_CODEC_DMX512:
+    return 8;
+   break;
+  case ROAR_CODEC_RDS:
+    return 26;
+   break;
+  default:
+    return -1;
+   break;
+ }
+}
+
+ssize_t roar_info2framesize  (struct roar_audio_info * info) {
+ ssize_t ret = roar_info2samplesize(info);
+
+ if ( ret == -1 )
+  return -1;
+
+ ret *= info->channels;
+
+ return ret;
+}
+
+ssize_t roar_info2bitspersec(struct roar_audio_info * info) {
+ ssize_t ret = roar_info2samplesize(info);
+
+ if ( ret == -1 )
+  return -1;
+
+ ret *= info->channels * info->rate;
+
+ return ret;
+}
+
 //ll

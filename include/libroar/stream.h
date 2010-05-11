@@ -157,6 +157,10 @@ char * roar_streamstate2str(int streamstate);
 int    roar_str2role  (char * role);
 char * roar_role2str  (int    role);
 
+ssize_t roar_info2samplesize (struct roar_audio_info * info);
+ssize_t roar_info2framesize  (struct roar_audio_info * info);
+ssize_t roar_info2bitspersec (struct roar_audio_info * info);
+
 #endif
 
 //ll
