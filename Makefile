@@ -24,17 +24,24 @@ new: clean all
 test: all
 	set -e; cd tests; $(MAKE) test; cd ..;
 
+build-pc-files:
+	set -e; for lib in $(comp_libs); do lib/roar-config --output-pc $$lib > lib/$$lib.pc; done
+
+prep-install: prep-install-dirs build-pc-files
+
 prep-install-dirs:
 	mkdir -p '$(DESTDIR)$(PREFIX_BIN)'
 	mkdir -p '$(DESTDIR)$(PREFIX_LIB)'
 	mkdir -p '$(DESTDIR)$(PREFIX_INC)'
 	mkdir -p '$(DESTDIR)$(PREFIX_MAN)'
+	mkdir -p '$(DESTDIR)$(PREFIX_PC)'
 	mkdir -p '$(DESTDIR)$(PREFIX_COMP_LIBS)'
 	mkdir -p '$(DESTDIR)$(PREFIX_COMP_BINS)'
 	set -e; cd doc; $(MAKE) prep-install-dirs; cd ..
 
-install: prep-install-dirs
+install: prep-install
 	cp $(cp_v) lib/roar*     '$(DESTDIR)$(PREFIX_BIN)'
+	cp $(cp_v) lib/*.pc      '$(DESTDIR)$(PREFIX_PC)'
 	sh -c 'set -e; cd lib; for file in lib*$(SHARED_SUFFIX)*; do cp $$file '$(DESTDIR)$(PREFIX_LIB)'/$$file.$(COMMON_VERSION); done'
 	sh -c 'set -e; cd lib; for file in lib*$(SHARED_SUFFIX)*; do ln -fs $$file.$(COMMON_VERSION) '$(DESTDIR)$(PREFIX_LIB)'/$$file.$(COMMON_V_MM); done'
 	sh -c 'set -e; cd lib; for file in lib*$(SHARED_SUFFIX)*; do ln -fs $$file.$(COMMON_VERSION) '$(DESTDIR)$(PREFIX_LIB)'/$$file.$(COMMON_V_MAJOR); done'
@@ -45,8 +52,9 @@ install: prep-install-dirs
 	set -e; cd doc; $(MAKE) install; cd ..
 	set -e; for i in $(PLUGINS); do if [ "$$i" != '' ]; then cd $$i; $(MAKE) install; cd ../..; fi; done
 
-semi-install: prep-install-dirs
+semi-install: prep-install
 	sh -c 'set -e; for file in lib/roar*;    do ln -fs `pwd`/$$file '$(DESTDIR)$(PREFIX_BIN)'/; done'
+	sh -c 'set -e; for file in lib/*.pc;     do ln -fs `pwd`/$$file '$(DESTDIR)$(PREFIX_PC)'/; done'
 	sh -c 'set -e; cd lib; for file in lib*$(SHARED_SUFFIX)*; do ln -fs `pwd`/$$file '$(DESTDIR)$(PREFIX_LIB)'/; done'
 	sh -c 'set -e; cd lib; for file in lib*$(SHARED_SUFFIX)*; do ln -fs `pwd`/$$file '$(DESTDIR)$(PREFIX_LIB)'/$$file.$(COMMON_VERSION); done'
 	sh -c 'set -e; cd lib; for file in lib*$(SHARED_SUFFIX)*; do ln -fs `pwd`/$$file '$(DESTDIR)$(PREFIX_LIB)'/$$file.$(COMMON_V_MM); done'

@@ -37,6 +37,7 @@ PREFIX_BIN=''
 PREFIX_LIB=''
 PREFIX_INC=''
 PREFIX_MAN=''
+PREFIX_PC=''
 PREFIX_COMP_LIBS=''
 PREFIX_COMP_BINS=''
 
@@ -189,6 +190,7 @@ do
    echo '--prefix-lib DIR            - Set prefix for librarys (default: $PREFIX/libs)'
    echo '--prefix-inc DIR            - Set prefix for include files (default: $PREFIX/include)'
    echo '--prefix-man DIR            - Set prefix for manpages (default: $PREFIX/man)'
+   echo '--prefix-pc DIR             - Set prefix for pkg-config (default: $PREFIX_LIB/pkgconfig)'
    echo '--prefix-comp-libs DIR      - Set prefix for compatibility librarys (default: $PREFIX_LIB/roaraudio/complibs)'
    echo '--prefix-comp-bins DIR      - Set prefix for compatibility binarys  (default: $PREFIX_LIB/roaraudio/compbins)'
    echo
@@ -435,6 +437,10 @@ do
    PREFIX_MAN="$2"
    shift;
   ;;
+  '--prefix-pc')
+   PREFIX_PC="$2"
+   shift;
+  ;;
   # we should remove --prefix-comp soon
   '--prefix-comp'|'--prefix-comp-libs')
    PREFIX_COMP_LIBS="$2"
@@ -460,6 +466,9 @@ do
   ;;
   '--prefix-man=*')
    PREFIX_MAN=$(echo "$1" | cut -d= -f2)
+  ;;
+  '--prefix-pc=*')
+   PREFIX_PC=$(echo "$1" | cut -d= -f2)
   ;;
   '--prefix-comp-libs='*)
    PREFIX_COMP_LIBS=$(echo "$1" | cut -d= -f2)
@@ -845,6 +854,7 @@ fi
 [ "$PREFIX_LIB"  = '' ] && PREFIX_LIB="$PREFIX/lib/"
 [ "$PREFIX_INC"  = '' ] && PREFIX_INC="$PREFIX/include/"
 [ "$PREFIX_MAN"  = '' ] && PREFIX_MAN="$PREFIX/share/man/"
+[ "$PREFIX_PC"   = '' ] && PREFIX_PC="$PREFIX_LIB/pkgconfig/"
 [ "$PREFIX_COMP_LIBS" = '' ] && PREFIX_COMP_LIBS="$PREFIX_LIB/roaraudio/complibs/"
 [ "$PREFIX_COMP_BINS" = '' ] && PREFIX_COMP_BINS="$PREFIX_LIB/roaraudio/compbins/"
 
@@ -891,6 +901,7 @@ fi
  echo "PREFIX_LIB=$PREFIX_LIB"
  echo "PREFIX_INC=$PREFIX_INC"
  echo "PREFIX_MAN=$PREFIX_MAN"
+ echo "PREFIX_PC=$PREFIX_PC"
  echo "PREFIX_COMP_LIBS=$PREFIX_COMP_LIBS"
  echo "PREFIX_COMP_BINS=$PREFIX_COMP_BINS"
  echo
@@ -909,7 +920,7 @@ fi
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.256 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.257 $ of RoarAudio
  */
 
 EOF
