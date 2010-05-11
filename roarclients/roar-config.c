@@ -137,12 +137,13 @@ int main (int argc, char * argv[]) {
     printf("\n");
     printf(
            "Name: lib%s\n"
-//           "Description: $DESC$\n"
+           "Description: lib%s is part of RoarAudio Sound System\n"
            "Version: %s\n"
 //           "Requires: libroar\n"
            "Conflicts:\n"
            "Libs: -L${libdir} %s\n"
            "Cflags: -I${includedir} %s\n",
+           flags_ptr->name,
            flags_ptr->name,
            COMMON_VERSION,
            flags_ptr->libs,
