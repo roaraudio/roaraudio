@@ -202,6 +202,7 @@ __BEGIN_DECLS
 #define ROAR_LIBS_C_ESD          "-lroaresd "   ROAR_LIBS
 #define ROAR_LIBS_C_ARTSC        "-lroarartsc " ROAR_LIBS
 #define ROAR_LIBS_C_PULSE        "-lroarpulse " ROAR_LIBS
+#define ROAR_LIBS_C_PULSE_SIMPLE "-lroarpulse-simple " ROAR_LIBS_C_PULSE
 #define ROAR_LIBS_C_SNDIO        "-lroarsndio " ROAR_LIBS
 #define ROAR_LIBS_C_YIFF         "-lroaryiff "  ROAR_LIBS
 
