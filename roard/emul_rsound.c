@@ -35,8 +35,8 @@ int emul_rsound_on_connect  (int fh, struct roard_listen * lsock) {
  int oldfh = emul_rsound_lastcon;
  int client;
  union {
-  int32_t i[2];
-  char c[8];
+  int32_t i[4];
+  char c[16];
  } buf;
 
  if ( emul_rsound_lastcon == -1 ) {
@@ -68,8 +68,10 @@ int emul_rsound_on_connect  (int fh, struct roard_listen * lsock) {
 
   buf.i[0] = ROAR_HOST2NET32(0);
   buf.i[1] = ROAR_HOST2NET32(512);
+  buf.i[2] = ROAR_HOST2NET32(0);
+  buf.i[3] = ROAR_HOST2NET32(0);
 
-  ROAR_NETWORK_WRITE(oldfh, buf.c, 8);
+  ROAR_NETWORK_WRITE(oldfh, buf.c, sizeof(buf.c));
 
   return client;
  }
@@ -196,8 +198,13 @@ int emul_rsound_vsend_msg(struct emul_rsound_msg * msg, struct roar_vio_calls * 
 }
 
 int emul_rsound_check_client(int client, struct roar_vio_calls * vio) {
- struct roar_vio_calls rvio;
- struct emul_rsound_msg msg;
+ struct roar_vio_calls     rvio;
+ struct emul_rsound_msg     msg;
+ struct roar_client        *  c;
+ struct roar_stream_server * ss;
+ int                   streamid;
+ int                          i;
+ ssize_t                    ptr;
 
  if ( vio == NULL ) {
   vio = &rvio;
@@ -209,7 +216,33 @@ int emul_rsound_check_client(int client, struct roar_vio_calls * vio) {
 
  if ( !strncmp(msg.datasp, "INFO", 4) ) {
   // TODO: add support for INFO
-  return clients_delete(client);
+  if ( clients_get(client, &c) == -1 )
+   return clients_delete(client);
+
+  streamid = -1;
+  for (i = 0; i < ROAR_CLIENTS_MAX_STREAMS_PER_CLIENT; i++)
+   if ( c->streams[i] > streamid )
+    streamid = c->streams[i];
+
+  if ( streamid == -1 )
+   return clients_delete(client);
+
+  if ( streams_get(streamid, &ss) == -1 )
+   return clients_delete(client);
+
+  ptr = roar_info2samplesize(&(ROAR_STREAM(ss)->info));
+
+  if ( ptr == -1 )
+   return clients_delete(client);
+
+  ptr *= ROAR_STREAM(ss)->pos;
+  ptr /= 8; // bits -> bytes
+
+  i = snprintf(msg.data+msg.datalen, EMUL_RSOUND_MSG_DATA_LEN - msg.datalen, " %lld", (long long int)ptr);
+
+  msg.datalen += i;
+
+  return emul_rsound_vsend_msg(&msg, vio);
  } else if ( !strncmp(msg.datasp, "NULL", 4) ) {
   // NULL is simular to NOOP
   return 0;
