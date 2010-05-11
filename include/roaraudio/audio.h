@@ -204,8 +204,8 @@
                                      /* if no byte order is given then you
                                         should assume BE as it is network
                                         byte order                     */
-#define ROAR_CODEC_META_RALB_LE (ROAR_CODEC_META_RALB | ROAR_CODEC_LE)
-#define ROAR_CODEC_META_RALB_BE (ROAR_CODEC_META_RALB | ROAR_CODEC_BE)
+#define ROAR_CODEC_META_RALB_LE  (ROAR_CODEC_META_RALB | ROAR_CODEC_LE )
+#define ROAR_CODEC_META_RALB_BE  (ROAR_CODEC_META_RALB | ROAR_CODEC_BE )
 #define ROAR_CODEC_META_RALB_PDP (ROAR_CODEC_META_RALB | ROAR_CODEC_PDP)
 
 // Container Codecs:
