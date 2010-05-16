@@ -36,16 +36,20 @@
 #include <sys/ioctl.h>
 
 #ifdef SNDCTL_DSP_SETFRAGMENT
-static void roar_cdriver_oss_try_buf_setups(int fh) {
+static void roar_cdriver_oss_try_buf_setups(struct roar_vio_calls * calls) {
+ struct roar_vio_sysio_ioctl ctl;
  int blocksizes[] = {11, 12, 13};
  int blocks[]     = {4, 5, 6, 3, 7, 2, 8};
  int bs, b;
  int tmp;
 
+ ctl.cmd  = SNDCTL_DSP_SETFRAGMENT;
+ ctl.argp = &tmp;
+
  for (bs = 0; bs < sizeof(blocksizes)/sizeof(int); bs++) {
   for (b = 0; b  < sizeof(blocks)    /sizeof(int); b++ ) {
    tmp = blocksizes[bs] | (blocks[b] << 16);
-   if ( ioctl(fh, SNDCTL_DSP_SETFRAGMENT, &tmp) == 0 )
+   if ( roar_vio_ctl(calls, ROAR_VIO_CTL_SYSIO_IOCTL, &ctl) == 0 )
     return;
   }
  }
@@ -55,8 +59,11 @@ static void roar_cdriver_oss_try_buf_setups(int fh) {
 #define _err() roar_vio_close(calls); return -1
 
 int roar_cdriver_oss(struct roar_vio_calls * calls, char * name, char * dev, struct roar_audio_info * info, int dir) {
- int fh;
+ struct roar_vio_sysio_ioctl ctl;
  int tmp, ctmp;
+
+ // preinit ctl struct, we always pass ints in tmp.
+ ctl.argp = &tmp;
 
  ROAR_DBG("roar_cdriver_oss(*) = ?");
 
@@ -91,15 +98,13 @@ int roar_cdriver_oss(struct roar_vio_calls * calls, char * name, char * dev, str
  if ( roar_vio_open_file(calls, dev, tmp, 0644) == -1 )
   return -1;
 
- if ( roar_vio_ctl(calls, ROAR_VIO_CTL_GET_FH, &fh) == -1 ) {
-  _err();
- }
-
 // channels:
 #ifdef SNDCTL_DSP_CHANNELS
  tmp = info->channels;
 
- if ( ioctl(fh, SNDCTL_DSP_CHANNELS, &tmp) == -1 ) {
+ ctl.cmd  = SNDCTL_DSP_CHANNELS;
+
+ if ( roar_vio_ctl(calls, ROAR_VIO_CTL_SYSIO_IOCTL, &ctl) == -1 ) {
   _err();
  }
 
@@ -113,7 +118,9 @@ int roar_cdriver_oss(struct roar_vio_calls * calls, char * name, char * dev, str
   default: _err();
  }
 
- if ( ioctl(fh, SNDCTL_DSP_STEREO, &tmp) == -1 ) {
+ ctl.cmd = SNDCTL_DSP_STEREO;
+
+ if ( roar_vio_ctl(calls, ROAR_VIO_CTL_SYSIO_IOCTL, &ctl) == -1 ) {
   _err();
  }
 #endif
@@ -149,10 +156,12 @@ int roar_cdriver_oss(struct roar_vio_calls * calls, char * name, char * dev, str
 
  ctmp = tmp;
 #ifdef SNDCTL_DSP_SETFMT
- if ( ioctl(fh, SNDCTL_DSP_SETFMT, &tmp) == -1 ) {
+ ctl.cmd = SNDCTL_DSP_SETFMT;
 #else
- if ( ioctl(fh, SNDCTL_DSP_SAMPLESIZE, &tmp) == -1 ) {
+ ctl.cmd = SNDCTL_DSP_SAMPLESIZE;
 #endif
+
+ if ( roar_vio_ctl(calls, ROAR_VIO_CTL_SYSIO_IOCTL, &ctl) == -1 ) {
   _err();
  }
 
@@ -163,7 +172,8 @@ int roar_cdriver_oss(struct roar_vio_calls * calls, char * name, char * dev, str
 // rate:
  tmp = info->rate;
 
- if ( ioctl(fh, SNDCTL_DSP_SPEED, &tmp) == -1 ) {
+ ctl.cmd = SNDCTL_DSP_SPEED;
+ if ( roar_vio_ctl(calls, ROAR_VIO_CTL_SYSIO_IOCTL, &ctl) == -1 ) {
   _err();
  }
 
@@ -172,7 +182,7 @@ int roar_cdriver_oss(struct roar_vio_calls * calls, char * name, char * dev, str
  }
 
 #ifdef SNDCTL_DSP_SETFRAGMENT
- roar_cdriver_oss_try_buf_setups(fh);
+ roar_cdriver_oss_try_buf_setups(calls);
 #endif
 
  return 0;
