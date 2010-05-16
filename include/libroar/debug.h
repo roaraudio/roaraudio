@@ -52,12 +52,15 @@
 #define ROAR_DEBUG_MODE_SYSLOG   2
 
 #if 1
-#define roar_debug_warn_sysio(f,n,i) roar_debug_warn_sysio_real((f),(n),(i))
+#define roar_debug_warn_sysio(f,n,i)     roar_debug_warn_sysio_real((f),(n),(i))
+#define roar_debug_warn_obsolete(f,n,i)  roar_debug_warn_obsolete_real((f),(n),(i))
 #else
 #define roar_debug_warn_sysio(f,n,i)
+#define roar_debug_warn_obsolete(f,n,i)
 #endif
 
-void roar_debug_warn_sysio_real(char * func, char * newfunc, char * info);
+void roar_debug_warn_sysio_real   (char * func, char * newfunc, char * info);
+void roar_debug_warn_obsolete_real(char * func, char * newfunc, char * info);
 
 // Error handle:
 struct roar_vio_calls; // will be declared later in vio.h
