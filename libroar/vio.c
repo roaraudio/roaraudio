@@ -417,7 +417,7 @@ int     roar_vio_basic_ctl     (struct roar_vio_calls * vio, int cmd, void * dat
      return 0; // nothing to do.
     }
 
-    return shutdown(roar_vio_get_fh(vio), tmp);
+    return ROAR_SHUTDOWN(roar_vio_get_fh(vio), tmp);
    break;
   case ROAR_VIO_CTL_SYSIO_IOCTL:
     sysioctl = data;
