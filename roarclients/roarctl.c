@@ -236,7 +236,9 @@ void list_clients (struct roar_connection * con) {
    fprintf(stderr, "Error: can not get client info\n");
    continue;
   }
-  printf("Client name           : %s\n", c.name);
+
+  if ( c.name[0] != '\0' )
+   printf("Client name           : %s\n", c.name);
 
   if ( roar_nnode_get_socktype(&(c.nnode)) != ROAR_SOCKET_TYPE_UNKNOWN ) {
    if ( roar_nnode_to_str(&(c.nnode), tmp, 80) == 0 ) {
@@ -244,10 +246,12 @@ void list_clients (struct roar_connection * con) {
    }
   }
 
-  if ( self_id != -1 && roar_nnode_cmp(&(self_client.nnode), &(c.nnode)) == 0 ) {
-   printf("Client PID            : %i(%s)\n", c.pid, proc_name(c.pid));
-  } else { 
-   printf("Client PID            : %i\n", c.pid);
+  if ( c.pid != -1 ) {
+   if ( self_id != -1 && roar_nnode_cmp(&(self_client.nnode), &(c.nnode)) == 0 ) {
+    printf("Client PID            : %i(%s)\n", c.pid, proc_name(c.pid));
+   } else { 
+    printf("Client PID            : %i\n", c.pid);
+   }
   }
   if ( c.uid != -1 ) {
 #ifdef _POSIX_USERS
