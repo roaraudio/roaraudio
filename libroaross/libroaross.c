@@ -327,7 +327,7 @@ static struct session * _open_session (char * server, char * name) {
  ROAR_DBG("_open_session(server='%s', name='%s'): _session.refc=%i", server, name, _session.refc);
 
  if ( new_session ) {
-  ses = malloc(sizeof(struct session));
+  ses = roar_mm_malloc(sizeof(struct session));
   if ( ses == NULL )
    return NULL;
 
@@ -344,7 +344,7 @@ static struct session * _open_session (char * server, char * name) {
 
   if ( roar_simple_connect(&(ses->con), server, name) == -1 ) {
    if ( new_session )
-    free(ses);
+    roar_mm_free(ses);
 
    return NULL;
   }
@@ -376,7 +376,7 @@ static void _close_session(struct session * session) {
  }
 
  if ( session != &_session )
-  free(session);
+  roar_mm_free(session);
 }
 
 static struct handle * _open_handle(struct session * session) {
