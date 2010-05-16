@@ -274,8 +274,12 @@ int     roar_vio_simple_stream (struct roar_vio_calls * calls, int rate, int cha
  if ( calls == NULL )
   return -1;
 
- if ( (fh = roar_simple_stream(rate, channels, bits, codec, server, dir, name)) == -1 )
+ roar_libroar_nowarn();
+ if ( (fh = roar_simple_stream(rate, channels, bits, codec, server, dir, name)) == -1 ) {
+  roar_libroar_warn();
   return -1;
+ }
+ roar_libroar_warn();
 
  return roar_vio_open_fh_socket(calls, fh);
 }
@@ -293,8 +297,12 @@ int     roar_vio_simple_new_stream_obj (struct roar_vio_calls * calls,
  if ( s == NULL )
   s = &stream;
 
- if ( (fh = roar_simple_new_stream_obj(con, s, rate, channels, bits, codec, dir)) == -1 )
+ roar_libroar_nowarn();
+ if ( (fh = roar_simple_new_stream_obj(con, s, rate, channels, bits, codec, dir)) == -1 ) {
+  roar_libroar_warn();
   return -1;
+ }
+ roar_libroar_warn();
 
  return roar_vio_open_fh_socket(calls, fh);
 }
