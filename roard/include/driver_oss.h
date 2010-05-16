@@ -32,10 +32,10 @@ struct driver_oss {
  int blocks;
  int blocksize;
  struct roar_audio_info info;
- int need_reopen;
  int need_config;
  struct roar_stream_server * stream;
  int ssid;
+ int fh_savemode;
 };
 
 int driver_oss_open(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh, struct roar_stream_server * sstream);

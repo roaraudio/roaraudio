@@ -49,7 +49,7 @@ struct roar_driver g_driver[] = {
 #ifndef ROAR_DEFAULT_OSS_DEV
 #define ROAR_DEFAULT_OSS_DEV "no default device"
 #endif
- { "oss", "Open Sound System", ROAR_DEFAULT_OSS_DEV, DRV_FLAG_NONE, ROAR_SUBSYS_WAVEFORM,
+ { "oss", "Open Sound System", ROAR_DEFAULT_OSS_DEV, DRV_FLAG_FHSEC, ROAR_SUBSYS_WAVEFORM,
    NULL, NULL, driver_oss_open},
 #endif
 #ifdef ROAR_HAVE_LIBAO

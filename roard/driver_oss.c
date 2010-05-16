@@ -343,6 +343,12 @@ int driver_oss_open(struct roar_vio_calls * inst, char * device, struct roar_aud
  self->ssid = -1;
  self->fh   = fh;
 
+ if ( fh != -1 ) {
+  self->fh_savemode = 1;
+ } else {
+  self->fh_savemode = 0;
+ }
+
  if ( device != NULL )
   self->device = strdup(device);
 
@@ -366,6 +372,11 @@ int driver_oss_open(struct roar_vio_calls * inst, char * device, struct roar_aud
 #undef er
 
 int     driver_oss_reopen_device(struct driver_oss * self) {
+
+ // we need to reject in fh save mode.
+ if ( self->fh_savemode )
+  return -1;
+
 #ifdef SNDCTL_DSP_SYNC
  ioctl(self->fh, SNDCTL_DSP_SYNC, NULL);
 #endif
