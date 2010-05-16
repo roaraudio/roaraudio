@@ -66,7 +66,13 @@ FILE * open_http (char * file) {
 #endif
 }
 
-int update_stream (struct roar_connection * con, struct roar_stream * s, int * out, OggVorbis_File * vf, char * file, struct roar_audio_info * info, struct roar_vio_calls * vclt) {
+int update_stream (struct roar_connection * con,
+                   struct roar_stream     * s,
+                   struct roar_vio_calls  * vio,
+                   OggVorbis_File         * vf,
+                   char                   * file,
+                   struct roar_audio_info * info,
+                   struct roar_vio_calls  * vclt) {
  vorbis_info *vi = ov_info(vf, -1);
  int    bits     = 16;
  int    codec    = ROAR_CODEC_DEFAULT;
@@ -74,7 +80,8 @@ int update_stream (struct roar_connection * con, struct roar_stream * s, int * o
  char key[ROAR_META_MAX_NAMELEN], value[LIBROAR_BUFFER_MSGDATA] = {0};
  int j, h = 0;
  struct roar_meta   meta;
- int need_new_stream = 0;
+ static int need_new_stream = 1;
+ int need_close = 0;
  int meta_ok;
 
  fprintf(stderr, "\n");
@@ -83,25 +90,27 @@ int update_stream (struct roar_connection * con, struct roar_stream * s, int * o
   roar_vio_printf(vclt, "AUDIOINFO=rate:%iHz, channels:%i\n", vi->rate, vi->channels);
  }
 
- if ( *out == -1 ) {
-  need_new_stream = 1;
- } else if ( info->rate != (uint16_t)vi->rate || info->channels != (uint16_t)vi->channels ) {
-  need_new_stream = 1;
+ if ( !need_new_stream ) {
+  if ( info->rate != (uint16_t)vi->rate || info->channels != (uint16_t)vi->channels ) {
+   need_close      = 1;
+   need_new_stream = 1;
+  }
  }
 
  if ( need_new_stream ) {
-  if ( *out != -1 )
-  close(*out);
+  if ( need_close )
+   roar_vio_close(vio);
 
   fprintf(stderr, "Audio: %i channel, %liHz\n\n", vi->channels, vi->rate);
 
   info->rate     = vi->rate;
   info->channels = vi->channels;
 
-  if ( (*out = roar_simple_new_stream_obj(con, s, vi->rate, vi->channels, bits, codec, ROAR_DIR_PLAY)) == -1 ) {
+  if ( roar_vio_simple_new_stream_obj(vio, con, s, vi->rate, vi->channels, bits, codec, ROAR_DIR_PLAY) == -1 ) {
    roar_disconnect(con);
    return -1;
   }
+  need_new_stream = 0;
  }
 
 
@@ -191,9 +200,9 @@ int main (int argc, char * argv[]) {
  char * k;
  int    i;
  FILE * in;
- int    out = -1;
  struct roar_connection con;
  struct roar_stream     s;
+ struct roar_vio_calls  vio;
  OggVorbis_File vf;
  int eof=0;
  int current_section = -1;
@@ -248,7 +257,7 @@ int main (int argc, char * argv[]) {
   _setmode(_fileno(in), _O_BINARY);
 #endif
 
- if(ov_open(in, &vf, NULL, 0) < 0) {
+ if( ov_open(in, &vf, NULL, 0) < 0 ) {
   fprintf(stderr,"Input does not appear to be an Ogg bitstream.\n");
   roar_disconnect(&con);
   return 1;
@@ -270,29 +279,26 @@ int main (int argc, char * argv[]) {
   long ret = ov_read(&vf, pcmout, sizeof(pcmout), 0, 2, 1, &current_section);
 
   if ( last_section != current_section )
-   if ( update_stream(&con, &s, &out, &vf, file, &info, vcltfile == NULL ? NULL : &vclt) == -1 )
+   if ( update_stream(&con, &s, &vio, &vf, file, &info, vcltfile == NULL ? NULL : &vclt) == -1 )
     return 1;
 
   last_section = current_section;
 
   if (ret == 0) {
    /* EOF */
-   eof=1;
+   eof = 1;
   } else if (ret < 0) {
    /* error in the stream.  Not a problem, just reporting it in
       case we (the app) cares.  In this case, we don't. */
   } else {
-     /* we don't bother dealing with sample rate changes, etc, but
-        you'll have to */
-//    write(out, pcmout, ret);
-   roar_stream_send_data(&con, &s, pcmout, ret);
+   roar_vio_write(&vio, pcmout, ret);
   }
  }
 
-  ov_clear(&vf);
+ ov_clear(&vf);
 
 // fclose(in);
- close(out);
+ roar_vio_close(&vio);
  roar_disconnect(&con);
 
  if ( vcltfile != NULL ) {
