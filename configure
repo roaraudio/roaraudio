@@ -920,7 +920,7 @@ fi
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.257 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.258 $ of RoarAudio
  */
 
 EOF
@@ -1058,6 +1058,7 @@ test_lib_defmake ROAR_HAVE_LIBFISHSOUND  roarfish     libfishsound  fishsound  -
 test_lib_defmake ROAR_HAVE_LIBSAMPLERATE %            libsamplerate samplerate -- samplerate.h
 test_lib_defmake ROAR_HAVE_LIBSHOUT      %            libshout      shout      -- shout/shout.h
 test_lib_defmake ROAR_HAVE_LIBPULSE      libroarpulse libpulse      pulse      -- pulse/pulseaudio.h pulse/simple.h
+test_lib_defmake ROAR_HAVE_LIBPULSESIMPLE %           libpulse-simple pulse-simple -- pulse/simple.h
 test_lib_defmake ROAR_HAVE_LIBY2         libroaryiff  libyiff       Y2         -- Y2/Y.h Y2/Ylib.h
 test_lib_defmake ROAR_HAVE_LIBARTSC      %            libartsc      artsc      -- kde/artsc/artsc.h
 test_lib_defmake ROAR_HAVE_LIBOSSAUDIO   %            libossaudio   ossaudio   -- sys/ioctl.h
