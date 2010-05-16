@@ -105,8 +105,8 @@ void print_driverlist (void) {
  int i;
  char subsys[7] = "      ";
 
- printf("  Driver   Flag Subsys - Description (devices)\n");
- printf("------------------------------------------------------\n");
+ printf("  Driver      Flag Subsys - Description (devices)\n");
+ printf("---------------------------------------------------------\n");
 
  for (i = 0; g_driver[i].name != NULL; i++) {
   strncpy(subsys, "      ", 6);
@@ -124,7 +124,7 @@ void print_driverlist (void) {
   if ( g_driver[i].subsystems & ROAR_SUBSYS_COMPLEX )
    subsys[5] = 'X';
 
-  printf("  %-9s %c%c%c %6s - %s (devices: %s)\n", g_driver[i].name,
+  printf("  %-12s %c%c%c %6s - %s (devices: %s)\n", g_driver[i].name,
                 g_driver[i].flags & DRV_FLAG_FHSEC                                                         ? 's' : ' ',
                 g_driver[i].open     != NULL || (g_driver[i].open == NULL && g_driver[i].vio_init == NULL) ? 'S' : ' ',
                 g_driver[i].vio_init != NULL || (g_driver[i].open == NULL && g_driver[i].vio_init == NULL) ? 'V' : ' ',
