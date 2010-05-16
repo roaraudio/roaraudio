@@ -4,7 +4,7 @@ include ../Makefile.inc
 SLIB=libroareio$(SHARED_SUFFIX)
 
 TARGETS=$(SLIB) libroareio.a
-DRIVER=driver.o driver_oss.o esdfw.a
+DRIVER=driver.o driver_oss.o driver_roar.o esdfw.a
 FF=ff_ssdp.o
 OBJS=libroareio.o $(DRIVER) $(FF) httpd.o
 
