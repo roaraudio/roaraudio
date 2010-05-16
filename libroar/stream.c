@@ -263,8 +263,12 @@ int roar_stream_passfh  (struct roar_connection * con, struct roar_stream * s, i
 
  ROAR_DBG("roar_stream_passfh(con=%p{...}, s={.id=%i,...}, fh=%i) = ?", con, s->id, fh);
 
- if ( (confh = roar_get_connection_fh(con)) == -1 )
+ roar_libroar_nowarn();
+ if ( (confh = roar_get_connection_fh(con)) == -1 ) {
+  roar_libroar_warn();
   return -1;
+ }
+ roar_libroar_warn();
 
  if ( roar_send_message(con, &m, NULL) == -1 ) {
   ROAR_DBG("roar_stream_passfh(con=%p{...}, s={.id=%i,...}, fh=%i) = -1 // can not send message", con, s->id, fh);
@@ -338,11 +342,14 @@ int roar_stream_add_data (struct roar_connection * con, struct roar_stream * s, 
 }
 
 int roar_stream_send_data (struct roar_connection * con, struct roar_stream * s, char * data, size_t len) {
- if ( ! s )
+
+ roar_debug_warn_obsolete("roar_stream_send_data", "roar_vio_write", NULL);
+
+ if ( s == NULL )
   return -1;
 
  if ( s->fh == -1 ) {
-  if ( !con )
+  if ( con == NULL )
    return -1;
 
   if ( roar_stream_add_data(con, s, data, len) == -1 )

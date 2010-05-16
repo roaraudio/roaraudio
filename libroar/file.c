@@ -105,6 +105,8 @@ ssize_t roar_file_send_raw (int out, int in) {
  }
 #endif
 
+ roar_debug_warn_obsolete("roar_file_send_raw", "roar_vio_copy_data", NULL);
+
 #ifdef ROAR_HAVE_LINUX_SENDFILE
  while ((ret = sendfile(out, in, NULL, BUFMAX)) > 0)
   r += ret;
@@ -267,11 +269,14 @@ ssize_t roar_file_play_full  (struct roar_connection * con, char * file, int exe
    return -1;
   }
 
+  roar_libroar_nowarn();
   if ( (out = roar_get_connection_fh(con)) == -1 ) {
    ROAR_ERR("roar_file_play_full(*): Can not get socket of server connection for exec data transmition.");
    close(in);
+   roar_libroar_warn();
    return -1;
   }
+  roar_libroar_warn();
 
   ROAR_SHUTDOWN(out, SHUT_RD);
  } else {

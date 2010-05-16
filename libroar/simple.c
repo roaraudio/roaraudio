@@ -92,10 +92,13 @@ int roar_simple_stream_obj  (struct roar_stream * s, int rate, int channels, int
   return -1;
  }
 
+ roar_libroar_nowarn();
  if ( (ret = roar_get_connection_fh(&con)) == -1 ) {
+  roar_libroar_warn();
   roar_disconnect(&con);
   return -1;
  }
+ roar_libroar_warn();
 
  if ( dir == ROAR_DIR_PLAY ) {
   ROAR_SHUTDOWN(ret, SHUT_RD);
@@ -127,7 +130,15 @@ int roar_simple_new_stream_attachexeced_obj (struct roar_connection * con, struc
 
 int roar_simple_new_stream (struct roar_connection * con, int rate, int channels, int bits, int codec, int dir) {
  struct roar_stream     s;
- return roar_simple_new_stream_obj(con, &s, rate, channels, bits, codec, dir);
+ int ret;
+
+ roar_debug_warn_sysio("roar_simple_new_stream", "roar_vio_simple_new_stream_obj", NULL);
+
+ roar_libroar_nowarn();
+ ret = roar_simple_new_stream_obj(con, &s, rate, channels, bits, codec, dir);
+ roar_libroar_warn();
+
+ return ret;
 }
 
 int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream * s, int rate, int channels, int bits, int codec, int dir) {
@@ -169,9 +180,12 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
  }
 
 #ifdef ROAR_HAVE_BSDSOCKETS
+ roar_libroar_nowarn();
  if ( getsockname(roar_get_connection_fh(con), (struct sockaddr *)&socket_addr, &len) == -1 ) {
+  roar_libroar_warn();
   return -1;
  }
+ roar_libroar_warn();
 #else
  return -1;
 #endif
