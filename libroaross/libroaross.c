@@ -232,6 +232,9 @@ static struct devices {
  {NULL, HT_NONE, 0, NULL},
 };
 
+
+static int _update_nonblock (struct handle * handle);
+
 static void _init_os (void) {
  memset(&_os, 0, sizeof(_os));
 
@@ -655,6 +658,41 @@ static int _open_stream (struct handle * handle) {
  handle->stream_opened++;
 
  _mix_settings.sid.pcm = roar_stream_get_id(&(handle->stream));
+
+ _update_nonblock(handle);
+
+ return 0;
+}
+
+// -------------------------------------
+// function to update O_NONBLOCK:
+// -------------------------------------
+
+static int _update_nonblock (struct handle * handle) {
+ int opened = 0;
+ int state  = handle->sysio_flags & O_NONBLOCK ? ROAR_SOCKET_NONBLOCK : ROAR_SOCKET_BLOCK;
+
+ switch (handle->type) {
+  case HT_NONE:
+  case HT_STATIC:
+  case HT_MIXER:
+    // we can ignore setting of nonblock flag here.
+    return 0;
+   break;
+  case HT_VIO:
+    opened = 1;
+   break;
+  case HT_STREAM:
+  case HT_WAVEFORM:
+  case HT_MIDI:
+  case HT_DMX:
+    opened = handle->stream_opened;
+   break;
+ }
+
+ if ( opened ) {
+  return roar_vio_nonblock(&(handle->stream_vio), state);
+ }
 
  return 0;
 }
@@ -1645,8 +1683,18 @@ int fcntl(int fd, int cmd, ...) {
   case F_SETFL:
     diff  = (int)argl ^ pointer->handle->sysio_flags;
     diff &= (int)~(int)(O_DIRECT|O_APPEND|O_LARGEFILE|O_NOATIME|O_NOCTTY|O_TRUNC);
+
+    if ( diff & O_NONBLOCK ) {
+     diff -= O_NONBLOCK;
+     pointer->handle->sysio_flags ^= O_NONBLOCK;
+     if ( _update_nonblock(pointer->handle) == -1 ) {
+      pointer->handle->sysio_flags ^= O_NONBLOCK;
+      return -1;
+     }
+    }
+
     if ( diff == 0 ) { // only flags changed we ignore anyway.
-     pointer->handle->sysio_flags = (int)argl;
+     pointer->handle->sysio_flags  = (int)argl;
      ret = 0;
     } else {
      errno = EINVAL;
