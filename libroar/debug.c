@@ -42,7 +42,25 @@ static struct roar_vio_calls * roar_debug_stderr_vio  = NULL;
 void roar_debug_warn_sysio_real(char * func, char * newfunc, char * info) {
  struct roar_libroar_config * config = roar_libroar_get_config();
 
+ if ( !roar_libroar_iswarn(config) )
+  return;
+
  if ( config->warnings.sysio == ROAR_WARNING_ALWAYS ) {
+  if ( newfunc == NULL ) {
+   ROAR_WARN("%s(*): This function is obsolete. %s", func, info == NULL ? "" : info);
+  } else {
+   ROAR_WARN("%s(*): This function is obsolete. Please use %s(...). %s", func, newfunc, info == NULL ? "" : info);
+  }
+ }
+}
+
+void roar_debug_warn_obsolete_real(char * func, char * newfunc, char * info) {
+ struct roar_libroar_config * config = roar_libroar_get_config();
+
+ if ( !roar_libroar_iswarn(config) )
+  return;
+
+ if ( config->warnings.obsolete == ROAR_WARNING_ALWAYS ) {
   if ( newfunc == NULL ) {
    ROAR_WARN("%s(*): This function is obsolete. %s", func, info == NULL ? "" : info);
   } else {
