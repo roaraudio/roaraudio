@@ -274,6 +274,20 @@ int roar_disconnect (struct roar_connection * con) {
  return 0;
 }
 
+int roar_noop         (struct roar_connection * con) {
+ struct roar_message mes;
+
+ if ( con == NULL ) {
+  return -1;
+ }
+
+ memset(&mes, 0, sizeof(mes));
+
+ mes.cmd = ROAR_CMD_NOOP;
+
+ return roar_req(con, &mes, NULL);
+}
+
 int roar_identify   (struct roar_connection * con, char * name) {
  struct roar_message mes;
  pid_t pid;

@@ -65,15 +65,17 @@ struct roar_connection {
 };
 
 
-int roar_connect_raw (char * server);
+int roar_connect_raw  (char * server);
 
-int roar_connect    (struct roar_connection * con, char * server);
-int roar_connect_fh (struct roar_connection * con, int fh);
+int roar_connect      (struct roar_connection * con, char * server);
+int roar_connect_fh   (struct roar_connection * con, int fh);
 int roar_get_connection_fh  (struct roar_connection * con);
 int roar_get_connection_vio (struct roar_connection * con, struct roar_vio_calls * vio);
-int roar_disconnect (struct roar_connection * con);
+int roar_disconnect   (struct roar_connection * con);
 
-int roar_identify   (struct roar_connection * con, char * name);
+int roar_noop         (struct roar_connection * con);
+
+int roar_identify     (struct roar_connection * con, char * name);
 
 int roar_send_message (struct roar_connection * con, struct roar_message * mes, char *  data);
 int roar_recv_message (struct roar_connection * con, struct roar_message * mes, char ** data);
@@ -83,8 +85,7 @@ int roar_vsend_message(struct roar_vio_calls  * vio, struct roar_message * mes, 
 int roar_vrecv_message(struct roar_vio_calls  * vio, struct roar_message * mes, char ** data);
 int roar_vreq         (struct roar_vio_calls  * vio, struct roar_message * mes, char ** data);
 
-int roar_debug_message_print (struct roar_message * mes);
-
+int roar_debug_message_print    (struct roar_message * mes);
 int roar_debug_audio_info_print (struct roar_audio_info * info);
 
 #endif
