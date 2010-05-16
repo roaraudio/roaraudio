@@ -51,27 +51,25 @@ pa_simple* pa_simple_new(
     const pa_buffer_attr *attr,         /**< Buffering attributes, or NULL for default */
     int *error                          /**< A pointer where the error code is stored when the routine returns NULL. It is OK to pass NULL here. */
     ) {
- struct roarpulse_simple * s = roar_mm_malloc(sizeof(struct roarpulse_simple));
+ struct roarpulse_simple * s;
  struct roar_audio_info info;
  int roar_dir;
  struct roar_meta meta;
-
- if ( !s )
-  return NULL;
 
  if ( dir == PA_STREAM_PLAYBACK ) {
   roar_dir = ROAR_DIR_PLAY;
  } else if ( dir == PA_STREAM_RECORD ) {
   roar_dir = ROAR_DIR_RECORD;
  } else {
-  roar_mm_free(s);
   return NULL;
  }
 
  if ( roar_pa_sspec2auinfo(&info, ss) == -1 ) {
-  roar_mm_free(s);
   return NULL;
  }
+
+ if ( (s = roar_mm_malloc(sizeof(struct roarpulse_simple))) == NULL )
+  return NULL;
 
  server = roar_pa_find_server((char*)server);
 
@@ -88,7 +86,7 @@ pa_simple* pa_simple_new(
   return NULL;
  }
 
- if ( stream_name && stream_name[0] != 0 ) {
+ if ( stream_name != NULL && stream_name[0] != 0 ) {
   meta.value  = (char*)stream_name;
   meta.key[0] = 0;
   meta.type   = ROAR_META_TYPE_DESCRIPTION;
@@ -102,7 +100,8 @@ pa_simple* pa_simple_new(
 /** Close and free the connection to the server. The connection objects becomes invalid when this is called. */
 void pa_simple_free(pa_simple *s) {
  struct roarpulse_simple * ss = (struct roarpulse_simple*) s;
- if ( !s )
+
+ if ( s == NULL )
   return;
 
  roar_vio_close(&(ss->vio));
@@ -114,7 +113,8 @@ void pa_simple_free(pa_simple *s) {
 /** Write some data to the server */
 int pa_simple_write(pa_simple *s, const void*data, size_t length, int *error) {
  struct roarpulse_simple * ss = (struct roarpulse_simple*) s;
- if ( !s )
+
+ if ( s == NULL )
   return -1;
 
  return roar_vio_write(&(ss->vio), (char*) data, length);
@@ -123,10 +123,11 @@ int pa_simple_write(pa_simple *s, const void*data, size_t length, int *error) {
 /** Wait until all data already written is played by the daemon */
 int pa_simple_drain(pa_simple *s, int *error) {
 // struct roarpulse_simple * ss = (struct roarpulse_simple*) s;
- if ( !s )
+
+ if ( s == NULL )
   return -1;
 
- pa_simple_flush(s, NULL);
+ pa_simple_flush(s, error);
 
  return -1;
 }
@@ -134,7 +135,8 @@ int pa_simple_drain(pa_simple *s, int *error) {
 /** Read some data from the server */
 int pa_simple_read(pa_simple *s, void*data, size_t length, int *error) {
  struct roarpulse_simple * ss = (struct roarpulse_simple*) s;
- if ( !s )
+
+ if ( s == NULL )
   return -1;
 
  return roar_vio_read(&(ss->vio), data, length);
@@ -143,7 +145,8 @@ int pa_simple_read(pa_simple *s, void*data, size_t length, int *error) {
 /** Return the playback latency. \since 0.5 */
 pa_usec_t pa_simple_get_latency(pa_simple *s, int *error) {
  struct roarpulse_simple * ss = (struct roarpulse_simple*) s;
- if ( !s )
+
+ if ( s == NULL )
   return -1;
 
  return -1;
@@ -152,14 +155,11 @@ pa_usec_t pa_simple_get_latency(pa_simple *s, int *error) {
 /** Flush the playback buffer. \since 0.5 */
 int pa_simple_flush(pa_simple *s, int *error) {
  struct roarpulse_simple * ss = (struct roarpulse_simple*) s;
- if ( !s )
+
+ if ( s == NULL )
   return -1;
 
-#ifdef ROAR_FDATASYNC
  return roar_vio_sync(&(ss->vio));
-#else
- return 0;
-#endif
 }
 
 //ll
