@@ -69,8 +69,15 @@ int emul_rsound_on_connect  (int fh, struct roard_listen * lsock) {
    return -1;
   }
 
+  // LATENCY:
+  // we currently don't know what we need to set here.
   buf.i[0] = ROAR_HOST2NET32(0);
-  buf.i[1] = ROAR_HOST2NET32(512);
+
+  // block size used by roard.
+  buf.i[1] = ROAR_HOST2NET32(ROAR_OUTPUT_BUFFER_SAMPLES * roar_info2framesize(g_sa) / 8);
+
+  // Magic zeros to enable protocol handling.
+  // (RSD_CONN_PROTO)
   buf.i[2] = ROAR_HOST2NET32(0);
   buf.i[3] = ROAR_HOST2NET32(0);
 
@@ -254,6 +261,7 @@ int emul_rsound_check_client(int client, struct roar_vio_calls * vio) {
   // This is quit.
   return clients_delete(client);
  } else {
+  // Unknown command, kill the client.
   return clients_delete(client);
  }
 
