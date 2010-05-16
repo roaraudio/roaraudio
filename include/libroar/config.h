@@ -86,6 +86,7 @@ struct roar_libroar_config {
  char * server;
  struct {
   int sysio;
+  int obsolete;
  } warnings;
  struct {
   size_t num;
@@ -96,6 +97,7 @@ struct roar_libroar_config {
  struct {
   char * display;
  } x11;
+ size_t nowarncounter;
 };
 
 struct roar_libroar_config * roar_libroar_get_config_ptr(void);
@@ -107,6 +109,10 @@ struct roar_libroar_config_codec * roar_libroar_config_codec_get(int codec, int 
 
 int    roar_libroar_set_server(char * server);
 char * roar_libroar_get_server(void);
+
+void   roar_libroar_nowarn(void);
+void   roar_libroar_warn(void);
+#define roar_libroar_iswarn(cfg) (((cfg) == NULL ? roar_libroar_get_config_ptr() : (cfg))->nowarncounter ? 0 : 1)
 
 #endif
 

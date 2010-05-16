@@ -224,6 +224,11 @@ int    roar_libroar_config_parse(char * txt, char * delm) {
   } else if ( !strcmp(k, "warning") || !strcmp(k, "warn") ) {
    if ( !strcmp(v, "sysio") ) {
     config->warnings.sysio = ROAR_WARNING_ALWAYS;
+   } else if ( !strcmp(v, "obsolete") ) {
+    config->warnings.obsolete = ROAR_WARNING_ALWAYS;
+   } else if ( !strcmp(v, "all") ) {
+    config->warnings.sysio    = ROAR_WARNING_ALWAYS;
+    config->warnings.obsolete = ROAR_WARNING_ALWAYS;
    } else {
     ROAR_WARN("roar_libroar_config_parse(*): Unknown warning option: %s", v);
    }
@@ -330,6 +335,21 @@ int    roar_libroar_set_server(char * server) {
 
 char * roar_libroar_get_server(void) {
  return roar_libroar_get_config_ptr()->server;
+}
+
+void   roar_libroar_nowarn(void) {
+ roar_libroar_get_config_ptr()->nowarncounter++;
+}
+
+void   roar_libroar_warn(void) {
+ struct roar_libroar_config * cfg = roar_libroar_get_config_ptr();
+
+ if ( cfg->nowarncounter == 0 ) {
+  ROAR_WARN("roar_libroar_warn(): Re-Enabling already enabled warnings! (Application error?)");
+  return;
+ }
+
+ cfg->nowarncounter--;
 }
 
 //ll
