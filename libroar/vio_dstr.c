@@ -335,7 +335,7 @@ int     roar_vio_open_dstr    (struct roar_vio_calls * calls, char * dstr, struc
  return roar_vio_open_dstr_vio(calls, dstr, def, dnum, NULL);
 }
 
-#define _ret(x) free(dstr); return (x)
+#define _ret(x) roar_mm_free(dstr); return (x)
 
 int     roar_vio_open_dstr_vio(struct roar_vio_calls * calls,
                                char * dstr, struct roar_vio_defaults * def, int dnum,
@@ -358,7 +358,7 @@ int     roar_vio_open_dstr_vio(struct roar_vio_calls * calls,
  if ( dnum != 0 && def == NULL )
   return -1;
 
- if ( (dstr = strdup(dstr)) == NULL )
+ if ( (dstr = roar_mm_strdup(dstr)) == NULL )
   return -1;
 
  memset(chain, 0, sizeof(chain));

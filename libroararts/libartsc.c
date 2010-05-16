@@ -39,7 +39,7 @@
 #include <roaraudio.h>
 #include <kde/artsc/artsc.h>
 
-struct roar_connection _libroarartsc_connection[1];
+static struct roar_connection _libroarartsc_connection[1];
 
 struct _libroarartsc_stream {
  struct roar_stream stream;
@@ -96,7 +96,7 @@ const char *arts_error_text(int errorcode) {
  * @return a stream
  */
 arts_stream_t arts_play_stream(int rate, int bits, int channels, const char *name) {
- struct _libroarartsc_stream * s = malloc(sizeof(struct _libroarartsc_stream));
+ struct _libroarartsc_stream * s = roar_mm_malloc(sizeof(struct _libroarartsc_stream));
  struct roar_meta meta;
  struct roar_stream_info info;
 
@@ -105,7 +105,7 @@ arts_stream_t arts_play_stream(int rate, int bits, int channels, const char *nam
 
  if ( (s->fh = roar_simple_new_stream_obj(_libroarartsc_connection, &(s->stream),
                                  rate, channels, bits, ROAR_CODEC_DEFAULT, ROAR_DIR_PLAY)) == -1 ) {
-  free(s);
+  roar_mm_free(s);
   return NULL;
  }
 
@@ -117,7 +117,7 @@ arts_stream_t arts_play_stream(int rate, int bits, int channels, const char *nam
   s->block_size = info.block_size;
  } else {
   close(s->fh);
-  free(s);
+  roar_mm_free(s);
   return NULL;
  }
 
@@ -144,7 +144,7 @@ arts_stream_t arts_play_stream(int rate, int bits, int channels, const char *nam
  * @return a stream
  */
 arts_stream_t arts_record_stream(int rate, int bits, int channels, const char *name) {
- struct _libroarartsc_stream * s = malloc(sizeof(struct _libroarartsc_stream));
+ struct _libroarartsc_stream * s = roar_mm_malloc(sizeof(struct _libroarartsc_stream));
  struct roar_meta meta;
  struct roar_stream_info info;
 
@@ -153,7 +153,7 @@ arts_stream_t arts_record_stream(int rate, int bits, int channels, const char *n
 
  if ( (s->fh = roar_simple_new_stream_obj(_libroarartsc_connection, &(s->stream),
                                  rate, channels, bits, ROAR_CODEC_DEFAULT, ROAR_DIR_RECORD)) == -1 ) {
-  free(s);
+  roar_mm_free(s);
   return NULL;
  }
 
@@ -165,7 +165,7 @@ arts_stream_t arts_record_stream(int rate, int bits, int channels, const char *n
   s->block_size = info.block_size;
  } else {
   close(s->fh);
-  free(s);
+  roar_mm_free(s);
   return NULL;
  }
 
@@ -190,7 +190,7 @@ void arts_close_stream(arts_stream_t stream) {
 
  close(s->fh);
 
- free(stream);
+ roar_mm_free(stream);
 }
 
 /**

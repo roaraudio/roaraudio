@@ -87,7 +87,7 @@ struct sio_hdl * sio_open(const char * name, unsigned mode, int nbio_flag) {
  struct sio_hdl * hdl = NULL;
  int is_midi = 0;
 
- if ( (hdl = malloc(sizeof(struct sio_hdl))) == NULL )
+ if ( (hdl = roar_mm_malloc(sizeof(struct sio_hdl))) == NULL )
   return NULL;
 
  memset(hdl, 0, sizeof(struct sio_hdl));
@@ -112,7 +112,7 @@ struct sio_hdl * sio_open(const char * name, unsigned mode, int nbio_flag) {
 
   // illigal:
   default:
-    free(hdl);
+    roar_mm_free(hdl);
     return NULL;
  }
 
@@ -127,7 +127,7 @@ struct sio_hdl * sio_open(const char * name, unsigned mode, int nbio_flag) {
  name = sndio_to_roar_names((char*) name);
 
  if ( roar_simple_connect(&(hdl->con), (char*) name, "libroarsndio") == -1 ) {
-  free(hdl);
+  roar_mm_free(hdl);
   return NULL;
  }
 
@@ -162,7 +162,7 @@ void   sio_close  (struct sio_hdl * hdl) {
 
  roar_disconnect(&(hdl->con));
 
- free(hdl);
+ roar_mm_free(hdl);
 }
 
 int    sio_eof    (struct sio_hdl * hdl) {
