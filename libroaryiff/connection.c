@@ -26,7 +26,7 @@
 #include <libroaryiff.h>
 
 YConnection *YOpenConnection (const char *start_arg, const char *con_arg) {
- YConnection * ycon = malloc(sizeof(YConnection));
+ YConnection * ycon = roar_mm_malloc(sizeof(YConnection));
  struct roar_connection con;
  char * server = (char *)con_arg;
  char * name   = "libroaryiff client";
@@ -48,13 +48,13 @@ YConnection *YOpenConnection (const char *start_arg, const char *con_arg) {
 
  if (roar_simple_connect(&con, server, name) == -1) {
   // Handle start_arg here!
-  free(ycon);
+  roar_mm_free(ycon);
   return NULL;
  }
 
  if ( (ycon->fd = roar_get_connection_fh(&con)) == -1 ) {
   roar_disconnect(&con);
-  free(ycon);
+  roar_mm_free(ycon);
   return NULL;
  }
 
@@ -62,13 +62,13 @@ YConnection *YOpenConnection (const char *start_arg, const char *con_arg) {
 }
 
 void YCloseConnection (YConnection *connection, Boolean no_shutdown) {
- if ( !connection )
+ if ( connection == NULL )
   return;
 
  roar_simple_close(connection->fd);  // roard will clean up all other sockets if the close the main one.
 
 
- free(connection);
+ roar_mm_free(connection);
 }
 
 //ll
