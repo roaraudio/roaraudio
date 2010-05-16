@@ -86,7 +86,7 @@ void usage (void) {
         "                            An optional scale can be given using S.\n"
         "                            all other args are the volumes of the channels\n"
         "                            you may use integer or percent values.\n"
-        "                            percent values can flooding points.\n"
+        "                            percent values can floating points.\n"
         "\n"
         "  flag   ID FLAGS         - Sets flags FLAGS on stream ID. FLAGS may be a comma\n"
         "                            seperated list of flags.\n"
