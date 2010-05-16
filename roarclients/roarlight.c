@@ -50,7 +50,6 @@ int cmd_set (CONVAR, char * arg) {
  char * k, * v;
  int32_t chan, val;
  struct roar_roardmx_message mes;
- int fh;                    //TODO: we should use pure VIO here
  struct roar_vio_calls vio;
 
  roar_roardmx_message_new_sset(&mes);
@@ -78,16 +77,10 @@ int cmd_set (CONVAR, char * arg) {
    return -1;
  }
 
- if ( (fh = roar_simple_new_stream(con,
-                                   ROAR_RATE_DEFAULT, ROAR_CHANNELS_DEFAULT, ROAR_BITS_DEFAULT,
-                                   ROAR_CODEC_ROARDMX, ROAR_DIR_LIGHT_IN
-                                  )) == -1 )
+ if ( roar_vio_simple_new_stream_obj(&vio, con, NULL,
+                                     ROAR_RATE_DEFAULT, ROAR_CHANNELS_DEFAULT, ROAR_BITS_DEFAULT,
+                                     ROAR_CODEC_ROARDMX, ROAR_DIR_LIGHT_IN) == -1 )
   return -1;
-
- if ( roar_vio_open_fh_socket(&vio, fh) == -1 ) {
-  close(fh);
-  return -1;
- }
 
  if ( roar_roardmx_message_send(&mes, &vio) == -1 ) {
   roar_vio_close(&vio);
