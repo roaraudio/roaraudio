@@ -284,10 +284,14 @@ int     roar_vio_simple_new_stream_obj (struct roar_vio_calls * calls,
                                         struct roar_connection * con,
                                         struct roar_stream * s,
                                         int rate, int channels, int bits, int codec, int dir) {
+ struct roar_stream stream;
  int fh;
 
  if ( calls == NULL )
   return -1;
+
+ if ( s == NULL )
+  s = &stream;
 
  if ( (fh = roar_simple_new_stream_obj(con, s, rate, channels, bits, codec, dir)) == -1 )
   return -1;
