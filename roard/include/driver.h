@@ -124,6 +124,11 @@
 #include "driver_wmm.h"
 #endif
 
+#ifdef ROAR_HAVE_LIBPULSE
+#include <pulse/simple.h>
+#include "driver_pulsesimple.h"
+#endif
+
 #define DRV_FLAG_NONE           0x00
 #define DRV_FLAG_FHSEC          0x01
 
