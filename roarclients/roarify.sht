@@ -12,12 +12,17 @@ usage() {
  echo " --print-env-bash     - Print needed ENVs in bash mode"
  echo " --server SERVER      - Sets server to SERVER"
  echo " --load   MODULE      - Force loading of MODULE"
+ echo " --no-load-roar       - Do not preload libroar"
+ echo " --no-load-oss        - Do not preload libroaross (OSS Emulation)"
 }
 
 CMD=false
 
 print_env=false
 print_mode=none
+
+preload_libroar='%%%PREFIX_LIB%%%/libroar.so.%%%VERSION%%% '
+preload_libroaross='%%%PREFIX_LIB%%%/libroaross.so.%%%VERSION%%% '
 
 while [ "$1" != '' ]
 do
@@ -37,6 +42,12 @@ do
   '--load')
    LD_PRELOAD="%%%PREFIX_COMP_LIBS%%%/lib$1.so $LD_PRELOAD"
    shift;
+  ;;
+  '--no-load-roar')
+   preload_libroar=''
+  ;;
+  '--no-load-oss')
+   preload_libroaross=''
   ;;
   '--help'|'-h')
    usage;
@@ -58,7 +69,16 @@ do
  esac
 done
 
-export LD_PRELOAD="%%%PREFIX_LIB%%%/libroar.so.%%%VERSION%%% %%%PREFIX_LIB%%%/libroaross.so.%%%VERSION%%% $LD_PRELOAD"
+# spaces are included in $preload_*
+LD_PRELOAD="$preload_libroar$preload_libroaross$LD_PRELOAD"
+
+if [ "$LD_PRELOAD" = '' ]
+then
+ unset LD_PRELOAD
+else
+ export LD_PRELOAD
+fi
+
 export LD_LIBRARY_PATH='%%%PREFIX_COMP_LIBS%%%'":$LD_LIBRARY_PATH"
 export PATH='%%%PREFIX_COMP_BINS%%%'":$PATH"
 
@@ -67,7 +87,7 @@ then
  case "$print_mode" in
   'bash')
    [ "$ROAR_SERVER" != '' ] && echo "ROAR_SERVER='$ROAR_SERVER'; export ROAR_SERVER;"
-   echo "LD_PRELOAD='$LD_PRELOAD'; export LD_PRELOAD;"
+   [ "$LD_PRELOAD"  != '' ] && echo "LD_PRELOAD='$LD_PRELOAD'; export LD_PRELOAD;"
    echo "LD_LIBRARY_PATH='$LD_LIBRARY_PATH'; export LD_LIBRARY_PATH;"
    echo "PATH='$PATH'; export PATH;"
   ;;
