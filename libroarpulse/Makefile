@@ -6,7 +6,7 @@ TARGETS=$(LIB_STDAPI) $(LIB_SIMPLE) libroarpulseinfo
 OBJS_ROAR   = libroarpulse.o
 OBJS_STD    = util.o error.o timeval.o context.o xmalloc.o version.o operation.o introspect.o sample.o channelmap.o stream.o volume.o mainloop.o mainloop-signal.o utf8.o x11.o
 OBJS_SIMPLE = simple.o
-OBJS_STDAPI=$(OBJS_ROAR) $(OBJS_STD)
+OBJS_STDAPI = $(OBJS_ROAR) $(OBJS_STD)
 
 include ../Makefile.conf
 include ../Makefile.inc
