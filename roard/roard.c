@@ -162,7 +162,7 @@ void usage (void) {
         " -n  --decnet          - use DECnet listen socket\n"
 #endif
         " -4                    - Use IPv4 connections (implies -t)\n"
-#ifdef PF_INET6
+#ifdef AF_INET6
         " -6                    - Use IPv6 connections (implies -t)\n"
 #endif
 #ifdef IPV6_ADDRFORM
@@ -1495,7 +1495,7 @@ int main (void) {
 #endif
   } else if ( strcmp(k, "-6") == 0 ) {
 #ifdef ROAR_SUPPORT_LISTEN
-#ifdef PF_INET6
+#ifdef AF_INET6
    sock_type = ROAR_SOCKET_TYPE_TCP6;
    if ( *sock_addr == '/' )
     sock_addr = ROAR_DEFAULT_HOST;

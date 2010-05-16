@@ -64,7 +64,7 @@ int roar_socket_new_tcp (void) {
 
  roar_socket_win32_init();
 
- fh = socket(PF_INET, SOCK_STREAM, 0);
+ fh = socket(AF_INET, SOCK_STREAM, 0);
 
 #ifndef ROAR_TARGET_WIN32
  setsockopt(fh, IPPROTO_IP, IP_TOS, &opt, sizeof(int));
@@ -88,7 +88,7 @@ int roar_socket_new_udp (void) {
 
  roar_socket_win32_init();
 
- fh = socket(PF_INET, SOCK_DGRAM, 0);
+ fh = socket(AF_INET, SOCK_DGRAM, 0);
 
 #ifndef ROAR_TARGET_WIN32
  setsockopt(fh, IPPROTO_IP, IP_TOS, &opt, sizeof(int));
@@ -107,7 +107,7 @@ int roar_socket_new_tcp6 (void) {
 
  roar_socket_win32_init();
 
- fh = socket(PF_INET6, SOCK_STREAM, 0);
+ fh = socket(AF_INET6, SOCK_STREAM, 0);
 
  setsockopt(fh, IPPROTO_IP, IP_TOS, &opt, sizeof(int));
 
@@ -124,7 +124,7 @@ int roar_socket_new_udp6 (void) {
 
  roar_socket_win32_init();
 
- fh = socket(PF_INET6, SOCK_DGRAM, 0);
+ fh = socket(AF_INET6, SOCK_DGRAM, 0);
 
  setsockopt(fh, IPPROTO_IP, IP_TOS, &opt, sizeof(int));
 
@@ -457,7 +457,7 @@ char * roar_socket_get_local_nodename(void) {
   if ( (binaddr=getnodeadd()) == NULL)
    return NULL;
 
-  if ( (dp=getnodebyaddr((char*)binaddr->a_addr, binaddr->a_len, PF_DECnet)) == NULL )
+  if ( (dp=getnodebyaddr((char*)binaddr->a_addr, binaddr->a_len, AF_DECnet)) == NULL )
    return NULL;
 
   strncpy(node, dp->n_name, 15);
