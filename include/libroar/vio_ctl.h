@@ -77,6 +77,8 @@
 #define ROAR_VIO_CTL_GET_NAME            (ROAR_VIO_CTL_GENERIC|ROAR_VIO_CTL_GET|0x0160) /* get name of VIO */
 #define ROAR_VIO_CTL_ACCEPT              (ROAR_VIO_CTL_GENERIC|0x0170) /* accept(), vio* */
 #define ROAR_VIO_CTL_SHUTDOWN            (ROAR_VIO_CTL_GENERIC|ROAR_VIO_CTL_SET|0x0174) /* shutdown(), int */
+#define ROAR_VIO_CTL_SYSIO_IOCTL         (ROAR_VIO_CTL_GENERIC|ROAR_VIO_CTL_SET|0x0180) /* ioctl(), */
+                                                                                        /* struct roar_vio_sysio_ioctl* */
 
 // get or set data format used for read and write calls, see below
 #define ROAR_VIO_CTL_GET_DATA_FORMAT   (ROAR_VIO_CTL_GENERIC|ROAR_VIO_CTL_GET|0x0170)
@@ -133,6 +135,11 @@
 
 struct roar_vio_dataformat {
  unsigned int type;
+};
+
+struct roar_vio_sysio_ioctl {
+ long long int   cmd;
+ void          * argp;
 };
 
 #endif
