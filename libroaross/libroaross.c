@@ -1338,6 +1338,11 @@ IOCTL() {
         return _ioctl_mixer(handle, SOUND_MIXER_WRITE_PCM, argp);
        break;
 #endif
+#ifdef SNDCTL_DSP_NONBLOCK
+      case SNDCTL_DSP_NONBLOCK:
+        return fcntl(__fd, F_SETFL, handle->sysio_flags|O_NONBLOCK);
+       break;
+#endif
       default:
 #ifdef __FIXME__
         ROAR_DBG("ioctl(__fd=%i, __request=0x%lX (%s)) = -1 // errno = ENOSYS", __fd, (long unsigned int) __request, nosys_reqname);
