@@ -1732,6 +1732,7 @@ int fcntl(int fd, int cmd, ...) {
    break;
   case F_SETFL:
     diff  = (int)argl ^ pointer->handle->sysio_flags;
+    diff &= (int)~(int)(O_RDONLY|O_WRONLY|O_RDWR);
     diff &= (int)~(int)(O_DIRECT|O_APPEND|O_LARGEFILE|O_NOATIME|O_NOCTTY|O_TRUNC);
 
     if ( diff & O_NONBLOCK ) {
