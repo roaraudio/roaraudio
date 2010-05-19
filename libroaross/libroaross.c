@@ -150,6 +150,7 @@ static struct {
                    fd_set *exceptfds, struct timeval *timeout);
  int     (*fcntl)(int fd, int cmd, ...);
  int     (*access)(const char *pathname, int mode);
+ int     (*open64)(const char *__file, int __oflag, ...);
 } _os;
 
 static struct {
@@ -255,6 +256,7 @@ static void _init_os (void) {
  _os.select = dlsym(REAL_LIBC, "select");
  _os.fcntl  = dlsym(REAL_LIBC, "fcntl");
  _os.access = dlsym(REAL_LIBC, "access");
+ _os.open64 = dlsym(REAL_LIBC, "open64");
 }
 
 static void _init_ptr (void) {
@@ -1018,6 +1020,49 @@ int     open(const char *pathname, int flags, ...) {
  }
 
  return _os.open(pathname, flags, mode);
+}
+
+int    open64(const char *__file, int __oflag, ...) {
+ int     ret;
+ mode_t  mode = 0;
+ va_list args;
+
+ _init();
+
+ if ( __file == NULL ) {
+  errno = EFAULT;
+  return -1;
+ }
+
+ ROAR_DBG("open64(__file='%s', __oflags=%x, ...) = ?\n", __file, __oflag);
+ ret = _open_file(__file, __oflag);
+
+ switch (ret) {
+  case -2:       // continue as normal, use _op.open()
+   break;
+  case -1:       // pass error to caller
+    return -1;
+   break;
+  default:       // return successfully opened pointer to caller
+    return ret;
+   break;
+ }
+
+ if (__oflag & O_CREAT) {
+  va_start(args, __oflag);
+  mode = va_arg(args, mode_t);
+  va_end(args);
+ }
+
+ if ( _os.open64 != NULL ) {
+  return _os.open64(__file, __oflag, mode);
+ } else {
+#ifdef O_LARGEFILE
+  return _os.open(__file, __oflag | O_LARGEFILE, mode);
+#else
+  return _os.open(__file, __oflag, mode);
+#endif
+ }
 }
 
 int     close(int fd) {
