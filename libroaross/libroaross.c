@@ -70,6 +70,9 @@
 #define ENOTSUP ENOSYS
 #endif
 
+#define _O_PARA_DIR (O_RDONLY|O_WRONLY|O_RDWR)
+#define _O_PARA_IGN (O_DIRECT|O_APPEND|O_LARGEFILE|O_NOATIME|O_NOCTTY|O_TRUNC)
+
 #if defined(ROAR_OS_NETBSD) && defined(ioctl)
 #define IOCTL_IS_ALIAS
 #endif
@@ -549,7 +552,7 @@ static int _open_file (const char *pathname, int flags) {
  handle->sysio_flags = flags;
  handle->stream_dir  = -1;
 
- switch (flags & (O_RDONLY|O_WRONLY|O_RDWR)) {
+ switch (flags & _O_PARA_DIR) {
   case O_RDONLY:
     switch (ptr->type) {
      case HT_WAVEFORM:
@@ -1732,8 +1735,8 @@ int fcntl(int fd, int cmd, ...) {
    break;
   case F_SETFL:
     diff  = (int)argl ^ pointer->handle->sysio_flags;
-    diff &= (int)~(int)(O_RDONLY|O_WRONLY|O_RDWR);
-    diff &= (int)~(int)(O_DIRECT|O_APPEND|O_LARGEFILE|O_NOATIME|O_NOCTTY|O_TRUNC);
+    diff &= (int)~(int)_O_PARA_DIR;
+    diff &= (int)~(int)_O_PARA_IGN;
 
     if ( diff & O_NONBLOCK ) {
      diff -= O_NONBLOCK;
