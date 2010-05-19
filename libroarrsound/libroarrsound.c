@@ -35,12 +35,16 @@ static size_t libroarrsound_fmt2fs (enum rsd_format format) {
  switch (format) {
   case RSD_S16_LE:
   case RSD_S16_BE:
+  case RSD_S16_NE:
   case RSD_U16_LE:
   case RSD_U16_BE:
+  case RSD_U16_NE:
     return 16;
    break;
   case RSD_U8:
   case RSD_S8:
+  case RSD_ALAW:
+  case RSD_MULAW:
     return 8;
    break;
   default:
@@ -207,11 +211,17 @@ int rsd_start (rsound_t *rd) {
   case RSD_S16_BE:
     codec = ROAR_CODEC_PCM_S_BE;
    break;
+  case RSD_S16_NE:
+    codec = ROAR_CODEC_PCM_S;
+   break;
   case RSD_U16_LE:
     codec = ROAR_CODEC_PCM_U_LE;
    break;
   case RSD_U16_BE:
     codec = ROAR_CODEC_PCM_U_BE;
+   break;
+  case RSD_U16_NE:
+    codec = ROAR_CODEC_PCM_U;
    break;
   case RSD_S8:
     codec = ROAR_CODEC_PCM_S;
@@ -219,6 +229,14 @@ int rsd_start (rsound_t *rd) {
    break;
   case RSD_U8:
     codec = ROAR_CODEC_PCM_U;
+    bits  = 8;
+   break;
+  case RSD_ALAW:
+    codec = ROAR_CODEC_ALAW;
+    bits  = 8;
+   break;
+  case RSD_MULAW:
+    codec = ROAR_CODEC_MULAW;
     bits  = 8;
    break;
   default:
@@ -264,7 +282,7 @@ int rsd_stop (rsound_t *rd) {
    or there was an unexpected error. This function will block until all data has
    been written to the buffer. This function will return the number of bytes written to the buffer,
    or 0 should it fail (disconnection from server). You will have to restart the stream again should this occur. */
-size_t rsd_write (rsound_t *rd, const char* buf, size_t size) {
+size_t rsd_write (rsound_t *rd, const void * buf, size_t size) {
  struct libroarrsound * self = (struct libroarrsound *)rd;
  ssize_t ret;
 
