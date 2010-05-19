@@ -46,6 +46,10 @@
 #error ROAR_MAX_CHANNELS too large change ROAR_MAX_CHANNELS or LIBROAR_BUFFER_SMALL
 #endif
 
+#define ROAR_CON_FLAGS_NONE        0x00
+#define ROAR_CON_FLAGS_FH          0x01
+#define ROAR_CON_FLAGS_VIO         0x02
+
 struct roar_message {
  int cmd;
  unsigned int stream;
@@ -71,6 +75,7 @@ int roar_connect      (struct roar_connection * con, char * server);
 int roar_connect_fh   (struct roar_connection * con, int fh);
 int roar_get_connection_fh  (struct roar_connection * con);
 int roar_get_connection_vio (struct roar_connection * con, struct roar_vio_calls * vio);
+struct roar_vio_calls * roar_get_connection_vio2 (struct roar_connection * con);
 int roar_disconnect   (struct roar_connection * con);
 
 int roar_noop         (struct roar_connection * con);

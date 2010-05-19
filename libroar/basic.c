@@ -230,30 +230,54 @@ int roar_connect_fh (struct roar_connection * con, int fh) {
 
  memset(con, 0, sizeof(struct roar_connection));
 
- con->__fh = fh;
+ con->flags = ROAR_CON_FLAGS_FH;
+ con->__fh  = fh;
+
+ if ( roar_vio_open_fh_socket(&(con->viocon), fh) != -1 )
+  con->flags |= ROAR_CON_FLAGS_VIO;
 
  roar_errno = ROAR_ERROR_NONE;
  return 0;
 }
 
 int roar_get_connection_fh (struct roar_connection * con) {
- roar_debug_warn_sysio("roar_get_connection_fh", "roar_get_connection_vio", NULL);
+ roar_debug_warn_sysio("roar_get_connection_fh", "roar_get_connection_vio2", NULL);
 
  if ( con == NULL )
+  return -1;
+
+ if ( !(con->flags & ROAR_CON_FLAGS_FH) )
   return -1;
 
  return con->__fh;
 }
 
 int roar_get_connection_vio (struct roar_connection * con, struct roar_vio_calls * vio) {
+ roar_debug_warn_obsolete("roar_get_connection_vio", "roar_get_connection_vio2", NULL);
+
  if ( con == NULL || vio == NULL )
+  return -1;
+
+ if ( !(con->flags & ROAR_CON_FLAGS_FH) )
   return -1;
 
  return roar_vio_open_fh_socket(vio, con->__fh);
 }
 
+struct roar_vio_calls * roar_get_connection_vio2 (struct roar_connection * con) {
+ if ( con == NULL )
+  return NULL;
+
+ if ( con->flags & ROAR_CON_FLAGS_VIO )
+  return &(con->viocon);
+
+// TODO: try to open the VIO.
+
+ return NULL;
+}
+
 int roar_disconnect (struct roar_connection * con) {
- struct roar_vio_calls vio;
+ struct roar_vio_calls * vio;
  struct roar_message m;
 
  m.datalen = 0;
@@ -263,8 +287,8 @@ int roar_disconnect (struct roar_connection * con) {
 
  roar_req(con, &m, NULL);
 
- if ( roar_get_connection_vio(con, &vio) != -1 ) {
-  roar_vio_close(&vio);
+ if ( (vio = roar_get_connection_vio2(con)) != NULL ) {
+  roar_vio_close(vio);
  }
 
  roar_connect_fh(con, -2);
@@ -328,12 +352,12 @@ int roar_identify   (struct roar_connection * con, char * name) {
 
 #define _ROAR_MESS_BUF_LEN (1 /* version */ + 1 /* cmd */ + 2 /* stream */ + 4 /* pos */ + 2 /* datalen */)
 int roar_send_message (struct roar_connection * con, struct roar_message * mes, char * data) {
- struct roar_vio_calls vio;
+ struct roar_vio_calls * vio;
 
- if ( roar_get_connection_vio(con, &vio) == -1 )
+ if ( (vio = roar_get_connection_vio2(con)) == NULL )
   return -1;
 
- return roar_vsend_message(&vio, mes, data);
+ return roar_vsend_message(vio, mes, data);
 }
 
 int roar_vsend_message(struct roar_vio_calls * vio, struct roar_message * mes, char *  data) {
@@ -368,12 +392,12 @@ int roar_vsend_message(struct roar_vio_calls * vio, struct roar_message * mes, c
 }
 
 int roar_recv_message (struct roar_connection * con, struct roar_message * mes, char ** data) {
- struct roar_vio_calls vio;
+ struct roar_vio_calls * vio;
 
- if ( roar_get_connection_vio(con, &vio) == -1 )
+ if ( (vio = roar_get_connection_vio2(con)) == NULL )
   return -1;
 
- return roar_vrecv_message(&vio, mes, data);
+ return roar_vrecv_message(vio, mes, data);
 }
 
 int roar_vrecv_message(struct roar_vio_calls * vio, struct roar_message * mes, char ** data) {
@@ -463,12 +487,12 @@ int roar_vrecv_message(struct roar_vio_calls * vio, struct roar_message * mes, c
 }
 
 int roar_req (struct roar_connection * con, struct roar_message * mes, char ** data) {
- struct roar_vio_calls vio;
+ struct roar_vio_calls * vio;
 
- if ( roar_get_connection_vio(con, &vio) == -1 )
+ if ( (vio = roar_get_connection_vio2(con)) == NULL )
   return -1;
 
- return roar_vreq(&vio, mes, data);
+ return roar_vreq(vio, mes, data);
 }
 
 int roar_vreq         (struct roar_vio_calls * vio, struct roar_message * mes, char ** data) {

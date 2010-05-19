@@ -26,8 +26,11 @@
 #ifndef _DRIVER_PORTAUDIO_H_
 #define _DRIVER_PORTAUDIO_H_
 
+//#undef ROAR_HAVE_LIBPABLIO
+//#define ROAR_HAVE_LIBPORTAUDIO_V0_19
+
 #ifdef ROAR_HAVE_LIBPORTAUDIO
-#if defined(ROAR_HAVE_LIBPABLIO)
+#if defined(ROAR_HAVE_LIBPABLIO) || defined(ROAR_HAVE_LIBPORTAUDIO_V0_19)
 #define _DRIVER_PORTAUDIO_CAN_OPERATE
 #endif
 #endif
@@ -37,8 +40,35 @@
 struct driver_portaudio {
 #ifdef ROAR_HAVE_LIBPABLIO
  PABLIO_Stream * ostream;
+#elif defined(ROAR_HAVE_LIBPORTAUDIO_V0_19)
+ PaStream *stream;
+ int framesize;
 #endif
 };
+
+typedef struct {
+/*
+ params.device                    = Pa_GetDefaultOutputDevice();
+ params.channelCount              = info->channels;
+ params.sampleFormat              = fmt;
+ params.suggestedLatency          = Pa_GetDeviceInfo(params.device)->defaultLowOutputLatency;
+ params.hostApiSpecificStreamInfo = NULL;
+*/
+ void * device;
+ int channelCount;
+ PaSampleFormat sampleFormat;
+ int suggestedLatency;
+ void * hostApiSpecificStreamInfo;
+} PaStreamParameters;
+
+#define paOutputUnderflowed -1
+
+void *  Pa_GetDefaultOutputDevice(void);
+// Pa_WriteStream(device->stream, buf, write_frames);
+PaError  Pa_WriteStream(PaStream * stream, void *, size_t);
+PaError Pa_StartStream(PaStream * stream);
+PaError Pa_StopStream(PaStream * stream);
+PaError Pa_CloseStream(PaStream * stream);
 
 int driver_portaudio_open(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh, struct roar_stream_server * sstream);
 

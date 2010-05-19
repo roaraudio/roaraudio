@@ -5,6 +5,7 @@ v. 0.3beta6 - ?
 	* Fixed error with roarinterconnect on non-OSS systems
 	* Fixed some problems with minimal builds
 	* Some Copyright fixes
+	* much better VIO support for connections
 
 v. 0.3beta5 - Sun May 02 2010 12:41 CEST
 	* added tool roardtmf

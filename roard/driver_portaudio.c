@@ -32,6 +32,9 @@ int driver_portaudio_open(struct roar_vio_calls * inst, char * device, struct ro
  PaSampleFormat fmt;
 #ifdef ROAR_HAVE_LIBPABLIO
  long flags = PABLIO_WRITE;
+#elif defined(ROAR_HAVE_LIBPORTAUDIO_V0_19)
+ PaError err;
+ PaStreamParameters params;
 #endif
 
  switch (info->bits) {
@@ -101,6 +104,44 @@ int driver_portaudio_open(struct roar_vio_calls * inst, char * device, struct ro
  }
 
  return 0;
+#elif defined(ROAR_HAVE_LIBPORTAUDIO_V0_19)
+ params.device                    = Pa_GetDefaultOutputDevice();
+ params.channelCount              = info->channels;
+ params.sampleFormat              = fmt;
+ params.suggestedLatency          = Pa_GetDeviceInfo(params.device)->defaultLowOutputLatency;
+ params.hostApiSpecificStreamInfo = NULL;
+
+ // TODO: FIXME: use libroar for this.
+ self->framesize = info->bits * info->channels / 8;
+
+ // Sets up blocking I/O stream.
+#if 0
+ err = Pa_OpenStream(&(self->stream),
+                     NULL,
+                     &params,
+                     info->rate,
+                     128 /*FIXME:frames*/,
+                     paClipOff,
+                     NULL,
+                     NULL
+                    );
+#endif
+
+ if ( err != paNoError ) {
+  ROAR_ERR("driver_portaudio_open(*): Could not open PortAudio device: \"%s\".", Pa_GetErrorText(err));
+  roar_mm_free(self);
+  return -1;
+ }
+
+ err = Pa_StartStream(self->stream);
+
+ if ( err != paNoError ) {
+  ROAR_ERR("driver_portaudio_open(*): Could not start stream: \"%s\".", Pa_GetErrorText(err));
+  roar_mm_free(self);
+  return -1;
+ }
+
+ return 0;
 #else
  return -1;
 #endif
@@ -109,12 +150,25 @@ int driver_portaudio_open(struct roar_vio_calls * inst, char * device, struct ro
 int     driver_portaudio_close        (struct roar_vio_calls * vio) {
  struct driver_portaudio * self = vio->inst;
 
+ // TODO: cleanup common code.
+
 #ifdef ROAR_HAVE_LIBPABLIO
  CloseAudioStream(self->ostream);
 
  Pa_Terminate();
 
  roar_mm_free(self);
+
+ return 0;
+#elif defined(ROAR_HAVE_LIBPORTAUDIO_V0_19)
+ if ( (self != NULL) && (self->stream != NULL) ) {
+  Pa_StopStream(self->stream);
+  Pa_CloseStream(self->stream);
+ }
+
+ roar_mm_free(self);
+
+ Pa_Terminate();
 
  return 0;
 #else
@@ -131,6 +185,20 @@ ssize_t driver_portaudio_write        (struct roar_vio_calls * vio, void *buf, s
  count /= self->ostream->bytesPerFrame; // TODO: FIXME: do not access private members
  ROAR_DBG("driver_portaudio_write(vio=%p, buf=%p, count=%llu) = ? // PABLIO mode", vio, buf, (long long unsigned int)count);
  return WriteAudioStream(self->ostream, buf, count) * self->ostream->bytesPerFrame;
+#elif defined(ROAR_HAVE_LIBPORTAUDIO_V0_19)
+ size_t write_frames = count / self->framesize;
+ PaError err;
+
+ ROAR_DBG("driver_portaudio_write(vio=%p, buf=%p, size=%llu) = ?", vio, buf, (long long unsigned int)size);
+
+ // I'm not 100% sure if you could write arbitrary number of frames to Pa_WriteStream(), but it seems to be backend dependent.
+ err = Pa_WriteStream(self->stream, buf, write_frames);
+
+ if ( err < 0 && err != paOutputUnderflowed )
+  return -1;
+
+ // PA always seems to write requested size, or it will error out.
+ return count;
 #else
  return -1;
 #endif
