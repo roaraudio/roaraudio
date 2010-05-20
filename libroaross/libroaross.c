@@ -70,6 +70,14 @@
 #define ENOTSUP ENOSYS
 #endif
 
+#ifndef O_LARGEFILE
+#define O_LARGEFILE 0
+#endif
+
+#ifndef O_NOATIME
+#define O_NOATIME 0
+#endif
+
 #define _O_PARA_DIR (O_RDONLY|O_WRONLY|O_RDWR)
 #define _O_PARA_IGN (O_DIRECT|O_APPEND|O_LARGEFILE|O_NOATIME|O_NOCTTY|O_TRUNC)
 
@@ -1667,16 +1675,26 @@ int fcntl(int fd, int cmd, ...) {
   case F_SETFD:
   case F_SETFL:
   case F_SETOWN:
+#ifdef F_SETSIG
   case F_SETSIG:
+#endif
+#ifdef F_SETLEASE
   case F_SETLEASE:
+#endif
+#ifdef F_NOTIFY
   case F_NOTIFY:
+#endif
     type = LONG;
    break;
   case F_GETFD:
   case F_GETFL:
   case F_GETOWN:
+#ifdef F_GETSIG
   case F_GETSIG:
+#endif
+#ifdef F_GETLEASE
   case F_GETLEASE:
+#endif
     type = NONE;
    break;
   case F_GETLK:
