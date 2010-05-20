@@ -214,26 +214,27 @@ static struct devices {
   int type;
   size_t len;
   void * userdata;
+  struct handle * (*open)(const char * file, int flags, mode_t mode, struct devices * ptr);
 } _device_list[] = {
- {"/dev/dsp",           HT_WAVEFORM,  0, NULL},
- {"/dev/audio",         HT_WAVEFORM,  0, NULL},
- {"/dev/sound/dsp",     HT_WAVEFORM,  0, NULL},
- {"/dev/sound/audio",   HT_WAVEFORM,  0, NULL},
- {"/dev/mixer",         HT_MIXER,     0, NULL},
- {"/dev/sound/mixer",   HT_MIXER,     0, NULL},
- {"/dev/midi",          HT_MIDI,      0, NULL},
- {"/dev/rmidi",         HT_MIDI,      0, NULL},
- {"/dev/sound/midi",    HT_MIDI,      0, NULL},
- {"/dev/sound/rmidi",   HT_MIDI,      0, NULL},
- {"/dev/dmx",           HT_DMX,       0, NULL},
- {"/dev/misc/dmx",      HT_DMX,       0, NULL},
- {"/dev/dmxin",         HT_DMX,       0, NULL},
- {"/dev/misc/dmxin",    HT_DMX,       0, NULL},
- {"/dev/sndstat",       HT_STATIC,    sizeof(_sf__dev_sndstat)-1, _sf__dev_sndstat},
+ {"/dev/dsp*",          HT_WAVEFORM,  0, NULL, NULL},
+ {"/dev/audio*",        HT_WAVEFORM,  0, NULL, NULL},
+ {"/dev/sound/dsp*",    HT_WAVEFORM,  0, NULL, NULL},
+ {"/dev/sound/audio*",  HT_WAVEFORM,  0, NULL, NULL},
+ {"/dev/mixer*",        HT_MIXER,     0, NULL, NULL},
+ {"/dev/sound/mixer*",  HT_MIXER,     0, NULL, NULL},
+ {"/dev/midi*",         HT_MIDI,      0, NULL, NULL},
+ {"/dev/rmidi*",        HT_MIDI,      0, NULL, NULL},
+ {"/dev/sound/midi*",   HT_MIDI,      0, NULL, NULL},
+ {"/dev/sound/rmidi*",  HT_MIDI,      0, NULL, NULL},
+ {"/dev/dmx*",          HT_DMX,       0, NULL, NULL},
+ {"/dev/misc/dmx*",     HT_DMX,       0, NULL, NULL},
+ {"/dev/dmxin*",        HT_DMX,       0, NULL, NULL},
+ {"/dev/misc/dmxin*",   HT_DMX,       0, NULL, NULL},
+ {"/dev/sndstat",       HT_STATIC,    sizeof(_sf__dev_sndstat)-1, _sf__dev_sndstat, NULL},
 #ifdef ROAR_DEFAULT_OSS_DEV
- {ROAR_DEFAULT_OSS_DEV, HT_WAVEFORM,  0, NULL},
+ {ROAR_DEFAULT_OSS_DEV, HT_WAVEFORM,  0, NULL, NULL},
 #endif
- {NULL, HT_NONE, 0, NULL},
+ {NULL, HT_NONE, 0, NULL, NULL},
 };
 
 
@@ -495,6 +496,31 @@ static void _close_pointer(struct pointer * pointer) {
 }
 
 // -------------------------------------
+// central function to find device:
+// -------------------------------------
+
+static struct devices * _get_device (const char * pathname) {
+ struct devices * ptr;
+ size_t len;
+ int i;
+
+ for (i = 0; _device_list[i].prefix != NULL; i++) {
+  len = strlen(_device_list[i].prefix);
+
+  if ( _device_list[i].prefix[len-1] == '*' ) {
+   len--;
+  } else {
+   len++;
+  }
+  if ( !strncmp(pathname, _device_list[i].prefix, len) ) {
+   ptr = &(_device_list[i]);
+  }
+ }
+
+ return NULL;
+}
+
+// -------------------------------------
 // central open function:
 // -------------------------------------
 
@@ -503,7 +529,6 @@ static int _open_file (const char *pathname, int flags) {
  struct handle  * handle;
  struct pointer * pointer;
  struct devices * ptr = NULL;
- int i;
 
  ROAR_DBG("_open_file(pathname='%s', flags=0x%x) = ?", pathname, flags);
 
@@ -524,13 +549,7 @@ static int _open_file (const char *pathname, int flags) {
   return -1;
  }
 
- for (i = 0; _device_list[i].prefix != NULL; i++) {
-  if ( !strcmp(pathname, _device_list[i].prefix) ) {
-   ptr = &(_device_list[i]);
-  }
- }
-
- if ( ptr == NULL )
+ if ( (ptr = _get_device(pathname)) == NULL )
   return -2;
 
  if ( ptr->type == HT_STATIC || ptr->type == HT_VIO ) { // non-session handles
@@ -542,15 +561,24 @@ static int _open_file (const char *pathname, int flags) {
   }
  }
 
- if ( (handle = _open_handle(session)) == NULL ) {
-  _close_session(session);
-  ROAR_DBG("_open_file(pathname='%s', flags=0x%x) = -1", pathname, flags);
-  return -1;
- }
+ if ( ptr->open != NULL ) {
+  // TODO: Add support to pass mode (perms) to open.
+  if ( (handle = ptr->open(pathname, flags, 0000, ptr)) == NULL ) {
+   _close_session(session);
+   ROAR_DBG("_open_file(pathname='%s', flags=0x%x) = -1", pathname, flags);
+   return -1;
+  }
+ } else {
+  if ( (handle = _open_handle(session)) == NULL ) {
+   _close_session(session);
+   ROAR_DBG("_open_file(pathname='%s', flags=0x%x) = -1", pathname, flags);
+   return -1;
+  }
 
- handle->type        = ptr->type;
- handle->sysio_flags = flags;
- handle->stream_dir  = -1;
+  handle->type        = ptr->type;
+  handle->sysio_flags = flags;
+  handle->stream_dir  = -1;
+ }
 
  switch (flags & _O_PARA_DIR) {
   case O_RDONLY:
@@ -1779,17 +1807,10 @@ int fcntl(int fd, int cmd, ...) {
 
 int access(const char *pathname, int mode) {
  struct devices * ptr = NULL;
- int i;
 
  _init();
 
- for (i = 0; _device_list[i].prefix != NULL; i++) {
-  if ( !strcmp(pathname, _device_list[i].prefix) ) {
-   ptr = &(_device_list[i]);
-  }
- }
-
- if ( ptr != NULL ) {
+ if ( (ptr = _get_device(pathname)) != NULL ) {
   // the only flag we do not support is +x, which means
   // we need to reject all requets with X_OK.
   if ( mode & X_OK ) {
