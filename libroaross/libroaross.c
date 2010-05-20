@@ -154,6 +154,7 @@ static struct {
  int     (*fcntl)(int fd, int cmd, ...);
  int     (*access)(const char *pathname, int mode);
  int     (*open64)(const char *__file, int __oflag, ...);
+ int     (*creat)(const char *pathname, mode_t mode);
 } _os;
 
 static struct {
@@ -261,6 +262,7 @@ static void _init_os (void) {
  _os.fcntl  = dlsym(REAL_LIBC, "fcntl");
  _os.access = dlsym(REAL_LIBC, "access");
  _os.open64 = dlsym(REAL_LIBC, "open64");
+ _os.creat  = dlsym(REAL_LIBC, "creat");
 }
 
 static void _init_ptr (void) {
@@ -1830,6 +1832,17 @@ int access(const char *pathname, int mode) {
  }
 
  return _os.access(pathname, mode);
+}
+
+int creat(const char *pathname, mode_t mode) {
+ _init();
+
+ if ( _get_device(pathname) != NULL ) {
+  errno = EEXIST;
+  return -1;
+ }
+
+ return _os.creat(pathname, mode);
 }
 
 // -------------------------------------
