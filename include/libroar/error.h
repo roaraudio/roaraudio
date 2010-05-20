@@ -40,6 +40,12 @@
 
 int roar_errno;
 
+/*
+struct roar_message;
+
+int roar_err_buildmsg(struct roar_message * msg);
+*/
+
 #endif
 
 //ll
