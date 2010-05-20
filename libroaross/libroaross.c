@@ -70,6 +70,10 @@
 #define ENOTSUP ENOSYS
 #endif
 
+#ifndef O_DIRECTORY
+#define O_DIRECTORY 0
+#endif
+
 #ifndef O_LARGEFILE
 #define O_LARGEFILE 0
 #endif
