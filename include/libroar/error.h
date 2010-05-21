@@ -40,11 +40,35 @@
 
 int roar_errno;
 
-/*
 struct roar_message;
 
-int roar_err_buildmsg(struct roar_message * msg);
-*/
+/*
+  Off Size (Byte)
+    | | /- Name
+    0 1 Version
+    1 1 Cmd
+    2 1 RA Errno
+    3 1 RA SubErrno
+    4 2 Portable Errno
+    6 2 Flags
+   (8 0 Datalen)
+    8 N Data
+ */
+
+struct roar_error_frame {
+ int version;
+ int cmd;
+ int ra_errno;
+ int ra_suberrno;
+ int p_errno;
+ uint16_t flags;
+ size_t datalen;
+ void * data;
+};
+
+int    roar_err_int(struct roar_error_frame * frame);
+void * roar_err_buildmsg(struct roar_message * mes, struct roar_error_frame * frame);
+int    roar_err_parsemsg(struct roar_message * mes, struct roar_error_frame * frame);
 
 #endif
 
