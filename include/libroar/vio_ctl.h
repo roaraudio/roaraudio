@@ -79,6 +79,7 @@
 #define ROAR_VIO_CTL_SHUTDOWN            (ROAR_VIO_CTL_GENERIC|ROAR_VIO_CTL_SET|0x0174) /* shutdown(), int */
 #define ROAR_VIO_CTL_SYSIO_IOCTL         (ROAR_VIO_CTL_GENERIC|ROAR_VIO_CTL_SET|0x0180) /* ioctl(), */
                                                                                         /* struct roar_vio_sysio_ioctl* */
+#define ROAR_VIO_CTL_FSTAT               (ROAR_VIO_CTL_GENERIC|ROAR_VIO_CTL_GET|0x0184) /* fstat() */
 
 // get or set data format used for read and write calls, see below
 #define ROAR_VIO_CTL_GET_DATA_FORMAT   (ROAR_VIO_CTL_GENERIC|ROAR_VIO_CTL_GET|0x0170)
@@ -140,6 +141,34 @@ struct roar_vio_dataformat {
 struct roar_vio_sysio_ioctl {
  long long int   cmd;
  void          * argp;
+};
+
+#if 0
+          struct stat {
+              dev_t     st_dev;     /* ID of device containing file */
+              ino_t     st_ino;     /* inode number */
+            X mode_t    st_mode;    /* protection */
+            X nlink_t   st_nlink;   /* number of hard links */
+            X uid_t     st_uid;     /* user ID of owner */
+            X gid_t     st_gid;     /* group ID of owner */
+              dev_t     st_rdev;    /* device ID (if special file) */
+            X off_t     st_size;    /* total size, in bytes */
+            X blksize_t st_blksize; /* blocksize for filesystem I/O */
+            X blkcnt_t  st_blocks;  /* number of blocks allocated */
+              time_t    st_atime;   /* time of last access */
+              time_t    st_mtime;   /* time of last modification */
+              time_t    st_ctime;   /* time of last status change */
+          };
+#endif
+
+struct roar_vio_stat {
+ mode_t mode;
+ size_t linkc;
+ uid_t  uid;
+ gid_t  gid;
+ size_t size;
+ size_t blksize;
+ size_t blocks;
 };
 
 #endif
