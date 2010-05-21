@@ -1954,6 +1954,15 @@ FILE *fopen(const char *path, const char *mode) {
  return _os.fopen(path, mode);
 }
 
+// -------------------------------------
+// RoarAudio plugin functions follow:
+// -------------------------------------
+
+ROAR_DL_PLUGIN_START(libroaross) {
+ (void)para;
+ _init();
+} ROAR_DL_PLUGIN_END
+
 #endif
 
 //ll
