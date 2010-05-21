@@ -167,6 +167,9 @@ static struct {
  int     (*access)(const char *pathname, int mode);
  int     (*open64)(const char *__file, int __oflag, ...);
  int     (*creat)(const char *pathname, mode_t mode);
+ int     (*stat)(const char *path, struct stat *buf);
+ int     (*fstat)(int filedes, struct stat *buf);
+ int     (*lstat)(const char *path, struct stat *buf);
 } _os;
 
 static struct {
@@ -275,6 +278,9 @@ static void _init_os (void) {
  _os.access = dlsym(REAL_LIBC, "access");
  _os.open64 = dlsym(REAL_LIBC, "open64");
  _os.creat  = dlsym(REAL_LIBC, "creat");
+ _os.stat   = dlsym(REAL_LIBC, "stat");
+ _os.fstat  = dlsym(REAL_LIBC, "fstat");
+ _os.lstat  = dlsym(REAL_LIBC, "lstat");
 }
 
 static void _init_ptr (void) {
@@ -1865,6 +1871,46 @@ int creat(const char *pathname, mode_t mode) {
  }
 
  return _os.creat(pathname, mode);
+}
+
+// -------------------------------------
+// emulated *stat*() functions follow:
+// -------------------------------------
+
+int stat(const char *path, struct stat *buf) {
+ struct devices * ptr;
+
+ _init();
+
+ if ( (ptr = _get_device(path)) != NULL ) {
+  errno = ENOSYS;
+  return -1;
+ }
+
+ return _os.stat(path, buf);
+}
+
+int fstat(int filedes, struct stat *buf) {
+ struct pointer * pointer;
+
+ _init();
+
+ if ( (pointer = _get_pointer_by_fh(filedes)) == NULL ) {
+  return _os.fstat(filedes, buf);
+ }
+
+ errno = ENOSYS;
+ return -1;
+}
+
+int lstat(const char *path, struct stat *buf) {
+ _init();
+
+ if ( _get_device(path) != NULL ) {
+  return stat(path, buf);
+ }
+
+ return _os.lstat(path, buf);
 }
 
 // -------------------------------------
