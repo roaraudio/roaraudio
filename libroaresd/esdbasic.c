@@ -80,11 +80,15 @@ int esd_close( int esd ) {
 /* in bytes woudl be lag * 2 * 2 bytes (2 for stereo, 2 for 16bit) */
 /* if your stream is at 22.05 Khz it'll be double this - in mono   */
 /* double again ... etc.                                           */
+
+// TODO: FIXME: write something usefull here.
 int esd_get_latency(int esd) {
 #ifdef ROAR_HAVE_GETTIMEOFDAY
  struct timeval         try, ans;
  struct roar_message    m;
  struct roar_connection con;
+
+ memset(&m, 0, sizeof(m));
 
  m.cmd = ROAR_CMD_NOOP;
  m.datalen = 0;

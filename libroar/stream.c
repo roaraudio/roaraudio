@@ -42,6 +42,7 @@ int roar_stream_connect (struct roar_connection * con, struct roar_stream * s, i
 
  s->dir = dir;
 
+ memset(&m,  0, sizeof(m));
  memcpy(&ms, s, sizeof(ms));
 
  m.cmd     = ROAR_CMD_NEW_STREAM;
@@ -193,6 +194,8 @@ int roar_stream_get_dir (struct roar_stream * s) {
 int roar_stream_exec    (struct roar_connection * con, struct roar_stream * s) {
  struct roar_message m;
 
+ memset(&m,  0, sizeof(m));
+
  m.cmd     = ROAR_CMD_EXEC_STREAM;
  m.stream  = s->id;
  m.datalen = 0;
@@ -229,6 +232,8 @@ int roar_stream_connect_to_ask (struct roar_connection * con, struct roar_stream
 
  ROAR_DBG("roar_stream_connect_to_ask(*): Ask the server to connect to: %s:%i", host, port);
 
+ memset(&m,  0, sizeof(m));
+
  m.cmd     = ROAR_CMD_CON_STREAM;
  m.stream  = s->id;
  m.pos     = 0;
@@ -255,6 +260,8 @@ int roar_stream_connect_to_ask (struct roar_connection * con, struct roar_stream
 int roar_stream_passfh  (struct roar_connection * con, struct roar_stream * s, int fh) {
  struct roar_message m;
  int confh;
+
+ memset(&m,  0, sizeof(m));
 
  m.cmd     = ROAR_CMD_PASSFH;
  m.stream  = s->id;
@@ -298,6 +305,8 @@ int roar_stream_attach_simple (struct roar_connection * con, struct roar_stream 
  uint16_t * info = (uint16_t *) m.data;
  int i;
 
+ memset(&m,  0, sizeof(m));
+
  m.cmd     = ROAR_CMD_ATTACH;
  m.stream  = s->id;
  m.pos     = 0;
@@ -322,6 +331,8 @@ int roar_stream_attach_simple (struct roar_connection * con, struct roar_stream 
 
 int roar_stream_add_data (struct roar_connection * con, struct roar_stream * s, char * data, size_t len) {
  struct roar_message m;
+
+ memset(&m,  0, sizeof(m));
 
  m.cmd     = ROAR_CMD_ADD_DATA;
  m.stream  = s->id;
@@ -369,6 +380,8 @@ int roar_stream_get_info (struct roar_connection * con, struct roar_stream * s, 
  struct roar_message m;
  uint16_t * data = (uint16_t *) m.data;
  int i;
+
+ memset(&m,  0, sizeof(m));
 
  m.cmd     = ROAR_CMD_GET_STREAM_PARA;
  m.stream  = s->id;
@@ -445,6 +458,8 @@ int roar_stream_get_name (struct roar_connection * con, struct roar_stream * s, 
   return -1;
 
  name[0] = 0; // just in case...
+
+ memset(&m,  0, sizeof(m));
 
  m.cmd     = ROAR_CMD_GET_STREAM_PARA;
  m.stream  = s->id;
@@ -599,6 +614,8 @@ int roar_stream_set_flags (struct roar_connection * con, struct roar_stream * s,
  uint16_t * data = (uint16_t *) m.data;
  int i;
 
+ memset(&m,  0, sizeof(m));
+
  m.cmd     = ROAR_CMD_SET_STREAM_PARA;
  m.stream  = s->id;
  m.datalen = 8;
@@ -626,6 +643,8 @@ int roar_stream_set_role  (struct roar_connection * con, struct roar_stream * s,
  struct roar_message m;
  uint16_t * data = (uint16_t *) m.data;
  int i;
+
+ memset(&m,  0, sizeof(m));
 
  m.cmd     = ROAR_CMD_SET_STREAM_PARA;
  m.stream  = s->id;

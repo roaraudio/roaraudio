@@ -467,6 +467,8 @@ int roar_stream_meta_get (struct roar_connection * con, struct roar_stream * s, 
  struct roar_message m;
  char * c;
 
+ memset(&m,  0, sizeof(m));
+
  m.cmd     = ROAR_CMD_GET_META;
  m.stream  = s->id;
 // m.datalen = len;
@@ -502,6 +504,8 @@ int roar_stream_meta_get (struct roar_connection * con, struct roar_stream * s, 
 int roar_stream_meta_list (struct roar_connection * con, struct roar_stream * s, int * types, size_t len) {
  int i;
  struct roar_message m;
+
+ memset(&m,  0, sizeof(m));
 
  m.cmd     = ROAR_CMD_LIST_META;
  m.stream  = s->id;

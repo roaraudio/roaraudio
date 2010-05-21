@@ -149,6 +149,9 @@ esd_server_info_t *esd_get_server_info( int esd ) {
  r->version = 0; // seems to be static
 
  roar_connect_fh(&con, esd);
+
+ memset(&m, 0, sizeof(m));
+
  m.cmd     = ROAR_CMD_SERVER_OINFO;
  m.datalen = 0;
 

@@ -124,8 +124,13 @@ int ping (struct roar_connection * con, int num) {
   return 0;
 
  for (i = 0; i < num; i++) {
+  memset(&m, 0, sizeof(m));
+
   m.cmd = ROAR_CMD_NOOP;
   m.datalen = 0;
+
+  // we use roar_req() directly here because of speed.
+  // roar_noop() does basicly the same but is a bit slower.
 
   gettimeofday(&try, NULL);
   ret = roar_req(con, &m, NULL);

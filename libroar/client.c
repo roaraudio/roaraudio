@@ -93,6 +93,8 @@ int roar_client_pass     (struct roar_connection * con, struct roar_client * cli
  int confh;
  int i;
 
+ memset(&m,  0, sizeof(m));
+
  m.cmd     = ROAR_CMD_PASSFH;
  m.stream  =  -1; // client (non-stream) passs
  m.pos     =   0;

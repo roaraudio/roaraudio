@@ -280,6 +280,8 @@ int roar_disconnect (struct roar_connection * con) {
  struct roar_vio_calls * vio;
  struct roar_message m;
 
+ memset(&m, 0, sizeof(m));
+
  m.datalen = 0;
  m.stream  = 0;
  m.pos     = 0;
@@ -320,6 +322,8 @@ int roar_identify   (struct roar_connection * con, char * name) {
  roar_errno = ROAR_ERROR_UNKNOWN;
 
  ROAR_DBG("roar_identify(*): try to identify myself...");
+
+ memset(&mes, 0, sizeof(mes));
 
  mes.cmd    = ROAR_CMD_IDENTIFY;
  mes.stream = 0;
