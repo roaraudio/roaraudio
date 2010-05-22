@@ -60,6 +60,7 @@ struct roar_message {
  int32_t flags;
  int32_t crc;
  int version;
+ uint64_t pos64;
 };
 
 struct roar_connection {
