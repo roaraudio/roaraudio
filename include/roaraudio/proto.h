@@ -124,16 +124,16 @@
 #define ROAR_STREAM_PARA_ROLE       5
 
 // Message flags:
-#define ROAR_MF_NONE                0x00000000 /* No flags set */
-#define ROAR_MF_SID                 0x00000001 /* Stream ID */
-#define ROAR_MF_SPOS                0x00000002 /* Stream Possition */
-#define ROAR_MF_DL                  0x00000004 /* Data Length */
-#define ROAR_MF_LSID                0x00000008 /* Long Stream ID */
-#define ROAR_MF_LSPOS               0x00000010 /* Long Stream Possition */
-#define ROAR_MF_LDL                 0x00000020 /* Long Data Length */
-#define ROAR_MF_ED                  0x00000040 /* Error Detection */
-#define ROAR_MF_MF                  0x00000080 /* Meta Framing */
-#define ROAR_MF_UNIID               0x00000100 /* Stream ID is Universal ID */
+#define ROAR_MF_NONE                0x00000000 /* No flags set              | Versions: *ALL* */
+#define ROAR_MF_SID                 0x00000001 /* Stream ID                 | Versions: 1   */
+#define ROAR_MF_SPOS                0x00000002 /* Stream Possition          | Versions: 1   */
+#define ROAR_MF_DL                  0x00000004 /* Data Length               | Versions: 1   */
+#define ROAR_MF_LSID                0x00000008 /* Long Stream ID            | Versions: 1   */
+#define ROAR_MF_LSPOS               0x00000010 /* Long Stream Possition     | Versions: 1,2 */
+#define ROAR_MF_LDL                 0x00000020 /* Long Data Length          | Versions: 1   */
+#define ROAR_MF_ED                  0x00000040 /* Error Detection           | Versions: 1,2 */
+#define ROAR_MF_MF                  0x00000080 /* Meta Framing              | Versions: 1   */
+#define ROAR_MF_UNIID               0x00000100 /* Stream ID is Universal ID | Versions: 2   */
 
 struct roar_timeofday {
  int64_t  t_sec;   // secund part of system time
