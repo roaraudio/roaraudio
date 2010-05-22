@@ -49,6 +49,8 @@
 #define ROAR_CON_FLAGS_NONE        0x00
 #define ROAR_CON_FLAGS_FH          0x01
 #define ROAR_CON_FLAGS_VIO         0x02
+#define ROAR_CON_FLAGS_ISCLIENT    0x04
+#define ROAR_CON_FLAGS_SUPPORT_V2  0x08
 
 struct roar_message {
  int cmd;
