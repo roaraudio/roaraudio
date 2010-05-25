@@ -74,6 +74,10 @@
 #define O_DIRECTORY 0
 #endif
 
+#ifndef O_DIRECT
+#define O_DIRECT 0
+#endif
+
 #ifndef O_LARGEFILE
 #define O_LARGEFILE 0
 #endif
