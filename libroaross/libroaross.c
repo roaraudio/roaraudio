@@ -90,7 +90,9 @@
 #endif
 
 #ifdef ROAR_OS_FREEBSD
-#define mode_t int
+#define _VA_ARGS_MODE_T int
+#else
+#define _VA_ARGS_MODE_T mode_t
 #endif
 
 #ifdef ROAR_OS_FREEBSD
@@ -1072,7 +1074,7 @@ int     open(const char *pathname, int flags, ...) {
 
  if (flags & O_CREAT) {
   va_start(args, flags);
-  mode = va_arg(args, mode_t);
+  mode = va_arg(args, _VA_ARGS_MODE_T);
   va_end(args);
  }
 
@@ -1107,7 +1109,7 @@ int    open64(const char *__file, int __oflag, ...) {
 
  if (__oflag & O_CREAT) {
   va_start(args, __oflag);
-  mode = va_arg(args, mode_t);
+  mode = va_arg(args, _VA_ARGS_MODE_T);
   va_end(args);
  }
 
