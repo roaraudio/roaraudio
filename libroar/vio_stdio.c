@@ -123,10 +123,14 @@ ssize_t roar_vio_stdio_write   (struct roar_vio_calls * vio, void *buf, size_t c
 }
 
 off_t   roar_vio_stdio_lseek   (struct roar_vio_calls * vio, off_t offset, int whence) {
+#if defined(ROAR_HAVE_FSEEK) && defined(ROAR_HAVE_FTELL)
  if ( fseek((FILE*)(vio->inst), offset, whence) == -1 )
   return -1;
 
  return ftell((FILE*)(vio->inst));
+#else
+ return (off_t)-1;
+#endif
 }
 
 int     roar_vio_stdio_sync    (struct roar_vio_calls * vio) {
@@ -146,12 +150,17 @@ int     roar_vio_stdio_ctl     (struct roar_vio_calls * vio, int cmd, void * dat
     *(char**)data = "stdio";
     return 0;
    break;
+#ifdef ROAR_HAVE_FILENO
   case ROAR_VIO_CTL_GET_FH:
   case ROAR_VIO_CTL_GET_READ_FH:
   case ROAR_VIO_CTL_GET_WRITE_FH:
+  case ROAR_VIO_CTL_GET_SELECT_FH:
+  case ROAR_VIO_CTL_GET_SELECT_READ_FH:
+  case ROAR_VIO_CTL_GET_SELECT_WRITE_FH:
    *(int*)data = fileno((FILE*)(vio->inst));
     return 0;
    break;
+#endif
  }
 
  return -1;

@@ -921,7 +921,7 @@ fi
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.261 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.262 $ of RoarAudio
  */
 
 EOF
@@ -1170,6 +1170,11 @@ test_func_defmake ROAR_HAVE_UNAME     uname     'uname((void*)0)'            -- 
 test_func_defmake ROAR_HAVE_SYSLOG    syslog    'syslog(0, "")'              -- syslog.h
 test_func_defmake ROAR_HAVE_OPENLOG   openlog   'openlog("", 0, 0)'          -- syslog.h
 test_func_defmake ROAR_HAVE_CLOSELOG  closelog  'closelog()'                 -- syslog.h
+test_func_defmake ROAR_HAVE_FILENO    fileno    'fileno(0)'                  -- stdio.h
+test_func_defmake ROAR_HAVE_FTELL     ftell     'ftell(0)'                   -- stdio.h
+test_func_defmake ROAR_HAVE_FSEEK     fseek     'fseek(0, 0, 0)'             -- stdio.h
+test_func_defmake ROAR_HAVE_POPEN     popen     'popen("", "")'              -- stdio.h
+test_func_defmake ROAR_HAVE_PCLOSE    pclose    'pclose(0)'                  -- stdio.h
 
 echo -n 'checking for basic IO calls... '
 

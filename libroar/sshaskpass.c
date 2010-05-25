@@ -36,7 +36,7 @@
 #include "libroar.h"
 
 int roar_sshaskpass_getpass   (char ** pw, char * desc) {
-#if defined(ROAR_HAVE_BIN_SSH_ASKPASS) && defined(ROAR_SUPPORT_PASSWORD_API)
+#if defined(ROAR_HAVE_BIN_SSH_ASKPASS) && defined(ROAR_SUPPORT_PASSWORD_API) && defined(ROAR_HAVE_POPEN) && defined(ROAR_HAVE_PCLOSE)
  FILE * cpipe;
  char   buf[1024];
  int    pos;
