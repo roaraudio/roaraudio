@@ -15,9 +15,9 @@ test: sandbox-clean sandbox-install test-all sandbox-clean
 test-all: test-runnable test-roard
 
 test-runnable:
-	PREFIX_BIN=$(PREFIX_BIN) PREFIX_LIB=$(PREFIX_LIB) ./test-runnable.sh "$(CLIENTS)"
+	PREFIX_BIN=$(PREFIX_BIN) PREFIX_LIB=$(PREFIX_LIB) EXEC_HELPER=$(EXEC_HELPER) ./test-runnable.sh "$(CLIENTS)"
 test-roard:
-	PREFIX_BIN=$(PREFIX_BIN) PREFIX_LIB=$(PREFIX_LIB) ./test-roard.sh
+	PREFIX_BIN=$(PREFIX_BIN) PREFIX_LIB=$(PREFIX_LIB) EXEC_HELPER=$(EXEC_HELPER) ./test-roard.sh
 sandbox-install:
 	mkdir sandbox
 	sh -c 'cd ..; DESTDIR=`pwd`/tests/sandbox $(MAKE) install'

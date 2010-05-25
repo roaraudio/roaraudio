@@ -11,7 +11,7 @@ for c in $CLIENTS;
 do
  printf "%-16s : " "$c"
 
- $BIN_PATH$c --server '(INVALID)' < /dev/null > /dev/null 2> /dev/null
+ $EXEC_HELPER $BIN_PATH$c --server '(INVALID)' < /dev/null > /dev/null 2> /dev/null
  R=$?
 
  if [ "$R" -le 64 ]
