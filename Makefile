@@ -25,7 +25,7 @@ test: all
 	set -e; cd tests; $(MAKE) test; cd ..;
 
 build-pc-files:
-	set -e; for lib in $(comp_libs); do lib/roar-config --output-pc $$lib > lib/$$lib.pc; done
+	set -e; for lib in $(comp_libs); do $(EXEC_HELPER) ./lib/roar-config --output-pc $$lib > lib/$$lib.pc; done
 
 prep-install: prep-install-dirs build-pc-files
 
@@ -47,7 +47,7 @@ install: prep-install
 	sh -c 'set -e; cd lib; for file in lib*$(SHARED_SUFFIX)*; do ln -fs $$file.$(COMMON_VERSION) '$(DESTDIR)$(PREFIX_LIB)'/$$file.$(COMMON_V_MAJOR); done'
 	sh -c 'set -e; cd lib; for file in lib*$(SHARED_SUFFIX)*; do ln -fs $$file.$(COMMON_VERSION) '$(DESTDIR)$(PREFIX_LIB)'/$$file; done'
 	sh -c 'set -e; cd lib; while read d t; do ln -fs '$(DESTDIR)$(PREFIX_LIB)'/$$d '$(DESTDIR)$(PREFIX_COMP_LIBS)'/$$t; done < ../symlinks.comp'
-	sh -c 'set -e; cd lib; for file in *.r; do b=`basename $$file .r`; cp $$file '$(DESTDIR)$(PREFIX_COMP_BINS)'/$$b; done'
+	sh -c 'set -e; cd lib; for file in *$(COMPBIN_SUFFIX); do b=`basename $$file $(COMPBIN_SUFFIX)`; cp $$file '$(DESTDIR)$(PREFIX_COMP_BINS)'/$$b; done'
 	sh -c 'set -e; for file in include/roar* include/lib*; do cp $(cp_v) -r $$file '$(DESTDIR)$(PREFIX_INC)'/; done'
 	set -e; cd doc; $(MAKE) install; cd ..
 	set -e; for i in $(PLUGINS); do if [ "$$i" != '' ]; then cd $$i; $(MAKE) install; cd ../..; fi; done
@@ -60,7 +60,7 @@ semi-install: prep-install
 	sh -c 'set -e; cd lib; for file in lib*$(SHARED_SUFFIX)*; do ln -fs `pwd`/$$file '$(DESTDIR)$(PREFIX_LIB)'/$$file.$(COMMON_V_MM); done'
 	sh -c 'set -e; cd lib; for file in lib*$(SHARED_SUFFIX)*; do ln -fs `pwd`/$$file '$(DESTDIR)$(PREFIX_LIB)'/$$file.$(COMMON_V_MAJOR); done'
 	sh -c 'set -e; cd lib; while read d t; do ln -fs `pwd`/$$d '$(DESTDIR)$(PREFIX_COMP_LIBS)'/$$t; done < ../symlinks.comp'
-	sh -c 'set -e; cd lib; for file in *.r; do b=`basename $$file .r`; ln -fs `pwd`/$$file '$(DESTDIR)$(PREFIX_COMP_BINS)'/$$b; done'
+	sh -c 'set -e; cd lib; for file in *$(COMPBIN_SUFFIX); do b=`basename $$file $(COMPBIN_SUFFIX)`; ln -fs `pwd`/$$file '$(DESTDIR)$(PREFIX_COMP_BINS)'/$$b; done'
 	sh -c 'set -e; for file in include/roar* include/lib*; do ln -fs `pwd`/$$file '$(DESTDIR)$(PREFIX_INC)'/; done'
 	set -e; cd doc; $(MAKE) semi-install; cd ..
 	set -e; for i in $(PLUGINS); do if [ "$$i" != '' ]; then cd $$i; $(MAKE) semi-install; cd ../..; fi; done
