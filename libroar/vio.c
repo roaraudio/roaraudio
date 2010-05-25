@@ -392,7 +392,7 @@ int     roar_vio_basic_ctl     (struct roar_vio_calls * vio, int cmd, void * dat
     return 0;
    break;
   case ROAR_VIO_CTL_ACCEPT:
-    tmp = accept(roar_vio_get_fh(vio), NULL, 0);
+    tmp = ROAR_ACCEPT(roar_vio_get_fh(vio), NULL, 0);
     if ( tmp == -1 )
      return -1;
 

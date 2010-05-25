@@ -921,7 +921,7 @@ fi
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.260 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.261 $ of RoarAudio
  */
 
 EOF
@@ -1442,6 +1442,41 @@ then
  echo yes, WinSock
 else
  echo '#define ROAR_SHUTDOWN(x,y) (-1)' >&3
+ echo no
+fi
+
+echo -n 'checking for accept()... '
+cat <<EOF > $TF_C
+#include <sys/types.h>
+#ifndef WITHOUT_SYS_SOCKET_H
+#include <sys/socket.h>
+#endif
+#ifdef WITH_WINSOCK_H
+#include <winsock.h>
+#endif
+
+int main (void) { accept(0, 0, 0); return 0; }
+EOF
+
+if [ "$SYSNAME" = 'SunOS' ]
+then
+ _l='-lsocket'
+else
+ _l=''
+fi
+
+if $CCTF $_l 2> /dev/null;
+then
+ echo '#define ROAR_HAVE_ACCEPT'     >&3
+ echo '#define ROAR_ACCEPT accept'   >&3
+ echo yes
+elif $CCTF -DWITHOUT_SYS_SOCKET_H -DWITH_WINSOCK_H $lib_wsock32 2> /dev/null;
+then
+ echo '#define ROAR_HAVE_ACCEPT'     >&3
+ echo '#define ROAR_ACCEPT accept'   >&3
+ echo yes, WinSock
+else
+ echo '#define ROAR_ACCEPT(x,y,z) (-1)' >&3
  echo no
 fi
 
