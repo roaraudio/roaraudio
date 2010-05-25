@@ -36,11 +36,13 @@
 #include "libroar.h"
 
 ssize_t roar_vio_select(struct roar_vio_select * vios, size_t len, struct roar_vio_selecttv * rtv, struct roar_vio_selectctl * ctl) {
+#ifdef ROAR_HAVE_SELECT
  struct timeval tv;
+ fd_set rfds, wfds, efds;
+#endif
  size_t i;
  int max_fh = -1;
  int ret;
- fd_set rfds, wfds, efds;
 
  ROAR_DBG("roar_vio_select(vios=%p, len=%llu, rtv=%p, ctl=%p) = ?", vios, (long long unsigned int)len, rtv, ctl);
 
@@ -103,6 +105,7 @@ ssize_t roar_vio_select(struct roar_vio_select * vios, size_t len, struct roar_v
   }
  }
 
+#ifdef ROAR_HAVE_SELECT
  // prepaer fdsets:
  FD_ZERO(&rfds);
  FD_ZERO(&wfds);
@@ -168,6 +171,10 @@ ssize_t roar_vio_select(struct roar_vio_select * vios, size_t len, struct roar_v
    if ( FD_ISSET(vios[i].internal.fh[2], &efds) )
     vios[i].eventsa |= ROAR_VIO_SELECT_EXCEPT;
  }
+
+#else
+ ret = -1;
+#endif
 
  ROAR_DBG("roar_vio_select(vios=%p, len=%llu, rtv=%p, ctl=%p) = %lli", vios, (long long unsigned int)len, rtv, ctl, (long long int)ret);
  return ret;

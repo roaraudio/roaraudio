@@ -788,8 +788,11 @@ int roar_socket_open_proxy (int mode, int type, char * host, int port, char * pr
   passwd = getpwuid(getuid());
  }
 
+// TODO: fix this in a good way
+#ifndef ROAR_TARGET_MICROCONTROLLER
  if ( passwd != NULL )
   user = passwd->pw_name;
+#endif
 
  if ( user == NULL )
   user = getenv("USER");
@@ -896,6 +899,7 @@ int roar_socket_open_proxy (int mode, int type, char * host, int port, char * pr
 // protocoll dependet proxy code:
 
 int roar_socket_open_socks4 (int mode, int fh, char * host, int port, char * user, char * pw, char * opts) {
+#ifndef ROAR_TARGET_MICROCONTROLLER
  struct hostent     * he;
 
  if ( (he = gethostbyname(host)) == NULL ) {
@@ -904,6 +908,9 @@ int roar_socket_open_socks4 (int mode, int fh, char * host, int port, char * use
  }
 
  return roar_socket_open_socks4x(mode, fh, he->h_addr, port, NULL, 0, user);
+#else
+ return -1;
+#endif
 }
 
 int roar_socket_open_socks4a(int mode, int fh, char * host, int port, char * user, char * pw, char * opts) {
@@ -1061,9 +1068,14 @@ int roar_socket_open_ssh    (int mode, int fh, char * host, int port, char * use
  cmd[1023] = 0;
 
 
+// TODO: get this more portable!
+#ifdef AF_UNIX
  if ( socketpair(AF_UNIX, SOCK_STREAM, 0, socks) == -1 ) {
   return -1;
  }
+#else
+ return -1;
+#endif
 
  r = fork();
 

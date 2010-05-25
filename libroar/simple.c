@@ -169,7 +169,9 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
 
  // make valgrind happy
  memset(&socket_addr, 0, sizeof(socket_addr));
+#ifdef ROAR_HAVE_SELECT
  memset(&mes,         0, sizeof(mes));
+#endif
 
  roar_debug_warn_sysio("roar_simple_new_stream_obj", "roar_vio_simple_new_stream_obj", NULL);
 

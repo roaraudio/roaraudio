@@ -142,6 +142,8 @@ int roar_nnode_new_from_sockaddr(struct roar_nnode * nnode, struct sockaddr * ad
 }
 
 int roar_nnode_new_from_fh(struct roar_nnode * nnode, int fh, int remote) {
+ // TODO: fix this in a nice way
+#ifndef ROAR_TARGET_MICROCONTROLLER
  struct sockaddr_storage sa;
  socklen_t               len = sizeof(sa);
  int                     ret;
@@ -161,6 +163,9 @@ int roar_nnode_new_from_fh(struct roar_nnode * nnode, int fh, int remote) {
   return -1;
 
  return roar_nnode_new_from_sockaddr(nnode, (struct sockaddr*)&sa, len);
+#else
+ return -1;
+#endif
 }
 
 int roar_nnode_free       (struct roar_nnode * nnode) {
