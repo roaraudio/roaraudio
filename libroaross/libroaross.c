@@ -93,6 +93,12 @@
 #define mode_t int
 #endif
 
+#ifdef ROAR_OS_FREEBSD
+#define _CREAT_ARG_PATHNAME path
+#else
+#define _CREAT_ARG_PATHNAME pathname
+#endif
+
 #ifdef ROAR_OS_NETBSD
 #define IOCTL() int _oss_ioctl __P((int fd, unsigned long com, void *argp))
 #define map_args int __fd = fd; unsigned long int __request = com
@@ -166,7 +172,7 @@ static struct {
  int     (*fcntl)(int fd, int cmd, ...);
  int     (*access)(const char *pathname, int mode);
  int     (*open64)(const char *__file, int __oflag, ...);
- int     (*creat)(const char *pathname, mode_t mode);
+ int     (*creat)(const char *_CREAT_ARG_PATHNAME, mode_t mode);
  int     (*stat)(const char *path, struct stat *buf);
  int     (*fstat)(int filedes, struct stat *buf);
  int     (*lstat)(const char *path, struct stat *buf);
@@ -1862,15 +1868,15 @@ int access(const char *pathname, int mode) {
  return _os.access(pathname, mode);
 }
 
-int creat(const char *pathname, mode_t mode) {
+int creat(const char *_CREAT_ARG_PATHNAME, mode_t mode) {
  _init();
 
- if ( _get_device(pathname) != NULL ) {
+ if ( _get_device(_CREAT_ARG_PATHNAME) != NULL ) {
   errno = EEXIST;
   return -1;
  }
 
- return _os.creat(pathname, mode);
+ return _os.creat(_CREAT_ARG_PATHNAME, mode);
 }
 
 // -------------------------------------
