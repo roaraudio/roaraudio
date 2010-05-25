@@ -53,7 +53,7 @@ int roar_sshaskpass_getpass   (char ** pw, char * desc) {
   return -1;
  }
 
- fclose(cpipe);
+ pclose(cpipe);
 
  pos = strlen(buf);
 
