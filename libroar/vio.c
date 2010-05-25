@@ -34,7 +34,10 @@
  */
 
 #include "libroar.h"
+
+#ifdef ROAR_HAVE_H_SYS_IOCTL
 #include <sys/ioctl.h>
+#endif
 
 #ifdef ROAR_HAVE_IO_POSIX
 #define _CAN_OPERATE
@@ -355,7 +358,9 @@ int     roar_vio_basic_sync    (struct roar_vio_calls * vio) {
 }
 
 int     roar_vio_basic_ctl     (struct roar_vio_calls * vio, int cmd, void * data) {
+#ifdef ROAR_HAVE_H_SYS_IOCTL
  struct roar_vio_sysio_ioctl * sysioctl;
+#endif
  int tmp;
  int s_r = 0, s_w = 0;
 
@@ -431,10 +436,12 @@ int     roar_vio_basic_ctl     (struct roar_vio_calls * vio, int cmd, void * dat
 
     return ROAR_SHUTDOWN(roar_vio_get_fh(vio), tmp);
    break;
+#ifdef ROAR_HAVE_H_SYS_IOCTL
   case ROAR_VIO_CTL_SYSIO_IOCTL:
     sysioctl = data;
     return ioctl(roar_vio_get_fh(vio), sysioctl->cmd, sysioctl->argp);
    break;
+#endif
  }
 
  return -1;
