@@ -314,6 +314,25 @@ size_t rsd_delay (rsound_t *rd) {
  return 0; // TODO: FIXME: write some code to read pos from server.
 }
 
+/* Utility for returning latency in milliseconds. */
+size_t rsd_delay_ms (rsound_t *rd) {
+ if ( rd == NULL )
+  return -1;
+
+ if ( rd->rate <= 0 || rd->channels <= 0 )
+  return -1;
+
+ return (rsd_delay(rd) * 1000) / (rd->rate * rd->channels * rd->framesize);
+}
+
+/* Returns bytes per sample */
+int rsd_samplesize( rsound_t *rd ) {
+ if ( rd == NULL )
+  return -1;
+
+ return rd->framesize;
+}
+
 /* Will sleep until latency of stream reaches maximum allowed latency defined earlier by rsd_set_param - RSD_LATENCY
    Useful for hard headed blocking I/O design where user defined latency is needed. If rsd_set_param hasn't been set
    with RSD_LATENCY, this function will do nothing. */
