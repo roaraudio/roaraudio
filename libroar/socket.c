@@ -768,6 +768,12 @@ int roar_socket_open_file  (int mode, char * host, int port) {
 
 // --- [ PROXY CODE ] ---
 
+#ifndef ROAR_HAVE_IO_POSIX
+#ifdef  ROAR_SUPPORT_PROXY
+#undef  ROAR_SUPPORT_PROXY
+#endif
+#endif
+
 // generic proxy code:
 
 #ifdef ROAR_SUPPORT_PROXY
