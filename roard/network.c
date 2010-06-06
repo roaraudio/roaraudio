@@ -101,6 +101,7 @@ int net_get_new_client (struct roard_listen * lsock) {
 
  if ( client == -1 ) {
   ROAR_DBG("net_get_new_client(void) = -1 // can not create new client");
+  close(fh);
   return -1;
  }
 
