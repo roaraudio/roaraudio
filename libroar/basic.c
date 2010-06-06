@@ -300,6 +300,21 @@ int roar_disconnect (struct roar_connection * con) {
  return 0;
 }
 
+int roar_set_connection_callback(struct roar_connection * con,
+                                 void (*cb)(struct roar_connection * con,
+                                            struct roar_message    * mes,
+                                            void                   * userdata),
+                                 void * userdata) {
+ if ( con == NULL )
+  return -1;
+
+ con->cb       = cb;
+ con->userdata = userdata;
+
+ return 0;
+}
+
+
 int roar_noop         (struct roar_connection * con) {
  struct roar_message mes;
 

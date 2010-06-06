@@ -70,6 +70,8 @@ struct roar_connection {
  int32_t flags;
  struct roar_vio_calls viocon;
  struct roar_buffer * msgqueue;
+ void * userdata;
+ void (*cb)(struct roar_connection * con, struct roar_message * mes, void * userdata);
 };
 
 
@@ -81,6 +83,12 @@ int roar_get_connection_fh  (struct roar_connection * con);
 int roar_get_connection_vio (struct roar_connection * con, struct roar_vio_calls * vio);
 struct roar_vio_calls * roar_get_connection_vio2 (struct roar_connection * con);
 int roar_disconnect   (struct roar_connection * con);
+
+int roar_set_connection_callback(struct roar_connection * con,
+                                 void (*cb)(struct roar_connection * con,
+                                            struct roar_message    * mes,
+                                            void                   * userdata),
+                                 void * userdata);
 
 int roar_noop         (struct roar_connection * con);
 
