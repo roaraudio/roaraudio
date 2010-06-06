@@ -107,7 +107,9 @@ void roar_debug_msg_simple(const char *format, ...) {
  va_list ap;
  int ret;
  char buf[8192];
+#ifdef ROAR_HAVE_SYSLOG
  size_t len;
+#endif
 
  vio = roar_debug_get_stderr();
 
@@ -143,7 +145,9 @@ void roar_debug_msg(int type, unsigned long int line, char * file, char * prefix
  char  * bufp = buf;
  char  * typename;
  int     ret;
+#ifdef ROAR_HAVE_SYSLOG
  int     priority;
+#endif
  size_t  len;
 
  switch (type) {
