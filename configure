@@ -492,6 +492,9 @@ do
    TARGET_MICROCONTROLLER=true
    CROSS_COMPILE=true
    HAVE_MAIN_ARGS=false
+   XMMS=false
+   AUDACIOUS=false
+   LIBAO=false
    WITHOUT_VIO="$WITHOUT_VIO"' cmd'
   ;;
   '--target-win32')
@@ -921,7 +924,7 @@ fi
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.264 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.265 $ of RoarAudio
  */
 
 EOF
