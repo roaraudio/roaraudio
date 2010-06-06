@@ -345,7 +345,9 @@ int add_listen (char * addr, int port, int sock_type, char * user, char * group,
  char * env_roar_proxy_backup;
 #endif
  int    sockid = -1;
+#ifdef ROAR_HAVE_UNIX
  int    sock;
+#endif
  int    i;
 
  if ( *addr != 0 ) {
