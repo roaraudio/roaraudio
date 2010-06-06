@@ -237,7 +237,7 @@ int roar_simple_new_stream_obj (struct roar_connection * con, struct roar_stream
  if ( type == ROAR_SOCKET_TYPE_INET ) {
 #ifdef ROAR_HAVE_IPV4
   len = sizeof(struct sockaddr_in);
-  setsockopt(listen, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(int));
+  setsockopt(listen, SOL_SOCKET, SO_REUSEADDR, (void*)&opt, sizeof(int));
 
   if ( getsockname(listen, (struct sockaddr *)&socket_addr, &len) == -1 ) {
    return -1;
