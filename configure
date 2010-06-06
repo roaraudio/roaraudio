@@ -921,7 +921,7 @@ fi
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.262 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.263 $ of RoarAudio
  */
 
 EOF
@@ -1555,7 +1555,7 @@ fi
 echo -n 'checking for __LP64__... '
 if $TARGET_WIN32
 then
- echo 'need to set (win32 build)'
+ echo 'no need to set (win32 build)'
 else
 cat > $TF_C << EOF
 #include <stdio.h>
