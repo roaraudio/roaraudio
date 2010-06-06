@@ -25,6 +25,9 @@
 
 #include "roard.h"
 
+#define _CHECK_CID_RET(id,ret) if ( (id) < 0 || (id) > ROAR_CLIENTS_MAX || g_clients[(id)] == NULL ) return (ret)
+#define _CHECK_CID(id)         _CHECK_CID_RET((id), -1)
+
 int clients_init (void) {
  int i;
 
@@ -38,7 +41,7 @@ int clients_free (void) {
  int i;
 
  for (i = 0; i < ROAR_CLIENTS_MAX; i++)
-  if ( g_clients[i] )
+  if ( g_clients[i] != NULL )
    clients_delete(i);
 
  return 0;
@@ -125,8 +128,7 @@ int clients_delete (int id) {
 
  ROAR_DBG("clients_delete(id=%i) = ?", id);
 
- if ( g_clients[id] == NULL )
-  return -1;
+ _CHECK_CID(id);
 
  if (g_clients[id]->execed != -1) {
 //  return streams_delete(g_clients[id]->execed);
@@ -151,6 +153,8 @@ int clients_delete (int id) {
 }
 
 int clients_get       (int id, struct roar_client ** client) {
+ _CHECK_CID(id);
+
  *client = g_clients[id];
 
  if ( *client == NULL )
@@ -165,6 +169,8 @@ int clients_set_fh    (int id, int    fh) {
  struct ucred cred;
  socklen_t cred_len = sizeof(cred);
 #endif
+
+ _CHECK_CID(id);
 
  if ( (c = g_clients[id]) == NULL )
   return -1;
@@ -191,15 +197,13 @@ int clients_set_fh    (int id, int    fh) {
 }
 
 int clients_get_fh    (int id) {
- if ( g_clients[id] == NULL )
-  return -1;
+ _CHECK_CID(id);
 
  return g_clients[id]->fh;
 }
 
 int clients_set_pid   (int id, int    pid) {
- if ( g_clients[id] == NULL )
-  return -1;
+ _CHECK_CID(id);
 
  g_clients[id]->pid = pid;
 
@@ -207,8 +211,7 @@ int clients_set_pid   (int id, int    pid) {
 }
 
 int clients_set_uid   (int id, int    uid) {
- if ( g_clients[id] == NULL )
-  return -1;
+ _CHECK_CID(id);
 
  g_clients[id]->uid = uid;
 
@@ -216,8 +219,7 @@ int clients_set_uid   (int id, int    uid) {
 }
 
 int clients_set_gid   (int id, int    gid) {
- if ( g_clients[id] == NULL )
-  return -1;
+ _CHECK_CID(id);
 
  g_clients[id]->gid = gid;
 
@@ -227,8 +229,7 @@ int clients_set_gid   (int id, int    gid) {
 int clients_set_proto (int id, int    proto) {
  int byteorder = ROAR_BYTEORDER_UNKNOWN;
 
- if ( g_clients[id] == NULL )
-  return -1;
+ _CHECK_CID(id);
 
  switch (proto) {
   case ROAR_PROTO_ROARAUDIO:
@@ -411,8 +412,8 @@ int clients_check     (int id) {
  int r;
  int rv = 0;
 
- if ( g_clients[id] == NULL )
-  return -1;
+ _CHECK_CID(id);
+
  if ( g_clients[id]->fh == -1 )
   return -1;
 
@@ -553,10 +554,14 @@ int clients_send_filter(struct roar_audio_info * sa, uint32_t pos) {
 int client_stream_exec   (int client, int stream) {
  int i;
 
+ _CHECK_CID(client);
+
+#if 0
  if ( g_clients[client] == NULL ) {
   ROAR_WARN("client_stream_exec(client=%i, stream=%i) = -1 // client does not exist", client, stream);
   return -1;
  }
+#endif
 
  for (i = 0; i < ROAR_CLIENTS_MAX_STREAMS_PER_CLIENT; i++) {
   if ( g_clients[client]->streams[i] == stream ) {
@@ -575,8 +580,7 @@ int client_stream_exec   (int client, int stream) {
 int client_stream_set_fh (int client, int stream, int fh) {
  int i;
 
- if ( g_clients[client] == NULL )
-  return -1;
+ _CHECK_CID(client);
 
  for (i = 0; i < ROAR_CLIENTS_MAX_STREAMS_PER_CLIENT; i++) {
   if ( g_clients[client]->streams[i] == stream ) {
@@ -591,8 +595,7 @@ int client_stream_set_fh (int client, int stream, int fh) {
 int client_stream_add    (int client, int stream) {
  int i;
 
- if ( g_clients[client] == NULL )
-  return -1;
+ _CHECK_CID(client);
 
  for (i = 0; i < ROAR_CLIENTS_MAX_STREAMS_PER_CLIENT; i++) {
   if ( g_clients[client]->streams[i] == -1 ) {
@@ -608,8 +611,7 @@ int client_stream_add    (int client, int stream) {
 int client_stream_delete (int client, int stream) {
  int i;
 
- if ( g_clients[client] == NULL )
-  return -1;
+ _CHECK_CID(client);
 
  for (i = 0; i < ROAR_CLIENTS_MAX_STREAMS_PER_CLIENT; i++) {
   if ( g_clients[client]->streams[i] == stream ) {

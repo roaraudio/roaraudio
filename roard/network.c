@@ -99,6 +99,11 @@ int net_get_new_client (struct roard_listen * lsock) {
 
  client = clients_new();
 
+ if ( client == -1 ) {
+  ROAR_DBG("net_get_new_client(void) = -1 // can not create new client");
+  return -1;
+ }
+
  if ( clients_set_fh(client, fh) == -1 ) {
   ROAR_ERR("net_get_new_client(void): Can not set client's fh");
 
