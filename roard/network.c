@@ -77,7 +77,13 @@ int net_get_new_client (struct roard_listen * lsock) {
  struct sockaddr_storage  addr;
  socklen_t                addrlen = sizeof(addr);
 
- roar_vio_ctl(&(lsock->sock), ROAR_VIO_CTL_GET_FH, &socket);
+ if ( roar_vio_ctl(&(lsock->sock), ROAR_VIO_CTL_GET_FH, &socket) == -1 ) {
+  // next is needed for winsock:
+  if ( roar_vio_ctl(&(lsock->sock), ROAR_VIO_CTL_GET_SELECT_FH, &socket) == -1 ) {
+   ROAR_DBG("net_get_new_client(void) = -1 // can not find any acceptable socket to accept() on");
+   return -1;
+  }
+ }
 
  fh = accept(socket, (struct sockaddr*)&addr, &addrlen);
 
