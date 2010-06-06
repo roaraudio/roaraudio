@@ -84,6 +84,7 @@ int roar_vio_open_pipe (struct roar_vio_calls * s0, struct roar_vio_calls * s1, 
       return -1;
      }
    break;
+#ifdef ROAR_HAVE_UNIX
   case ROAR_VIO_PIPE_TYPE_SOCKET:
     if ( socketpair(AF_UNIX, SOCK_STREAM, 0, self->b.p) == -1 ) {
      roar_mm_free(self);
@@ -98,6 +99,7 @@ int roar_vio_open_pipe (struct roar_vio_calls * s0, struct roar_vio_calls * s1, 
      ROAR_SHUTDOWN(self->b.p[1], SHUT_WR);
     }
    break;
+#endif
   default:
     roar_mm_free(self);
     return -1;
@@ -168,10 +170,12 @@ int     roar_vio_pipe_close   (struct roar_vio_calls * vio) {
      break;
    }
    break;
+#ifdef ROAR_HAVE_UNIX
   case ROAR_VIO_PIPE_TYPE_SOCKET:
     close(self->b.p[idx = ROAR_VIO_PIPE_S(self, vio)]);
     self->b.p[idx] = -1;
    break;
+#endif
  }
 
  if ( ! self->refcount ) {
@@ -197,9 +201,11 @@ int     roar_vio_pipe_nonblock(struct roar_vio_calls * vio, int state) {
      return -1;
     return roar_socket_nonblock(self->b.p[(ROAR_VIO_PIPE_SR(self,vio)*2)+1], state);
    break;
+#ifdef ROAR_HAVE_UNIX
   case ROAR_VIO_PIPE_TYPE_SOCKET:
     return roar_socket_nonblock(self->b.p[ROAR_VIO_PIPE_S(self,vio)], state);
    break;
+#endif
  }
 
  return -1;
@@ -230,20 +236,26 @@ int     roar_vio_pipe_ctl     (struct roar_vio_calls * vio, int cmd, void * data
    break;
   case ROAR_VIO_CTL_GET_FH:
   case ROAR_VIO_CTL_GET_SELECT_FH:
+#ifdef ROAR_HAVE_UNIX
     if ( self->type == ROAR_VIO_PIPE_TYPE_SOCKET ) {
      *(int*)data = self->b.p[ROAR_VIO_PIPE_S(self,vio)];
      return 0;
     } else {
      return -1;
     }
+#else
+    return -1;
+#endif
    break;
   case ROAR_VIO_CTL_GET_READ_FH:
   case ROAR_VIO_CTL_GET_SELECT_READ_FH:
     switch (self->type) {
+#ifdef ROAR_HAVE_UNIX
      case ROAR_VIO_PIPE_TYPE_SOCKET:
        *(int*)data = self->b.p[ROAR_VIO_PIPE_S(self,vio)];
        return 0;
       break;
+#endif
      case ROAR_VIO_PIPE_TYPE_PIPE:
        *(int*)data = self->b.p[ROAR_VIO_PIPE_S(self,vio)*2];
        return 0;
@@ -252,10 +264,12 @@ int     roar_vio_pipe_ctl     (struct roar_vio_calls * vio, int cmd, void * data
   case ROAR_VIO_CTL_GET_WRITE_FH:
   case ROAR_VIO_CTL_GET_SELECT_WRITE_FH:
     switch (self->type) {
+#ifdef ROAR_HAVE_UNIX
      case ROAR_VIO_PIPE_TYPE_SOCKET:
        *(int*)data = self->b.p[ROAR_VIO_PIPE_S(self,vio)];
        return 0;
       break;
+#endif
      case ROAR_VIO_PIPE_TYPE_PIPE:
        *(int*)data = self->b.p[(ROAR_VIO_PIPE_SR(self,vio)*2)+1];
        return 0;
@@ -298,9 +312,11 @@ ssize_t roar_vio_pipe_read    (struct roar_vio_calls * vio, void *buf, size_t co
   case ROAR_VIO_PIPE_TYPE_PIPE:
     return read(self->b.p[ROAR_VIO_PIPE_S(self,vio)*2], buf, count);
    break;
+#ifdef ROAR_HAVE_UNIX
   case ROAR_VIO_PIPE_TYPE_SOCKET:
     return read(self->b.p[ROAR_VIO_PIPE_S(self,vio)], buf, count);
    break;
+#endif
  }
 
  return -1;
@@ -351,9 +367,11 @@ ssize_t roar_vio_pipe_write   (struct roar_vio_calls * vio, void *buf, size_t co
   case ROAR_VIO_PIPE_TYPE_PIPE:
     return write(self->b.p[(ROAR_VIO_PIPE_SR(self,vio)*2)+1], buf, count);
    break;
+#ifdef ROAR_HAVE_UNIX
   case ROAR_VIO_PIPE_TYPE_SOCKET:
     return write(self->b.p[ROAR_VIO_PIPE_S(self,vio)], buf, count);
    break;
+#endif
  }
 
  return -1;
