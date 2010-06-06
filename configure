@@ -921,7 +921,7 @@ fi
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.263 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.264 $ of RoarAudio
  */
 
 EOF
@@ -1689,6 +1689,9 @@ then
   fi
   echo '#define ROAR_DEFAULT_TTY "'"$TTY_DEV"'"' >&3
  fi
+elif $CROSS_COMPILE
+then
+ echo 'none (cross compiling, use --tty to set default device)'
 else
  TTY_DEV=$(ls /dev/tty 2> /dev/null | head -n 1);
  if [ -e "$TTY_DEV" ]
@@ -1718,6 +1721,9 @@ then
   fi
   echo '#define ROAR_DEFAULT_OSS_DEV "'"$OSS_DEV"'"' >&3
  fi
+elif $CROSS_COMPILE
+then
+ echo 'none (cross compiling, use --oss-dev to set default device)'
 else
  OSS_DEV=$(ls /dev/dsp /dev/audio 2> /dev/null | head -n 1);
  if [ -e "$OSS_DEV" ]
