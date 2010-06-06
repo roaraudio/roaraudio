@@ -314,6 +314,14 @@ int roar_set_connection_callback(struct roar_connection * con,
  return 0;
 }
 
+int roar_sync         (struct roar_connection * con) {
+ // wait for any non-client reqs
+ return roar_wait_msg(con, 0x0000, 0x8000);
+}
+
+int roar_wait_msg     (struct roar_connection * con, int16_t seq, int16_t seqmask) {
+ return -1;
+}
 
 int roar_noop         (struct roar_connection * con) {
  struct roar_message mes;

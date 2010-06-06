@@ -90,6 +90,9 @@ int roar_set_connection_callback(struct roar_connection * con,
                                             void                   * userdata),
                                  void * userdata);
 
+int roar_sync         (struct roar_connection * con);
+int roar_wait_msg     (struct roar_connection * con, int16_t seq, int16_t seqmask);
+
 int roar_noop         (struct roar_connection * con);
 
 int roar_identify     (struct roar_connection * con, char * name);
