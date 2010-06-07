@@ -105,11 +105,21 @@
 #define ROAR_OT_SAMPLE 4
 
 // auth types...
-#define ROAR_AUTH_NONE    0 /* do not auth */
-#define ROAR_AUTH_TRUST   1 /* trust: used for UNIX Domain sockets, same uid = trusted, diffrent uid = public */
-#define ROAR_AUTH_COOKIE  2 /* use cookie */
-#define ROAR_AUTH_SYSUSER 3 /* use local/NIS/PAM userdatabase */
-#define ROAR_AUTH_PASSWD  4 /* use password */
+#define ROAR_AUTH_T_AUTO               -1
+#define ROAR_AUTH_T_NONE                0 /* do not auth */
+#define ROAR_AUTH_T_COOKIE              1 /* use cookie */
+#define ROAR_AUTH_T_TRUST               2 /* trust: used for UNIX Domain sockets, */
+                                          /* same uid = trusted, diffrent uid = public */
+#define ROAR_AUTH_T_PASSWORD            3 /* use password */
+#define ROAR_AUTH_T_SYSUSER             4 /* use local/NIS/PAM userdatabase */
+#define ROAR_AUTH_T_OPENPGP_SIGN        5
+#define ROAR_AUTH_T_OPENPGP_ENCRYPT     6
+#define ROAR_AUTH_T_OPENPGP_AUTH        7
+#define ROAR_AUTH_T_KERBEROS            8
+#define ROAR_AUTH_T_RHOST               9
+#define ROAR_AUTH_T_XAUTH              10
+#define ROAR_AUTH_T_IDENT              11
+
 
 // attach types...
 #define ROAR_ATTACH_SIMPLE 1 /* move a stream from one to another client (attach the stream to it) */
