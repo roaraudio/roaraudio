@@ -227,7 +227,6 @@ int emul_rsound_check_client(int client, struct roar_vio_calls * vio) {
   return -1;
 
  if ( !strncmp(msg.datasp, "INFO", 4) ) {
-  // TODO: add support for INFO
   if ( clients_get(client, &c) == -1 )
    return clients_delete(client);
 
