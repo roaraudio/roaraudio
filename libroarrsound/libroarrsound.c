@@ -76,6 +76,9 @@ int rsd_init (rsound_t **rd) {
  self->rsound.rate            = ROAR_RATE_DEFAULT;
  self->rsound.format          = RSD_S16_LE;
 
+ strncpy(self->rsound.identity, "libroarrsound client", sizeof(self->rsound.identity) - 1);
+ self->rsound.identity[sizeof(self->rsound.identity)-1] = 0;
+
  return 0;
 }
 
@@ -94,9 +97,6 @@ int rsd_free (rsound_t *rd) {
  if ( self->flags & LIBROARRSOUND_FLAGS_STREAMING )
   if ( roar_vio_close(&(self->vio)) == -1 )
    ret = -1;
-
- if ( self->rsound.host != NULL )
-  roar_mm_free(self->rsound.host);
 
  if ( self->rsound.port != NULL )
   roar_mm_free(self->rsound.port);
@@ -127,6 +127,10 @@ int rsd_set_param (rsound_t *rd, enum rsd_settings option, void* param) {
      roar_mm_free(self->rsound.port);
 
     self->rsound.port = roar_mm_strdup(param);
+   break;
+  case RSD_IDENTITY:
+    strncpy(self->rsound.identity, param, sizeof(self->rsound.identity) - 1);
+    self->rsound.identity[sizeof(self->rsound.identity)-1] = 0;
    break;
   // stream settings:
   case RSD_SAMPLERATE:
@@ -168,7 +172,7 @@ static int libroarrsound_connect (struct libroarrsound * self) {
 
  ROAR_DBG("libroarrsound_connect(self=%p): try to connect to: %s", self, host);
 
- if ( roar_simple_connect(&(self->con), host, "libroarrsound client") == -1 ) {
+ if ( roar_simple_connect(&(self->con), host, self->rsound.identity) == -1 ) {
   ROAR_DBG("libroarrsound_connect(self=%p) = -1 // can not connect to server", self);
   return -1;
  }
