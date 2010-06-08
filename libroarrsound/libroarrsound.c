@@ -128,10 +128,12 @@ int rsd_set_param (rsound_t *rd, enum rsd_settings option, void* param) {
 
     self->rsound.port = roar_mm_strdup(param);
    break;
+#ifdef RSD_IDENTITY
   case RSD_IDENTITY:
     strncpy(self->rsound.identity, param, sizeof(self->rsound.identity) - 1);
     self->rsound.identity[sizeof(self->rsound.identity)-1] = 0;
    break;
+#endif
   // stream settings:
   case RSD_SAMPLERATE:
     self->rsound.rate = *(int*)param;
