@@ -215,6 +215,7 @@ int emul_rsound_check_client(int client, struct roar_vio_calls * vio) {
  int                   streamid;
  int                          i;
  ssize_t                    ptr;
+ size_t                 max_len;
 
  if ( vio == NULL ) {
   vio = &rvio;
@@ -259,6 +260,20 @@ int emul_rsound_check_client(int client, struct roar_vio_calls * vio) {
  } else if ( !strncmp(msg.datasp, "STOP", 4) ) {
   // This is quit.
   return clients_delete(client);
+ } else if ( !strncmp(msg.datasp, "IDENTITY ", 9) ) {
+  if ( msg.dataslen < (8+1+1) )
+   return clients_delete(client);
+
+  msg.datasp   += 9;
+  msg.dataslen -= 9;
+
+  if ( clients_get(client, &c) == -1 )
+   return clients_delete(client);
+
+  max_len = msg.dataslen < (ROAR_BUFFER_NAME-1) ? msg.dataslen : (ROAR_BUFFER_NAME-1);
+
+  strncpy(c->name, msg.datasp, max_len);
+  c->name[max_len] = 0;
  } else {
   // Unknown command, kill the client.
   return clients_delete(client);
