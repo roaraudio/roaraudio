@@ -276,18 +276,28 @@ int rsd_exec (rsound_t *rd) {
  struct libroarrsound * self = (struct libroarrsound *)rd;
  int fh;
 
+ ROAR_DBG("rsd_exec(rd=%p) = ?", rd);
+
  if ( !(self->flags & LIBROARRSOUND_FLAGS_STREAMING) )
   if ( rsd_start(rd) == -1 )
    return -1;
 
+ ROAR_DBG("rsd_exec(rd=%p) = ?", rd);
+
  if ( roar_vio_ctl(&(self->vio), ROAR_VIO_CTL_GET_FH, &fh) == -1 )
   return -1;
+
+ ROAR_DBG("rsd_exec(rd=%p) = ?", rd);
 
  if ( fh == -1 )
   return -1;
 
+ ROAR_DBG("rsd_exec(rd=%p) = ?", rd);
+
  if ( roar_stream_exec(&(self->con), &(self->stream)) == -1 )
   return -1;
+
+ ROAR_DBG("rsd_exec(rd=%p) = ?", rd);
 
  // reset flags:
  if ( self->flags & LIBROARRSOUND_FLAGS_CONNECTED )
@@ -296,8 +306,12 @@ int rsd_exec (rsound_t *rd) {
  if ( self->flags & LIBROARRSOUND_FLAGS_STREAMING )
   self->flags -= LIBROARRSOUND_FLAGS_STREAMING;
 
+ ROAR_DBG("rsd_exec(rd=%p) = ?", rd);
+
  // we hope nothing goes wrong here:
  rsd_free(rd);
+
+ ROAR_DBG("rsd_exec(rd=%p) = %i", fh);
 
  return fh;
 }
