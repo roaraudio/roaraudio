@@ -126,6 +126,8 @@ int streams_get        (int id, struct roar_stream_server ** stream);
 int streams_set_socktype (int id, int socktype);
 int streams_get_socktype (int id);
 
+int streams_is_ready     (int id);
+
 int streams_set_primary  (int id, int prim);
 int streams_mark_primary (int id);
 int streams_set_sync     (int id, int sync);

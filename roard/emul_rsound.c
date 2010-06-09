@@ -274,6 +274,23 @@ int emul_rsound_check_client(int client, struct roar_vio_calls * vio) {
 
   strncpy(c->name, msg.datasp, max_len);
   c->name[max_len] = 0;
+ } else if ( !strncmp(msg.datasp, "CLOSECTL", 9) ) {
+  if ( clients_get(client, &c) == -1 )
+   return clients_delete(client);
+
+  strncpy(msg.data, " CLOSECTL OK", EMUL_RSOUND_MSG_DATA_LEN);
+  msg.datalen = 12; //strlen(" CLOSECTL OK");
+
+  if ( emul_rsound_vsend_msg(&msg, vio) == -1 ) {
+   return clients_delete(client);
+  }
+
+  streamid = c->streams[0];
+  if ( client_stream_exec(client, streamid) == -1 ) {
+   return clients_delete(client);
+  }
+
+  return 0;
  } else {
   // Unknown command, kill the client.
   return clients_delete(client);

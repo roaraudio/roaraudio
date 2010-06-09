@@ -679,6 +679,12 @@ int streams_get_socktype (int id) {
  return g_streams[id]->socktype;
 }
 
+int streams_is_ready     (int id) {
+ _CHECK_SID(id);
+
+ return g_streams[id]->ready;
+}
+
 int streams_set_primary (int id, int prim) {
  _CHECK_SID(id);
 
