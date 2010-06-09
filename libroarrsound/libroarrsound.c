@@ -98,6 +98,9 @@ int rsd_free (rsound_t *rd) {
   if ( roar_vio_close(&(self->vio)) == -1 )
    ret = -1;
 
+ if ( self->rsound.host != NULL )
+  roar_mm_free(self->rsound.host);
+
  if ( self->rsound.port != NULL )
   roar_mm_free(self->rsound.port);
 
