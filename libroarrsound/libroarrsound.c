@@ -265,6 +265,40 @@ int rsd_start (rsound_t *rd) {
  return 0;
 }
 
+/* Shuts down the rsound data structures, but returns the file descriptor associated with the connection.
+   The control socket will be shut down. If this function returns a negative number, the exec failed,
+   but the data structures will not be teared down.
+   Should a valid file descriptor be returned, it will always be non-blocking.  <<-- FIXME? */
+int rsd_exec (rsound_t *rd) {
+ struct libroarrsound * self = (struct libroarrsound *)rd;
+ int fh;
+
+ if ( !(self->flags & LIBROARRSOUND_FLAGS_STREAMING) )
+  if ( rsd_start(rd) == -1 )
+   return -1;
+
+ if ( roar_vio_ctl(&(self->vio), ROAR_VIO_CTL_GET_FH, &fh) == -1 )
+  return -1;
+
+ if ( fh == -1 )
+  return -1;
+
+ if ( roar_stream_exec(&(self->con), &(self->stream)) == -1 )
+  return -1;
+
+ // reset flags:
+ if ( self->flags & LIBROARRSOUND_FLAGS_CONNECTED )
+  self->flags -= LIBROARRSOUND_FLAGS_CONNECTED;
+
+ if ( self->flags & LIBROARRSOUND_FLAGS_STREAMING )
+  self->flags -= LIBROARRSOUND_FLAGS_STREAMING;
+
+ // we hope nothing goes wrong here:
+ rsd_free(rd);
+
+ return fh;
+}
+
 /* Disconnects from server. All audio data still in network buffer and other buffers will be dropped.
    To continue playing, you will need to rsd_start() again. */
 int rsd_stop (rsound_t *rd) {
