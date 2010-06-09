@@ -553,6 +553,7 @@ int clients_send_filter(struct roar_audio_info * sa, uint32_t pos) {
 
 int client_stream_exec   (int client, int stream) {
  int i;
+ int fh;
 
  _CHECK_CID(client);
 
@@ -566,8 +567,13 @@ int client_stream_exec   (int client, int stream) {
  for (i = 0; i < ROAR_CLIENTS_MAX_STREAMS_PER_CLIENT; i++) {
   if ( g_clients[client]->streams[i] == stream ) {
    g_clients[client]->execed = stream;
-   streams_set_fh(stream, g_clients[client]->fh);
-   streams_set_socktype(stream, ROAR_SOCKET_TYPE_GENSTR);
+   if ( (fh = streams_get_fh(stream)) == -1 ) {
+    streams_set_fh(stream, g_clients[client]->fh);
+    streams_set_socktype(stream, ROAR_SOCKET_TYPE_GENSTR);
+   } else {
+    close(g_clients[client]->fh);
+    g_clients[client]->fh = fh;
+   }
    ROAR_DBG("client_stream_exec(client=%i, stream=%i) = 0", client, stream);
    return 0;
   }
