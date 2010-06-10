@@ -571,10 +571,11 @@ int client_stream_exec   (int client, int stream) {
     streams_set_fh(stream, g_clients[client]->fh);
     streams_set_socktype(stream, ROAR_SOCKET_TYPE_GENSTR);
    } else {
-    fh = streams_get_fh(stream);
     ROAR_DBG("client_stream_exec(client=%i, stream=%i): fh=%i", client, stream, fh);
-    close(g_clients[client]->fh);
-    g_clients[client]->fh = fh;
+    if ( (fh = g_clients[client]->fh) != -1 ) {
+     close(fh);
+     g_clients[client]->fh = -1;
+    }
    }
    ROAR_DBG("client_stream_exec(client=%i, stream=%i) = 0", client, stream);
    return 0;
