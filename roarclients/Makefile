@@ -54,7 +54,7 @@ roarmon: roarmon.o
 roarmonhttp: roarmonhttp.o
 	$L
 roarinterconnect: roarinterconnect.o
-	$L $(lib_esd) $(LIBROAREIO)
+	$L $(lib_esd) $(LIBROAREIO) $(lib_rsound)
 roarbidir: roarbidir.o
 	$L
 roarphone: roarphone.o

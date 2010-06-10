@@ -34,6 +34,13 @@ int g_verbose = 0;
 #include <esd.h>
 #endif
 
+#ifdef ROAR_HAVE_LIBRSOUND
+#include <rsound.h>
+#ifdef RSD_EXEC
+#define _HAVE_RSOUND
+#endif
+#endif
+
 #if defined(ROAR_HAVE_OSS_BSD) || defined(ROAR_HAVE_OSS)
 #define _HAVE_OSS
 #endif
@@ -44,6 +51,7 @@ int g_verbose = 0;
 #define MT_ESD      0x20
 #define MT_SIMPLE   0x30
 #define MT_OSS      0x40
+#define MT_RSOUND   0x50
 #define MT_DEFAULT  MT_ROAR
 
 #define ST_NONE     0x00
@@ -79,6 +87,9 @@ void usage (void) {
 #ifdef _HAVE_OSS
         "  oss                - Open Sound System (OSS) device\n"
 #endif
+#ifdef _HAVE_RSOUND
+        "  rsound             - RSound server\n"
+#endif
         "\n"
         "  bidir              - Connect bidirectional\n"
         "  filter             - Use local server as filter for remote server\n"
@@ -111,6 +122,9 @@ int parse_type (char * type) {
    } else if ( !strcmp(type, "oss") ) {
     ret -= ret & MT_MASK;
     ret += MT_OSS;
+   } else if ( !strcmp(type, "rsound") ) {
+    ret -= ret & MT_MASK;
+    ret += MT_RSOUND;
    } else if ( !strcmp(type, "bidir") ) {
     ret -= ret & ST_MASK;
     ret += ST_BIDIR;
@@ -141,6 +155,7 @@ int parse_type (char * type) {
    case MT_SIMPLE: ret |= ST_TRANSMIT; break; // we use ST_TRANSMIT because ST_BIDIR is
                                               // very unlike to be configured at the server side.
    case MT_OSS:    ret |= ST_BIDIR;    break;
+   case MT_RSOUND: ret |= ST_TRANSMIT; break; // RSound does only handle playback streams.
    default:
      return MT_NONE|ST_NONE; // error case
     break;
@@ -150,12 +165,85 @@ int parse_type (char * type) {
  return ret;
 }
 
+#ifdef _HAVE_RSOUND
+// RSound format helper function:
+enum rsd_format para2rsdfmt (int bits, int codec) {
+ switch (codec) {
+/*
+      RSD_S16_LE = 0x0001,
+      RSD_S16_BE = 0x0002,
+      RSD_U16_LE = 0x0004,
+      RSD_U16_BE = 0x0008,
+      RSD_U8     = 0x0010,
+      RSD_S8     = 0x0020,
+      RSD_S16_NE = 0x0040,
+      RSD_U16_NE = 0x0080,
+*/
+  case ROAR_CODEC_PCM_S_LE:
+    switch (bits) {
+#ifdef RSD_S8
+     case  8: return RSD_S8;     break;
+#endif
+#ifdef RSD_S16_LE
+     case 16: return RSD_S16_LE; break;
+#endif
+    }
+   break;
+  case ROAR_CODEC_PCM_S_BE:
+    switch (bits) {
+#ifdef RSD_S8
+     case  8: return RSD_S8;     break;
+#endif
+#ifdef RSD_S16_BE
+     case 16: return RSD_S16_BE; break;
+#endif
+    }
+   break;
+  case ROAR_CODEC_PCM_U_LE:
+    switch (bits) {
+#ifdef RSD_U8
+     case  8: return RSD_U8;     break;
+#endif
+#ifdef RSD_U16_LE
+     case 16: return RSD_U16_LE; break;
+#endif
+    }
+   break;
+  case ROAR_CODEC_PCM_U_BE:
+    switch (bits) {
+#ifdef RSD_U8
+     case  8: return RSD_U8;     break;
+#endif
+#ifdef RSD_U16_BE
+     case 16: return RSD_U16_BE; break;
+#endif
+    }
+   break;
+#ifdef RSD_ALAW
+  case ROAR_CODEC_ALAW:
+    return RSD_ALAW;
+   break;
+#endif
+#ifdef RSD_MULAW
+  case ROAR_CODEC_MULAW:
+    return RSD_MULAW;
+   break;
+#endif
+ }
+ return 0;
+}
+#endif
+
 int main (int argc, char * argv[]) {
  struct roar_connection con[1];
  struct roar_stream     stream[1];
 #ifdef _HAVE_OSS
  struct roar_vio_calls  vio;
  struct roar_audio_info info;
+#endif
+#ifdef _HAVE_RSOUND
+ rsound_t *rd;
+ enum rsd_format fmt = 0;
 #endif
  int    rate     = 44100;
  int    bits     = 16;
@@ -297,6 +385,37 @@ int main (int argc, char * argv[]) {
       break;
      default:
        fprintf(stderr, "Error: this type is not supported by EsounD\n");
+       return 2;
+      break;
+    }
+   break;
+#endif
+#ifdef _HAVE_RSOUND
+  case MT_RSOUND:
+    fmt = para2rsdfmt(bits, codec);
+
+    if ( fmt == 0 ) {
+     fprintf(stderr, "Error: Bits/Codec not supported by RSound\n");
+     return 2;
+    }
+
+    switch (type & ST_MASK) {
+     case ST_TRANSMIT:
+       localdir = ROAR_DIR_MONITOR;
+
+       rsd_init(&rd);
+       rsd_set_param(rd, RSD_HOST,       remote);
+       rsd_set_param(rd, RSD_CHANNELS,   &channels);
+       rsd_set_param(rd, RSD_SAMPLERATE, &rate);
+       rsd_set_param(rd, RSD_FORMAT,     &fmt);
+       rfh = rsd_exec(rd);
+       if ( rfh == -1 ) {
+        rsd_stop(rd);
+        rsd_free(rd);
+       }
+      break;
+     default:
+       fprintf(stderr, "Error: this type is not supported by RSound\n");
        return 2;
       break;
     }
