@@ -20,7 +20,7 @@
  *  along with this software; see the file COPYING.  If not, write to
  *  the Free Software Foundation, 51 Franklin Street, Fifth Floor,
  *  Boston, MA 02110-1301, USA.
- *
+ nd_exec*
  */
 
 #ifndef _COMMANDS_H_
@@ -31,6 +31,9 @@
 #define COMMAND_MAX_NAMELEN  80
 #define COMMAND_MAX_COMMANDS 32
 
+#define COMMAND_FLAG_NONE          0x00000000
+#define COMMAND_FLAG_OUT_CLOSECON  0x00000001
+
 struct roar_command {
  int cmd;
 #if !defined(ROAR_TARGET_MICROCONTROLLER) && !defined(ROAR_MINIMAL)
@@ -38,11 +41,11 @@ struct roar_command {
 #else
  char * name;
 #endif
- int (*handler)(int client, struct roar_message * mes, char * data);
+ int (*handler)(int client, struct roar_message * mes, char ** data, uint32_t flags[2]);
 };
 
 int command_get_id_by_cmd (int command);
-int command_exec (int client, struct roar_message * mes, char * data);
+int command_exec (int client, struct roar_message * mes, char ** data, uint32_t flags[2]);
 int command_get_name (int command, char ** name);
 
 #endif

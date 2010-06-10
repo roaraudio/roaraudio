@@ -47,7 +47,7 @@ struct roar_command g_commands[COMMAND_MAX_COMMANDS] = {
 #endif
 
   {ROAR_CMD_EXEC_STREAM,  _NAME("EXEC_STREAM"),  req_on_exec_stream},
-  {ROAR_CMD_QUIT,         _NAME("QUIT"),         (int(*)(int client, struct roar_message * mes, char * data))clients_delete},
+  {ROAR_CMD_QUIT,         _NAME("QUIT"),         (int(*)(int client, struct roar_message * mes, char ** data, uint32_t flags[2]))clients_delete},
 
   {ROAR_CMD_CON_STREAM,   _NAME("CON_STREAM"),   req_on_con_stream},
   {ROAR_CMD_PASSFH,       _NAME("PASSFH"),       req_on_passfh},
@@ -90,9 +90,9 @@ int command_get_id_by_cmd (int command) {
  return -1;
 }
 
-int command_exec (int client, struct roar_message * mes, char * data) {
+int command_exec (int client, struct roar_message * mes, char ** data, uint32_t flags[2]) {
  int cmd = command_get_id_by_cmd(mes->cmd);
- int (*func)(int client, struct roar_message * mes, char * data);
+ int (*func)(int client, struct roar_message * mes, char ** data, uint32_t flags[2]);
 
  if ( cmd == -1 )
   return -1;
@@ -102,7 +102,7 @@ int command_exec (int client, struct roar_message * mes, char * data) {
 
  ROAR_DBG("command_exec(*): Execing command %i(%s) via %p", cmd, g_commands[cmd].name, func);
 
- return func(client, mes, data);
+ return func(client, mes, data, flags);
 }
 
 int command_get_name (int command, char ** name) {

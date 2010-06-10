@@ -28,51 +28,51 @@
 
 #include <roaraudio.h>
 
-int req_on_noop        (int client, struct roar_message * mes, char * data);
+int req_on_noop        (int client, struct roar_message * mes, char ** data, uint32_t flags[2]);
 
-int req_on_identify    (int client, struct roar_message * mes, char * data);
-int req_on_auth        (int client, struct roar_message * mes, char * data);
+int req_on_identify    (int client, struct roar_message * mes, char ** data, uint32_t flags[2]);
+int req_on_auth        (int client, struct roar_message * mes, char ** data, uint32_t flags[2]);
 
-int req_on_whoami      (int client, struct roar_message * mes, char * data);
+int req_on_whoami      (int client, struct roar_message * mes, char ** data, uint32_t flags[2]);
 
-int req_on_new_stream  (int client, struct roar_message * mes, char * data);
-int req_on_exec_stream (int client, struct roar_message * mes, char * data);
-int req_on_con_stream  (int client, struct roar_message * mes, char * data);
-int req_on_passfh      (int client, struct roar_message * mes, char * data);
+int req_on_new_stream  (int client, struct roar_message * mes, char ** data, uint32_t flags[2]);
+int req_on_exec_stream (int client, struct roar_message * mes, char ** data, uint32_t flags[2]);
+int req_on_con_stream  (int client, struct roar_message * mes, char ** data, uint32_t flags[2]);
+int req_on_passfh      (int client, struct roar_message * mes, char ** data, uint32_t flags[2]);
 
 #ifdef ROAR_SUPPORT_META
-int req_on_set_meta    (int client, struct roar_message * mes, char * data);
-int req_on_get_meta    (int client, struct roar_message * mes, char * data);
-int req_on_list_meta   (int client, struct roar_message * mes, char * data);
+int req_on_set_meta    (int client, struct roar_message * mes, char ** data, uint32_t flags[2]);
+int req_on_get_meta    (int client, struct roar_message * mes, char ** data, uint32_t flags[2]);
+int req_on_list_meta   (int client, struct roar_message * mes, char ** data, uint32_t flags[2]);
 #endif
 
-int req_on_get_standby (int client, struct roar_message * mes, char * data);
-int req_on_set_standby (int client, struct roar_message * mes, char * data);
+int req_on_get_standby (int client, struct roar_message * mes, char ** data, uint32_t flags[2]);
+int req_on_set_standby (int client, struct roar_message * mes, char ** data, uint32_t flags[2]);
 
-int req_on_exit        (int client, struct roar_message * mes, char * data);
+int req_on_exit        (int client, struct roar_message * mes, char ** data, uint32_t flags[2]);
 
-int req_on_server_oinfo(int client, struct roar_message * mes, char * data);
+int req_on_server_oinfo(int client, struct roar_message * mes, char ** data, uint32_t flags[2]);
 
-int req_on_list_clients(int client, struct roar_message * mes, char * data);
-int req_on_list_streams(int client, struct roar_message * mes, char * data);
+int req_on_list_clients(int client, struct roar_message * mes, char ** data, uint32_t flags[2]);
+int req_on_list_streams(int client, struct roar_message * mes, char ** data, uint32_t flags[2]);
 
-int req_on_get_client  (int client, struct roar_message * mes, char * data);
-int req_on_get_stream  (int client, struct roar_message * mes, char * data);
+int req_on_get_client  (int client, struct roar_message * mes, char ** data, uint32_t flags[2]);
+int req_on_get_stream  (int client, struct roar_message * mes, char ** data, uint32_t flags[2]);
 
-int req_on_get_stream_para (int client, struct roar_message * mes, char * data);
-int req_on_set_stream_para (int client, struct roar_message * mes, char * data);
+int req_on_get_stream_para (int client, struct roar_message * mes, char ** data, uint32_t flags[2]);
+int req_on_set_stream_para (int client, struct roar_message * mes, char ** data, uint32_t flags[2]);
 
-int req_on_kick        (int client, struct roar_message * mes, char * data);
-int req_on_attach      (int client, struct roar_message * mes, char * data);
+int req_on_kick        (int client, struct roar_message * mes, char ** data, uint32_t flags[2]);
+int req_on_attach      (int client, struct roar_message * mes, char ** data, uint32_t flags[2]);
 
-int req_on_set_vol     (int client, struct roar_message * mes, char * data);
-int req_on_get_vol     (int client, struct roar_message * mes, char * data);
+int req_on_set_vol     (int client, struct roar_message * mes, char ** data, uint32_t flags[2]);
+int req_on_get_vol     (int client, struct roar_message * mes, char ** data, uint32_t flags[2]);
 
-int req_on_add_data    (int client, struct roar_message * mes, char * data);
+int req_on_add_data    (int client, struct roar_message * mes, char ** data, uint32_t flags[2]);
 
-int req_on_beep        (int client, struct roar_message * mes, char * data);
+int req_on_beep        (int client, struct roar_message * mes, char ** data, uint32_t flags[2]);
 
-//int req_on_ (int client, struct roar_message * mes, char * data);
+//int req_on_ (int client, struct roar_message * mes, char ** data, uint32_t flags[2]);
 
 #endif
 

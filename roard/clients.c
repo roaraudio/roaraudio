@@ -411,6 +411,7 @@ int clients_check     (int id) {
  int oldcmd;
  int r;
  int rv = 0;
+ uint32_t flags[2] = {COMMAND_FLAG_NONE, COMMAND_FLAG_NONE};
 
  _CHECK_CID(id);
 
@@ -432,7 +433,7 @@ int clients_check     (int id) {
 
     oldcmd = m.cmd;
 
-    if ( (r = command_exec(id, &m, data)) == -1 ) {
+    if ( (r = command_exec(id, &m, &data, flags)) == -1 ) {
      m.cmd     = ROAR_CMD_ERROR;
      m.datalen = 0;
      ROAR_DBG("clients_check(*): Exec of command faild!");

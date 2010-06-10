@@ -25,14 +25,14 @@
 
 #include "roard.h"
 
-int req_on_noop        (int client, struct roar_message * mes, char * data) {
+int req_on_noop        (int client, struct roar_message * mes, char ** data, uint32_t flags[2]) {
  mes->cmd     = ROAR_CMD_OK;
  mes->pos     = g_pos;
  mes->datalen = 0;
  return 0;
 }
 
-int req_on_identify    (int client, struct roar_message * mes, char * data) {
+int req_on_identify    (int client, struct roar_message * mes, char ** data, uint32_t flags[2]) {
  struct roar_client * c;
  int max_len;
 
@@ -66,7 +66,7 @@ int req_on_identify    (int client, struct roar_message * mes, char * data) {
  return -1;
 }
 
-int req_on_auth        (int client, struct roar_message * mes, char * data) {
+int req_on_auth        (int client, struct roar_message * mes, char ** data, uint32_t flags[2]) {
  // TODO: add code to support some auth.
  mes->cmd     = ROAR_CMD_OK;
  mes->pos     = g_pos;
@@ -75,7 +75,7 @@ int req_on_auth        (int client, struct roar_message * mes, char * data) {
 }
 
 
-int req_on_whoami      (int client, struct roar_message * mes, char * data) {
+int req_on_whoami      (int client, struct roar_message * mes, char ** data, uint32_t flags[2]) {
  mes->cmd     = ROAR_CMD_OK;
  mes->pos     = g_pos;
  mes->datalen = 1;
@@ -84,7 +84,7 @@ int req_on_whoami      (int client, struct roar_message * mes, char * data) {
 }
 
 
-int req_on_new_stream  (int client, struct roar_message * mes, char * data) {
+int req_on_new_stream  (int client, struct roar_message * mes, char ** data, uint32_t flags[2]) {
  int stream;
  struct roar_stream * s;
  struct roar_stream * source_stream;
@@ -229,7 +229,7 @@ int req_on_new_stream  (int client, struct roar_message * mes, char * data) {
  return 0;
 }
 
-int req_on_exec_stream (int client, struct roar_message * mes, char * data) {
+int req_on_exec_stream (int client, struct roar_message * mes, char ** data, uint32_t flags[2]) {
  int r;
 
  ROAR_DBG("req_on_exec_stream(client=%i, mes={stream=%i,...},...): execing stream", client, mes->stream);
@@ -244,7 +244,7 @@ int req_on_exec_stream (int client, struct roar_message * mes, char * data) {
  return 0;
 }
 
-int req_on_con_stream  (int client, struct roar_message * mes, char * data) {
+int req_on_con_stream  (int client, struct roar_message * mes, char ** data, uint32_t flags[2]) {
  char   host[80] = {0};
  int    port = 0;
  int    type;
@@ -293,7 +293,7 @@ int req_on_con_stream  (int client, struct roar_message * mes, char * data) {
  return 0;
 }
 
-int req_on_passfh      (int client, struct roar_message * mes, char * data) {
+int req_on_passfh      (int client, struct roar_message * mes, char ** data, uint32_t flags[2]) {
  int sock = clients_get_fh(client);
  int16_t * d = (int16_t*)mes->data;
  struct roard_listen * lsock;
@@ -365,7 +365,7 @@ int req_on_passfh      (int client, struct roar_message * mes, char * data) {
 }
 
 #ifdef ROAR_SUPPORT_META
-int req_on_set_meta    (int client, struct roar_message * mes, char * data) {
+int req_on_set_meta    (int client, struct roar_message * mes, char ** data, uint32_t flags[2]) {
  int type;
  int mode;
  int namelen, vallen;
@@ -437,7 +437,7 @@ int req_on_set_meta    (int client, struct roar_message * mes, char * data) {
  return -1;
 }
 
-int req_on_get_meta    (int client, struct roar_message * mes, char * data) {
+int req_on_get_meta    (int client, struct roar_message * mes, char ** data, uint32_t flags[2]) {
  int vallen;
  int type;
  char val[LIBROAR_BUFFER_MSGDATA-1];
@@ -468,7 +468,7 @@ int req_on_get_meta    (int client, struct roar_message * mes, char * data) {
  return 0;
 }
 
-int req_on_list_meta   (int client, struct roar_message * mes, char * data) {
+int req_on_list_meta   (int client, struct roar_message * mes, char ** data, uint32_t flags[2]) {
  int i;
  int len = 0;
  int types[ROAR_META_MAX_PER_STREAM];
@@ -493,7 +493,7 @@ int req_on_list_meta   (int client, struct roar_message * mes, char * data) {
 }
 #endif
 
-int req_on_server_oinfo    (int client, struct roar_message * mes, char * data) {
+int req_on_server_oinfo    (int client, struct roar_message * mes, char ** data, uint32_t flags[2]) {
  struct roar_stream s;
 //ROAR_DIR_OUTPUT
 
@@ -516,7 +516,7 @@ int req_on_server_oinfo    (int client, struct roar_message * mes, char * data) 
 }
 
 
-int req_on_get_standby (int client, struct roar_message * mes, char * data) {
+int req_on_get_standby (int client, struct roar_message * mes, char ** data, uint32_t flags[2]) {
  mes->cmd     = ROAR_CMD_OK;
  mes->pos     = g_pos;
  mes->datalen = 2;
@@ -526,7 +526,7 @@ int req_on_get_standby (int client, struct roar_message * mes, char * data) {
  return 0;
 }
 
-int req_on_set_standby (int client, struct roar_message * mes, char * data) {
+int req_on_set_standby (int client, struct roar_message * mes, char ** data, uint32_t flags[2]) {
  if ( mes->datalen != 2 )
   return -1;
 
@@ -539,7 +539,7 @@ int req_on_set_standby (int client, struct roar_message * mes, char * data) {
  return 0;
 }
 
-int req_on_exit      (int client, struct roar_message * mes, char * data) {
+int req_on_exit      (int client, struct roar_message * mes, char ** data, uint32_t flags[2]) {
  int term = 0;
 
  if ( mes->datalen == 1 )
@@ -560,7 +560,7 @@ int req_on_exit      (int client, struct roar_message * mes, char * data) {
  return 0;
 }
 
-int req_on_list_clients(int client, struct roar_message * mes, char * data) {
+int req_on_list_clients(int client, struct roar_message * mes, char ** data, uint32_t flags[2]) {
  unsigned char filter, cmp;
  uint32_t id;
  int clients[ROAR_CLIENTS_MAX];
@@ -585,7 +585,7 @@ int req_on_list_clients(int client, struct roar_message * mes, char * data) {
 
  return 0;
 }
-int req_on_list_streams(int client, struct roar_message * mes, char * data) {
+int req_on_list_streams(int client, struct roar_message * mes, char ** data, uint32_t flags[2]) {
  unsigned char filter, cmp;
  uint32_t id;
  int streams[ROAR_STREAMS_MAX];
@@ -611,7 +611,7 @@ int req_on_list_streams(int client, struct roar_message * mes, char * data) {
  return 0;
 }
 
-int req_on_get_client  (int client, struct roar_message * mes, char * data) {
+int req_on_get_client  (int client, struct roar_message * mes, char ** data, uint32_t flags[2]) {
  struct roar_client * c;
 
  if ( mes->datalen != 1 )
@@ -625,7 +625,7 @@ int req_on_get_client  (int client, struct roar_message * mes, char * data) {
  return roar_ctl_c2m(mes, c);
 }
 
-int req_on_get_stream  (int client, struct roar_message * mes, char * data) {
+int req_on_get_stream  (int client, struct roar_message * mes, char ** data, uint32_t flags[2]) {
  struct roar_stream_server * s;
 
  if ( mes->datalen != 1 )
@@ -640,7 +640,7 @@ int req_on_get_stream  (int client, struct roar_message * mes, char * data) {
  return roar_stream_s2m(ROAR_STREAM(s), mes);
 }
 
-int req_on_get_stream_para (int client, struct roar_message * mes, char * data) {
+int req_on_get_stream_para (int client, struct roar_message * mes, char ** data, uint32_t flags[2]) {
  struct roar_stream * s;
  struct roar_stream_server * ss;
  struct roar_audio_info * audio_info;
@@ -740,7 +740,7 @@ int req_on_get_stream_para (int client, struct roar_message * mes, char * data) 
  return 0;
 }
 
-int req_on_set_stream_para (int client, struct roar_message * mes, char * data) {
+int req_on_set_stream_para (int client, struct roar_message * mes, char ** data, uint32_t flags[2]) {
  uint16_t * d = (uint16_t *) mes->data;
  int i;
 
@@ -797,7 +797,7 @@ int req_on_set_stream_para (int client, struct roar_message * mes, char * data) 
  return 0;
 }
 
-int req_on_kick (int client, struct roar_message * mes, char * data) {
+int req_on_kick (int client, struct roar_message * mes, char ** data, uint32_t flags[2]) {
  uint16_t * info = (uint16_t *) mes->data;
 
  if ( mes->datalen != 4 )
@@ -832,7 +832,7 @@ int req_on_kick (int client, struct roar_message * mes, char * data) {
  return 0;
 }
 
-int req_on_attach      (int client, struct roar_message * mes, char * data) {
+int req_on_attach      (int client, struct roar_message * mes, char ** data, uint32_t flags[2]) {
  uint16_t * info = (uint16_t *) mes->data;
 
  if ( mes->datalen < 6 )
@@ -858,7 +858,7 @@ int req_on_attach      (int client, struct roar_message * mes, char * data) {
  return 0;
 }
 
-int req_on_set_vol (int client, struct roar_message * mes, char * data) {
+int req_on_set_vol (int client, struct roar_message * mes, char ** data, uint32_t flags[2]) {
  struct roar_stream_server * s;
  uint16_t * info = (uint16_t *) mes->data;
  uint16_t   version;
@@ -948,7 +948,7 @@ int req_on_set_vol (int client, struct roar_message * mes, char * data) {
  return 0;
 }
 
-int req_on_get_vol (int client, struct roar_message * mes, char * data) {
+int req_on_get_vol (int client, struct roar_message * mes, char ** data, uint32_t flags[2]) {
  uint16_t * info = (uint16_t *) mes->data;
  uint16_t   version = -1;
  int stream;
@@ -1030,7 +1030,7 @@ int req_on_get_vol (int client, struct roar_message * mes, char * data) {
  return 0;
 }
 
-int req_on_add_data (int client, struct roar_message * mes, char * data) {
+int req_on_add_data (int client, struct roar_message * mes, char ** data, uint32_t flags[2]) {
  struct roar_buffer * b;
  char               * buf;
 
@@ -1043,7 +1043,7 @@ int req_on_add_data (int client, struct roar_message * mes, char * data) {
  if ( data == NULL ) {
   memcpy(buf, mes->data, mes->datalen);
  } else {
-  memcpy(buf, data, mes->datalen);
+  memcpy(buf, *data, mes->datalen);
  }
 
  if ( stream_add_buffer(mes->stream, b) == -1 ) {
@@ -1057,7 +1057,7 @@ int req_on_add_data (int client, struct roar_message * mes, char * data) {
  return 0;
 }
 
-int req_on_beep        (int client, struct roar_message * mes, char * data) {
+int req_on_beep        (int client, struct roar_message * mes, char ** data, uint32_t flags[2]) {
  struct roar_beep bs;
  int16_t * info = (int16_t*)mes->data;
  int stream;
