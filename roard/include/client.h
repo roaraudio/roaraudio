@@ -56,6 +56,7 @@ int clients_free       (void);
 int clients_new        (void);
 int clients_new_from_fh(int fh, int proto, int byteorder, int update_nnode);
 int clients_delete     (int id);
+int clients_close      (int id, int nocheck_exec);
 int clients_set_fh     (int id, int    fh);
 int clients_set_pid    (int id, int    pid);
 int clients_set_uid    (int id, int    uid);

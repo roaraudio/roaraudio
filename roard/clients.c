@@ -152,6 +152,29 @@ int clients_delete (int id) {
  return 0;
 }
 
+int clients_close      (int id, int nocheck_exec) {
+ struct roar_client * c;
+
+ ROAR_DBG("clients_close(id=%i) = ?", id);
+
+ _CHECK_CID(id);
+
+ c = g_clients[id];
+
+ if ( c->fh == -1 ) {
+  ROAR_DBG("clients_delete(id=%i) = 0", id);
+  return 0;
+ }
+
+ if (nocheck_exec || g_clients[id]->execed != -1) {
+  close(c->fh);
+  c->fh = -1;
+ }
+
+ ROAR_DBG("clients_delete(id=%i) = 0", id);
+ return 0;
+}
+
 int clients_get       (int id, struct roar_client ** client) {
  _CHECK_CID(id);
 
