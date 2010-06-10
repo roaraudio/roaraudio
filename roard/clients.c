@@ -471,6 +471,10 @@ int clients_check     (int id) {
     }
 
     roar_send_message(&con, &m, NULL);
+
+    if ( flags[1] & COMMAND_FLAG_OUT_CLOSECON )
+     clients_close(id, 1);
+
    break;
 #ifndef ROAR_WITHOUT_DCOMP_EMUL_ESD
 #ifdef ROAR_HAVE_H_ESD

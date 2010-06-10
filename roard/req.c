@@ -234,8 +234,13 @@ int req_on_exec_stream (int client, struct roar_message * mes, char ** data, uin
 
  ROAR_DBG("req_on_exec_stream(client=%i, mes={stream=%i,...},...): execing stream", client, mes->stream);
 
- if ( (r = client_stream_exec(client, mes->stream)) == -1 )
-  return -1;
+
+ if ( streams_is_ready(mes->stream) ) {
+  flags[1] |= COMMAND_FLAG_OUT_CLOSECON;
+ } else {
+  if ( (r = client_stream_exec(client, mes->stream)) == -1 )
+   return -1;
+ }
 
  ROAR_DBG("req_on_exec_stream(client=%i, mes={stream=%i,...},...): returning (OK)...", client, mes->stream);
  mes->cmd     = ROAR_CMD_OK;
