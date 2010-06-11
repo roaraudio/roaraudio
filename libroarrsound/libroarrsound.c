@@ -311,7 +311,7 @@ int rsd_exec (rsound_t *rd) {
  // we hope nothing goes wrong here:
  rsd_free(rd);
 
- ROAR_DBG("rsd_exec(rd=%p) = %i", fh);
+ ROAR_DBG("rsd_exec(rd=%p) = %i", rd, fh);
 
  return fh;
 }
