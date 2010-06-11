@@ -1,4 +1,5 @@
 v. 0.3beta6 - ?
+	Prereleases: 0: Fri Jun 11 2010 10:47 CEST
 	* Added something like select() for VIOs
 	* Fixed a lot warnings
 	* disabled cmd codecfilter by default
