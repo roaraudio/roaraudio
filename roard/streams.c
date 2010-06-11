@@ -1189,7 +1189,8 @@ int streams_fill_mixbuffer2 (int id, struct roar_audio_info * info) {
   }
  }
 
- s->pos = ROAR_MATH_OVERFLOW_ADD(s->pos, ROAR_OUTPUT_CALC_OUTBUFSAMP(info, outlen)*stream_info->channels);
+ ROAR_DBG("streams_fill_mixbuffer2(*): inlen_got=%llu, stream_info={.bits=%i, .rate=%i,...}", (long long unsigned int)inlen_got, stream_info->bits, stream_info->rate);
+ s->pos = ROAR_MATH_OVERFLOW_ADD(s->pos, (inlen_got*8)/stream_info->bits);
 
  ROAR_DBG("streams_fill_mixbuffer2(*) = 0");
  return 0;
