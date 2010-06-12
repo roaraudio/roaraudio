@@ -65,7 +65,7 @@ struct pa_context {
 };
 
 // older versions:
-typedef void pa_proplist;
+typedef struct pa_proplist pa_proplist;
 pa_context *pa_context_new_with_proplist(pa_mainloop_api *mainloop, const char *name, pa_proplist *proplist);
 
 void pa_context_set_state(pa_context *c, pa_context_state_t st);
