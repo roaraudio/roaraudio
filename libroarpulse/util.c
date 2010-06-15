@@ -63,9 +63,9 @@ ROAR_HAVE_TYPE_PA_PATH_GET_FILENAME pa_path_get_filename(const char *p) {
  char * r;
 
  if ( (r = strrchr(p, '/')) ) {
-  return (const char *) r+1;
+  return (ROAR_HAVE_TYPE_PA_PATH_GET_FILENAME) r+1;
  } else {
-  return p;
+  return (ROAR_HAVE_TYPE_PA_PATH_GET_FILENAME) p;
  }
 
 }

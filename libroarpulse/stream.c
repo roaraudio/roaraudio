@@ -78,7 +78,7 @@ struct pa_stream {
  } op;
 };
 
-typedef void pa_proplist;
+typedef struct pa_proplist pa_proplist;
 void pa_stream_set_state(pa_stream *s, pa_stream_state_t st);
 
 pa_stream* pa_stream_new_with_proplist(
@@ -354,7 +354,7 @@ int pa_stream_connect_playback(
         pa_stream_flags_t flags       /**< Additional flags, or 0 for default */,
         ROAR_HAVE_ARG_VOLUME_OF_PA_STREAM_CONNECT_PLAYBACK volume            /**< Initial volume, or NULL for default */,
         pa_stream *sync_stream        /**< Synchronize this stream with the specified one, or NULL for a standalone stream*/) {
- return _roar_pa_stream_open(s, dev, attr, flags, volume, sync_stream, PA_STREAM_PLAYBACK);
+ return _roar_pa_stream_open(s, dev, attr, flags, (pa_cvolume*)volume, sync_stream, PA_STREAM_PLAYBACK);
 }
 
 /** Connect the stream to a source */
