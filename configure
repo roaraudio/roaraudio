@@ -966,7 +966,7 @@ fi
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.266 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.267 $ of RoarAudio
  */
 
 EOF
@@ -1538,6 +1538,12 @@ test_func_defmake ROAR_HAVE_GETSERVBYNAME   getservbyname   'getservbyname((void
 test_pa_type ROAR_HAVE_TYPE_PA_PATH_GET_FILENAME pa_path_get_filename type 'const char *' 'char *' 'const char *pa_path_get_filename(const char *p) { return NULL; }' pulse/simple.h
 
 test_pa_type ROAR_HAVE_TYPE_PA_UTF8_VALID pa_utf8_valid type 'const char *' 'char *' 'const char *pa_utf8_valid(const char *str) { return NULL; }'
+
+test_pa_type ROAR_HAVE_ARG_SINK_NAME_OF_PA_CONTEXT_MOVE_SINK_INPUT_BY_NAME pa_context_move_sink_input_by_name args:'pa_context *c, uint32_t idx, %s sink_name, pa_context_success_cb_t cb, void* userdata' 'const char *' 'char *' 'pa_operation* pa_context_move_sink_input_by_name(pa_context *c, uint32_t idx, const char *sink_name, pa_context_success_cb_t cb, void* userdata) { return NULL; }'
+
+test_pa_type ROAR_HAVE_ARG_SOURCE_NAME_OF_PA_CONTEXT_MOVE_SOURCE_OUTPUT_BY_NAME pa_context_move_source_output_by_name args:'pa_context *c, uint32_t idx, %s source_name, pa_context_success_cb_t cb, void* userdata)' 'const char *' 'char *' 'pa_operation* pa_context_move_source_output_by_name(pa_context *c, uint32_t idx, const char *source_name, pa_context_success_cb_t cb, void* userdata) { return NULL; }'
+
+test_pa_type ROAR_HAVE_ARG_VOLUME_OF_PA_STREAM_CONNECT_PLAYBACK pa_stream_connect_playback args:'pa_stream *s, const char *dev, const pa_buffer_attr *attr, pa_stream_flags_t flags, %s volume, pa_stream *sync_stream' 'const pa_cvolume *' 'pa_cvolume *' 'int pa_stream_connect_playback(pa_stream *s, const char *dev, const pa_buffer_attr *attr, pa_stream_flags_t flags, const pa_cvolume * volume, pa_stream *sync_stream) { return -1; }'
 # --- End of PulseAudio tests ---
 
 
