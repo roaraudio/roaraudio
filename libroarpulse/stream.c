@@ -352,7 +352,7 @@ int pa_stream_connect_playback(
         const char *dev               /**< Name of the sink to connect to, or NULL for default */ ,
         const pa_buffer_attr *attr    /**< Buffering attributes, or NULL for default */,
         pa_stream_flags_t flags       /**< Additional flags, or 0 for default */,
-        pa_cvolume *volume            /**< Initial volume, or NULL for default */,
+        ROAR_HAVE_ARG_VOLUME_OF_PA_STREAM_CONNECT_PLAYBACK volume            /**< Initial volume, or NULL for default */,
         pa_stream *sync_stream        /**< Synchronize this stream with the specified one, or NULL for a standalone stream*/) {
  return _roar_pa_stream_open(s, dev, attr, flags, volume, sync_stream, PA_STREAM_PLAYBACK);
 }
