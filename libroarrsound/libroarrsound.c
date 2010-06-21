@@ -82,6 +82,67 @@ int rsd_init (rsound_t **rd) {
  return 0;
 }
 
+/* This is a simpler function that initializes an rsound struct, sets params as given,
+   and starts the stream. Should this function fail, the structure will stay uninitialized.
+   Should NULL be passed in either host, port or ident, defaults will be used. */
+
+int rsd_simple_start (rsound_t **rd, const char* host, const char* port, const char* ident,
+                           int rate, int channels, int format) {
+ rsound_t * rsound;
+
+ if ( rsd_init(rd) == -1 )
+  return -1;
+
+ if ( *rd == NULL )
+  return -1;
+
+ rsound = *rd;
+
+ if ( host != NULL ) {
+  if ( rsd_set_param(rsound, RSD_HOST, (void*)host) == -1 ) {
+   rsd_free(rsound);
+   return -1;
+  }
+ }
+
+ if ( port != NULL ) {
+  if ( rsd_set_param(rsound, RSD_PORT, (void*)port) == -1 ) {
+   rsd_free(rsound);
+   return -1;
+  }
+ }
+
+ if ( ident != NULL ) {
+  if ( rsd_set_param(rsound, RSD_IDENTITY, (void*)ident) == -1 ) {
+   rsd_free(rsound);
+   return -1;
+  }
+ }
+
+ if ( rsd_set_param(rsound, RSD_FORMAT, &format) == -1 ) {
+  rsd_free(rsound);
+  return -1;
+ }
+
+ if ( rsd_set_param(rsound, RSD_CHANNELS, &channels) == -1 ) {
+  rsd_free(rsound);
+  return -1;
+ }
+
+ if ( rsd_set_param(rsound, RSD_SAMPLERATE, &rate) == -1 ) {
+  rsd_free(rsound);
+  return -1;
+ }
+
+ if ( rsd_start(rsound) == -1 ) {
+  rsd_free(rsound);
+  return -1;
+ }
+
+ return 0;
+}
+
+
 /* Frees an rsound_t struct. */
 int rsd_free (rsound_t *rd) {
  struct libroarrsound * self = (struct libroarrsound *)rd;
