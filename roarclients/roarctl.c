@@ -883,9 +883,14 @@ int show_aiprofile (const char * profile) {
  }
 
  printf("Profile Name          : %s\n", profile);
- printf("Profile sample rate   : %i\n", info.rate);
- printf("Profile bits          : %i\n", info.bits);
- printf("Profile channels      : %i\n", info.channels);
+
+ if ( info.rate )
+  printf("Profile sample rate   : %i\n", info.rate);
+ if ( info.bits )
+  printf("Profile bits          : %i\n", info.bits);
+ if ( info.channels )
+  printf("Profile channels      : %i\n", info.channels);
+
  printf("Profile codec         : %2i (%s%s)\n", info.codec, roar_codec2str(info.codec),
                                        info.codec == ROAR_CODEC_DEFAULT ? " native" : "");
 
