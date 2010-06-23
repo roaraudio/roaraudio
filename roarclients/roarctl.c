@@ -874,6 +874,44 @@ int set_flags (struct roar_connection * con, int id, int reset, char * flags) {
  return roar_stream_set_flags(con, s, f, reset);
 }
 
+int show_aiprofile (const char * profile) {
+ struct roar_audio_info info;
+
+ if ( roar_profile2info(&info, profile) == -1 ) {
+  fprintf(stderr, "Error: unknown profile: %s\n", profile);
+  return -1;
+ }
+
+ printf("Profile Name          : %s\n", profile);
+ printf("Profile sample rate   : %i\n", info.rate);
+ printf("Profile bits          : %i\n", info.bits);
+ printf("Profile channels      : %i\n", info.channels);
+ printf("Profile codec         : %2i (%s%s)\n", info.codec, roar_codec2str(info.codec),
+                                       info.codec == ROAR_CODEC_DEFAULT ? " native" : "");
+
+ return 0;
+}
+
+int list_aiprofiles (void) {
+ const char * list[1024];
+ ssize_t ret;
+ ssize_t i;
+
+ ret = roar_profiles_list(list, 1024, 0);
+
+ if ( ret == -1 ) {
+  fprintf(stderr, "Error: can not read list of profiles\n");
+  return -1;
+ }
+
+ for (i = 0; i < ret; i++) {
+  printf("profile %lli:\n", (long long signed int)i);
+  show_aiprofile(list[i]);
+ }
+
+ return 0;
+}
+
 int main (int argc, char * argv[]) {
  struct roar_connection con;
  char * server   = NULL;
@@ -1072,6 +1110,16 @@ int main (int argc, char * argv[]) {
    }
    i++;
 
+
+  } else if ( !strcmp(k, "listprofiles") ) {
+   if ( list_aiprofiles() == -1 ) {
+    fprintf(stderr, "Error: can not list profiles\n");
+   }
+  } else if ( !strcmp(k, "profileget") ) {
+   i++;
+   if ( show_aiprofile(argv[i]) == -1 ) {
+    fprintf(stderr, "Error: can not get profile data\n");
+   }
   } else {
    fprintf(stderr, "Error: invalid command: %s\n", k);
   }

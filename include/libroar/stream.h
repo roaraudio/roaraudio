@@ -161,6 +161,9 @@ ssize_t roar_info2samplesize (struct roar_audio_info * info);
 ssize_t roar_info2framesize  (struct roar_audio_info * info);
 ssize_t roar_info2bitspersec (struct roar_audio_info * info);
 
+int     roar_profile2info    (struct roar_audio_info * info, const char * profile);
+ssize_t roar_profiles_list   (const char ** list, size_t len, size_t offset);
+
 #endif
 
 //ll

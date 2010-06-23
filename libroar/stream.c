@@ -1010,4 +1010,52 @@ ssize_t roar_info2bitspersec(struct roar_audio_info * info) {
  return ret;
 }
 
+static struct {
+ const char * name;
+ struct roar_audio_info info;
+} _libroar_aiprofiles[] = {
+ {"default", {.rate     = ROAR_RATE_DEFAULT,
+              .bits     = ROAR_BITS_DEFAULT,
+              .channels = ROAR_CHANNELS_DEFAULT,
+              .codec    = ROAR_CODEC_DEFAULT}},
+ {"cd",      {.rate =  44100, .bits = 16, .channels = 2, .codec = ROAR_CODEC_DEFAULT}},
+ {"cdr",     {.rate =  44100, .bits = 16, .channels = 2, .codec = ROAR_CODEC_PCM_S_BE}},
+ {"dat",     {.rate =  48000, .bits = 16, .channels = 2, .codec = ROAR_CODEC_PCM_S_LE}},
+ {"isdn-eu", {.rate =   8000, .bits =  8, .channels = 1, .codec = ROAR_CODEC_ALAW}},
+ {NULL,      {.rate =      0, .bits =  0, .channels = 0, .codec = 0}}
+};
+
+int     roar_profile2info    (struct roar_audio_info * info, const char * profile) {
+ int i;
+
+ for (i = 0; _libroar_aiprofiles[i].name != NULL; i++) {
+  if ( !strcasecmp(_libroar_aiprofiles[i].name, profile) ) {
+   memcpy(info, &(_libroar_aiprofiles[i].info), sizeof(struct roar_audio_info));
+   return 0;
+  }
+ }
+
+ return -1;
+}
+
+ssize_t   roar_profiles_list   (const char ** list, size_t len, size_t offset) {
+ size_t i;
+ int idx = 0;
+
+ if ( list == NULL )
+  return -1;
+
+ if ( len == 0 )
+  return 0;
+
+ if ( offset >= (sizeof(_libroar_aiprofiles)/sizeof(*_libroar_aiprofiles)) )
+  return 0;
+
+ for (i = offset; _libroar_aiprofiles[i].name != NULL; i++) {
+  list[idx++] = _libroar_aiprofiles[i].name;
+ }
+
+ return idx;
+}
+
 //ll
