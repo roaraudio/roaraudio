@@ -1014,15 +1014,22 @@ static struct {
  const char * name;
  struct roar_audio_info info;
 } _libroar_aiprofiles[] = {
- {"default", {.rate     = ROAR_RATE_DEFAULT,
-              .bits     = ROAR_BITS_DEFAULT,
-              .channels = ROAR_CHANNELS_DEFAULT,
-              .codec    = ROAR_CODEC_DEFAULT}},
- {"cd",      {.rate =  44100, .bits = 16, .channels = 2, .codec = ROAR_CODEC_DEFAULT}},
- {"cdr",     {.rate =  44100, .bits = 16, .channels = 2, .codec = ROAR_CODEC_PCM_S_BE}},
- {"dat",     {.rate =  48000, .bits = 16, .channels = 2, .codec = ROAR_CODEC_PCM_S_LE}},
- {"isdn-eu", {.rate =   8000, .bits =  8, .channels = 1, .codec = ROAR_CODEC_ALAW}},
- {NULL,      {.rate =      0, .bits =  0, .channels = 0, .codec = 0}}
+ {"default",   {.rate     = ROAR_RATE_DEFAULT,
+                .bits     = ROAR_BITS_DEFAULT,
+                .channels = ROAR_CHANNELS_DEFAULT,
+                .codec    = ROAR_CODEC_DEFAULT}},
+ {"cd",        {.rate =  44100, .bits = 16, .channels =  2, .codec = ROAR_CODEC_DEFAULT}},
+ {"cdr",       {.rate =  44100, .bits = 16, .channels =  2, .codec = ROAR_CODEC_PCM_S_BE}},
+ {"dat",       {.rate =  48000, .bits = 16, .channels =  2, .codec = ROAR_CODEC_PCM_S_LE}},
+ {"isdn-eu",   {.rate =   8000, .bits =  8, .channels =  1, .codec = ROAR_CODEC_ALAW}},
+ {"isdn-na",   {.rate =   8000, .bits =  8, .channels =  1, .codec = ROAR_CODEC_MULAW}},
+ {"speex-nb",  {.rate =   8000, .bits = 16, .channels =  2, .codec = ROAR_CODEC_ROAR_SPEEX}},
+ {"speex-wb",  {.rate =  16000, .bits = 16, .channels =  2, .codec = ROAR_CODEC_ROAR_SPEEX}},
+ {"speex-uwb", {.rate =  32000, .bits = 16, .channels =  2, .codec = ROAR_CODEC_ROAR_SPEEX}},
+ {"rds",       {.rate =      0, .bits =  0, .channels =  0, .codec = ROAR_CODEC_RDS}},
+ {"midi",      {.rate =      0, .bits =  8, .channels = 16, .codec = ROAR_CODEC_MIDI}},
+ {"dmx512",    {.rate =      0, .bits =  8, .channels =  0, .codec = ROAR_CODEC_DMX512}},
+ {NULL,        {.rate =      0, .bits =  0, .channels =  0, .codec = 0}}
 };
 
 int     roar_profile2info    (struct roar_audio_info * info, const char * profile) {
