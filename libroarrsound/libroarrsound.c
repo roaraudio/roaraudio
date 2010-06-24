@@ -87,7 +87,7 @@ int rsd_init (rsound_t **rd) {
    Should NULL be passed in either host, port or ident, defaults will be used. */
 
 int rsd_simple_start (rsound_t **rd, const char* host, const char* port, const char* ident,
-                           int rate, int channels, int format) {
+                           int rate, int channels, enum rsd_format format) {
  rsound_t * rsound;
 
  if ( rsd_init(rd) == -1 )
