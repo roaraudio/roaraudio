@@ -703,6 +703,39 @@ static int _open_file (const char *pathname, int flags) {
 }
 
 // -------------------------------------
+// VIO open function:
+// -------------------------------------
+
+int libroaross_open_vio(struct handle ** handleret, struct roar_vio_calls ** vio, int flags) {
+ struct handle  * handle;
+ struct pointer * pointer;
+
+ _init();
+
+ if ( vio == NULL )
+  return -1;
+
+ if ( (handle = _open_handle(NULL)) == NULL ) {
+  return -1;
+ }
+
+ handle->type        = HT_VIO;
+ handle->sysio_flags = flags;
+
+ *vio = &(handle->stream_vio);
+
+ if ( handleret != NULL )
+  *handleret = handle;
+
+ if ( (pointer = _open_pointer(handle)) == NULL ) {
+  _close_handle(handle);
+  return -1;
+ }
+
+ return pointer->fh;
+}
+
+// -------------------------------------
 // open function for streams:
 // -------------------------------------
 
