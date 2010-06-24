@@ -7,6 +7,7 @@ CONFIGURE=true
 BUILD=true
 TEST=true
 PORT=''
+REV='HEAD'
 
 SSH_OPTS=''
 
@@ -23,6 +24,7 @@ cat <<HELP
     --configure={true,false}      - configure on remote site?
     --test={true,false}           - test on remote site?
     --port=PORT                   - Set port of remote site
+    --rev=REVISION                - Set the revision (or tag) to send
 HELP
    exit 0;
   ;;
@@ -40,6 +42,9 @@ HELP
   ;;
   '--port='*)
    PORT=`echo $1 | cut -d= -f2`
+  ;;
+  '--rev='*)
+   REV=`echo $1 | cut -d= -f2`
   ;;
   *)
     REMOTEHOST="$1"
@@ -63,7 +68,7 @@ LOCALDIR="sra-@$REMOTEHOST"
 mkdir $LOCALDIR
 
 cd $LOCALDIR
-cvs co roaraudio
+cvs co -r $REV roaraudio
 cd ..
 
 {
