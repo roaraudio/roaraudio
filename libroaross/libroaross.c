@@ -569,11 +569,13 @@ static int _open_file (const char *pathname, int flags) {
  * O_DIRECT, O_APPEND, O_LARGEFILE, O_NOATIME, O_NOCTTY, O_TRUNC
  */
 
+#ifdef O_ASYNC
  if ( flags & O_ASYNC ) {
   ROAR_DBG("_open_file(pathname='%s', flags=0x%x) = -1 // not supported O_ASYNC", pathname, flags);
   errno = ENOSYS;
   return -1;
  }
+#endif
 
  if ( (flags & O_DIRECTORY) || (flags & O_EXCL) ) {
   ROAR_DBG("_open_file(pathname='%s', flags=0x%x) = -1 // invalid flags (O_DIRECTORY or O_EXCL)", pathname, flags);
