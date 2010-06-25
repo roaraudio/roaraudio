@@ -80,7 +80,7 @@ void usage (void) {
         " -R  --rate   RATE     - Set server rate\n"
         " -B  --bits   BITS     - Set server bits\n"
         " -C  --chans  CHANNELS - Set server channels\n"
-        " --aiprofile PROFILE   - Use the given audio profile\n"
+        " --aiprofile  PROFILE  - Use the given audio profile\n"
        );
 
  printf("\nStream Options:\n\n");
