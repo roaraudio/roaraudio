@@ -352,6 +352,7 @@ static struct _listen_profile {
  // TODO: convert port numbers into consts!
 
  // RoarAudio:
+ {"roar-usock",     ROAR_SOCKET_TYPE_UNIX,   0,                 "~/.roar",          ROAR_PROTO_ROARAUDIO, -1, NULL, NULL},
  {"roar-gsock",     ROAR_SOCKET_TYPE_UNIX,   0,                 "/tmp/roar",        ROAR_PROTO_ROARAUDIO, -1, NULL, NULL},
  {"roar-tcp",       ROAR_SOCKET_TYPE_TCP,    ROAR_DEFAULT_PORT, "localhost",        ROAR_PROTO_ROARAUDIO, -1, NULL, NULL},
  {"roar-tcp-pub",   ROAR_SOCKET_TYPE_TCP,    ROAR_DEFAULT_PORT, "0.0.0.0",          ROAR_PROTO_ROARAUDIO, -1, NULL, NULL},
@@ -417,7 +418,11 @@ int get_listen_profile (const char * name,
   if ( !strcasecmp(p->name, name) ) {
    *port     = p->port;
 
-   strcpy(buf, p->sockaddr);
+   if ( p->type == ROAR_SOCKET_TYPE_UNIX && p->sockaddr[0] != '+' ) {
+    roar_env_render_path_r(buf, sizeof(buf), p->sockaddr);
+   } else {
+    strncpy(buf, p->sockaddr, sizeof(buf));
+   }
    *sockaddr = buf;
 
    *proto    = p->proto;
@@ -1193,8 +1198,12 @@ int main (void) {
 
 #ifdef ROAR_HAVE_GETUID
  if ( getuid() != 0 && getenv("HOME") != NULL ) {
+/*
   snprintf(user_sock, 79, "%s/%s", (char*)getenv("HOME"), ROAR_DEFAULT_SOCK_USER);
+*/
+  roar_env_render_path_r(user_sock, sizeof(user_sock), "~/" ROAR_DEFAULT_SOCK_USER);
   sock_addr = user_sock;
+  ROAR_DBG("main(*): setting sock_addr='%s'", sock_addr);
  }
 #endif
 
