@@ -58,6 +58,7 @@ void usage (void) {
  printf("  --server SERVER         - Set server hostname\n"
         "  --help                  - Show this help\n"
         "  --verbose   -v          - Show verbose output\n"
+        "  --list-aiprofiles       - Show audio info profiles and exit\n"
        );
 
  printf("\nCommands:\n\n");
@@ -68,6 +69,9 @@ void usage (void) {
         "  ping  NUM               - Do NUM pings using NOOP commands\n"
 #endif
         "  whoami                  - Get own client ID\n"
+        "\n"
+        "  listaiprofiles          - list audio info profiles\n"
+        "  aiprofileget PROFILE    - show audio info profile PROFILE\n"
         "\n"
         "  standby, off            - Go into standby mode\n"
         "  resume, on              - Go into active mode\n"
@@ -1119,11 +1123,11 @@ int main (int argc, char * argv[]) {
    i++;
 
 
-  } else if ( !strcmp(k, "listprofiles") ) {
+  } else if ( !strcmp(k, "listaiprofiles") || !strcmp(k, "listprofiles") ) {
    if ( list_aiprofiles() == -1 ) {
     fprintf(stderr, "Error: can not list profiles\n");
    }
-  } else if ( !strcmp(k, "profileget") ) {
+  } else if ( !strcmp(k, "aiprofileget") || !strcmp(k, "profileget") ) {
    i++;
    if ( show_aiprofile(argv[i]) == -1 ) {
     fprintf(stderr, "Error: can not get profile data\n");
