@@ -46,7 +46,7 @@ void print_header (int codec, int rate, int channels) {
  printf("Content-type: %s\r\n", mime);
  printf("ice-audio-info: ice-samplerate=%i;ice-channels=%i\r\n", rate, channels);
  printf("icy-pub:0\r\n");
- printf("Server: RoarAudio (roarmonhttp $Revision: 1.19 $)\r\n");
+ printf("Server: RoarAudio (roarmonhttp $Revision: 1.20 $)\r\n");
  printf("\r\n");
 
  fflush(stdout);
@@ -139,6 +139,7 @@ int stream (int dest, int src) {
 
 #ifdef _CAN_SET_ENV
 int parse_http (int * gopher) {
+ struct roar_keyval kv;
  char buf[1024];
  char * qs = buf, *str;
  ssize_t len;
@@ -189,18 +190,10 @@ int parse_http (int * gopher) {
 
  fflush(stdout);
 
-#ifdef ROAR_HAVE_SETENV
- setenv("QUERY_STRING", qs, 1);
-#else
- // TODO: does this leak memory?
- if ( (str = malloc(strlen(qs) + strlen("QUERY_STRING=") + 1)) == NULL ) {
-  return -1;
- }
+ kv.key   = "QUERY_STRING";
+ kv.value = qs;
 
- sprintf(str, "QUERY_STRING=%s", qs);
-
- putenv(str);
-#endif
+ roar_env_set(&kv);
 
  return dir;
 }
