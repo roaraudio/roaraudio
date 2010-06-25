@@ -178,6 +178,8 @@ void usage (void) {
         "     --proto-bits BITS - Set bits per sample parameter for protocol\n"
         "     --proto-codec E   - Set codec parameter for protocol\n"
         "     --proto-chans C   - Set number of channels paramter for protocol\n"
+        "     --proto-aiprofile PROFILE\n"
+        "                       - Sets the audio profile for socket\n" 
         "     --list-proto      - List supported protocols\n"
         "     --new-sock        - Parameters for new socket follows\n"
 #ifdef ROAR_HAVE_LIBSLP
@@ -1471,6 +1473,13 @@ int main (void) {
 #ifdef ROAR_SUPPORT_LISTEN
    if ( (sock_info.codec = roar_str2codec(argv[++i])) == -1 ) {
     ROAR_ERR("Unknown codec: %s", argv[i]);
+    return 1;
+   }
+#endif
+  } else if ( strcmp(k, "--proto-aiprofile") == 0 ) {
+#ifdef ROAR_SUPPORT_LISTEN
+   if ( roar_profile2info(&sock_info, argv[++i]) == -1 ) {
+    ROAR_ERR("Unknown audio profile: %s", argv[i]);
     return 1;
    }
 #endif
