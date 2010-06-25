@@ -934,6 +934,9 @@ int main (int argc, char * argv[]) {
   } else if ( strcmp(k, "--help") == 0 ) {
    usage();
    return 0;
+  } else if ( strcmp(k, "--list-aiprofiles") == 0 ) {
+   list_aiprofiles();
+   return 0;
   } else if ( *k == '-' ) {
    fprintf(stderr, "Error: unknown argument: %s\n", k);
    usage();
