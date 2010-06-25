@@ -35,7 +35,20 @@
 
 #include "libroar.h"
 
-int roar_env_set(struct roar_keyval * keyval);
+int roar_env_set(struct roar_keyval * keyval) {
+#ifdef ROAR_HAVE_SETENV
+ return setenv(keyval->key, keyval->value, 1);
+#else
+ // TODO: does this leak memory?
+ if ( (str = malloc(strlen(keyval->key) + strlen(keyval->value) + 2)) == NULL ) {
+  return -1;
+ }
+
+ sprintf(str, "%s=%s", keyval->key, keyval->value);
+
+ return putenv(str) == 0 ? 0 : -1;
+#endif
+}
 
 const char * roar_env_get_home(int level) {
  const char * home = getenv("HOME");
