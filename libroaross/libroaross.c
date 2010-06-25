@@ -722,6 +722,11 @@ int libroaross_open_vio(struct handle ** handleret, struct roar_vio_calls ** vio
  handle->type        = HT_VIO;
  handle->sysio_flags = flags;
 
+ if ( roar_vio_init_calls(&(handle->stream_vio)) == -1 ) {
+  _close_handle(handle);
+  return -1;
+ }
+
  *vio = &(handle->stream_vio);
 
  if ( handleret != NULL )
