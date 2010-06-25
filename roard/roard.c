@@ -365,6 +365,7 @@ static struct _listen_profile {
  {"esd-tcp-pub",    ROAR_SOCKET_TYPE_TCP,    16001,             "0.0.0.0",          ROAR_PROTO_ESOUND,    -1, NULL, NULL},
 
  // RSound:
+ {"rsound-unix",    ROAR_SOCKET_TYPE_UNIX,   0,                 "/tmp/rsound",      ROAR_PROTO_RSOUND,    -1, NULL, NULL},
  {"rsound-tcp",     ROAR_SOCKET_TYPE_TCP,    12345,             "localhost",        ROAR_PROTO_RSOUND,    -1, NULL, NULL},
  {"rsound-tcp-pub", ROAR_SOCKET_TYPE_TCP,    12345,             "0.0.0.0",          ROAR_PROTO_RSOUND,    -1, NULL, NULL},
  {"rsound-dnet",    ROAR_SOCKET_TYPE_DECNET, 0,                 "::rsound",         ROAR_PROTO_RSOUND,    -1, NULL, NULL},
