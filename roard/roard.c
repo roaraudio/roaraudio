@@ -80,6 +80,7 @@ void usage (void) {
         " -R  --rate   RATE     - Set server rate\n"
         " -B  --bits   BITS     - Set server bits\n"
         " -C  --chans  CHANNELS - Set server channels\n"
+        " --aiprofile PROFILE   - Use the given audio profile\n"
        );
 
  printf("\nStream Options:\n\n");
@@ -1345,6 +1346,13 @@ int main (void) {
    sa.bits = atoi(argv[++i]);
   } else if ( strcmp(k, "-C") == 0 || strcmp(k, "--chans") == 0 ) {
    sa.channels = atoi(argv[++i]);
+
+  } else if ( strcmp(k, "--aiprofile") == 0 ) {
+   if ( roar_profile2info(&sa, argv[++i]) == -1 ) {
+    ROAR_ERR("Unknown audio profile: %s", argv[i]);
+    return 1;
+   }
+   sa.codec    = ROAR_CODEC_DEFAULT;
 
   } else if ( strcmp(k, "--stream-flags") == 0 ) {
    if ( update_stream_flags(argv[++i]) == -1 ) {
