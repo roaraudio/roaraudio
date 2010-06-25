@@ -180,7 +180,9 @@ void usage (void) {
         "     --proto-chans C   - Set number of channels paramter for protocol\n"
         "     --proto-aiprofile PROFILE\n"
         "                       - Sets the audio profile for socket\n" 
+        "     --proto-profile P - Set profile for listen socket\n"
         "     --list-proto      - List supported protocols\n"
+        "     --list-profiles   - List supported profiles for --proto-profile\n"
         "     --new-sock        - Parameters for new socket follows\n"
 #ifdef ROAR_HAVE_LIBSLP
         "     --slp             - Enable OpenSLP support\n"
@@ -335,6 +337,97 @@ int get_listen(struct roard_listen ** sock, char *** sockname) {
 
  return -1;
 }
+
+#ifdef ROAR_SUPPORT_LISTEN
+static struct _listen_profile {
+ const char * name;
+ int          type;
+ int          port;
+ const char * sockaddr;
+ int          proto;
+ int          dir;
+ const char * aiprofile;
+ const char * desc;
+} _g_listen_profiles[] = {
+ // TODO: convert port numbers into consts!
+
+ // RoarAudio:
+ {"roar-gsock",     ROAR_SOCKET_TYPE_UNIX,   0,                 "/tmp/roar",        ROAR_PROTO_ROARAUDIO, -1, NULL, NULL},
+ {"roar-tcp",       ROAR_SOCKET_TYPE_TCP,    ROAR_DEFAULT_PORT, "localhost",        ROAR_PROTO_ROARAUDIO, -1, NULL, NULL},
+ {"roar-tcp-pub",   ROAR_SOCKET_TYPE_TCP,    ROAR_DEFAULT_PORT, "0.0.0.0",          ROAR_PROTO_ROARAUDIO, -1, NULL, NULL},
+ {"roar-dnet",      ROAR_SOCKET_TYPE_DECNET, 0,                 "::roar",           ROAR_PROTO_ROARAUDIO, -1, NULL, NULL},
+
+ // EsounD:
+ {"esd-unix",       ROAR_SOCKET_TYPE_UNIX,   0,                 "/tmp/.esd/socket", ROAR_PROTO_ESOUND,    -1, NULL, NULL},
+ {"esd-tcp",        ROAR_SOCKET_TYPE_TCP,    16001,             "localhost",        ROAR_PROTO_ESOUND,    -1, NULL, NULL},
+ {"esd-tcp-pub",    ROAR_SOCKET_TYPE_TCP,    16001,             "0.0.0.0",          ROAR_PROTO_ESOUND,    -1, NULL, NULL},
+
+ // RSound:
+ {"rsound-tcp",     ROAR_SOCKET_TYPE_TCP,    12345,             "localhost",        ROAR_PROTO_RSOUND,    -1, NULL, NULL},
+ {"rsound-tcp-pub", ROAR_SOCKET_TYPE_TCP,    12345,             "0.0.0.0",          ROAR_PROTO_RSOUND,    -1, NULL, NULL},
+ {"rsound-dnet",    ROAR_SOCKET_TYPE_DECNET, 0,                 "::rsound",         ROAR_PROTO_RSOUND,    -1, NULL, NULL},
+ {NULL, -1, -1, NULL, -1, -1, NULL, NULL}
+};
+
+void listen_listen_profiles (void) {
+ struct _listen_profile * p;
+ char * type;
+ int i;
+
+ printf("Name           Type    Addrress         Port    Protocol  Dir        Audio Profile - Description\n");
+ printf("------------------------------------------------------------------------------------------------\n");
+      //roar-tcp-pub 0.0.0.0       16002   RoarAudio unknown    (null) - (null)
+
+ for (i = 0; (p = &(_g_listen_profiles[i]))->name != NULL; i++) {
+  switch (p->type) {
+   case ROAR_SOCKET_TYPE_UNIX:   type = "UNIX";   break;
+   case ROAR_SOCKET_TYPE_TCP:    type = "TCP";    break;
+   case ROAR_SOCKET_TYPE_DECNET: type = "DECnet"; break;
+   default:
+     type = "unknown";
+    break;
+  }
+  printf("%-14s %-7s %-16s %-7i %-9s %-10s %-13s - %s\n",
+           p->name,
+           type,
+           p->sockaddr, p->port,
+           roar_proto2str(p->proto),
+           roar_dir2str(p->dir), p->aiprofile == NULL ? "" : p->aiprofile,
+           p->desc == NULL ? "" : p->desc);
+ }
+}
+
+int get_listen_profile (const char * name,
+                        int * port, char ** sockaddr, int * type,
+                        int * proto,
+                        int * dir, struct roar_audio_info * info) {
+ static char buf[1024];
+ struct _listen_profile * p;
+ int i;
+
+ for (i = 0; (p = &(_g_listen_profiles[i]))->name != NULL; i++) {
+  if ( !strcasecmp(p->name, name) ) {
+   *port     = p->port;
+
+   strcpy(buf, p->sockaddr);
+   *sockaddr = buf;
+
+   *proto    = p->proto;
+   *dir      = p->dir;
+
+   if ( p->aiprofile != NULL ) {
+    if ( roar_profile2info(info, p->aiprofile) == -1 ) {
+     ROAR_ERR("Unknown audio profile: %s", p->aiprofile);
+     return -1;
+    }
+   }
+   return 0;
+  }
+ }
+
+ return -1;
+}
+#endif
 
 int add_listen (char * addr, int port, int sock_type, char * user, char * group, int proto, int dir, struct roar_audio_info * info) {
 #if defined(ROAR_HAVE_SETGID) && defined(ROAR_HAVE_IO_POSIX)
@@ -1480,6 +1573,18 @@ int main (void) {
 #ifdef ROAR_SUPPORT_LISTEN
    if ( roar_profile2info(&sock_info, argv[++i]) == -1 ) {
     ROAR_ERR("Unknown audio profile: %s", argv[i]);
+    return 1;
+   }
+#endif
+  } else if ( strcmp(k, "--list-profiles") == 0 ) {
+#ifdef ROAR_SUPPORT_LISTEN
+   listen_listen_profiles();
+   return 0;
+#endif
+  } else if ( strcmp(k, "--proto-profile") == 0 ) {
+#ifdef ROAR_SUPPORT_LISTEN
+   if ( get_listen_profile(argv[++i], &port, &sock_addr, &sock_type, &sock_proto, &sock_dir, &sock_info) == -1 ) {
+    ROAR_ERR("Unknown listen profile: %s", argv[i]);
     return 1;
    }
 #endif

@@ -540,7 +540,7 @@ int roar_socket_open (int mode, int type, char * host, int port) {
 
 
  ROAR_DBG("roar_socket_open(*): type=%s, host='%s', port=%i",
-             type == ROAR_SOCKET_TYPE_UNIX ? "UNIX" : "INET", host, port);
+             type == ROAR_SOCKET_TYPE_UNIX ? "UNIX" : "???", host, port);
 
  if ( type == ROAR_SOCKET_TYPE_DECNET ) {
 #ifdef ROAR_HAVE_LIBDNET
@@ -591,9 +591,11 @@ int roar_socket_open (int mode, int type, char * host, int port) {
  if ( type == ROAR_SOCKET_TYPE_INET || type == ROAR_SOCKET_TYPE_INET6 ) {
 #if defined(ROAR_HAVE_IPV4) || defined(ROAR_HAVE_IPV6)
 
-  ROAR_DBG("roar_socket_open(*) = ?");
+  ROAR_DBG("roar_socket_open(*): type=INET|INET6, host='%s', port=%i", host, port);
 
   roar_socket_win32_init(); // we need to do this early as gethostbyname() requires this.
+
+  ROAR_DBG("roar_socket_open(*): type=INET|INET6, host='%s', port=%i", host, port);
 
   if ( (he = gethostbyname(host)) == NULL ) {
    ROAR_ERR("roar_socket_open(*): Can\'t resolve host name '%s'",
