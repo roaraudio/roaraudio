@@ -38,6 +38,31 @@
 
 #include "libroar.h"
 
+struct roar_vio_buffer_offset {
+ int is_old;
+ size_t offset;
+};
+
+struct roar_vio_buffer {
+ struct roar_vio_calls * backend;
+ struct roar_buffer * buf_old, * buf_cur;
+ size_t len_old, len_cur;
+ ssize_t min_bufsize;
+ struct roar_vio_buffer_offset offset;
+ struct roar_vio_calls re_vio;
+ int use_re;
+ size_t abspos;
+};
+
+int     roar_vio_open_buffer    (struct roar_vio_calls * calls, struct roar_vio_calls * dst, ssize_t minsize, int use_re);
+ssize_t roar_vio_buffer_read    (struct roar_vio_calls * vio, void *buf, size_t count);
+ssize_t roar_vio_buffer_write   (struct roar_vio_calls * vio, void *buf, size_t count);
+off_t   roar_vio_buffer_lseek   (struct roar_vio_calls * vio, off_t offset, int whence);
+int     roar_vio_buffer_nonblock(struct roar_vio_calls * vio, int state);
+int     roar_vio_buffer_sync    (struct roar_vio_calls * vio);
+int     roar_vio_buffer_ctl     (struct roar_vio_calls * vio, int cmd, void * data);
+int     roar_vio_buffer_close   (struct roar_vio_calls * vio);
+
 #endif
 
 //ll
