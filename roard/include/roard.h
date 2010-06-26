@@ -101,6 +101,7 @@ int g_verbose;
 #include "emul_esd.h" /* MFOI */
 #include "emul_simple.h" /* MFOI */
 #include "emul_rsound.h" /* MFOI */
+#include "emul_rplay.h" /* MFOI */
 #include "sources.h"
 #include "sample.h"
 #include "meta.h"
