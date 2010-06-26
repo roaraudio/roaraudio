@@ -91,7 +91,49 @@ int     roar_vio_buffer_close   (struct roar_vio_calls * vio) {
  return ret;
 }
 
-ssize_t roar_vio_buffer_read    (struct roar_vio_calls * vio, void *buf, size_t count);
+ssize_t roar_vio_buffer_read    (struct roar_vio_calls * vio, void *buf, size_t count) {
+ struct roar_vio_buffer * self = vio->inst;
+ size_t                   havelen;
+ size_t                   buflen;
+
+ if ( count == 0 )
+  return 0;
+
+ if ( buf == NULL )
+  return -1;
+
+ if ( self->offset.is_old ) {
+  havelen = (self->len_old + self->len_cur) - self->offset.offset;
+ } else {
+  havelen = self->len_cur - self->offset.offset;
+ }
+
+ if ( havelen == 0 ) {
+ } else if ( count == havelen ) {
+  if (self->offset.is_old) {
+   buflen = count;
+   if ( roar_buffer_shift_out(&(self->buf_old), buf, &buflen) == -1 )
+    return -1;
+
+   if ( self->buf_old != NULL ) // strange error
+    return buflen;
+
+   buf   += buflen;
+   count -= buflen;
+
+   self->len_old       = 0;
+   self->offset.is_old = 0;
+   self->offset.offset = 0;
+  }
+
+  return -1;
+
+ } else if ( count <  havelen ) {
+ } else if ( count >  havelen ) {
+ }
+
+ return -1;
+}
 
 int     roar_vio_buffer_sync    (struct roar_vio_calls * vio) {
  struct roar_vio_buffer * self = vio->inst;
