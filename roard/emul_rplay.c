@@ -69,7 +69,32 @@ static inline int is_false(const char * str) {
 }
 
 
-int emul_rplay_check_client  (int client, struct roar_vio_calls * vio);
+int emul_rplay_check_client  (int client, struct roar_vio_calls * vio) {
+ struct roar_vio_calls calls;
+ char buf[1024];
+ ssize_t len;
+
+ if ( client == -1 )
+  return -1;
+
+ if ( vio == NULL ) {
+  vio = &calls;
+  if ( roar_vio_open_fh_socket(vio, clients_get_fh(client)) == -1 )
+   return -1;
+ }
+
+ if ( (len = roar_vio_read(vio, buf, sizeof(buf)-1)) <= 0 ) {
+  // really bad protocol error
+  clients_delete(client);
+  return -1;
+ }
+
+ for (; buf[len-1] == '\r' || buf[len-1] == '\n'; len--);
+
+ buf[len] = 0;
+
+ return emul_rplay_exec_command(client, vio, buf);
+}
 
 int emul_rplay_exec_command  (int client, struct roar_vio_calls * vio, char * command) {
  struct emul_rplay_command * cmd;
