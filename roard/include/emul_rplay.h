@@ -40,6 +40,10 @@ struct emul_rplay_command {
 
 int emul_rplay_check_client  (int client, struct roar_vio_calls * vio);
 
+int emul_rplay_exec_command  (int client, struct roar_vio_calls * vio, char * command);
+
+int emul_rplay_send_error    (int client, struct emul_rplay_command * cmd, struct roar_vio_calls * vio, struct roar_keyval * kv, size_t kvlen, const char * msg);
+
 #endif
 
 #endif
