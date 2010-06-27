@@ -172,6 +172,12 @@ int net_get_new_client (struct roard_listen * lsock) {
 #endif
 #ifndef ROAR_WITHOUT_DCOMP_EMUL_RPLAY
   case ROAR_PROTO_RPLAY: // nothing to do here.
+
+    if ( roar_vio_open_fh_socket(&vio, fh) == -1 )
+     return -1;
+
+    if ( emul_rplay_on_status(client, NULL, &vio, NULL, 0) == -1 )
+     return -1;
    break;
 #endif
   default:
