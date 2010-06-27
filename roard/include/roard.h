@@ -84,6 +84,11 @@ int g_verbose;
 // listeing code:
 #define ROAR_MAX_LISTEN_SOCKETS  8
 
+union uniinst {
+ void * vp;
+ int    si;
+};
+
 // MFOI = Marked For Optional Include
 
 //#include "buffer.h"
