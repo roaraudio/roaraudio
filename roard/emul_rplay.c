@@ -159,7 +159,7 @@ int emul_rplay_send_error    (int client, struct emul_rplay_command * cmd, struc
  if ( cd == NULL )
   cd = "";
 
- return roar_vio_printf("-error=\"%s\" command=\"%s\" client-data=\"%s\"\n", msg, command, cd) <= 0 ? -1 : 0;
+ return roar_vio_printf(vio, "-error=\"%s\" command=\"%s\" client-data=\"%s\"\n", msg, command, cd) <= 0 ? -1 : 0;
 }
 
 //ll
