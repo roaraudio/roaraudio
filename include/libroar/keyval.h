@@ -43,6 +43,9 @@ struct roar_keyval {
  char * value;
 };
 
+struct roar_keyval * roar_keyval_lookup (struct roar_keyval *  kv, const char * key, ssize_t len, int casesens);
+ssize_t              roar_keyval_split  (struct roar_keyval ** kv, char * str, const char * fdel, const char * kdel, int quotes);
+
 #endif
 
 //ll
