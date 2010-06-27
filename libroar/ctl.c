@@ -504,6 +504,8 @@ int    roar_str2proto (char * proto) {
   return ROAR_PROTO_SIMPLE;
  } else if ( !strcasecmp(proto, "rsound") ) {
   return ROAR_PROTO_RSOUND;
+ } else if ( !strcasecmp(proto, "rplay") ) {
+  return ROAR_PROTO_RPLAY;
  }
 
  return -1;
@@ -519,6 +521,7 @@ char * roar_proto2str (int    proto) {
   case ROAR_PROTO_ICY:       return "ICY";       break;
   case ROAR_PROTO_SIMPLE:    return "Simple";    break;
   case ROAR_PROTO_RSOUND:    return "RSound";    break;
+  case ROAR_PROTO_RPLAY:     return "RPlay";     break;
   default:
     return "(unknown)";
  }

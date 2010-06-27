@@ -43,6 +43,7 @@
 #define ROAR_PROTO_ICY              7 /* Nullsoft ICY */
 #define ROAR_PROTO_SIMPLE           8 /* PulseAudio Simple */
 #define ROAR_PROTO_RSOUND           9
+#define ROAR_PROTO_RPLAY           10
 
 #define ROAR_BYTEORDER_UNKNOWN      0x00
 #define ROAR_BYTEORDER_LE           ROAR_CODEC_LE
