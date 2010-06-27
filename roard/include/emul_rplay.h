@@ -44,6 +44,10 @@ int emul_rplay_exec_command  (int client, struct roar_vio_calls * vio, char * co
 
 int emul_rplay_send_error    (int client, struct emul_rplay_command * cmd, struct roar_vio_calls * vio, struct roar_keyval * kv, size_t kvlen, const char * msg);
 
+int emul_rplay_on_status(int client, struct emul_rplay_command * cmd, struct roar_vio_calls * vio, struct roar_keyval * kv, size_t kvlen);
+int emul_rplay_on_quit(int client, struct emul_rplay_command * cmd, struct roar_vio_calls * vio, struct roar_keyval * kv, size_t kvlen);
+int emul_rplay_on_help(int client, struct emul_rplay_command * cmd, struct roar_vio_calls * vio, struct roar_keyval * kv, size_t kvlen);
+
 #endif
 
 #endif

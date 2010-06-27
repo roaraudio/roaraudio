@@ -33,7 +33,7 @@ struct emul_rplay_command emul_rplay_commands[] = {
  {"done",        NULL,  1, -1, NULL}, // #ifdef DEBUG
  {"find",        NULL,  1,  1, NULL},
  {"get",         NULL,  1,  1, NULL},
- {"help",        NULL, -1, -1, NULL},
+ {"help",        NULL, -1, -1, emul_rplay_on_help},
  {"info",        NULL,  1,  1, NULL},
  {"list",        NULL,  0,  1, NULL},
  {"modify",      NULL,  2, -1, NULL},
@@ -41,11 +41,11 @@ struct emul_rplay_command emul_rplay_commands[] = {
  {"pause",       NULL,  1, -1, NULL},
  {"play",        NULL,  1, -1, NULL},
  {"put",         NULL,  2, -1, NULL},
- {"quit",        NULL,  0,  0, NULL},
+ {"quit",        NULL,  0,  0, emul_rplay_on_quit},
  {"reset",       NULL,  0,  0, NULL},
  {"set",         NULL,  1, -1, NULL},
  {"skip",        NULL,  1,  1, NULL},
- {"status",      NULL,  0,  0, NULL},
+ {"status",      NULL,  0,  0, emul_rplay_on_status},
  {"stop",        NULL,  1, -1, NULL},
  {"version",     NULL,  0,  0, NULL},
  {"volume",      NULL,  0,  1, NULL},
@@ -160,6 +160,76 @@ int emul_rplay_send_error    (int client, struct emul_rplay_command * cmd, struc
   cd = "";
 
  return roar_vio_printf(vio, "-error=\"%s\" command=\"%s\" client-data=\"%s\"\n", msg, command, cd) <= 0 ? -1 : 0;
+}
+
+
+int emul_rplay_on_status(int client, struct emul_rplay_command * cmd, struct roar_vio_calls * vio, struct roar_keyval * kv, size_t kvlen) {
+ const char * hostname  = "localhost";
+ const char * version   = "RoarAudio";
+       char   uptime[16];
+ const char * byteorder = "native";
+       int    fragsize  = ROAR_OUTPUT_CALC_OUTBUFSIZE(g_sa);
+       int    h, m, s;
+
+ s  = g_pos / g_sa->rate / g_sa->channels;
+ h  = s / 3600;
+ s -= h * 3600;
+ m  = s / 60;
+ s -= m * 60;
+
+ sprintf(uptime, "%.2i:%.2i:%.2i", h, m, s);
+
+ switch (ROAR_CODEC_BYTE_ORDER(g_sa->codec)) {
+  case ROAR_CODEC_LE:
+    byteorder = "little-endian";
+   break;
+  case ROAR_CODEC_BE:
+    byteorder = "big-endian";
+   break;
+  case ROAR_CODEC_PDP:
+    byteorder = "pdp-endian";
+   break;
+ }
+
+ roar_vio_printf(vio,
+                 "+host=%s version=%s uptime=%s "
+                 "audio-bits=%i audio-byte-order=%s audio-channels=%i "
+                 "audio-device=internal-mixer "
+                 "audio-format=linear-%i "
+                 "audio-fragsize=%i "
+                 "audio-port=speaker,headphone,lineout audio-rate=10 "
+                 "audio-sample-rate=%i "
+                 "volume=254 "
+                 "curr-rate=10 priority-threshold=0 audio-close=0 audio-device-status=open"
+                 "\n",
+                      hostname, version, uptime,
+                      g_sa->bits, byteorder, g_sa->channels,
+                      g_sa->bits,
+                      fragsize,
+                      g_sa->rate
+                );
+
+ return 0;
+}
+
+
+int emul_rplay_on_quit(int client, struct emul_rplay_command * cmd, struct roar_vio_calls * vio, struct roar_keyval * kv, size_t kvlen) {
+ clients_delete(client);
+ return -1;
+}
+
+int emul_rplay_on_help(int client, struct emul_rplay_command * cmd, struct roar_vio_calls * vio, struct roar_keyval * kv, size_t kvlen) {
+ struct emul_rplay_command * c;
+
+ roar_vio_printf(vio, "+message=\"command summary\" command=help\n");
+
+ for (c = emul_rplay_commands; c->name != NULL; c++) {
+  roar_vio_printf(vio, "%-8s %s\n", c->name, c->usage == NULL ? "" : c->usage);
+ }
+
+ roar_vio_printf(vio, ".\n");
+
+ return -1;
 }
 
 //ll
