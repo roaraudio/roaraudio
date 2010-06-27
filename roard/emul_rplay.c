@@ -25,6 +25,8 @@
 
 #include "roard.h"
 
+#ifndef ROAR_WITHOUT_DCOMP_EMUL_RPLAY
+
 struct emul_rplay_command emul_rplay_commands[] = {
  {"access",      NULL, -1, -1, NULL},
  {"application", NULL,  1, -1, NULL},
@@ -231,5 +233,7 @@ int emul_rplay_on_help(int client, struct emul_rplay_command * cmd, struct roar_
 
  return -1;
 }
+
+#endif
 
 //ll
