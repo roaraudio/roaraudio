@@ -486,7 +486,7 @@ int clients_check     (int id) {
 #endif
 #ifndef ROAR_WITHOUT_DCOMP_EMUL_RPLAY
   case ROAR_PROTO_RPLAY:
-    rv = emul_esd_check_client(id, NULL);
+    rv = emul_rplay_check_client(id, NULL);
    break;
 #endif
 #ifndef ROAR_WITHOUT_DCOMP_EMUL_ESD
