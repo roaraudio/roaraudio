@@ -226,6 +226,9 @@ static void list_proto (void) {
 #ifndef ROAR_WITHOUT_DCOMP_EMUL_RSOUND
  printf("  rsound        W      - RSound emulation\n");
 #endif
+#ifndef ROAR_WITHOUT_DCOMP_EMUL_RPLAY
+ printf("  rplay         W      - RPlay emulation\n");
+#endif
 }
 
 #endif

@@ -170,6 +170,10 @@ int net_get_new_client (struct roard_listen * lsock) {
   case ROAR_PROTO_RSOUND: // nothing to do here.
    break;
 #endif
+#ifndef ROAR_WITHOUT_DCOMP_EMUL_RPLAY
+  case ROAR_PROTO_RPLAY: // nothing to do here.
+   break;
+#endif
   default:
     // OS independiend code to close the socket:
     if ( roar_vio_open_fh_socket(&vio, fh) == -1 )

@@ -257,6 +257,7 @@ int clients_set_proto (int id, int    proto) {
  switch (proto) {
   case ROAR_PROTO_ROARAUDIO:
   case ROAR_PROTO_ESOUND:
+  case ROAR_PROTO_RPLAY:
   case ROAR_PROTO_SIMPLE:
     byteorder = ROAR_BYTEORDER_NETWORK;
    break;
@@ -482,6 +483,11 @@ int clients_check     (int id) {
     rv = emul_esd_check_client(id, NULL);
    break;
 #endif
+#endif
+#ifndef ROAR_WITHOUT_DCOMP_EMUL_RPLAY
+  case ROAR_PROTO_RPLAY:
+    rv = emul_esd_check_client(id, NULL);
+   break;
 #endif
 #ifndef ROAR_WITHOUT_DCOMP_EMUL_ESD
   case ROAR_PROTO_RSOUND:
