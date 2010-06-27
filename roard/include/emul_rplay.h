@@ -48,6 +48,14 @@ int emul_rplay_on_status(int client, struct emul_rplay_command * cmd, struct roa
 int emul_rplay_on_quit(int client, struct emul_rplay_command * cmd, struct roar_vio_calls * vio, struct roar_keyval * kv, size_t kvlen);
 int emul_rplay_on_help(int client, struct emul_rplay_command * cmd, struct roar_vio_calls * vio, struct roar_keyval * kv, size_t kvlen);
 
+// things we need to implent soon:
+int emul_rplay_on_play(int client, struct emul_rplay_command * cmd, struct roar_vio_calls * vio, struct roar_keyval * kv, size_t kvlen);
+int emul_rplay_on_put(int client, struct emul_rplay_command * cmd, struct roar_vio_calls * vio, struct roar_keyval * kv, size_t kvlen);
+int emul_rplay_on_set(int client, struct emul_rplay_command * cmd, struct roar_vio_calls * vio, struct roar_keyval * kv, size_t kvlen);
+int emul_rplay_on_modify(int client, struct emul_rplay_command * cmd, struct roar_vio_calls * vio, struct roar_keyval * kv, size_t kvlen);
+int emul_rplay_on_pause(int client, struct emul_rplay_command * cmd, struct roar_vio_calls * vio, struct roar_keyval * kv, size_t kvlen);
+int emul_rplay_on_continue(int client, struct emul_rplay_command * cmd, struct roar_vio_calls * vio, struct roar_keyval * kv, size_t kvlen);
+int emul_rplay_on_stop(int client, struct emul_rplay_command * cmd, struct roar_vio_calls * vio, struct roar_keyval * kv, size_t kvlen);
 #endif
 
 #endif

@@ -41,8 +41,8 @@ struct emul_rplay_command emul_rplay_commands[] = {
  {"modify",      NULL,  2, -1, NULL},
  {"monitor",     NULL,  1, -1, NULL},
  {"pause",       NULL,  1, -1, NULL},
- {"play",        NULL,  1, -1, NULL},
- {"put",         NULL,  2, -1, NULL},
+ {"play",        NULL,  1, -1, emul_rplay_on_play},
+ {"put",         NULL,  2, -1, emul_rplay_on_put},
  {"quit",        NULL,  0,  0, emul_rplay_on_quit},
  {"reset",       NULL,  0,  0, NULL},
  {"set",         NULL,  1, -1, NULL},
@@ -70,6 +70,45 @@ static inline int is_false(const char * str) {
  return !is_true(str);
 }
 
+static int format_to_codec(const char * str, const int bo) {
+
+ if ( !strcasecmp(str, "ulaw") || !strcasecmp(str, "u_law") || !strcasecmp(str, "u-law") )
+  return ROAR_CODEC_MULAW;
+
+ if ( !strncasecmp(str, "ulinear", 7) ) {
+  switch (bo) {
+   case ROAR_BYTEORDER_LE:
+     return ROAR_CODEC_PCM_U_LE;
+    break;
+   case ROAR_BYTEORDER_BE:
+     return ROAR_CODEC_PCM_U_BE;
+    break;
+   case ROAR_BYTEORDER_PDP:
+     return ROAR_CODEC_PCM_U_PDP;
+    break;
+   default:
+     return -1;
+    break;
+  }
+ } else if ( !strncasecmp(str, "linear", 6) ) {
+  switch (bo) {
+   case ROAR_BYTEORDER_LE:
+     return ROAR_CODEC_PCM_S_LE;
+    break;
+   case ROAR_BYTEORDER_BE:
+     return ROAR_CODEC_PCM_S_BE;
+    break;
+   case ROAR_BYTEORDER_PDP:
+     return ROAR_CODEC_PCM_S_PDP;
+    break;
+   default:
+     return -1;
+    break;
+  }
+ }
+
+ return -1;
+}
 
 int emul_rplay_check_client  (int client, struct roar_vio_calls * vio) {
  struct roar_vio_calls calls;
@@ -233,6 +272,155 @@ int emul_rplay_on_help(int client, struct emul_rplay_command * cmd, struct roar_
 
  return -1;
 }
+
+
+int emul_rplay_on_play(int client, struct emul_rplay_command * cmd, struct roar_vio_calls * vio, struct roar_keyval * kv, size_t kvlen) {
+ struct roar_keyval        * kvr, * rate, * bits, * channels, * format, * byteorder;
+ struct roar_audio_info      info;
+ struct roar_stream_server * ss;
+ struct roar_stream        *  s;
+ int stream;
+ int bo = -1;
+ char * cd = NULL;
+
+ if ( (kvr = roar_keyval_lookup(kv, "input", kvlen, 0)) == NULL ) {
+  emul_rplay_send_error(client, cmd, vio, kv, kvlen, "no input parameter");
+  return -1;
+ }
+
+ if ( !!strcasecmp(kvr->value, "flow") ) {
+  emul_rplay_send_error(client, cmd, vio, kv, kvlen, "non-flow input not supported");
+  return -1;
+ }
+
+/*
+               "input-format=%s input-sample-rate=%d input-bits=%d "
+               "input-channels=%d input-byte-order=%s",
+*/
+
+ rate      = roar_keyval_lookup(kv, "input-sample-rate", kvlen, 0);
+ bits      = roar_keyval_lookup(kv, "input-bits",        kvlen, 0);
+ channels  = roar_keyval_lookup(kv, "input-channels",    kvlen, 0);
+ format    = roar_keyval_lookup(kv, "input-format",      kvlen, 0);
+ byteorder = roar_keyval_lookup(kv, "input-byte-order",  kvlen, 0);
+
+ if ( rate == NULL || bits == NULL || channels == NULL || format == NULL || byteorder == NULL ) {
+  emul_rplay_send_error(client, cmd, vio, kv, kvlen, "missing audio parameter");
+  return -1;
+ }
+
+ info.rate     = atoi(rate->value);
+ info.bits     = atoi(bits->value);
+ info.channels = atoi(channels->value);
+
+ if ( !strcasecmp(byteorder->value, "big-endian") || !strcasecmp(byteorder->value, "big") ) {
+  bo = ROAR_BYTEORDER_BE;
+ } else if ( !strcasecmp(byteorder->value, "little-endian") || !strcasecmp(byteorder->value, "little") ) {
+  bo = ROAR_BYTEORDER_LE;
+ } else if ( !strcasecmp(byteorder->value, "pdp-endian") || !strcasecmp(byteorder->value, "pdp") ) {
+  bo = ROAR_BYTEORDER_PDP;
+ } else {
+  emul_rplay_send_error(client, cmd, vio, kv, kvlen, "unknown byte order");
+  return -1;
+ }
+
+ info.codec = format_to_codec(format->value, bo);
+
+ if ((stream = streams_new()) == -1 ) {
+  emul_rplay_send_error(client, cmd, vio, kv, kvlen, "can not create new stream");
+  return -1;
+ }
+
+ if ( streams_get(stream, &ss) == -1 ) {
+  streams_delete(stream);
+  emul_rplay_send_error(client, cmd, vio, kv, kvlen, "can not get stream object");
+  return -1;
+ }
+
+ s = ROAR_STREAM(ss);
+
+ if ( client_stream_add(client, stream) == -1 ) {
+  streams_delete(stream);
+  emul_rplay_send_error(client, cmd, vio, kv, kvlen, "can not add stream to client");
+  return -1;
+ }
+
+ memcpy(&(s->info), &info, sizeof(info));
+ ss->codec_orgi = s->info.codec;
+
+ if ( streams_set_dir(stream, ROAR_DIR_PLAY, 1) == -1 ) {
+  streams_delete(stream);
+  emul_rplay_send_error(client, cmd, vio, kv, kvlen, "can not set dir on stream");
+  return -1;
+ }
+
+ if ( (kvr = roar_keyval_lookup(kv, "client-data", kvlen, 0)) != NULL ) {
+  cd = kvr->value;
+ }
+
+ if ( cd == NULL )
+  cd = "";
+
+//        connection_reply(c, "%cid=#%d sound=\"%s\" command=%s client-data=\"%s\" list-name=\"%s\"",
+// roar_vio_printf(vio, "+id=#%i sound=\"%s\" command=%s client-data=\"%s\" list-name=\"%s\"");
+ roar_vio_printf(vio, "+id=#%i command=%s client-data=\"%s\"\n", stream, "play", cd);
+
+ return 0;
+}
+
+int emul_rplay_on_put(int client, struct emul_rplay_command * cmd, struct roar_vio_calls * vio, struct roar_keyval * kv, size_t kvlen) {
+ struct roar_keyval * kvr;
+ int stream;
+ size_t len;
+ char * cd = NULL;
+
+//23:00 < ph3-der-loewe>   rptp_putline(flow_fd, "put id=#%d size=0", spool_id);
+ if ( (kvr = roar_keyval_lookup(kv, "id", kvlen, 0)) == NULL ) {
+  emul_rplay_send_error(client, cmd, vio, kv, kvlen, "no id parameter");
+  return -1;
+ }
+
+ stream = atoi(kvr->value+1);
+
+ if ( (kvr = roar_keyval_lookup(kv, "size", kvlen, 0)) == NULL ) {
+  emul_rplay_send_error(client, cmd, vio, kv, kvlen, "no size parameter");
+  return -1;
+ }
+
+ len = atoi(kvr->value);
+
+ if ( len != 0 ) {
+  emul_rplay_send_error(client, cmd, vio, kv, kvlen, "currently only zero size put supported");
+  return -1;
+ }
+
+ if ( client_stream_exec(client, stream) == -1 ) {
+  emul_rplay_send_error(client, cmd, vio, kv, kvlen, "can not exec stream");
+  return -1;
+ }
+
+
+ if ( (kvr = roar_keyval_lookup(kv, "client-data", kvlen, 0)) != NULL ) {
+  cd = kvr->value;
+ }
+
+ if ( cd == NULL )
+  cd = "";
+
+/*
+        connection_reply(c, "%cid=#%d size=%d command=put client-data=\"%s\"",
+                         RPTP_OK, spool_id, sound_size, client_data);
+*/
+ roar_vio_printf(vio, "+id=#%i command=%s client-data=\"%s\"\n", stream, "put", cd);
+
+ return 0;
+}
+
+int emul_rplay_on_set(int client, struct emul_rplay_command * cmd, struct roar_vio_calls * vio, struct roar_keyval * kv, size_t kvlen);
+int emul_rplay_on_modify(int client, struct emul_rplay_command * cmd, struct roar_vio_calls * vio, struct roar_keyval * kv, size_t kvlen);
+int emul_rplay_on_pause(int client, struct emul_rplay_command * cmd, struct roar_vio_calls * vio, struct roar_keyval * kv, size_t kvlen);
+int emul_rplay_on_continue(int client, struct emul_rplay_command * cmd, struct roar_vio_calls * vio, struct roar_keyval * kv, size_t kvlen);
+int emul_rplay_on_stop(int client, struct emul_rplay_command * cmd, struct roar_vio_calls * vio, struct roar_keyval * kv, size_t kvlen);
 
 #endif
 
