@@ -361,6 +361,7 @@ static struct _listen_profile {
  {"roar-tcp",       ROAR_SOCKET_TYPE_TCP,    ROAR_DEFAULT_PORT, "localhost",        ROAR_PROTO_ROARAUDIO, -1, NULL, NULL},
  {"roar-tcp-pub",   ROAR_SOCKET_TYPE_TCP,    ROAR_DEFAULT_PORT, "0.0.0.0",          ROAR_PROTO_ROARAUDIO, -1, NULL, NULL},
  {"roar-dnet",      ROAR_SOCKET_TYPE_DECNET, 0,                 "::roar",           ROAR_PROTO_ROARAUDIO, -1, NULL, NULL},
+ {"roar-abstract",  ROAR_SOCKET_TYPE_UNIX,   0,                 "+abstract",        ROAR_PROTO_ROARAUDIO, -1, NULL, NULL},
 
  // EsounD:
  {"esd-unix",       ROAR_SOCKET_TYPE_UNIX,   0,                 "/tmp/.esd/socket", ROAR_PROTO_ESOUND,    -1, NULL, NULL},
@@ -380,6 +381,12 @@ static struct _listen_profile {
  {"pas-mon-tcp",    ROAR_SOCKET_TYPE_TCP,    4712,              "0.0.0.0",          ROAR_PROTO_SIMPLE,
                                                                                     ROAR_DIR_MONITOR, "default",
                                                                                     NULL},
+
+ // RPlay:
+ {"rplay-tcp",      ROAR_SOCKET_TYPE_TCP,    5556,              "localhost",        ROAR_PROTO_RPLAY,     -1, NULL, NULL},
+ {"rplay-tcp-pub",  ROAR_SOCKET_TYPE_TCP,    5556,              "0.0.0.0",          ROAR_PROTO_RPLAY,     -1, NULL, NULL},
+
+ // End of List:
  {NULL, -1, -1, NULL, -1, -1, NULL, NULL}
 };
 
@@ -387,6 +394,7 @@ void listen_listen_profiles (void) {
  struct _listen_profile * p;
  char * type;
  int i;
+ char port[8];
 
  printf("Name           Type    Addrress         Port    Protocol  Dir        Audio Profile - Description\n");
  printf("------------------------------------------------------------------------------------------------\n");
@@ -401,10 +409,17 @@ void listen_listen_profiles (void) {
      type = "unknown";
     break;
   }
-  printf("%-14s %-7s %-16s %-7i %-9s %-10s %-13s - %s\n",
+
+  if ( p->port ) {
+   sprintf(port, "%i", p->port);
+  } else {
+   strcpy(port, "(none)");
+  }
+
+  printf("%-14s %-7s %-16s %-7s %-9s %-10s %-13s - %s\n",
            p->name,
            type,
-           p->sockaddr, p->port,
+           p->sockaddr, port,
            roar_proto2str(p->proto),
            p->dir == -1 ? "(none)" : roar_dir2str(p->dir), p->aiprofile == NULL ? "(none)" : p->aiprofile,
            p->desc == NULL ? "" : p->desc);
