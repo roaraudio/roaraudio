@@ -158,7 +158,9 @@ void usage (void) {
 
  printf("\nServer Options:\n\n");
  printf(" -t  --tcp             - Use TCP listen socket\n"
+#ifdef ROAR_HAVE_UNIX
         " -u  --unix            - Use UNIX Domain listen socket (default)\n"
+#endif
 #ifdef ROAR_HAVE_LIBDNET
         " -n  --decnet          - use DECnet listen socket\n"
 #endif
@@ -356,35 +358,65 @@ static struct _listen_profile {
  // TODO: convert port numbers into consts!
 
  // RoarAudio:
+#ifdef ROAR_HAVE_UNIX
  {"roar-usock",     ROAR_SOCKET_TYPE_UNIX,   0,                 "~/.roar",          ROAR_PROTO_ROARAUDIO, -1, NULL, NULL},
  {"roar-gsock",     ROAR_SOCKET_TYPE_UNIX,   0,                 "/tmp/roar",        ROAR_PROTO_ROARAUDIO, -1, NULL, NULL},
+#endif
+#ifdef ROAR_HAVE_IPV4
  {"roar-tcp",       ROAR_SOCKET_TYPE_TCP,    ROAR_DEFAULT_PORT, "localhost",        ROAR_PROTO_ROARAUDIO, -1, NULL, NULL},
  {"roar-tcp-pub",   ROAR_SOCKET_TYPE_TCP,    ROAR_DEFAULT_PORT, "0.0.0.0",          ROAR_PROTO_ROARAUDIO, -1, NULL, NULL},
+#endif
+#ifdef ROAR_HAVE_LIBDNET
  {"roar-dnet",      ROAR_SOCKET_TYPE_DECNET, 0,                 "::roar",           ROAR_PROTO_ROARAUDIO, -1, NULL, NULL},
+#endif
+#ifdef ROAR_HAVE_UNIX
  {"roar-abstract",  ROAR_SOCKET_TYPE_UNIX,   0,                 "+abstract",        ROAR_PROTO_ROARAUDIO, -1, NULL, NULL},
+#endif
 
  // EsounD:
+#if !defined(ROAR_WITHOUT_DCOMP_EMUL_ESD) && defined(ROAR_HAVE_H_ESD)
+#ifdef ROAR_HAVE_UNIX
  {"esd-unix",       ROAR_SOCKET_TYPE_UNIX,   0,                 "/tmp/.esd/socket", ROAR_PROTO_ESOUND,    -1, NULL, NULL},
+#endif
+#ifdef ROAR_HAVE_IPV4
  {"esd-tcp",        ROAR_SOCKET_TYPE_TCP,    16001,             "localhost",        ROAR_PROTO_ESOUND,    -1, NULL, NULL},
  {"esd-tcp-pub",    ROAR_SOCKET_TYPE_TCP,    16001,             "0.0.0.0",          ROAR_PROTO_ESOUND,    -1, NULL, NULL},
+#endif
+#endif
 
  // RSound:
+#ifndef ROAR_WITHOUT_DCOMP_EMUL_RSOUND
+#ifdef ROAR_HAVE_UNIX
  {"rsound-unix",    ROAR_SOCKET_TYPE_UNIX,   0,                 "/tmp/rsound",      ROAR_PROTO_RSOUND,    -1, NULL, NULL},
+#endif
+#ifdef ROAR_HAVE_IPV4
  {"rsound-tcp",     ROAR_SOCKET_TYPE_TCP,    12345,             "localhost",        ROAR_PROTO_RSOUND,    -1, NULL, NULL},
  {"rsound-tcp-pub", ROAR_SOCKET_TYPE_TCP,    12345,             "0.0.0.0",          ROAR_PROTO_RSOUND,    -1, NULL, NULL},
+#endif
+#ifdef ROAR_HAVE_LIBDNET
  {"rsound-dnet",    ROAR_SOCKET_TYPE_DECNET, 0,                 "::rsound",         ROAR_PROTO_RSOUND,    -1, NULL, NULL},
+#endif
+#endif
 
  // PulseAudio Simple:
+#ifndef ROAR_WITHOUT_DCOMP_EMUL_SIMPLE
+#ifdef ROAR_HAVE_IPV4
  {"pas-play-tcp",   ROAR_SOCKET_TYPE_TCP,    4712,              "0.0.0.0",          ROAR_PROTO_SIMPLE,
                                                                                     ROAR_DIR_PLAY, "default",
                                                                                     NULL},
  {"pas-mon-tcp",    ROAR_SOCKET_TYPE_TCP,    4712,              "0.0.0.0",          ROAR_PROTO_SIMPLE,
                                                                                     ROAR_DIR_MONITOR, "default",
                                                                                     NULL},
+#endif
+#endif
 
  // RPlay:
+#ifndef ROAR_WITHOUT_DCOMP_EMUL_RPLAY
+#ifdef ROAR_HAVE_IPV4
  {"rplay-tcp",      ROAR_SOCKET_TYPE_TCP,    5556,              "localhost",        ROAR_PROTO_RPLAY,     -1, NULL, NULL},
  {"rplay-tcp-pub",  ROAR_SOCKET_TYPE_TCP,    5556,              "0.0.0.0",          ROAR_PROTO_RPLAY,     -1, NULL, NULL},
+#endif
+#endif
 
  // End of List:
  {NULL, -1, -1, NULL, -1, -1, NULL, NULL}
