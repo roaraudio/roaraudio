@@ -396,7 +396,7 @@ void listen_listen_profiles (void) {
  int i;
  char port[8];
 
- printf("Name           Type    Addrress         Port    Protocol  Dir        Audio Profile - Description\n");
+ printf("Name           Type    Address          Port    Protocol  Dir        Audio Profile - Description\n");
  printf("------------------------------------------------------------------------------------------------\n");
       //roar-tcp-pub 0.0.0.0       16002   RoarAudio unknown    (null) - (null)
 
