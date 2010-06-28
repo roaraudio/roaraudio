@@ -30,7 +30,7 @@
 struct emul_rplay_command emul_rplay_commands[] = {
  {"access",      NULL, -1, -1, NULL},
  {"application", NULL,  1, -1, NULL},
- {"continue",    NULL,  1, -1, NULL},
+ {"continue",    NULL,  1, -1, emul_rplay_on_continue},
  {"die",         NULL,  1, -1, NULL},
  {"done",        NULL,  1, -1, NULL}, // #ifdef DEBUG
  {"find",        NULL,  1,  1, NULL},
@@ -40,7 +40,7 @@ struct emul_rplay_command emul_rplay_commands[] = {
  {"list",        NULL,  0,  1, NULL},
  {"modify",      NULL,  2, -1, NULL},
  {"monitor",     NULL,  1, -1, NULL},
- {"pause",       NULL,  1, -1, NULL},
+ {"pause",       NULL,  1, -1, emul_rplay_on_pause},
  {"play",        NULL,  1, -1, emul_rplay_on_play},
  {"put",         NULL,  2, -1, emul_rplay_on_put},
  {"quit",        NULL,  0,  0, emul_rplay_on_quit},
@@ -418,8 +418,65 @@ int emul_rplay_on_put(int client, struct emul_rplay_command * cmd, struct roar_v
 
 int emul_rplay_on_set(int client, struct emul_rplay_command * cmd, struct roar_vio_calls * vio, struct roar_keyval * kv, size_t kvlen);
 int emul_rplay_on_modify(int client, struct emul_rplay_command * cmd, struct roar_vio_calls * vio, struct roar_keyval * kv, size_t kvlen);
-int emul_rplay_on_pause(int client, struct emul_rplay_command * cmd, struct roar_vio_calls * vio, struct roar_keyval * kv, size_t kvlen);
-int emul_rplay_on_continue(int client, struct emul_rplay_command * cmd, struct roar_vio_calls * vio, struct roar_keyval * kv, size_t kvlen);
+
+int emul_rplay_on_pause(int client, struct emul_rplay_command * cmd, struct roar_vio_calls * vio, struct roar_keyval * kv, size_t kvlen) {
+ struct roar_keyval * kvr;
+ int stream;
+ char * cd = NULL;
+
+ if ( kvlen < 1 ) {
+  emul_rplay_send_error(client, cmd, vio, kv, kvlen, "no id parameter");
+  return -1;
+ }
+
+ stream = atoi(kv->key+1);
+
+ if ( streams_set_flag(stream, ROAR_FLAG_PAUSE) == -1 ) {
+  emul_rplay_send_error(client, cmd, vio, kv, kvlen, "can not set pause flag");
+  return -1;
+ }
+
+ if ( (kvr = roar_keyval_lookup(kv, "client-data", kvlen, 0)) != NULL ) {
+  cd = kvr->value;
+ }
+
+ if ( cd == NULL )
+  cd = "";
+
+ roar_vio_printf(vio, "+id=#%i command=%s client-data=\"%s\"\n", stream, "pause", cd);
+
+ return 0;
+}
+
+int emul_rplay_on_continue(int client, struct emul_rplay_command * cmd, struct roar_vio_calls * vio, struct roar_keyval * kv, size_t kvlen) {
+ struct roar_keyval * kvr;
+ int stream;
+ char * cd = NULL;
+
+ if ( kvlen < 1 ) {
+  emul_rplay_send_error(client, cmd, vio, kv, kvlen, "no id parameter");
+  return -1;
+ }
+
+ stream = atoi(kv->key+1);
+
+ if ( streams_reset_flag(stream, ROAR_FLAG_PAUSE) == -1 ) {
+  emul_rplay_send_error(client, cmd, vio, kv, kvlen, "can not reset pause flag");
+  return -1;
+ }
+
+ if ( (kvr = roar_keyval_lookup(kv, "client-data", kvlen, 0)) != NULL ) {
+  cd = kvr->value;
+ }
+
+ if ( cd == NULL )
+  cd = "";
+
+ roar_vio_printf(vio, "+id=#%i command=%s client-data=\"%s\"\n", stream, "coninue", cd);
+
+ return 0;
+}
+
 int emul_rplay_on_stop(int client, struct emul_rplay_command * cmd, struct roar_vio_calls * vio, struct roar_keyval * kv, size_t kvlen);
 
 #endif
