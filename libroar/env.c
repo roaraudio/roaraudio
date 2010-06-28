@@ -39,6 +39,8 @@ int roar_env_set(struct roar_keyval * keyval) {
 #ifdef ROAR_HAVE_SETENV
  return setenv(keyval->key, keyval->value, 1);
 #elif defined(ROAR_HAVE_PUTENV)
+ char * str;
+
  // TODO: does this leak memory?
  if ( (str = malloc(strlen(keyval->key) + strlen(keyval->value) + 2)) == NULL ) {
   return -1;
