@@ -50,6 +50,9 @@ int     roar_vio_open_buffer_store    (struct roar_vio_calls * calls, struct roa
 
  memset(calls, 0, sizeof(struct roar_vio_calls));
 
+ if ( inst != NULL )
+  *inst = self;
+
  calls->inst     = self;
  calls->close    = roar_vio_buffer_store_close;
  calls->nonblock = roar_vio_buffer_store_nonblock;
@@ -80,6 +83,8 @@ int     roar_vio_buffer_store_close   (struct roar_vio_calls * vio) {
 ssize_t roar_vio_buffer_store_read    (struct roar_vio_calls * vio, void *buf, size_t count) {
  struct roar_vio_buffer_store * self = vio->inst;
 
+ ROAR_DBG("roar_vio_buffer_store_read(vio=%p, buf=%p, count=%llu) = ?", vio, buf, (long long unsigned int)count);
+
  if ( count == 0 )
   return 0;
 
@@ -89,8 +94,12 @@ ssize_t roar_vio_buffer_store_read    (struct roar_vio_calls * vio, void *buf, s
  if ( self->out == NULL )
   return 0;
 
+ ROAR_DBG("roar_vio_buffer_store_read(vio=%p, buf=%p, count=%llu) = ?", vio, buf, (long long unsigned int)count);
+
  if ( roar_buffer_shift_out(&(self->out), buf, &count) == -1 )
   return -1;
+
+ ROAR_DBG("roar_vio_buffer_store_read(*) = %llu", (long long unsigned int)count);
 
  return count;
 }
