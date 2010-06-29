@@ -810,6 +810,7 @@ struct {
  // MIDI:
  {ROAR_CODEC_MIDI_FILE,   "midi_file"  },
  {ROAR_CODEC_MIDI,        "midi"       },
+ {ROAR_CODEC_ROARMIDI,    "roarmidi"   },
 
  // XIPH:
  {ROAR_CODEC_OGG_VORBIS,  "ogg_vorbis" },
@@ -838,6 +839,10 @@ struct {
  {ROAR_CODEC_ALAW,        "alaw"       },
  {ROAR_CODEC_MULAW,       "mulaw"      },
  {ROAR_CODEC_MULAW,       "ulaw"       }, // alias
+
+ //GSM:
+ {ROAR_CODEC_GSM,         "gsm"        },
+ {ROAR_CODEC_GSM49,       "gsm49"      },
 
  // Meta Codecs:
  {ROAR_CODEC_META_VCLT,     "meta_vclt"    },
