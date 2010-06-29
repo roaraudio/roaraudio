@@ -196,6 +196,8 @@
 
 #define ROAR_CODEC_ALAW         0x30
 #define ROAR_CODEC_MULAW        0x34
+#define ROAR_CODEC_GSM          0x38
+#define ROAR_CODEC_GSM49        0x39
 
 // Meta Codecs:
 #define ROAR_CODEC_META_VCLT    0x40 /* VCLT = Vorbis Comment Like Text */
@@ -230,8 +232,9 @@
 
 // MIDI:
 #define ROAR_CODEC_MIDI         0x60
+#define ROAR_CODEC_ROARMIDI     0x64
 
-// Light COntrol:
+// Light Control:
 #define ROAR_CODEC_DMX512       0x70
 #define ROAR_CODEC_ROARDMX      0x71
 
