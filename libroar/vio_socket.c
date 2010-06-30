@@ -46,6 +46,7 @@ int     roar_vio_open_def_socket          (struct roar_vio_calls * calls, struct
  int       listening  = 0;
  int       one_client = 0;
  int       client;
+ int       connection_less = 0;
 
  if ( calls == NULL || def == NULL )
   return -1;
@@ -74,6 +75,7 @@ int     roar_vio_open_def_socket          (struct roar_vio_calls * calls, struct
       break;
      case SOCK_DGRAM:
        fh = roar_socket_new_udp();
+       connection_less = 1;
       break;
      default:
        return -1;
@@ -89,6 +91,7 @@ int     roar_vio_open_def_socket          (struct roar_vio_calls * calls, struct
        fh = roar_socket_new_unix();
       break;
      case SOCK_DGRAM:
+       connection_less = 1;
        return -1;
       break;
      default:
@@ -122,6 +125,7 @@ int     roar_vio_open_def_socket          (struct roar_vio_calls * calls, struct
       break;
      case SOCK_DGRAM:
        fh = roar_socket_new_udp6();
+       connection_less = 1;
       break;
      default:
        return -1;
@@ -148,20 +152,22 @@ int     roar_vio_open_def_socket          (struct roar_vio_calls * calls, struct
    return -1;
   }
 
-  if ( listen(fh, one_client ? 1 : 16) == -1 ) {
-   close(fh);
-   return -1;
-  }
-
-  if ( one_client ) {
-   client = accept(fh, NULL, NULL);
-   close(fh);
-
-   if ( client == -1 ) {
+  if ( !connection_less ) {
+   if ( listen(fh, one_client ? 1 : 16) == -1 ) {
+    close(fh);
     return -1;
    }
 
-   fh = client;
+   if ( one_client ) {
+    client = accept(fh, NULL, NULL);
+    close(fh);
+
+    if ( client == -1 ) {
+     return -1;
+    }
+
+    fh = client;
+   }
   }
  } else {
   if ( connect(fh, &(def->d.socket.sa.sa), len) == -1 ) {
