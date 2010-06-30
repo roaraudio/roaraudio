@@ -168,7 +168,7 @@ ssize_t roar_vio_rtp_read    (struct roar_vio_calls * vio, void *buf, size_t cou
     if ( have != 0 ) {
      return have;
     } else {
-     return roar_vio_rtp_read(vio, buf, count); // restart ower self from the beginning with no buffer
+     return roar_vio_rtp_read(vio, buf, count); // restart our self from the beginning with no buffer
     }
    }
   }
