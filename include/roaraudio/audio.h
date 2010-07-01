@@ -193,6 +193,9 @@
 #define ROAR_CODEC_RAUM_FLAC    0x1e
 
 #define ROAR_CODEC_RIFF_WAVE    0x20
+#define ROAR_CODEC_RIFX         (ROAR_CODEC_RIFF_WAVE | ROAR_CODEC_BE)
+#define ROAR_CODEC_AU           0x24
+#define ROAR_CODEC_AIFF         0x28
 
 #define ROAR_CODEC_ALAW         0x30
 #define ROAR_CODEC_MULAW        0x34
