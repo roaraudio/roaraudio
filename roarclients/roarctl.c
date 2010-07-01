@@ -735,8 +735,10 @@ int load_meta (struct roar_connection * con, int id, char * file) {
    continue;
   }
 
-  if ( roar_stream_meta_set(con, &s, mode_i, &meta) == -1 )
+  if ( roar_stream_meta_set(con, &s, mode_i, &meta) == -1 ) {
+   fclose(in);
    return -1;
+  }
  }
 
  fclose(in);
@@ -800,10 +802,10 @@ int save_meta (struct roar_connection * con, int id, char * file) {
  if ( roar_stream_new_by_id(&s, id) == -1 )
   return -1;
 
- if ( (out = fopen(file, "w")) == NULL )
+ if ( (len = roar_stream_meta_list(con, &s, types, ROAR_META_MAX_PER_STREAM)) == -1 )
   return -1;
 
- if ( (len = roar_stream_meta_list(con, &s, types, ROAR_META_MAX_PER_STREAM)) == -1 )
+ if ( (out = fopen(file, "w")) == NULL )
   return -1;
 
  for (i = 0; i < len; i++) {

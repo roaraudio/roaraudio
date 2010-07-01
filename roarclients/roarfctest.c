@@ -101,11 +101,14 @@ int main (int argc, char * argv[]) {
  }
 #endif
 
- if ( roar_stream_new(stream, rate, channels, bits, codec) == -1 )
+ if ( roar_stream_new(stream, rate, channels, bits, codec) == -1 ) {
+  pclose(rmsout);
   return 2;
+ }
 
  if ( roardsp_filter_init(filt, stream, ROARDSP_FILTER_DCBLOCK) == -1 ) {
   ROAR_ERR("main(*): roardsp_filter_init() failed: errno=%s(%i)", strerror(errno), errno);
+  pclose(rmsout);
   return 1;
  }
 
@@ -116,6 +119,7 @@ int main (int argc, char * argv[]) {
 
  if ( roardsp_filter_init(filt+1, stream, ROARDSP_FILTER_HIGHP) == -1 ) {
   ROAR_ERR("main(*): roardsp_filter_init() failed: errno=%s(%i)", strerror(errno), errno);
+  pclose(rmsout);
   return 1;
  }
 
@@ -124,6 +128,7 @@ int main (int argc, char * argv[]) {
 
  if ( roardsp_filter_init(filt+2, stream, ROARDSP_FILTER_AMP) == -1 ) {
   ROAR_ERR("main(*): roardsp_filter_init() failed: errno=%s(%i)", strerror(errno), errno);
+  pclose(rmsout);
   return 1;
  }
 
@@ -210,7 +215,7 @@ int main (int argc, char * argv[]) {
  roardsp_fchain_uninit(fc);
 
  if ( rmsout != NULL )
-  fclose(rmsout);
+  pclose(rmsout);
 
  return 0;
 }

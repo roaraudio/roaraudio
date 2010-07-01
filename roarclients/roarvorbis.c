@@ -250,6 +250,7 @@ int main (int argc, char * argv[]) {
 
  if ( in == NULL ) {
   roar_disconnect(&con);
+  fclose(in);
   return 1;
  }
 
@@ -260,6 +261,7 @@ int main (int argc, char * argv[]) {
  if( ov_open(in, &vf, NULL, 0) < 0 ) {
   fprintf(stderr,"Input does not appear to be an Ogg bitstream.\n");
   roar_disconnect(&con);
+  fclose(in);
   return 1;
  }
 
@@ -268,6 +270,7 @@ int main (int argc, char * argv[]) {
    return 1;
   if ( roar_vio_open_dstr(&vclt, vcltfile, &def, 1) == -1 ) {
    fprintf(stderr, "Error: can not open file: %s: %s\n", k, strerror(errno));
+   fclose(in);
    return 1;
   }
  }
@@ -279,8 +282,10 @@ int main (int argc, char * argv[]) {
   long ret = ov_read(&vf, pcmout, sizeof(pcmout), 0, 2, 1, &current_section);
 
   if ( last_section != current_section )
-   if ( update_stream(&con, &s, &vio, &vf, file, &info, vcltfile == NULL ? NULL : &vclt) == -1 )
+   if ( update_stream(&con, &s, &vio, &vf, file, &info, vcltfile == NULL ? NULL : &vclt) == -1 ) {
+    fclose(in);
     return 1;
+   }
 
   last_section = current_section;
 
@@ -304,6 +309,8 @@ int main (int argc, char * argv[]) {
  if ( vcltfile != NULL ) {
   roar_vio_close(&vclt);
  }
+
+ fclose(in);
 
  return 0;
 #endif

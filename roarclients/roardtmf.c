@@ -169,11 +169,12 @@ int main (int argc, char * argv[]) {
  return 0;
 */
 
- if ( (buf = malloc((len = bits*samples/8))) == NULL )
+ if ( (buf = roar_mm_malloc((len = bits*samples/8))) == NULL )
   return 4;
 
  if ( roar_vio_simple_stream(&stream, rate, 1, bits, codec, server, ROAR_DIR_PLAY, name) == -1 ) {
   fprintf(stderr, "Error: can not start playback\n");
+  roar_mm_free(buf);
   return 1;
  }
 
@@ -183,12 +184,16 @@ int main (int argc, char * argv[]) {
   if ( c == ' ' || c == '+' || c == '.' || c == '_' )
    continue;
 
-  if ( calc(buf, len, rate, c) == -1 )
+  if ( calc(buf, len, rate, c) == -1 ) {
+   roar_mm_free(buf);
    return 5;
+  }
   roar_vio_write(&stream, buf, len);
  }
 
  roar_vio_close(&stream);
+
+ roar_mm_free(buf);
 
  return 0;
 }
