@@ -115,4 +115,6 @@ echo creating Makefile.conf...
  $HAVE_MATRIX && echo "HAVE_MATRIX=-DHAVE_MATRIX"
 } > Makefile.conf
 
+true; # needed so return value is correct
+
 #ll
