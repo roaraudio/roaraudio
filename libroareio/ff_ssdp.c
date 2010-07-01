@@ -25,26 +25,17 @@
 
 #include "libroareio.h"
 
-static char * _sd (char * str) {
- ssize_t len = strlen(str) + 1;
- char * ret = roar_mm_malloc(len);
-
- memcpy(ret, str, len);
-
- return ret;
-}
-
 void roar_ff_ssdp_init (struct roar_ff_ssdp * c) {
  memset(c, 0, sizeof(struct roar_ff_ssdp));
 
  c->method        = ROAR_FF_SSDP_M_NOTIFY;
- c->server        = _sd("RoarAudio libroareio/ff_ssdp.c");
+ c->server        = roar_mm_strdup("RoarAudio libroareio/ff_ssdp.c");
  c->max_age       = 1800;
  c->location      = NULL;
  c->nt            = NULL;
  c->usn           = NULL;
  c->usn_nt_suffix = 1;
- c->host          = _sd(ROAR_FF_SSDP_HOST_UPNP);
+ c->host          = roar_mm_strdup(ROAR_FF_SSDP_HOST_UPNP);
 }
 
 void roar_ff_ssdp_free (struct roar_ff_ssdp * c) {
