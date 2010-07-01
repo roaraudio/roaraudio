@@ -532,9 +532,10 @@ static void _close_pointer(struct pointer * pointer) {
 // -------------------------------------
 
 static struct devices * _get_device (const char * pathname) {
- struct devices * ptr;
  size_t len;
  int i;
+
+ ROAR_DBG("_get_device(pathname='%s') = ?", pathname);
 
  for (i = 0; _device_list[i].prefix != NULL; i++) {
   len = strlen(_device_list[i].prefix);
@@ -545,10 +546,11 @@ static struct devices * _get_device (const char * pathname) {
    len++;
   }
   if ( !strncmp(pathname, _device_list[i].prefix, len) ) {
-   ptr = &(_device_list[i]);
+   return &(_device_list[i]);
   }
  }
 
+ ROAR_DBG("_get_device(pathname='%s') = NULL", pathname);
  return NULL;
 }
 
@@ -583,8 +585,12 @@ static int _open_file (const char *pathname, int flags) {
   return -1;
  }
 
+ ROAR_DBG("_open_file(pathname='%s', flags=0x%x) = ?", pathname, flags);
+
  if ( (ptr = _get_device(pathname)) == NULL )
   return -2;
+
+ ROAR_DBG("_open_file(pathname='%s', flags=0x%x) = ?", pathname, flags);
 
  if ( ptr->type == HT_STATIC || ptr->type == HT_VIO ) { // non-session handles
   session = NULL;
