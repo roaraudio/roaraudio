@@ -8,7 +8,7 @@ roarmonhttp \- CGI and inetd based streaming server emulation for RoarAudio
 
 .SH SYNOPSIS
 
-roarmonhttp [--inetd]
+roarmonhttp [\-\-inetd]
 
 .SH DESCRIPTION
 
@@ -27,7 +27,7 @@ Enables inetd mode.
 
 .SH "EXAMPLES"
 Here is an example of a roarmonhttp listening on port 8000 using inetd:
- 8000 stream tcp nowait roard /usr/bin/roarmonhttp roarmonhttp --inetd
+ 8000 stream tcp nowait roard /usr/bin/roarmonhttp roarmonhttp \-\-inetd
 
 .SH "SEE ALSO"
 \fBinetd\fR(8),

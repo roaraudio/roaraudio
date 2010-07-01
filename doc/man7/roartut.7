@@ -43,7 +43,7 @@ a varibale to go thru the array:
  char out[1024];
 
 To open the connection we use the call \fBroar_simple_play\fR(3):
- if ( (fh = roar_simple_play(rate, channels, bits, codec, NULL, "sine gen")) == -1 ) {
+ if ( (fh = roar_simple_play(rate, channels, bits, codec, NULL, "sine gen")) == \-1 ) {
   fprintf(stderr, "Error: can not open playback!\\n");
   exit(1);
  }
@@ -58,7 +58,7 @@ In this loop we need to calculate our samples:
    t += step;
   }
 
-The sine is multiplyed by 127 as our amplitude range for 8 bit signed int is from -128 to +127.
+The sine is multiplyed by 127 as our amplitude range for 8 bit signed int is from \-128 to +127.
 
 After we have our current data in \fBout\fR we want to write them to the server:
   write(fh, out, 1024);
@@ -88,7 +88,7 @@ After adding some standard main() construct we should have something like this:
   int i;
   char out[1024];
 
-  if ( (fh = roar_simple_play(rate, channels, bits, codec, NULL, "sine gen")) == -1 ) {
+  if ( (fh = roar_simple_play(rate, channels, bits, codec, NULL, "sine gen")) == \-1 ) {
    fprintf(stderr, "Error: can not open playback!\\n");
    exit(1);
   }
@@ -107,7 +107,7 @@ After adding some standard main() construct we should have something like this:
  }
 
 To compile and link we can use a command like this one:
- cc -o roarsin roarsin.c -lm `roar-config --libs --cflags`
+ cc \-o roarsin roarsin.c \-lm `roar\-config \-\-libs \-\-cflags`
 
 We need to use \fB-lm\fR to link the math library for \fBsin()\fR.
 The tool \fBroar-config\fR(1) will keep care for us about all flags needed for libraor.

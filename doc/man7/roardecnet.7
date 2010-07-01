@@ -6,9 +6,9 @@ roardecnet \- Hints for DECnet users or RoarAudio
 
 .SH SYNOPSIS
 
- roard -n [OPTIONS...] ...
+ roard \-n [OPTIONS...] ...
 
- roarclient --server node:: [OPTIONS...] ...
+ roarclient \-\-server node:: [OPTIONS...] ...
 
 .SH "DESCRIPTION"
 This manpage lists some hints for use of RoarAudio over DECnet.
@@ -19,8 +19,8 @@ If you set it the daemon will listen via DECnet.
 You may use the option '\fB-b\fR' to set the object name.
 Nodenames given via '\fB-b\fR' are ignored.
 Example:
- roard -n
- roard -n -b ::myobject
+ roard \-n
+ roard \-n -b ::myobject
 
 If you use the default object local clients should find there way to the server.
 For remote clients or if you use a non default object it is needed to give a
