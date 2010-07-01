@@ -1,7 +1,8 @@
 include ../Makefile.conf
 include ../Makefile.inc
 
-TARGETS=libartsc$(SHARED_SUFFIX) libroarartsc$(SHARED_SUFFIX)
+#TARGETS=libartsc$(SHARED_SUFFIX) libroarartsc$(SHARED_SUFFIX)
+TARGETS=libroarartsc$(SHARED_SUFFIX)
 OBJS=libartsc.o
 
 #DEFINES        = -DDEBUG
@@ -16,7 +17,7 @@ clean:
 	rm -f ${TARGETS} *.o
 new: clean all
 
-libartsc$(SHARED_SUFFIX): libroarartsc$(SHARED_SUFFIX)
-	cp libroarartsc$(SHARED_SUFFIX) libartsc$(SHARED_SUFFIX)
+#libartsc$(SHARED_SUFFIX): libroarartsc$(SHARED_SUFFIX)
+#	cp libroarartsc$(SHARED_SUFFIX) libartsc$(SHARED_SUFFIX)
 libroarartsc$(SHARED_SUFFIX): ${OBJS}
 	${CC} ${LDFLAGS} $(SHARED) -Wl,-soname,libroarartsc$(SHARED_SUFFIX).$(COMMON_V_MAJOR) -o libroarartsc$(SHARED_SUFFIX) ${OBJS} ${LIBS}
