@@ -244,20 +244,34 @@ static struct devices {
   void * userdata;
   struct handle * (*open)(const char * file, int flags, mode_t mode, struct devices * ptr);
 } _device_list[] = {
- {"/dev/dsp*",          HT_WAVEFORM,  0, NULL, NULL},
- {"/dev/audio*",        HT_WAVEFORM,  0, NULL, NULL},
- {"/dev/sound/dsp*",    HT_WAVEFORM,  0, NULL, NULL},
- {"/dev/sound/audio*",  HT_WAVEFORM,  0, NULL, NULL},
- {"/dev/mixer*",        HT_MIXER,     0, NULL, NULL},
- {"/dev/sound/mixer*",  HT_MIXER,     0, NULL, NULL},
- {"/dev/midi*",         HT_MIDI,      0, NULL, NULL},
- {"/dev/rmidi*",        HT_MIDI,      0, NULL, NULL},
- {"/dev/sound/midi*",   HT_MIDI,      0, NULL, NULL},
- {"/dev/sound/rmidi*",  HT_MIDI,      0, NULL, NULL},
- {"/dev/dmx*",          HT_DMX,       0, NULL, NULL},
- {"/dev/misc/dmx*",     HT_DMX,       0, NULL, NULL},
- {"/dev/dmxin*",        HT_DMX,       0, NULL, NULL},
- {"/dev/misc/dmxin*",   HT_DMX,       0, NULL, NULL},
+ {"/dev/dsp",           HT_WAVEFORM,  0, NULL, NULL},
+ {"/dev/dsp?",          HT_WAVEFORM,  0, NULL, NULL},
+ {"/dev/audio",         HT_WAVEFORM,  0, NULL, NULL},
+ {"/dev/audio?",        HT_WAVEFORM,  0, NULL, NULL},
+ {"/dev/sound/dsp",     HT_WAVEFORM,  0, NULL, NULL},
+ {"/dev/sound/dsp?",    HT_WAVEFORM,  0, NULL, NULL},
+ {"/dev/sound/audio",   HT_WAVEFORM,  0, NULL, NULL},
+ {"/dev/sound/audio?",  HT_WAVEFORM,  0, NULL, NULL},
+ {"/dev/mixer",         HT_MIXER,     0, NULL, NULL},
+ {"/dev/mixer?",        HT_MIXER,     0, NULL, NULL},
+ {"/dev/sound/mixer",   HT_MIXER,     0, NULL, NULL},
+ {"/dev/sound/mixer?",  HT_MIXER,     0, NULL, NULL},
+ {"/dev/midi",          HT_MIDI,      0, NULL, NULL},
+ {"/dev/midi?",         HT_MIDI,      0, NULL, NULL},
+ {"/dev/rmidi",         HT_MIDI,      0, NULL, NULL},
+ {"/dev/rmidi?",        HT_MIDI,      0, NULL, NULL},
+ {"/dev/sound/midi",    HT_MIDI,      0, NULL, NULL},
+ {"/dev/sound/midi?",   HT_MIDI,      0, NULL, NULL},
+ {"/dev/sound/rmidi",   HT_MIDI,      0, NULL, NULL},
+ {"/dev/sound/rmidi?",  HT_MIDI,      0, NULL, NULL},
+ {"/dev/dmx",           HT_DMX,       0, NULL, NULL},
+ {"/dev/dmx?",          HT_DMX,       0, NULL, NULL},
+ {"/dev/misc/dmx",      HT_DMX,       0, NULL, NULL},
+ {"/dev/misc/dmx?",     HT_DMX,       0, NULL, NULL},
+ {"/dev/dmxin",         HT_DMX,       0, NULL, NULL},
+ {"/dev/dmxin?",        HT_DMX,       0, NULL, NULL},
+ {"/dev/misc/dmxin",    HT_DMX,       0, NULL, NULL},
+ {"/dev/misc/dmxin?",   HT_DMX,       0, NULL, NULL},
  {"/dev/sndstat",       HT_STATIC,    sizeof(_sf__dev_sndstat)-1, _sf__dev_sndstat, NULL},
 #ifdef ROAR_DEFAULT_OSS_DEV
  {ROAR_DEFAULT_OSS_DEV, HT_WAVEFORM,  0, NULL, NULL},
@@ -532,21 +546,31 @@ static void _close_pointer(struct pointer * pointer) {
 // -------------------------------------
 
 static struct devices * _get_device (const char * pathname) {
- size_t len;
+ size_t len, pathlen;
  int i;
+ int qm_match;
 
  ROAR_DBG("_get_device(pathname='%s') = ?", pathname);
+
+ pathlen = strlen(pathname);
 
  for (i = 0; _device_list[i].prefix != NULL; i++) {
   len = strlen(_device_list[i].prefix);
 
+  qm_match = 0;
+
   if ( _device_list[i].prefix[len-1] == '*' ) {
+   len--;
+  } else if ( _device_list[i].prefix[len-1] == '?' ) {
+   qm_match = 1;
    len--;
   } else {
    len++;
   }
+
   if ( !strncmp(pathname, _device_list[i].prefix, len) ) {
-   return &(_device_list[i]);
+   if ( !qm_match || pathlen == (len + 1) )
+    return &(_device_list[i]);
   }
  }
 
