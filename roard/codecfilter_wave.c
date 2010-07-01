@@ -30,7 +30,7 @@
 int cf_wave_open(CODECFILTER_USERDATA_T * inst, int codec,
                                             struct roar_stream_server * info,
                                             struct roar_codecfilter   * filter) {
- struct codecfilter_wave_inst * self = malloc(sizeof(struct codecfilter_wave_inst));
+ struct codecfilter_wave_inst * self = roar_mm_malloc(sizeof(struct codecfilter_wave_inst));
  struct roar_stream * s = ROAR_STREAM(info);
 
  if ( !self )
@@ -52,7 +52,7 @@ int cf_wave_close(CODECFILTER_USERDATA_T   inst) {
  if ( !inst )
   return -1;
 
- free(inst);
+ roar_mm_free(inst);
  return 0;
 }
 
