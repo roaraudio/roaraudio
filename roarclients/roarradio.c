@@ -142,13 +142,13 @@ int main (int argc, char * argv[]) {
 
       fprintf(http, "GET %s HTTP/1.1\r\n", file);
       fprintf(http, "Host: %s\r\n", host);
-      fprintf(http, "User-Agent: roarradio $Revision: 1.8 $\r\n");
+      fprintf(http, "User-Agent: roarradio $Revision: 1.9 $\r\n");
       fprintf(http, "Connection: close\r\n");
       fprintf(http, "\r\n");
       fflush(http);
 
       if ( fscanf(http, "%79s %i %79s\n", buf0, &port, buf1) != 3 ) {
-       ROAR_ERR("HTTP protocoll error!, no initial HTTP/1.x-line!");
+       ROAR_ERR("HTTP protocol error!, no initial HTTP/1.x-line!");
        return 1;
       }
       if ( port != 200 ) { // 200 = HTTP OK

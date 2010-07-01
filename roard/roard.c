@@ -86,7 +86,7 @@ void usage (void) {
  printf("\nStream Options:\n\n");
  printf(
         " --stream-flags D=F    - Set default flags for stream directions\n"
-        "                         D is the stream direction and F is a comma seperated\n"
+        "                         D is the stream direction and F is a comma separated\n"
         "                         list of flags in form +flag or -flag to set or unset\n"
         "                         a flag as default or remove it from the default\n"
        );
@@ -170,7 +170,7 @@ void usage (void) {
 #endif
 #ifdef IPV6_ADDRFORM
         " -64                   - Try to downgrade sockets from IPv6 into IPv4,\n"
-        "                         this is normaly not usefull.\n"
+        "                         this is normaly not useful.\n"
 #endif
         " -p  --port            - TCP Port to bind to\n"
         " -b  --bind            - IP/Hostname to bind to\n"
@@ -180,7 +180,7 @@ void usage (void) {
         "     --proto-rate RATE - Set sample rate parameter for protocol\n"
         "     --proto-bits BITS - Set bits per sample parameter for protocol\n"
         "     --proto-codec E   - Set codec parameter for protocol\n"
-        "     --proto-chans C   - Set number of channels paramter for protocol\n"
+        "     --proto-chans C   - Set number of channels parameter for protocol\n"
         "     --proto-aiprofile PROFILE\n"
         "                       - Sets the audio profile for socket\n" 
         "     --proto-profile P - Set profile for listen socket\n"
@@ -199,9 +199,9 @@ void usage (void) {
         " -U  USER              - Sets the user for the UNIX Domain Socket, (default: do not set)\n"
         "                         You need the permissions to change the UID (normaly only root has)\n"
         " --no-listen           - Do not listen for new clients\n"
-        "                         (only usefull for relaing, impleys --terminate)\n"
+        "                         (only useful for relaing, impleys --terminate)\n"
         " --client-fh           - Comunicate with a client over this handle\n"
-        "                         (only usefull for relaing)\n"
+        "                         (only useful for relaing)\n"
         " --close-fh            - Closes the given fh\n"
         " --standby             - Start in standby state\n"
         " --auto-standby        - Automatical goes into standby if there are no streams\n",
@@ -1585,7 +1585,7 @@ int main (void) {
 
 
   } else if ( strcmp(k, "-p") == 0 || strcmp(k, "--port") == 0 ) {
-   // This is only usefull in INET not UNIX mode.
+   // This is only useful in INET not UNIX mode.
 #ifdef ROAR_SUPPORT_LISTEN
    if ( *sock_addr == '/' )
     sock_addr = ROAR_DEFAULT_HOST;

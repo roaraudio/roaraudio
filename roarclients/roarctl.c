@@ -93,7 +93,7 @@ void usage (void) {
         "                            percent values can floating points.\n"
         "\n"
         "  flag   ID FLAGS         - Sets flags FLAGS on stream ID. FLAGS may be a comma\n"
-        "                            seperated list of flags.\n"
+        "                            separated list of flags.\n"
         "  unflag ID FLAGS         - Unsets flags on a stream. See flag.\n"
         "\n"
         "  kick TYPE ID            - Kicks object of TYPE with id ID\n"
@@ -109,9 +109,9 @@ void usage (void) {
         "  metasave ID FILE        - Saves meta data of stream ID to file FILE\n"
         "  metaload ID FILE        - Loads meta data from file FILE and set it on stream ID\n"
         "\n"
-        "  serveroinfo             - Gets Informations about server output\n"
-        "  listclients             - Gets Informations about clients\n"
-        "  liststreams             - Gets Informations about streams\n"
+        "  serveroinfo             - Gets Information about server output\n"
+        "  listclients             - Gets Information about clients\n"
+        "  liststreams             - Gets Information about streams\n"
         "  allinfo                 - Get all infos\n"
        );
 }
