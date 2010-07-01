@@ -834,6 +834,9 @@ struct {
  {ROAR_CODEC_RIFF_WAVE,   "riff_wave"  },
  {ROAR_CODEC_RIFF_WAVE,   "wave"       }, // alias
  {ROAR_CODEC_RIFF_WAVE,   "wav"        }, // alias
+ {ROAR_CODEC_RIFX,        "rifx"       },
+ {ROAR_CODEC_AU,          "au"         },
+ {ROAR_CODEC_AIFF,        "aiff"       },
 
  //Log codecs:
  {ROAR_CODEC_ALAW,        "alaw"       },
