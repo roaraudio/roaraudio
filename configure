@@ -452,22 +452,22 @@ do
   ;;
 ####################################
 # autof* options block:
-  '--prefix=*')
+  '--prefix='*)
    PREFIX=$(echo "$1" | cut -d= -f2)
   ;;
-  '--prefix-bin=*')
+  '--prefix-bin='*)
    PREFIX_BIN=$(echo "$1" | cut -d= -f2)
   ;;
-  '--prefix-lib=*')
+  '--prefix-lib='*)
    PREFIX_LIB=$(echo "$1" | cut -d= -f2)
   ;;
-  '--prefix-inc=*')
+  '--prefix-inc='*)
    PREFIX_INC=$(echo "$1" | cut -d= -f2)
   ;;
-  '--prefix-man=*')
+  '--prefix-man='*)
    PREFIX_MAN=$(echo "$1" | cut -d= -f2)
   ;;
-  '--prefix-pc=*')
+  '--prefix-pc='*)
    PREFIX_PC=$(echo "$1" | cut -d= -f2)
   ;;
   '--prefix-comp-libs='*)
@@ -966,7 +966,7 @@ fi
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.267 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.268 $ of RoarAudio
  */
 
 EOF
