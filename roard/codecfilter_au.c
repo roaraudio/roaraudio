@@ -43,6 +43,9 @@ int cf_au_open(CODECFILTER_USERDATA_T * inst, int codec,
  *inst = (CODECFILTER_USERDATA_T) self;
 
  memcpy(&(s->info), g_sa, sizeof(struct roar_audio_info));
+
+ s->info.codec = ROAR_CODEC_PCM_S_BE;
+
  return 0;
 }
 
