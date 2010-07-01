@@ -76,6 +76,12 @@ struct roar_codecfilter g_codecfilter[] = {
 #endif
 //#endif
 
+#ifndef ROAR_WITHOUT_CF_AU
+ {ROAR_CODEC_AU, "AU", "AU", NULL, NULL,
+  ROAR_CODECFILTER_READ|ROAR_CODECFILTER_WRITE|ROAR_CODECFILTER_PRETHRU, ROAR_SUBSYS_WAVEFORM,
+  cf_au_open, cf_au_close, NULL, cf_au_write, cf_au_read, NULL, NULL, cf_au_ctl},
+#endif
+
 #ifdef ROAR_HAVE_LIBRAUM
  {ROAR_CODEC_RAUM, "RAUM", "RAUM Container Format", NULL, cf_raum_setup, ROAR_CODECFILTER_WRITE,
   ROAR_SUBSYS_WAVEFORM|ROAR_SUBSYS_MIDI|ROAR_SUBSYS_LIGHT|ROAR_SUBSYS_RAW|ROAR_SUBSYS_COMPLEX,

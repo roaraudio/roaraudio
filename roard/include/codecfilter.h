@@ -86,6 +86,7 @@ struct roar_codecfilter {
 
 #include "codecfilter_cmd.h"
 #include "codecfilter_wave.h"
+#include "codecfilter_au.h"
 
 
 #ifdef ROAR_HAVE_LIBVORBISFILE

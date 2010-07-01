@@ -4,7 +4,7 @@ OBJ=roard.o driver.o mixer.o output.o signals.o loop.o clients.o streams.o netwo
 SUBSYS=midi.o light.o raw.o rdtcs.o waveform.o beep.o
 DRV=driver_esd.o driver_ao.o driver_roar.o driver_raw.o driver_oss.o driver_shout.o driver_sndio.o driver_dmx.o driver_pwmled.o driver_sysclock.o driver_wmm.o driver_dstr.o driver_alsa.o driver_rsound.o driver_portaudio.o driver_pulsesimple.o
 CF_CODEC=codecfilter_cmd.o codecfilter_vorbis.o codecfilter_celt.o codecfilter_speex.o codecfilter_alaw.o codecfilter_mulaw.o codecfilter_sndfile.o codecfilter_fishsound.o
-CF_CONTAINER=codecfilter_wave.o codecfilter_raum.o
+CF_CONTAINER=codecfilter_wave.o codecfilter_raum.o codecfilter_au.o
 EMUL=emul_esd.o emul_simple.o emul_rsound.o emul_rplay.o
 
 CF=${CF_CONTAINER} ${CF_CODEC}
