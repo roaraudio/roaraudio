@@ -46,7 +46,7 @@ install: prep-install
 	sh -c 'set -e; cd lib; for file in lib*$(SHARED_SUFFIX)*; do ln -fs $$file.$(COMMON_VERSION) '$(DESTDIR)$(PREFIX_LIB)'/$$file.$(COMMON_V_MM); done'
 	sh -c 'set -e; cd lib; for file in lib*$(SHARED_SUFFIX)*; do ln -fs $$file.$(COMMON_VERSION) '$(DESTDIR)$(PREFIX_LIB)'/$$file.$(COMMON_V_MAJOR); done'
 	sh -c 'set -e; cd lib; for file in lib*$(SHARED_SUFFIX)*; do ln -fs $$file.$(COMMON_VERSION) '$(DESTDIR)$(PREFIX_LIB)'/$$file; done'
-	sh -c 'set -e; cd lib; while read d t; do ln -fs '$(DESTDIR)$(PREFIX_LIB)'/$$d '$(DESTDIR)$(PREFIX_COMP_LIBS)'/$$t; done < ../symlinks.comp'
+	sh -c 'set -e; cd lib; while read d t; do ln -fs '$(PREFIX_LIB)'/$$d '$(DESTDIR)$(PREFIX_COMP_LIBS)'/$$t; done < ../symlinks.comp'
 	sh -c 'set -e; cd lib; for file in *$(COMPBIN_SUFFIX); do b=`basename $$file $(COMPBIN_SUFFIX)`; cp $$file '$(DESTDIR)$(PREFIX_COMP_BINS)'/$$b; done'
 	sh -c 'set -e; for file in include/roar* include/lib*; do cp $(cp_v) -r $$file '$(DESTDIR)$(PREFIX_INC)'/; done'
 	set -e; cd doc; $(MAKE) install; cd ..
