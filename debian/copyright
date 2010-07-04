@@ -1,0 +1,148 @@
+This package was debianized by Patrick Matthäi <pmatthaei@debian.org> on
+Sun, 04 Jul 2010 23:53:23 +0200.
+
+It was downloaded from <http://roaraudio.keep-cool.org/downloads.html>.
+
+Upstream Author: Philipp 'ph3-der-loewe' Schafft <lion@lion.leolix.org>
+
+Copyright: © Philipp 'ph3-der-loewe' Schafft - 2008-2010
+
+
+License (plugins/mplayer/ao_roar.c):
+
+    This package is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; version 2 dated June, 1991.
+
+    This package is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this package; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+    02110-1301, USA.
+
+On Debian systems, the complete text of the GNU General Public License
+version 2 can be found in `/usr/share/common-licenses/GPL-2'.
+
+
+License (plugins/ao/ao_roar.c):
+
+    This file is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2, or (at your opinion)
+    any later version.
+
+    RoarAudio is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with GNU Make; see the file COPYING.  If not, write to
+    the Free Software Foundation, 51 Franklin Street, Fifth Floor,
+    Boston, MA 02110-1301, USA.
+
+On Debian systems, the complete text of the GNU General Public License
+can be found in `/usr/share/common-licenses/GPL-2'.
+
+
+License (plugins/gstreamer0.10/*):
+
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Library General Public
+    License as published by the Free Software Foundation; either
+    version 2 of the License, or (at your option) any later version.
+
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Library General Public License for more details.
+
+    You should have received a copy of the GNU Library General Public
+    License along with this library; if not, write to the
+	Free Software Foundation, 51 Franklin Street, Fifth Floor,
+    Boston, MA 02110-1301, USA.
+
+On Debian systems, the complete text of the GNU Lesser General Public License
+can be found in /usr/share/common-licenses/LGPL-3.
+
+
+License (everything else):
+
+    This file is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License version 3
+    as published by the Free Software Foundation.
+
+    RoarAudio is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this software; see the file COPYING.  If not, write to
+    the Free Software Foundation, 51 Franklin Street, Fifth Floor,
+    Boston, MA 02110-1301, USA.
+
+On Debian systems, the complete text of the GNU General Public License
+can be found in /usr/share/common-licenses/GPL-3.
+
+
+The following file has got an additional copyright holder:
+
+dist/debian-like/roaraudio:
+    Copyright © 2007 Javier Fernandez-Sanguino <jfs@debian.org>
+
+plugins/gstreamer0.10/roarsink.h, plugins/gstreamer0.10/roarmixer.*:
+    Copyright © 2005 Arwed v. Merkatz <v.merkatz@gmx.net>
+
+plugins/gstreamer0.10/gstroar.c:
+    Copyright © 1999 Erik Walthinsen <omega@cse.ogi.edu>
+    Copyright © 2003 David A. Schleef <ds@schleef.org>
+
+plugins/gstreamer0.10/roarsink.c:
+    Copyright © 2005 Arwed v. Merkatz <v.merkatz@gmx.net>
+    Copyright © 2001 Richard Boulton <richard-gst@tartarus.org>
+
+plugins/alsa/pcm.c, roard/include/driver_alsa.h, roard/driver_alsa.c:
+    Copyright © 2010 Hans-Kristian 'maister' Arntzen
+
+libroararts/*.c:
+    Copyright © 2000 Stefan Westerfeld <stefan@space.twc.de>
+
+libroaresd/*.c:
+    Those copyrights are unclear in source package.
+    The code parts used in this package are taken from source package: esound.
+    Copyright © ???? Eric B. 'Ricdude' Mitchell
+    Copyright © 1999? Carsten 'The Rasterman' Haitzler
+    Copyright © 2004 Kjartan Maraas
+    Copyright © 2003 Frederic Crozat
+    Copyright © 2002 Stephen Browne
+    Copyright © 1999 Timur Bakeyev
+    Copyright © 1998-1999 Yo Ric Dude
+    Copyright © 1998 Manish Singh
+    Copyright © 1998 Frank Belew
+    Copyright © 1998 Myth
+    Copyright © 1998 Isaac Richards
+
+libroarpulse/*.c:
+    Copyright © ???? Lennart Poettering <poettering@users.sourceforge.net>
+    Copyright © ???? Pierre Ossman <drzeus@drzeus.cx>
+
+libroarrsound/*.c:
+    Copyright © 1010 Hans-Kristian 'maister' Arntzen.
+
+libroarsndio/*.c:
+    Copyright © 2008,2009 Alexandre Ratchov <alex@caoua.org>
+
+libroaryiff/*.c:
+    Code was taken from the source package: yiff.
+    This package does not have copyright statements.
+    The debian package was put together by Raphael Bossek <bossekr@debian.org>,
+    Upstream author: Tara Milana <learfox@twu.net>
+    Copyright (C)  1997-2003 WolfPack Entertainment
+
+The Debian packaging is © 2010, Patrick Matthäi <pmatthaei@debian.org> and
+is licensed under the GPL-3, see above.
