@@ -512,7 +512,7 @@ then
  :
 else
  PASSWORD_API=false
- WITHOUT_DCOMP="$WITHOUT_DCOMP"' cb midi rdtcs emul_rsound'
+ WITHOUT_DCOMP="$WITHOUT_DCOMP"' cb midi rdtcs'
  WITHOUT_CF="$WITHOUT_CF"' cf'
 fi
 
@@ -966,7 +966,7 @@ fi
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.268 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.269 $ of RoarAudio
  */
 
 EOF
