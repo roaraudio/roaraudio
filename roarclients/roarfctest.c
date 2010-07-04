@@ -31,6 +31,23 @@
 #include <stdio.h>      /* *printf*() */
 #include <libroardsp/libroardsp.h>
 
+void usage (void) {
+ printf("roarfctest [OPTIONS]...\n");
+
+ printf("\nOptions:\n\n");
+
+ printf(
+        "  --rate      RATE      - Set sample rate\n"
+        "  --sfreq     SFREQ     - Start frequency \n"
+        "  --efreq     EFREQ     - End frequency\n"
+        "  --engage    ENGAGE    - This option is not documented\n"
+        "  --tmax      TMAX      - This option is not documented\n"
+        "  --gnuplot             - Output data using gnuplot(1)\n"
+        "  --rmsout    RMSOUT    - Set output file for RMS data\n"
+        "  --help   -h           - Show this help\n"
+       );
+}
+
 int main (int argc, char * argv[]) {
  int rate     = ROAR_RATE_DEFAULT;
  int bits     = 16;
@@ -82,6 +99,9 @@ int main (int argc, char * argv[]) {
 #endif
   } else if ( !strcmp(k, "--rmsout") ) {
    rmsout = fopen(argv[++i], "w");
+  } else if ( !strcmp(k, "--help") || !strcmp(k, "-h") ) {
+   usage();
+   return 0;
   } else {
    kill_var = 0;
   }
