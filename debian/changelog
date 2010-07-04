@@ -1,6 +1,6 @@
-roaraudio (0.3~beta7-1) unstable; urgency=low
+roaraudio (0.3~beta7-1) UNRELEASED; urgency=low
 
   * Initial release.
-    Closes: #1234567
+    Closes: #587968
 
  -- Patrick Matthäi <pmatthaei@debian.org>  Thu, 01 Jul 2010 15:44:06 +0200
