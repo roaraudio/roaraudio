@@ -489,7 +489,7 @@ int clients_check     (int id) {
     rv = emul_rplay_check_client(id, NULL);
    break;
 #endif
-#ifndef ROAR_WITHOUT_DCOMP_EMUL_ESD
+#ifndef ROAR_WITHOUT_DCOMP_EMUL_RSOUND
   case ROAR_PROTO_RSOUND:
     rv = emul_rsound_check_client(id, NULL);
     if ( rv == 0 ) { // loop as long as we don't get an error.
