@@ -853,7 +853,7 @@ int roar_socket_open_proxy (int mode, int type, char * host, int port, char * pr
 
  ROAR_DBG("roar_socket_open_proxy(*): proxy_type='%s', opts='%s', user='%s', pw=(not shown), proxy_addr='%s'", proxy_type, opts, user, proxy_addr);
 
- for (i = 0; proxy_addr[i] != 0 && proxy_addr[i] != ':' && i < ROAR_SOCKET_MAX_HOSTNAMELEN; i++)
+ for (i = 0; proxy_addr[i] != 0 && proxy_addr[i] != ':' && i < (ROAR_SOCKET_MAX_HOSTNAMELEN - 1); i++)
   proxy_host[i] = proxy_addr[i];
  proxy_host[i] = 0;
 
