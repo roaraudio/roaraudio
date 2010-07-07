@@ -309,12 +309,12 @@ roar_noop			ok
 roar_identify			internal
 
 # Messages:
-#roar_send_message
-#roar_recv_message
-#roar_req
-#roar_vsend_message
-#roar_vrecv_message
-#roar_vreq
+roar_send_message		likely	This is for internal use mostly
+roar_recv_message		likely	This is for internal use mostly
+roar_req			likely	This is for internal use mostly
+roar_vsend_message		likely	This is for internal use mostly
+roar_vrecv_message		likely	This is for internal use mostly
+roar_vreq			likely	This is for internal use mostly
 
 # Client handling:
 roar_client_new			ok
