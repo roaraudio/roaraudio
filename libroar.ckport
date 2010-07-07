@@ -3,6 +3,457 @@
 !TYPE: func
 
 !TARGET: libroar0
+# VIO:
+roar_vio_close			ok
+
+roar_vio_read			ok
+roar_vio_write			ok
+
+roar_vio_lseek			ok
+
+roar_vio_sync			ok
+roar_vio_nonblock		ok
+roar_vio_ctl			ok
+
+roar_vio_accept			ok
+roar_vio_shutdown		ok
+
+roar_vio_select			ok
+
+# VIO String functions:
+roar_vio_fgets			ok
+roar_vio_getc			ok
+roar_vio_printf			ok
+roar_vio_putc			ok
+
+# VIO Open functions:
+# very basic:
+roar_vio_open_pass		ok
+roar_vio_open_re		ok
+
+# basic:
+roar_vio_open_fh		maybe
+roar_vio_open_file		maybe
+
+# network:
+roar_vio_open_fh_socket		maybe
+roar_vio_open_socket		ok
+roar_vio_open_socket_listen	ok
+
+# DSTR:
+roar_vio_open_dstr		ok
+roar_vio_open_dstr_vio		ok
+
+# stdio:
+roar_vio_open_stdio		maybe	Not supported by all archs
+
+#...
+roar_vio_open_2popen
+roar_vio_open_bio
+roar_vio_open_buffer
+roar_vio_open_buffer_store
+roar_vio_open_cmd
+roar_vio_open_def_socket
+roar_vio_open_default
+roar_vio_open_gpg
+roar_vio_open_gzip
+roar_vio_open_jumbo
+roar_vio_open_pgp_decrypt
+roar_vio_open_pgp_encrypt_pub
+roar_vio_open_pgp_encrypt_sym
+roar_vio_open_pgp_store
+roar_vio_open_pipe
+roar_vio_open_proto
+roar_vio_open_proto_gopher
+roar_vio_open_proto_http
+roar_vio_open_rtp
+roar_vio_open_stack
+roar_vio_open_tantalos
+
+# VIO based streams:
+roar_vio_simple_stream		ok
+roar_vio_simple_new_stream_obj	ok
+
+# VIO internals:
+roar_vio_init_calls	internal
+roar_vio_set_inst	internal
+roar_vio_set_fh		legacy
+roar_vio_get_fh		legacy
+
+roar_vio_basic_read	internal
+roar_vio_basic_write	internal
+roar_vio_basic_lseek	internal
+roar_vio_basic_nonblock	internal
+roar_vio_basic_sync	internal
+roar_vio_basic_ctl	internal
+roar_vio_basic_close	internal
+
+roar_vio_null_rw	internal
+roar_vio_null_sync	internal
+
+roar_vio_pass_read	internal
+roar_vio_pass_write	internal
+roar_vio_pass_lseek	internal
+roar_vio_pass_nonblock	internal
+roar_vio_pass_sync	internal
+roar_vio_pass_ctl	internal
+roar_vio_pass_close	internal
+
+roar_vio_re_read	internal
+roar_vio_re_write	internal
+roar_vio_re_lseek	internal
+
+# Buffer:
+roar_buffer_add			ok
+roar_buffer_delete		ok
+roar_buffer_duplicate		ok
+roar_buffer_free		ok
+roar_buffer_get_data		ok
+roar_buffer_get_flag		ok
+roar_buffer_get_len		ok
+roar_buffer_get_meta		ok
+roar_buffer_get_meta_i32	ok
+roar_buffer_get_next		ok
+roar_buffer_new			ok
+roar_buffer_new_data		ok
+roar_buffer_new_no_ma		ok
+roar_buffer_ring_new		ok
+roar_buffer_ring_read		ok
+roar_buffer_ring_stats		ok
+roar_buffer_ring_write		ok
+roar_buffer_set_flag		ok
+roar_buffer_set_len		ok
+roar_buffer_set_meta		ok
+roar_buffer_set_meta_i32	ok
+roar_buffer_set_offset		ok
+roar_buffer_shift_out		ok
+
+# Some internal functions:
+roar_debug_msg			internal
+roar_debug_message_print	internal
+roar_debug_audio_info_print	internal
+
+# Connection handling:
+roar_connect_raw		internal
+roar_connect			ok
+roar_connect_fh			likely
+roar_get_connection_fh		critical
+roar_get_connection_vio		legacy
+roar_get_connection_vio2	ok
+roar_disconnect			ok
+#roar_set_connection_callback
+roar_sync			ok
+roar_wait_msg			wip
+#roar_wait_msg
+roar_noop			ok
+roar_identify			internal
+
+# Messages:
+#roar_send_message
+#roar_recv_message
+#roar_req
+#roar_vsend_message
+#roar_vrecv_message
+#roar_vreq
+
+# Client handling:
+roar_client_new			ok
+roar_client_set_fh		maybe	Using FHs directly may not work on all systems
+roar_client_set_proto		ok
+roar_client_pass		ok
+
+# Streams:
+roar_stream_connect		ok
+roar_stream_new			ok
+roar_stream_set_rel_id		ok
+roar_stream_get_rel_id		ok
+roar_stream_new_by_id		ok
+roar_stream_new_empty		ok
+roar_stream_set_id		ok
+roar_stream_get_id		ok
+roar_stream_set_fh		likely
+roar_stream_get_fh		likely
+roar_stream_set_dir		ok
+roar_stream_get_dir		ok
+
+roar_stream_exec		ok
+roar_stream_connect_to		maybe
+roar_stream_connect_to_ask	internal
+roar_stream_passfh		likely
+
+roar_stream_attach_simple	ok
+roar_stream_add_data		likely	does not work most of the time
+
+#roar_stream_send_data
+
+roar_stream_get_info		ok
+roar_stream_get_name		ok
+
+#roar_stream_get_chanmap
+#roar_stream_set_chanmap
+
+roar_stream_set_flags		ok
+roar_stream_set_role		ok
+
+roar_stream_s2m			likely	mostly for internal use only
+roar_stream_m2s			likely	mostly for internal use only
+
+# Accessing name database:
+roar_dir2str			ok
+roar_str2dir			ok
+roar_str2codec			ok
+roar_codec2str			ok
+roar_streamstate2str		ok
+roar_str2role			ok
+roar_role2str			ok
+roar_str2proto			ok
+roar_proto2str			ok
+roar_str2byteorder		ok
+roar_byteorder2str		ok
+roar_str2autht			ok
+roar_autht2str			ok
+roar_meta_strtype		ok
+roar_meta_inttype		ok
+roar_meta_strgenre		ok
+roar_meta_intgenre		ok
+
+# Audio info:
+roar_info2samplesize		ok
+roar_info2framesize		ok
+roar_info2bitspersec		ok
+
+roar_profile2info		ok
+roar_profiles_list		ok
+
+# Config:
+roar_libroar_set_server		ok
+roar_libroar_get_server		ok
+roar_libroar_nowarn		internal
+roar_libroar_warn		internal
+roar_libroar_get_config_ptr	fail
+roar_libroar_get_config		internal
+roar_libroar_config_codec_get	internal
+roar_libroar_config_parse	likely	Why do you want to parse additional config?
+
+# Controling the server:
+roar_get_clientid		ok
+roar_get_standby		ok
+roar_set_standby		ok
+roar_exit			legacy	use roar_terminate
+roar_terminate			ok
+roar_server_oinfo		legacy	depends on mixer
+
+roar_list			ok
+
+roar_get_client			ok
+roar_get_stream			ok
+
+roar_kick			ok
+
+roar_set_vol			ok
+roar_get_vol			ok
+
+roar_ctl_f2m			internal
+roar_ctl_m2f			internal
+
+roar_ctl_ia2m			internal
+roar_ctl_m2ia			internal
+
+roar_ctl_c2m			likely	mostly for internal use only
+roar_ctl_m2c			likely	mostly for internal use only
+
+# Env:
+roar_env_set			ok
+roar_env_get_home		likely	use roar_env_get_home_r
+roar_env_get_home_r		ok
+roar_env_render_path_r		maybe	Why do you want to use this?
+
+# File handlung:
+roar_file_codecdetect		ok
+roar_file_send_raw		legacy	use roar_vio_copy_data
+roar_file_play			ok
+roar_file_play_full		ok
+roar_file_map			likely	not supported on all systems
+roar_file_unmap			likely	not supported on all systems
+
+roar_cdromdevice		maybe
+
+# KeyVal:
+roar_keyval_lookup		ok
+roar_keyval_split		ok
+
+# ACL:
+roar_acl_rule_chk_connect	wip
+
+# Auth:
+roar_auth			wip
+
+# Beep:
+roar_beep			ok
+
+# CDRum / CDDA:
+roar_cdrom_open			wip
+roar_cdrom_close		wip
+roar_cdrom_stop			wip
+roar_cdrom_play			wip
+
+# Debug:
+roar_debug_warn_sysio_real	internal
+roar_debug_warn_obsolete_real	internal
+
+roar_debug_set_stderr_fh	likely	use roar_debug_set_stderr_vio
+roar_debug_set_stderr_vio	ok
+roar_debug_set_stderr_mode	ok
+
+roar_debug_get_stderr		ok
+
+roar_debug_msg_simple		legacy
+roar_debug_msg			ok
+
+# Error handling:
+roar_err_int			wip
+roar_err_buildmsg		wip
+roar_err_parsemsg		wip
+
+# MemMgr:
+roar_mm_calloc			wip
+roar_mm_malloc			wip
+roar_mm_free			wip
+roar_mm_realloc			wip
+roar_mm_strdup			wip
+
+# Meta Data:
+roar_stream_meta_set		ok
+roar_stream_meta_get		ok
+roar_stream_meta_list		ok
+roar_meta_free			ok
+roar_meta_parse_audioinfo	ok
+
+# NNode:
+roar_nnode_new			ok
+roar_nnode_new_from_af		ok
+roar_nnode_new_from_sockaddr	maybe	not supported on all systems
+roar_nnode_new_from_fh		likely	not supported on all systems
+
+roar_nnode_free			ok
+
+roar_nnode_get_socktype		ok
+roar_nnode_to_str		ok
+roar_nnode_from_blob		internal	mostly for internal use
+roar_nnode_to_blob		internal	mostly for internal use
+roar_nnode_cmp			ok
+
+# Password API:
+roar_pinentry_open		internal
+roar_pinentry_simple_open	internal
+roar_pinentry_close		internal
+roar_pinentry_send		internal
+roar_pinentry_recv		internal
+roar_pinentry_req		internal
+roar_pinentry_set_desc		internal
+roar_pinentry_set_prompt	internal
+roar_pinentry_set_yes		internal
+roar_pinentry_set_no		internal
+roar_pinentry_set		internal
+roar_pinentry_getpin		internal
+roar_pinentry_confirm		internal
+
+roar_sshaskpass_getpass		internal
+
+# RoarDL:
+roar_dl_open			ok
+roar_dl_close			ok
+roar_dl_getsym			ok
+roar_dl_ra_init			ok
+roar_dl_errstr			ok
+
+# RoarSLP:
+roar_slp_url_callback		internal
+roar_slp_search			internal
+roar_slp_cookie_init		internal
+# Those may be more public in futur:
+roar_slp_find_roard		internal
+roar_slp_find_roard_r		internal
+
+# RoarX11:
+roar_x11_connect		ok
+roar_x11_connect_display	maybe	not supported on all systems
+roar_x11_disconnect		ok
+roar_x11_flush			ok
+roar_x11_set_prop		ok
+roar_x11_delete_prop		ok
+roar_x11_get_prop		ok
+
+# (old) Simple API:
+roar_simple_connect		ok
+
+roar_simple_stream		legacy	use VIO based streams
+roar_simple_stream_obj		legacy	use VIO based streams
+roar_simple_new_stream_attachexeced_obj	internal
+
+roar_simple_new_stream		legacy
+roar_simple_new_stream_obj	legacy
+
+roar_simple_play_file		ok
+
+roar_simple_play		legacy
+roar_simple_monitor		legacy
+roar_simple_record		legacy
+roar_simple_filter		legacy
+
+roar_simple_connect_virtual	ok
+
+roar_simple_close		legacy	use roar_vio_close
+
+roar_simple_get_standby		legacy	use roar_get_standby
+
+# (old) Socket API:
+roar_socket_listen		legacy	use roar_vio_open_socket_listen
+roar_socket_connect		legacy	use roar_vio_open_socket
+
+roar_socket_new_tcp		internal
+roar_socket_new_udp		internal
+roar_socket_new_tcp6		internal
+roar_socket_new_udp6		internal
+roar_socket_new_unix		internal
+roar_socket_new_decnet_seqpacket	internal
+roar_socket_new_decnet_stream	internal
+roar_socket_new_ipxspx		internal
+roar_socket_new_ipx		internal
+
+roar_socket_open		legacy	use roar_vio_open_socket or roar_vio_open_socket_listen
+roar_socket_open_fork		internal
+roar_socket_open_file		internal
+roar_socket_open_proxy		internal
+roar_socket_listen_decnet	internal
+roar_socket_get_local_nodename	internal
+roar_socket_nonblock		internal	use roar_vio_nonblock
+roar_socket_decnet_set_timeout	internal
+roar_socket_recvbuf		internal
+roar_socket_dup_udp_local_end	internal
+
+roar_socket_send_fh		internal
+roar_socket_recv_fh		internal
+
+roar_socket_open_socks4		internal
+roar_socket_open_socks4a	internal
+roar_socket_open_socks4d	internal
+roar_socket_open_socks4x	internal
+
+roar_socket_open_http		internal
+roar_socket_open_ssh		internal
+
+# Stack:
+roar_stack_new			ok
+roar_stack_newalloc		ok
+roar_stack_free			ok
+roar_stack_set_free		ok
+roar_stack_set_flag		ok
+roar_stack_push			ok
+roar_stack_pop			ok
+roar_stack_get_cur		ok
+
+
 !TARGET: libroardsp0
 !TARGET: libroareio0
 !TARGET: libroarlight0
