@@ -1,0 +1,11 @@
+#ckport(1) database for RoarAudio core librarys:
+!NAME: RoarAudio core librarys
+!TYPE: func
+
+!TARGET: libroar0
+!TARGET: libroardsp0
+!TARGET: libroareio0
+!TARGET: libroarlight0
+!TARGET: libroarmidi0
+
+#ll
