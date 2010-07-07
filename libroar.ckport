@@ -301,10 +301,9 @@ roar_get_connection_fh		critical
 roar_get_connection_vio		legacy
 roar_get_connection_vio2	ok
 roar_disconnect			ok
-#roar_set_connection_callback
+roar_set_connection_callback	wip
 roar_sync			ok
 roar_wait_msg			wip
-#roar_wait_msg
 roar_noop			ok
 roar_identify			internal
 
@@ -344,13 +343,13 @@ roar_stream_passfh		likely
 roar_stream_attach_simple	ok
 roar_stream_add_data		likely	does not work most of the time
 
-#roar_stream_send_data
+roar_stream_send_data		critical	does not work as exected
 
 roar_stream_get_info		ok
 roar_stream_get_name		ok
 
-#roar_stream_get_chanmap
-#roar_stream_set_chanmap
+roar_stream_get_chanmap		wip
+roar_stream_set_chanmap		wip
 
 roar_stream_set_flags		ok
 roar_stream_set_role		ok
