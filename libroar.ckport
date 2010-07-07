@@ -26,6 +26,11 @@ roar_vio_getc			ok
 roar_vio_printf			ok
 roar_vio_putc			ok
 
+# VIO other ops:
+roar_vio_copy_data		ok
+roar_vio_open_tee		wip	Does not yet work
+roar_vio_open_split		wip	Does not yet work
+
 # VIO Open functions:
 # very basic:
 roar_vio_open_pass		ok
@@ -40,35 +45,16 @@ roar_vio_open_fh_socket		maybe
 roar_vio_open_socket		ok
 roar_vio_open_socket_listen	ok
 
-# DSTR:
-roar_vio_open_dstr		ok
-roar_vio_open_dstr_vio		ok
-
 # stdio:
 roar_vio_open_stdio		maybe	Not supported by all archs
+roar_vio_to_stdio		maybe	Not supported by all archs
 
-#...
-roar_vio_open_2popen
-roar_vio_open_bio
-roar_vio_open_buffer
-roar_vio_open_buffer_store
-roar_vio_open_cmd
-roar_vio_open_def_socket
-roar_vio_open_default
-roar_vio_open_gpg
-roar_vio_open_gzip
-roar_vio_open_jumbo
-roar_vio_open_pgp_decrypt
-roar_vio_open_pgp_encrypt_pub
-roar_vio_open_pgp_encrypt_sym
-roar_vio_open_pgp_store
-roar_vio_open_pipe
-roar_vio_open_proto
-roar_vio_open_proto_gopher
-roar_vio_open_proto_http
-roar_vio_open_rtp
-roar_vio_open_stack
-roar_vio_open_tantalos
+roar_vio_stdio_read		internal
+roar_vio_stdio_write		internal
+roar_vio_stdio_lseek		internal
+roar_vio_stdio_sync		internal
+roar_vio_stdio_ctl		internal
+roar_vio_stdio_close		internal
 
 # VIO based streams:
 roar_vio_simple_stream		ok
@@ -102,6 +88,180 @@ roar_vio_pass_close	internal
 roar_vio_re_read	internal
 roar_vio_re_write	internal
 roar_vio_re_lseek	internal
+
+# VIO for Winsock:
+roar_vio_winsock_read	internal
+roar_vio_winsock_write	internal
+roar_vio_winsock_nonblock	internal
+roar_vio_winsock_sync	internal
+roar_vio_winsock_ctl	internal
+roar_vio_winsock_close	internal
+
+# VIO OpenSSL BIO:
+roar_vio_open_bio	maybe	requires OpenSSL support to be compiled in
+roar_vio_to_bio		maybe	requires OpenSSL support to be compiled in
+
+roar_vio_bio_read	internal
+roar_vio_bio_write	internal
+roar_vio_bio_lseek	internal
+roar_vio_bio_nonblock	internal
+roar_vio_bio_sync	internal
+roar_vio_bio_close	internal
+
+# VIO buffer:
+roar_vio_open_buffer		wip
+roar_vio_buffer_read		internal
+roar_vio_buffer_write		internal
+roar_vio_buffer_lseek		internal
+roar_vio_buffer_nonblock	internal
+roar_vio_buffer_sync		internal
+roar_vio_buffer_ctl		internal
+roar_vio_buffer_close		internal
+
+# VIO Buffer Store:
+roar_vio_open_buffer_store	wip
+roar_vio_buffer_store_read	internel
+roar_vio_buffer_store_write	internal
+roar_vio_buffer_store_lseek	internal
+roar_vio_buffer_store_nonblock	internal
+roar_vio_buffer_store_sync	internal
+roar_vio_buffer_store_ctl	internal
+roar_vio_buffer_store_close	internal
+
+# VIO Commands:
+roar_vio_open_cmd		likely	This requires forking processes
+roar_vio_cmd_close		internal
+roar_vio_cmd_fork		internal
+roar_vio_cmd_wait		internal
+
+roar_vio_open_2popen		likely	This requires forking processes
+roar_vio_2popen_close		internal
+
+roar_vio_cmd_read		internal
+roar_vio_cmd_write		internal
+roar_vio_cmd_nonblock		internal
+roar_vio_cmd_sync		internal
+roar_vio_cmd_ctl		internal
+
+roar_vio_open_gzip		wip	Currently requires cmd vio
+roar_vio_open_gpg		wip	Currently requires cmd vio
+roar_vio_open_pgp_decrypt	wip	Currently requires cmd vio
+roar_vio_open_pgp_store		wip	Currently requires cmd vio
+roar_vio_open_pgp_encrypt_sym	wip	Currently requires cmd vio
+roar_vio_open_pgp_encrypt_pub	wip	Currently requires cmd vio
+
+# VIO DSTR:
+roar_vio_dstr_get_type		ok
+roar_vio_dstr_get_name		ok
+roar_vio_dstr_register_type	wip
+
+roar_vio_dstr_init_defaults	ok
+roar_vio_dstr_init_defaults_c	ok
+
+roar_vio_open_default		ok
+
+roar_vio_open_dstr		ok
+roar_vio_open_dstr_vio		ok
+
+roar_vio_dstr_parse_opts	internal
+roar_vio_dstr_set_defaults	internal
+roar_vio_dstr_build_chain	internal
+
+# VIO Jumbo (frames):
+roar_vio_open_jumbo		ok
+
+roar_vio_jumbo_read		internal
+roar_vio_jumbo_write		internal
+roar_vio_jumbo_lseek		internal
+roar_vio_jumbo_nonblock		internal
+roar_vio_jumbo_sync		internal
+roar_vio_jumbo_ctl		internal
+roar_vio_jumbo_close		internal
+
+# VIO Magic:
+roar_vio_open_magic		wip	Does not yet work
+roar_vio_magic_read		internal
+roar_vio_magic_write		internal
+roar_vio_magic_lseek		internal
+roar_vio_magic_nonblock		internal
+roar_vio_magic_sync		internal
+roar_vio_magic_close		internal
+
+# VIO pipe:
+roar_vio_open_pipe		wip	No support for buffer based pipes
+roar_vio_pipe_init		internal
+
+roar_vio_pipe_read		internal
+roar_vio_pipe_write		internal
+roar_vio_pipe_nonblock		internal
+roar_vio_pipe_sync		internal
+roar_vio_pipe_ctl		internal
+roar_vio_pipe_close		internal
+
+# VIO proto:
+roar_vio_proto_init_def		internal
+
+roar_vio_open_proto		likely	use DSTR interface
+
+roar_vio_proto_read		internal
+roar_vio_proto_write		internal
+roar_vio_proto_lseek		internal
+roar_vio_proto_nonblock		internal
+roar_vio_proto_sync		internal
+roar_vio_proto_ctl		internal
+roar_vio_proto_close		internal
+
+roar_vio_open_proto_http	internal
+roar_vio_open_proto_gopher	internal
+
+# VIO RTP:
+roar_vio_open_rtp		wip	Does not always work correctly
+roar_vio_rtp_read		internal
+roar_vio_rtp_write		internal
+roar_vio_rtp_lseek		internal
+roar_vio_rtp_nonblock		internal
+roar_vio_rtp_sync		internal
+roar_vio_rtp_ctl		internal
+roar_vio_rtp_close		internal
+
+# VIO Socket:
+roar_vio_open_def_socket	internal	use DSTR interface
+roar_vio_socket_init_socket_def	internal
+roar_vio_socket_init_dstr_def	internal
+
+roar_vio_socket_conv_def	internal
+
+roar_vio_socket_get_port	internal
+
+roar_vio_socket_init_unix_def		internal
+
+roar_vio_socket_init_decnetnode_def	internal
+roar_vio_socket_init_decnet_def		internal
+
+roar_vio_socket_init_inet4host_def	internal
+roar_vio_socket_init_inet4_def		internal
+roar_vio_socket_init_tcp4_def		internal
+roar_vio_socket_init_udp4_def		internal
+roar_vio_socket_init_inet6host_def	internal
+roar_vio_socket_init_inet6_def		internal
+roar_vio_socket_init_tcp6_def		internal
+roar_vio_socket_init_udp6_def		internal
+
+# VIO Stack:
+roar_vio_open_stack		ok
+roar_vio_stack_add		ok
+
+roar_vio_stack_read		internal
+roar_vio_stack_write		internal
+roar_vio_stack_lseek		internal
+roar_vio_stack_nonblock		internal
+roar_vio_stack_sync		internal
+roar_vio_stack_ctl		internal
+roar_vio_stack_close		internal
+
+# VIO Tantalos:
+roar_vio_open_tantalos		ok
+
 
 # Buffer:
 roar_buffer_add			ok
