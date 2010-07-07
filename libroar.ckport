@@ -614,8 +614,429 @@ roar_stack_get_cur		ok
 
 
 !TARGET: libroardsp0
+# amp.h:
+roar_amp_pcm			ok
+roar_amp_pcm_8bit		internal
+roar_amp_pcm_16bit		internal
+roar_amp_pcm_24bit		internal
+roar_amp_pcm_32bit		internal
+
+# channels.h:
+roardsp_chan2str		ok
+roardsp_str2chan		ok
+
+roardsp_chanlist2str		ok
+
+roardsp_chanlist_init		wip
+roardsp_chanmap_calc		wip
+
+roardsp_chanmap_mappcm8		wip
+roardsp_chanmap_mappcm16	wip
+roardsp_chanmap_mappcm24	wip
+roardsp_chanmap_mappcm32	wip
+roardsp_chanmap_mappcm		wip
+
+# convert.h:
+roar_conv_bits			ok
+
+roar_conv_bits_8to16		internal
+roar_conv_bits_8to24		internal
+roar_conv_bits_8to32		internal
+roar_conv_bits_16to8		internal
+roar_conv_bits_16to24		internal
+roar_conv_bits_16to32		internal
+roar_conv_bits_24to8		internal
+roar_conv_bits_24to16		internal
+roar_conv_bits_24to32		internal
+roar_conv_bits_32to8		internal
+roar_conv_bits_32to16		internal
+roar_conv_bits_32to24		internal
+
+roar_conv_chans			legacy
+
+roar_conv_chans_1ton8		internal
+roar_conv_chans_1ton16		internal
+roar_conv_chans_1to28		internal
+roar_conv_chans_1to216		internal
+roar_conv_chans_nto18		internal
+roar_conv_chans_nto116		internal
+roar_conv_chans_2to18		internal
+roar_conv_chans_2to116		internal
+roar_conv_chans_2to38		internal
+roar_conv_chans_2to316		internal
+roar_conv_chans_2to48		internal
+roar_conv_chans_2to416		internal
+roar_conv_chans_2to58		internal
+roar_conv_chans_2to516		internal
+roar_conv_chans_2to68		internal
+roar_conv_chans_2to616		internal
+
+roar_conv_chans_3to28		internal
+roar_conv_chans_3to216		internal
+roar_conv_chans_4to28		internal
+roar_conv_chans_4to216		internal
+roar_conv_chans_5to28		internal
+roar_conv_chans_5to216		internal
+roar_conv_chans_6to28		internal
+roar_conv_chans_6to216		internal
+
+roar_conv_rate			broken
+roar_conv_rate_8		internal
+roar_conv_rate_16		internal
+roar_conv_rate_161zoh		internal
+roar_conv_rate_162zoh		internal
+roar_conv_rate_16nzoh		internal
+roar_conv_rate_SRC		internal
+
+roar_conv_codec			ok
+
+roar_conv_signedness		internal
+roar_conv_codec_s2u8		internal
+roar_conv_codec_s2u16		internal
+roar_conv_codec_s2u32		internal
+roar_conv_codec_u2s8		internal
+roar_conv_codec_u2s16		internal
+roar_conv_codec_u2s32		internal
+
+roar_conv_endian		ok
+
+roar_conv_endian_16		internal
+roar_conv_endian_24		internal
+roar_conv_endian_32		internal
+
+roar_conv			legacy	broken in very bad way
+roar_conv2			ok
+
+roar_conv_poly4_16		internal
+roar_conv_poly4_16s		internal
+
+# fader.h:
+roar_fader_init			ok
+roar_fader_set_rate		ok
+roar_fader_set_startstop	ok
+roar_fader_has_started		ok
+roar_fader_has_ended		ok
+
+roar_fader_calcpcm_i16n		ok
+
+roar_fader_calcpcm_i161		internal
+
+# filter.h:
+roardsp_filter_str2id		ok
+roardsp_filter_id2str		ok
+
+roardsp_filter_new		ok
+roardsp_filter_init		ok
+roardsp_filter_uninit		ok
+roardsp_filter_calc		ok
+roardsp_filter_ctl		ok
+roardsp_filter_reset		ok
+
+roardsp_lowp_init		internal
+roardsp_lowp_uninit		internal
+roardsp_lowp_calc16		internal
+roardsp_lowp_ctl		internal
+roardsp_lowp_reset		internal
+
+roardsp_highp_init		internal
+roardsp_highp_uninit		internal
+roardsp_highp_calc16		internal
+roardsp_highp_ctl		internal
+roardsp_highp_reset		internal
+
+roardsp_amp_init		internal
+roardsp_amp_uninit		internal
+roardsp_amp_calc16		internal
+roardsp_amp_calc8		internal
+roardsp_amp_ctl			internal
+roardsp_amp_reset		internal
+
+roardsp_add_init		internal
+roardsp_add_calc16		internal
+roardsp_add_reset		internal
+
+roardsp_quantify_init		internal
+roardsp_quantify_uninit		internal
+roardsp_quantify_calc16		internal
+roardsp_quantify_ctl		internal
+roardsp_quantify_reset		internal
+
+roardsp_clip_calc16		internal
+roardsp_clip_ctl		internal
+roardsp_clip_reset		internal
+
+roardsp_downmix_init		internal
+roardsp_downmix_calc162		internal
+roardsp_downmix_ctl		internal
+roardsp_downmix_reset		internal
+
+roardsp_dcblock_init		internal
+roardsp_dcblock_uninit		internal
+roardsp_dcblock_calc16		internal
+roardsp_dcblock_reset		internal
+
+roardsp_swap_init		internal
+roardsp_swap_uninit		internal
+roardsp_swap_calc162		internal
+roardsp_swap_ctl		internal
+roardsp_swap_reset		internal
+
+roardsp_agc_init		internal
+roardsp_agc_uninit		internal
+roardsp_agc_ctl			internal
+roardsp_agc_reset		internal
+
+roardsp_speex_prep_init		internal
+roardsp_speex_prep_uninit	internal
+roardsp_speex_prep_calc161	internal
+roardsp_speex_prep_ctl		internal
+roardsp_speex_prep_reset	internal
+
+# filterchain.h:
+roardsp_fchain_init		ok
+roardsp_fchain_uninit		ok
+roardsp_fchain_add		ok
+roardsp_fchain_calc		ok
+roardsp_fchain_reset		ok
+roardsp_fchain_num		ok
+
+# interleave.h:
+roar_interl_init		ok
+roar_interl_uninit		ok
+roar_interl_ctl			ok
+
+#roar_interl_encode_ext		???
+#roar_interl_decode_ext		???
+
+# libroardsp.h:
+# why are those prototypes still here?
+roardsp_conv_alaw2pcm16		likely	use roar_xcoder_*
+roardsp_conv_pcm162alaw		likely	use roar_xcoder_*
+roardsp_conv_mulaw2pcm16	likely	use roar_xcoder_*
+roardsp_conv_pcm162mulaw	likely	use roar_xcoder_*
+
+# midi.h:
+# why isn't this in libroarmidi?:
+roar_midi_note2name		ok
+roar_midi_name2note		ok
+roar_midi_midi2note		ok
+roar_midi_note2freq		ok
+
+roar_midi_note_from_midiid	ok
+
+roar_midi_find_octave		ok
+roar_midi_add_octave		ok
+roar_midi_notefill		ok
+
+roar_midi_gen_tone		legacy	use roar_synth_*
+
+roar_midi_play_note		legacy	use roar_synth_*
+
+roar_midi_basic_init		legacy	use roar_synth_*
+roar_midi_basic_play		legacy	use roar_synth_*
+
+# midside.h:
+# where is the public part of this API?:
+roar_conv_s2ms_8		internal
+roar_conv_s2ms_16		internal
+roar_conv_s2ms_32		internal
+roar_conv_ms2s_8		internal
+roar_conv_ms2s_16		internal
+roar_conv_ms2s_32		internal
+
+# mixer.h:
+roar_mix_pcm			ok
+roar_mix_pcm_8bit		internal
+roar_mix_pcm_16bit		internal
+roar_mix_pcm_24bit		internal
+roar_mix_pcm_32bit		internal
+
+# point.h:
+# this file contains no function prototypes.
+
+# poly.h (was math.h long ago):
+roar_math_mkpoly		ok
+
+# we allow this public because this part is speed relevant:
+roar_math_mkpoly_2x2		ok
+roar_math_mkpoly_3x3		ok
+roar_math_mkpoly_4x4		ok
+roar_math_mkpoly_5x5		wip
+
+roar_math_cvpoly		ok
+roar_math_cvpoly_4x4		ok
+
+# remove.h:
+roar_remove_init		ok
+roar_remove			ok
+
+roar_remove_8			internal
+roar_remove_16			internal
+roar_remove_32			internal
+
+roar_remove_so			ok
+
+roar_remove_so8			internal
+roar_remove_so16		internal
+roar_remove_so32		internal
+
+# rms.h:
+# why do we not have a roar_rms2_1_X_Y()?
+
+roar_rms2_1_8			ok
+roar_rms2_1_16			ok
+roar_rms2_1_32			ok
+
+roar_rms2_1_8_2			ok
+roar_rms2_1_16_2		ok
+roar_rms2_1_32_2		ok
+
+roar_rms2_1_8_n			ok
+roar_rms2_1_16_n		ok
+roar_rms2_1_32_n		ok
+
+# synth.h:
+roar_synth_init			ok
+roar_synth_set_offset		ok
+roar_synth_set_func		ok
+roar_synth_set_volume		ok
+
+roar_synth_pcmout_i16n		ok
+roar_synth_pcmout_i161		internal
+
+roar_synth_synf_rect		fail	you must not call this function directly
+roar_synth_synf_saw		fail	you must not call this function directly
+roar_synth_synf_tri		fail	you must not call this function directly
+roar_synth_synf_trap		fail	you must not call this function directly
+roar_synth_synf_s2s		fail	you must not call this function directly
+
+# transcode.h:
+roar_xcoder_init		ok
+roar_xcoder_set_backend		likely	you should provide backend directly using roar_xcoder_init
+roar_xcoder_packet_size		maybe
+roar_xcoder_close		ok
+roar_xcoder_proc_header		ok
+roar_xcoder_proc_packet		ok
+roar_xcoder_proc		ok
+
+roar_bixcoder_init		ok
+roar_bixcoder_packet_size	ok
+roar_bixcoder_close		ok
+roar_bixcoder_read_header	ok
+roar_bixcoder_read_packet	ok
+roar_bixcoder_read		ok
+roar_bixcoder_write_header	ok
+roar_bixcoder_write_packet	ok
+roar_bixcoder_write		ok
+
+roar_xcoder_dummy_inituninit	internal
+roar_xcoder_dummy_packet_size_any	internal
+roar_xcoder_dummy_proc_header	internal
+
+roar_xcoder_alaw_encode		internal
+roar_xcoder_alaw_decode		internal
+roar_xcoder_mulaw_encode	internal
+roar_xcoder_mulaw_decode	internal
+
+# transcode_celt.h:
+roar_xcoder_celt_init		internal
+roar_xcoder_celt_uninit		internal
+roar_xcoder_celt_packet_size	internal
+roar_xcoder_celt_encode		internal
+roar_xcoder_celt_decode		internal
+
+# transocde_speex.h:
+roar_xcoder_speex_init		internal
+roar_xcoder_speex_uninit	internal
+roar_xcoder_speex_packet_size	internal
+roar_xcoder_speex_proc_header	internal
+roar_xcoder_speex_encode	internal
+roar_xcoder_speex_decode	internal
+
+# vio_transcode.h:
+
+roar_vio_open_xcode		ok
+roar_vio_xcode_proc		internal
+roar_vio_xcode_lseek		internal
+roar_vio_xcode_nonblock		internal
+roar_vio_xcode_sync		internal
+roar_vio_xcode_ctl		internal
+roar_vio_xcode_close		internal
+
+roar_vio_open_bixcode		ok
+roar_vio_bixcode_read		internal
+roar_vio_bixcode_write		internal
+roar_vio_bixcode_lseek		internal
+roar_vio_bixcode_nonblock	internal
+roar_vio_bixcode_sync		internal
+roar_vio_bixcode_ctl		internal
+roar_vio_bixcode_close		internal
+
 !TARGET: libroareio0
+# driver.h:
+roar_cdriver_open		ok
+roar_cdriver_oss		internal
+roar_cdriver_roar		internal
+
+# ff_ssdp.h:
+roar_ff_ssdp_init		ok
+roar_ff_ssdp_free		ok
+roar_ff_ssdp_write		ok
+roar_ff_ssdp_read		ok
+
+# httpd.h:
+roar_http_new			ok
+roar_http_free			ok
+roar_http_update		ok
+
+# libroareio.h:
+# no function prototypes in this file.
+
 !TARGET: libroarlight0
+
+# colors.h:
+roar_color_new			ok
+roar_color_new_gray		maybe	has only 8 bit support
+roar_color_new_rgb		maybe	has only 24bit (8 bit per channel) RGB support
+
+roar_color_copy			ok
+roar_color_conv			wip
+
+roar_color_conv_gray		internal
+roar_color_conv_rgb		internal
+
+roar_color_to_string		ok
+
+roar_color_to_blob		fail	not yet implemented
+roar_color_from_blob		fail	not yet implemented
+
+# laser.h:
+# no function prototypes in this file.
+
+# pwm.h:
+roar_light_pwm_new		ok
+roar_light_pwm_set		ok
+roar_light_pwm_send		ok
+
+# roardmx.h:
+roar_roardmx_message_new	likely	This may not what you want, use roar_roardmx_message_new_*
+
+roar_roardmx_message_set_type	likely
+roar_roardmx_message_get_flag	maybe
+roar_roardmx_message_get_type	maybe
+roar_roardmx_message_get_len	maybe
+
+roar_roardmx_message_send	ok
+roar_roardmx_message_recv	ok
+
+roar_roardmx_message_new_sset		ok
+roar_roardmx_message_add_chanval	ok
+roar_roardmx_message_get_chanval	ok
+roar_roardmx_message_numchannels	ok
+
 !TARGET: libroarmidi0
+# libroarmidi.h:
+# no function prototypes in this file.
+
 
 #ll
