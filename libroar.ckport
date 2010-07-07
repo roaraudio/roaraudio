@@ -805,8 +805,8 @@ roar_interl_init		ok
 roar_interl_uninit		ok
 roar_interl_ctl			ok
 
-#roar_interl_encode_ext		???
-#roar_interl_decode_ext		???
+roar_interl_encode_ext		ok
+roar_interl_decode_ext		ok
 
 # libroardsp.h:
 # why are those prototypes still here?
