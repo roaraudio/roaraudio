@@ -298,7 +298,7 @@ roar_connect_raw		internal
 roar_connect			ok
 roar_connect_fh			likely
 roar_get_connection_fh		critical
-roar_get_connection_vio		legacy
+roar_get_connection_vio		legacy	use roar_get_connection_vio2
 roar_get_connection_vio2	ok
 roar_disconnect			ok
 roar_set_connection_callback	wip
