@@ -3,9 +3,7 @@
 /*
  *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2009-2010
  *  The code (may) include prototypes and comments (and maybe
- *  other code fragements) from EsounD.
- *  They are mostly copyrighted by Eric B. Mitchell (aka 'Ricdude)
- *  <ericmit@ix.netcom.com>. For more information see AUTHORS.esd.
+ *  other code fragements) from OpenBSD's sndio.
  *
  *  This file is part of libroaresd a part of RoarAudio,
  *  a cross-platform sound system for both, home and professional use.
