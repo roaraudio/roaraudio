@@ -26,11 +26,6 @@
  *  the license of this document you need to read before you send
  *  any patches.
  *
- *  NOTE for uses of non-GPL (LGPL,...) software using libesd, libartsc
- *  or libpulse*:
- *  The libs libroaresd, libroararts and libroarpulse link this lib
- *  and are therefore GPL. Because of this it may be illigal to use
- *  them with any software that uses libesd, libartsc or libpulse*.
  */
 
 #ifndef _ROARAUDIO_PLUGINS_ALSA_ROAR_H_
