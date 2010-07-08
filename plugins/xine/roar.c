@@ -2,6 +2,7 @@
 
 /*
  *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008-2010
+ *      Copyright (C) 2000-2003 the xine project
  *
  *  This file is part of the xine RoarAudio plugin a part of RoarAudio,
  *  a cross-platform sound system for both, home and professional use.
