@@ -338,7 +338,7 @@ roar_stream_get_dir		ok
 roar_stream_exec		ok
 roar_stream_connect_to		maybe
 roar_stream_connect_to_ask	internal
-roar_stream_passfh		likely
+roar_stream_passfh		maybe	Does not work on all systems
 
 roar_stream_attach_simple	ok
 roar_stream_add_data		likely	does not work most of the time
