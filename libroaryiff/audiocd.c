@@ -3,6 +3,12 @@
 /*
  *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008-2010
  *
+ *  The code (may) include prototypes and comments (and maybe
+ *  other code fragements) from the yiff sound system.
+ *  According to the debian/copyright file upstream author is
+ *  Tara Milana <learfox@twu.net>. Also copyright is listed as:
+ *  Copyright (C)  1997-2003 WolfPack Entertainment
+ *
  *  This file is part of libroaryiff a part of RoarAudio,
  *  a cross-platform sound system for both, home and professional use.
  *  See README for details.
@@ -20,6 +26,10 @@
  *  along with this software; see the file COPYING.  If not, write to
  *  the Free Software Foundation, 51 Franklin Street, Fifth Floor,
  *  Boston, MA 02110-1301, USA.
+ *
+ * NOTE: code fragments (like prototypes) taken from the yiff package
+ *       are 'GPLv2 or later' and are upgraded to GPLv3 by being used
+ *       within this document.
  *
  */
 
