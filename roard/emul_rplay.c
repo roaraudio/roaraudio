@@ -218,7 +218,8 @@ int emul_rplay_on_status(int client, struct emul_rplay_command * cmd, struct roa
  m  = s / 60;
  s -= m * 60;
 
- sprintf(uptime, "%.2i:%.2i:%.2i", h, m, s);
+ snprintf(uptime, sizeof(uptime)-1, "%.2i:%.2i:%.2i", h, m, s);
+ uptime[sizeof(uptime)-1] = 0;
 
  switch (ROAR_CODEC_BYTE_ORDER(g_sa->codec)) {
   case ROAR_CODEC_LE:

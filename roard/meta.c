@@ -63,13 +63,12 @@ int stream_meta_add   (int id, int type, char * name, char * val) {
     strncpy(s->meta[i].key, name, ROAR_META_MAX_NAMELEN);
    }
 
-   if ( (c = malloc(strlen(val)+1)) == NULL ) {
+   if ( (c = strdup(val)) == NULL ) {
     s->meta[i].type = ROAR_META_TYPE_NONE;
     s->meta[i].key[0] = 0;
     return -1;
    }
 
-   strcpy(c, val);
    s->meta[i].value = c;
 
    ROAR_DBG("stream_meta_add(id=%i, type=%i, name='%s', val='%s') = 0", id, type, name, val);

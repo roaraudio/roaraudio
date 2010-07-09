@@ -443,7 +443,8 @@ void listen_listen_profiles (void) {
   }
 
   if ( p->port ) {
-   sprintf(port, "%i", p->port);
+   snprintf(port, sizeof(port)-1, "%i", p->port);
+   port[sizeof(port)-1] = 0;
   } else {
    strcpy(port, "(none)");
   }
