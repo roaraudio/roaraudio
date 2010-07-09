@@ -194,18 +194,20 @@ const char * proc_name (pid_t pid) {
  char file[80], buf[80], *r;
  int  i;
 
- snprintf(file, 79, "/proc/%i/exe", pid);
- file[79] = 0;
+ snprintf(file, sizeof(file)-1, "/proc/%i/exe", pid);
+ file[sizeof(file)-1] = 0;
 
  ret[0] = '?';
  ret[1] = 0;
 
- if ( (i = readlink(file, buf, 79)) != -1 ) {
+ if ( (i = readlink(file, buf, sizeof(buf)-1)) != -1 ) {
   buf[i] = 0;
   if ( (r = strrchr(buf, '/')) != NULL ) {
    r++;
-   if ( *r != 0 )
-    strcpy(ret, r);
+   if ( *r != 0 ) {
+    strncpy(ret, r, sizeof(ret)-1);
+    ret[sizeof(ret)-1] = 0;
+   }
   }
  }
 #else
@@ -1000,7 +1002,7 @@ int main (int argc, char * argv[]) {
    }
 
   } else if ( !strcmp(k, "exit") ) {
-   if ( roar_exit(&con) == -1 ) {
+   if ( roar_terminate(&con, 0) == -1 ) {
     fprintf(stderr, "Error: can not quit server\n");
    } else {
     printf("Server quited\n");
