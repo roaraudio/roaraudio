@@ -250,7 +250,7 @@ pa_operation* pa_context_exit_daemon(pa_context *c, pa_context_success_cb_t cb, 
   return roar_pa_operation_new(PA_OPERATION_DONE);
 
  if ( c->state == PA_CONTEXT_READY ) {
-  if ( roar_exit(&(c->con)) == -1 ) {
+  if ( roar_terminate(&(c->con), 0) == -1 ) {
    c->errnum = PA_ERR_INTERNAL;
    s = 0;
   }
