@@ -64,7 +64,7 @@ int main (int argc, char * argv[]) {
  int    prethru  = 0;
  struct roar_connection    con;
  struct roar_stream        s;
- struct roar_vio_calls     file, stream;
+ struct roar_vio_calls     file, * stream;
  struct roar_vio_defaults  def;
  int file_opened = 0;
 
@@ -213,7 +213,7 @@ int main (int argc, char * argv[]) {
   return 12;
  }
 
- if ( roar_get_connection_vio(&con, &stream) == -1 ) {
+ if ( (stream = roar_get_connection_vio2(&con)) == NULL ) {
   fprintf(stderr, "Error: can not get stream vio\n");
   roar_disconnect(&con);
   return 13;
@@ -222,9 +222,9 @@ int main (int argc, char * argv[]) {
 // TODO: FIXME:
 // ROAR_SHUTDOWN(fh, SHUT_WR); // we need to have something do do shutdowns here...
 
- roar_vio_copy_data(&file, &stream);
+ roar_vio_copy_data(&file, stream);
 
- roar_vio_close(&stream);
+ roar_vio_close(stream);
  roar_vio_close(&file);
 
  return 0;

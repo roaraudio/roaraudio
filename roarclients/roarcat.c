@@ -62,7 +62,7 @@ int main (int argc, char * argv[]) {
  char * name = "roarcat";
  struct roar_connection    con;
  struct roar_stream        s;
- struct roar_vio_calls     file, stream;
+ struct roar_vio_calls     file, * stream;
  struct roar_vio_defaults  def;
  int file_opened = 0;
 
@@ -198,15 +198,15 @@ int main (int argc, char * argv[]) {
   return 12;
  }
 
- if ( roar_get_connection_vio(&con, &stream) == -1 ) {
+ if ( (stream = roar_get_connection_vio2(&con)) == NULL ) {
   fprintf(stderr, "Error: can not get stream vio\n");
   roar_disconnect(&con);
   return 13;
  }
 
- roar_vio_copy_data(&stream, &file);
+ roar_vio_copy_data(stream, &file);
 
- roar_vio_close(&stream);
+ roar_vio_close(stream);
  roar_vio_close(&file);
 
  return 0;
