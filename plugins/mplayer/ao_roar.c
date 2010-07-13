@@ -2,11 +2,24 @@
 /*
  * ao_roar - RoarAudio audio output driver for MPlayer
  *
- *      Juergen Keil <jk@tools.de>
- *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008, 2009
+ * copyright (c) 2002 Juergen Keil <jk@tools.de>
+ * copyright (c) 2008-2010 Philipp 'ph3-der-loewe' Schafft
  *
- * This driver is distributed under the terms of the GPL v. 2
+ * This file is part of RoarAudio, based on a file from MPlayer.
  *
+ * MPlayer is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * MPlayer is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with MPlayer; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
 #include <sys/types.h>
