@@ -39,6 +39,10 @@ void usage (void) {
         "  --proto PROTO         - Client uses protocol PROTO (default: RoarAudio)\n"
         "  --byteorder BO        - Client uses byteorder BO (default: network)\n"
         "  --listen              - This is a listen mode connection\n"
+        "  --mode MODE           - Set mode of operation: none, listen, connect (default: none)\n"
+        "  --bind BIND           - Set host/node/path for mode listen and connect\n"
+        "  --port PORT           - Set port for mode listen and connect\n"
+//        "  --type TYPE           - Set type for mode listen and connect (default: unknown)\n"
         "  --help                - Show this help\n"
        );
 
@@ -60,6 +64,10 @@ int main (int argc, char * argv[]) {
  int    flags     = 0;
  int    proto     = ROAR_PROTO_ROARAUDIO;
  int    byteorder = ROAR_BYTEORDER_NETWORK;
+ int    mode      = ROAR_SOCKET_MODE_NONE;
+ int    type      = ROAR_SOCKET_TYPE_UNKNOWN;
+ char * host      = NULL;
+ int    port      = -1;
 
  for (i = 1; i < argc; i++) {
   k = argv[i];
@@ -82,6 +90,24 @@ int main (int argc, char * argv[]) {
    byteorder = roar_str2byteorder(argv[++i]);
   } else if ( !strcmp(k, "--listen") ) {
    flags |= ROAR_CLIENTPASS_FLAG_LISTEN;
+  } else if ( !strcmp(k, "--mode") ) {
+   k = argv[++i];
+   if ( !strcasecmp(k, "none") ) {
+    mode = ROAR_SOCKET_MODE_NONE;
+   } else if ( !strcasecmp(k, "listen") ) {
+    mode = ROAR_SOCKET_MODE_LISTEN;
+    flags |= ROAR_CLIENTPASS_FLAG_LISTEN;
+   } else if ( !strcasecmp(k, "connect") ) {
+    mode = ROAR_SOCKET_MODE_CONNECT;
+    flags -= ROAR_CLIENTPASS_FLAG_LISTEN;
+   } else {
+    ROAR_ERR("unknown mode: %s", k);
+    return 1;
+   }
+  } else if ( !strcmp(k, "--bind") ) {
+   host = argv[++i];
+  } else if ( !strcmp(k, "--port") ) {
+   port = atoi(argv[++i]);
   } else {
    ROAR_ERR("unknown argument: %s", k);
    usage();
@@ -97,6 +123,20 @@ int main (int argc, char * argv[]) {
 #endif
  } else {
   roar_debug_set_stderr_fh(ROAR_STDERR);
+ }
+
+ if ( mode != ROAR_SOCKET_MODE_NONE ) {
+  if ( clientfh != -1 ) {
+   ROAR_ERR("Too may socket types given");
+   return 30;
+  }
+
+  clientfh = roar_socket_open(mode, type, host, port);
+
+  if ( clientfh == -1 ) {
+   ROAR_ERR("Unabled to open socket");
+   return 31;
+  }
  }
 
  if ( clientfh == -1 ) {
