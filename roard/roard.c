@@ -1092,6 +1092,8 @@ int register_slp (int unreg, char * sockname) {
 
 // MAIN:
 
+#define _CKHAVEARGS(x) if ( (i + (x)) >= argc ) { ROAR_ERR("Option requires more arguments."); return 70; }
+
 #ifdef ROAR_HAVE_MAIN_ARGS
 int main (int argc, char * argv[]) {
 #else
@@ -1348,6 +1350,7 @@ int main (void) {
   } else if ( strcmp(k, "--realtime") == 0 ) {
    realtime++;
   } else if ( strcmp(k, "--chroot") == 0 ) {
+   _CKHAVEARGS(1);
 #ifdef ROAR_HAVE_CHROOT
    chrootdir = argv[++i];
 #else
@@ -1367,8 +1370,10 @@ int main (void) {
    ROAR_ERR("--setuid not supported");
 #endif
   } else if ( strcmp(k, "--location") == 0 ) {
+   _CKHAVEARGS(1);
    g_config->location = argv[++i];
   } else if ( strcmp(k, "--pidfile") == 0 ) {
+   _CKHAVEARGS(1);
 #ifdef SUPPORT_PIDFILE
    pidfile = argv[++i];
 #else
@@ -1384,6 +1389,7 @@ int main (void) {
 
 
   } else if ( strcmp(k, "--plugin-load") == 0 ) {
+   _CKHAVEARGS(1);
    if ( plugins_load(argv[++i]) == -1 ) {
     ROAR_ERR("Can not load plugin");
    }
@@ -1393,13 +1399,17 @@ int main (void) {
    return 0;
 
   } else if ( strcmp(k, "-R") == 0 || strcmp(k, "--rate") == 0 ) {
+   _CKHAVEARGS(1);
    sa.rate = atoi(argv[++i]);
   } else if ( strcmp(k, "-B") == 0 || strcmp(k, "--bits") == 0 ) {
+   _CKHAVEARGS(1);
    sa.bits = atoi(argv[++i]);
   } else if ( strcmp(k, "-C") == 0 || strcmp(k, "--chans") == 0 ) {
+   _CKHAVEARGS(1);
    sa.channels = atoi(argv[++i]);
 
   } else if ( strcmp(k, "--aiprofile") == 0 ) {
+   _CKHAVEARGS(1);
    if ( roar_profile2info(&sa, argv[++i]) == -1 ) {
     ROAR_ERR("Unknown audio profile: %s", argv[i]);
     return 1;
@@ -1407,12 +1417,14 @@ int main (void) {
    sa.codec    = ROAR_CODEC_DEFAULT;
 
   } else if ( strcmp(k, "--stream-flags") == 0 ) {
+   _CKHAVEARGS(1);
    if ( update_stream_flags(argv[++i]) == -1 ) {
     ROAR_ERR("Can not set stream flags");
     return 1;
    }
 
   } else if ( strcmp(k, "-d") == 0 || strcmp(k, "--driver") == 0 ) {
+   _CKHAVEARGS(1);
    driver = argv[++i];
    if ( strcmp(driver, "list") == 0 ) {
     ROAR_WARN("The option is obsolete, use --list-driver!");
@@ -1420,18 +1432,23 @@ int main (void) {
     return 0;
    }
   } else if ( strcmp(k, "-D") == 0 || strcmp(k, "--device") == 0 ) {
+   _CKHAVEARGS(1);
    device = argv[++i];
   } else if ( strcmp(k, "-dO") == 0 ) {
+   _CKHAVEARGS(1);
    opts = argv[++i];
   } else if ( strcmp(k, "--list-driver") == 0 ) {
    print_driverlist();
    return 0;
 
   } else if ( strcmp(k, "-o") == 0 || strcmp(k, "--odriver") == 0 ) {
+   _CKHAVEARGS(1);
    o_drv  = argv[++i];
   } else if ( strcmp(k, "-O") == 0 || strcmp(k, "--odevice") == 0 ) {
+   _CKHAVEARGS(1);
    o_dev  = argv[++i];
   } else if ( strcmp(k, "-oO") == 0 ) {
+   _CKHAVEARGS(1);
    o_opts = argv[++i];
   } else if ( strcmp(k, "-oP") == 0 ) {
    o_prim = 1;
@@ -1443,28 +1460,36 @@ int main (void) {
    o_prim = 0;
 
   } else if ( strcmp(k, "-s") == 0 || strcmp(k, "--source") == 0 ) {
+   _CKHAVEARGS(1);
 #ifndef ROAR_WITHOUT_DCOMP_SOURCES
    s_drv = argv[++i];
 #else
    ROAR_ERR("main(*): No support for sources compiled in");
+   i++;
 #endif
   } else if ( strcmp(k, "-S") == 0 ) {
+   _CKHAVEARGS(1);
 #ifndef ROAR_WITHOUT_DCOMP_SOURCES
    s_dev = argv[++i];
 #else
    ROAR_ERR("main(*): No support for sources compiled in");
+   i++;
 #endif
   } else if ( strcmp(k, "-sO") == 0 ) {
+   _CKHAVEARGS(1);
 #ifndef ROAR_WITHOUT_DCOMP_SOURCES
    s_opt = argv[++i];
 #else
    ROAR_ERR("main(*): No support for sources compiled in");
+   i++;
 #endif
   } else if ( strcmp(k, "-sC") == 0 ) {
+   _CKHAVEARGS(1);
 #ifndef ROAR_WITHOUT_DCOMP_SOURCES
    s_con = argv[++i];
 #else
    ROAR_ERR("main(*): No support for sources compiled in");
+   i++;
 #endif
   } else if ( strcmp(k, "-sP") == 0 ) {
 #ifndef ROAR_WITHOUT_DCOMP_SOURCES
@@ -1493,19 +1518,24 @@ int main (void) {
 #endif
 
   } else if ( strcmp(k, "--light-channels") == 0 ) {
+   _CKHAVEARGS(1);
 #ifndef ROAR_WITHOUT_DCOMP_LIGHT
    light_channels = atoi(argv[++i]);
 #else
    ROAR_WARN("main(*): no light subsystem compiled in");
+   i++;
 #endif
 
   } else if ( strcmp(k, "--rds-pi") == 0 ) {
+   _CKHAVEARGS(1);
 #ifndef ROAR_WITHOUT_DCOMP_RDTCS
    g_rdtcs.rds.pi = atoi(argv[++i]);
 #else
    ROAR_WARN("main(*): no RDTCS subsystem compiled in");
+   i++;
 #endif
   } else if ( strcmp(k, "--rds-ps") == 0 ) {
+   _CKHAVEARGS(1);
 #ifndef ROAR_WITHOUT_DCOMP_RDTCS
    if ( rdtcs_rds_set_ps(argv[++i]) == -1 ) {
     ROAR_ERR("Can not set RDS PS to '%s' (longer than 8 chars?)", argv[i]);
@@ -1513,8 +1543,10 @@ int main (void) {
    }
 #else
    ROAR_WARN("main(*): no RDTCS subsystem compiled in");
+   i++;
 #endif
   } else if ( strcmp(k, "--rds-pty") == 0 ) {
+   _CKHAVEARGS(1);
 #ifndef ROAR_WITHOUT_DCOMP_RDTCS
    if ( rdtcs_rds_set_pty(argv[++i]) == -1 ) {
     ROAR_ERR("Can not set RDS PTY to '%s'", argv[i]);
@@ -1522,6 +1554,7 @@ int main (void) {
    }
 #else
    ROAR_WARN("main(*): no RDTCS subsystem compiled in");
+   i++;
 #endif
   } else if ( strcmp(k, "--rds-tp") == 0 ) {
 #ifndef ROAR_WITHOUT_DCOMP_RDTCS
@@ -1556,11 +1589,13 @@ int main (void) {
    ROAR_ERR("main(*): No support for MIDI subsystem part CB compiled in");
 #endif
   } else if ( strcmp(k, "--midi-console") == 0 ) {
+   _CKHAVEARGS(1);
 #ifndef ROAR_WITHOUT_DCOMP_CB
    midi_config.console_dev = argv[++i];
    midi_config.init_cb = 1;
 #else
    ROAR_ERR("main(*): No support for MIDI subsystem part CB compiled in");
+   i++;
 #endif
 
   } else if ( strcmp(k, "--ssynth-enable") == 0 ) {
@@ -1577,6 +1612,7 @@ int main (void) {
 #endif
 
   } else if ( strcmp(k, "--x11-display") == 0 || strcmp(k, "--display") == 0 ) {
+   _CKHAVEARGS(1);
 #ifdef ROAR_HAVE_LIBX11
    x11display = argv[++i];
 #else
@@ -1586,6 +1622,7 @@ int main (void) {
 
 
   } else if ( strcmp(k, "-p") == 0 || strcmp(k, "--port") == 0 ) {
+   _CKHAVEARGS(1);
    // This is only useful in INET not UNIX mode.
 #ifdef ROAR_SUPPORT_LISTEN
    if ( *sock_addr == '/' )
@@ -1609,8 +1646,11 @@ int main (void) {
    }
 #endif
   } else if ( strcmp(k, "-b") == 0 || strcmp(k, "--bind") == 0 || strcmp(k, "--sock") == 0 ) {
+   _CKHAVEARGS(1);
 #ifdef ROAR_SUPPORT_LISTEN
    sock_addr = argv[++i];
+#else
+   i++;
 #endif
 
   } else if ( strcmp(k, "--proto") == 0 ) {
@@ -1621,37 +1661,55 @@ int main (void) {
    }
 #endif
   } else if ( strcmp(k, "--proto-dir") == 0 ) {
+   _CKHAVEARGS(1);
 #ifdef ROAR_SUPPORT_LISTEN
    if ( (sock_dir = roar_str2dir(argv[++i])) == -1 ) {
     ROAR_ERR("Unknown stream direction: %s", argv[i]);
     return 1;
    }
+#else
+   i++;
 #endif
   } else if ( strcmp(k, "--proto-rate") == 0 ) {
+   _CKHAVEARGS(1);
 #ifdef ROAR_SUPPORT_LISTEN
    sock_info.rate = atoi(argv[++i]);
+#else
+   i++;
 #endif
   } else if ( strcmp(k, "--proto-bits") == 0 ) {
+   _CKHAVEARGS(1);
 #ifdef ROAR_SUPPORT_LISTEN
    sock_info.bits = atoi(argv[++i]);
+#else
+   i++;
 #endif
   } else if ( strcmp(k, "--proto-chans") == 0 ) {
+   _CKHAVEARGS(1);
 #ifdef ROAR_SUPPORT_LISTEN
    sock_info.channels = atoi(argv[++i]);
+#else
+   i++;
 #endif
   } else if ( strcmp(k, "--proto-codec") == 0 ) {
+   _CKHAVEARGS(1);
 #ifdef ROAR_SUPPORT_LISTEN
    if ( (sock_info.codec = roar_str2codec(argv[++i])) == -1 ) {
     ROAR_ERR("Unknown codec: %s", argv[i]);
     return 1;
    }
+#else
+   i++;
 #endif
   } else if ( strcmp(k, "--proto-aiprofile") == 0 ) {
+   _CKHAVEARGS(1);
 #ifdef ROAR_SUPPORT_LISTEN
    if ( roar_profile2info(&sock_info, argv[++i]) == -1 ) {
     ROAR_ERR("Unknown audio profile: %s", argv[i]);
     return 1;
    }
+#else
+   i++;
 #endif
   } else if ( strcmp(k, "--list-profiles") == 0 ) {
 #ifdef ROAR_SUPPORT_LISTEN
@@ -1659,11 +1717,14 @@ int main (void) {
    return 0;
 #endif
   } else if ( strcmp(k, "--proto-profile") == 0 ) {
+   _CKHAVEARGS(1);
 #ifdef ROAR_SUPPORT_LISTEN
    if ( get_listen_profile(argv[++i], &port, &sock_addr, &sock_type, &sock_proto, &sock_dir, &sock_info) == -1 ) {
     ROAR_ERR("Unknown listen profile: %s", argv[i]);
     return 1;
    }
+#else
+   i++;
 #endif
 
 
@@ -1742,11 +1803,14 @@ int main (void) {
 
 
   } else if ( strcmp(k, "--jumbo-mtu") == 0 ) {
+   _CKHAVEARGS(1);
    g_config->jumbo_mtu = atoi(argv[++i]);
 
   } else if ( strcmp(k, "-G") == 0 ) {
+   _CKHAVEARGS(1);
    sock_grp  = argv[++i];
   } else if ( strcmp(k, "-U") == 0 ) {
+   _CKHAVEARGS(1);
    sock_user = argv[++i];
 
   } else if ( strcmp(k, "--no-listen") == 0 ) {
@@ -1756,11 +1820,13 @@ int main (void) {
    g_no_listen = 1;
 #endif
   } else if ( strcmp(k, "--client-fh") == 0 ) {
+   _CKHAVEARGS(1);
    if ( clients_new_from_fh(atoi(argv[++i]), ROAR_PROTO_ROARAUDIO, ROAR_BYTEORDER_NETWORK, 1) == -1 ) {
     ROAR_ERR("main(*): Can not set client's fh");
     return 1;
    }
   } else if ( strcmp(k, "--close-fh") == 0 ) {
+   _CKHAVEARGS(1);
 #ifdef ROAR_HAVE_IO_POSIX
    close(atoi(argv[++i]));
 #else
