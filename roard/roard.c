@@ -1092,7 +1092,10 @@ int register_slp (int unreg, char * sockname) {
 
 // MAIN:
 
-#define _CKHAVEARGS(x) if ( (i + (x)) >= argc ) { ROAR_ERR("Option requires more arguments."); return 70; }
+#define _CKHAVEARGS(x) if ( (i + (x)) >= argc ) { \
+                        ROAR_ERR("Option %s requires more arguments. See --help for more details.", k); \
+                        return 70; \
+                       }
 
 #ifdef ROAR_HAVE_MAIN_ARGS
 int main (int argc, char * argv[]) {
