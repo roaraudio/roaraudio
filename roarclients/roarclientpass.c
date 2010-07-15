@@ -108,6 +108,9 @@ int main (int argc, char * argv[]) {
    host = argv[++i];
   } else if ( !strcmp(k, "--port") ) {
    port = atoi(argv[++i]);
+  } else if ( !strcmp(k, "--help") || !strcmp(k, "-h") ) {
+   usage();
+   return 0;
   } else {
    ROAR_ERR("unknown argument: %s", k);
    usage();
