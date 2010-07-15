@@ -244,6 +244,8 @@ int restart_server (char * server, int terminate) {
  pid_t pid;
  int ok;
 
+ ROAR_INFO("restart_server(server='%s', terminate=%i): trying to restart server", ROAR_DBG_INFO_INFO, server, terminate);
+
  if ( pidfile != NULL ) {
   if ( roar_vio_open_file(&fh, pidfile, O_RDONLY, 0644) == -1 ) {
    ROAR_WARN("restart_server(*): Can not read pidfile: %s", pidfile);
@@ -511,6 +513,11 @@ int add_listen (char * addr, int port, int sock_type, char * user, char * group,
 #endif
  int    i;
 
+ ROAR_INFO("add_listen(addr='%s', port=%i, sock_type=%i, user='%s', group='%s', proto=%s(%i), dir=%s(%i), info={.rate=%u, .bits=%u, .channels=%u, .codec=%s(%u)}): trying to add listen socket",
+            ROAR_DBG_INFO_INFO,
+            addr, port, sock_type, user, group, roar_proto2str(proto), proto, roar_dir2str(dir), dir,
+            info->rate, info->bits, info->channels, roar_codec2str(info->codec), info->codec);
+
  if ( *addr != 0 ) {
   for (i = 0; i < ROAR_MAX_LISTEN_SOCKETS; i++) {
    if ( ! g_listen[i].used ) {
@@ -700,7 +707,7 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
  uint16_t tu16;
  float q = -32e6;
 
- ROAR_DBG("add_output(drv='%s', dev='%s', opts='%s') = ?", drv, dev, opts);
+ ROAR_INFO("add_output(drv='%s', dev='%s', opts='%s', prim=%i, count=%i): trying to add output driver", ROAR_DBG_INFO_INFO, drv, dev, opts, prim, count);
 
  if ( drv == NULL && count == 0 ) {
   drv  = ROAR_DRIVER_DEFAULT;
@@ -1859,7 +1866,7 @@ int main (void) {
 
  add_output(o_drv, o_dev, o_opts, o_prim, o_count);
 
- ROAR_DBG("Server config: rate=%i, bits=%i, chans=%i", sa.rate, sa.bits, sa.channels);
+ ROAR_INFO("Server config: rate=%i, bits=%i, chans=%i", ROAR_DBG_INFO_NOTICE, sa.rate, sa.bits, sa.channels);
 
  if ( waveform_init() == -1 ) {
   ROAR_ERR("Can not initialize Waveform subsystem");
@@ -2097,18 +2104,25 @@ int main (void) {
 #endif
 
  // start main loop...
+ ROAR_INFO("Entering main loop", ROAR_DBG_INFO_INFO);
  main_loop(drvid, drvinst, &sa, sysclocksync);
+ ROAR_INFO("Left main loop", ROAR_DBG_INFO_INFO);
 
  // clean up.
  clean_quit_prep();
  driver_close(drvinst, drvid);
  output_buffer_free();
 
+ ROAR_INFO("Exiting, no error", ROAR_DBG_INFO_INFO);
  return 0;
 }
 
 void cleanup_listen_socket (int terminate) {
  int i;
+
+ ROAR_DBG("cleanup_listen_socket(terminate=%i) = (void)?", terminate);
+
+ ROAR_INFO("Cleaning up listen sockets", ROAR_DBG_INFO_INFO);
 
  // Deregister from SLP:
 #ifdef ROAR_HAVE_LIBSLP
@@ -2175,9 +2189,13 @@ void clean_quit_prep (void) {
 }
 
 void clean_quit (void) {
+ ROAR_INFO("Shuting down", ROAR_DBG_INFO_INFO);
+
  clean_quit_prep();
 // driver_close(drvinst, drvid);
 // output_buffer_free();
+
+ ROAR_INFO("Exiting, no error", ROAR_DBG_INFO_INFO);
  exit(0);
 }
 

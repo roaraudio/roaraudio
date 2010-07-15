@@ -30,21 +30,21 @@
 #if !defined(ROAR_TARGET_MICROCONTROLLER) && !defined(ROAR_TARGET_WIN32)
 
 void on_sig_int (int signum) {
- ROAR_DBG("got SIGINT");
+ ROAR_INFO("got SIGINT", ROAR_DBG_INFO_NOTICE);
 
  // TODO: implement some kind of termonate/force depending on how many ^Cs we get
  on_sig_term(signum);
 }
 
 void on_sig_term (int signum) {
- ROAR_DBG("got SIGTERM (or called by SIGINT handler)");
+ ROAR_INFO("got SIGTERM (or called by SIGINT handler)", ROAR_DBG_INFO_NOTICE);
 
  alive = 0;
  clean_quit();
 }
 
 void on_sig_chld (int signum) {
- ROAR_DBG("got SIGCHLD");
+ ROAR_INFO("got SIGCHLD", ROAR_DBG_INFO_NOTICE);
 
  wait(NULL);
 
@@ -52,7 +52,7 @@ void on_sig_chld (int signum) {
 }
 
 void on_sig_usr1 (int signum) {
- ROAR_DBG("got SIGUSR1");
+ ROAR_INFO("got SIGUSR1", ROAR_DBG_INFO_NOTICE);
 
  cleanup_listen_socket(1);
 }
