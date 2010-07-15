@@ -1,0 +1,96 @@
+.\" roarclientpass.1:
+
+.TH "roarclientpass" "1" "July 2010" "RoarAudio" "System User's Manual: roarclientpass"
+
+.SH NAME
+
+roarclientpass \- Passing clients to and creating new listen sockets on RoarAudio sound server
+
+.SH SYNOPSIS
+
+roarclientpass [OPTIONS]...
+
+.SH DESCRIPTION
+
+This program let you pass new clients to a RoarAudio sound server as as a proxy and
+let you add new listen sockets to a running server.
+
+.SH "OPTIONS"
+
+.TP
+\fB--server    SERVER\fR
+Set server hostname.
+
+.TP
+\fB--stdin\fR
+Client is on stdin.
+
+.TP
+\fB--stdout\fR
+Client is on stdout.
+
+.TP
+\fB--stdio\fR
+Same as \-\-stdin \-\-stdout.
+
+This option may for example be used in case of being runed from a inetd.
+
+.TP
+\fB--stderr\fR
+Client is on stderr.
+
+Beside to make stderr known as client fh it will disable error output on stderr.
+This \fBmust\fR be used in case this program is used from inetd or simular tools.
+
+.TP
+\fB--client-fh FH\fR
+Client is on FH.
+
+This is basicly the same as \-\-client-fh on roard(1).
+
+.TP
+\fB--proto PROTO\fR
+Set the protocol used by the client.
+
+Defaults to RoarAudio.
+
+.TP
+\fB--byteorder BO\fR
+Sets the byteorder used by the client.
+
+Defaults to network byte order.
+
+.TP
+\fB--listen\fR
+Client is a listen connection.
+
+This is not the same as \-\-mode listen.
+
+.TP
+\fB--mode MODE\fR
+Set mode of operation: none, listen or connect
+
+Defaults to none.
+
+.TP
+\fB--bind BIND\fR
+Set host/node/path for mode listen and connect.
+
+.TP
+\fB--port PORT\fR
+Set port for mode listen and connect.
+
+.TP
+\fB--help\fR
+Show this help
+
+.SH "SEE ALSO"
+\fBroartips\fR(7),
+\fBlibroar\fR(7),
+\fBRoarAudio\fR(7).
+
+.SH "HISTORY"
+
+For history information see \fBRoarAudio\fR(7).
+
+.\" ll
