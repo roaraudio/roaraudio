@@ -2,7 +2,7 @@ TARGETS_TESTS=pinentrytest zcattest pgptest pipetest polytest roarfctest
 TARGETS_DEVEL=roartypes roarsocktypes roar-config
 TARGETS_EXAMPLE=roarcatad roarcat2sock roarcatsendfile roarcatpassfh roarvorbis roarsin
 TARGETS_IO=roarcat roarcatplay roarcatvio roarbidir roarmon roarmonhttp roarradio
-TARGETS_CTL=roarctl roarlight roarinterconnect
+TARGETS_CTL=roarctl roarlight roarinterconnect roarclientpass
 TARGETS_DSP=roarfilt roarvumeter
 TARGETS_MISC=roarsockconnect roarphone roarshout
 TARGETS_M=roardtmf
@@ -55,6 +55,8 @@ roarmonhttp: roarmonhttp.o
 	$L
 roarinterconnect: roarinterconnect.o
 	$L $(lib_esd) $(LIBROAREIO) $(lib_rsound)
+roarclientpass: roarclientpass.o
+	$L
 roarbidir: roarbidir.o
 	$L
 roarphone: roarphone.o

@@ -8,6 +8,7 @@ v. 0.3beta7 - ?
 	  and security relevant function calls
 	* Fixed bug with incorrect number of arguments to roard
 	* Added some more ROAR_INFO()s to roard
+	* Added tool roarclientpass
 
 v. 0.3beta6 - Thu Jun 24 2010 20:47 CEST
 	Prereleases: 0: Fri Jun 11 2010 10:47 CEST;
