@@ -146,18 +146,33 @@ __BEGIN_DECLS
 
 #include <libroar/libroar.h>
 
+// Some glocal network defaults:
+#ifndef ROAR_NET_INET4_LOCALHOST
+#define ROAR_NET_INET4_LOCALHOST "localhost"
+#endif
+#ifndef ROAR_NET_INET4_ANYHOST
+#define ROAR_NET_INET4_ANYHOST   "0.0.0.0"
+#endif
+
+#ifndef ROAR_NET_INET6_LOCALHOST
+#define ROAR_NET_INET6_LOCALHOST "ipv6-localhost"
+#endif
+#ifndef ROAR_NET_INET6_ANYHOST
+#define ROAR_NET_INET6_ANYHOST   "::"
+#endif
+
 // IP:
 #define ROAR_DEFAULT_PORT        16002
 
 // IPv4
 #define ROAR_DEFAULT_INET4_PORT  ROAR_DEFAULT_PORT
-#define ROAR_DEFAULT_INET4_HOST  "localhost"
+#define ROAR_DEFAULT_INET4_HOST  ROAR_NET_INET4_LOCALHOST
 // aliases:
 #define ROAR_DEFAULT_HOST        ROAR_DEFAULT_INET4_HOST
 
 // IPv6:
 #define ROAR_DEFAULT_INET6_PORT  ROAR_DEFAULT_PORT
-#define ROAR_DEFAULT_INET6_HOST  "ipv6-localhost"
+#define ROAR_DEFAULT_INET6_HOST  ROAR_NET_INET6_LOCALHOST
 
 // UNIX Domain Sockets
 #define ROAR_DEFAULT_SOCK_GLOBAL "/tmp/roar"
@@ -168,8 +183,22 @@ __BEGIN_DECLS
 #define ROAR_DEFAULT_NUM         0
 #define ROAR_DEFAULT_LISTEN_OBJECT "::" ROAR_DEFAULT_OBJECT
 
-// now handled by condiguere
+// now handled by configure:
 //#define ROAR_DEFAULT_SOCKGRP     "audio"
+
+
+// defines for emulations:
+// ESD:
+#define ROAR_DEFAULT_ESD_GSOCK   "/tmp/.esd/socket"
+#define ROAR_DEFAULT_ESD_PORT    16001
+// RSound:
+#define ROAR_DEFAULT_RSOUND_GSOCK  "/tmp/rsound"
+#define ROAR_DEFAULT_RSOUND_PORT   12345
+#define ROAR_DEFAULT_RSOUND_OBJECT "::rsound"
+// PulseAudio:
+#define ROAR_DEFAULT_PA_PORT     4712
+// RPlay:
+#define ROAR_DEFAULT_RPLAY_PORT  5556
 
 #if defined(ROAR_HAVE_LIBWSOCK32) && defined(ROAR_HAVE_LIBWS2_32)
 #define ROAR_LIBS_WIN32          " -lwsock32 -lws2_32"
