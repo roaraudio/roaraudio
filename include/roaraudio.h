@@ -243,7 +243,9 @@ __BEGIN_DECLS
 #define ROAR_WARN(format, args...) roar_debug_msg(ROAR_DEBUG_TYPE_WARNING, __LINE__, __FILE__, ROAR_DBG_PREFIX, format, ## args)
 
 // INFO function:
-#ifdef ROAR_DBG_INFOVAR
+#ifdef DEBUG
+ #define ROAR_INFO(format, level, args...) roar_debug_msg(ROAR_DEBUG_TYPE_INFO, __LINE__, __FILE__, ROAR_DBG_PREFIX, format, ## args)
+#elif defined(ROAR_DBG_INFOVAR)
  #define ROAR_INFO(format, level, args...) if ( (ROAR_DBG_INFOVAR) >= (level) ) roar_debug_msg(ROAR_DEBUG_TYPE_INFO, __LINE__, __FILE__, ROAR_DBG_PREFIX, format, ## args)
 #else
  #define ROAR_INFO(format, level, args...)
