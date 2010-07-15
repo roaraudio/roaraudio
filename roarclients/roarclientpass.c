@@ -151,6 +151,7 @@ int main (int argc, char * argv[]) {
    clientfh = ROAR_STDERR;
   } else {
    ROAR_ERR("No client socket given");
+   return 32;
   }
  }
 
