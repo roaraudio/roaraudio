@@ -38,6 +38,7 @@
 
 #include "libroar.h"
 
+#define ROAR_SOCKET_MODE_NONE    0
 #define ROAR_SOCKET_MODE_LISTEN  1
 #define ROAR_SOCKET_MODE_CONNECT 2
 
