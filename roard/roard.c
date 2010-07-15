@@ -357,66 +357,93 @@ static struct _listen_profile {
  const char * aiprofile;
  const char * desc;
 } _g_listen_profiles[] = {
- // TODO: convert port numbers into consts!
-
  // RoarAudio:
 #ifdef ROAR_HAVE_UNIX
- {"roar-usock",     ROAR_SOCKET_TYPE_UNIX,   0,                 "~/.roar",          ROAR_PROTO_ROARAUDIO, -1, NULL, NULL},
- {"roar-gsock",     ROAR_SOCKET_TYPE_UNIX,   0,                 "/tmp/roar",        ROAR_PROTO_ROARAUDIO, -1, NULL, NULL},
+ {"roar-usock",     ROAR_SOCKET_TYPE_UNIX,   0,                 "~/" ROAR_DEFAULT_SOCK_USER,
+                    ROAR_PROTO_ROARAUDIO, -1, NULL,
+                    "RoarAudio default user profile"},
+ {"roar-gsock",     ROAR_SOCKET_TYPE_UNIX,   0,                 ROAR_DEFAULT_SOCK_GLOBAL,
+                    ROAR_PROTO_ROARAUDIO, -1, NULL,
+                    "RoarAudio default global profile"},
 #endif
 #ifdef ROAR_HAVE_IPV4
- {"roar-tcp",       ROAR_SOCKET_TYPE_TCP,    ROAR_DEFAULT_PORT, "localhost",        ROAR_PROTO_ROARAUDIO, -1, NULL, NULL},
- {"roar-tcp-pub",   ROAR_SOCKET_TYPE_TCP,    ROAR_DEFAULT_PORT, "0.0.0.0",          ROAR_PROTO_ROARAUDIO, -1, NULL, NULL},
+ {"roar-tcp",       ROAR_SOCKET_TYPE_TCP,    ROAR_DEFAULT_PORT, ROAR_DEFAULT_INET4_HOST,
+                    ROAR_PROTO_ROARAUDIO, -1, NULL,
+                    "RoarAudio local TCP profile"},
+ {"roar-tcp-pub",   ROAR_SOCKET_TYPE_TCP,    ROAR_DEFAULT_PORT, ROAR_NET_INET4_ANYHOST,
+                    ROAR_PROTO_ROARAUDIO, -1, NULL,
+                    "RoarAudio network TCP profile"},
 #endif
 #ifdef ROAR_HAVE_LIBDNET
- {"roar-dnet",      ROAR_SOCKET_TYPE_DECNET, 0,                 "::roar",           ROAR_PROTO_ROARAUDIO, -1, NULL, NULL},
+ {"roar-dnet",      ROAR_SOCKET_TYPE_DECNET, 0,                 ROAR_DEFAULT_LISTEN_OBJECT,
+                    ROAR_PROTO_ROARAUDIO, -1, NULL,
+                    "RoarAudio default DECnet"},
 #endif
 #ifdef ROAR_HAVE_UNIX
- {"roar-abstract",  ROAR_SOCKET_TYPE_UNIX,   0,                 "+abstract",        ROAR_PROTO_ROARAUDIO, -1, NULL, NULL},
+ {"roar-abstract",  ROAR_SOCKET_TYPE_UNIX,   0,                 "+abstract",        ROAR_PROTO_ROARAUDIO, -1, NULL,
+                    "RoarAudio abstract namespace profile"},
 #endif
 
  // EsounD:
 #if !defined(ROAR_WITHOUT_DCOMP_EMUL_ESD) && defined(ROAR_HAVE_H_ESD)
 #ifdef ROAR_HAVE_UNIX
- {"esd-unix",       ROAR_SOCKET_TYPE_UNIX,   0,                 "/tmp/.esd/socket", ROAR_PROTO_ESOUND,    -1, NULL, NULL},
+ {"esd-unix",       ROAR_SOCKET_TYPE_UNIX,   0,                 ROAR_DEFAULT_ESD_GSOCK,
+                    ROAR_PROTO_ESOUND,    -1, NULL,
+                    "EsounD default local profile"},
 #endif
 #ifdef ROAR_HAVE_IPV4
- {"esd-tcp",        ROAR_SOCKET_TYPE_TCP,    16001,             "localhost",        ROAR_PROTO_ESOUND,    -1, NULL, NULL},
- {"esd-tcp-pub",    ROAR_SOCKET_TYPE_TCP,    16001,             "0.0.0.0",          ROAR_PROTO_ESOUND,    -1, NULL, NULL},
+ {"esd-tcp",        ROAR_SOCKET_TYPE_TCP,    ROAR_DEFAULT_ESD_PORT, ROAR_NET_INET4_LOCALHOST,
+                    ROAR_PROTO_ESOUND,    -1, NULL,
+                    "EsounD local TCP profile"},
+ {"esd-tcp-pub",    ROAR_SOCKET_TYPE_TCP,    ROAR_DEFAULT_ESD_PORT, ROAR_NET_INET4_ANYHOST,
+                    ROAR_PROTO_ESOUND,    -1, NULL,
+                    "EsounD network TCP profile"},
 #endif
 #endif
 
  // RSound:
 #ifndef ROAR_WITHOUT_DCOMP_EMUL_RSOUND
 #ifdef ROAR_HAVE_UNIX
- {"rsound-unix",    ROAR_SOCKET_TYPE_UNIX,   0,                 "/tmp/rsound",      ROAR_PROTO_RSOUND,    -1, NULL, NULL},
+ {"rsound-unix",    ROAR_SOCKET_TYPE_UNIX,   0,                 ROAR_DEFAULT_RSOUND_GSOCK,
+                    ROAR_PROTO_RSOUND,    -1, NULL,
+                    "RSound default local profile"},
 #endif
 #ifdef ROAR_HAVE_IPV4
- {"rsound-tcp",     ROAR_SOCKET_TYPE_TCP,    12345,             "localhost",        ROAR_PROTO_RSOUND,    -1, NULL, NULL},
- {"rsound-tcp-pub", ROAR_SOCKET_TYPE_TCP,    12345,             "0.0.0.0",          ROAR_PROTO_RSOUND,    -1, NULL, NULL},
+ {"rsound-tcp",     ROAR_SOCKET_TYPE_TCP,    ROAR_DEFAULT_RSOUND_PORT, ROAR_NET_INET4_LOCALHOST,
+                    ROAR_PROTO_RSOUND,    -1, NULL,
+                    "RSound local TCP profile"},
+ {"rsound-tcp-pub", ROAR_SOCKET_TYPE_TCP,    ROAR_DEFAULT_RSOUND_PORT, ROAR_NET_INET4_ANYHOST,
+                    ROAR_PROTO_RSOUND,    -1, NULL,
+                    "RSound network TCP profile"},
 #endif
 #ifdef ROAR_HAVE_LIBDNET
- {"rsound-dnet",    ROAR_SOCKET_TYPE_DECNET, 0,                 "::rsound",         ROAR_PROTO_RSOUND,    -1, NULL, NULL},
+ {"rsound-dnet",    ROAR_SOCKET_TYPE_DECNET, 0,                 ROAR_DEFAULT_RSOUND_OBJECT,
+                    ROAR_PROTO_RSOUND,    -1, NULL,
+                    "RSound DECnet profile"},
 #endif
 #endif
 
  // PulseAudio Simple:
 #ifndef ROAR_WITHOUT_DCOMP_EMUL_SIMPLE
 #ifdef ROAR_HAVE_IPV4
- {"pas-play-tcp",   ROAR_SOCKET_TYPE_TCP,    4712,              "0.0.0.0",          ROAR_PROTO_SIMPLE,
-                                                                                    ROAR_DIR_PLAY, "default",
-                                                                                    NULL},
- {"pas-mon-tcp",    ROAR_SOCKET_TYPE_TCP,    4712,              "0.0.0.0",          ROAR_PROTO_SIMPLE,
-                                                                                    ROAR_DIR_MONITOR, "default",
-                                                                                    NULL},
+ {"pas-play-tcp",   ROAR_SOCKET_TYPE_TCP,    ROAR_DEFAULT_PA_PORT, ROAR_NET_INET4_ANYHOST,
+                    ROAR_PROTO_SIMPLE, ROAR_DIR_PLAY, "default",
+                    "PulseAudio Simple TCP play profile"},
+ {"pas-mon-tcp",    ROAR_SOCKET_TYPE_TCP,    ROAR_DEFAULT_PA_PORT, ROAR_NET_INET4_ANYHOST,
+                    ROAR_PROTO_SIMPLE, ROAR_DIR_MONITOR, "default",
+                    "PulseAudio Simple TCP monitor profile"},
 #endif
 #endif
 
  // RPlay:
 #ifndef ROAR_WITHOUT_DCOMP_EMUL_RPLAY
 #ifdef ROAR_HAVE_IPV4
- {"rplay-tcp",      ROAR_SOCKET_TYPE_TCP,    5556,              "localhost",        ROAR_PROTO_RPLAY,     -1, NULL, NULL},
- {"rplay-tcp-pub",  ROAR_SOCKET_TYPE_TCP,    5556,              "0.0.0.0",          ROAR_PROTO_RPLAY,     -1, NULL, NULL},
+ {"rplay-tcp",      ROAR_SOCKET_TYPE_TCP,    ROAR_DEFAULT_RPLAY_PORT, ROAR_NET_INET4_LOCALHOST,
+                    ROAR_PROTO_RPLAY,     -1, NULL,
+                    "RPlay local TCP profile"},
+ {"rplay-tcp-pub",  ROAR_SOCKET_TYPE_TCP,    ROAR_DEFAULT_RPLAY_PORT, ROAR_NET_INET4_ANYHOST,
+                    ROAR_PROTO_RPLAY,     -1, NULL,
+                    "RPlay network TCP profile"},
 #endif
 #endif
 
