@@ -93,6 +93,7 @@ Tested Version:
 	Current:	Current as listed on Homepage
 	last:		Last released version (This system is on release checklist)
 	*b*:		Beta
+	*p*		Pre-Release
 
 Status: Maintenance/testing Status:
 Maintenance:	s = your are on your own, sources.
