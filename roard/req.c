@@ -661,7 +661,7 @@ int req_on_get_stream_para (int client, struct roar_message * mes, char ** data,
  }
 
  if ( d[0] != 0 ) {
-  ROAR_WARN("req_on_get_stream_para(*): unsupported command version: %i, %i", d[0], d[1]);
+  ROAR_WARN("req_on_get_stream_para(*): unsupported command version: %i, %i", (int)d[0], (int)d[1]);
   return -1;
  }
 
