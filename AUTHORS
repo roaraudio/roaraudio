@@ -16,24 +16,47 @@ OpenBSD  : janus
 --- Testers:
 Many people around the world.
 
+--- Debian init script:
+* Javier Fernandez-Sanguino <jfs@debian.org>
+
+--- G.711 Codec vector tables:
+* Sun Microsystems, Inc.
+  2550 Garcia Avenue
+  Mountain View, California  94043
+
+--- gstreamer code:
+* Arwed v. Merkatz <v.merkatz@gmx.net>
+* David A. Schleef <ds@schleef.org>
+* Erik Walthinsen <omega@cse.ogi.edu>
+* Richard Boulton <richard-gst@tartarus.org>
+
 --- Compatibility layers are based on code/prototypes/... by:
  * libroararts:
   - Stefan Westerfeld <stefan@space.twc.de>
-  - ...and others?
  * libroaresd:
   - Eric B. Mitchell (aka 'Ricdude) <ericmit@ix.netcom.com>
-  - ...and others
+  - Carsten 'The Rasterman' Haitzler
+  - Kjartan Maraas
+  - Frederic Crozat
+  - Stephen Browne
+  - Timur Bakeyev
+  - Yo Ric Dude
+  - Manish Singh
+  - Frank Belew
+  - Myth
+  - Isaac Richards
  * libroaross:
   - IEEE/POSIX
   - 4Front Technologies (Open Sound System)
   - Operating system vendors
   - ...and others
  * libroarpulse:
-  - ...and others
+  - Lennart Poettering <poettering@users.sourceforge.net>
+  - Pierre Ossman <drzeus@drzeus.cx>
  * libroarsndio:
-  - (2008-2010?) Alexandre Ratchov <alex@caoua.org>
+  - Alexandre Ratchov <alex@caoua.org>
  * libroaryiff:
   - Tara Milana <learfox@twu.net>
-  - 1997-2003 WolfPack Entertainment
+  - WolfPack Entertainment
  * libroarrsound:
   - Hans-Kristian 'maister' Arntzen
