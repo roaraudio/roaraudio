@@ -1,5 +1,6 @@
 v. 0.3beta7 - ?
-	Prereleases: 0: Mon Jul 19 2010 12:58 CEST
+	Prereleases: 0: Mon Jul 19 2010 12:58 CEST;
+	             1: Mon Jul 19 2010 20:37 CEST
 	* Added support for audio profiles
 	* Updated libroarrsound
 	* Added RPlay protocol to roard
