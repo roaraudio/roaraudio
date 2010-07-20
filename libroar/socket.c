@@ -425,7 +425,7 @@ int roar_socket_listen_decnet (char * object, int num) {
  if ( num ) {
   bind_sockaddr.sdn_objnamel = 0;
  } else {
-  bind_sockaddr.sdn_objnamel  = ROAR_dn_htons(strlen(object));
+  bind_sockaddr.sdn_objnamel  = ROAR_HOST2LE16(strlen(object));
   if ( bind_sockaddr.sdn_objnamel > DN_MAXOBJL )
    bind_sockaddr.sdn_objnamel = DN_MAXOBJL;
   strncpy((char*)bind_sockaddr.sdn_objname, object, DN_MAXOBJL);

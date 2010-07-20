@@ -143,6 +143,7 @@ __BEGIN_DECLS
 #include <roaraudio/genre.h>
 #include <roaraudio/acl.h>
 #include <roaraudio/misc.h>
+#include <roaraudio/byteorder.h>
 
 #include <libroar/libroar.h>
 
@@ -301,84 +302,6 @@ int _ROAR_MLOCK(const void *addr, size_t len);
 #define _roar_strcasestr(a,b) strcasestr((a), (b))
 #else
 #define _roar_strcasestr(a,b) NULL
-#endif
-
-#if BYTE_ORDER == BIG_ENDIAN && !defined(ROAR_TARGET_WIN32)
-
-#ifdef ROAR_TARGET_WIN32
-#error This is nonsens. No win32 runs on a BE machine
-#endif
-
-#define ROAR_NET2HOST64(x) (x)
-#define ROAR_HOST2NET64(x) (x)
-#define ROAR_NET2HOST32(x) (x)
-#define ROAR_HOST2NET32(x) (x)
-#define ROAR_NET2HOST16(x) (x)
-#define ROAR_HOST2NET16(x) (x)
-
-#define ROAR_BE2HOST64(x) (x)
-#define ROAR_HOST2BE64(x) (x)
-#define ROAR_BE2HOST32(x) (x)
-#define ROAR_HOST2BE32(x) (x)
-#define ROAR_BE2HOST16(x) (x)
-#define ROAR_HOST2BE16(x) (x)
-
-#define ROAR_LE2HOST32(x) ROAR_dn_ntohl(x)
-#define ROAR_HOST2LE32(x) ROAR_dn_htonl(x)
-#define ROAR_LE2HOST16(x) ROAR_dn_ntohs(x)
-#define ROAR_HOST2LE16(x) ROAR_dn_htons(x)
-
-#ifdef ROAR_HAVE_LIBDNET
-#define ROAR_dn_ntohs(x) ((((x)&0x0ff)<<8) | (((x)&0xff00)>>8))
-#define ROAR_dn_ntohl(x) ( ((dn_ntohs((x)&0xffff))<<16) |\
-                           ((dn_ntohs(((x)>>16)))) )
-#define ROAR_dn_htonl(x) ROAR_dn_ntohl(x)
-#define ROAR_dn_htons(x) ROAR_dn_ntohs(x)
-#endif
-
-//#elif BYTE_ORDER == LITTLE_ENDIAN
-#else
-
-#if BYTE_ORDER == LITTLE_ENDIAN
-#define _ROAR_MOVE_BYTE(x,p) (((x) & (0xFFUL << (8*(p)))) >> (8*(p)) << (64-8*((p)+1)))
-#define ROAR_NET2HOST64(x) ROAR_HOST2NET64(x)
-#define ROAR_HOST2NET64(x) (_ROAR_MOVE_BYTE((x), 0) | _ROAR_MOVE_BYTE((x), 1) | \
-                            _ROAR_MOVE_BYTE((x), 2) | _ROAR_MOVE_BYTE((x), 3) | \
-                            _ROAR_MOVE_BYTE((x), 4) | _ROAR_MOVE_BYTE((x), 5) | \
-                            _ROAR_MOVE_BYTE((x), 6) | _ROAR_MOVE_BYTE((x), 7) | )
-#else
-/* PDP byte order */
-#endif
-
-#define ROAR_NET2HOST32(x) ntohl((x))
-#define ROAR_HOST2NET32(x) htonl((x))
-#define ROAR_NET2HOST16(x) ntohs((x))
-#define ROAR_HOST2NET16(x) htons((x))
-
-#define ROAR_BE2HOST32(x) ntohl(x)
-#define ROAR_HOST2BE32(x) htonl(x)
-#define ROAR_BE2HOST16(x) ntohs(x)
-#define ROAR_HOST2BE16(x) htons(x)
-
-#define ROAR_LE2HOST64(x) (x)
-#define ROAR_HOST2LE64(x) (x)
-#define ROAR_LE2HOST32(x) (x)
-#define ROAR_HOST2LE32(x) (x)
-#define ROAR_LE2HOST16(x) (x)
-#define ROAR_HOST2LE16(x) (x)
-
-#ifdef ROAR_HAVE_LIBDNET
-#if BYTE_ORDER == LITTLE_ENDIAN
-#define ROAR_dn_ntohs(x) (x)
-#define ROAR_dn_htons(x) (x)
-
-#define ROAR_dn_ntohl(x) (x)
-#define ROAR_dn_htonl(x) (x)
-#else
-#error can not build on this architecture with DECnet support enabled
-#endif
-#endif
-
 #endif
 
 __END_DECLS
