@@ -363,11 +363,14 @@ static void _find_volume_sid (struct session * session) {
 static int _open_dummy (void) {
  int p[2];
 
+ ROAR_DBG("_open_dummy(void) = ?");
+
  if ( pipe(p) == -1 )
   return -1;
 
  close(p[1]);
 
+ ROAR_DBG("_open_dummy(void) = %i", p[0]);
  return p[0];
 }
 
@@ -489,11 +492,8 @@ static void _close_handle(struct handle * handle) {
  }
 }
 
-static struct pointer * _get_pointer_by_fh (int fh) {
+static struct pointer * _get_pointer_by_fh_or_new (int fh) {
  int i;
-
- if ( fh == -1 )
-  return NULL;
 
  for (i = 0; i < _MAX_POINTER; i++) {
   if ( _ptr[i].fh == fh )
@@ -503,22 +503,39 @@ static struct pointer * _get_pointer_by_fh (int fh) {
  return NULL;
 }
 
+static struct pointer * _get_pointer_by_fh (int fh) {
+ int i;
+
+ if ( fh == -1 )
+  return NULL;
+
+ return _get_pointer_by_fh_or_new(fh);
+}
+
 static struct pointer * _open_pointer(struct handle * handle) {
- struct pointer * ret = _get_pointer_by_fh(-1);
+ struct pointer * ret = _get_pointer_by_fh_or_new(-1);
 
- if ( ret == NULL )
-  return NULL;
+ ROAR_DBG("_open_pointer(handle=%p) = ?", handle);
 
- if ( (ret->fh = _open_dummy()) == -1 )
+ if ( ret == NULL ) {
+  ROAR_DBG("_open_pointer(handle=%p) = NULL", handle);
   return NULL;
+ }
+
+ if ( (ret->fh = _open_dummy()) == -1 ) {
+  ROAR_DBG("_open_pointer(handle=%p) = NULL", handle);
+  return NULL;
+ }
 
  ret->handle = handle;
+
+ ROAR_DBG("_open_pointer(handle=%p) = %p", handle, ret);
 
  return ret;
 }
 
 static struct pointer * _attach_pointer(struct handle * handle, int fh) {
- struct pointer * ret = _get_pointer_by_fh(-1);
+ struct pointer * ret = _get_pointer_by_fh_or_new(-1);
 
  if ( ret == NULL )
   return NULL;
@@ -723,6 +740,8 @@ static int _open_file (const char *pathname, int flags) {
     handle->userdata.sf.data     = ptr->userdata;
    break;
  }
+
+ ROAR_DBG("_open_file(pathname='%s', flags=0x%x) = ?", pathname, flags);
 
  if ( (pointer = _open_pointer(handle)) == NULL ) {
   _close_handle(handle);
