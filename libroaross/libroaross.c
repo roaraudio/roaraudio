@@ -492,6 +492,9 @@ static void _close_handle(struct handle * handle) {
 static struct pointer * _get_pointer_by_fh (int fh) {
  int i;
 
+ if ( fh == -1 )
+  return NULL;
+
  for (i = 0; i < _MAX_POINTER; i++) {
   if ( _ptr[i].fh == fh )
    return &(_ptr[i]);
@@ -1411,6 +1414,8 @@ IOCTL() {
  argp = va_arg (args, void *);
  va_end (args);
 #endif
+
+ ROAR_DBG("ioctl(fh=%i, request=%i, ...) = ?", __fd, __request);
 
 // ROAR_DBG("ioctl(__fd=%i, __request=0x%lX): argp=%p", __fd, (long unsigned int) __request, argp);
 
