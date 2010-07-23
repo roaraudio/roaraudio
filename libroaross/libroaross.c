@@ -504,8 +504,6 @@ static struct pointer * _get_pointer_by_fh_or_new (int fh) {
 }
 
 static struct pointer * _get_pointer_by_fh (int fh) {
- int i;
-
  if ( fh == -1 )
   return NULL;
 
@@ -1426,7 +1424,7 @@ IOCTL() {
 
  _init();
 
-// ROAR_DBG("ioctl(__fd=%i, __request=0x%lX) = ?", __fd, (long unsigned int) __request);
+ ROAR_DBG("ioctl(__fd=%i, __request=0x%lX) = ?", __fd, (long unsigned int) __request);
 
 #ifdef va_argp
  va_start (args, ioctl_lastarg);
@@ -1434,15 +1432,15 @@ IOCTL() {
  va_end (args);
 #endif
 
- ROAR_DBG("ioctl(fh=%i, request=%i, ...) = ?", __fd, __request);
+// ROAR_DBG("ioctl(fh=%i, request=%i, ...) = ?", __fd, __request);
 
-// ROAR_DBG("ioctl(__fd=%i, __request=0x%lX): argp=%p", __fd, (long unsigned int) __request, argp);
+ ROAR_DBG("ioctl(__fd=%i, __request=0x%lX): argp=%p", __fd, (long unsigned int) __request, argp);
 
  if ( (pointer = _get_pointer_by_fh(__fd)) != NULL ) {
   ip = argp;
 //  ROAR_DBG("ioctl(__fd=%i, __request=0x%lx): ip=%p", __fd, (long unsigned int) __request, ip);
 #ifdef __FIXME__
-  switch ((handle = pointer->handle)->type) {
+  switch (__request) {
    case SOUND_PCM_READ_RATE: nosys_reqname     = "SOUND_PCM_READ_RATE";     break;
    case SOUND_PCM_READ_CHANNELS: nosys_reqname = "SOUND_PCM_READ_CHANNELS"; break;
    case SOUND_PCM_READ_BITS: nosys_reqname     = "SOUND_PCM_READ_BITS";     break;
