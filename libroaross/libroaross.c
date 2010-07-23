@@ -613,6 +613,14 @@ static int _open_file (const char *pathname, int flags) {
  * O_DIRECT, O_APPEND, O_LARGEFILE, O_NOATIME, O_NOCTTY, O_TRUNC
  */
 
+ if ( (ptr = _get_device(pathname)) == NULL ) {
+  ROAR_DBG("_open_file(pathname='%s', flags=0x%x) = -2", pathname, flags);
+  return -2;
+ }
+
+ ROAR_DBG("_open_file(pathname='%s', flags=0x%x) = ?", pathname, flags);
+
+
 #ifdef O_ASYNC
  if ( flags & O_ASYNC ) {
   ROAR_DBG("_open_file(pathname='%s', flags=0x%x) = -1 // not supported O_ASYNC", pathname, flags);
@@ -626,11 +634,6 @@ static int _open_file (const char *pathname, int flags) {
   errno = EINVAL;
   return -1;
  }
-
- ROAR_DBG("_open_file(pathname='%s', flags=0x%x) = ?", pathname, flags);
-
- if ( (ptr = _get_device(pathname)) == NULL )
-  return -2;
 
  ROAR_DBG("_open_file(pathname='%s', flags=0x%x) = ?", pathname, flags);
 
@@ -1157,6 +1160,7 @@ int     open(const char *pathname, int flags, ...) {
 
  switch (ret) {
   case -2:       // continue as normal, use _op.open()
+    ROAR_DBG("open(pathname='%s', flags=%x, ...): is not handled by us, pass to kernel\n", pathname, flags);
    break;
   case -1:       // pass error to caller
     return -1;
@@ -1187,16 +1191,18 @@ int    open64(const char *__file, int __oflag, ...) {
   return -1;
  }
 
- ROAR_DBG("open64(__file='%s', __oflags=%x, ...) = ?\n", __file, __oflag);
+ ROAR_DBG("open64(__file='%s', __oflags=%x, ...) = ?", __file, __oflag);
  ret = _open_file(__file, __oflag);
 
  switch (ret) {
   case -2:       // continue as normal, use _op.open()
+    ROAR_DBG("open64(__file='%s', __oflags=%x, ...): not for us, passing to kernel", __file, __oflag);
    break;
   case -1:       // pass error to caller
     return -1;
    break;
   default:       // return successfully opened pointer to caller
+    ROAR_DBG("open64(__file='%s', __oflags=%x, ...) = %i", __file, __oflag, ret);
     return ret;
    break;
  }
@@ -1569,6 +1575,7 @@ IOCTL() {
  errno = ENOSYS;
  return -1;
 #else
+ ROAR_DBG("ioctl(__fd=%i, __request=0x%lX, argp=%p): not for us, passing to kernel", __fd, (long unsigned int) __request, argp);
  return _os.ioctl(__fd, __request, argp);
 #endif
 }
@@ -1814,6 +1821,15 @@ int fcntl(int fd, int cmd, ...) {
   case F_GETLK:
   case F_SETLK:
   case F_SETLKW:
+#ifdef F_GETLK64
+  case F_GETLK64:
+#endif
+#ifdef F_SETLK64
+  case F_SETLK64:
+#endif
+#ifdef F_SETLKW64
+  case F_SETLKW64:
+#endif
     type = POINTER;
    break;
 /*
@@ -1830,6 +1846,8 @@ int fcntl(int fd, int cmd, ...) {
  }
 
  if ( type == UNKNOWN ) {
+  ROAR_DBG("fcntl(fd=%i, cmd=%i, ...): unknown data type!", fd, cmd);
+  ROAR_DBG("fcntl(fd=%i, cmd=%i, ...) = -1 // errno = EINVAL", fd, cmd);
   errno = EINVAL;
   return -1;
  }
@@ -2079,6 +2097,7 @@ FILE *fopen(const char *path, const char *mode) {
 
  switch (ret) {
   case -2:       // continue as normal, use _op.open()
+    ROAR_DBG("fopen(path='%s', mode='%s'): not for us, passing to libc", path, mode);
    break;
   case -1:       // pass error to caller
     return NULL;
