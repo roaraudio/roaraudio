@@ -2084,6 +2084,10 @@ FILE *fopen(const char *path, const char *mode) {
     return NULL;
    break;
   default:       // return successfully opened pointer to caller
+#ifdef __USE_FDOPEN__
+    ROAR_DBG("fopen(path='%s', mode='%s') = fdopen(%i, '%s')", path, mode, ret, mode);
+    return fdopen(ret, r ? (w ? "rw" : "r") : "w");
+#else
     if ( (vio = roar_mm_malloc(sizeof(struct roar_vio_calls))) == NULL ) {
      return NULL; // errno should be set correctly by roar_mm_malloc().
     }
@@ -2098,6 +2102,7 @@ FILE *fopen(const char *path, const char *mode) {
     } else {
      return fr;
     }
+#endif
    break;
  }
 
