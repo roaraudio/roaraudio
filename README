@@ -66,6 +66,7 @@ Debian Etch		x86_64	gcc 4.1.2	last	s/OK
 Debian Lenny		ix86	gcc 4.3.2	last	s/OK
 Debian Lenny		x86_64	gcc 4.3.2	0.3b6	s/OK		No speex (why?)
 Debian ?		x86_64	gcc 4.3.4	0.3b3	m/OK
+Debian (sid)		*	*		last	M/OK
 Ubuntu 9.04		ix86	gcc 4.3.3	0.2rc2	s/OK
 archlinux ?		i686	gcc 4.3.2	0.2rc2	M/OK
 Gentoo 1.12.11.1	i686	gcc 4.3.2-r3	0.3b0	s/OK
@@ -78,7 +79,7 @@ OpenBSD	4.4		i386	gcc 3.3.5	0.3b0	s/OK
 OpenBSD	4.5		i386	gcc 3.3.5	0.2rc2	s/OK
 FreeBSD 6.2		i386	gcc 3.4.6	0.1b4	s/OK
 FreeBSD 7.1		i386	gcc 4.2.1	0.2	s/OK
-FreeBSD 7.2		i386	gcc 4.2.1	0.3b6	s/OK
+FreeBSD 7.2		i386	gcc 4.2.1	0.3b7	s/OK
 OpenSolaris 5.11	i386	gcc 3.4.3	?	s/OK
 Darwin 9.4.0		i386	gcc 4.0.1	0.1b?	s/OK
 Cygwin 1.5.25		i686	gcc 3.4.4	0.3b6	s/Client+	Client libs work, roard only partly,
