@@ -43,6 +43,9 @@ ssize_t roar_vio_select(struct roar_vio_select * vios, size_t len, struct roar_v
  size_t i;
  int max_fh = -1;
  int ret;
+#ifdef DEBUG
+ char * name;
+#endif
 
  ROAR_DBG("roar_vio_select(vios=%p, len=%llu, rtv=%p, ctl=%p) = ?", vios, (long long unsigned int)len, rtv, ctl);
 
@@ -56,9 +59,16 @@ ssize_t roar_vio_select(struct roar_vio_select * vios, size_t len, struct roar_v
   return -1;
  }
 
- // pepaer interl structs:
+ // pepaer internal structs:
  for (i = 0; i < len; i++) {
+  ROAR_DBG("roar_vio_select(vios=%p, len=%llu, rtv=%p, ctl=%p): vios[i=%i].fh=%i", vios, (long long unsigned int)len, rtv, ctl, i, vios[i].fh);
   if ( vios[i].fh == -1 ) {
+#ifdef DEBUG
+   name = NULL;
+   roar_vio_ctl(vios[i].vio, ROAR_VIO_CTL_GET_NAME, &name);
+   ROAR_DBG("roar_vio_select(*): vios[%i]'s name is: '%s'", i, name);
+#endif
+
    vios[i].internal.action = ROAR_VIO_SELECT_ACTION_NONE;
 
    if ( vios[i].eventsq & ROAR_VIO_SELECT_READ ) {
@@ -87,6 +97,7 @@ ssize_t roar_vio_select(struct roar_vio_select * vios, size_t len, struct roar_v
      vios[i].internal.action |= ROAR_VIO_SELECT_ACTION_SELECT;
     }
    }
+   ROAR_DBG("roar_vio_select(*): vios[%i].internal.fh[] = {%i, %i, %i}", i, vios[i].internal.fh[0], vios[i].internal.fh[1], vios[i].internal.fh[2]);
   } else {
    vios[i].internal.action = ROAR_VIO_SELECT_ACTION_SELECT;
    vios[i].internal.fh[0]  = vios[i].fh;
