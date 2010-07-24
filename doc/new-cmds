@@ -2,8 +2,8 @@
  +:version
  +:type
  +:vendor
- +VENDOR_ROARAUDIO
- +VENDOR_BASICDEV
+ +VENDOR_ROARAUDIO = 0
+ +VENDOR_BASICDEV  = 1
  +:subtype
  +:flags
  +:ot
