@@ -63,7 +63,7 @@ struct roar_display_info_x11 {
  char * host;
  int display;
  int screen;
- int wins;
+ size_t wins;
  _ROAR_X11_WINDOW window[ROAR_X11_MAX_WIN_PER_INFO];
 };
 
