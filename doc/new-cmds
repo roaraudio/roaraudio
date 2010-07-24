@@ -28,7 +28,7 @@
 +WAIT = NEEDS_CONST
  +:version (TODO)
  +:flags (TODO)
- +:... (TODO)
+ :(TODO)
 +NOTIFY = NEEDS_CONST
  +structof(WAIT)
 +SEEK = NEEDS_CONST
@@ -66,27 +66,52 @@
  +CC_WININFO   = PARA_WININFO
  +CC_PROPTABLE = PARA_PROPTABLE
 +LOOKUP = NEEDS_CONST
- +:version (TODO)
- +:flags (TODO)
- +:ot (TODO)
- +:ht (TODO) #(hash type)
+ +:version (uint8)
+ +:flags (uint8)
+ +:extflags (uint8)
+ +:ot (uint8)
+ +:ht (uint32) #(hash type)
  +:hash... (vardata)
 *SERVER_INFO
- +IT_SERVER   = NEEDS_CONST
- +IT_COUNTERS = NEEDS_CONST
- +IT_LISTEN   = NEEDS_CONST
+ +IT_SERVER   = 1
+  :(TODO)
+ +IT_COUNTERS = 2
+  +:version (uint8)
+  +:reserved (uint24)
+  +:data... (dataarray)
+  +::type (uint8)
+  +::flags (uint8)
+  +::reserved (uint16)
+  +::counter (uint32)
+  +CF_CURRENT = 0x01 #(Current value if set, sum if unset)
+  +CF_OTTYPE  = 0x02 #(Type is a OT_* type if set, or other if unset)
+ +IT_LISTEN   = 3
+  +:version (TODO)
+  +:listensocks... (dataarray)
+  +::id (uint16)
+  +::flags (uint8)
+  +::socktype (uint8)
+  +::proto (uint16)
+  +::byteorder (uint16)
+  +::dir (uint32)
+  +::auinfo (packed-audioinfo) #(4*4*8 = 128bit)
+  +::addrlen (uint16)
+  +::addr (padded-string(:addrlen))
+  +LF_HAVEDIR = 0x01
+  +LF_HAVEAI  = 0x02
 *[GS]ET_STREAM_PARA
  *PARA_INFO
   +STREAMSTATE_ERROR    = 5 #(Stream is in some error condition, parent client should close or kick it)
   +STREAMSTATE_NEEDSEEK = 6 #(like Error but stream can become usable again if you do a seek)
- +PARA_HASHTABLE  = NEEDS_CONST   #(GTN, UUID, ...)
-  +:htsettertype (TODO)
-  +:htsettersize (TODO)
-  +:htsetterdata (TODO)
+ +PARA_HASHTABLE  = 6   #(GTN, UUID, ...)
+  +:htsettertype (uint32)
+  +:htsettersize (uint16)
+  +:htsetterdata (vardata)
   +:hashtable... (dataarray)
-  +::httype
-  +::htsize
-  +::htfunction
+  +::httype (uint32)
+  +::htsize (uint16)
+  +::htfunction (uint16)
+  +::htdata (vardata)
   +HT_MD5        = 1
   +HT_SHA1       = 2
   +HT_RIPEMD160  = 3
@@ -119,8 +144,18 @@
   +HF_SONG       = 7 #(This identifys the Song. This may for example be used with Tantalos)
   +HF_APP        = 8 #(The application, device or other source generating this object)
   +HF_FILE       = 9 #(The source file for this object)
- +PARA_WININFO   = NEEDS_CONST
- +PARA_PROPTABLE = NEEDS_CONST
+ +PARA_WININFO   = 7
+  :(TODO)
+  +:wsystype (uint8)
+  +:socktype (uint8)
+  +:display (uint8)
+  +:screen (uint8)
+  +:addrlen (uint16)
+  +:addr (padded-string(:addrlen))
+  +:wins (dataarray)
+  +::window (uint32)
+ +PARA_PROPTABLE = 8
+  :(TODO)
 *KICK,...
  +OT_MIXER    =  5
  +OT_BRIDGE   =  6
@@ -129,8 +164,14 @@
  +OT_MSGQUEUE =  9 #(Message queue, message is gone as soon as one client took it)
  +OT_MSGBUS   = 10 #(Message bus, message is gone as soon as all listening clients got it)
 *ATTACH
- +ATTACH_MIXER    = NEEDS_CONST
- +ATTACH_BRIDGE   = NEEDS_CONST
+ *ATTACH_SOURCE
+  :(TODO)
+ *ATTACH_OUTPUT
+  :(TODO)
+ +ATTACH_MIXER    = 4
+  :(TODO)
+ +ATTACH_BRIDGE   = 5
+  :(TODO)
 *SET_VOL
  +SET_VOL_MS      = 3
  +SET_VOL_UNMAPED = 4 #(like roarctls mono/stereo...)
