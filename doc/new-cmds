@@ -1,51 +1,51 @@
-+DEVCTL
- +:version
- +:type
- +:vendor
++DEVCTL = NEEDS_CONST
+ +:version (uint8)
+ +:type (uint8)
+ +:vendor (uint8)
  +VENDOR_ROARAUDIO = 0
  +VENDOR_BASICDEV  = 1
- +:subtype
- +:flags
- +:ot
- +:(id) #(if not UNIID or SID)
- +:data...
-+CAPS
+ +:subtype (uint8)
+ +:flags (uint8)
+ +:ot (uint8)
+ +:(id) (uint16) #(if not UNIID or SID)
+ +:data... (vardata)
++CAPS = NEEDS_CONST
  +:version (uint8)
  +:type (uint8)
  +:flags (uint16)
- +CT_CAPS
- +::dataarray
- +:::captype
- +:::...
- +CT_STANDARDS
+ +CT_CAPS      = 0
+ +::dataarray (dataarray)
+ +:::captype (TODO)
+ +:::... (TODO)
+ +CT_STANDARDS = 1
  +::dataarray
  +:::stdvendor (uint8)
- +STDV_ROARAUDIO
- +STDV_PROTO
- +STDV_RFC
+ +STDV_ROARAUDIO = 0
+ +STDV_PROTO     = 1
+ +STDV_RFC       = 2
  +:::stdversion (uint8)
  +:::standard (uint16)
-+WAIT
- +:version
- +:flags
- +:...
-+NOTIFY
++WAIT = NEEDS_CONST
+ +:version (TODO)
+ +:flags (TODO)
+ +:... (TODO)
++NOTIFY = NEEDS_CONST
  +structof(WAIT)
-+SEEK
- +:version
- +:flags
- +:destination possition
- +:destination possition whence
- +:hint pos
- +:hint whence
- +:hint quality
- +:seek at
- +:seek to
- +:seek whence
- +SF_CONT_WHILE_SEEK
- +SF_CONT_ON_ERROR
- +SF_HINT
- +SF_SEEK
++SEEK = NEEDS_CONST
+ +:version (TODO)
+ +:flags (TODO)
+ +:destination possition (TODO)
+ +:destination possition whence (TODO)
+ +:hint pos (TODO)
+ +:hint whence (TODO)
+ +:hint quality (TODO)
+ +:seek at (TODO)
+ +:seek to (TODO)
+ +:seek whence (TODO)
+ +SF_CONT_WHILE_SEEK = 0x01
+ +SF_CONT_ON_ERROR   = 0x02
+ +SF_HINT            = 0x04
+ +SF_SEEK            = 0x08
  +HQ_BAD       = 0
  +HQ_BAD_NB    = 1 #(bad, not before this possition)
  +HQ_NEAR      = 2
@@ -57,33 +57,33 @@
  +WHENCE_BEGIN = 0
  +WHENCE_CUR   = 1
  +WHENCE_END   = 2
-+CLIENTCTL
- +:version
- +:subcmd
- +:flags
- +:data
++CLIENTCTL = NEEDS_CONST
+ +:version (uint8)
+ +:subcmd (uint8)
+ +:flags (uint16)
+ +:data (vardata)
  +CC_HASHTABLE = PARA_HASHTABLE
  +CC_WININFO   = PARA_WININFO
  +CC_PROPTABLE = PARA_PROPTABLE
-+LOOKUP
- +:version
- +:flags
- +:ot
- +:ht #(hash type)
- +:hash...
++LOOKUP = NEEDS_CONST
+ +:version (TODO)
+ +:flags (TODO)
+ +:ot (TODO)
+ +:ht (TODO) #(hash type)
+ +:hash... (vardata)
 *SERVER_INFO
- +IT_SERVER
- +IT_COUNTERS
- +IT_LISTEN
+ +IT_SERVER   = NEEDS_CONST
+ +IT_COUNTERS = NEEDS_CONST
+ +IT_LISTEN   = NEEDS_CONST
 *[GS]ET_STREAM_PARA
  *PARA_INFO
-  +STREAMSTATE_ERROR    #(Stream is in some error condition, parent client should close or kick it)
-  +STREAMSTATE_NEEDSEEK #(like Error but stream can become usable again if you do a seek)
- +PARA_HASHTABLE     #(GTN, UUID, ...)
-  +:htsettertype
-  +:htsettersize
-  +:htsetterdata
-  +:datarray
+  +STREAMSTATE_ERROR    = 5 #(Stream is in some error condition, parent client should close or kick it)
+  +STREAMSTATE_NEEDSEEK = 6 #(like Error but stream can become usable again if you do a seek)
+ +PARA_HASHTABLE  = NEEDS_CONST   #(GTN, UUID, ...)
+  +:htsettertype (TODO)
+  +:htsettersize (TODO)
+  +:htsetterdata (TODO)
+  +:hashtable... (dataarray)
   +::httype
   +::htsize
   +::htfunction
@@ -119,8 +119,8 @@
   +HF_SONG       = 7 #(This identifys the Song. This may for example be used with Tantalos)
   +HF_APP        = 8 #(The application, device or other source generating this object)
   +HF_FILE       = 9 #(The source file for this object)
- +PARA_WININFO
- +PARA_PROPTABLE
+ +PARA_WININFO   = NEEDS_CONST
+ +PARA_PROPTABLE = NEEDS_CONST
 *KICK,...
  +OT_MIXER    =  5
  +OT_BRIDGE   =  6
@@ -129,8 +129,8 @@
  +OT_MSGQUEUE =  9 #(Message queue, message is gone as soon as one client took it)
  +OT_MSGBUS   = 10 #(Message bus, message is gone as soon as all listening clients got it)
 *ATTACH
- +ATTACH_MIXER
- +ATTACH_BRIDGE
+ +ATTACH_MIXER    = NEEDS_CONST
+ +ATTACH_BRIDGE   = NEEDS_CONST
 *SET_VOL
- +SET_VOL_MS
- +SET_VOL_UNMAPED #(like roarctls mono/stereo...)
+ +SET_VOL_MS      = 3
+ +SET_VOL_UNMAPED = 4 #(like roarctls mono/stereo...)
