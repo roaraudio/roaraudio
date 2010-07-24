@@ -1,6 +1,9 @@
 +DEVCTL
  +:version
  +:type
+ +:vendor
+ +VENDOR_ROARAUDIO
+ +VENDOR_BASICDEV
  +:subtype
  +:flags
  +:ot
@@ -16,11 +19,11 @@
  +:::...
  +CT_STANDARDS
  +::dataarray
- +:::vendor (8bit)
+ +:::stdvendor (8bit)
  +STDV_ROARAUDIO
  +STDV_PROTO
  +STDV_RFC
- +:::version (8bit)
+ +:::stdversion (8bit)
  +:::standard (16bit)
 +WAIT
  +:version
@@ -38,10 +41,22 @@
  +:hint quality
  +:seek at
  +:seek to
+ +:seek whence
  +SF_CONT_WHILE_SEEK
  +SF_CONT_ON_ERROR
  +SF_HINT
  +SF_SEEK
+ +HQ_BAD       = 0
+ +HQ_BAD_NB    = 1 #(bad, not before this possition)
+ +HQ_NEAR      = 2
+ +HQ_NEAR_NB   = 3 #(Near, not before this possition)
+ +HQ_GOOD      = 4
+ +HQ_GOOD_NB   = 5 #(good, not before this possition)
+ +HQ_EXACT     = HQ_EXACT_NB #(ID 6 is skiped here)
+ +HQ_EXACT_NB  = 7
+ +WHENCE_BEGIN = 0
+ +WHENCE_CUR   = 1
+ +WHENCE_END   = 2
 +CLIENTCTL
  +:version
  +:subcmd
@@ -61,20 +76,58 @@
  +IT_COUNTERS
  +IT_LISTEN
 *[GS]ET_STREAM_PARA
+ *PARA_INFO
+  +STREAMSTATE_ERROR    #(Stream is in some error condition, parent client should close or kick it)
+  +STREAMSTATE_NEEDSEEK #(like Error but stream can become usable again if you do a seek)
  +PARA_HASHTABLE     #(GTN, UUID, ...)
-  +HT_{MD5,SHA{1,256,384,512,224},RIPEMD160,...} = OpenPGP_HASH_ID(name)
-  +HT_GTN{8,16,32,64}
-  +HT_UUID
-  +HT_{S,C,...}ID
+  +:htsettertype
+  +:htsettersize
+  +:htsetterdata
+  +:datarray
+  +::httype
+  +::htsize
+  +::htfunction
+  +HT_MD5        = 1
+  +HT_SHA1       = 2
+  +HT_RIPEMD160  = 3
+  +HT_SHA256     = 8
+  +HT_SHA384     = 9
+  +HT_SHA512     = 10
+  +HT_SHA224     = 11
+  +HT_UUID       = 70000
+  +HT_GTN8       = 70001
+  +HT_GTN16      = 70002
+  +HT_GTN32      = 70004
+  +HT_GTN64      = 70008
+  +HT_CLIENTID   = 71000 + OT_CLIENT   = 71001
+  +HT_STREAMID   = 71000 + OT_STREAM   = 71002
+  +HT_SOURCEID   = 71000 + OT_SOURCE   = 71003
+  +HT_SAMPLEID   = 71000 + OT_SAMPLE   = 71004
+  +HT_MIXERID    = 71000 + OT_MIXER    = 71005
+  +HT_BRIDGEID   = 71000 + OT_BRIDGE   = 71006
+  +HT_LISTENID   = 71000 + OT_LISTEN   = 71007
+  +HT_ACTIONID   = 71000 + OT_ACTION   = 71008
+  +HT_MSGQUEUEID = 71000 + OT_MSGQUEUE = 71009
+  +HT_MSGBUSID   = 71000 + OT_MSGBUS   = 71010
+  +HF_NONE       = 0 #(This entry does not have anything to do with the object...)
+  +HF_OBJECT     = 1 #(This is an entry for exacltly this object)
+  +HF_PARENT     = 2 #(This is the parent object)
+  +HF_LOGIC      = 3 #(This is a logic group of this object)
+  +HF_PERMANENT  = 4 #(This can be used to acces exactly this object with a premanent address)
+  +HF_DEVICE     = 5 #(The device this is on or the device itself if this is a device)
+  +HF_DISK       = 6 #(The disk this is on, if this is a disk the same as HF_DEVICE)
+  +HF_SONG       = 7 #(This identifys the Song. This may for example be used with Tantalos)
+  +HF_APP        = 8 #(The application, device or other source generating this object)
+  +HF_FILE       = 9 #(The source file for this object)
  +PARA_WININFO
  +PARA_PROPTABLE
 *KICK,...
- +OT_MIXER
- +OT_BRIDGE
- +OT_LISTEN
- +OT_ACTION
- +OT_MSGQUEUE #(Message queue, message is gone as soon as one client took it)
- +OT_MSGBUS   #(Message bus, message is gone as soon as all listening clients got it)
+ +OT_MIXER    =  5
+ +OT_BRIDGE   =  6
+ +OT_LISTEN   =  7
+ +OT_ACTION   =  8
+ +OT_MSGQUEUE =  9 #(Message queue, message is gone as soon as one client took it)
+ +OT_MSGBUS   = 10 #(Message bus, message is gone as soon as all listening clients got it)
 *ATTACH
  +ATTACH_MIXER
  +ATTACH_BRIDGE
