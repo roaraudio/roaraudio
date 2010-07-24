@@ -7,10 +7,27 @@
  +:(id) #(if not UNIID or SID)
  +:data...
 +CAPS
+ +:version (8bit)
+ +:type (8bit)
+ +:flags (16bit)
  +CT_CAPS
+ +::dataarray
+ +:::captype
+ +:::...
  +CT_STANDARDS
+ +::dataarray
+ +:::vendor (8bit)
+ +STDV_ROARAUDIO
+ +STDV_PROTO
+ +STDV_RFC
+ +:::version (8bit)
+ +:::standard (16bit)
 +WAIT
+ +:version
+ +:flags
+ +:...
 +NOTIFY
+ +structof(WAIT)
 +SEEK
  +:version
  +:flags
@@ -33,6 +50,12 @@
  +CC_HASHTABLE = PARA_HASHTABLE
  +CC_WININFO   = PARA_WININFO
  +CC_PROPTABLE = PARA_PROPTABLE
++LOOKUP
+ +:version
+ +:flags
+ +:ot
+ +:ht #(hash type)
+ +:hash...
 *SERVER_INFO
  +IT_SERVER
  +IT_COUNTERS
@@ -42,6 +65,7 @@
   +HT_{MD5,SHA{1,256,384,512,224},RIPEMD160,...} = OpenPGP_HASH_ID(name)
   +HT_GTN{8,16,32,64}
   +HT_UUID
+  +HT_{S,C,...}ID
  +PARA_WININFO
  +PARA_PROPTABLE
 *KICK,...
@@ -49,6 +73,8 @@
  +OT_BRIDGE
  +OT_LISTEN
  +OT_ACTION
+ +OT_MSGQUEUE #(Message queue, message is gone as soon as one client took it)
+ +OT_MSGBUS   #(Message bus, message is gone as soon as all listening clients got it)
 *ATTACH
  +ATTACH_MIXER
  +ATTACH_BRIDGE
