@@ -1,0 +1,57 @@
++DEVCTL
+ +:version
+ +:type
+ +:subtype
+ +:flags
+ +:ot
+ +:(id) #(if not UNIID or SID)
+ +:data...
++CAPS
+ +CT_CAPS
+ +CT_STANDARDS
++WAIT
++NOTIFY
++SEEK
+ +:version
+ +:flags
+ +:destination possition
+ +:destination possition whence
+ +:hint pos
+ +:hint whence
+ +:hint quality
+ +:seek at
+ +:seek to
+ +SF_CONT_WHILE_SEEK
+ +SF_CONT_ON_ERROR
+ +SF_HINT
+ +SF_SEEK
++CLIENTCTL
+ +:version
+ +:subcmd
+ +:flags
+ +:data
+ +CC_HASHTABLE = PARA_HASHTABLE
+ +CC_WININFO   = PARA_WININFO
+ +CC_PROPTABLE = PARA_PROPTABLE
+*SERVER_INFO
+ +IT_SERVER
+ +IT_COUNTERS
+ +IT_LISTEN
+*[GS]ET_STREAM_PARA
+ +PARA_HASHTABLE     #(GTN, UUID, ...)
+  +HT_{MD5,SHA{1,256,384,512,224},RIPEMD160,...} = OpenPGP_HASH_ID(name)
+  +HT_GTN{8,16,32,64}
+  +HT_UUID
+ +PARA_WININFO
+ +PARA_PROPTABLE
+*KICK,...
+ +OT_MIXER
+ +OT_BRIDGE
+ +OT_LISTEN
+ +OT_ACTION
+*ATTACH
+ +ATTACH_MIXER
+ +ATTACH_BRIDGE
+*SET_VOL
+ +SET_VOL_MS
+ +SET_VOL_UNMAPED #(like roarctls mono/stereo...)
