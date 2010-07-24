@@ -10,21 +10,21 @@
  +:(id) #(if not UNIID or SID)
  +:data...
 +CAPS
- +:version (8bit)
- +:type (8bit)
- +:flags (16bit)
+ +:version (uint8)
+ +:type (uint8)
+ +:flags (uint16)
  +CT_CAPS
  +::dataarray
  +:::captype
  +:::...
  +CT_STANDARDS
  +::dataarray
- +:::stdvendor (8bit)
+ +:::stdvendor (uint8)
  +STDV_ROARAUDIO
  +STDV_PROTO
  +STDV_RFC
- +:::stdversion (8bit)
- +:::standard (16bit)
+ +:::stdversion (uint8)
+ +:::standard (uint16)
 +WAIT
  +:version
  +:flags
