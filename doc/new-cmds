@@ -1,4 +1,4 @@
-#($Revision: 1.10 $)
+#($Revision: 1.11 $)
 +DEVCTL = 33
  +:version (uint8)
  +:type (uint8)
@@ -176,12 +176,13 @@
  +PARA_PROPTABLE = 8
   :(TODO)
 *KICK,...
- +OT_MIXER    =  5
- +OT_BRIDGE   =  6
- +OT_LISTEN   =  7
- +OT_ACTION   =  8
- +OT_MSGQUEUE =  9 #(Message queue, message is gone as soon as one client took it)
- +OT_MSGBUS   = 10 #(Message bus, message is gone as soon as all listening clients got it)
+ +OT_OUTPUT   =  5
+ +OT_MIXER    =  6
+ +OT_BRIDGE   =  7
+ +OT_LISTEN   =  8
+ +OT_ACTION   =  9
+ +OT_MSGQUEUE = 10 #(Message queue, message is gone as soon as one client took it)
+ +OT_MSGBUS   = 11 #(Message bus, message is gone as soon as all listening clients got it)
 *ATTACH
  *ATTACH_SOURCE
   :(TODO)
