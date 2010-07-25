@@ -264,7 +264,7 @@ int streams_delete (int id) {
 
  g_streams[id] = NULL;
 
- if ( prim ) {
+ if ( prim && alive ) {
   alive = 0;
   clean_quit();
  }
