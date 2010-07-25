@@ -1,4 +1,4 @@
-#($Revision: 1.8 $)
+#($Revision: 1.9 $)
 +DEVCTL = NEEDS_CONST
  +:version (uint8)
  +:type (uint8)
@@ -87,7 +87,8 @@
   +CF_CURRENT = 0x01 #(Current value if set, sum if unset)
   +CF_OTTYPE  = 0x02 #(Type is a OT_* type if set, or other if unset)
  +IT_LISTEN   = 3
-  +:version (TODO)
+  +:version (uint8)
+  +:reserved (uint24)
   +:listensocks... (dataarray)
   +::id (uint16)
   +::flags (uint8)
@@ -113,18 +114,29 @@
   +::htsize (uint16)
   +::htfunction (uint16)
   +::htdata (vardata)
+  +HT_NONE       = 0
   +HT_MD5        = 1
   +HT_SHA1       = 2
   +HT_RIPEMD160  = 3
+  +HT_MD2        = 5
+  +HT_TIGER      = 6
+  +HT_HAVAL      = 7
   +HT_SHA256     = 8
   +HT_SHA384     = 9
   +HT_SHA512     = 10
   +HT_SHA224     = 11
+  +HT_MD4        = 301
+  +HT_CRC32      = 302 #(ISO 3309, ITU-T V.42, IEEE 802.3)
+  +HT_RFC1510    = 303 #(HT_CRC32 as modified by RFC 1510)
+  +HT_RFC2440    = 304 #(poly=0x1864CFBL, init=0xB704CEL, OpenPGP)
+  +HT_WHIRLPOOL  = 305
   +HT_UUID       = 70000
+#(GTN is the Global Track Number as used by for example the RoarAudio PlayList Daemon (rpld))
+#(It is a creator-runtime-unique number to identify the object.)
   +HT_GTN8       = 70001
   +HT_GTN16      = 70002
-  +HT_GTN32      = 70004
-  +HT_GTN64      = 70008
+  +HT_GTN32      = 70004 #("Short Global Track Number")
+  +HT_GTN64      = 70008 #("Long  Global Track Number")
   +HT_CLIENTID   = 71000 + OT_CLIENT   = 71001
   +HT_STREAMID   = 71000 + OT_STREAM   = 71002
   +HT_SOURCEID   = 71000 + OT_SOURCE   = 71003
@@ -135,18 +147,24 @@
   +HT_ACTIONID   = 71000 + OT_ACTION   = 71008
   +HT_MSGQUEUEID = 71000 + OT_MSGQUEUE = 71009
   +HT_MSGBUSID   = 71000 + OT_MSGBUS   = 71010
-  +HF_NONE       = 0 #(This entry does not have anything to do with the object...)
-  +HF_OBJECT     = 1 #(This is an entry for exacltly this object)
-  +HF_PARENT     = 2 #(This is the parent object)
-  +HF_LOGIC      = 3 #(This is a logic group of this object)
-  +HF_PERMANENT  = 4 #(This can be used to acces exactly this object with a premanent address)
-  +HF_DEVICE     = 5 #(The device this is on or the device itself if this is a device)
-  +HF_DISK       = 6 #(The disk this is on, if this is a disk the same as HF_DEVICE)
-  +HF_SONG       = 7 #(This identifys the Song. This may for example be used with Tantalos)
-  +HF_APP        = 8 #(The application, device or other source generating this object)
-  +HF_FILE       = 9 #(The source file for this object)
+#(Next are article and book numers. They may be ued with HF_DISK and HF_WORK)
+  +HT_GTIN8      = 72001
+  +HT_GTIN13     = 72002
+  +HT_ISBN10     = 72003
+  +HT_ISBN13     = HT_GTIN13 #(ISBN-13 and GTIN/EAN-13 are the same)
+  +HF_NONE       =  0 #(This entry does not have anything to do with the object...)
+  +HF_OBJECT     =  1 #(This is an entry for exacltly this object)
+  +HF_PARENT     =  2 #(This is the parent object)
+  +HF_LOGIC      =  3 #(This is a logic group of this object)
+  +HF_PERMANENT  =  4 #(This can be used to acces exactly this object with a premanent address)
+  +HF_DEVICE     =  5 #(The device this is on or the device itself if this is a device)
+  +HF_DISK       =  6 #(The disk this is on, if this is a disk the same as HF_DEVICE)
+  +HF_SONG       =  7 #(This identifys the Song. This may for example be used with Tantalos)
+  +HF_APP        =  8 #(The application, device or other source generating this object)
+  +HF_FILE       =  9 #(The source file for this object)
+  +HT_ARTIST     = 10 #(This identifies any kind of artist/composer/interpret, to be used with Tantalos)
+  +HT_WORK       = 11 #(This identifies any kind of work/album/compilation, to be used with Tantalos)
  +PARA_WININFO   = 7
-  :(TODO)
   +:wsystype (uint8)
   +:socktype (uint8)
   +:display (uint8)
