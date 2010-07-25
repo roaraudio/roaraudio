@@ -1034,15 +1034,25 @@ int register_x11 (int unreg, char * sockname) {
  struct roar_x11_connection * x11con = NULL;
  int ret = 0;
 
- if ( (x11con = roar_x11_connect(x11display)) == NULL )
+ if ( (x11con = roar_x11_connect(x11display)) == NULL ) {
+  ROAR_ERR("Can not connect to X11 server for %sregistering", ROAR_DBG_INFO_INFO, unreg ? "un" : "");
   return -1;
+ }
 
  if ( unreg ) {
-  if ( roar_x11_delete_prop(x11con, "ROAR_SERVER") == -1 )
+  if ( roar_x11_delete_prop(x11con, "ROAR_SERVER") == -1 ) {
    ret = -1;
+   ROAR_ERR("Error while unregistereing from X11", ROAR_DBG_INFO_INFO);
+  } else {
+   ROAR_INFO("Successfully unregistered from X11", ROAR_DBG_INFO_INFO);
+  }
  } else {
-  if ( roar_x11_set_prop(x11con, "ROAR_SERVER", sockname) == -1 )
+  if ( roar_x11_set_prop(x11con, "ROAR_SERVER", sockname) == -1 ) {
    ret = -1;
+   ROAR_ERR("Error while registereing to X11", ROAR_DBG_INFO_INFO);
+  } else {
+   ROAR_INFO("Successfully registered to X11", ROAR_DBG_INFO_INFO);
+  }
  }
 
  roar_x11_disconnect(x11con);
@@ -2148,6 +2158,8 @@ int main (void) {
   register_x11(0, sock_addr);
  }
 #endif
+
+ ROAR_INFO("Startup complet", ROAR_DBG_INFO_INFO);
 
  // start main loop...
  ROAR_INFO("Entering main loop", ROAR_DBG_INFO_INFO);
