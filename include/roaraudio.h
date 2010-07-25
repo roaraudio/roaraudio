@@ -139,11 +139,13 @@ __BEGIN_DECLS
 #include <roaraudio/stream.h>
 #include <roaraudio/client.h>
 #include <roaraudio/sample.h>
+#include <roaraudio/beep.h>
 #include <roaraudio/meta.h>
 #include <roaraudio/genre.h>
 #include <roaraudio/acl.h>
 #include <roaraudio/misc.h>
 #include <roaraudio/byteorder.h>
+#include <roaraudio/socket.h>
 
 #include <libroar/libroar.h>
 

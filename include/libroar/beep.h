@@ -38,21 +38,6 @@
 
 #include "libroar.h"
 
-#define ROAR_BEEP_MAX_VOL  65535
-#define ROAR_BEEP_MAX_TIME 65535 /* ms */
-#define ROAR_BEEP_MAX_FREQ 65535 /* Hz */
-#define ROAR_BEEP_MAX_POS  32767
-
-#define ROAR_BEEP_DEFAULT_VOL  (ROAR_BEEP_MAX_VOL/4)
-#define ROAR_BEEP_DEFAULT_TIME 256 /* ms */
-#define ROAR_BEEP_DEFAULT_FREQ 440 /* Hz */
-#define ROAR_BEEP_DEFAULT_TYPE ROAR_BEEP_TYPE_DEFAULT
-
-#define ROAR_BEEP_TYPE_DEFAULT            0
-#define ROAR_BEEP_TYPE_CBELL              1
-#define ROAR_BEEP_TYPE_XBELL              2
-#define ROAR_BEEP_TYPE_ERROR              3
-
 struct roar_beep {
  uint16_t vol;
  uint16_t time;

@@ -41,58 +41,6 @@
 char * roar_dir2str (int dir);
 int    roar_str2dir (char * name);
 
-#define ROAR_FLAG_NONE           0x0000
-#define ROAR_FLAG_PRIMARY        0x0001
-#define ROAR_FLAG_OUTPUT         0x0002
-#define ROAR_FLAG_DRIVER         ROAR_FLAG_OUTPUT
-#define ROAR_FLAG_SOURCE         0x0004
-#define ROAR_FLAG_SYNC           0x0008
-#define ROAR_FLAG_META           0x0010
-#define ROAR_FLAG_AUTOCONF       0x0020
-#define ROAR_FLAG_CLEANMETA      0x0040
-#define ROAR_FLAG_HWMIXER        0x0080
-#define ROAR_FLAG_PAUSE          0x0100
-#define ROAR_FLAG_MUTE           0x0200
-#define ROAR_FLAG_MMAP           0x0400
-#define ROAR_FLAG_ANTIECHO       0x0800
-#define ROAR_FLAG_VIRTUAL        0x1000
-#define ROAR_FLAG_RECSOURCE      0x2000
-#define ROAR_FLAG_PASSMIXER      0x4000
-#define ROAR_FLAG_PRETHRU        0x8000
-// next are the exteded flags (> 16 bits)
-//#define ROAR_FLAG_SYNC           0x08
-#define ROAR_FLAG_IMMUTABLE      0x00010000
-#define ROAR_FLAG_ENHANCE        0x00020000
-
-#define ROAR_SET_FLAG            0
-#define ROAR_RESET_FLAG          1
-
-#define ROAR_STREAMSTATE_UNKNOWN   -1
-#define ROAR_STREAMSTATE_NULL       0
-#define ROAR_STREAMSTATE_UNUSED     ROAR_STREAMSTATE_NULL
-#define ROAR_STREAMSTATE_INITING    1
-#define ROAR_STREAMSTATE_NEW        2
-#define ROAR_STREAMSTATE_OLD        3
-#define ROAR_STREAMSTATE_CLOSING    4
-
-// PA currently defines: video, music, game, event, phone, animation, production, a11y
-// RA includes         : YES    YES    YES   YES    YES    NO         NO          NO
-
-#define ROAR_ROLE_UNKNOWN          -1
-#define ROAR_ROLE_NONE              0
-#define ROAR_ROLE_MUSIC             1
-#define ROAR_ROLE_VIDEO             2
-#define ROAR_ROLE_GAME              3
-#define ROAR_ROLE_EVENT             4
-#define ROAR_ROLE_BEEP              5
-#define ROAR_ROLE_PHONE             6
-#define ROAR_ROLE_BACKGROUND_MUSIC  7
-#define ROAR_ROLE_VOICE             8
-#define ROAR_ROLE_INSTRUMENT        9
-#define ROAR_ROLE_RHYTHM           10
-#define ROAR_ROLE_CLICK            11
-#define ROAR_ROLE_MIXED            12
-
 struct roar_stream_info {
  int block_size;
  int pre_underruns;
