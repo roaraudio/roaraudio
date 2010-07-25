@@ -109,6 +109,7 @@ int streams_new    (void) {
    s->prethru         = NULL;
    s->mixer_stream    = -1;
    s->role            = ROAR_ROLE_UNKNOWN;
+   s->parent_stream   = -1;
 
    s->mixer.scale     = 65535;
    s->mixer.rpg_mul   = 1;

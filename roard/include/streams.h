@@ -91,6 +91,7 @@ struct roar_stream_server {
  int mixer_stream;
  struct roardsp_chanmap chanmap;
  int role;
+ int parent_stream;
 } * g_streams[ROAR_STREAMS_MAX];
 
 int streams_thru_num;
