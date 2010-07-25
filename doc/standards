@@ -4,11 +4,17 @@ RoarAudio	0	0	ra-msg-v0	RoarAudio Message format v. 0
 RoarAudio	0	1	ra-msg-v1	RoarAudio Message format v. 1
 RoarAudio	0	2	ra-msg-v2	RoarAudio Message format v. 2
 RoarAudio	0	3	ra-msg-v3	RoarAudio Message format v. 3
+
 RoarAudio	1	0	ra-cmdset	RoarAudio Commandset
-RoarAudio	2	0	ra-cert-base	RoarAudio Base Certificate Spec
-RoarAudio	2	1	ra-cert-a	RoarAudio Base Certificate A
-RoarAudio	2	2	ra-cert-b	RoarAudio Base Certificate B
-RoarAudio	2	3	ra-cert-c	RoarAudio Base Certificate C
-RoarAudio	2	4	ra-cert-d	RoarAudio Base Certificate D
-RoarAudio	2	5	ra-cert-e	RoarAudio Base Certificate E
-RoarAudio	2	6	ra-cert-f	RoarAudio Base Certificate F
+
+RoarAudio	2	0	ra-comnums	RoarAudio Common Numbers
+
+RoarAudio	3	0	ra-codecs	RoarAudio Codec IDs
+
+RoarAudio	4	0	ra-cert-base	RoarAudio Base Certificate Spec
+RoarAudio	4	1	ra-cert-a	RoarAudio Base Certificate A
+RoarAudio	4	2	ra-cert-b	RoarAudio Base Certificate B
+RoarAudio	4	3	ra-cert-c	RoarAudio Base Certificate C
+RoarAudio	4	4	ra-cert-d	RoarAudio Base Certificate D
+RoarAudio	4	5	ra-cert-e	RoarAudio Base Certificate E
+RoarAudio	4	6	ra-cert-f	RoarAudio Base Certificate F
