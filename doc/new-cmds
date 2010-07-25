@@ -1,4 +1,5 @@
-#($Revision: 1.11 $)
+#($Revision: 1.12 $)
+!SECTION: Commands
 +DEVCTL = 33
  +:version (uint8)
  +:type (uint8)
@@ -195,3 +196,8 @@
 *SET_VOL
  +SET_VOL_MS      = 3
  +SET_VOL_UNMAPED = 4 #(like roarctls mono/stereo...)
+!SECTIONEND
+!SECTION: Codecs
++AUTLAW  = NEEDS_CONST
++MUUTLAW = NEEDS_CONST
+!SECTIONEND
