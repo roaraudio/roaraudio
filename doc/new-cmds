@@ -1,5 +1,5 @@
-#($Revision: 1.9 $)
-+DEVCTL = NEEDS_CONST
+#($Revision: 1.10 $)
++DEVCTL = 33
  +:version (uint8)
  +:type (uint8)
  +:vendor (uint8)
@@ -10,7 +10,7 @@
  +:ot (uint8)
  +:(id) (uint16) #(if not UNIID or SID)
  +:data... (vardata)
-+CAPS = NEEDS_CONST
++CAPS = 34
  +:version (uint8)
  +:type (uint8)
  +:flags (uint16)
@@ -26,13 +26,13 @@
  +STDV_RFC       = 2
  +:::stdversion (uint8)
  +:::standard (uint16)
-+WAIT = NEEDS_CONST
++WAIT = 35
  +:version (TODO)
  +:flags (TODO)
  :(TODO)
-+NOTIFY = NEEDS_CONST
++NOTIFY = 36
  +structof(WAIT)
-+SEEK = NEEDS_CONST
++SEEK = 37
  +:version (TODO)
  +:flags (TODO)
  +:destination possition (TODO)
@@ -58,7 +58,7 @@
  +WHENCE_BEGIN = 0
  +WHENCE_CUR   = 1
  +WHENCE_END   = 2
-+CLIENTCTL = NEEDS_CONST
++CLIENTCTL = 38
  +:version (uint8)
  +:subcmd (uint8)
  +:flags (uint16)
@@ -66,7 +66,7 @@
  +CC_HASHTABLE = PARA_HASHTABLE
  +CC_WININFO   = PARA_WININFO
  +CC_PROPTABLE = PARA_PROPTABLE
-+LOOKUP = NEEDS_CONST
++LOOKUP = 39
  +:version (uint8)
  +:flags (uint8)
  +:extflags (uint8)
