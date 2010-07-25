@@ -235,6 +235,23 @@ static void list_proto (void) {
 
 #endif
 
+#define _pmsg(format, args...) roar_debug_msg(type, __LINE__, __FILE__, ROAR_DBG_PREFIX, format, ## args)
+#define _pmsgc(group, counter, name) _pmsg("  Counter %-10s: %llu", (name), (long long unsigned int)counters_get(group, counter))
+void counters_print(int type, int force) {
+ if ( type != ROAR_DEBUG_TYPE_INFO || force || (ROAR_DBG_INFOVAR) >= ROAR_DBG_INFO_INFO ) {
+  _pmsg("--- Counter Listing ---");
+  _pmsg(" Current:");
+  _pmsgc(cur, clients, "Clients");
+  _pmsgc(cur, streams, "Streams");
+  _pmsg(" Total:");
+  _pmsgc(sum, clients, "Clients");
+  _pmsgc(sum, streams, "Streams");
+  _pmsg("--- End of Counter Listing ---");
+ }
+}
+#undef _pmsgc
+#undef _pmsg
+
 int restart_server (char * server, int terminate) {
  struct roar_connection con;
 #ifdef ROAR_HAVE_KILL
@@ -1238,6 +1255,8 @@ int main (void) {
 
  memcpy(g_max_sa, g_sa, sizeof(max_sa));
 
+ counters_init();
+
  g_config = &config;
 
  if ( init_config() == -1 ) {
@@ -2217,6 +2236,8 @@ void clean_quit_prep (void) {
 
 void clean_quit (void) {
  ROAR_INFO("Shuting down", ROAR_DBG_INFO_INFO);
+
+ counters_print(ROAR_DEBUG_TYPE_INFO, 0);
 
  clean_quit_prep();
 // driver_close(drvinst, drvid);

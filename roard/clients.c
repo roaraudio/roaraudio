@@ -80,6 +80,7 @@ int clients_new (void) {
 
     g_clients[i] = n;
 
+    counters_inc(clients, 1);
     ROAR_DBG("clients_new(void) = %i", i);
     return i;
    } else {
@@ -127,6 +128,8 @@ int clients_delete (int id) {
  int close_client_fh = 1;
 
  ROAR_DBG("clients_delete(id=%i) = ?", id);
+
+ counters_inc(clients, -1);
 
  _CHECK_CID(id);
 

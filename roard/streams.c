@@ -134,6 +134,7 @@ int streams_new    (void) {
    //roardsp_fchain_init(&(s->fc));
 
    g_streams[i] = s;
+   counters_inc(streams, 1);
    ROAR_DBG("streams_new(void): n->id=%i", n->id);
    ROAR_DBG("streams_new(void) = %i", i);
    return i;
@@ -163,6 +164,8 @@ int streams_delete (int id) {
   return 0;
 
  s->state = ROAR_STREAMSTATE_CLOSING;
+
+ counters_inc(streams, -1);
 
  if ( streams_get_flag(id, ROAR_FLAG_RECSOURCE) == 1 )
   streams_reset_flag(id, ROAR_FLAG_RECSOURCE);

@@ -182,6 +182,27 @@ struct roard_config {
  size_t jumbo_mtu;
 } * g_config;
 
+struct _counters {
+ size_t clients, streams,
+        samples,
+        sources, outputs,
+        mixers, bridges,
+        listens;
+};
+
+struct {
+ struct _counters cur, sum;
+} g_counters;
+
+
+#define counters_init() memset(&g_counters, 0, sizeof(g_counters))
+//#define counters_inc(c,i) do { signed long int __i = (i); if ( __i < 0 && __i > (g_counters.cur.c) ) { ROAR_WARN("counters_inc(c=%s, i=%li): Decrement request bigger than current counter value. Counter out of syn!", )  } while (0)
+#define counters_inc(c,i) do { signed long int __i = (i); g_counters.cur.c += __i; if ( __i > 0 ) g_counters.sum.c += __i; } while (0)
+
+#define counters_get(g,c) ((g_counters.g.c))
+
+void counters_print(int type, int force);
+
 #endif
 
 //ll
