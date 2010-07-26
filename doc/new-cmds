@@ -1,4 +1,4 @@
-#($Revision: 1.12 $)
+#($Revision: 1.13 $)
 !SECTION: Commands
 +DEVCTL = 33
  +:version (uint8)
@@ -32,7 +32,7 @@
  +:flags (TODO)
  :(TODO)
 +NOTIFY = 36
- +structof(WAIT)
+ +=structof(WAIT)
 +SEEK = 37
  +:version (TODO)
  +:flags (TODO)
