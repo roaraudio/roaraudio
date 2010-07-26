@@ -1,4 +1,4 @@
-#($Revision: 1.13 $)
+#($Revision: 1.14 $)
 !SECTION: Commands
 +DEVCTL = 33
  +:version (uint8)
@@ -16,11 +16,11 @@
  +:type (uint8)
  +:flags (uint16)
  +CT_CAPS      = 0
- +::dataarray (dataarray)
+ +::data... (dataarray)
  +:::captype (TODO)
  +:::... (TODO)
  +CT_STANDARDS = 1
- +::dataarray
+ +::data... (dataarray)
  +:::stdvendor (uint8)
  +STDV_ROARAUDIO = 0
  +STDV_PROTO     = 1
@@ -74,6 +74,25 @@
  +:ot (uint8)
  +:ht (uint32) #(hash type)
  +:hash... (vardata)
++CRYPTCTL = 40
+ +:version (uint8)
+ +:flags (uint8)
+ +:session (uint8)
+ +:type (uint8)
+ +:stdvendor (uint8)
+ +:stdversion (uint8)
+ +:standard (uint16)
+ +CCT_NONE       = 0 #(This is the same like a NOOP-Command)
+ +CCT_CRYPTMSG   = 1 #(This request contains zero or more crypto packages according to given standard)
+ +CCT_OPENSESS   = 2 #(This opens a crypto session)
+ +:hash (uint32)
+ +:data... (dataarray)
+ +CCT_CLOSESESS  = 3 #(This closes a opend cryto session)
+ +:hashlen (uint16)
+ +:hash (dataarray(:hashlen))
+ +:data... (dataarray)
+ +CCT_SESSDATA   = 4 #(This is some kind of data used in the session)
+ +:data... (dataarray)
 *SERVER_INFO
  +IT_SERVER   = 1
   :(TODO)
