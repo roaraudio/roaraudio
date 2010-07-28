@@ -1,4 +1,4 @@
-#($Revision: 1.14 $)
+#($Revision: 1.15 $)
 !SECTION: Commands
 +DEVCTL = 33
  +:version (uint8)
@@ -74,7 +74,7 @@
  +:ot (uint8)
  +:ht (uint32) #(hash type)
  +:hash... (vardata)
-+CRYPTCTL = 40
++CONCTL = 40
  +:version (uint8)
  +:flags (uint8)
  +:session (uint8)
@@ -86,6 +86,13 @@
  +CCT_CRYPTMSG   = 1 #(This request contains zero or more crypto packages according to given standard)
  +CCT_OPENSESS   = 2 #(This opens a crypto session)
  +:hash (uint32)
+ +:comp (uint16)
+ +COMPT_NONE  = 0
+ +COMPT_ZLIB  = 1
+ +COMPT_GZIP  = 2
+ +COMPT_BZIP2 = 3
+ +:complevel (uint8)
+ +:compflags (uint8)
  +:data... (dataarray)
  +CCT_CLOSESESS  = 3 #(This closes a opend cryto session)
  +:hashlen (uint16)
