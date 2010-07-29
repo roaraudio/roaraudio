@@ -184,7 +184,7 @@ void server_oinfo (struct roar_connection * con) {
  printf("Server Output codec   : %i (%s%s)\n", s.info.codec, roar_codec2str(s.info.codec),
                                      s.info.codec == ROAR_CODEC_DEFAULT ? " native" : "");
 // printf("Server Output rate: %i", s.info.rate);
-  if ( g_verbose > 1 )
+  if ( g_verbose > 1 && s.pos != (uint32_t)-1 )
    printf("Server Position       : %lu S (%.3fs)\n", (unsigned long int) s.pos, (float)s.pos/(s.info.rate*s.info.channels));
 }
 
@@ -350,7 +350,7 @@ void list_streams (struct roar_connection * con) {
   } else {
    printf("Relativ position id   : %i (synchronized)\n", s.pos_rel_id);
   }
-  if ( g_verbose > 1 ) {
+  if ( g_verbose > 1 && s.pos != (uint32_t)-1 ) {
    if ( s.info.rate && s.info.channels ) {
     printf("Position              : %lu S (%.3fs)\n", (unsigned long int) s.pos,
                                     (float)s.pos/(s.info.rate*s.info.channels));
