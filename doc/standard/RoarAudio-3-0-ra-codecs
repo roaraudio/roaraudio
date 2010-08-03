@@ -1,62 +1,89 @@
-Codec Name	Value	Class	Signed	Byteorder	Standards	Description
+Standard: RoarAudio-3
+Version: 0
+Short-Name: ra-codecs
+Subject: RoarAudio Codec IDs
+Date: Tue Aug  3 17:50:21 CEST 2010
+Authors: Philipp "ph3-der-loewe" Schafft <lion@lion.leolix.org>
+Recommends: RoarAudio-2-0 ("ra-comnums")
+
+Chapter: Implementation requirements
+An implementation MUST handle all the Codec IDs listed in table 0 without error.
+This means that the implementation MUST accept all of those IDs as valid.
+
+An implentation NOT NEED to implement all of those codecs. Implementation and working with
+those codecs is to be defined in other standards.
+
+An application MUST return error to caller or client in case a non-supported codec is used.
+Handling invalid (unknown) codecs and unimplemented codecs SHOULD give diffrent errors.
+
+If an implementation is a library of some kind it SHOULD provide constants or string lookup
+functions or simular (depends on type of implementation) for all those IDs but MUST provide them
+for all codecs marked as critical in table 0.
+
+Table: 0: Known Codecs
+Cirt. is Crtical.
+Sugg. is Suggested name to display to user.
+Rec.  is Recommended but not needed.
+
+Codec Name	Value	Crit.	Sugg.	Class	Signed	Byteorder	Standards
 -------------------------------------------------------------------------------------------
-PCM_S_LE	0x01	PCM	Yes	Little Endian	-/-
-PCM_S_BE	0x02	PCM	Yes	Big Endian	-/-
-PCM_S_PDP	0x03	PCM	Yes	PDP Endian	-/-
-PCM_U_LE	0x05	PCM	No	Little Endian	-/-
-PCM_U_BE	0x06	PCM	No	Big Endian	-/-
-PCM_U_PDP	0x07	PCM	No	PDP Endian	-/-
-OGG_VORBIS	0x10	?	Yes	?
-FLAC		0x11	?	?	?
-OGG_SPEEX	0x12	CELP	?	?
-OGG_FLAC	0x14	?	?	?
-OGG_CELT	0x16	CELT?	?	?
-OGG_GENERAL	0x15	?	?	?
-OGG		0x17	PO-Cont	?	?		RFC 3533, 5334
-ROAR_CELT	0x1a	CELT?	?	?
-ROAR_SPEEX	0x1b	CELP	?	?
-RIFF_WAVE	0x20	SO-Cont	?	Little Endian	(none)
-RIFX		0x22	SO-Cont	?	Big Endian
-AU		0x24	SO-Cont	?	Big Endian
-AIFF		0x28	?-Cont	?	Big Endian
-ALAW		0x30	Log	Yes	-/-		G.711
-MULAW		0x34	Log	Yes	-/-		G.711
-GSM		0x38	?	?	?		ETSI 06.10/20
-GSM49		0x39	?	?	?		ETSI 06.10/20
-MIDI_FILE	0x08	MIDI	No	-/-
-MIDI		0x60	MIDI	No	-/-
-ROARMIDI	0x64	?	?	?
-DMX512		0x70	DMX	No	-/-
-ROARDMX		0x71	?	?	Big Endian
-RAUM		0x1c	PO-Cont	No	Big Endian
-RAUM_VORBIS	0x1d	?	Yes	?
-RAUM_FLAC	0x1e	?	?	?
-META_VCLT	0x40	Text	-/-	-/-
-META_RALT	0x44	Text	-/-	-/-
-META_RALB	0x4c	Text	?	?
-META_RALB_LE	0x4d	Text	?	Little Endian
-META_RALB_BE	0x4e	Text	?	Big Endian
-META_RALB_PDP	0x4f	Text	?	PDP Endian
-CONT_NULL	0x50	(none)	-/-	-/-
-CONT_GZIP	0x51	?	?	?
-CONT_BZIP2	0x52	?	?	?
-CONT_OPGPBIN	0x53	?	?	Big Endian
-CONT_OPGPASC	0x54	?	?	(Big Endian)
-CONT_TAR	0x55	?-Cont	?	?
-RDS		0x80	?	?	?
-USER0		0x90	-/-	-/-	-/-
-USER1		0x91	-/-	-/-	-/-
-USER2		0x92	-/-	-/-	-/-
-USER3		0x93	-/-	-/-	-/-
-USER4		0x94	-/-	-/-	-/-
-USER5		0x95	-/-	-/-	-/-
-USER6		0x96	-/-	-/-	-/-
-USER7		0x97	-/-	-/-	-/-
-USER8		0x98	-/-	-/-	-/-
-USER9		0x99	-/-	-/-	-/-
-USER10		0x9a	-/-	-/-	-/-
-USER11		0x9b	-/-	-/-	-/-
-USER12		0x9c	-/-	-/-	-/-
-USER13		0x9d	-/-	-/-	-/-
-USER14		0x9e	-/-	-/-	-/-
-USER15		0x9f	-/-	-/-	-/-
+PCM_S_LE	0x01	Yes		PCM	Yes	Little Endian	-/-
+PCM_S_BE	0x02	Yes		PCM	Yes	Big Endian	-/-
+PCM_S_PDP	0x03	Rec.		PCM	Yes	PDP Endian	-/-
+PCM_U_LE	0x05	Yes		PCM	No	Little Endian	-/-
+PCM_U_BE	0x06	Yes		PCM	No	Big Endian	-/-
+PCM_U_PDP	0x07	Rec.		PCM	No	PDP Endian	-/-
+OGG_VORBIS	0x10	Yes		?	Yes	?
+FLAC		0x11	Rec.		?	?	?
+OGG_SPEEX	0x12			CELP	?	?
+OGG_FLAC	0x14			?	?	?
+OGG_CELT	0x16			CELT?	?	?
+OGG_GENERAL	0x15			?	?	?
+OGG		0x17			PO-Cont	?	?		RFC 3533, 5334
+ROAR_CELT	0x1a			CELT?	?	?
+ROAR_SPEEX	0x1b			CELP	?	?
+RIFF_WAVE	0x20	Rec.		SO-Cont	?	Little Endian	(none)
+RIFX		0x22			SO-Cont	?	Big Endian
+AU		0x24			SO-Cont	?	Big Endian
+AIFF		0x28			?-Cont	?	Big Endian
+ALAW		0x30	Yes		Log	Yes	-/-		G.711
+MULAW		0x34	Yes		Log	Yes	-/-		G.711
+GSM		0x38			?	?	?		ETSI 06.10/20
+GSM49		0x39			?	?	?		ETSI 06.10/20
+MIDI_FILE	0x08			MIDI	No	-/-
+MIDI		0x60	Yes		MIDI	No	-/-
+ROARMIDI	0x64			?	?	?
+DMX512		0x70	Yes		DMX	No	-/-
+ROARDMX		0x71	Rec.		?	?	Big Endian
+RAUM		0x1c	Rec.		PO-Cont	No	Big Endian
+RAUM_VORBIS	0x1d			?	Yes	?
+RAUM_FLAC	0x1e			?	?	?
+META_VCLT	0x40			Text	-/-	-/-
+META_RALT	0x44			Text	-/-	-/-
+META_RALB	0x4c			Text	?	?
+META_RALB_LE	0x4d			Text	?	Little Endian
+META_RALB_BE	0x4e			Text	?	Big Endian
+META_RALB_PDP	0x4f			Text	?	PDP Endian
+CONT_NULL	0x50			(none)	-/-	-/-
+CONT_GZIP	0x51			?	?	?
+CONT_BZIP2	0x52			?	?	?
+CONT_OPGPBIN	0x53			?	?	Big Endian
+CONT_OPGPASC	0x54			?	?	(Big Endian)
+CONT_TAR	0x55			?-Cont	?	?
+RDS		0x80	Rec.		?	?	?
+USER0		0x90	Rec.		-/-	-/-	-/-
+USER1		0x91	Rec.		-/-	-/-	-/-
+USER2		0x92	Rec.		-/-	-/-	-/-
+USER3		0x93	Rec.		-/-	-/-	-/-
+USER4		0x94			-/-	-/-	-/-
+USER5		0x95			-/-	-/-	-/-
+USER6		0x96			-/-	-/-	-/-
+USER7		0x97			-/-	-/-	-/-
+USER8		0x98			-/-	-/-	-/-
+USER9		0x99			-/-	-/-	-/-
+USER10		0x9a			-/-	-/-	-/-
+USER11		0x9b			-/-	-/-	-/-
+USER12		0x9c			-/-	-/-	-/-
+USER13		0x9d			-/-	-/-	-/-
+USER14		0x9e			-/-	-/-	-/-
+USER15		0x9f			-/-	-/-	-/-
