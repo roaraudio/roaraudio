@@ -131,6 +131,9 @@ int roar_connect_raw (char * server) {
   }
 #endif
 
+  if ( (fh = roar_socket_connect("+abstract", 0)) != -1 )
+   return fh;
+
 #ifdef ROAR_HAVE_LIBSLP
  if ( (server = roar_slp_find_roard(0)) != NULL )
   if ( (fh = roar_connect_raw(server)) != -1 )
