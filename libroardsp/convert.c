@@ -1012,7 +1012,7 @@ int roar_conv2(void * out, void * in,
  }
 */
 
- // calcumate number of input samples:
+ // calculate number of input samples:
  samples = (inlen * 8) / (from->bits);
 
  ROAR_DBG("roar_conv2(*): input samples: %i", samples);
@@ -1028,7 +1028,7 @@ int roar_conv2(void * out, void * in,
 
  ROAR_DBG("roar_conv2(*): needed_buffer=%u, bufsize=%u", needed_buffer, bufsize);
 
- // chjeck if we have enogth RAM to convert
+ // check if we have enogth RAM to convert
  if ( needed_buffer > bufsize )
   return -1;
 
