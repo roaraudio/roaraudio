@@ -626,6 +626,7 @@ int roar_conv_rate_SRC   (void * out, void * in, int samples, int from, int to, 
 }
 
 int roar_conv_rate2      (void * out, void * in, int samples, int outsamples, int bits, int channels) {
+ ROAR_DBG("roar_conv_rate2(out=%p, in=%p, samples=%i, outsamples=%i, bits=%i, channels=%i) = ?", out, in, samples, outsamples, bits, channels);
  switch (bits) {
   case 16:
     return roar_conv_poly3_16(out, in, outsamples, samples, channels);
@@ -1007,6 +1008,7 @@ int roar_conv2(void * out, void * in,
  void   * cin = in;
  struct roar_audio_info cinfo;
  int    need_signed = 0;
+ size_t outsamples;
 
  memcpy(&cinfo, from, sizeof(cinfo));
 
@@ -1083,16 +1085,19 @@ int roar_conv2(void * out, void * in,
    return -1;
 
   cin            = out;
+  samples        = (samples * to->channels) / cinfo.channels;
   cinfo.channels = to->channels;
  }
 
 //--//
  if ( from->rate != to->rate ) {
-  if ( roar_conv_rate2(out, cin, samples, bufsize/(cinfo.bits/8), cinfo.bits, cinfo.channels) == -1 )
+  outsamples = bufsize/(cinfo.bits/8);
+
+  if ( roar_conv_rate2(out, cin, samples, outsamples, cinfo.bits, cinfo.channels) == -1 )
    return -1;
 
   cin            = out;
-  samples        = bufsize/(cinfo.bits/8);
+  samples        = outsamples;
   cinfo.rate     = to->rate;
  }
 
@@ -1102,6 +1107,7 @@ int roar_conv2(void * out, void * in,
    return -1;
 
   cin            = out;
+  samples        = (samples * to->channels) / cinfo.channels;
   cinfo.channels = to->channels;
  }
 
