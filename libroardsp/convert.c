@@ -1203,7 +1203,6 @@ int roar_conv_poly4_16s (int16_t * out, int16_t * in, size_t olen, size_t ilen, 
  return 0;
 }
 
-//ll
 /***********************************/
 // ilen and olen are in samples, not frames.
 int roar_conv_poly3_16 (int16_t * out, int16_t * in, size_t olen, size_t ilen, int channels) {
@@ -1272,3 +1271,5 @@ int roar_conv_poly3_16 (int16_t * out, int16_t * in, size_t olen, size_t ilen, i
  roar_mm_free(ip);
  return 0;
 }
+
+//ll
