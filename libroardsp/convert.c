@@ -1204,6 +1204,10 @@ int roar_conv_poly3_16 (int16_t * out, int16_t * in, size_t olen, size_t ilen, i
  float ratio = (float)olen / (float)ilen;
  int16_t *ip;
  int c, x;
+ float pos_in;
+ float poly[3];
+ float y[3];
+ float x_val;
 
  /* Can't create poly out of less than 3 samples in each channel. */
  if ( ilen < 3 * channels )
@@ -1217,15 +1221,7 @@ int roar_conv_poly3_16 (int16_t * out, int16_t * in, size_t olen, size_t ilen, i
 
  for ( x = 0; x < olen/channels; x++ ) {
   for ( c = 0; c < channels; c++ ) {
-   float pos_out;
-   float pos_in;
-
-   float poly[3];
-   float y[3];
-   float x_val;
-
-   pos_out = x;
-   pos_in = pos_out / ratio;
+   pos_in = (float)x / ratio;
 
    if ( (int)pos_in == 0 ) {
     y[0] = ip[0 * channels + c];
