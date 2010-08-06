@@ -1208,6 +1208,7 @@ int roar_conv_poly3_16 (int16_t * out, int16_t * in, size_t olen, size_t ilen, i
  float poly[3];
  float y[3];
  float x_val;
+ int32_t temp;
 
  /* Can't create poly out of less than 3 samples in each channel. */
  if ( ilen < 3 * channels )
@@ -1219,8 +1220,10 @@ int roar_conv_poly3_16 (int16_t * out, int16_t * in, size_t olen, size_t ilen, i
 
  memcpy(ip, in, ilen * sizeof(int16_t));
 
- for ( x = 0; x < olen/channels; x++ ) {
-  for ( c = 0; c < channels; c++ ) {
+ olen /= channels;
+
+ for (x = 0; x < olen; x++) {
+  for (c = 0; c < channels; c++) {
    pos_in = (float)x / ratio;
 
    if ( (int)pos_in == 0 ) {
@@ -1228,33 +1231,38 @@ int roar_conv_poly3_16 (int16_t * out, int16_t * in, size_t olen, size_t ilen, i
     y[1] = ip[1 * channels + c];
     y[2] = ip[2 * channels + c];
     x_val = pos_in;
+    roar_math_mkpoly_3x3(poly, y);
    } else if ( (int)pos_in + 1 >= ilen/channels ) {
     /* If we're at the end of the block, we will need to interpolate against a value that is not yet known.
      * We will assume this value, by linearly extrapolating the two preceding values. From causual testing, this is not audible. */
     y[0] = ip[((int)pos_in - 1) * channels + c];
     y[1] = ip[((int)pos_in    ) * channels + c];
-    y[2] = y[1] * 2.0 - y[0];
+
+    // we create a 2x2 poly here and set the 3rd coefficient to zero to build a 3x3 poly
+    roar_math_mkpoly_2x2(poly, y);
+    poly[2] = 0;
     x_val = pos_in - (int)pos_in + 1.0;
    } else {
     y[0] = ip[((int)pos_in - 1) * channels + c];
     y[1] = ip[((int)pos_in    ) * channels + c];
     y[2] = ip[((int)pos_in + 1) * channels + c];
     x_val = pos_in - (int)pos_in + 1.0;
+    roar_math_mkpoly_3x3(poly, y);
    }
 
-   roar_math_mkpoly_3x3(poly, y);
 
-   int32_t temp = (int32_t)(poly[2]*x_val*x_val + poly[1]*x_val + poly[0] + 0.5);
+   temp = (float)(poly[2]*x_val*x_val + poly[1]*x_val + poly[0] + 0.5);
    /* temp could be out of bounds, so need to check this */
    if (temp > 0x7FFE ) {
     out[x * channels + c] =  0x7FFE;
-   } else if (temp < -0x7FFE) {
-    out[x * channels + c] = -0x7FFE;
+   } else if (temp < -0x7FFF) {
+    out[x * channels + c] = -0x7FFF;
    } else {
     out[x * channels + c] = (int16_t)temp;
    }
   }
  }
+
  roar_mm_free(ip);
  return 0;
 }
