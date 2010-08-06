@@ -1228,26 +1228,20 @@ int roar_conv_poly3_16 (int16_t * out, int16_t * in, size_t olen, size_t ilen, i
    pos_in = pos_out / ratio;
 
    if ( (int)pos_in == 0 ) {
-    y[0] = ip[c];
-    y[1] = ip[channels + c];
+    y[0] = ip[0 * channels + c];
+    y[1] = ip[1 * channels + c];
     y[2] = ip[2 * channels + c];
     x_val = pos_in;
    } else if ( (int)pos_in + 1 >= ilen/channels ) {
     /* If we're at the end of the block, we will need to interpolate against a value that is not yet known.
      * We will assume this value, by linearly extrapolating the two preceding values. From causual testing, this is not audible. */
     y[0] = ip[((int)pos_in - 1) * channels + c];
-    y[1] = ip[(int)pos_in * channels + c];
+    y[1] = ip[((int)pos_in    ) * channels + c];
     y[2] = y[1] * 2.0 - y[0];
-    /* We have to clip this value. */
-    if ( (int32_t)y[2] > 0x7FFE )
-     y[2] = 0x7FFE;
-    else if ( (int32_t)y[2] < -0x7FFE )
-     y[2] = -0x7FFE;
-
     x_val = pos_in - (int)pos_in + 1.0;
    } else {
     y[0] = ip[((int)pos_in - 1) * channels + c];
-    y[1] = ip[(int)pos_in * channels + c];
+    y[1] = ip[((int)pos_in    ) * channels + c];
     y[2] = ip[((int)pos_in + 1) * channels + c];
     x_val = pos_in - (int)pos_in + 1.0;
    }
@@ -1256,12 +1250,13 @@ int roar_conv_poly3_16 (int16_t * out, int16_t * in, size_t olen, size_t ilen, i
 
    int32_t temp = (int32_t)(poly[2]*x_val*x_val + poly[1]*x_val + poly[0] + 0.5);
    /* temp could be out of bounds, so need to check this */
-   if (temp > 0x7FFE )
-    out[x * channels + c] = 0x7FFE;
-   else if (temp < -0x7FFE)
+   if (temp > 0x7FFE ) {
+    out[x * channels + c] =  0x7FFE;
+   } else if (temp < -0x7FFE) {
     out[x * channels + c] = -0x7FFE;
-   else
+   } else {
     out[x * channels + c] = (int16_t)temp;
+   }
   }
  }
  roar_mm_free(ip);
