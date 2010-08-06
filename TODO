@@ -13,7 +13,6 @@ Things we should do:
  * (0.3 O/h/P) Check for things needed to be done to support newer versions of CELT
  * (0.3 S/L/-) Clean libroardsp headers
  * (0.3 O/L/-) fix libroaryiff
- * (0.3 W/H/-) Get into Debian
  * (0.3 S/N/-) Clean and update libroarpulse
  * (0.3 S/N/-) Implement ALSA support
  * (0.3 S/L/-) Implement support for ICY Meta Data
