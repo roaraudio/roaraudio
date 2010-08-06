@@ -1164,7 +1164,7 @@ int streams_fill_mixbuffer2 (int id, struct roar_audio_info * info) {
  } else {
 //  if ( roar_conv(outdata, indata, (8*inlen_got*info->rate)/(stream_info->rate * stream_info->bits), stream_info, info) == -1 ) {
   ROAR_DBG("streams_fill_mixbuffer2(*): CALL roar_conv2(*)...");
-  if ( roar_conv2(bufdata, indata, inlen, stream_info, info, buflen) == -1 ) {
+  if ( roar_conv2(bufdata, indata, inlen, stream_info, info, outlen) == -1 ) {
    if ( bufbuf != NULL )
     roar_buffer_free(bufbuf);
    return -1;

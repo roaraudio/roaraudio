@@ -51,7 +51,15 @@
 
 #define ROAR_OUTPUT_WRITE_SIZE     1024
 
-#define ROAR_OUTPUT_CALC_OUTBUFSIZE(x)   (ROAR_OUTPUT_BUFFER_SAMPLES * (x)->channels * ((x)->bits / 8) * ((float)(x)->rate/g_sa->rate))
+//#define ROAR_OUTPUT_CALC_OUTBUFSIZE(x)   (ROAR_OUTPUT_BUFFER_SAMPLES * (x)->channels * ((x)->bits / 8) * ((float)(x)->rate/g_sa->rate))
+// First rounds the samples count, and makes sure that the outbuffer size is divisible by the framesize (channels * bits/8)
+#define ROAR_OUTPUT_CALC_OUTBUFSIZE(x)   ( \
+                                          ( \
+                                           (int)(ROAR_OUTPUT_BUFFER_SAMPLES * ((float)(x)->rate/g_sa->rate) + 0.5) \
+                                          ) * \
+                                          (x)->channels * ((x)->bits / 8) \
+                                         )
+
 #define ROAR_OUTPUT_CALC_OUTBUFSAMP(x,y) ((y) / ((x)->channels * ((x)->bits / 8)*((float)(x)->rate/g_sa->rate)))
 #define ROAR_OUTPUT_CALC_OUTBUFSIZE_MAX(x0,x1)  (ROAR_OUTPUT_BUFFER_SAMPLES                                  * \
                                                   ROAR_MAX((x0)->channels,(x1)->channels)                    * \
