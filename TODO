@@ -4,17 +4,20 @@ Things we need to do:
 
 Things we should do:
  * (*.* */*/*) add a lot other things
- * (0.3 O/h/-) Update debain init script
- * (0.3 O/n/-) better tests for libspeex{,dsp}-dev
- * (0.3 O/N/-) add support to to roard to auto select a sync stream
- * (0.3 S/N/-) do a lot work on the manpages
- * (0.3 O/h/P) Check for things needed to be done to support newer versions of CELT
- * (0.3 S/L/-) Clean libroardsp headers
- * (0.3 O/L/-) fix libroaryiff
+
+ * (0.3 O/H/-) Update debain init script
+ * (0.3 O/h/-) Implement a better way to find working driver
+ * (0.3 O/N/P) Check for things needed to be done to support newer versions of CELT
  * (0.3 S/N/-) Clean and update libroarpulse
- * (0.3 O/N/-) Implement a better way to find working driver
- * (0.3 S/N/-) Implement ALSA support
- * (0.3 S/L/-) Implement support for ICY Meta Data
+ * (0.3 O/L/-) better tests for libspeex{,dsp}-dev
+ * (0.3 S/L/-) Implement ALSA support
+
+ * (0.4 S/N/-) do a lot work on the manpages
+ * (0.4 O/N/-) add support to to roard to auto select a sync stream
+ * (0.4 O/L/-) fix libroaryiff
+ * (0.4 S/L/-) Clean libroardsp headers
+ * (0.4 S/L/-) Implement support for ICY Meta Data
+
  * (1.0 S/h/-) impelemnt RTS/SDP/SAP
  * (1.0 O/N/-) Clean up unused parts in plugins/
  * (1.0 S/L/-) add RAUM support
