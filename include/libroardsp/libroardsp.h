@@ -46,6 +46,7 @@ __BEGIN_DECLS
 #include "fader.h"
 #include "mixer.h"
 #include "amp.h"
+#include "resampler_poly3.h"
 #include "convert.h"
 #include "midside.h"
 #include "point.h"

@@ -2,6 +2,7 @@
 
 /*
  *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008-2010
+ *      Copyright (C) Hans-Kristian 'maister' Arntzen - 2010
  *
  *  This file is part of libroar a part of RoarAudio,
  *  a cross-platform sound system for both, home and professional use.
@@ -621,11 +622,17 @@ int roar_conv_rate_SRC   (void * out, void * in, int samples, int from, int to, 
 #endif
 }
 
-int roar_conv_rate2      (void * out, void * in, int samples, int outsamples, int bits, int channels) {
+int roar_conv_rate2      (void * out, void * in, int outsamples, int samples, int bits, int channels) {
  ROAR_DBG("roar_conv_rate2(out=%p, in=%p, samples=%i, outsamples=%i, bits=%i, channels=%i) = ?", out, in, samples, outsamples, bits, channels);
  switch (bits) {
+  case  8:
+    return roar_conv_poly3_8(out, in, outsamples, samples, channels);
+   break;
   case 16:
     return roar_conv_poly3_16(out, in, outsamples, samples, channels);
+   break;
+  case 32:
+    return roar_conv_poly3_32(out, in, outsamples, samples, channels);
    break;
  }
  return -1;
@@ -1000,7 +1007,7 @@ int roar_conv2(void * out, void * in,
                struct roar_audio_info * from, struct roar_audio_info * to,
                size_t bufsize) {
  size_t samples;
- size_t needed_buffer;
+// size_t needed_buffer;
  void   * cin = in;
  struct roar_audio_info cinfo;
  int    need_signed = 0;
@@ -1105,7 +1112,7 @@ int roar_conv2(void * out, void * in,
 
   ROAR_DBG("roar_conv2(*): outsamples=%llu", (long long unsigned int)outsamples);
 
-  if ( roar_conv_rate2(out, cin, samples, outsamples, cinfo.bits, cinfo.channels) == -1 )
+  if ( roar_conv_rate2(out, cin, outsamples, samples, cinfo.bits, cinfo.channels) == -1 )
    return -1;
 
   cin            = out;
@@ -1214,75 +1221,6 @@ int roar_conv_poly4_16s (int16_t * out, int16_t * in, size_t olen, size_t ilen, 
 
  printf("io=%i\n", io);
 
- return 0;
-}
-
-/***********************************/
-// ilen and olen are in samples, not frames.
-int roar_conv_poly3_16 (int16_t * out, int16_t * in, size_t olen, size_t ilen, int channels) {
- float ratio = (float)olen / (float)ilen;
- int16_t *ip;
- int c, x;
- float pos_in;
- float poly[3];
- float y[3];
- float x_val;
- int32_t temp;
-
- /* Can't create poly out of less than 3 samples in each channel. */
- if ( ilen < 3 * channels )
-  return -1;
-
- ip = roar_mm_malloc(ilen * sizeof(int16_t));
- if ( ip == NULL )
-  return -1;
-
- memcpy(ip, in, ilen * sizeof(int16_t));
-
- olen /= channels;
-
- for (x = 0; x < olen; x++) {
-  for (c = 0; c < channels; c++) {
-   pos_in = (float)x / ratio;
-
-   if ( (int)pos_in == 0 ) {
-    y[0] = ip[0 * channels + c];
-    y[1] = ip[1 * channels + c];
-    y[2] = ip[2 * channels + c];
-    x_val = pos_in;
-    roar_math_mkpoly_3x3(poly, y);
-   } else if ( (int)pos_in + 1 >= ilen/channels ) {
-    /* If we're at the end of the block, we will need to interpolate against a value that is not yet known.
-     * We will assume this value, by linearly extrapolating the two preceding values. From causual testing, this is not audible. */
-    y[0] = ip[((int)pos_in - 1) * channels + c];
-    y[1] = ip[((int)pos_in    ) * channels + c];
-
-    // we create a 2x2 poly here and set the 3rd coefficient to zero to build a 3x3 poly
-    roar_math_mkpoly_2x2(poly, y);
-    poly[2] = 0;
-    x_val = pos_in - (int)pos_in + 1.0;
-   } else {
-    y[0] = ip[((int)pos_in - 1) * channels + c];
-    y[1] = ip[((int)pos_in    ) * channels + c];
-    y[2] = ip[((int)pos_in + 1) * channels + c];
-    x_val = pos_in - (int)pos_in + 1.0;
-    roar_math_mkpoly_3x3(poly, y);
-   }
-
-
-   temp = (float)(poly[2]*x_val*x_val + poly[1]*x_val + poly[0] + 0.5);
-   /* temp could be out of bounds, so need to check this */
-   if (temp > 0x7FFE ) {
-    out[x * channels + c] =  0x7FFE;
-   } else if (temp < -0x7FFF) {
-    out[x * channels + c] = -0x7FFF;
-   } else {
-    out[x * channels + c] = (int16_t)temp;
-   }
-  }
- }
-
- roar_mm_free(ip);
  return 0;
 }
 
