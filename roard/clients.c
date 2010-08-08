@@ -500,7 +500,21 @@ int clients_check     (int id) {
       rv = emul_rsound_check_client(id, NULL);
      rv = 0; // restore
     } else { // in case of error delete the client
-     rv = clients_delete(id);
+     if (
+#ifdef EAGAIN
+          errno != EAGAIN      ||
+#endif
+#ifdef EWOULDBLOCK
+          errno != EWOULDBLOCK ||
+#endif
+#ifdef EINTR
+          errno != EINTR       ||
+#endif
+          0 ) {
+      rv = clients_delete(id);
+     } else {
+      rv = 0;
+     }
     }
    break;
 #endif
