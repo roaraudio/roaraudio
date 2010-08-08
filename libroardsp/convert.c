@@ -353,9 +353,7 @@ int roar_conv_chans_2to116  (void * out, void * in, int samples) {
 
  ROAR_DBG("roar_conv_chans_2to116(out=%p, in=%p, samples=%i) = ?", out, in, samples);
 
- samples -= 2;
-
- for (h = (i = samples) / 2; i >= 0; i -= 2, h--) {
+ for (h = i = 0; i < samples; i += 2, h++) {
   ROAR_DBG("roar_conv_chans_2to116(out=%p, in=%p, samples=%i): op[%i] = (ip[%i] + ip[%i])/2", out, in, samples, h, i, i+1);
   op[h] = ((int)ip[i + 0] + (int)ip[i + 1]) / 2;
  }
@@ -1093,6 +1091,20 @@ int roar_conv2(void * out, void * in,
  if ( from->rate != to->rate ) {
   outsamples = bufsize/(cinfo.bits/8);
 
+  ROAR_DBG("roar_conv2(*): outsamples=%llu", (long long unsigned int)outsamples);
+
+  if ( cinfo.channels != to->channels ) {
+   outsamples *= cinfo.channels;
+   outsamples /= to->channels;
+  }
+
+  if ( cinfo.bits != to->bits ) {
+   outsamples *= cinfo.bits;
+   outsamples /= to->bits;
+  }
+
+  ROAR_DBG("roar_conv2(*): outsamples=%llu", (long long unsigned int)outsamples);
+
   if ( roar_conv_rate2(out, cin, samples, outsamples, cinfo.bits, cinfo.channels) == -1 )
    return -1;
 
@@ -1139,6 +1151,8 @@ int roar_conv2(void * out, void * in,
   }
   cin = out;
  }
+
+ ROAR_DBG("roar_conv2(*): samples=%llu", (long long unsigned int)samples);
 
  ROAR_DBG("roar_conv2(*) = 0");
  return 0;
