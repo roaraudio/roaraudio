@@ -1089,7 +1089,7 @@ int roar_conv2(void * out, void * in,
 
 //--//
  if ( from->rate != to->rate ) {
-  outsamples = bufsize/(cinfo.bits/8);
+  outsamples = bufsize;
 
   ROAR_DBG("roar_conv2(*): outsamples=%llu", (long long unsigned int)outsamples);
 
@@ -1102,6 +1102,8 @@ int roar_conv2(void * out, void * in,
    outsamples *= cinfo.bits;
    outsamples /= to->bits;
   }
+
+  outsamples /= cinfo.bits/8;
 
   ROAR_DBG("roar_conv2(*): outsamples=%llu", (long long unsigned int)outsamples);
 
