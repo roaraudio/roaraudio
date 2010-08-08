@@ -943,7 +943,9 @@ int streams_set_mixer    (int id) {
    if ( (pmss = g_streams[i]) != NULL ) {
     if ( streams_get_flag(i, ROAR_FLAG_PASSMIXER) == 1 ) {
      if ( streams_get_subsys(i) == subsys ) {
-      memcpy(&(pmss->mixer), &(ss->mixer), sizeof(struct roar_mixer_settings));
+      if ( &(pmss->mixer) != &(ss->mixer) ) {
+       memcpy(&(pmss->mixer), &(ss->mixer), sizeof(struct roar_mixer_settings));
+      }
 
       // update hwmixers and the like but do not set mixer value recrusivly.
       streams_reset_flag(i, ROAR_FLAG_PASSMIXER);
@@ -1157,7 +1159,7 @@ int streams_fill_mixbuffer2 (int id, struct roar_audio_info * info) {
  // TODO: this only works in case a we have a amp for the given stream parameters.
  if ( !streams_get_flag(id, ROAR_FLAG_HWMIXER) && !streams_get_flag(id, ROAR_FLAG_PASSMIXER) ) {
   ROAR_DBG("streams_fill_mixbuffer2(*): CALL roar_amp_pcm(*)...");
-  if ( roar_amp_pcm(outdata, info->bits, indata, 8*inlen / stream_info->bits, stream_info->channels, &(ss->mixer)) == -1 )
+  if ( roar_amp_pcm(outdata, stream_info->bits, indata, 8*inlen / stream_info->bits, stream_info->channels, &(ss->mixer)) == -1 )
    return -1;
  }
 
