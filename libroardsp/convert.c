@@ -301,7 +301,7 @@ int roar_conv_chans_nto18  (void * out, void * in, int samples, int from) {
 
  samples /= from;
 
- for (i = samples - 1; i >= 0; i--) {
+ for (i = 0; i < samples; i++) {
   s  = 0;
 
   for (c = 0; c < from; c++)
@@ -318,9 +318,7 @@ int roar_conv_chans_2to18  (void * out, void * in, int samples) {
  int8_t * ip = (int8_t*) in, * op = (int8_t*) out;
  int i, h;
 
- samples -= 2;
-
- for (h = (i = samples) / 2; i >= 0; i -= 2, h--)
+ for (h = i = 0; i < samples; i += 2, h++)
   op[h] = ((int)ip[i + 0] + (int)ip[i + 1]) / 2;
 
  return 0;
@@ -334,7 +332,7 @@ int roar_conv_chans_nto116 (void * out, void * in, int samples, int from) {
 
  samples /= from;
 
- for (i = samples - 1; i >= 0; i--) {
+ for (i = 0; i < samples; i++) {
   s  = 0;
 
   for (c = 0; c < from; c++)

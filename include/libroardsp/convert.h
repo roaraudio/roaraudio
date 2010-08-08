@@ -62,10 +62,10 @@ int roar_conv_chans_1ton16 (void * out, void * in, int samples, int to);   // ye
 int roar_conv_chans_1to28  (void * out, void * in, int samples);           // yes          yes     no
 int roar_conv_chans_1to216 (void * out, void * in, int samples);           // yes          yes     no
 
-int roar_conv_chans_nto18  (void * out, void * in, int samples, int from); // yes          ?       yes
-int roar_conv_chans_nto116 (void * out, void * in, int samples, int from); // yes          ?       yes
+int roar_conv_chans_nto18  (void * out, void * in, int samples, int from); // yes          yes?    yes
+int roar_conv_chans_nto116 (void * out, void * in, int samples, int from); // yes          yes?    yes
 
-int roar_conv_chans_2to18  (void * out, void * in, int samples);           // yes          yes?    no
+int roar_conv_chans_2to18  (void * out, void * in, int samples);           // yes          yes     no
 int roar_conv_chans_2to116 (void * out, void * in, int samples);           // yes          yes     no
 int roar_conv_chans_2to38  (void * out, void * in, int samples);           // no           ?       yes
 int roar_conv_chans_2to316 (void * out, void * in, int samples);           // yes          yes     yes
