@@ -1822,13 +1822,19 @@ int fcntl(int fd, int cmd, ...) {
   case F_SETLK:
   case F_SETLKW:
 #ifdef F_GETLK64
+#if F_GETLK64 != F_GETLK
   case F_GETLK64:
 #endif
+#endif
 #ifdef F_SETLK64
+#if F_SETLK64 != F_SETLK
   case F_SETLK64:
 #endif
+#endif
 #ifdef F_SETLKW64
+#if F_SETLKW64 != F_SETLKW
   case F_SETLKW64:
+#endif
 #endif
     type = POINTER;
    break;
