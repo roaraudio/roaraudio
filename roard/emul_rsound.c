@@ -192,7 +192,7 @@ int emul_rsound_vsend_msg(struct emul_rsound_msg * msg, struct roar_vio_calls * 
  if ( msg == NULL || vio == NULL )
   return -1;
 
- snprintf(msg->header, EMUL_RSOUND_MSG_HEADER_LEN+1, "RSD%5d", msg->datalen);
+ snprintf(msg->header, EMUL_RSOUND_MSG_HEADER_LEN+1, "RSD%5d", (int)msg->datalen);
 
  ret = roar_vio_write(vio, msg->header, EMUL_RSOUND_MSG_HEADER_LEN);
 
@@ -281,14 +281,13 @@ int emul_rsound_check_client(int client, struct roar_vio_calls * vio) {
   strncpy(msg.data, " CLOSECTL OK", EMUL_RSOUND_MSG_DATA_LEN);
   msg.datalen = 12; //strlen(" CLOSECTL OK");
 
-  if ( emul_rsound_vsend_msg(&msg, vio) == -1 ) {
+  if ( emul_rsound_vsend_msg(&msg, vio) == -1 )
    return clients_delete(client);
-  }
 
   streamid = c->streams[0];
-  if ( client_stream_exec(client, streamid) == -1 ) {
+
+  if ( client_stream_exec(client, streamid) == -1 )
    return clients_delete(client);
-  }
 
   return 0;
  } else {
