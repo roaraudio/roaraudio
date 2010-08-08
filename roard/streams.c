@@ -1154,6 +1154,13 @@ int streams_fill_mixbuffer2 (int id, struct roar_audio_info * info) {
  }
 #endif
 
+ // TODO: this only works in case a we have a amp for the given stream parameters.
+ if ( !streams_get_flag(id, ROAR_FLAG_HWMIXER) && !streams_get_flag(id, ROAR_FLAG_PASSMIXER) ) {
+  ROAR_DBG("streams_fill_mixbuffer2(*): CALL roar_amp_pcm(*)...");
+  if ( roar_amp_pcm(outdata, info->bits, indata, 8*inlen / stream_info->bits, stream_info->channels, &(ss->mixer)) == -1 )
+   return -1;
+ }
+
  // check codec, bits, channels, rate...
  if ( is_the_same ) {
   if ( indata != outdata )
@@ -1176,12 +1183,6 @@ int streams_fill_mixbuffer2 (int id, struct roar_audio_info * info) {
  if ( bufbuf != NULL ) {
   memcpy(outdata, bufdata, outlen);
   roar_buffer_free(bufbuf);
- }
-
- if ( !streams_get_flag(id, ROAR_FLAG_HWMIXER) && !streams_get_flag(id, ROAR_FLAG_PASSMIXER) ) {
-  ROAR_DBG("streams_fill_mixbuffer2(*): CALL roar_amp_pcm(*)...");
-  if ( roar_amp_pcm(outdata, info->bits, outdata, 8*outlen / info->bits, info->channels, &(ss->mixer)) == -1 )
-   return -1;
  }
 
  if ( streams_get_flag(id, ROAR_FLAG_ANTIECHO) ) {
