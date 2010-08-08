@@ -56,34 +56,35 @@ int roar_conv_bits_32to24 (void * out, void * in, int samples);
 
 int roar_conv_chans (void * out, void * in, int samples, int from, int to, int bits);
 
-                                                                           // implmented?  working
-int roar_conv_chans_1ton8  (void * out, void * in, int samples, int to);   // yes          ?
-int roar_conv_chans_1ton16 (void * out, void * in, int samples, int to);   // yes          yes
-int roar_conv_chans_1to28  (void * out, void * in, int samples);           // yes          yes
-int roar_conv_chans_1to216 (void * out, void * in, int samples);           // yes          yes
+                                                                           // implmented?  working Needed?
+int roar_conv_chans_1ton8  (void * out, void * in, int samples, int to);   // yes          ?       yes
+int roar_conv_chans_1ton16 (void * out, void * in, int samples, int to);   // yes          yes     yes
+int roar_conv_chans_1to28  (void * out, void * in, int samples);           // yes          yes     no
+int roar_conv_chans_1to216 (void * out, void * in, int samples);           // yes          yes     no
 
-int roar_conv_chans_nto18  (void * out, void * in, int samples, int from); // yes          ?
-int roar_conv_chans_nto116 (void * out, void * in, int samples, int from); // yes          ?
+int roar_conv_chans_nto18  (void * out, void * in, int samples, int from); // yes          ?       yes
+int roar_conv_chans_nto116 (void * out, void * in, int samples, int from); // yes          ?       yes
 
-int roar_conv_chans_2to18  (void * out, void * in, int samples);           // yes          yes
-int roar_conv_chans_2to116 (void * out, void * in, int samples);           // yes          yes
-int roar_conv_chans_2to38  (void * out, void * in, int samples);           // ?            ?
-int roar_conv_chans_2to316 (void * out, void * in, int samples);           // yes          yes
-int roar_conv_chans_2to48  (void * out, void * in, int samples);           // ?            ?
-int roar_conv_chans_2to416 (void * out, void * in, int samples);           // yes          yes
-int roar_conv_chans_2to58  (void * out, void * in, int samples);           // ?            ?
-int roar_conv_chans_2to516 (void * out, void * in, int samples);           // yes          yes
-int roar_conv_chans_2to68  (void * out, void * in, int samples);           // ?            ?
-int roar_conv_chans_2to616 (void * out, void * in, int samples);           // yes          yes
+int roar_conv_chans_2to18  (void * out, void * in, int samples);           // yes          yes?    no
+int roar_conv_chans_2to116 (void * out, void * in, int samples);           // yes          yes     no
+int roar_conv_chans_2to38  (void * out, void * in, int samples);           // no           ?       yes
+int roar_conv_chans_2to316 (void * out, void * in, int samples);           // yes          yes     yes
+int roar_conv_chans_2to48  (void * out, void * in, int samples);           // no           ?       yes
+int roar_conv_chans_2to416 (void * out, void * in, int samples);           // yes          yes     yes
+int roar_conv_chans_2to58  (void * out, void * in, int samples);           // no           ?       yes
+int roar_conv_chans_2to516 (void * out, void * in, int samples);           // yes          yes     yes
+int roar_conv_chans_2to68  (void * out, void * in, int samples);           // no           ?       yes
+int roar_conv_chans_2to616 (void * out, void * in, int samples);           // yes          yes     yes
 
-int roar_conv_chans_3to28  (void * out, void * in, int samples);           // ?            ?
-int roar_conv_chans_3to216 (void * out, void * in, int samples);           // ?            ?
-int roar_conv_chans_4to28  (void * out, void * in, int samples);           // ?            ?
-int roar_conv_chans_4to216 (void * out, void * in, int samples);           // ?            ?
-int roar_conv_chans_5to28  (void * out, void * in, int samples);           // ?            ?
-int roar_conv_chans_5to216 (void * out, void * in, int samples);           // ?            ?
-int roar_conv_chans_6to28  (void * out, void * in, int samples);           // ?            ?
-int roar_conv_chans_6to216 (void * out, void * in, int samples);           // ?            ?
+// FIXME: in this block we need to add a lot funcs more
+int roar_conv_chans_3to28  (void * out, void * in, int samples);           // no           ?       yes
+int roar_conv_chans_3to216 (void * out, void * in, int samples);           // no           ?       yes
+int roar_conv_chans_4to28  (void * out, void * in, int samples);           // no           ?       yes
+int roar_conv_chans_4to216 (void * out, void * in, int samples);           // yes          ?       yes
+int roar_conv_chans_5to28  (void * out, void * in, int samples);           // no           ?       yes
+int roar_conv_chans_5to216 (void * out, void * in, int samples);           // no           ?       yes
+int roar_conv_chans_6to28  (void * out, void * in, int samples);           // no           ?       yes
+int roar_conv_chans_6to216 (void * out, void * in, int samples);           // no           ?       yes
 
 int roar_conv_rate       (void * out, void * in, int samples, int from, int to, int bits, int channels);
 int roar_conv_rate_8     (void * out, void * in, int samples, int from, int to, int channels);
