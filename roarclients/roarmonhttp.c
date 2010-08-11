@@ -31,6 +31,23 @@
 
 #define BUFSIZE 1024
 
+void usage (void) {
+ printf("roarmonhttp [OPTIONS]...\n");
+
+ printf("\nOptions:\n\n");
+
+ printf("  --server    SERVER    - Set server hostname\n"
+        "  --rate  -R  RATE      - Set sample rate\n"
+        "  --bits  -B  BITS      - Set bits per sample\n"
+        "  --chans -C  CHANNELS  - Set number of channels\n"
+        "  --codec     CODEC     - Set the codec\n"
+        "  --rel-id ID           - Set ID of relative stream\n"
+        "  --inetd               - Start in inetd mode (STDIN and STDOUT connected to socket)\n"
+        "  --help                - Show this help\n"
+       );
+
+}
+
 void print_header (int codec, int rate, int channels) {
  char * mime = "application/octet-stream";
 
@@ -46,7 +63,7 @@ void print_header (int codec, int rate, int channels) {
  printf("Content-type: %s\r\n", mime);
  printf("ice-audio-info: ice-samplerate=%i;ice-channels=%i\r\n", rate, channels);
  printf("icy-pub:0\r\n");
- printf("Server: RoarAudio (roarmonhttp $Revision: 1.20 $)\r\n");
+ printf("Server: RoarAudio (roarmonhttp $Revision: 1.21 $)\r\n");
  printf("\r\n");
 
  fflush(stdout);
@@ -209,6 +226,7 @@ int main (int argc, char * argv[]) {
 // int    codec    = ROAR_CODEC_DEFAULT;
  char * server   = NULL;
  int    fh;
+ int    i;
  char * c, * k, * v;
 #ifdef ROAR_HAVE_STRTOK_R
  char * sp0 = NULL, * sp1 = NULL;
@@ -222,14 +240,36 @@ int main (int argc, char * argv[]) {
  alarm(0); // reset alarm timers from httpd 
 #endif
 
- if ( argc > 1 )
-  if ( ! strcmp(argv[1], "--inetd") )
+ for (i = 1; i < argc; i++) {
+  k = argv[i];
+  if ( !strcmp(k, "--inetd") ) {
 #ifdef _CAN_SET_ENV
    if ( (dir = parse_http(&gopher)) == -1 )
     return 1;
 #else
    return 1;
 #endif
+  } else if ( !strcmp(k, "--server") ) {
+   roar_libroar_set_server(argv[++i]);
+  } else if ( !strcmp(k, "--codec") ) {
+   codec = roar_str2codec(argv[++i]);
+  } else if ( !strcmp(k, "--rate") || !strcmp(k, "-r") || !strcmp(k, "-R") ) {
+   rate = atoi(argv[++i]);
+  } else if ( !strcmp(k, "--bits") || !strcmp(k, "-B") ) {
+   bits = atoi(argv[++i]);
+  } else if ( !strcmp(k, "--channels") || !strcmp(k, "--chans") || !strcmp(k, "-C") ) {
+   channels = atoi(argv[++i]);
+  } else if ( !strcmp(k, "--rel-id") ) {
+   rel_id = atoi(argv[++i]);
+  } else if ( !strcmp(k, "--help") && !strcmp(k, "-h") ) {
+   usage();
+   return 0;
+  } else {
+   ROAR_ERR("Unknown parameter");
+   usage();
+   return 1;
+  }
+ }
 
  c = getenv("QUERY_STRING");
  if ( c == NULL )
