@@ -63,7 +63,7 @@ void print_header (int codec, int rate, int channels) {
  printf("Content-type: %s\r\n", mime);
  printf("ice-audio-info: ice-samplerate=%i;ice-channels=%i\r\n", rate, channels);
  printf("icy-pub:0\r\n");
- printf("Server: RoarAudio (roarmonhttp $Revision: 1.21 $)\r\n");
+ printf("Server: RoarAudio (roarmonhttp $Revision: 1.22 $)\r\n");
  printf("\r\n");
 
  fflush(stdout);
@@ -265,7 +265,7 @@ int main (int argc, char * argv[]) {
    usage();
    return 0;
   } else {
-   ROAR_ERR("Unknown parameter");
+   ROAR_ERR("Unknown parameter: %s", k);
    usage();
    return 1;
   }
