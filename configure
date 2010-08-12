@@ -777,7 +777,7 @@ test_version () {
  echo $_ver
 
  _ver=$(echo $_ver | tr .a-z _A-Z)
- echo "$DEF_$_ver" >&3
+ echo "#define ${DEF}_$_ver" >&3
 }
 
 test_pa_type () {
@@ -986,7 +986,7 @@ fi
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.271 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.272 $ of RoarAudio
  */
 
 EOF
