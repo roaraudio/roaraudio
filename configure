@@ -760,6 +760,26 @@ test_func_defmake () {
 
 }
 
+test_version () {
+ DEF="$1"
+ NAME="$2"
+ PKGNAME="$3"
+
+ echo -n "checking for version of $NAME... "
+
+ _ver=$($PKG_CONFIG --modversion $PKGNAME 2> /dev/null)
+
+ if [ "$_ver" = '' ]
+ then
+  _ver=unknown
+ fi
+
+ echo $_ver
+
+ _ver=$(echo $_ver | tr .a-z _A-Z)
+ echo "$DEF_$_ver" >&3
+}
+
 test_pa_type () {
  DEF="$1"
  NAME="$2"
@@ -966,7 +986,7 @@ fi
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.270 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.271 $ of RoarAudio
  */
 
 EOF
@@ -1135,6 +1155,10 @@ test_lib_defmake ROAR_HAVE_LIBWSOCK32    %            WinSockP0     wsock32    -
 test_lib_defmake ROAR_HAVE_LIBWS2_32     %            WinSockP1     ws2_32     -- winsock2.h
 test_lib_defmake ROAR_HAVE_LIBX11        %            X11           X11        -- X11/Xlib.h X11/Xatom.h
 test_lib_defmake ROAR_HAVE_GTK_P_2_0     %            GTK+2.0       gtk+-2.0/t -- gtk/gtk.h gdk/gdkkeysyms.h
+
+echo >&3
+
+test_version ROAR_HAVE_CELT_VERSION libcelt celt
 
 echo >&3
 
