@@ -2,6 +2,7 @@ v. 0.3beta8 - ?
 	* Fixed locking bug with libroaross and Audacity
 	* Added working resampler code thanks to maister.
 	  (Closes: DEB#592017)
+	* Changed way to find default driver.
 
 v. 0.3beta7 - Fri Jul 23 2010 15:11 CEST
 	Prereleases: 0: Mon Jul 19 2010 12:58 CEST;
