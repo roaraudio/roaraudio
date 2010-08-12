@@ -502,15 +502,15 @@ int clients_check     (int id) {
     } else { // in case of error delete the client
      if (
 #ifdef EAGAIN
-          errno != EAGAIN      ||
+          errno != EAGAIN      &&
 #endif
 #ifdef EWOULDBLOCK
-          errno != EWOULDBLOCK ||
+          errno != EWOULDBLOCK &&
 #endif
 #ifdef EINTR
-          errno != EINTR       ||
+          errno != EINTR       &&
 #endif
-          0 ) {
+          1 ) {
       rv = clients_delete(id);
      } else {
       rv = 0;
