@@ -26,6 +26,10 @@
 #include "roard.h"
 #ifdef ROAR_HAVE_LIBCELT
 
+#ifdef ROAR_HAVE_CELT_VERSION_0_7_1
+typedef celt_int16 celt_int16_t;
+#endif
+
 int cf_celt_open(CODECFILTER_USERDATA_T * inst, int codec,
                                             struct roar_stream_server * info,
                                             struct roar_codecfilter   * filter) {
@@ -80,8 +84,12 @@ int cf_celt_open(CODECFILTER_USERDATA_T * inst, int codec,
   free(self);
   return -1;
  }
- 
+
+#ifdef ROAR_HAVE_CELT_VERSION_0_7_1
+ self->mode                 = celt_mode_create(s->info.rate, self->frame_size, NULL);
+#else
  self->mode                 = celt_mode_create(s->info.rate, s->info.channels, self->frame_size, NULL);
+#endif
 
  if ( !self->mode ) {
   free(self);
@@ -89,12 +97,25 @@ int cf_celt_open(CODECFILTER_USERDATA_T * inst, int codec,
  }
 
  if ( s->dir == ROAR_DIR_PLAY ) {
+#ifdef ROAR_HAVE_CELT_VERSION_0_7_1
+   self->decoder = celt_decoder_create(self->mode, s->info.channels, NULL);
+#else
    self->decoder = celt_decoder_create(self->mode);
+#endif
  } else if ( s->dir == ROAR_DIR_MONITOR || s->dir == ROAR_DIR_OUTPUT ) {
+#ifdef ROAR_HAVE_CELT_VERSION_0_7_1
+   self->encoder = celt_encoder_create(self->mode, s->info.channels, NULL);
+#else
    self->encoder = celt_encoder_create(self->mode);
+#endif
  } else if ( s->dir == ROAR_DIR_BIDIR ) {
+#ifdef ROAR_HAVE_CELT_VERSION_0_7_1
+   self->decoder = celt_decoder_create(self->mode, s->info.channels, NULL);
+   self->encoder = celt_encoder_create(self->mode, s->info.channels, NULL);
+#else
    self->decoder = celt_decoder_create(self->mode);
    self->encoder = celt_encoder_create(self->mode);
+#endif
  } else {
   celt_mode_destroy(self->mode);
   free(self);

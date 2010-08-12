@@ -322,7 +322,12 @@
 #define ROAR_SPEEX_MODE_WB         2
 #define ROAR_SPEEX_MODE_UWB        3
 
+#ifdef ROAR_HAVE_CELT_VERSION_0_7_1
+#define ROAR_CELT_MAGIC            "RoarCELT1"
+#else
 #define ROAR_CELT_MAGIC            "RoarCELT0"
+#endif
+
 #define ROAR_CELT_MAGIC_LEN        9
 
 struct roar_audio_info {

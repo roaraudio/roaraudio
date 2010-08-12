@@ -30,6 +30,10 @@
 #define _16BIT (16/8)
 #define _SIZE_LEN 2
 
+#ifdef ROAR_HAVE_CELT_VERSION_0_7_1
+typedef celt_int16 celt_int16_t;
+#endif
+
 int roar_xcoder_celt_init       (struct roar_xcoder * state) {
  struct roar_xcoder_celt * self = roar_mm_malloc(sizeof(struct roar_xcoder_celt));
  struct roar_audio_info  * info = &(state->info.pcm);
@@ -57,7 +61,11 @@ int roar_xcoder_celt_init       (struct roar_xcoder * state) {
   return -1;
  }
 
+#ifdef ROAR_HAVE_CELT_VERSION_0_7_1
+ self->mode                 = celt_mode_create(info->rate, self->frame_size, NULL);
+#else
  self->mode                 = celt_mode_create(info->rate, info->channels, self->frame_size, NULL);
+#endif
 
  if ( self->mode == NULL ) {
   roar_mm_free(self->iobuffer);
@@ -66,13 +74,21 @@ int roar_xcoder_celt_init       (struct roar_xcoder * state) {
  }
 
  if (state->encode) {
+#ifdef ROAR_HAVE_CELT_VERSION_0_7_1
+  self->encoder = celt_encoder_create(self->mode, info->channels, NULL);
+#else
   self->encoder = celt_encoder_create(self->mode);
+#endif
   if ( self->encoder == NULL ) {
    roar_xcoder_celt_uninit(state);
    return -1;
   }
  } else {
+#ifdef ROAR_HAVE_CELT_VERSION_0_7_1
+  self->decoder = celt_decoder_create(self->mode, info->channels, NULL);
+#else
   self->decoder = celt_decoder_create(self->mode);
+#endif
   if ( self->decoder == NULL ) {
    roar_xcoder_celt_uninit(state);
    return -1;
