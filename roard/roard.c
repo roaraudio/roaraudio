@@ -744,26 +744,20 @@ int update_stream_flags (char * str) {
 #else
 int add_default_output (char * drv, char * dev, char * opts, int prim, int count) {
  char * drvs[] = {
-#if defined(ROAR_HAVE_OSS_BSD) || defined(ROAR_HAVE_OSS)
-  "oss",
-#endif
-#ifdef ROAR_HAVE_LIBWINMM
-  "wmm",
-#endif
-#ifdef ROAR_HAVE_LIBAO
-  "ao",
-#endif
-#ifdef ROAR_HAVE_ESD
-  "esd",
-#endif
-#ifdef ROAR_HAVE_DRIVER_SYSCLOCK
-  "sysclock",
-#endif
-  "null",
+  // native and pseudo-native interfaces:
+  "oss", "alsa", "sndio", "wmm",
+  // sound libs:
+  "ao", "portaudio",
+  // other sound systems:
+  "esd", "rsound", "pulsesimple", "roar",
+  // specal buildins:
+  "sysclock", "null",
+  // terminator:
   NULL
  };
  int i;
  int ret;
+ int _alive;
 
  if ( drv != NULL )
   return add_output(drv, dev, opts, prim, count);
@@ -774,9 +768,13 @@ int add_default_output (char * drv, char * dev, char * opts, int prim, int count
 
  for (i = 0; drvs[i] != NULL; i++) {
   ROAR_INFO("add_default_output(*): trying driver %s", ROAR_DBG_INFO_INFO, drvs[i]);
+  _alive = alive; // save global alive setting
+
   ret = add_output(drvs[i], dev, opts, prim, count);
   if ( ret != -1 )
    return ret;
+
+  alive = _alive; // restore global alive setting
   ROAR_INFO("add_default_output(*): Driver %s faild to load", ROAR_DBG_INFO_VERBOSE, drvs[i]);
  }
 
