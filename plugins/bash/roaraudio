@@ -1,0 +1,751 @@
+#
+#  /etc/bash_completion.d/roaraudio
+#
+# Bash completion function for the RoarAudio.
+# http://roaraudio.keep-cool.org/
+#
+# Philipp "ph3-der-loewe" Schafft <lion@lion.leolix.org>
+# --
+#
+
+# Tools supported completly:
+#roarctl
+#roard
+#roarvumeter
+#roarcat
+#roarmon
+#roarinterconnect
+#roarcatplay
+#roarradio
+#roarvorbis
+#roarbidir
+#roarphone
+#roarcatvio
+#roarcatpassfh
+#roarcatsendfile
+#roarcatad
+#roarcat2sock
+#roartypes
+#roarsocktypes
+
+# Tools supported partly:
+#roarify
+
+# Tools not supported at all:
+#roarfilt
+#roarfish
+#roarlight
+#roarshout
+#roarsin
+
+# Tools not supported at all and unimportent:
+#roarfctest
+#roarsockconnect
+
+# Unsupported devel tools:
+#roar-config
+
+# The rest:
+#roarmonhttp
+
+_roar_no_opts() {
+    COMPREPLY=()
+}
+complete -F _roar_no_opts roarsocktypes roartypes
+
+_roar_server() {
+    COMPREPLY=( $(_roar_server_exec "$1") )
+}
+
+_roar_server_exec() {
+ local cur link words nodes stdsocks x11sock
+ cur="$1"
+ link=$(readlink /etc/roarserver 2> /dev/null)
+
+ nodes=$(grep '^\(node\|executor\)' /etc/decnet.conf 2> /dev/null | sed 's/^.*\tname\t\t*//; s/\t.*$//; s/$/::/')
+
+ stdsocks="/tmp/roar $HOME/.roar localhost 0.0";
+
+ x11sock=$(xprop -root 2>/dev/null | grep '^ROAR_SERVER(STRING) = ' | sed 's/^[^"]*"//; s/"$//')
+
+ words="$link $nodes $stdsocks $x11sock +slp +fork"
+
+ compgen -A hostname $cur
+ compgen -W "$words" $cur
+}
+
+_roar_jumbo_mtu() {
+    COMPREPLY=($(compgen -W "750 1000 1100 1200 1300" -- "${COMP_WORDS[COMP_CWORD]}"))  
+}
+
+_roar_rate() {
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    COMPREPLY=($(compgen -W "8000 16000 32000 11025 22050 44100 48000 96000" -- ${cur}))  
+}
+
+_roar_bits() {
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    COMPREPLY=($(compgen -W "8 16 24 32" -- ${cur}))  
+}
+
+_roar_channels() {
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    COMPREPLY=($(compgen -W "1 2 3 4 5 6 7 8 9" -- ${cur}))  
+}
+
+_roar_codec() {
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    words=$(roard --list-cf | tail -n +4 | sed 's/^ *//; s/ .*$//')
+    COMPREPLY=($(compgen -W "${words} default pcm" -- ${cur}))  
+}
+
+_roar_flag() {
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    COMPREPLY=($(compgen -W "meta primary sync cleanmeta hwmixer pause mute mmap antiecho recsource passmixer virtual prethru immutable enhance" -- ${cur}))
+}
+
+_roar_dir() {
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    COMPREPLY=($(compgen -W "play record monitor filter output mixing meta bidir thru bridge midi_in midi_out light_in light_out raw_in raw_out complex_in complex_out rdtcs_in rdtcs_out" -- ${cur}))
+}
+
+_roar_metatype() {
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    COMPREPLY=($(compgen -W "none title album author autor artist version date license tracknumber organization description genre location contact streamurl homepage thumbnail length comment other filename fileurl server duration www woaf encoder encodedby year discid rpg_track_peak rpg_track_gain rpg_album_peak rpg_album_gain hash signalinfo audioinfo offset performer copyright" -- ${cur}))
+}
+
+_roar_baseopts() {
+    case "$1" in
+        '--rate')
+            _roar_rate
+            return 0
+            ;;
+        '--bits')
+            _roar_bits
+            return 0
+            ;;
+        '--chans')
+            _roar_channels
+            return 0
+            ;;
+        '--server')
+            _roar_server "${COMP_WORDS[COMP_CWORD]}"
+            return 0
+            ;;
+        *)
+        ;;
+    esac
+
+  return 77
+}
+
+_roar_basecodec() {
+    case "$1" in
+        '--codec')
+            _roar_codec
+            return 0
+            ;;
+        *)
+        ;;
+    esac
+
+  return 77
+}
+
+
+_roar_baseclients() {
+    local cur prev opts dirs
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    dirs="--wave --midi --light --raw --complex --rdtcs"
+    opts="$dirs --server --rate -R --bits -B --chans -C --codec --rel-id --help"
+
+    [ "${COMP_WORDS[0]}" = "roarmon" ] && opts="$opts --prethru"
+
+    _roar_baseopts  "$prev" && return 0;
+    _roar_basecodec "$prev" && return 0;
+
+    case "${prev}" in
+        '-R')
+            _roar_rate
+            return 0
+            ;;
+        '-B')
+            _roar_bits
+            return 0
+            ;;
+        '-C')
+            _roar_channels
+            return 0
+            ;;
+        *)
+        ;;
+    esac
+
+   _filedir
+   COMPREPLY=(${COMPREPLY[*]} $(compgen -W "${opts}" -- ${cur}))
+   return 0
+}
+complete -F _roar_baseclients roarcat roarmon
+
+_roarcatplay() {
+    local cur prev opts
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    opts="--server --simple --passive --background --verbose --help"
+
+    case "${COMP_WORDS[COMP_CWORD-1]}" in
+        '--server')
+            _roar_server "$cur"
+            return 0
+            ;;
+        *)
+        ;;
+    esac
+
+   _filedir
+   COMPREPLY=(${COMPREPLY[*]} $(compgen -W "${opts}" -- ${cur}))
+   return 0
+}
+complete -F _roarcatplay roarcatplay
+
+_roarvumeter() {
+    local cur prev opts
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    opts="--server --rate --bits --chans --samples --pc --db --beat --lowpass --help"
+
+    _roar_baseopts "$prev" && return 0;
+
+    case "${prev}" in
+        '--samples')
+            COMPREPLY=($(compgen -W "5000 50000" -- ${cur}))  
+            return 0
+            ;;
+        '--lowpass')
+            COMPREPLY=($(compgen -W "100 200 300 400 500" -- ${cur}))  
+            return 0
+            ;;
+        *)
+        ;;
+    esac
+
+   COMPREPLY=($(compgen -W "${opts}" -- ${cur}))
+   return 0
+}
+complete -F _roarvumeter roarvumeter
+
+_roarradio() {
+    local cur prev opts
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    opts="--server --rate --bits --chans --codec --help"
+
+    _roar_baseopts  "$prev" && return 0;
+    _roar_basecodec "$prev" && return 0;
+
+   COMPREPLY=($(compgen -W "${opts}" -- ${cur}))
+   return 0
+}
+complete -F _roarradio roarradio
+
+_roarvorbis() {
+    local cur prev opts
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    opts="--server --vclt-out --help"
+
+    case "${prev}" in
+        '--vclt-out')
+            _filedir
+            return 0
+            ;;
+        '--server')
+            _roar_server "$cur"
+            return 0
+            ;;
+        *)
+        ;;
+    esac
+
+   COMPREPLY=($(compgen -W "${opts}" -- ${cur}))
+   return 0
+}
+complete -F _roarvorbis roarvorbis
+
+
+_roarinterconnect() {
+    local cur prev opts
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    opts="--server --remote --type --rate --bits --chans --codec --help"
+
+    _roar_baseopts  "$prev" && return 0;
+    _roar_basecodec "$prev" && return 0;
+
+    case "${prev}" in
+        '--remote')
+            _roar_server "$cur"
+            return 0
+            ;;
+        '--type')
+            COMPREPLY=($(compgen -W "roar esd bidir filter transmit receive" -- ${cur}))  
+            return 0
+            ;;
+        *)
+        ;;
+    esac
+
+   COMPREPLY=($(compgen -W "${opts}" -- ${cur}))
+   return 0
+}
+complete -F _roarinterconnect roarinterconnect
+
+_roarbidir() {
+    local cur prev opts
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    opts="--server --rate --bits --chans --codec --help"
+
+    _roar_baseopts  "$prev" && return 0;
+    _roar_basecodec "$prev" && return 0;
+
+   _filedir
+   COMPREPLY=(${COMPREPLY[*]} $(compgen -W "${opts}" -- ${cur}))
+   return 0
+}
+complete -F _roarbidir roarbidir roarcatvio roarcatpassfh roarcatsendfile
+
+_roarcatad() {
+    local cur prev opts
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    opts="--server --rate --bits --chans --help"
+
+    _roar_baseopts  "$prev" && return 0;
+
+   _filedir
+   COMPREPLY=(${COMPREPLY[*]} $(compgen -W "${opts}" -- ${cur}))
+   return 0
+}
+complete -F _roarcatad roarcatad roarcat2sock
+
+_roarphone() {
+    local cur prev opts mopts
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    mopts="--m-rn --m-nick --m-email --m-hp --m-thumbn --m-loc --m-org"
+    opts="--server --jumbo-mtu --io-flush --rate --bits --chans --afi-downmix --afi-lowpass --afi-speex-prep --afi-speex-denoise --afi-speex-agc --afi-speex-vad --codec --transcode --driver --device --antiecho --threshold --help $mopts"
+
+    _roar_baseopts  "$prev" && return 0;
+    _roar_basecodec "$prev" && return 0;
+
+    case "${prev}" in
+        '--jumbo-mtu')
+            _roar_jumbo_mtu
+            return 0
+            ;;
+        '--io-flush')
+            return 0
+            ;;
+        '--afi-lowpass')
+            return 0
+            ;;
+        '--driver')
+            return 0
+            ;;
+        '--device')
+            _filedir
+            return 0
+            ;;
+        '--antiecho')
+            COMPREPLY=($(compgen -W "none simple speex roard" -- ${cur}))  
+            return 0
+            ;;
+        '--threshold')
+            return 0
+            ;;
+        '--m-rn')
+            return 0
+            ;;
+        '--m-nick')
+            COMPREPLY=($(compgen -W "$USER" -- ${cur}))  
+            return 0
+            ;;
+        '--m-email')
+            COMPREPLY=($(compgen -W "$USER@$HOSTNAME" -- ${cur}))  
+            return 0
+            ;;
+        '--m-hp')
+            return 0
+            ;;
+        '--m-thumbn')
+            return 0
+            ;;
+        '--m-loc')
+            return 0
+            ;;
+        '--m-org')
+            return 0
+            ;;
+        *)
+        ;;
+    esac
+
+   COMPREPLY=($(compgen -W "${opts}" -- ${cur}))
+   return 0
+}
+complete -F _roarphone roarphone
+
+_roarctl() {
+    local cur prev pprev opts cmds
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    pprev="--NX-COMMAND--"
+    if [ "$COMP_CWORD" -ge 2 ]
+    then
+     pprev="${COMP_WORDS[COMP_CWORD-2]}"
+    fi
+
+    if [ "$COMP_CWORD" -ge 3 ]
+    then
+     if [ "${COMP_WORDS[COMP_CWORD-3]}" = 'newvirtual' ]
+     then
+      _roar_codec
+      return 0
+     fi
+     if [ "$COMP_CWORD" -ge 4 ]
+     then
+      if [ "${COMP_WORDS[COMP_CWORD-4]}" = 'newvirtual' ]
+      then
+       _roar_rate
+       return 0
+      fi
+      if [ "$COMP_CWORD" -ge 5 ]
+      then
+       if [ "${COMP_WORDS[COMP_CWORD-5]}" = 'newvirtual' ]
+       then
+        _roar_bits
+        return 0
+       fi
+       if [ "$COMP_CWORD" -ge 6 ]
+       then
+        if [ "${COMP_WORDS[COMP_CWORD-6]}" = 'newvirtual' ]
+        then
+         _roar_channels
+         return 0
+        fi
+       fi
+      fi
+     fi
+    fi
+
+    opts="--server --help --verbose -v --list-aiprofiles"
+    cmds="help sleep ping whoami listaiprofiles aiprofileget standby off resume on standbymode exit terminate volume flag unflag kick newvirtual metaget metasave metaload serveroinfo listclients liststreams allinfo"
+
+    case "${pprev}" in
+        'volume')
+            COMPREPLY=($(compgen -W "mono stereo 1 2 3 4 5 6 7 8 9" -- ${cur}))  
+	    return 0
+            ;;
+        'flag')
+            _roar_flag
+	    return 0
+            ;;
+        'unflag')
+            _roar_flag
+	    return 0
+            ;;
+        'kick')
+	    return 0
+            ;;
+        'newvirtual')
+            _roar_dir
+	    return 0
+            ;;
+        'metaget')
+            _roar_metatype
+	    return 0
+            ;;
+        'metasave')
+            _filedir
+	    return 0
+            ;;
+        'metaload')
+            _filedir
+	    return 0
+            ;;
+       *)
+        ;;
+    esac
+
+    case "${prev}" in
+        '--server')
+            _roar_server "$cur"
+            return 0
+            ;;
+        'sleep')
+	    return 0
+            ;;
+        'ping')
+	    return 0
+            ;;
+        'aiprofileget')
+            COMPREPLY=($(compgen -W "$(roarctl --list-aiprofiles | grep '^Profile Name *: *' | sed 's/^.*: *//')" -- ${cur}))  
+	    return 0
+            ;;
+        'volume')
+	    return 0
+            ;;
+        'flag')
+	    return 0
+            ;;
+        'unflag')
+	    return 0
+            ;;
+        'kick')
+            COMPREPLY=($(compgen -W "client stream sample source" -- ${cur}))  
+	    return 0
+            ;;
+        'newvirtual')
+	    return 0
+            ;;
+        'metaget')
+	    return 0
+            ;;
+        'metasave')
+	    return 0
+            ;;
+        'metaload')
+	    return 0
+            ;;
+        *)
+        ;;
+    esac
+
+   COMPREPLY=($(compgen -W "${opts} ${cmds}" -- ${cur}))
+   return 0
+}
+
+complete -F _roarctl roarctl
+
+_roard() 
+{
+    local cur prev opts
+    local opts_misc opts_audio opts_stream opts_driver opts_output opts_source opts_cf opts_midi opts_rdtcs opts_server opts_plugins
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    #
+    #  The basic options we'll complete.
+    #
+    opts_misc="--daemon --verbose --terminate --start --restart --stop --shutdown --realtime --chroot --setgid --setuid --sysclocksync --location --pidfile"
+    opts_audio="--rate --bits --chans -R -B -C --aiprofile"
+    opts_stream="--stream-flags"
+    opts_driver="--driver --device -d -D --list-driver"
+    opts_output="--odriver --odevice -o -O -oO -oP -oN"
+    opts_source="--source -s -S -sO -sP -sN --list-sources"
+    opts_cf="--list-cf"
+    opts_midi="--midi-no-console --midi-console-enable --midi-console --ssynth-enable --ssynth-disable"
+    opts_light="--light-channels"
+    opts_rdtcs="--rds-pi --rds-ps --rds-pty --rds-tp --rds-ct"
+    opts_server="--tcp --unix --decnet -t -u -n -4 -6 -64 --port -p --bind -b --sock --proto --proto-dir --proto-rate --proto-bits --proto-codec --proto-chans --list-proto --list-profiles --proto-profile --proto-aiprofile --new-sock --slp --x11 --jumbo-mtu -G -U --no-listen --client-fh --close-fh --standby --auto-standby"
+    opts_plugins="--plugin-load"
+
+    opts="$opts_misc $opts_audio $opts_stream $opts_driver $opts_output $opts_source $opts_cf $opts_midi $opts_light $opts_rdtcs $opts_server $opts_plugins --help"
+
+
+    #
+    #  Complete the arguments to some of the basic commands.
+    #
+    case "${prev}" in
+# DIR/FILE:
+	'--chroot')
+            _filedir -d
+	    return 0
+            ;;
+	'--pidfile')
+            _filedir
+	    return 0
+            ;;
+        '--plugin-load')
+            _filedir
+	    return 0
+            ;;
+# String:
+	'--location')
+	    return 0
+            ;;
+# Int:
+	'--rate'|'-R'|'--proto-rate')
+            _roar_rate
+	    return 0
+            ;;
+	'--bits'|'-B'|'--proto-bits')
+            _roar_bits
+	    return 0
+            ;;
+	'--chans'|'-C'|'--proto-chans')
+            _roar_channels
+	    return 0
+            ;;
+	'--light-channels')
+            COMPREPLY=($(compgen -W "512 1024 1536 2048 4096 8192" -- ${cur}))  
+	    return 0
+            ;;
+	'--jumbo-mtu')
+            _roar_jumbo_mtu
+	    return 0
+            ;;
+# C=F:
+	'--stream-flags')
+	    return 0
+            ;;
+# driver:
+	'--driver'|'-d')
+            words=$(roard --list-driver | tail -n +3 | sed 's/^ *//; s/ .*$//')
+            COMPREPLY=($(compgen -W "${words}" -- ${cur}))  
+	    return 0
+            ;;
+	'--odriver'|'-o')
+            words=$(roard --list-driver | tail -n +3 | sed 's/^ *//; s/ .*$//')
+            COMPREPLY=($(compgen -W "${words}" -- ${cur}))  
+	    return 0
+            ;;
+# Source:
+	'--source'|'-s')
+            words=$(roard --list-sources | tail -n +3 | sed 's/^ *//; s/ .*$//')
+            COMPREPLY=($(compgen -W "${words}" -- ${cur}))  
+	    return 0
+            ;;
+# Device:
+# FIXME: add support for non file devices
+	'--device'|'-D')
+            _filedir
+	    return 0
+            ;;
+	'--odevice'|'-O')
+            _filedir
+	    return 0
+            ;;
+	'-S')
+            _filedir
+	    return 0
+            ;;
+	'--midi-console')
+            _filedir
+	    return 0
+            ;;
+# Options:
+	'-dO')
+	    return 0
+            ;;
+	'-oO')
+	    return 0
+            ;;
+	'-sO')
+	    return 0
+            ;;
+# RDS:
+	'--rds-pi')
+	    return 0
+            ;;
+	'--rds-ps')
+	    return 0
+            ;;
+	'--rds-pty')
+	    return 0
+            ;;
+# Port:
+	'--port'|'-p')
+	    COMPREPLY=( $( compgen -s $cur ) )
+	    return 0
+            ;;
+# Host/Node/File:
+	'--bind'|'-b')
+	    COMPREPLY=( $( compgen -A hostname $cur ) "0.0.0.0" )
+	    return 0
+            ;;
+	'--sock')
+            _filedir
+	    return 0
+            ;;
+# Proto:
+	'--proto')
+            words=$(roard --list-proto | tail -n +3 | sed 's/^ *//; s/ .*$//')
+            COMPREPLY=($(compgen -W "${words}" -- ${cur}))  
+	    return 0
+            ;;
+        '--proto-profile')
+            words=$(roard --list-profiles | tail -n +3 | sed 's/^ *//; s/ .*$//')
+            COMPREPLY=($(compgen -W "${words}" -- ${cur}))
+            return 0
+            ;;
+        '--proto-aiprofile'|'--aiprofile')
+            words=$(roarctl --list-aiprofiles | grep '^Profile Name' | sed 's/^.*: *//')
+            COMPREPLY=($(compgen -W "${words}" -- ${cur}))
+            return 0
+            ;;
+# FH:
+	'--client-fh')
+            words=$(command ls /proc/self/fd 2> /dev/null)
+            COMPREPLY=($(compgen -W "${words}" -- ${cur}))  
+	    return 0
+            ;;
+	'--close-fh')
+            words=$(command ls /proc/self/fd 2> /dev/null)
+            COMPREPLY=($(compgen -W "${words}" -- ${cur}))  
+	    return 0
+            ;;
+# Dir:
+        '--proto-dir')
+            _roar_dir
+            return 0;
+            ;;
+# Codec:
+        '--proto-codec')
+            _roar_codec
+            return 0;
+            ;;
+
+        *)
+        ;;
+    esac
+
+   COMPREPLY=($(compgen -W "${opts}" -- ${cur}))  
+   return 0
+}
+complete -F _roard roard
+
+complete -F _command roarify
+
+# vim:ft=sh:
+
+#ll
