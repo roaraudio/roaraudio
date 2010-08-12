@@ -966,7 +966,7 @@ fi
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.269 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.270 $ of RoarAudio
  */
 
 EOF
@@ -1098,6 +1098,7 @@ test_lib_defmake ROAR_HAVE_LIBVORBISENC  %            libvorbisenc  vorbisenc  -
 test_lib_defmake ROAR_HAVE_LIBSPEEX      %            libspeex      speex      -- speex/speex.h speex/speex_stereo.h
 test_lib_defmake ROAR_HAVE_LIBSPEEXDSP   %            libspeexdsp   speexdsp   -- speex/speex.h speex/speex_echo.h
 test_lib_defmake ROAR_HAVE_LIBCELT       %            libcelt       celt       -- celt/celt.h celt/celt_header.h
+test_lib_defmake ROAR_HAVE_LIBCELT0      %            libcelt0      celt0      -- celt/celt.h celt/celt_header.h
 test_lib_defmake ROAR_HAVE_LIBOGGZ       %            liboggz       oggz       -- oggz/oggz.h
 test_lib_defmake ROAR_HAVE_LIBSNDFILE    %            libsndfile    sndfile    -- sndfile.h
 test_lib_defmake ROAR_HAVE_LIBFISHSOUND  roarfish     libfishsound  fishsound  -- fishsound/fishsound.h
@@ -1782,6 +1783,10 @@ fi
 $NEED_GNU_SOURCE && echo '#define ROAR_NEED_GNU_SOURCE' >&3
 
 cat >&3 << EOF
+
+#if defined(ROAR_HAVE_LIBCELT0) && !defined(ROAR_HAVE_LIBCELT)
+#define ROAR_HAVE_LIBCELT
+#endif
 
 #endif
 
