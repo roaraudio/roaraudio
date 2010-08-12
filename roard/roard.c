@@ -42,6 +42,8 @@ int    setids    = 0;
 char * x11display = NULL;
 #endif
 
+int add_output (char * drv, char * dev, char * opts, int prim, int count);
+
 #ifdef ROAR_HAVE_MAIN_ARGS
 void usage (void) {
  printf("Usage: roard [OPTIONS]...\n\n");
@@ -92,7 +94,11 @@ void usage (void) {
        );
 
  printf("\nDriver Options: (obsolete, do not use, Use Ouput Options)\n\n");
+#ifdef ROAR_DRIVER_DEFAULT
  printf(" -d  --driver DRV      - Set the driver (default: %s)\n", ROAR_DRIVER_DEFAULT);
+#else
+ printf(" -d  --driver DRV      - Set the driver (default: autodetect)\n");
+#endif
  printf(" -D  --device DEV      - Set the device\n");
  printf(" -dO OPTS              - Set output options\n");
  printf(" --list-driver         - List all drivers\n");
@@ -737,7 +743,7 @@ int update_stream_flags (char * str) {
 #define add_default_output add_output
 #else
 int add_default_output (char * drv, char * dev, char * opts, int prim, int count) {
- char drvs[] = {
+ char * drvs[] = {
 #if defined(ROAR_HAVE_OSS_BSD) || defined(ROAR_HAVE_OSS)
   "oss",
 #endif
@@ -763,13 +769,15 @@ int add_default_output (char * drv, char * dev, char * opts, int prim, int count
   return add_output(drv, dev, opts, prim, count);
 
  if ( dev != NULL ) {
-  ROAR_WARN("add_output(drv=(none), dev='%s', opts='%s', prim=%i, count=%i): It's not recommended to use device name without driver name.", dev, opts, prim, count);
+  ROAR_WARN("add_default_output(drv=(none), dev='%s', opts='%s', prim=%i, count=%i): It's not recommended to use device name without driver name.", dev, opts, prim, count);
  }
 
  for (i = 0; drvs[i] != NULL; i++) {
+  ROAR_INFO("add_default_output(*): trying driver %s", ROAR_DBG_INFO_INFO, drvs[i]);
   ret = add_output(drvs[i], dev, opts, prim, count);
   if ( ret != -1 )
    return ret;
+  ROAR_INFO("add_default_output(*): Driver %s faild to load", ROAR_DBG_INFO_VERBOSE, drvs[i]);
  }
 
  return -1;
@@ -797,6 +805,7 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
  ROAR_INFO("add_output(drv='%s', dev='%s', opts='%s', prim=%i, count=%i): trying to add output driver", ROAR_DBG_INFO_INFO, drv, dev, opts, prim, count);
 
  if ( drv == NULL && count == 0 ) {
+#ifdef ROAR_DRIVER_DEFAULT
   drv  = ROAR_DRIVER_DEFAULT;
   prim = 1;
   sync = 1;
@@ -805,6 +814,10 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
   if ( opts == NULL ) {
    opts = to_free = strdup("codec=" ROAR_DRIVER_CODEC);
   }
+#endif
+#else
+  ROAR_ERR("add_output(*): Can not find default driver");
+  return -1;
 #endif
  }
 
@@ -1963,7 +1976,7 @@ int main (void) {
  }
 #endif
 
- add_output(o_drv, o_dev, o_opts, o_prim, o_count);
+ add_default_output(o_drv, o_dev, o_opts, o_prim, o_count);
 
  ROAR_INFO("Server config: rate=%i, bits=%i, chans=%i", ROAR_DBG_INFO_NOTICE, sa.rate, sa.bits, sa.channels);
 

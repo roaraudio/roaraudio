@@ -30,6 +30,7 @@
 
 #define DRIVER_USERDATA_T void *
 
+#if 0
 #ifndef ROAR_DRIVER_DEFAULT
 
 #if defined(ROAR_HAVE_OSS_BSD) || defined(ROAR_HAVE_OSS)
@@ -54,6 +55,7 @@
 #endif
 #endif
 
+#endif
 #endif
 
 #ifdef ROAR_HAVE_ESD
