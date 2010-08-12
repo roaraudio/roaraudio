@@ -733,6 +733,49 @@ int update_stream_flags (char * str) {
  return 0;
 }
 
+#ifdef ROAR_DRIVER_DEFAULT
+#define add_default_output add_output
+#else
+int add_default_output (char * drv, char * dev, char * opts, int prim, int count) {
+ char drvs[] = {
+#if defined(ROAR_HAVE_OSS_BSD) || defined(ROAR_HAVE_OSS)
+  "oss",
+#endif
+#ifdef ROAR_HAVE_LIBWINMM
+  "wmm",
+#endif
+#ifdef ROAR_HAVE_LIBAO
+  "ao",
+#endif
+#ifdef ROAR_HAVE_ESD
+  "esd",
+#endif
+#ifdef ROAR_HAVE_DRIVER_SYSCLOCK
+  "sysclock",
+#endif
+  "null",
+  NULL
+ };
+ int i;
+ int ret;
+
+ if ( drv != NULL )
+  return add_output(drv, dev, opts, prim, count);
+
+ if ( dev != NULL ) {
+  ROAR_WARN("add_output(drv=(none), dev='%s', opts='%s', prim=%i, count=%i): It's not recommended to use device name without driver name.", dev, opts, prim, count);
+ }
+
+ for (i = 0; drvs[i] != NULL; i++) {
+  ret = add_output(drvs[i], dev, opts, prim, count);
+  if ( ret != -1 )
+   return ret;
+ }
+
+ return -1;
+}
+#endif
+
 int add_output (char * drv, char * dev, char * opts, int prim, int count) {
  int stream;
  struct roar_stream * s;
