@@ -4,7 +4,6 @@ Things we need to do:
 Things we should do:
  * (*.* */*/*) add a lot other things
 
- * (0.3 O/N/P) Check for things needed to be done to support newer versions of CELT
  * (0.3 S/N/-) Clean and update libroarpulse
  * (0.3 O/L/-) better tests for libspeex{,dsp}-dev
  * (0.3 S/L/-) Implement ALSA support
