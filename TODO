@@ -12,6 +12,7 @@ Things we should do:
 
  * (0.4 S/N/-) do a lot work on the manpages
  * (0.4 O/N/-) add support to to roard to auto select a sync stream
+ * (0.4 O/N/-) add functions for parsing channels/bits/rate ('mono' -> 1,...)
  * (0.4 O/L/-) fix libroaryiff
  * (0.4 S/L/-) Clean libroardsp headers
  * (0.4 S/L/-) Implement support for ICY Meta Data
