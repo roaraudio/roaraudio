@@ -50,6 +50,9 @@ SCRIPTNAME=/etc/init.d/$NAME
 
 USER_LIST="$DAEMON_BN roard roar nobody";
 
+# List of files to chown to the daemon user
+CHOWN_LIST=''
+
 # Gracefully exit if the package has been removed.
 test -x $DAEMON || exit 0;
 
@@ -90,8 +93,9 @@ ESD_OPTS=''
 
 case "$ROARD_EMUL_ESD_AF" in
   UNIX|unix)
-   ESD_OPTS="--new-sock --proto esd -u -b /tmp/.esd/socket"
+   ROARD_PROFILES="esd-unix $ROARD_PROFILES"
    mkdir /tmp/.esd/ 2> /dev/null;
+   CHOWN_LIST="$CHOWN_LIST /tmp/.esd/"
   ;;
   TCP|tcp)
    _host='localhost';
@@ -102,9 +106,9 @@ esac
 
 RSOUND_OPTS=''
 
-case "$ROARD_EMUL_ESD_AF" in
+case "$ROARD_EMUL_RSOUND_AF" in
   UNIX|unix)
-   RSOUND_OPTS="--new-sock --proto rsound -u -b /tmp/rsound"
+   ROARD_PROFILES="rsound-unix $ROARD_PROFILES"
   ;;
   TCP|tcp)
    _host='localhost';
@@ -112,7 +116,7 @@ case "$ROARD_EMUL_ESD_AF" in
    RSOUND_OPTS="--new-sock --proto rsound -t -b $_host -p 12345"
   ;;
   DECnet|DECNET|decnet)
-   RSOUND_OPTS="--new-sock --proto rsound -n -b ::rsound"
+   ROARD_PROFILES="rsound-dnet $ROARD_PROFILES"
   ;;
 esac
 
@@ -177,6 +181,11 @@ ROARD_OPTS="$ROARD_OPTS $ESD_OPTS $RSOUND_OPTS"
 for _p in $ROARD_PROFILES
 do
  ROARD_OPTS="$ROARD_OPTS --new-sock --proto-profile $_p"
+done
+
+for _p in $CHOWN_LIST
+do
+ chown "$ROARD_USER":"$ROARD_GROUP" "$_p"
 done
 
 set -e
