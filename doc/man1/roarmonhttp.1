@@ -25,6 +25,23 @@ is detected per client at runtime.
 \fB--inetd\fR
 Enables inetd mode.
 
+.TP
+\fB--server SERVER\fR
+Set Server to connect to. This may be usfull in inetd mode.
+
+.TP
+\fB--rate\fR, \fB--bits\fR, \fB--channels\fR, \fB--codec\fR
+Sets the default rate, bits, channels or codec.
+Those option taking a argument for the given option. Codec names may be used.
+
+.TP
+\fB--rel-id SID\fR
+Set the stream ID for the stream this stream is relative to.
+
+.TP
+\fB--help\fR
+Show a brief help.
+
 .SH "EXAMPLES"
 Here is an example of a roarmonhttp listening on port 8000 using inetd:
  8000 stream tcp nowait roard /usr/bin/roarmonhttp roarmonhttp \-\-inetd
