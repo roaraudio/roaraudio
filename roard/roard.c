@@ -1089,7 +1089,7 @@ int register_x11 (int unreg, char * sockname) {
  int ret = 0;
 
  if ( (x11con = roar_x11_connect(x11display)) == NULL ) {
-  ROAR_ERR("Can not connect to X11 server for %sregistering", ROAR_DBG_INFO_INFO, unreg ? "un" : "");
+  ROAR_ERR("Can not connect to X11 server for %sregistering", unreg ? "un" : "");
   return -1;
  }
 
