@@ -52,18 +52,38 @@ void print_header (int codec, int rate, int channels) {
  char * mime = "application/octet-stream";
 
  switch (codec) {
+  case ROAR_CODEC_OGG:
+  case ROAR_CODEC_OGG_GENERAL:
   case ROAR_CODEC_OGG_VORBIS:
     mime = "application/ogg";
    break;
+  case ROAR_CODEC_OGG_SPEEX:
+    mime = "audio/ogg; codecs=speex";
+   break;
+  case ROAR_CODEC_OGG_FLAC:
+    mime = "audio/ogg; codecs=flac";
+   break;
+  case ROAR_CODEC_OGG_CELT:
+    mime = "audio/ogg; codecs=celt";
+   break;
+  case ROAR_CODEC_FLAC:
+    mime = "audio/x-flac";
+   break;
   case ROAR_CODEC_RIFF_WAVE:
     mime = "audio/x-wav";
+   break;
+  case ROAR_CODEC_AU:
+    mime = "audio/basic";
+   break;
+  case ROAR_CODEC_AIFF:
+    mime = "audio/aiff";
    break;
  }
 
  printf("Content-type: %s\r\n", mime);
  printf("ice-audio-info: ice-samplerate=%i;ice-channels=%i\r\n", rate, channels);
  printf("icy-pub:0\r\n");
- printf("Server: RoarAudio (roarmonhttp $Revision: 1.22 $)\r\n");
+ printf("Server: RoarAudio (roarmonhttp $Revision: 1.23 $)\r\n");
  printf("\r\n");
 
  fflush(stdout);
