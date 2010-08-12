@@ -136,8 +136,13 @@ void print_driverlist (void) {
 int driver_open (DRIVER_USERDATA_T * inst, int * driver_id, char * driver, char * device, struct roar_audio_info * info) {
  int i;
 
+#ifdef ROAR_DRIVER_DEFAULT
  if ( driver == NULL )
   driver = ROAR_DRIVER_DEFAULT;
+#else
+ if ( driver == NULL )
+  return -1;
+#endif
 
  for (i = 0; g_driver[i].name != NULL; i++) {
   if ( strcmp(g_driver[i].name, driver) == 0 ) {
@@ -176,8 +181,13 @@ int driver_openvio(struct roar_vio_calls * calls,
                  struct roar_stream_server * sstream) {
  int i;
 
+#ifdef ROAR_DRIVER_DEFAULT
  if ( driver == NULL )
   driver = ROAR_DRIVER_DEFAULT;
+#else
+ if ( driver == NULL )
+  return -1;
+#endif
 
  ROAR_DBG("driver_openvio(*): searching for driver '%s'...", driver);
 
