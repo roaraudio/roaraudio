@@ -1,7 +1,8 @@
 BASENAME=libasound_module_roar
 SLIB=$(BASENAME)$(SHARED_SUFFIX)
 TARGET=$(SLIB)
-OBJS=roar.o pcm.o mixer.o
+INSTALL_DIR=$(PREFIX_LIB)/alsa-lib/
+OBJS=pcm_roar.o thread.o
 
 include ../../Makefile.conf
 include ../../Makefile.inc

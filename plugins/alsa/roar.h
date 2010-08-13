@@ -2,6 +2,7 @@
 
 /*
  *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2010
+ *      Copyright (C) Hans-Kristian 'maister' Arntzen - 2010
  *
  *  This file is part of libroar a part of RoarAudio,
  *  a cross-platform sound system for both, home and professional use.
@@ -26,6 +27,11 @@
  *  the license of this document you need to read before you send
  *  any patches.
  *
+ *  NOTE for uses of non-GPL (LGPL,...) software using libesd, libartsc
+ *  or libpulse*:
+ *  The libs libroaresd, libroararts and libroarpulse link this lib
+ *  and are therefore GPL. Because of this it may be illigal to use
+ *  them with any software that uses libesd, libartsc or libpulse*.
  */
 
 #ifndef _ROARAUDIO_PLUGINS_ALSA_ROAR_H_
@@ -37,6 +43,8 @@
 #include <alsa/global.h>
 #include <alsa/pcm_external.h>
 #include <alsa/control_external.h>
+#include <pthread.h>
+#include <time.h>
 
 #define _as(x) (sizeof((x))/sizeof(*(x)))
 
@@ -52,7 +60,25 @@ struct roar_alsa_pcm {
  struct roar_vio_calls  stream_vio;
  int                    stream_opened;
  size_t                 writec;
+ size_t                 last_ptr;
+ char*                  buffer;
+ size_t                 bufsize;
+ size_t                 bufptr;
+ pthread_t              thread;
+ pthread_mutex_t        lock;
+ pthread_mutex_t        cond_lock;
+ pthread_cond_t         cond;
+ volatile int           thread_active;
+ int                    bytes_in_buffer;
+ volatile int64_t       total_written;
+ int                    has_written;
+ struct timespec        start_tv;
 };
+
+void roar_reset(struct roar_alsa_pcm * self);
+void* roar_thread (void * thread_data);
+size_t roar_write(struct roar_alsa_pcm * self, const char * buf, size_t size);
+void roar_drain(struct roar_alsa_pcm * self);
 
 #endif
 
