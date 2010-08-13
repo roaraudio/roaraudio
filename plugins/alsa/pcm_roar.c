@@ -481,5 +481,9 @@ SND_PCM_PLUGIN_DEFINE_FUNC(roar) {
 
 SND_PCM_PLUGIN_SYMBOL(roar);
 
+int __snd_pcm_roar_open_dlsym_pcm_001 (void) {
+ ROAR_DBG("__snd_pcm_roar_open_dlsym_pcm_001(void) = 0");
+ return 0;
+}
 
 //ll
