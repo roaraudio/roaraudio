@@ -995,7 +995,7 @@ fi
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.273 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.274 $ of RoarAudio
  */
 
 EOF
@@ -1167,7 +1167,10 @@ test_lib_defmake ROAR_HAVE_GTK_P_2_0     %            GTK+2.0       gtk+-2.0/t -
 
 echo >&3
 
-test_version ROAR_HAVE_CELT_VERSION libcelt celt
+test_version ROAR_HAVE_CELT_VERSION      libcelt  celt
+test_version ROAR_HAVE_SPEEX_VERSION     libspeex speex
+test_version ROAR_HAVE_PULSE_VERSION     libpulse libpulse
+test_version ROAR_HAVE_GTK_P_2_0_VERSION GTK+2.0  gtk+-2.0
 
 echo >&3
 
