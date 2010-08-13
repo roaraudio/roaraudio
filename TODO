@@ -15,6 +15,7 @@ Things we should do:
  * (0.4 O/L/-) fix libroaryiff
  * (0.4 S/L/-) Clean libroardsp headers
  * (0.4 S/L/-) Implement support for ICY Meta Data
+ * (0.4 O/L/-) do something about repeating error messages
 
  * (1.0 S/h/-) impelemnt RTS/SDP/SAP
  * (1.0 O/N/-) Clean up unused parts in plugins/
