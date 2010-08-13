@@ -27,9 +27,20 @@
 #ifndef _DRIVER_ALSA_H_
 #define _DRIVER_ALSA_H_
 
+typedef struct roar_alsa {
+ snd_pcm_t * handle;
+ snd_pcm_hw_params_t * params;
+ snd_pcm_format_t format;
+ struct roar_audio_info info;
+ struct roar_stream_server * sstream;
+ int ssid;
+} roar_alsa_t;
+
 int     driver_alsa_open_vio(struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh, struct roar_stream_server * sstream);
 ssize_t driver_alsa_write   (struct roar_vio_calls * vio, void *buf, size_t count);
 int     driver_alsa_close   (struct roar_vio_calls * vio);
+int     driver_alsa_sync    (struct roar_vio_calls * vio);
+int     driver_alsa_ctl     (struct roar_vio_calls * vio, int cmd, void * data);
 
 #endif
 
