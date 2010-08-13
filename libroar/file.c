@@ -73,11 +73,14 @@ int roar_file_codecdetect(char * buf, int len) {
    }
    if ( len > ROAR_CELT_MAGIC_LEN ) {
 #endif
-    if ( strncmp(buf, ROAR_CELT_MAGIC, ROAR_CELT_MAGIC_LEN) == 0 )
+    if ( strncmp(buf, ROAR_CELT_MAGIC_0, ROAR_CELT_MAGIC_LEN) == 0 ||
+         strncmp(buf, ROAR_CELT_MAGIC_1, ROAR_CELT_MAGIC_LEN) == 0  )
      codec = ROAR_CODEC_ROAR_CELT;
    }
   } else if ( strncmp(buf, "fLaC", 4) == 0 ) {
    codec = ROAR_CODEC_FLAC;
+  } else if ( strncmp(buf, ".snd", 4) == 0 ) {
+   codec = ROAR_CODEC_AU;
   } else if ( len > 7 && strncmp(buf, "RAUM-CF0", 8) == 0 ) {
    codec = ROAR_CODEC_RAUM;
   }
