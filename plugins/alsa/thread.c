@@ -42,7 +42,7 @@
 // Writes to the FIFO buffer. Waits until there is room to write.
 size_t roar_write(struct roar_alsa_pcm *self, const char *buf, size_t size) {
  /* Wait until we have a ready buffer */
- for (;;) {
+ while (1) {
   /* Should the thread be shut down while we're running, return with error */
   if ( !self->thread_active )
    return 0;
@@ -155,24 +155,25 @@ test_quit:
 }
 
 void roar_drain(struct roar_alsa_pcm *self) {
+ struct timespec now_tv;
+ int64_t temp, temp2;
+
  /* If the audio playback has started on the server we need to use timers. */
  if ( self->has_written ) {
-  int64_t temp, temp2;
 
   /* Falls back to gettimeofday() when CLOCK_MONOTONIC is not supported */
 
   /* Calculates the amount of bytes that the server has consumed. */
-  struct timespec now_tv;
   clock_gettime(CLOCK_MONOTONIC, &now_tv);
 
-  temp = (int64_t)now_tv.tv_sec - (int64_t)self->start_tv.tv_sec;
+  temp   = (int64_t)now_tv.tv_sec - (int64_t)self->start_tv.tv_sec;
 
-  temp *= self->info.rate * self->info.channels * self->info.bits / 8;
+  temp  *= self->info.rate * self->info.channels * self->info.bits / 8;
 
-  temp2 = (int64_t)now_tv.tv_nsec - (int64_t)self->start_tv.tv_nsec;
+  temp2  = (int64_t)now_tv.tv_nsec - (int64_t)self->start_tv.tv_nsec;
   temp2 *= self->info.rate * self->info.channels * self->info.bits / 8;
-  temp2 /= 1000000000;
-  temp += temp2;
+  temp2 /= 1000000000LL;
+  temp  += temp2;
   /* Calculates the amount of data we have in our virtual buffer. Only used to calculate delay. */
   self->bytes_in_buffer = (int)((int64_t)self->total_written + (int64_t)self->bufptr - temp);
  } else {
@@ -180,5 +181,4 @@ void roar_drain(struct roar_alsa_pcm *self) {
  }
 }
 
-
-
+//ll
