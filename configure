@@ -995,7 +995,7 @@ fi
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.275 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.276 $ of RoarAudio
  */
 
 EOF
@@ -1429,6 +1429,25 @@ then
 else
  echo no
 fi
+
+
+echo -n 'checking for -pthread... '
+
+echo '#include <pthread.h>'                            > $TF_C
+echo 'int main (void) { pthread_self(); return 0; }'  >> $TF_C
+
+if $CCTF -pthread 2> /dev/null;
+then
+ echo '#define ROAR_HAVE_CC_PTHREAD_OPTION' >&3
+ echo 'opt_pthread=-pthread' >&4
+ echo 'pthread=$(opt_pthread)' >&4
+ echo yes
+else
+ echo 'opt_pthread=' >&4
+ echo 'pthread=$(lib_pthread)' >&4
+ echo no
+fi
+
 
 echo -n 'checking for broken peercred... '
 echo '#include <sys/types.h>'      >  $TF_C
