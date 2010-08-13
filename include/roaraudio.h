@@ -29,6 +29,8 @@
 #ifndef _ROARAUDIO_H_
 #define _ROARAUDIO_H_
 
+#define  _ROAR_MKVERSION(a,b,c) (((a) << 16) + ((b) << 8) + (c))
+
 #include <roaraudio/config.h>
 #include <roaraudio/muconthacks.h>
 #include <roaraudio/win32hacks.h> // we include this at the beginning of the file
