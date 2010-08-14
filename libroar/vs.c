@@ -342,6 +342,8 @@ static int roar_vs_volume (roar_vs_t * vss, float * c, size_t channels, int * er
  struct roar_mixer_settings mixer;
  size_t i;
  register float s;
+ int oldchannels;
+ int handled;
 
  if ( !(vss->flags & FLAG_STREAM) ) {
   _seterr(ROAR_ERROR_INVAL);
@@ -350,6 +352,11 @@ static int roar_vs_volume (roar_vs_t * vss, float * c, size_t channels, int * er
 
  if ( channels > ROAR_MAX_CHANNELS ) {
   _seterr(ROAR_ERROR_INVAL);
+  return -1;
+ }
+
+ if ( roar_get_vol(vss->con, roar_stream_get_id(&(vss->stream)), &mixer, &oldchannels) == -1 ) {
+  _seterr(ROAR_ERROR_UNKNOWN);
   return -1;
  }
 
@@ -367,8 +374,42 @@ static int roar_vs_volume (roar_vs_t * vss, float * c, size_t channels, int * er
  }
 
  mixer.scale = 65535;
- mixer.rpg_mul = 1;
- mixer.rpg_div = 1;
+
+ if ( channels != oldchannels ) {
+  handled = 0;
+  switch (oldchannels) {
+   case 1:
+     if ( channels == 2 ) {
+      mixer.mixer[0] = (mixer.mixer[0] + mixer.mixer[1]) / 2;
+      handled = 1;
+     }
+    break;
+   case 2:
+     if ( channels == 1 ) {
+      mixer.mixer[1] = mixer.mixer[0];
+      handled = 1;
+     }
+    break;
+   case 4:
+     if ( channels == 1 ) {
+      mixer.mixer[1] = mixer.mixer[0];
+      mixer.mixer[2] = mixer.mixer[0];
+      mixer.mixer[3] = mixer.mixer[0];
+      handled = 1;
+     } else if ( channels == 2 ) {
+      mixer.mixer[2] = mixer.mixer[0];
+      mixer.mixer[3] = mixer.mixer[1];
+      handled = 1;
+     }
+    break;
+  }
+  if ( handled ) {
+   channels = oldchannels;
+  } else {
+   _seterr(ROAR_ERROR_INVAL);
+   return -1;
+  }
+ }
 
  if ( roar_set_vol(vss->con, roar_stream_get_id(&(vss->stream)), &mixer, channels) == -1 ) {
   _seterr(ROAR_ERROR_UNKNOWN);
