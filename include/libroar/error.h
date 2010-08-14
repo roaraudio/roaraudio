@@ -70,6 +70,10 @@ int    roar_err_int(struct roar_error_frame * frame);
 void * roar_err_buildmsg(struct roar_message * mes, struct roar_error_frame * frame);
 int    roar_err_parsemsg(struct roar_message * mes, struct roar_error_frame * frame);
 
+void   roar_err_clear(void);
+void   roar_err_from_errno(void);
+void   roar_err_to_errno(void);
+
 #endif
 
 //ll
