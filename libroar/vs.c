@@ -39,7 +39,7 @@
 #define FLAG_STREAM   0x0001
 #define FLAG_NONBLOCK 0x0002
 
-#define _seterr(x) do { if ( error != NULL ) *error = (x); } while(1)
+#define _seterr(x) do { if ( error != NULL ) *error = (x); } while(0)
 
 struct roar_vs {
  int flags;
@@ -172,8 +172,13 @@ roar_vs_t * roar_vs_new_simple(const char * server, const char * name, int rate,
 }
 
 int roar_vs_close(roar_vs_t * vss, int killit, int * error) {
+ if ( killit != ROAR_VS_TRUE && killit != ROAR_VS_FALSE ) {
+  _seterr(ROAR_ERROR_UNKNOWN);
+  return -1;
+ }
+
  if ( vss->flags & FLAG_STREAM ) {
-  if ( killit ) {
+  if ( killit == ROAR_VS_TRUE ) {
    roar_kick(vss->con, ROAR_OT_STREAM, roar_stream_get_id(&(vss->stream)));
   }
 
@@ -282,7 +287,6 @@ int     roar_vs_blocking (roar_vs_t * vss, int val, int * error) {
  return -1;
 }
 
-// ....................
 ssize_t roar_vs_latency(roar_vs_t * vss, int backend, int * error) {
  _seterr(ROAR_ERROR_NOTSUP);
  return -1;
