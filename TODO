@@ -11,6 +11,7 @@ Things we should do:
  * (0.4 S/N/-) do a lot work on the manpages
  * (0.4 O/N/-) add functions for parsing channels/bits/rate ('mono' -> 1,...)
  * (0.4 S/N/-) Clean and update libroarpulse
+ * (0.4 O/N/-) Update to work with newer versions of portaudio
  * (0.4 O/L/-) better tests for libspeex{,dsp}-dev
  * (0.4 O/L/-) Install bash completion script
  * (0.4 O/L/-) fix libroaryiff
