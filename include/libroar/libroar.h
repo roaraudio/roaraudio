@@ -157,6 +157,7 @@
 #include "display.h"
 #include "roarx11.h"
 #include "beep.h"
+#include "vs.h"
 
 // some basic macros:
 #define ROAR_MAX2(a,b) ((a) > (b) ? (a) : (b))
