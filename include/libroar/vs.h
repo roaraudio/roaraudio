@@ -88,6 +88,10 @@ int     roar_vs_volume_get    (roar_vs_t * vss, float * l, float * r, int * erro
 
 int     roar_vs_meta          (roar_vs_t * vss, struct roar_keyval * kv, size_t len, int * error);
 
+struct roar_connection * roar_vs_connection_obj(roar_vs_t * vss, int * error);
+struct roar_stream     * roar_vs_stream_obj    (roar_vs_t * vss, int * error);
+struct roar_vio_calls  * roar_vs_vio_obj       (roar_vs_t * vss, int * error);
+
 #endif
 
 //ll

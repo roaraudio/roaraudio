@@ -500,4 +500,26 @@ int     roar_vs_meta          (roar_vs_t * vss, struct roar_keyval * kv, size_t 
  return ret;
 }
 
+struct roar_connection * roar_vs_connection_obj(roar_vs_t * vss, int * error) {
+ return vss->con;
+}
+
+struct roar_stream     * roar_vs_stream_obj    (roar_vs_t * vss, int * error) {
+ if ( !(vss->flags & FLAG_STREAM) ) {
+  _seterr(ROAR_ERROR_INVAL);
+  return -1;
+ }
+
+ return &(vss->stream);
+}
+
+struct roar_vio_calls  * roar_vs_vio_obj       (roar_vs_t * vss, int * error) {
+ if ( !(vss->flags & FLAG_STREAM) ) {
+  _seterr(ROAR_ERROR_INVAL);
+  return -1;
+ }
+
+ return &(vss->vio);
+}
+
 //ll
