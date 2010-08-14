@@ -341,6 +341,7 @@ int     roar_vs_mute (roar_vs_t * vss, int val, int * error) {
 static int roar_vs_volume (roar_vs_t * vss, float * c, size_t channels, int * error) {
  struct roar_mixer_settings mixer;
  size_t i;
+ register float s;
 
  if ( !(vss->flags & FLAG_STREAM) ) {
   _seterr(ROAR_ERROR_INVAL);
@@ -352,8 +353,18 @@ static int roar_vs_volume (roar_vs_t * vss, float * c, size_t channels, int * er
   return -1;
  }
 
- for (i = 0; i < channels; i++)
-  mixer.mixer[i] = c[i] * 65535.0;
+ for (i = 0; i < channels; i++) {
+  s = c[i] * 65535.0;
+  if ( s > 66190.0 || s < -655.0 ) {
+   _seterr(ROAR_ERROR_RANGE);
+   return -1;
+  } else if ( s > 65535.0 ) {
+   s = 65535.0;
+  } else if ( s <     0.0 ) {
+   s = 0.0;
+  }
+  mixer.mixer[i] = s;
+ }
 
  mixer.scale = 65535;
  mixer.rpg_mul = 1;
