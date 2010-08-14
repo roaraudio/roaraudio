@@ -92,6 +92,8 @@ struct roar_connection * roar_vs_connection_obj(roar_vs_t * vss, int * error);
 struct roar_stream     * roar_vs_stream_obj    (roar_vs_t * vss, int * error);
 struct roar_vio_calls  * roar_vs_vio_obj       (roar_vs_t * vss, int * error);
 
+#define roar_vs_noop(v, error) roar_noop(roar_vs_connection_obj((v), (error)))
+
 #endif
 
 //ll
