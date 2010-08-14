@@ -744,6 +744,11 @@ int update_stream_flags (char * str) {
 #else
 int add_default_output (char * drv, char * dev, char * opts, int prim, int count) {
  char * drvs[] = {
+  // operating system depended things:
+#ifdef __OpenBSD__
+  /* OpenBSD use sndio natively, this check is discusses with upstream (See ML archive August 2010) */
+  "sndio",
+#endif
   // native and pseudo-native interfaces:
   "oss", "alsa", "sndio", "wmm",
   // sound libs:
