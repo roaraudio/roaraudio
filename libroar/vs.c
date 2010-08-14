@@ -54,20 +54,20 @@ const char * roar_vs_strerr(int error) {
   int err;
   const char * msg;
  } msgs[] = {
-  {ROAR_ERROR_NONE,    "none"},
-  {ROAR_ERROR_PERM,    "perm"},
-  {ROAR_ERROR_NOENT,   "noent"},
-  {ROAR_ERROR_BADMSG,  "badmsg"},
-  {ROAR_ERROR_BUSY,    "busy"},
-  {ROAR_ERROR_CONNREFUSED, "connrefused"},
-  {ROAR_ERROR_NOSYS,   "nosys"},
-  {ROAR_ERROR_NOTSUP,  "notsup"},
-  {ROAR_ERROR_PIPE,    "pipe"},
-  {ROAR_ERROR_PROTO,   "proto"},
-  {ROAR_ERROR_RANGE,   "range"},
-  {ROAR_ERROR_MSGSIZE, "msgsize"},
-  {ROAR_ERROR_NOMEM,   "nomem"},
-  {ROAR_ERROR_INVAL,   "inval"},
+  {ROAR_ERROR_NONE,        "No error"},
+  {ROAR_ERROR_PERM,        "Operation not permitted"},
+  {ROAR_ERROR_NOENT,       "No such object, file or directory"},
+  {ROAR_ERROR_BADMSG,      "Bad message"},
+  {ROAR_ERROR_BUSY,        "Device or resource busy"},
+  {ROAR_ERROR_CONNREFUSED, "Connection refused"},
+  {ROAR_ERROR_NOSYS,       "Function not implemented"},
+  {ROAR_ERROR_NOTSUP,      "Operation not supported"},
+  {ROAR_ERROR_PIPE,        "Broken pipe"},
+  {ROAR_ERROR_PROTO,       "Protocol error"},
+  {ROAR_ERROR_RANGE,       "Result too large or parameter out of range"},
+  {ROAR_ERROR_MSGSIZE,     "Message too long"},
+  {ROAR_ERROR_NOMEM,       "Not enough space"},
+  {ROAR_ERROR_INVAL,       "Invalid argument"},
   {-1, NULL}
  };
  int i;
