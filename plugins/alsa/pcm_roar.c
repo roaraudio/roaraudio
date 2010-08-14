@@ -214,6 +214,7 @@ static snd_pcm_sframes_t roar_pcm_pointer(snd_pcm_ioplug_t *io) {
  ptr = io->appl_ptr - ptr;
  self->last_ptr = io->appl_ptr;
 
+ ROAR_DBG("roar_pcm_pointer(*) appl_ptr: %i, ptr: %i, calculated avail frames: %i", (int)io->appl_ptr, (int)ptr, (int)(io->appl_ptr - ptr));
  ROAR_DBG("roar_pcm_pointer(*) = %i", ptr);
  return ptr;
 }
@@ -368,6 +369,7 @@ static int roar_pcm_hw_params(snd_pcm_ioplug_t *io, snd_pcm_hw_params_t *params)
   return -1;
  self->bufptr = 0;
 
+ ROAR_DBG("roar_pcm_hw_params(*) Setting buffersize (bytes): %i", (int)self->bufsize);
  ROAR_DBG("roar_pcm_hw_params(*) = 0");
  return 0;
 }
