@@ -37,6 +37,7 @@
 
 #define FLAG_NONE     0x0000
 #define FLAG_STREAM   0x0001
+#define FLAG_NONBLOCK 0x0002
 
 #define _seterr(x) do { if ( error != NULL ) *error = (x); } while(1)
 
@@ -221,5 +222,184 @@ ssize_t roar_vs_read (roar_vs_t * vss,       void * buf, size_t len, int * error
  return ret;
 }
 
+int     roar_vs_sync (roar_vs_t * vss, int wait, int * error) {
+ if ( !(vss->flags & FLAG_STREAM) ) {
+  _seterr(ROAR_ERROR_INVAL);
+  return -1;
+ }
+
+ if ( wait != ROAR_VS_NOWAIT ) {
+  _seterr(ROAR_ERROR_INVAL);
+  return -1;
+ }
+
+ roar_vio_sync(&(vss->vio));
+
+ return 0;
+}
+
+int     roar_vs_blocking (roar_vs_t * vss, int val, int * error) {
+ int old = -1;
+
+  if ( !(vss->flags & FLAG_STREAM) ) {
+  _seterr(ROAR_ERROR_INVAL);
+  return -1;
+ }
+
+ old = vss->flags & FLAG_NONBLOCK ? ROAR_VS_FALSE : ROAR_VS_TRUE;
+
+ switch (val) {
+  case ROAR_VS_TRUE:
+    if ( roar_vio_nonblock(&(vss->vio), ROAR_SOCKET_BLOCK) == -1 ) {
+     _seterr(ROAR_ERROR_UNKNOWN);
+     return -1;
+    }
+    vss->flags |= FLAG_NONBLOCK;
+    vss->flags -= FLAG_NONBLOCK;
+    return old;
+   break;
+  case ROAR_VS_FALSE:
+    if ( roar_vio_nonblock(&(vss->vio), ROAR_SOCKET_NONBLOCK) == -1 ) {
+     _seterr(ROAR_ERROR_UNKNOWN);
+     return -1;
+    }
+    vss->flags |= FLAG_NONBLOCK;
+    return old;
+   break;
+  case ROAR_VS_TOGGLE:
+    if ( old == ROAR_VS_TRUE ) {
+     return roar_vs_blocking(vss, ROAR_VS_FALSE, error);
+    } else {
+     return roar_vs_blocking(vss, ROAR_VS_TRUE, error);
+    }
+   break;
+  case ROAR_VS_ASK:
+    return old;
+   break;
+ }
+
+ _seterr(ROAR_ERROR_INVAL);
+ return -1;
+}
+
+// ....................
+ssize_t roar_vs_latency(roar_vs_t * vss, int backend, int * error) {
+ _seterr(ROAR_ERROR_NOTSUP);
+ return -1;
+}
+
+static int roar_vs_flag(roar_vs_t * vss, int flag, int val, int * error) {
+ struct roar_stream_info info;
+ int old = -1;
+
+ if ( !(vss->flags & FLAG_STREAM) ) {
+  _seterr(ROAR_ERROR_INVAL);
+  return -1;
+ }
+
+ if ( val != ROAR_VS_ASK )
+  old = roar_vs_flag(vss, flag, ROAR_VS_ASK, error);
+
+ switch (val) {
+  case ROAR_VS_TRUE:
+  case ROAR_VS_FALSE:
+    if ( roar_stream_set_flags(vss->con, &(vss->stream), flag,
+                               val == ROAR_VS_TRUE ? ROAR_SET_FLAG : ROAR_RESET_FLAG) == -1 ) {
+     _seterr(ROAR_ERROR_UNKNOWN);
+     return -1;
+    }
+    return old;
+   break;
+  case ROAR_VS_TOGGLE:
+    return roar_vs_flag(vss, flag, old == ROAR_VS_TRUE ? ROAR_VS_FALSE : ROAR_VS_TRUE, error);
+   break;
+  case ROAR_VS_ASK:
+    if ( roar_stream_get_info(vss->con, &(vss->stream), &info) == -1 ) {
+     _seterr(ROAR_ERROR_UNKNOWN);
+     return -1;
+    }
+    return info.flags & flag ? ROAR_VS_TRUE : ROAR_VS_FALSE;
+   break;
+ }
+
+ _seterr(ROAR_ERROR_NOTSUP);
+ return -1;
+}
+
+int     roar_vs_pause(roar_vs_t * vss, int val, int * error) {
+ return roar_vs_flag(vss, ROAR_FLAG_PAUSE, val, error);
+}
+
+int     roar_vs_mute (roar_vs_t * vss, int val, int * error) {
+ return roar_vs_flag(vss, ROAR_FLAG_MUTE, val, error);
+}
+
+static int roar_vs_volume (roar_vs_t * vss, float * c, size_t channels, int * error) {
+ struct roar_mixer_settings mixer;
+ size_t i;
+
+ if ( !(vss->flags & FLAG_STREAM) ) {
+  _seterr(ROAR_ERROR_INVAL);
+  return -1;
+ }
+
+ if ( channels > ROAR_MAX_CHANNELS ) {
+  _seterr(ROAR_ERROR_INVAL);
+  return -1;
+ }
+
+ for (i = 0; i < channels; i++)
+  mixer.mixer[i] = c[i] * 65535.0;
+
+ mixer.scale = 65535;
+ mixer.rpg_mul = 1;
+ mixer.rpg_div = 1;
+
+ if ( roar_set_vol(vss->con, roar_stream_get_id(&(vss->stream)), &mixer, channels) == -1 ) {
+  _seterr(ROAR_ERROR_UNKNOWN);
+  return -1;
+ }
+
+ return 0;
+}
+
+int     roar_vs_volume_mono   (roar_vs_t * vss, float c, int * error) {
+ return roar_vs_volume(vss, &c, 1, error);
+}
+
+int     roar_vs_volume_stereo (roar_vs_t * vss, float l, float r, int * error) {
+ float c[2] = {l, r};
+ return roar_vs_volume(vss, c, 2, error);
+}
+
+int     roar_vs_volume_get    (roar_vs_t * vss, float * l, float * r, int * error) {
+ struct roar_mixer_settings mixer;
+ int channels;
+
+ if ( vss == NULL || l == NULL || r == NULL ) {
+  _seterr(ROAR_ERROR_INVAL);
+  return -1;
+ }
+
+ if ( !(vss->flags & FLAG_STREAM) ) {
+  _seterr(ROAR_ERROR_INVAL);
+  return -1;
+ }
+
+ if ( roar_get_vol(vss->con, roar_stream_get_id(&(vss->stream)), &mixer, &channels) == -1 ) {
+  _seterr(ROAR_ERROR_UNKNOWN);
+  return -1;
+ }
+
+ if ( channels == 1 )
+  mixer.mixer[1] = mixer.mixer[0];
+
+ *l = mixer.mixer[0] / (float)mixer.scale;
+ *r = mixer.mixer[1] / (float)mixer.scale;
+
+ return 0;
+}
+
+int     roar_vs_meta          (roar_vs_t * vss, struct roar_keyval * kv, size_t len, int * error);
 
 //ll
