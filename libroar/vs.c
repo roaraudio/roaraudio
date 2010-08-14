@@ -400,6 +400,38 @@ int     roar_vs_volume_get    (roar_vs_t * vss, float * l, float * r, int * erro
  return 0;
 }
 
-int     roar_vs_meta          (roar_vs_t * vss, struct roar_keyval * kv, size_t len, int * error);
+int     roar_vs_meta          (roar_vs_t * vss, struct roar_keyval * kv, size_t len, int * error) {
+ struct roar_meta meta;
+ size_t i;
+ int type;
+
+ if ( !(vss->flags & FLAG_STREAM) ) {
+  _seterr(ROAR_ERROR_INVAL);
+  return -1;
+ }
+
+ meta.type   = ROAR_META_TYPE_NONE;
+ meta.key[0] = 0;
+ meta.value  = NULL;
+
+ // TODO: add error hadnling here.
+
+ roar_stream_meta_set(vss->con, &(vss->stream), ROAR_META_MODE_CLEAR, &meta);
+
+ for (i = 0; i < len; i++) {
+  type = roar_meta_inttype(kv[i].key);
+  meta.type  = type;
+  meta.value = kv[i].value;
+
+  roar_stream_meta_set(vss->con, &(vss->stream), ROAR_META_MODE_ADD, &meta);
+ }
+
+ meta.type   = ROAR_META_TYPE_NONE;
+ meta.key[0] = 0;
+ meta.value  = NULL;
+ roar_stream_meta_set(vss->con, &(vss->stream), ROAR_META_MODE_FINALIZE, &meta);
+
+ return 0;
+}
 
 //ll
