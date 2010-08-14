@@ -4,13 +4,14 @@ Things we need to do:
 Things we should do:
  * (*.* */*/*) add a lot other things
 
- * (0.3 S/N/-) Clean and update libroarpulse
- * (0.3 O/L/-) better tests for libspeex{,dsp}-dev
  * (0.3 S/L/-) Implement ALSA support
 
+ * (0.4 O/h/-) Cleanup of plugins/
+ * (0.4 O/h/-) add support to to roard to auto select a sync stream
  * (0.4 S/N/-) do a lot work on the manpages
- * (0.4 O/N/-) add support to to roard to auto select a sync stream
  * (0.4 O/N/-) add functions for parsing channels/bits/rate ('mono' -> 1,...)
+ * (0.4 S/N/-) Clean and update libroarpulse
+ * (0.4 O/L/-) better tests for libspeex{,dsp}-dev
  * (0.4 O/L/-) Install bash completion script
  * (0.4 O/L/-) fix libroaryiff
  * (0.4 S/L/-) Clean libroardsp headers
@@ -19,8 +20,8 @@ Things we should do:
 
  * (1.0 S/h/-) impelemnt RTS/SDP/SAP
  * (1.0 O/N/-) Clean up unused parts in plugins/
- * (1.0 S/L/-) add RAUM support
  * (1.0 O/l/-) replace OpenBSD's aucat
+ * (1.0 S/L/-) add RAUM support
  * (1.0 S/L/-) add internal memory management
  * (?.? O/N/-) Better support for mixer streams
 
