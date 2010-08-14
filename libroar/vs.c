@@ -419,6 +419,7 @@ int     roar_vs_meta          (roar_vs_t * vss, struct roar_keyval * kv, size_t 
  struct roar_meta meta;
  size_t i;
  int type;
+ int ret = 0;
 
  if ( !(vss->flags & FLAG_STREAM) ) {
   _seterr(ROAR_ERROR_INVAL);
@@ -431,22 +432,31 @@ int     roar_vs_meta          (roar_vs_t * vss, struct roar_keyval * kv, size_t 
 
  // TODO: add error hadnling here.
 
- roar_stream_meta_set(vss->con, &(vss->stream), ROAR_META_MODE_CLEAR, &meta);
+ if ( roar_stream_meta_set(vss->con, &(vss->stream), ROAR_META_MODE_CLEAR, &meta) == -1 ) {
+  _seterr(ROAR_ERROR_UNKNOWN);
+  ret = -1;
+ }
 
  for (i = 0; i < len; i++) {
   type = roar_meta_inttype(kv[i].key);
   meta.type  = type;
   meta.value = kv[i].value;
 
-  roar_stream_meta_set(vss->con, &(vss->stream), ROAR_META_MODE_ADD, &meta);
+  if ( roar_stream_meta_set(vss->con, &(vss->stream), ROAR_META_MODE_ADD, &meta) == -1 ) {
+   _seterr(ROAR_ERROR_UNKNOWN);
+   ret = -1;
+  }
  }
 
  meta.type   = ROAR_META_TYPE_NONE;
  meta.key[0] = 0;
  meta.value  = NULL;
- roar_stream_meta_set(vss->con, &(vss->stream), ROAR_META_MODE_FINALIZE, &meta);
+ if ( roar_stream_meta_set(vss->con, &(vss->stream), ROAR_META_MODE_FINALIZE, &meta) == -1 ) {
+  _seterr(ROAR_ERROR_UNKNOWN);
+  ret = -1;
+ }
 
- return 0;
+ return ret;
 }
 
 //ll
