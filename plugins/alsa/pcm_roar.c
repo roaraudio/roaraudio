@@ -189,10 +189,9 @@ static int roar_hw_constraint(struct roar_alsa_pcm * self) {
 ///////////////////////////////////////////////////////////
 static snd_pcm_sframes_t roar_pcm_pointer(snd_pcm_ioplug_t *io) {
  struct roar_alsa_pcm * self = io->private_data;
+ int ptr;
 
  ROAR_DBG("roar_pcm_pointer(*) = ?");
-
- int ptr;
  // Did ALSA just call snd_pcm_reset() or something like that without calling the plugin? 
  // We should restart our stream as well.
  if ( io->appl_ptr < self->last_ptr ) {
@@ -215,6 +214,7 @@ static snd_pcm_sframes_t roar_pcm_pointer(snd_pcm_ioplug_t *io) {
  ptr = io->appl_ptr - ptr;
  self->last_ptr = io->appl_ptr;
 
+ ROAR_DBG("roar_pcm_pointer(*) = %i", ptr);
  return ptr;
 }
 
