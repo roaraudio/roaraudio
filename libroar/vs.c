@@ -346,7 +346,7 @@ static int roar_vs_flag(roar_vs_t * vss, int flag, int val, int * error) {
    break;
  }
 
- _seterr(ROAR_ERROR_NOTSUP);
+ _seterr(ROAR_ERROR_INVAL);
  return -1;
 }
 
