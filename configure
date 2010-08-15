@@ -776,7 +776,7 @@ test_version () {
 
  echo $_ver
 
- _ver_def=$(echo $_ver | tr .a-z _A-Z)
+ _ver_def=$(echo $_ver | tr .a-z- _A-Z_)
  echo "#define ${DEF}_$_ver_def" >&3
 
  echo "$_ver" | if grep '^[0-9]*\.[0-9]*\.[0-9]*$' > /dev/null
@@ -995,7 +995,7 @@ fi
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.276 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.277 $ of RoarAudio
  */
 
 EOF
