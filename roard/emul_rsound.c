@@ -144,11 +144,25 @@ int emul_rsound_new_client  (int client, int data) {
 }
 
 int emul_rsound_vrecv_msg(struct emul_rsound_msg * msg, struct roar_vio_calls * vio) {
+ struct roar_vio_select select;
+ struct roar_vio_selecttv tv = {
+  .sec  = 0,
+  .nsec = 0
+ };
  ssize_t ret;
  int     num;
 
  if ( msg == NULL || vio == NULL )
   return -1;
+
+ ROAR_VIO_SELECT_SETVIO(&select, vio, ROAR_VIO_SELECT_READ); 
+ if ( roar_vio_select(&select, 1, &tv, NULL) == -1 )
+  return -1;
+
+ if ( !(select.eventsa & ROAR_VIO_SELECT_READ) ) {
+  errno = EAGAIN;
+  return -1;
+ }
 
  ret = roar_vio_read(vio, msg->header, EMUL_RSOUND_MSG_HEADER_LEN);
 
@@ -187,10 +201,24 @@ int emul_rsound_vrecv_msg(struct emul_rsound_msg * msg, struct roar_vio_calls * 
 }
 
 int emul_rsound_vsend_msg(struct emul_rsound_msg * msg, struct roar_vio_calls * vio) {
+ struct roar_vio_select select;
+ struct roar_vio_selecttv tv = {
+  .sec = 0,
+  .nsec = 0
+ };
  ssize_t ret;
 
  if ( msg == NULL || vio == NULL )
   return -1;
+
+ ROAR_VIO_SELECT_SETVIO(&select, vio, ROAR_VIO_SELECT_WRITE); 
+ if ( roar_vio_select(&select, 1, &tv, NULL) == -1 )
+  return -1;
+
+ if ( !(select.eventsa & ROAR_VIO_SELECT_WRITE) ) {
+  errno = EAGAIN;
+  return -1;
+ }
 
  snprintf(msg->header, EMUL_RSOUND_MSG_HEADER_LEN+1, "RSD%5d", (int)msg->datalen);
 

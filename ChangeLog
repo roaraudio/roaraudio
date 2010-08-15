@@ -5,6 +5,8 @@ v. 0.3beta8 - ?
 	* Changed way to find default driver.
 	* Updated Debian init script
 	* Added VS API
+	* Fixed strange bug in RSound emulation killing streams
+	  after long time.
 
 v. 0.3beta7 - Fri Jul 23 2010 15:11 CEST
 	Prereleases: 0: Mon Jul 19 2010 12:58 CEST;
