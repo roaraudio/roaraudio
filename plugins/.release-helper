@@ -1,0 +1,4 @@
+#!RELEASE-HELPER:0.0beta0
+@RMDIR ao
+@RMDIR audacious
+#!END
