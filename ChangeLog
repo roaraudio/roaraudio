@@ -7,6 +7,7 @@ v. 0.3beta8 - ?
 	* Added VS API
 	* Fixed strange bug in RSound emulation killing streams
 	  after long time.
+	* Disabled build of broken libao and audacious (they are in upstream now)
 
 v. 0.3beta7 - Fri Jul 23 2010 15:11 CEST
 	Prereleases: 0: Mon Jul 19 2010 12:58 CEST;
