@@ -213,6 +213,16 @@ ssize_t roar_vs_write(roar_vs_t * vss, const void * buf, size_t len, int * error
  ret = roar_vio_write(&(vss->vio), (void*)buf, len);
 
  if ( ret == -1 ) {
+#ifdef EAGAIN
+  if ( errno == EAGAIN )
+   return 0;
+#endif
+
+#ifdef EWOULDBLOCK
+  if ( errno == EWOULDBLOCK )
+   return 0;
+#endif
+
   _seterrre();
  }
 
