@@ -4,7 +4,7 @@ Things we need to do:
 Things we should do:
  * (*.* */*/*) add a lot other things
 
- * (0.3 S/L/-) Implement ALSA support
+ * (0.3 O/N/-) Update ckport file
 
  * (0.4 O/h/-) Cleanup of plugins/
  * (0.4 O/h/-) add support to to roard to auto select a sync stream
