@@ -1,4 +1,5 @@
-v. 0.3beta8 - ?
+v. 0.3 - ?
+	Prereleases: 0: Mon Aug 16 2010 29:58 CEST
 	* Fixed locking bug with libroaross and Audacity
 	* Added working resampler code thanks to maister.
 	  (Closes: DEB#592017)
