@@ -3,6 +3,12 @@
 !TYPE: func
 
 !TARGET: libroar0
+# Unsorted misc:
+roar_cdrom_run_cdparanoia	unknown
+roar_vio_open_get_cookie	unknown
+_ROAR_MLOCK			internal
+_roardl2ldl			internal
+
 # VIO:
 roar_vio_close			ok
 
@@ -55,6 +61,10 @@ roar_vio_stdio_lseek		internal
 roar_vio_stdio_sync		internal
 roar_vio_stdio_ctl		internal
 roar_vio_stdio_close		internal
+
+roar_vio_to_stdio_close		internal
+roar_vio_to_stdio_write		internal
+roar_vio_to_stdio_read		internal
 
 # VIO based streams:
 roar_vio_simple_stream		ok
@@ -166,6 +176,9 @@ roar_vio_open_dstr_vio		ok
 roar_vio_dstr_parse_opts	internal
 roar_vio_dstr_set_defaults	internal
 roar_vio_dstr_build_chain	internal
+
+_roar_vio_dstr_init_otherlibs	internal
+roar_vio_dstr_get_by_type	internal
 
 # VIO Jumbo (frames):
 roar_vio_open_jumbo		ok
@@ -391,6 +404,7 @@ roar_libroar_nowarn		internal
 roar_libroar_warn		internal
 roar_libroar_get_config_ptr	fail
 roar_libroar_get_config		internal
+roar_libroar_config_codec_get_conf	internal
 roar_libroar_config_codec_get	internal
 roar_libroar_config_parse	likely	Why do you want to parse additional config?
 
@@ -473,6 +487,11 @@ roar_debug_msg			ok
 roar_err_int			wip
 roar_err_buildmsg		wip
 roar_err_parsemsg		wip
+
+roar_err_to_errno		maybe	This function should be avoided outside of libroar*
+roar_err_from_errno		maybe	This function should be avoided outside of libroar*
+roar_err_clear			maybe	This function should be avoided outside of libroar*
+
 
 # MemMgr:
 roar_mm_calloc			wip
@@ -612,6 +631,31 @@ roar_stack_push			ok
 roar_stack_pop			ok
 roar_stack_get_cur		ok
 
+# VS:
+roar_vs_new			ok
+roar_vs_volume			internal
+roar_vs_pause			ok
+roar_vs_read			ok
+roar_vs_stream_obj		maybe
+roar_vs_vio_obj			maybe
+roar_vs_close			ok
+roar_vs_blocking		ok
+roar_vs_new_from_con		maybe
+roar_vs_sync			wip
+roar_vs_volume_get		ok
+roar_vs_stream			ok
+roar_vs_mute			ok
+roar_vs_volume_mono		ok
+roar_vs_new_simple		ok
+roar_vs_latency			wip
+roar_vs_init			internal
+roar_vs_strerr			ok
+roar_vs_write			ok
+roar_vs_flag			internal
+roar_vs_meta			ok
+roar_vs_connection_obj		maybe
+roar_vs_volume_stereo		ok
+
 
 !TARGET: libroardsp0
 # amp.h:
@@ -687,6 +731,11 @@ roar_conv_rate_161zoh		internal
 roar_conv_rate_162zoh		internal
 roar_conv_rate_16nzoh		internal
 roar_conv_rate_SRC		internal
+
+roar_conv_rate2			ok
+roar_conv_poly3_32		internal
+roar_conv_poly3_16		internal
+roar_conv_poly3_8		internal
 
 roar_conv_codec			ok
 
@@ -814,6 +863,7 @@ roardsp_conv_alaw2pcm16		likely	use roar_xcoder_*
 roardsp_conv_pcm162alaw		likely	use roar_xcoder_*
 roardsp_conv_mulaw2pcm16	likely	use roar_xcoder_*
 roardsp_conv_pcm162mulaw	likely	use roar_xcoder_*
+provide_buffer			internal
 
 # midi.h:
 # why isn't this in libroarmidi?:
@@ -977,6 +1027,7 @@ roar_vio_bixcode_close		internal
 roar_cdriver_open		ok
 roar_cdriver_oss		internal
 roar_cdriver_roar		internal
+roar_cdriver_null		internal
 
 # ff_ssdp.h:
 roar_ff_ssdp_init		ok
