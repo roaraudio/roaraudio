@@ -10,6 +10,9 @@ v. 0.3 - ?
 	  after long time.
 	* Removed libao and audacious plugins (they are in upstream now)
 	* Added basic bash completion script
+	* Updated ckport database file to match the current libs (pr1)
+	* Wrote more comments in the VS header (pr1)
+	* fixed latency stuff in VS (pr1)
 
 v. 0.3beta7 - Fri Jul 23 2010 15:11 CEST
 	Prereleases: 0: Mon Jul 19 2010 12:58 CEST;
