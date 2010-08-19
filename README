@@ -19,7 +19,7 @@ A POSIX system or win32.
 
 You should install libesd and libao and maybe some codecs.
 For Debian you may use this command:
- $ apt-get install build-essential libdnet-dev libesd0-dev libao-dev libfishsound1-dev libvorbis-dev libspeex-dev libshout3-dev libsndfile1-dev liboggz1-dev libslp-dev
+ $ apt-get install build-essential libdnet-dev libesd0-dev libao-dev libfishsound1-dev libvorbis-dev libspeex-dev libshout3-dev liboggz1-dev libslp-dev
 
 Note that in case you want to use any emulation you need to install the corresponding
 sound system on the build system as we are using headers and other files from those
