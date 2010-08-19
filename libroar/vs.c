@@ -38,6 +38,7 @@
 #define FLAG_NONE     0x0000
 #define FLAG_STREAM   0x0001
 #define FLAG_NONBLOCK 0x0002
+#define FLAG_BUFFERED 0x0004
 
 #define _initerr()  do { errno = 0; roar_err_clear(); } while(0)
 #define _seterr(x)  do { if ( error != NULL ) *error = (x); } while(0)
@@ -50,7 +51,13 @@ struct roar_vs {
  struct roar_connection * con;
  struct roar_stream       stream;
  struct roar_vio_calls    vio;
+ struct roar_audio_info   info;
+ size_t                   readc, writec;
+ int                      mixerid;
+ int                      first_primid;
 };
+
+static int _roar_vs_find_first_prim(roar_vs_t * vss);
 
 const char * roar_vs_strerr(int error) {
  const struct {
@@ -92,6 +99,9 @@ static roar_vs_t * roar_vs_init(int * error) {
 
  memset(vss, 0, sizeof(roar_vs_t));
 
+ vss->mixerid      = -1;
+ vss->first_primid = -1;
+
  return vss;
 }
 
@@ -129,6 +139,7 @@ roar_vs_t * roar_vs_new(const char * server, const char * name, int * error) {
 }
 
 int roar_vs_stream(roar_vs_t * vss, const struct roar_audio_info * info, int dir, int * error) {
+ struct roar_stream_info sinfo;
  int ret;
 
  if ( vss->flags & FLAG_STREAM ) {
@@ -137,6 +148,9 @@ int roar_vs_stream(roar_vs_t * vss, const struct roar_audio_info * info, int dir
  }
 
  _initerr();
+
+ if ( info != &(vss->info) )
+  memcpy(&(vss->info), info, sizeof(struct roar_audio_info));
 
  ret = roar_vio_simple_new_stream_obj(&(vss->vio), vss->con, &(vss->stream),
                                       info->rate, info->channels, info->bits, info->codec,
@@ -148,6 +162,11 @@ int roar_vs_stream(roar_vs_t * vss, const struct roar_audio_info * info, int dir
   return -1;
  }
 
+ if ( roar_stream_get_info(vss->con, &(vss->stream), &sinfo) != -1 ) {
+  vss->mixerid = sinfo.mixer;
+  _roar_vs_find_first_prim(vss);
+ }
+
  vss->flags |= FLAG_STREAM;
 
  return 0;
@@ -155,20 +174,19 @@ int roar_vs_stream(roar_vs_t * vss, const struct roar_audio_info * info, int dir
 
 roar_vs_t * roar_vs_new_simple(const char * server, const char * name, int rate, int channels, int codec, int bits, int dir, int * error) {
  roar_vs_t * vss = roar_vs_new(server, name, error);
- struct roar_audio_info info;
  int ret;
 
  if (vss == NULL)
   return NULL;
 
- memset(&info, 0, sizeof(info));
+ memset(&(vss->info), 0, sizeof(vss->info));
 
- info.rate     = rate;
- info.channels = channels;
- info.codec    = codec;
- info.bits     = bits;
+ vss->info.rate     = rate;
+ vss->info.channels = channels;
+ vss->info.codec    = codec;
+ vss->info.bits     = bits;
 
- ret = roar_vs_stream(vss, &info, dir, error);
+ ret = roar_vs_stream(vss, &(vss->info), dir, error);
 
  if (ret == -1) {
   roar_vs_close(vss, ROAR_VS_TRUE, NULL);
@@ -224,6 +242,8 @@ ssize_t roar_vs_write(roar_vs_t * vss, const void * buf, size_t len, int * error
 #endif
 
   _seterrre();
+ } else {
+  vss->writec += ret;
  }
 
  return ret;
@@ -243,6 +263,8 @@ ssize_t roar_vs_read (roar_vs_t * vss,       void * buf, size_t len, int * error
 
  if ( ret == -1 ) {
   _seterrre();
+ } else {
+  vss->readc += ret;
  }
 
  return ret;
@@ -315,9 +337,136 @@ int     roar_vs_blocking (roar_vs_t * vss, int val, int * error) {
  return -1;
 }
 
-ssize_t roar_vs_latency(roar_vs_t * vss, int backend, int * error) {
+static int _roar_vs_find_first_prim(roar_vs_t * vss) {
+ struct roar_stream stream;
+ struct roar_stream_info info;
+ int id[ROAR_STREAMS_MAX];
+ int num;
+ int i;
+
+ if ( vss->first_primid != -1 )
+  return vss->first_primid;
+
+ if ( vss->mixerid == -1 )
+  return -1;
+
+ if ( (num = roar_list_streams(vss->con, id, ROAR_STREAMS_MAX)) == -1 ) {
+  return -1;
+ }
+
+ for (i = 0; i < num; i++) {
+  if ( roar_get_stream(vss->con, &stream, id[i]) == -1 )
+   continue;
+
+  if ( stream.dir != ROAR_DIR_OUTPUT )
+   continue;
+
+  if ( roar_stream_get_info(vss->con, &stream, &info) == -1 )
+   continue;
+
+  if ( info.mixer == vss->mixerid ) {
+   vss->first_primid = id[i];
+   return id[i];
+  }
+ }
+
+ return -1;
+}
+
+ssize_t roar_vs_position(roar_vs_t * vss, int backend, int * error) {
+ struct roar_stream stream;
+ struct roar_stream      out_stream;
+ struct roar_stream_info out_info;
+ size_t offset;
+
+ if ( !(vss->flags & FLAG_STREAM) ) {
+  _seterr(ROAR_ERROR_INVAL);
+  return -1;
+ }
+
+ _initerr();
+
+ if ( roar_get_stream(vss->con, &stream, roar_stream_get_id(&(vss->stream))) == -1 ) {
+  _seterrre();
+  return -1;
+ }
+
+ switch (backend) {
+  case ROAR_VS_BACKEND_NONE:
+    return stream.pos;
+   break;
+  case ROAR_VS_BACKEND_FIRST:
+   // _roar_vs_find_first_prim(vss);
+    if ( vss->first_primid == -1 ) {
+     _seterr(ROAR_ERROR_UNKNOWN);
+     return -1;
+    }
+
+    roar_stream_new_by_id(&out_stream, vss->first_primid);
+
+    if ( roar_stream_get_info(vss->con, &out_stream, &out_info) == -1 ) {
+     _seterrre();
+     return -1;
+    }
+
+    offset  = out_info.delay * vss->info.rate;
+    offset /= 1000000;
+
+    return stream.pos + offset;
+   break;
+  default:
+    _seterr(ROAR_ERROR_NOTSUP);
+    return -1;
+   break;
+ }
+
  _seterr(ROAR_ERROR_NOSYS);
  return -1;
+}
+
+roar_mus_t roar_vs_latency(roar_vs_t * vss, int backend, int * error) {
+ ssize_t pos  = roar_vs_position(vss, backend, error);
+ ssize_t bps;  // byte per sample
+ size_t  lioc; // local IO (byte) counter
+ size_t  lpos; // local possition
+ roar_mus_t  lag;
+
+ if (pos == -1)
+  return -1;
+
+ if ( !(vss->flags & FLAG_STREAM) ) {
+  _seterr(ROAR_ERROR_INVAL);
+  return -1;
+ }
+
+ if ( vss->writec == 0 ) {
+  lioc = vss->readc;
+ } else {
+  lioc = vss->writec;
+ }
+
+ _initerr();
+
+ bps = roar_info2samplesize(&(vss->info));
+
+ if ( bps == -1 ) {
+  _seterrre();
+  return -1;
+ }
+
+ lpos = lioc / bps;
+
+ lag = (roar_mus_t)lpos - (roar_mus_t)pos;
+
+ // we now have the lag in frames
+ // return value are ms
+ // so we need to multiply with 1s/ms and
+ // multiply by 1/rate
+
+ lag *= 1000000; // 1s/ms
+ lag /= vss->info.rate;
+
+ return lag;
 }
 
 static int roar_vs_flag(roar_vs_t * vss, int flag, int val, int * error) {

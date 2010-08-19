@@ -41,6 +41,7 @@
 struct roar_vs;
 
 typedef struct roar_vs roar_vs_t;
+typedef signed long int roar_mus_t;
 
 /* return readable string descriping the problem */
 const char * roar_vs_strerr(int error);
@@ -124,7 +125,9 @@ int     roar_vs_blocking (roar_vs_t * vss, int val, int * error);
 #define ROAR_VS_BACKEND_FIRST   -2
 #define ROAR_VS_BACKEND_MEAN    -3
 
-ssize_t roar_vs_latency(roar_vs_t * vss, int backend, int * error);
+ssize_t roar_vs_position(roar_vs_t * vss, int backend, int * error);
+
+roar_mus_t roar_vs_latency(roar_vs_t * vss, int backend, int * error);
 
 /* set pause flag
  * The pause flag should be set whenever the user presses the pause button or simular.
