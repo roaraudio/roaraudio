@@ -647,7 +647,8 @@ roar_vs_stream			ok
 roar_vs_mute			ok
 roar_vs_volume_mono		ok
 roar_vs_new_simple		ok
-roar_vs_latency			wip
+roar_vs_position		ok
+roar_vs_latency			ok
 roar_vs_init			internal
 roar_vs_strerr			ok
 roar_vs_write			ok
