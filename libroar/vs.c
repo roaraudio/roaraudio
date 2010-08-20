@@ -436,7 +436,7 @@ roar_mus_t roar_vs_latency(roar_vs_t * vss, int backend, int * error) {
 
  if ( !(vss->flags & FLAG_STREAM) ) {
   _seterr(ROAR_ERROR_INVAL);
-  return -1;
+  return 0;
  }
 
  if ( vss->writec == 0 ) {
@@ -451,7 +451,7 @@ roar_mus_t roar_vs_latency(roar_vs_t * vss, int backend, int * error) {
 
  if ( bps == -1 ) {
   _seterrre();
-  return -1;
+  return 0;
  }
 
  lpos = lioc / bps;
@@ -465,6 +465,10 @@ roar_mus_t roar_vs_latency(roar_vs_t * vss, int backend, int * error) {
 
  lag *= 1000000; // 1s/ms
  lag /= vss->info.rate;
+
+ if ( lag == 0 ) {
+  _seterr(ROAR_ERROR_NONE);
+ }
 
  return lag;
 }

@@ -119,14 +119,32 @@ int     roar_vs_sync (roar_vs_t * vss, int wait, int * error);
  */
 int     roar_vs_blocking (roar_vs_t * vss, int val, int * error);
 
-/* TODO: document this */
+/* default backend */
 #define ROAR_VS_BACKEND_DEFAULT ROAR_VS_BACKEND_FIRST
+/* do not supply backend offset */
 #define ROAR_VS_BACKEND_NONE    -1
+/* use first found primay stream of same mixer as offset source */
 #define ROAR_VS_BACKEND_FIRST   -2
+/* use mean of primary streams of same mixer as offset source */
 #define ROAR_VS_BACKEND_MEAN    -3
 
+/* get server's possition of stream
+ * returns server's possition of the stream or -1 on error.
+ * The retruned server possition is the possition in samples
+ * plus a offset provided by the selected backend
+ */
 ssize_t roar_vs_position(roar_vs_t * vss, int backend, int * error);
 
+/* get latency between playback and local write counter
+ * This function may fail because the used codec uses
+ * non-fixed bitrate.
+ * if this function fails it retruns zero and sets error or
+ * clear error to ROAR_ERROR_NONE.
+ * If non-zero is retruned error is untouched.
+ * return value is in mu-sec (units of 10^-6s).
+ * Note that the retruned value may be negative (the server being
+ * ahead of us). This is normal in case we read a stream.
+ */
 roar_mus_t roar_vs_latency(roar_vs_t * vss, int backend, int * error);
 
 /* set pause flag
