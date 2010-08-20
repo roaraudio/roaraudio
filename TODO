@@ -4,8 +4,8 @@ Things we need to do:
 Things we should do:
  * (*.* */*/*) add a lot other things
 
- * (0.3 O/N/-) Update ckport file
-
+ * (0.4 O/H/-) General cleanup
+ * (0.4 W/H/-) Work on docs
  * (0.4 O/h/-) Update gzip support
  * (0.4 O/h/-) Cleanup of plugins/
  * (0.4 O/h/-) add support to to roard to auto select a sync stream
@@ -17,6 +17,7 @@ Things we should do:
  * (0.4 O/N/-) Support EXEC with sid=-1 (client exec)
  * (0.4 O/N/-) Update to work with newer versions of portaudio
  * (0.4 O/N/-) Update crypto support
+ * (0.4 O/N/-) Add HashTable support
  * (0.4 O/L/-) better tests for libspeex{,dsp}-dev
  * (0.4 O/L/-) Install bash completion script
  * (0.4 O/L/-) fix libroaryiff
