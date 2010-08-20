@@ -176,6 +176,12 @@ int     roar_vs_volume_get    (roar_vs_t * vss, float * l, float * r, int * erro
  */
 int     roar_vs_meta          (roar_vs_t * vss, struct roar_keyval * kv, size_t len, int * error);
 
+/* sets the stream role
+ * see ../roaraudio/stream.h for possible roles
+ * Returns 0 on no error and -1 on error.
+ */
+int     roar_vs_role          (roar_vs_t * vss, int role, int * error);
+
 /* Get used connection object
  * This may be usefull if you want to use functions from the main API.
  * Returns used connection object or NULL on error.

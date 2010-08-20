@@ -683,6 +683,22 @@ int     roar_vs_meta          (roar_vs_t * vss, struct roar_keyval * kv, size_t 
  return ret;
 }
 
+int     roar_vs_role          (roar_vs_t * vss, int role, int * error) {
+ if ( !(vss->flags & FLAG_STREAM) ) {
+  _seterr(ROAR_ERROR_INVAL);
+  return -1;
+ }
+
+ _initerr();
+
+ if ( roar_stream_set_role(vss->con, &(vss->stream), role) == -1 ) {
+  _seterrre();
+  return -1;
+ }
+
+ return 0;
+}
+
 struct roar_connection * roar_vs_connection_obj(roar_vs_t * vss, int * error) {
  return vss->con;
 }
