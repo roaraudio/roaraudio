@@ -19,12 +19,17 @@ A POSIX system or win32.
 
 You should install libesd and libao and maybe some codecs.
 For Debian you may use this command:
- $ apt-get install build-essential libdnet-dev libesd0-dev libao-dev libfishsound1-dev libvorbis-dev libspeex-dev libshout3-dev liboggz1-dev libslp-dev
+ $ apt-get install build-essential libdnet-dev libesd0-dev libao-dev libvorbis-dev libspeex-dev libshout3-dev liboggz1-dev libslp-dev libx11-dev
 
 Note that in case you want to use any emulation you need to install the corresponding
 sound system on the build system as we are using headers and other files from those
 sound systems to be most compatible. You can safely uninstall them after building
 RoarAudio has been completed.
+
+The following binarys are suggested to be installed, too:
+ gnupg, openssh-client, socat, wget
+
+Also you maybe want to install µRoar and µRoarD (on debian libmuroar* and muroard).
 
 -- How to build:
 
