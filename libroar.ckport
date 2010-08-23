@@ -656,6 +656,7 @@ roar_vs_flag			internal
 roar_vs_meta			ok
 roar_vs_connection_obj		maybe
 roar_vs_volume_stereo		ok
+roar_vs_role			ok
 
 
 !TARGET: libroardsp0
