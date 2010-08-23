@@ -995,7 +995,7 @@ fi
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.278 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.279 $ of RoarAudio
  */
 
 EOF
@@ -1603,6 +1603,30 @@ test_pa_type ROAR_HAVE_ARG_SOURCE_NAME_OF_PA_CONTEXT_MOVE_SOURCE_OUTPUT_BY_NAME 
 test_pa_type ROAR_HAVE_ARG_VOLUME_OF_PA_STREAM_CONNECT_PLAYBACK pa_stream_connect_playback args:'pa_stream *s, const char *dev, const pa_buffer_attr *attr, pa_stream_flags_t flags, %s volume, pa_stream *sync_stream' 'const pa_cvolume *' 'pa_cvolume *' 'int pa_stream_connect_playback(pa_stream *s, const char *dev, const pa_buffer_attr *attr, pa_stream_flags_t flags, const pa_cvolume * volume, pa_stream *sync_stream) { return -1; }'
 # --- End of PulseAudio tests ---
 
+
+echo -n 'checking for struct rsound'\''s sample size member... '
+
+cat > $TF_C << EOF
+#define RSD_EXPOSE_STRUCT
+#include <rsound.h>
+
+int main (void) {
+ rsound_t var;
+
+ var.samplesize = 0;
+
+ return 0;
+}
+EOF
+if $CCTF 2> /dev/null;
+then
+ echo '#define ROAR_HAVE_RSOUND_SAMPLESIZE'     >&3
+ echo '#define ROAR_HAVE_RSOUND_SAMPLESIZE_MEMBER samplesize'   >&3
+ echo samplesize
+else
+ echo '#define ROAR_HAVE_RSOUND_SAMPLESIZE_MEMBER framesize'   >&3
+ echo framesize
+fi
 
 echo -n 'checking for safe 32 bit integer overflow... '
 

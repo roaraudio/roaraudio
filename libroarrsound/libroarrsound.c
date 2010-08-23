@@ -29,6 +29,7 @@
  *  any patches.
  */
 
+#define RSD_EXPOSE_STRUCT
 #include "libroarrsound.h"
 
 static size_t libroarrsound_fmt2fs (enum rsd_format format) {
@@ -207,7 +208,11 @@ int rsd_set_param (rsound_t *rd, enum rsd_settings option, void* param) {
    break;
   case RSD_FORMAT:
     self->rsound.format = *(int*)param;
+#ifdef ROAR_HAVE_RSOUND_SAMPLESIZE
+    self->rsound.samplesize = libroarrsound_fmt2fs(self->rsound.format);
+#else
     self->rsound.framesize = libroarrsound_fmt2fs(self->rsound.format);
+#endif
    break;
   default:
 /*
@@ -440,7 +445,11 @@ size_t rsd_delay_ms (rsound_t *rd) {
  if ( rd->rate <= 0 || rd->channels <= 0 )
   return -1;
 
+#ifdef ROAR_HAVE_RSOUND_SAMPLESIZE
+ return (rsd_delay(rd) * 1000) / (rd->rate * rd->channels * rd->samplesize);
+#else
  return (rsd_delay(rd) * 1000) / (rd->rate * rd->channels * rd->framesize);
+#endif
 }
 
 /* Returns bytes per sample */
@@ -448,7 +457,11 @@ int rsd_samplesize( rsound_t *rd ) {
  if ( rd == NULL )
   return -1;
 
+#ifdef ROAR_HAVE_RSOUND_SAMPLESIZE
+ return rd->samplesize;
+#else
  return rd->framesize;
+#endif
 }
 
 /* Will sleep until latency of stream reaches maximum allowed latency defined earlier by rsd_set_param - RSD_LATENCY
