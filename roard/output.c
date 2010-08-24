@@ -43,7 +43,7 @@ int output_buffer_init   (struct roar_audio_info * info) {
 
  ROAR_DBG("output_buffer_init(*): output buffer size is %i", size);
 
- if ( (buf = malloc(size)) == NULL )
+ if ( (buf = roar_mm_malloc(size)) == NULL )
   return -1;
 
  g_output_buffer     = buf;
@@ -71,8 +71,8 @@ int output_buffer_reinit (void) {
 int output_buffer_free   (void) {
  ROAR_DBG("output_buffer_init(*): freeing output buffer at %p", g_output_buffer);
 
- if ( g_output_buffer )
-  free(g_output_buffer);
+ if ( g_output_buffer != NULL )
+  roar_mm_free(g_output_buffer);
 
  g_output_buffer     = NULL;
  g_output_buffer_len = 0;
