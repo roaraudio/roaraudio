@@ -1742,6 +1742,19 @@ int select(int nfds, fd_set *readfds, fd_set *writefds,
  if ( ret < 1 ) {
   roar_mm_free(sv);
   ROAR_DBG("select(nfds=%i, readfds=%p, writefds=%p, exceptfds=%p, timeout=%p) = %i", nfds, readfds, writefds, exceptfds, timeout, (int)ret);
+
+  if ( ret == 0 ) {
+   if ( readfds != NULL ) {
+    FD_ZERO(readfds);
+   }
+   if ( writefds != NULL ) {
+    FD_ZERO(writefds);
+   }
+   if ( readfds != NULL ) {
+    FD_ZERO(exceptfds);
+   }
+  }
+
   return ret;
  }
 
