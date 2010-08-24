@@ -644,8 +644,7 @@ int client_stream_set_fh (int client, int stream, int fh) {
 
  for (i = 0; i < ROAR_CLIENTS_MAX_STREAMS_PER_CLIENT; i++) {
   if ( g_clients[client]->streams[i] == stream ) {
-   streams_set_fh(stream, fh);
-   return 0;
+   return streams_set_fh(stream, fh);
   }
  }
 
