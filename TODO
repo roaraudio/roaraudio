@@ -18,6 +18,7 @@ Things we should do:
  * (0.4 O/N/-) Update to work with newer versions of portaudio
  * (0.4 O/N/-) Update crypto support
  * (0.4 O/N/-) Add HashTable support
+ * (0.4 O/N/-) Consider defaulting to 32 bit mode, falling back to 16 bit if fails.
  * (0.4 O/L/-) better tests for libspeex{,dsp}-dev
  * (0.4 O/L/-) Install bash completion script
  * (0.4 O/L/-) fix libroaryiff
