@@ -93,22 +93,17 @@ void usage (void) {
         "                         a flag as default or remove it from the default\n"
        );
 
- printf("\nDriver Options: (obsolete, do not use, Use Ouput Options)\n\n");
-#ifdef ROAR_DRIVER_DEFAULT
- printf(" -d  --driver DRV      - Set the driver (default: %s)\n", ROAR_DRIVER_DEFAULT);
-#else
- printf(" -d  --driver DRV      - Set the driver (default: autodetect)\n");
-#endif
- printf(" -D  --device DEV      - Set the device\n");
- printf(" -dO OPTS              - Set output options\n");
- printf(" --list-driver         - List all drivers\n");
-
  printf("\nOutput Options:\n\n");
  printf(" -o  --odriver DRV     - Set the driver, use '--list-driver' to get a list\n");
  printf(" -O  --odevice DEV     - Set the device\n");
  printf(" -oO OPTS              - Set output options\n");
  printf(" -oN                   - Adds another output\n");
  printf(" -oP                   - Mark output as primary\n");
+#ifdef ROAR_DRIVER_DEFAULT
+ printf(" --list-driver         - List all drivers (default driver: %s)\n", ROAR_DRIVER_DEFAULT);
+#else
+ printf(" --list-driver         - List all drivers (default driver: (autodetect))\n");
+#endif
 
 #ifndef ROAR_WITHOUT_DCOMP_SOURCES
  printf("\nSource Options:\n\n");
@@ -2033,7 +2028,8 @@ int main (void) {
  if ( driver == NULL ) {
   driver = "null";
  } else {
-  ROAR_WARN("Usage of old driver interface. use -o not -d!");
+  ROAR_ERR("Usage of old driver interface. use -o not -d!");
+  ROAR_WARN("-d will be removed within the next releases");
  }
 
  if ( driver_open(&drvinst, &drvid, driver, device, &sa) == -1 ) {
