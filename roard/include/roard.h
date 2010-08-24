@@ -92,6 +92,7 @@ union uniinst {
 // MFOI = Marked For Optional Include
 
 //#include "buffer.h"
+#include "memlock.h"
 #include "codecfilter.h" /* MFOI */
 #include "container_framework.h" /* MFOI */
 #include "client.h"
