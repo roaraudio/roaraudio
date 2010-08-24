@@ -25,4 +25,38 @@
 
 #include "roard.h"
 
+int memlock_str2level(const char * str) {
+ if ( str == NULL )
+  return -1;
+
+ if ( !strcasecmp(str, "none") ) {
+  return MEMLOCK_NONE;
+ } else if ( !strcasecmp(str, "low") ) {
+  return MEMLOCK_LOW;
+ } else if ( !strcasecmp(str, "medium") ) {
+  return MEMLOCK_MEDIUM;
+ } else if ( !strcasecmp(str, "all") ) {
+  return MEMLOCK_ALL;
+ } else if ( !strcasecmp(str, "default") ) {
+  return MEMLOCK_DEFAULT;
+ } else {
+  return -1;
+ }
+}
+
+int memlock_set_level(int level) {
+ static int old_level = MEMLOCK_NONE;
+
+ if ( level == old_level )
+  return 0;
+
+ return -1;
+}
+
+void memlock_unload() {
+}
+
+void memlock_reload() {
+}
+
 //ll

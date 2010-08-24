@@ -28,6 +28,18 @@
 
 #include <roaraudio.h>
 
+#define MEMLOCK_NONE         0
+#define MEMLOCK_LOW          1
+#define MEMLOCK_MEDIUM       2
+#define MEMLOCK_ALL          127
+
+#define MEMLOCK_DEFAULT      MEMLOCK_LOW
+
+int memlock_str2level(const char * str);
+int memlock_set_level(int level);
+void memlock_unload();
+void memlock_reload();
+
 #endif
 
 //ll
