@@ -1750,7 +1750,7 @@ int select(int nfds, fd_set *readfds, fd_set *writefds,
    if ( writefds != NULL ) {
     FD_ZERO(writefds);
    }
-   if ( readfds != NULL ) {
+   if ( exceptfds != NULL ) {
     FD_ZERO(exceptfds);
    }
   }
