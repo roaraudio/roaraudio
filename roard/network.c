@@ -89,6 +89,9 @@ int net_get_new_client (struct roard_listen * lsock) {
 
  ROAR_DBG("net_get_new_client(void): fh = %i", fh);
 
+ if ( fh == -1 )
+  return -1;
+
 #ifndef ROAR_WITHOUT_DCOMP_EMUL_RSOUND
  if ( lsock->proto == ROAR_PROTO_RSOUND ) {
   client = emul_rsound_on_connect(fh, lsock);
