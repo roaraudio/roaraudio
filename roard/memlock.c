@@ -25,6 +25,47 @@
 
 #include "roard.h"
 
+#define MAX_SEGMENTS 16
+
+struct memlock {
+ int level;
+ void * addr;
+ size_t len;
+};
+
+static struct memlock memlock_table[MAX_SEGMENTS];
+
+static volatile int memlock_table_inited = 0;
+
+static void memlock_table_init (void) {
+ if ( memlock_table_inited )
+  return;
+
+ memset(memlock_table, 0, sizeof(memlock_table));
+
+ memlock_table_inited = 1;
+
+ memlock_register(MEMLOCK_MEDIUM, memlock_table, sizeof(memlock_table));
+}
+
+int memlock_register(int level, void * addr, size_t len) {
+ int i;
+
+ if ( !memlock_table_inited )
+  memlock_table_init();
+
+ for (i = 0; i < MAX_SEGMENTS; i++) {
+  if ( memlock_table[i].addr == NULL ) {
+   memlock_table[i].level = level;
+   memlock_table[i].addr  = addr;
+   memlock_table[i].len   = len;
+   return 0;
+  }
+ }
+
+ return -1;
+}
+
 int memlock_str2level(const char * str) {
  if ( str == NULL )
   return -1;
@@ -46,6 +87,9 @@ int memlock_str2level(const char * str) {
 
 int memlock_set_level(int level) {
  static int old_level = MEMLOCK_NONE;
+
+ if ( !memlock_table_inited )
+  memlock_table_init();
 
  if ( level == old_level )
   return 0;

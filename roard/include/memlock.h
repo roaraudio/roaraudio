@@ -37,6 +37,7 @@
 
 int memlock_str2level(const char * str);
 int memlock_set_level(int level);
+int memlock_register(int level, void * addr, size_t len);
 void memlock_unload();
 void memlock_reload();
 
