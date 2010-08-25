@@ -98,14 +98,21 @@ int memlock_set_level(int level) {
  int i;
  int ret = 0;
 
+ ROAR_DBG("memlock_set_level(level=%i) = ?", level);
+
+ ROAR_DBG("memlock_set_level(level=%i): ask for locking level change: %i->%i", level, old_level, level);
+
  if ( !memlock_table_inited )
   memlock_table_init();
 
- if ( level == old_level )
+ if ( level == old_level ) {
+  ROAR_DBG("memlock_set_level(level=%i) = 0 // old and new level are the same, nothing to do", level);
   return 0;
+ }
 
  for (i = 0; i < MAX_SEGMENTS; i++) {
-  if ( memlock_table[i].addr == NULL ) {
+  if ( memlock_table[i].addr != NULL ) {
+   ROAR_DBG("memlock_set_level(level=%i): found registerd segment %i at %p with %llu Byte length", level, i, memlock_table[i].addr, (unsigned long long int)memlock_table[i].len);
    if ( level > old_level ) {
     if ( memlock_table[i].level > old_level && memlock_table[i].level <= level )
      if ( memlock_lock(&(memlock_table[i])) == -1 )
@@ -120,6 +127,7 @@ int memlock_set_level(int level) {
 
  old_level = level;
 
+ ROAR_DBG("memlock_set_level(level=%i) = %i", level, ret);
  return ret;
 }
 
