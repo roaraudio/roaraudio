@@ -110,6 +110,23 @@ int memlock_set_level(int level) {
   return 0;
  }
 
+ // TODO: fix those #ifdefs and replace them with more general tests
+ if ( level == MEMLOCK_ALL ) {
+#ifdef ROAR_HAVE_MLOCKALL
+  // if we do not have ROAR_HAVE_MLOCKALL we do not have MCL_* flags.
+  // we just try to lock all known segments as fallback.
+  return roar_mm_mlockall(MCL_CURRENT|MCL_FUTURE);
+#endif
+ } else if ( old_level == MEMLOCK_ALL ) {
+#ifdef ROAR_HAVE_MUNLOCKALL
+  ret = roar_mm_munlockall();
+  // after roar_mm_munlockall() we need to re-lock all segemnts of target locking level.
+  i = old_level;
+  old_level = MEMLOCK_NONE;
+  return memlock_set_level(i);
+#endif
+ }
+
  for (i = 0; i < MAX_SEGMENTS; i++) {
   if ( memlock_table[i].addr != NULL ) {
    ROAR_DBG("memlock_set_level(level=%i): found registerd segment %i at %p with %llu Byte length", level, i, memlock_table[i].addr, (unsigned long long int)memlock_table[i].len);
