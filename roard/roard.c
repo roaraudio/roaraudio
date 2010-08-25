@@ -2068,7 +2068,7 @@ int main (void) {
 
  if ( realtime ) {
 #ifdef DEBUG
-  ROAR_WARN("compiled with -DDEBUG but realtime is enabled: for real realtime support compiel without -DDEBUG");
+  ROAR_WARN("compiled with -DDEBUG but realtime is enabled: for real realtime support compile without -DDEBUG");
 #endif
 
 #ifdef ROAR_HAVE_NICE
