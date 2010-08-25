@@ -37,7 +37,7 @@
 #define MEMLOCK_ALLCUR       126 /* specal as it uses roar_mm_mlockall() excluding future pages */
 #define MEMLOCK_ALL          127 /* specal as it uses roar_mm_mlockall() including future pages */
 
-#define MEMLOCK_DEFAULT      MEMLOCK_LOW
+#define MEMLOCK_DEFAULT      MEMLOCK_MEDIUM
 
 int memlock_str2level(const char * str);
 int memlock_set_level(int level);
