@@ -642,8 +642,8 @@ int streams_set_fh     (int id, int fh) {
 #endif
 
   ss->ready = 1;
-  ss->state = ROAR_STREAMSTATE_NEW;
   ROAR_INFO("streams_set_fh(id=%i, fh=%i): stream state: %s->new", ROAR_DBG_INFO_VERBOSE, id, fh, roar_streamstate2str(ss->state));
+  ss->state = ROAR_STREAMSTATE_NEW;
 
   ROAR_DBG("streams_set_fh(id=%i, fh=%i) = 0", id, fh);
   return 0;
