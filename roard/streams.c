@@ -135,6 +135,7 @@ int streams_new    (void) {
 
    g_streams[i] = s;
    counters_inc(streams, 1);
+   ROAR_INFO("streams_new(void): New stream %i created (state=initing)", ROAR_DBG_INFO_VERBOSE, i);
    ROAR_DBG("streams_new(void): n->id=%i", n->id);
    ROAR_DBG("streams_new(void) = %i", i);
    return i;
@@ -163,6 +164,7 @@ int streams_delete (int id) {
  if ( s->state == ROAR_STREAMSTATE_CLOSING )
   return 0;
 
+ ROAR_INFO("streams_delete(id=%i): stream state: %s->closing", ROAR_DBG_INFO_VERBOSE, id, roar_streamstate2str(s->state));
  s->state = ROAR_STREAMSTATE_CLOSING;
 
  counters_inc(streams, -1);
@@ -590,6 +592,7 @@ int streams_set_fh     (int id, int fh) {
 
  if ( fh == -1 || fh == -2 ) { // yes, this is valid, indecats full vio!
   ss->ready = 1;
+  ROAR_INFO("streams_set_fh(id=%i, fh=%i): stream state: %s->new", ROAR_DBG_INFO_VERBOSE, id, fh, roar_streamstate2str(ss->state));
   ss->state = ROAR_STREAMSTATE_NEW;
   return 0;
  }
@@ -626,6 +629,7 @@ int streams_set_fh     (int id, int fh) {
 
  if ( !nonblock ) {
   ss->ready = 1;
+  ROAR_INFO("streams_set_fh(id=%i, fh=%i): stream state: %s->new", ROAR_DBG_INFO_VERBOSE, id, fh, roar_streamstate2str(ss->state));
   ss->state = ROAR_STREAMSTATE_NEW;
 
   ROAR_DBG("streams_set_fh(id=%i, fh=%i) = 0", id, fh);
@@ -638,6 +642,7 @@ int streams_set_fh     (int id, int fh) {
 
   ss->ready = 1;
   ss->state = ROAR_STREAMSTATE_NEW;
+  ROAR_INFO("streams_set_fh(id=%i, fh=%i): stream state: %s->new", ROAR_DBG_INFO_VERBOSE, id, fh, roar_streamstate2str(ss->state));
 
   ROAR_DBG("streams_set_fh(id=%i, fh=%i) = 0", id, fh);
   return 0;
@@ -1708,6 +1713,9 @@ int streams_send_mon   (int id) {
     // send a tick:
     if ( ss->codecfilter != -1 ) {
      if ( codecfilter_write(ss->codecfilter_inst, ss->codecfilter, NULL, 0) == 0 )
+      if ( ss->state != ROAR_STREAMSTATE_OLD ) {
+       ROAR_INFO("streams_send_mon(id=%i): stream state: %s->old", ROAR_DBG_INFO_VERBOSE, id, roar_streamstate2str(ss->state));
+      }
       ss->state = ROAR_STREAMSTATE_OLD;
     }
     return 0;
@@ -1798,6 +1806,9 @@ int streams_send_mon   (int id) {
 
   if ( (ret = stream_vio_s_write(ss, obuf, olen)) == olen ) {
    s->pos = ROAR_MATH_OVERFLOW_ADD(s->pos, ROAR_OUTPUT_CALC_OUTBUFSAMP(&(s->info), olen)*s->info.channels);
+   if ( ss->state != ROAR_STREAMSTATE_OLD ) {
+    ROAR_INFO("streams_send_mon(id=%i): stream state: %s->old", ROAR_DBG_INFO_VERBOSE, id, roar_streamstate2str(ss->state));
+   }
    ss->state = ROAR_STREAMSTATE_OLD;
    ROAR_DBG("streams_send_mon(id=%i) = 0", id);
    _return(0);
@@ -1808,6 +1819,9 @@ int streams_send_mon   (int id) {
   if ( ret > 0 && errno == 0 ) {
    ROAR_WARN("streams_send_mon(id=%i): Overrun in stream: wrote %i of %i bytes, %i bytes missing", id, (int)ret, olen, olen-(int)ret);
    s->pos = ROAR_MATH_OVERFLOW_ADD(s->pos, ROAR_OUTPUT_CALC_OUTBUFSAMP(&(s->info), ret)*s->info.channels);
+   if ( ss->state != ROAR_STREAMSTATE_OLD ) {
+    ROAR_INFO("streams_send_mon(id=%i): stream state: %s->old", ROAR_DBG_INFO_VERBOSE, id, roar_streamstate2str(ss->state));
+   }
    ss->state = ROAR_STREAMSTATE_OLD;
    _return(0);
   }
@@ -1816,6 +1830,9 @@ int streams_send_mon   (int id) {
   if ( codecfilter_write(ss->codecfilter_inst, ss->codecfilter, obuf, olen)
             == olen ) {
    s->pos = ROAR_MATH_OVERFLOW_ADD(s->pos, ROAR_OUTPUT_CALC_OUTBUFSAMP(&(s->info), olen)*s->info.channels);
+   if ( ss->state != ROAR_STREAMSTATE_OLD ) {
+    ROAR_INFO("streams_send_mon(id=%i): stream state: %s->old", ROAR_DBG_INFO_VERBOSE, id, roar_streamstate2str(ss->state));
+   }
    ss->state = ROAR_STREAMSTATE_OLD;
    _return(0);
   } else { // we cann't retry on codec filetered streams
@@ -1836,6 +1853,9 @@ int streams_send_mon   (int id) {
 
   if ( stream_vio_s_write(ss, obuf, olen) == olen ) {
    s->pos = ROAR_MATH_OVERFLOW_ADD(s->pos, ROAR_OUTPUT_CALC_OUTBUFSAMP(&(s->info), olen)*s->info.channels);
+   if ( ss->state != ROAR_STREAMSTATE_OLD ) {
+    ROAR_INFO("streams_send_mon(id=%i): stream state: %s->old", ROAR_DBG_INFO_VERBOSE, id, roar_streamstate2str(ss->state));
+   }
    ss->state = ROAR_STREAMSTATE_OLD;
    _return(0);
   } else if ( errno == EAGAIN ) {
@@ -1946,8 +1966,12 @@ ssize_t stream_vio_s_read (struct roar_stream_server * stream, void *buf, size_t
       if ( stream_vio_write(i, orig_buf, len) != len )
        streams_delete(i);
 
-      if ( g_streams[i] != NULL )
+      if ( g_streams[i] != NULL ) {
+       if ( g_streams[i]->state != ROAR_STREAMSTATE_OLD ) {
+        ROAR_INFO("stream_vio_s_read(*): (stream: %i) stream state: %s->old", ROAR_DBG_INFO_VERBOSE, i, roar_streamstate2str(g_streams[i]->state));
+       }
        g_streams[i]->state = ROAR_STREAMSTATE_OLD;
+      }
      }
     }
    }
@@ -1989,8 +2013,12 @@ ssize_t stream_vio_s_write(struct roar_stream_server * stream, void *buf, size_t
        streams_delete(i);
       }
 
-      if ( g_streams[i] != NULL )
+      if ( g_streams[i] != NULL ) {
+       if ( g_streams[i]->state != ROAR_STREAMSTATE_OLD ) {
+        ROAR_INFO("stream_vio_s_write(*): (stream: %i) stream state: %s->old", ROAR_DBG_INFO_VERBOSE, i, roar_streamstate2str(g_streams[i]->state));
+       }
        g_streams[i]->state = ROAR_STREAMSTATE_OLD;
+      }
      }
     }
    }
