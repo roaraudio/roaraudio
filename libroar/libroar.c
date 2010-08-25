@@ -35,7 +35,8 @@
 
 #include "libroar.h"
 
-int _ROAR_MLOCK(const void *addr, size_t len) {
+#ifndef roar_mm_mlock
+int roar_mm_mlock(const void *addr, size_t len) {
 #if defined(ROAR_TARGET_WIN32)
  return GlobalLock(addr) == addr ? 0 : -1;
 #elif defined(ROAR_TARGET_MICROCONTROLLER)
@@ -50,6 +51,34 @@ int _ROAR_MLOCK(const void *addr, size_t len) {
 
  return mlock((void*)pos, len);
 #endif
+}
+#endif
+
+#ifndef roar_mm_munlock
+int roar_mm_munlock(const void *addr, size_t len) {
+#if defined(ROAR_TARGET_WIN32)
+ // TODO: find out what do do here. GlobalUnLock()? does such a function exist?
+// return GlobalLock(addr) == addr ? 0 : -1;
+ return -1;
+#elif defined(ROAR_TARGET_MICROCONTROLLER)
+ return 0;
+#else
+ long sz = sysconf(_SC_PAGESIZE);
+ unsigned long int pos = (unsigned long int) addr;
+
+ len += sz - (len % sz);
+
+ pos -= pos % sz;
+
+ return munlock((void*)pos, len);
+#endif
+}
+#endif
+
+// for compatibility with old versions:
+int _ROAR_MLOCK(const void *addr, size_t len) {
+ roar_debug_warn_obsolete("_ROAR_MLOCK", "roar_mm_mlock", NULL);
+ return roar_mm_mlock(addr, len);
 }
 
 //ll

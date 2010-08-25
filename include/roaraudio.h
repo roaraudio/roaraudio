@@ -293,15 +293,6 @@ __BEGIN_DECLS
 #define ROAR_MATH_OVERFLOW_ADD(a, b) ((4294967295U - (a)) + 1 + (b))
 #endif
 
-#ifdef ROAR_HAVE_MLOCK
-#ifdef __linux__
-#define ROAR_MLOCK(p,s) mlock((p), (s))
-#else
-int _ROAR_MLOCK(const void *addr, size_t len);
-#define ROAR_MLOCK _ROAR_MLOCK
-#endif
-#endif
-
 #ifdef ROAR_HAVE_STRCASESTR
 #define _roar_strcasestr(a,b) strcasestr((a), (b))
 #else

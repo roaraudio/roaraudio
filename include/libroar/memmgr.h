@@ -59,6 +59,44 @@ char * roar_mm_strdup(const char *s);
 #define roar_mm_strdup(str)         strdup((str))
 #endif
 
+
+// memory locking:
+
+#if defined(ROAR_HAVE_MLOCK) && defined(__linux__)
+#define roar_mm_mlock(addr, len) mlock((addr), (len))
+#elif defined(ROAR_TARGET_MICROCONTROLLER)
+#define roar_mm_mlock(addr, len) 0
+#else
+int roar_mm_mlock(const void *addr, size_t len);
+#endif
+
+#if defined(ROAR_HAVE_MUNLOCK) && defined(__linux__)
+#define roar_mm_munlock(addr, len) munlock((addr), (len))
+#elif defined(ROAR_TARGET_MICROCONTROLLER)
+#define roar_mm_munlock(addr, len) 0
+#else
+int roar_mm_munlock(const void *addr, size_t len);
+#endif
+
+#if defined(ROAR_HAVE_MLOCKALL)
+#define roar_mm_mlockall(flags) mlockall((flags))
+#elif defined(ROAR_TARGET_MICROCONTROLLER)
+#define roar_mm_mlockall(flags) 0
+#else
+#define roar_mm_mlockall(flags) (-1)
+#endif
+
+#if defined(ROAR_HAVE_MUNLOCKALL)
+#define roar_mm_munlockall(flags) munlockall((flags))
+#elif defined(ROAR_TARGET_MICROCONTROLLER)
+#define roar_mm_munlockall(flags) 0
+#else
+#define roar_mm_munlockall(flags) (-1)
+#endif
+
+// for compatibility with old versions:
+#define ROAR_MLOCK _ROAR_MLOCK
+
 #endif
 
 //ll
