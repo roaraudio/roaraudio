@@ -66,6 +66,18 @@ int memlock_register(int level, void * addr, size_t len) {
  return -1;
 }
 
+static int memlock_lock(struct memlock * seg) {
+#ifdef ROAR_HAVE_MLOCK
+ return ROAR_MLOCK(seg->addr, seg->len);
+#else
+ return -1;
+#endif
+}
+
+static int memlock_unlock(struct memlock * seg) {
+ return -1;
+}
+
 int memlock_str2level(const char * str) {
  if ( str == NULL )
   return -1;
@@ -87,6 +99,8 @@ int memlock_str2level(const char * str) {
 
 int memlock_set_level(int level) {
  static int old_level = MEMLOCK_NONE;
+ int i;
+ int ret = 0;
 
  if ( !memlock_table_inited )
   memlock_table_init();
@@ -94,7 +108,23 @@ int memlock_set_level(int level) {
  if ( level == old_level )
   return 0;
 
- return -1;
+ for (i = 0; i < MAX_SEGMENTS; i++) {
+  if ( memlock_table[i].addr == NULL ) {
+   if ( level > old_level ) {
+    if ( memlock_table[i].level > old_level && memlock_table[i].level <= level )
+     if ( memlock_lock(&(memlock_table[i])) == -1 )
+      ret = -1;
+   } else {
+    if ( memlock_table[i].level <= old_level && memlock_table[i].level > level )
+     if ( memlock_unlock(&(memlock_table[i])) == -1 )
+      ret = -1;
+   }
+  }
+ }
+
+ old_level = level;
+
+ return ret;
 }
 
 void memlock_unload() {
