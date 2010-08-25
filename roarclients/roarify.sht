@@ -99,6 +99,6 @@ then
  exit 0;
 fi
 
-exec -- "$CMD" "$@"
+exec $(exec -- echo -- 2>/dev/null) "$CMD" "$@"
 
 #ll
