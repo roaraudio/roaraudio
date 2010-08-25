@@ -46,6 +46,12 @@ static void memlock_table_init (void) {
  memlock_table_inited = 1;
 
  memlock_register(MEMLOCK_MEDIUM, memlock_table, sizeof(memlock_table));
+
+ memlock_register(MEMLOCK_MEDIUM, g_clients, sizeof(g_clients));
+ memlock_register(MEMLOCK_MEDIUM, g_streams, sizeof(g_streams));
+
+ memlock_register(MEMLOCK_HIGH, g_listen, sizeof(g_listen));
+ memlock_register(MEMLOCK_HIGH, &g_counters, sizeof(g_counters));
 }
 
 int memlock_register(int level, void * addr, size_t len) {
@@ -84,6 +90,14 @@ int memlock_str2level(const char * str) {
   return MEMLOCK_LOW;
  } else if ( !strcasecmp(str, "medium") ) {
   return MEMLOCK_MEDIUM;
+ } else if ( !strcasecmp(str, "high") ) {
+  return MEMLOCK_HIGH;
+ } else if ( !strcasecmp(str, "nearlyall") ) {
+  return MEMLOCK_NEARLYALL;
+ } else if ( !strcasecmp(str, "nearlyallsys") ) {
+  return MEMLOCK_NEARLYALLSYS;
+ } else if ( !strcasecmp(str, "allcur") ) {
+  return MEMLOCK_ALLCUR;
  } else if ( !strcasecmp(str, "all") ) {
   return MEMLOCK_ALL;
  } else if ( !strcasecmp(str, "default") ) {
@@ -115,9 +129,15 @@ int memlock_set_level(int level) {
 #ifdef ROAR_HAVE_MLOCKALL
   // if we do not have ROAR_HAVE_MLOCKALL we do not have MCL_* flags.
   // we just try to lock all known segments as fallback.
+  old_level = MEMLOCK_ALL;
   return roar_mm_mlockall(MCL_CURRENT|MCL_FUTURE);
 #endif
- } else if ( old_level == MEMLOCK_ALL ) {
+ } else if ( level == MEMLOCK_ALLCUR ) {
+#ifdef ROAR_HAVE_MLOCKALL
+  old_level = MEMLOCK_ALLCUR;
+  return roar_mm_mlockall(MCL_CURRENT);
+#endif
+ } else if ( old_level == MEMLOCK_ALL || old_level == MEMLOCK_ALLCUR ) {
 #ifdef ROAR_HAVE_MUNLOCKALL
   ret = roar_mm_munlockall();
   // after roar_mm_munlockall() we need to re-lock all segemnts of target locking level.

@@ -31,7 +31,11 @@
 #define MEMLOCK_NONE         0
 #define MEMLOCK_LOW          1
 #define MEMLOCK_MEDIUM       2
-#define MEMLOCK_ALL          127
+#define MEMLOCK_HIGH         3
+#define MEMLOCK_NEARLYALL    124
+#define MEMLOCK_NEARLYALLSYS 125 /* include stack and heap if possible */
+#define MEMLOCK_ALLCUR       126 /* specal as it uses roar_mm_mlockall() excluding future pages */
+#define MEMLOCK_ALL          127 /* specal as it uses roar_mm_mlockall() including future pages */
 
 #define MEMLOCK_DEFAULT      MEMLOCK_LOW
 
