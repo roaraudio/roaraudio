@@ -95,6 +95,8 @@ int req_on_new_stream  (int client, struct roar_message * mes, char ** data, uin
  if ((stream = streams_new()) == -1 )
   return -1;
 
+ ROAR_DBG("req_on_new_stream(client=%i, ...): stream=%i", client, stream);
+
  ROAR_DBG("req_on_new_stream(client=%i, ...): getting stream...", client);
  if ( streams_get(stream, (struct roar_stream_server **)&s) == -1 ) {
   streams_delete(stream);
@@ -220,7 +222,7 @@ int req_on_new_stream  (int client, struct roar_message * mes, char ** data, uin
    break;
  }
 
- ROAR_DBG("req_on_new_stream(client=%i, ...): returning (OK)...", client);
+ ROAR_DBG("req_on_new_stream(client=%i, ...): returning (OK, stream=%i)...", client, stream);
 
  mes->cmd     = ROAR_CMD_OK;
  mes->stream  = stream;
@@ -306,14 +308,23 @@ int req_on_passfh      (int client, struct roar_message * mes, char ** data, uin
  int fh;
  int i;
 
+ ROAR_DBG("req_on_passfh(client=%i, mes={stream=%i,...},...) = ?", client, mes->stream);
+
  if ( (fh = roar_socket_recv_fh(sock, NULL, NULL)) == -1 )
   return -1;
 
+ ROAR_DBG("req_on_passfh(client=%i, mes={stream=%i,...},...): fh=%i", client, mes->stream, fh);
+
  if ( mes->stream != -1 ) { // stream pass:
+  ROAR_DBG("req_on_passfh(client=%i, mes={stream=%i,...},...): This is a stream passfh", client, mes->stream);
+
   if ( client_stream_set_fh(client, mes->stream, fh) == -1 ) {
    close(fh);
+   ROAR_DBG("req_on_passfh(client=%i, mes={stream=%i,...},...): returning (ERROR)...", client, mes->stream);
    return -1;
   }
+
+  ROAR_DBG("req_on_passfh(client=%i, mes={stream=%i,...},...): returning (OK)...", client, mes->stream);
 
   mes->datalen = 0;
   mes->cmd     = ROAR_CMD_OK;
@@ -322,6 +333,8 @@ int req_on_passfh      (int client, struct roar_message * mes, char ** data, uin
  }
 
 // non-stream pass:
+
+ ROAR_DBG("req_on_passfh(client=%i, mes={stream=%i,...},...): This is a client passfh", client, mes->stream);
 
 /*
  0: Version,   16
@@ -362,6 +375,8 @@ int req_on_passfh      (int client, struct roar_message * mes, char ** data, uin
   if ( clients_new_from_fh(fh, d[2], d[3], 1) == -1 )
    return -1;
  }
+
+ ROAR_DBG("req_on_passfh(client=%i, mes={stream=%i,...},...): returning (OK)...", client, mes->stream);
 
  mes->datalen = 0;
  mes->cmd     = ROAR_CMD_OK;
