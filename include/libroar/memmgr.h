@@ -87,11 +87,11 @@ int roar_mm_munlock(const void *addr, size_t len);
 #endif
 
 #if defined(ROAR_HAVE_MUNLOCKALL)
-#define roar_mm_munlockall(flags) munlockall((flags))
+#define roar_mm_munlockall() munlockall()
 #elif defined(ROAR_TARGET_MICROCONTROLLER)
-#define roar_mm_munlockall(flags) 0
+#define roar_mm_munlockall() 0
 #else
-#define roar_mm_munlockall(flags) (-1)
+#define roar_mm_munlockall() (-1)
 #endif
 
 // for compatibility with old versions:
