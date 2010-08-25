@@ -51,11 +51,7 @@ int output_buffer_init   (struct roar_audio_info * info) {
 
  ROAR_DBG("output_buffer_init(*): output buffer is at %p", buf);
 
-/* TODO: do this within the memlock part
-#ifdef ROAR_HAVE_MLOCK
- ROAR_MLOCK(buf, size);
-#endif
-*/
+ memlock_register(MEMLOCK_LOW, buf, size);
 
  output_buffer_reinit();
 
