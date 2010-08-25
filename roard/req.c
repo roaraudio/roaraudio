@@ -310,8 +310,11 @@ int req_on_passfh      (int client, struct roar_message * mes, char ** data, uin
 
  ROAR_DBG("req_on_passfh(client=%i, mes={stream=%i,...},...) = ?", client, mes->stream);
 
- if ( (fh = roar_socket_recv_fh(sock, NULL, NULL)) == -1 )
+ if ( (fh = roar_socket_recv_fh(sock, NULL, NULL)) == -1 ) {
+  ROAR_WARN("req_on_passfh(client=%i, mes={stream=%i,...},...): was unabled to get filehandle from remote end. bad.", client, mes->stream);
+  ROAR_DBG("req_on_passfh(client=%i, mes={stream=%i,...},...): returning (ERROR)...", client, mes->stream);
   return -1;
+ }
 
  ROAR_DBG("req_on_passfh(client=%i, mes={stream=%i,...},...): fh=%i", client, mes->stream, fh);
 
