@@ -375,7 +375,8 @@ int roar_socket_recv_fh (int sock,         char * mes, size_t * len) {
   return -1;
  }
 
- if ( msg.msg_controllen != _SCMR_CONTROLLEN ) {
+ if ( msg.msg_controllen  < _SCMR_CONTROLLEN ||
+      cmptr->cmsg_len    != _SCMR_CONTROLLEN  ) {
   ROAR_DBG("roar_socket_recv_fh(sock=%i, mes=%p, len=%p) = -1 // control len is wrong", sock, mes, len);
   return -1;
  }
