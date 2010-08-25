@@ -348,8 +348,12 @@ int roar_socket_recv_fh (int sock,         char * mes, size_t * len) {
  char             localmes[1];
  size_t           locallen[1] = {1};
 
- if ( sock < 0 )
+ ROAR_DBG("roar_socket_recv_fh(sock=%i, mes=%p, len=%p) = ?", sock, mes, len);
+
+ if ( sock < 0 ) {
+  ROAR_DBG("roar_socket_recv_fh(sock=%i, mes=%p, len=%p) = -1 // invalid socket", sock, mes, len);
   return -1;
+ }
 
  if ( len == NULL ) {
   len = locallen;
@@ -366,12 +370,17 @@ int roar_socket_recv_fh (int sock,         char * mes, size_t * len) {
  msg.msg_control    = (caddr_t) cmptr;
  msg.msg_controllen = _SCMR_CONTROLLEN;
 
- if ( (*len = recvmsg(sock, &msg, 0)) == -1 )
+ if ( (*len = recvmsg(sock, &msg, 0)) == -1 ) {
+  ROAR_DBG("roar_socket_recv_fh(sock=%i, mes=%p, len=%p) = -1 // can not read from socket", sock, mes, len);
   return -1;
+ }
 
- if ( msg.msg_controllen != _SCMR_CONTROLLEN )
+ if ( msg.msg_controllen != _SCMR_CONTROLLEN ) {
+  ROAR_DBG("roar_socket_recv_fh(sock=%i, mes=%p, len=%p) = -1 // control len is wrong", sock, mes, len);
   return -1;
+ }
 
+ ROAR_DBG("roar_socket_recv_fh(sock=%i, mes=%p, len=%p) = %i", sock, mes, len, *(int *)CMSG_DATA(cmptr));
  return *(int *)CMSG_DATA(cmptr);
 #else
  ROAR_ERR("roar_socket_recv_fh(*): There is no UNIX Domain Socket support in win32, download a real OS.");
