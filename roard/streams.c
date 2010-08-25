@@ -271,6 +271,7 @@ int streams_delete (int id) {
   clean_quit();
  }
 
+ ROAR_INFO("streams_delete(id=%i): stream deleted", ROAR_DBG_INFO_VERBOSE, id);
  ROAR_DBG("streams_delete(id=%i) = 0", id);
  return 0;
 }
