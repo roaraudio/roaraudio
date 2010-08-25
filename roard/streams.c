@@ -538,12 +538,14 @@ int streams_set_fh     (int id, int fh) {
  if ( (s = ROAR_STREAM(ss = g_streams[id])) == NULL )
   return -1;
 
- if ( ss->ready )
+ if ( ss->ready ) {
+  ROAR_DBG("streams_set_fh(id=%i, fh=%i) = -1 // try to set fh for stream which is already ready", id, fh);
   return -1;
+ }
 
  dir = ROAR_STREAM(ss)->dir;
 
- ROAR_DBG("streams_set_fh(id=%i): g_streams[id]->id=%i", id, s->id);
+ ROAR_DBG("streams_set_fh(id=%i, fh=%i): g_streams[id]->id=%i", id, fh, s->id);
 
  s->fh = fh;
 
