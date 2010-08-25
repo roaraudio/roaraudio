@@ -995,7 +995,7 @@ fi
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.279 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.280 $ of RoarAudio
  */
 
 EOF
@@ -1308,9 +1308,12 @@ else
 fi
 
 
-test_func_defmake ROAR_HAVE_CHROOT    chroot    'chroot((void*)0)'           -- unistd.h
-test_func_defmake ROAR_HAVE_MLOCK     mlock     'mlock((void*)0, 0)'         -- sys/mman.h
-test_func_defmake ROAR_HAVE_MMAP      mmap      'mmap((void*)0,0,0,0,0,0)'   -- sys/mman.h
+test_func_defmake ROAR_HAVE_CHROOT     chroot     'chroot((void*)0)'           -- unistd.h
+test_func_defmake ROAR_HAVE_MLOCK      mlock      'mlock((void*)0, 0)'         -- sys/mman.h
+test_func_defmake ROAR_HAVE_MUNLOCK    munlock    'munlock((void*)0, 0)'       -- sys/mman.h
+test_func_defmake ROAR_HAVE_MLOCKALL   mlockall   'mlockall(MCL_CURRENT|MCL_FUTURE)' -- sys/mman.h
+test_func_defmake ROAR_HAVE_MUNLOCKALL munlockall 'munlockall()'               -- sys/mman.h
+test_func_defmake ROAR_HAVE_MMAP       mmap       'mmap((void*)0,0,0,0,0,0)'   -- sys/mman.h
 
 echo -n 'checking for fsync()... '
 
