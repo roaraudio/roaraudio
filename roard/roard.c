@@ -59,6 +59,7 @@ void usage (void) {
         " --shutdown            - Terminates a running roard (provide --pidfile!)\n"
         " --realtime            - Trys to get realtime priority,\n"
         "                         give multible times for being more realtime\n"
+        " --memlock LEVEL       - Set default memory locking level to LEVEL\n"
         " --chroot DIR          - chroots to the given dir\n"
         " --setgid              - GroupID to the audio group as specified via -G\n"
         " --setuid              - UserID to the audio user as specified via -U\n"
@@ -325,6 +326,8 @@ int init_config (void) {
  g_config->streams[ROAR_DIR_BIDIR   ].flags = ROAR_FLAG_ANTIECHO;
 
  g_config->location = "***default***";
+
+ g_config->memlock_level = -1;
 
  return 0;
 }
@@ -1469,6 +1472,9 @@ int main (void) {
    sysclocksync = 1000;
   } else if ( strcmp(k, "--realtime") == 0 ) {
    realtime++;
+  } else if ( strcmp(k, "--memlock") == 0 ) {
+   _CKHAVEARGS(1);
+   g_config->memlock_level = memlock_str2level(argv[++i]);
   } else if ( strcmp(k, "--chroot") == 0 ) {
    _CKHAVEARGS(1);
 #ifdef ROAR_HAVE_CHROOT
@@ -2051,6 +2057,14 @@ int main (void) {
  signal(SIGUSR1, on_sig_usr1);
  signal(SIGPIPE, SIG_IGN);  // ignore broken pipes
 #endif
+
+ if ( g_config->memlock_level == -1 ) {
+  g_config->memlock_level = MEMLOCK_DEFAULT;
+ }
+
+ if ( memlock_set_level(g_config->memlock_level) == -1 ) {
+  ROAR_WARN("Can not set memory locking level to target level.");
+ }
 
  if ( realtime ) {
 #ifdef DEBUG

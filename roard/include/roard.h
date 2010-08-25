@@ -181,6 +181,7 @@ struct roard_config {
  } streams[ROAR_DIR_DIRIDS];
  char * location;
  size_t jumbo_mtu;
+ int memlock_level;
 } * g_config;
 
 struct _counters {
