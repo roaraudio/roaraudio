@@ -66,16 +66,12 @@ int memlock_register(int level, void * addr, size_t len) {
  return -1;
 }
 
-static int memlock_lock(struct memlock * seg) {
-#ifdef ROAR_HAVE_MLOCK
- return ROAR_MLOCK(seg->addr, seg->len);
-#else
- return -1;
-#endif
+static inline int memlock_lock(struct memlock * seg) {
+ return roar_mm_mlock(seg->addr, seg->len);
 }
 
-static int memlock_unlock(struct memlock * seg) {
- return -1;
+static inline int memlock_unlock(struct memlock * seg) {
+ return roar_mm_munlock(seg->addr, seg->len);
 }
 
 int memlock_str2level(const char * str) {
