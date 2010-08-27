@@ -1021,6 +1021,140 @@ int streams_set_map      (int id, char * map, size_t len) {
  return 0;
 }
 
+int streams_ltm_ctl      (int id, int mt, int window, int cmd) {
+ struct roar_stream_server * ss;
+ struct roar_stream_ltm *    ltm;
+ int i;
+
+ _CHECK_SID(id);
+
+ // currently we only support the WORKBLOCK window
+ if ( window != ROAR_LTM_WIN_WORKBLOCK )
+  return -1;
+
+ // currently we only support ROAR_LTM_MT_RMS
+ if ( (mt | ROAR_LTM_MT_RMS) - ROAR_LTM_MT_RMS )
+  return -1;
+
+ if ( (ss = g_streams[id]) == NULL )
+  return -1;
+
+ switch (cmd) {
+  case ROAR_LTM_SST_NOOP:
+    return 0;
+   break;
+  case ROAR_LTM_SST_REGISTER:
+    // test if the window is already registered:
+    for (i = 0; i < MAX_LTM_WINDOWS_PER_STREAM; i++) {
+     ltm = &(ss->ltm[i]);
+     if ( ltm->refc && ltm->window == window ) {
+      ltm->refc++;
+      ltm->mt |= mt;
+      return 0;
+     }
+    }
+
+    // register
+    for (i = 0; i < MAX_LTM_WINDOWS_PER_STREAM; i++) {
+     ltm = &(ss->ltm[i]);
+     if ( ltm->refc == 0 ) {
+      memset(ltm, 0, sizeof(struct roar_stream_ltm));
+      ltm->refc = 1;
+      ltm->window = window;
+      ltm->parent_window = -1;
+      ltm->mt = mt;
+      ltm->channels = ROAR_STREAM(ss)->info.channels;
+      if ( (ltm->cur = roar_mm_malloc(ltm->channels*sizeof(struct roar_ltm_vals))) == NULL ) {
+       ltm->refc = 0; // reset
+       return -1;
+      }
+      memset(ltm->cur, 0, ltm->channels*sizeof(struct roar_ltm_vals));
+      return 0;
+     }
+    }
+    return -1;
+   break;
+  case ROAR_LTM_SST_UNREGISTER:
+    for (i = 0; i < MAX_LTM_WINDOWS_PER_STREAM; i++) {
+     ltm = &(ss->ltm[i]);
+     if ( ltm->refc && ltm->window == window ) {
+      ltm->refc--;
+      if ( ! ltm->refc ) {
+       roar_mm_free(ltm->cur);
+       return 0;
+      }
+     }
+    }
+    return -1;
+   break;
+  default:
+    return -1;
+   break;
+ }
+}
+
+int streams_ltm_calc     (int id, struct roar_audio_info * info, void * data, size_t len) {
+ struct roar_stream_server * ss;
+ struct roar_stream_ltm *    ltm = NULL;
+ int64_t rmsbuf_real[8];
+ int64_t * rmsbuf = rmsbuf_real;
+ size_t samples = 0;
+ int i;
+
+ _CHECK_SID(id);
+
+ if ( data == NULL || info == NULL )
+  return -1;
+
+ if ( info->codec != ROAR_CODEC_DEFAULT )
+  return -1;
+
+ if ( (ss = g_streams[id]) == NULL )
+  return -1;
+
+ for (i = 0; i < MAX_LTM_WINDOWS_PER_STREAM; i++) {
+  if ( ss->ltm[i].refc && ss->ltm[i].window == ROAR_LTM_WIN_WORKBLOCK ) {
+   ltm = &(ss->ltm[i]);
+   break;
+  }
+ }
+
+ if ( ltm == NULL )
+  return -1;
+
+ // TODO: support change of number of channels
+ if ( ltm->channels != info->channels )
+  return -1;
+
+ if ( len == 0 ) {
+  memset(ltm->cur, 0, ltm->channels * sizeof(struct roar_ltm_vals));
+  return 0;
+ }
+
+ // TODO: support more channels then rmsbuf_real has space for
+ if ( ltm->channels > (sizeof(rmsbuf_real)/sizeof(*rmsbuf_real)) ) {
+  return -1;
+ }
+
+ samples = len / info->bits;
+
+ if ( ltm->mt & ROAR_LTM_MT_RMS ) {
+  if ( roar_rms2_1_b_n(data, samples, rmsbuf, ltm->channels, info->bits) == -1 )
+   return -1;
+
+  for (i = 0; i < ltm->channels; i++) {
+   ltm->cur[i].rms = rmsbuf[i];
+  }
+
+  ROAR_DBG("streams_ltm_calc(id=%i,...): rmsbuf[0]=%lli", id, (long long int)rmsbuf[0]);
+ }
+
+ return 0;
+}
+
+struct roar_stream_ltm * streams_lzm_get(int id, int mt, int window);
+
+
 int streams_ctl          (int id, int_least32_t cmd, void * data) {
  struct roar_stream_server * ss;
  int_least32_t comp;
@@ -1200,6 +1334,8 @@ int streams_fill_mixbuffer2 (int id, struct roar_audio_info * info) {
   memcpy(outdata, bufdata, outlen);
   roar_buffer_free(bufbuf);
  }
+
+ streams_ltm_calc(id, stream_info, outdata, outlen);
 
  if ( streams_get_flag(id, ROAR_FLAG_ANTIECHO) ) {
   ROAR_DBG("streams_fill_mixbuffer2(*): Calcing antiecho...");

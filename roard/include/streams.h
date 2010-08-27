@@ -66,9 +66,11 @@ struct roar_ltm_vals {
 struct roar_stream_ltm {
  int window;
  int parent_window;
+ int mt;
  size_t refc;
- struct roar_ltm_vals cur;
- struct roar_ltm_vals * history;
+ size_t channels;
+ struct roar_ltm_vals *  cur;
+ struct roar_ltm_vals ** history;
 };
 
 struct roar_stream_server {
@@ -160,6 +162,10 @@ int streams_calc_delay   (int id);
 int streams_set_mixer    (int id);
 
 int streams_set_map      (int id, char * map, size_t len);
+
+int streams_ltm_ctl      (int id, int mt, int window, int cmd);
+int streams_ltm_calc     (int id, struct roar_audio_info * info, void * data, size_t len);
+struct roar_stream_ltm * streams_lzm_get(int id, int mt, int window);
 
 int streams_ctl          (int id, int_least32_t cmd, void * data);
 
