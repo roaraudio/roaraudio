@@ -809,15 +809,20 @@ int req_on_set_stream_para (int client, struct roar_message * mes, char ** data,
      return -1;
    break;
   case ROAR_STREAM_PARA_LTM:
-    if ( mes->stream == -1 )
-     return -1;
-
     for (i = 2; i < mes->datalen/2; i++) {
      d[i] = ROAR_NET2HOST16(d[i]);
     }
 
-    if ( streams_ltm_ctl(mes->stream, d[5], d[3], d[2]) == -1 )
+    if ( mes->stream == -1 ) {
      return -1;
+
+     for (i = 6; i < mes->datalen/2; i++)
+      if ( streams_ltm_ctl(d[i], d[5], d[3], d[2]) == -1 )
+       return -1;
+    } else {
+     if ( streams_ltm_ctl(mes->stream, d[5], d[3], d[2]) == -1 )
+      return -1;
+    }
    break;
   default:
     ROAR_WARN("req_on_set_stream_para(*): unsupported command version: %i, %i", d[0], d[1]);
