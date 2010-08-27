@@ -51,6 +51,11 @@
 #define ROAR_LTM_WIN_WORKBLOCK  0      /* The last block which the server worked on */
                                        /* This block does not have any sub-block historys (H()) */
 
+// command sub-sub-types:
+#define ROAR_LTM_SST_NOOP       0
+#define ROAR_LTM_SST_REGISTER   1
+#define ROAR_LTM_SST_UNREGISTER 2
+#define ROAR_LTM_SST_GET_RAW    3
 
 #endif
 
