@@ -157,6 +157,7 @@
 #include "display.h"
 #include "roarx11.h"
 #include "beep.h"
+#include "ltm.h"
 #include "vs.h"
 
 // some basic macros:

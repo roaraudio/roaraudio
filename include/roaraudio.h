@@ -148,6 +148,7 @@ __BEGIN_DECLS
 #include <roaraudio/misc.h>
 #include <roaraudio/byteorder.h>
 #include <roaraudio/socket.h>
+#include <roaraudio/ltm.h>
 
 #include <libroar/libroar.h>
 
