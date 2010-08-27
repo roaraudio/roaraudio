@@ -29,6 +29,29 @@
 #ifndef _ROARAUDIO_LTM_H_
 #define _ROARAUDIO_LTM_H_
 
+// monitoring targets:
+/* Vars used below:
+ * t = time
+ * w = window size
+ * l = history size
+ * S(t) = signal at time t
+ * H{g}(n) = history of type g element n
+ */
+#define ROAR_LTM_MT_NONE        0x0000 /* const for init of lists */
+#define ROAR_LTM_MT_INACT       0x0001 /* input activit */
+#define ROAR_LTM_MT_OUTACT      0x0002 /* output activity */
+#define ROAR_LTM_MT_ACT         0x0004 /* any (in+out+other) activity */
+#define ROAR_LTM_MT_AVG         0x0008 /* signal avg: SUM{t-w->t}(S(t))/w */
+#define ROAR_LTM_MT_PEAK        0x0010 /* signal min and max values: MIN(S(t-w..t)), MAX(S(t-w..t)) */
+#define ROAR_LTM_MT_RMS         0x0020 /* signal RMS^2: SUM{t-w->t}(S(t)^2) */
+#define ROAR_LTM_MT_RMSPEAK     0x0040 /* signal RMS^2 min and max: MIN(H{RMS}(0..l)), MAX(H{RMS}(0..l)) */
+#define ROAR_LTM_MT_HISTORY     0x0080 /* request to hold a history */
+
+// pre-defined windows:
+#define ROAR_LTM_WIN_WORKBLOCK  0      /* The last block which the server worked on */
+                                       /* This block does not have any sub-block historys (H()) */
+
+
 #endif
 
 //ll
