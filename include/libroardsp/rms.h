@@ -50,6 +50,8 @@ int roar_rms2_1_8_n    (int8_t  * data, size_t samples, int64_t * rms, size_t n)
 int roar_rms2_1_16_n   (int16_t * data, size_t samples, int64_t * rms, size_t n);
 int roar_rms2_1_32_n   (int32_t * data, size_t samples, int64_t * rms, size_t n);
 
+int roar_rms2_1_b_n    (void    * data, size_t samples, int64_t * rms, size_t n, size_t bits);
+
 #endif
 
 //ll

@@ -159,6 +159,7 @@ int roar_rms2_1_8_n    (int8_t  * data, size_t samples, int64_t * rms, size_t n)
 
  switch (n) {
   case 1: return *rms = roar_rms2_1_8(data, samples); return *rms == -1 ? -1 : 0; break;
+  case 2: return roar_rms2_1_8_2(data, samples, rms); break;
   default:
    return -1;
  }
@@ -173,6 +174,7 @@ int roar_rms2_1_16_n   (int16_t * data, size_t samples, int64_t * rms, size_t n)
 
  switch (n) {
   case 1: return *rms = roar_rms2_1_16(data, samples); return *rms == -1 ? -1 : 0; break;
+  case 2: return roar_rms2_1_16_2(data, samples, rms); break;
   default:
    return -1;
  }
@@ -187,8 +189,20 @@ int roar_rms2_1_32_n   (int32_t * data, size_t samples, int64_t * rms, size_t n)
 
  switch (n) {
   case 1: return *rms = roar_rms2_1_32(data, samples); return *rms == -1 ? -1 : 0; break;
+  case 2: return roar_rms2_1_32_2(data, samples, rms); break;
   default:
    return -1;
+ }
+}
+
+
+int roar_rms2_1_b_n    (void    * data, size_t samples, int64_t * rms, size_t n, size_t bits) {
+ switch (bits) {
+  case  8: return roar_rms2_1_8_n(data, samples, rms, n);  break;
+  case 16: return roar_rms2_1_16_n(data, samples, rms, n); break;
+  case 32: return roar_rms2_1_32_n(data, samples, rms, n); break;
+  default:
+    return -1;
  }
 }
 
