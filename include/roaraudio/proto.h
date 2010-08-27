@@ -132,6 +132,10 @@
 #define ROAR_STREAM_PARA_NAME       3
 #define ROAR_STREAM_PARA_CHANMAP    4
 #define ROAR_STREAM_PARA_ROLE       5
+#define ROAR_STREAM_PARA_HASHTABLE  6
+#define ROAR_STREAM_PARA_WININFO    7
+#define ROAR_STREAM_PARA_PROPTABLE  8
+#define ROAR_STREAM_PARA_LTM        9
 
 // Message flags:
 #define ROAR_MF_NONE                0x00000000 /* No flags set              | Versions: *ALL* */
