@@ -38,6 +38,14 @@
 
 #include "libroar.h"
 
+int roar_ltm_register(struct roar_connection * con, int mt, int window, int * streams, size_t slen);
+int roar_ltm_unregister(struct roar_connection * con, int mt, int window, int * streams, size_t slen);
+
+ssize_t roar_ltm_get_raw(struct roar_connection * con, int mt, int window, int * streams, size_t slen, void * buf, size_t * buflen, int64_t ** array);
+
+int64_t roar_ltm_extract(int64_t * buf, size_t len, int mt, int req);
+int64_t roar_ltm_extract1(int64_t * buf, size_t len, int mt, int req);
+
 #endif
 
 //ll
