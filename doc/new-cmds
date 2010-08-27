@@ -1,4 +1,4 @@
-#($Revision: 1.15 $)
+#($Revision: 1.16 $)
 !SECTION: Commands
 +DEVCTL = 33
  +:version (uint8)
@@ -202,6 +202,7 @@
   +::window (uint32)
  +PARA_PROPTABLE = 8
   :(TODO)
+ +PARA_LTM       = 9
 *KICK,...
  +OT_OUTPUT   =  5
  +OT_MIXER    =  6
