@@ -236,6 +236,20 @@ int roar_conv_chans (void * out, void * in, int samples, int from, int to, int b
      }
    }
   break;
+  case 32:
+   switch (from) {
+    case 1:
+     switch (to) {
+      default: return roar_conv_chans_1ton32(out, in, samples, to);
+     }
+     break;
+    default:
+     switch (to) {
+      case  1: return roar_conv_chans_nto132(out, in, samples, from);
+      default: return -1;
+     }
+   }
+  break;
   default: return -1;
  }
 
@@ -270,6 +284,18 @@ int roar_conv_chans_1to28  (void * out, void * in, int samples) {
 
 int roar_conv_chans_1ton16 (void * out, void * in, int samples, int to) {
  int16_t * ip = (int16_t*) in, * op = (int16_t*) out;
+ int i;
+ int c;
+
+ for (i = samples - 1; i >= 0; i--)
+  for (c = to - 1; c >= 0; c--)
+   op[i*to + c] = ip[i];
+
+ return 0;
+}
+
+int roar_conv_chans_1ton32 (void * out, void * in, int samples, int to) {
+ int32_t * ip = (int32_t*) in, * op = (int32_t*) out;
  int i;
  int c;
 
@@ -327,6 +353,27 @@ int roar_conv_chans_2to18  (void * out, void * in, int samples) {
 
 int roar_conv_chans_nto116 (void * out, void * in, int samples, int from) {
  int16_t * ip = (int16_t*) in, * op = (int16_t*) out;
+ int i;
+ int c;
+ register int s;
+
+ samples /= from;
+
+ for (i = 0; i < samples; i++) {
+  s  = 0;
+
+  for (c = 0; c < from; c++)
+   s += ip[i*from + c];
+
+  s /= from;
+  op[i] = s;
+ }
+
+ return 0;
+}
+
+int roar_conv_chans_nto132 (void * out, void * in, int samples, int from) {
+ int32_t * ip = (int32_t*) in, * op = (int32_t*) out;
  int i;
  int c;
  register int s;
