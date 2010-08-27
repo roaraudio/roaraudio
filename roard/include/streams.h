@@ -57,6 +57,20 @@
 #define STREAM_DIR_OUT              0x02
 #define STREAM_DIR_BIDIR            (STREAM_DIR_IN|STREAM_DIR_OUT)
 
+#define MAX_LTM_WINDOWS_PER_STREAM  1
+
+struct roar_ltm_vals {
+ int64_t rms;
+};
+
+struct roar_stream_ltm {
+ int window;
+ int parent_window;
+ size_t refc;
+ struct roar_ltm_vals cur;
+ struct roar_ltm_vals * history;
+};
+
 struct roar_stream_server {
  struct roar_stream _stream;
  unsigned int pos_abs;
@@ -92,6 +106,7 @@ struct roar_stream_server {
  struct roardsp_chanmap chanmap;
  int role;
  int parent_stream;
+ struct roar_stream_ltm ltm[MAX_LTM_WINDOWS_PER_STREAM];
 } * g_streams[ROAR_STREAMS_MAX];
 
 int streams_thru_num;
