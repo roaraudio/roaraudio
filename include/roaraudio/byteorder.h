@@ -30,8 +30,8 @@
 #define _ROARAUDIO_BYTEORDER_H_
 
 #define _ROAR_MOVE_BYTE(x,p,n) ( \
-                                ((int_least64_t)( \
-                                 ((int_least64_t)((int_least64_t)(x) & ((int_least64_t)0xFFUL << (8*(p))))) >> (8*(p)) \
+                                ((uint_least64_t)( \
+                                 ((uint_least64_t)((uint_least64_t)(x) & ((uint_least64_t)0xFFUL << (8*(p))))) >> (8*(p)) \
                                 )) << ((n)-8*((p)+1)) \
                                )
 
@@ -61,7 +61,7 @@
 #else
 #if BYTE_ORDER == LITTLE_ENDIAN
 #define ROAR_NET2HOST64(x) ROAR_HOST2NET64(x)
-#define ROAR_HOST2NET64(x) ((int_least64_t) \
+#define ROAR_HOST2NET64(x) ((uint_least64_t) \
                             (_ROAR_MOVE_BYTE((x), 0, 64) | _ROAR_MOVE_BYTE((x), 1, 64) | \
                              _ROAR_MOVE_BYTE((x), 2, 64) | _ROAR_MOVE_BYTE((x), 3, 64) | \
                              _ROAR_MOVE_BYTE((x), 4, 64) | _ROAR_MOVE_BYTE((x), 5, 64) | \
