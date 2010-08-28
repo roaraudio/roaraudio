@@ -97,8 +97,10 @@ int command_exec (int client, struct roar_message * mes, char ** data, uint32_t 
  if ( cmd == -1 )
   return -1;
 
- if ( (func = g_commands[cmd].handler) == NULL )
+ if ( (func = g_commands[cmd].handler) == NULL ) {
+  ROAR_WARN("command_exec(client=%i, mes=%p{.cmd=%i,...}, data=%p, flags=%p) = -1 // unknown command", client, mes, (int)mes->cmd, data, flags);
   return -1;
+ }
 
  ROAR_DBG("command_exec(*): Execing command %i(%s) via %p", cmd, g_commands[cmd].name, func);
 

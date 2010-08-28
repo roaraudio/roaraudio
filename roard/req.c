@@ -676,6 +676,8 @@ int req_on_get_stream_para (int client, struct roar_message * mes, char ** data,
  size_t needed;
  int test, bits;
 
+ ROAR_DBG("req_on_get_stream_para(client=%i, mes=%p{.stream=%i, .datalen=%i,...}, data=%p, flags=%p) = ?", client, mes, (int)mes->stream, (int)mes->datalen, data, flags);
+
  if ( mes->datalen != 4 )
   return -1;
 
@@ -760,6 +762,8 @@ int req_on_get_stream_para (int client, struct roar_message * mes, char ** data,
    break;
 
   case ROAR_STREAM_PARA_LTM:
+    ROAR_DBG("req_on_get_stream_para(client=%i, ...): LTM request...", client);
+
     if ( mes->datalen < (6 * 2) )
      return -1;
 
@@ -769,6 +773,8 @@ int req_on_get_stream_para (int client, struct roar_message * mes, char ** data,
 
     if ( d[2] != ROAR_LTM_SST_GET_RAW )
      return -1;
+
+    ROAR_DBG("req_on_get_stream_para(client=%i, ...): LTM request of type GET_RAW", client);
 
     test = d[5];
     bits = 0;
@@ -782,6 +788,8 @@ int req_on_get_stream_para (int client, struct roar_message * mes, char ** data,
     needed = 0;
 
     if ( mes->stream == -1 ) {
+     ROAR_DBG("req_on_get_stream_para(client=%i, ...): LTM multi-stream request...", client);
+
      for (i = 6; i < mes->datalen/2; i++) {
       if ( (ltm = streams_lzm_get(d[i], d[5], d[3])) == NULL )
        return -1;
@@ -789,6 +797,7 @@ int req_on_get_stream_para (int client, struct roar_message * mes, char ** data,
       needed += ltm->channels;
      }
     } else {
+     ROAR_DBG("req_on_get_stream_para(client=%i, ...): LTM single-stream request for stream %i...", client, mes->stream);
      if ( (ltm = streams_lzm_get(mes->stream, d[5], d[3])) == NULL )
       return -1;
 
@@ -800,7 +809,9 @@ int req_on_get_stream_para (int client, struct roar_message * mes, char ** data,
     needed += mes->stream == -1 ? (mes->datalen/2) - 6 : 1;
     needed += 2; // header
 
-    if ( needed > LIBROAR_BUFFER_MSGDATA ) {
+    ROAR_DBG("req_on_get_stream_para(client=%i, ...): data size for answer is %i 64 bit sub-packets", client, (int)needed);
+
+    if ( (needed*8) > LIBROAR_BUFFER_MSGDATA ) {
      return -1;
      if ( (d64 = malloc(needed*8)) == NULL )
       return -1;
@@ -874,6 +885,8 @@ int req_on_get_stream_para (int client, struct roar_message * mes, char ** data,
     }
 
     mes->datalen = needed * 8;
+    ROAR_DBG("req_on_get_stream_para(client=%i, ...): LTM final message has %i byte of data", client, (int)mes->datalen);
+    ROAR_DBG("req_on_get_stream_para(client=%i, ...): LTM GET_RAW request: OK. returning...", client);
    break;
 
   default:
@@ -881,6 +894,7 @@ int req_on_get_stream_para (int client, struct roar_message * mes, char ** data,
     return -1;
  }
 
+ ROAR_DBG("req_on_get_stream_para(client=%i, mes=%p{.stream=%i, .datalen=%i,...}, data=%p, flags=%p) = 0 // returning OK", client, mes, (int)mes->stream, (int)mes->datalen, data, flags);
  mes->cmd = ROAR_CMD_OK;
  return 0;
 }
