@@ -222,6 +222,16 @@ int64_t roar_ltm_extract1(int64_t * buf, size_t len, int mt, int req) {
 }
 */
 
+#ifdef DEBUG
+#define HEXDUMP64(x) roar_ltm_hexdump64((x))
+static void roar_ltm_hexdump64(void * p) {
+ unsigned char * d = p;
+ ROAR_DBG("roar_ltm_hexdump64(p=%p): hex: %.2x%.2x %.2x%.2x %.2x%.2x %.2x%.2x", p, d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7]);
+}
+#else
+#define HEXDUMP64(x)
+#endif
+
 struct roar_ltm_result * roar_ltm_get(struct roar_connection * con,
                                       int mt, int window,
                                       int * streams, size_t slen,
@@ -263,10 +273,15 @@ struct roar_ltm_result * roar_ltm_get(struct roar_connection * con,
  // TODO: do we need this block?
  for (i = 0; i < 8; i++) {
   d16[i] = ROAR_NET2HOST64(d16[i]);
+  ROAR_DBG("roar_ltm_get(*): d16[i=%i]=%i", i, (unsigned int)d16[i]);
  }
 
  for (i = 2; i < mes.datalen/8; i++) {
+  ROAR_DBG("roar_ltm_get(*): d64[i=%i]=%lli", i, (long long int)d64[i]);
+  HEXDUMP64(&(d64[i]));
   d64[i] = ROAR_NET2HOST64(d64[i]);
+  HEXDUMP64(&(d64[i]));
+  ROAR_DBG("roar_ltm_get(*): d64[i=%i]=%lli", i, (long long int)d64[i]);
  }
 
  needed_structlen = sizeof(struct roar_ltm_result) + mes.datalen - 16;
