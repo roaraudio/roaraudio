@@ -872,6 +872,7 @@ int req_on_get_stream_para (int client, struct roar_message * mes, char ** data,
         switch (1<<k) {
          case ROAR_LTM_MT_RMS:
            *d64ptr = ltm->cur[h].rms;
+           ROAR_ERR("req_on_get_stream_para(client=%i, ...): rms=%lli to %p", client, (long long int)*d64ptr, d64ptr);
           break;
          default:
            ROAR_ERR("req_on_get_stream_para(client=%i, ...): client requets unknown MT for LTM: bit %i", client, k);
@@ -889,6 +890,7 @@ int req_on_get_stream_para (int client, struct roar_message * mes, char ** data,
     }
 
     mes->datalen = needed * 8;
+    ROAR_DBG("req_on_get_stream_para(client=%i, ...): LTM d64=%p, d64ptr=%p", client, d64, d64ptr);
     ROAR_DBG("req_on_get_stream_para(client=%i, ...): LTM final message has %i byte of data", client, (int)mes->datalen);
     ROAR_DBG("req_on_get_stream_para(client=%i, ...): LTM GET_RAW request: OK. returning...", client);
    break;
