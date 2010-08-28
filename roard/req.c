@@ -681,7 +681,7 @@ int req_on_get_stream_para (int client, struct roar_message * mes, char ** data,
  if ( mes->datalen < 4 )
   return -1;
 
- for (i = 0; i < mes->datalen/2; i++) {
+ for (i = 0; i < 2; i++) {
   d[i] = ROAR_NET2HOST16(d[i]);
  }
 
@@ -764,15 +764,19 @@ int req_on_get_stream_para (int client, struct roar_message * mes, char ** data,
   case ROAR_STREAM_PARA_LTM:
     ROAR_DBG("req_on_get_stream_para(client=%i, ...): LTM request...", client);
 
-    if ( mes->datalen < (6 * 2) )
+    if ( mes->datalen < (6 * 2) ) {
+     ROAR_ERR("req_on_get_stream_para(client=%i, ...): LTM request of client is corruped: message too short", client);
      return -1;
+    }
 
     for (i = 2; i < mes->datalen/2; i++) {
      d[i] = ROAR_NET2HOST16(d[i]);
     }
 
-    if ( d[2] != ROAR_LTM_SST_GET_RAW )
+    if ( d[2] != ROAR_LTM_SST_GET_RAW ) {
+     ROAR_ERR("req_on_get_stream_para(client=%i, ...): LTM request of client is corruped: unknown LTM subtype: %i", client, (int)d[2]);
      return -1;
+    }
 
     ROAR_DBG("req_on_get_stream_para(client=%i, ...): LTM request of type GET_RAW", client);
 
