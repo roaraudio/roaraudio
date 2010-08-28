@@ -35,6 +35,15 @@
 
 #include "libroar.h"
 
+struct roar_ltm_result {
+ int mt;
+ int window;
+ size_t streams;
+ size_t nummt;
+ size_t structlen;
+ int64_t data[1];
+};
+
 static int roar_ltm_numbits(int f) {
  int found = 0;
 
@@ -139,6 +148,7 @@ int roar_ltm_unregister(struct roar_connection * con, int mt, int window, int * 
  return roar_ltm_regunreg(con, mt, window, streams, slen, ROAR_LTM_SST_UNREGISTER);
 }
 
+/*
 ssize_t roar_ltm_get_raw(struct roar_connection * con,
                          int mt, int window,
                          int * streams, size_t slen,
@@ -209,6 +219,162 @@ int64_t roar_ltm_extract1(int64_t * buf, size_t len, int mt, int req) {
  }
 
  return *buf;
+}
+*/
+
+struct roar_ltm_result * roar_ltm_get(struct roar_connection * con,
+                                      int mt, int window,
+                                      int * streams, size_t slen,
+                                      struct roar_ltm_result * oldresult) {
+ struct roar_ltm_result * res = NULL;
+ struct roar_message mes;
+ size_t needed_structlen = 0;
+ uint16_t * d16;
+ int64_t  * d64;
+ char * buf = NULL;
+ int    ret;
+ int    i;
+
+ if ( con == NULL )
+  return NULL;
+
+ if ( streams == NULL || slen == 0 )
+  return NULL;
+
+ if ( roar_ltm_pack_req(mt, window, streams, slen, &mes, &buf, ROAR_LTM_SST_GET_RAW) == -1 )
+  return NULL;
+
+ ret = roar_req(con, &mes, &buf);
+
+ if ( ret == -1 || mes.cmd != ROAR_CMD_OK ) {
+  if ( buf != NULL )
+   free(buf);
+  return NULL;
+ }
+
+ if ( buf == NULL ) {
+  d16 = (uint16_t*)&(mes.data);
+  d64 = ( int64_t*)&(mes.data);
+ } else {
+  d16 = (uint16_t*)buf;
+  d64 = ( int64_t*)buf;
+ }
+
+ for (i = 0; i < 8; i++) {
+  d16[i] = ROAR_NET2HOST64(d16[i]);
+ }
+
+ for (i = 2; i < mes.datalen/8; i++) {
+  d64[i] = ROAR_NET2HOST64(d64[i]);
+ }
+
+ needed_structlen = sizeof(struct roar_ltm_result) + mes.datalen - 16;
+
+ if ( oldresult != NULL ) {
+  if ( oldresult->structlen >= needed_structlen ) {
+   res = oldresult;
+   needed_structlen = oldresult->structlen;
+  } else {
+   roar_ltm_freeres(oldresult);
+  }
+ } else {
+  res = roar_mm_malloc(needed_structlen);
+ }
+
+ if ( res == NULL ) {
+  if ( buf != NULL )
+   free(buf);
+  return NULL;
+ }
+
+ memset(res, 0, needed_structlen);
+ res->structlen = needed_structlen;
+
+ res->mt      = mt;
+ res->window  = window;
+ res->streams = slen;
+ res->nummt   = roar_ltm_numbits(mt);
+
+ memcpy(res->data, &(d64[2]), mes.datalen - 16);
+
+ if ( buf != NULL )
+  free(buf);
+ return res;
+}
+
+#define _CKNULL(x) if ( (x) == NULL ) return -1
+#define _RETMEMBERCKED(x,m) _CKNULL(x); return (x)->m
+
+int roar_ltm_get_numstreams(struct roar_ltm_result * res) {
+ _RETMEMBERCKED(res, streams);
+}
+int roar_ltm_get_mt(struct roar_ltm_result * res) {
+ _RETMEMBERCKED(res, mt);
+}
+int roar_ltm_get_window(struct roar_ltm_result * res) {
+ _RETMEMBERCKED(res, window);
+}
+
+static int64_t * roar_ltm_get_streamptr(struct roar_ltm_result * res, int streamidx) {
+ int64_t * ptr;
+ int numchans;
+ int i;
+
+ if ( res == NULL || streamidx < 0 || streamidx >= res->streams )
+  return NULL;
+
+ ptr = res->data;
+
+ for (i = 0; i < streamidx; i++) {
+  numchans = *ptr & 0xFFFF;
+  ptr += res->nummt * numchans;
+  ptr++;
+ }
+
+ return ptr;
+}
+
+int roar_ltm_get_numchans(struct roar_ltm_result * res, int streamidx) {
+ int64_t * ptr = roar_ltm_get_streamptr(res, streamidx);
+
+ if ( ptr == NULL )
+  return -1;
+
+ return *ptr & 0xFFFF;
+}
+
+int64_t roar_ltm_extract(struct roar_ltm_result * res, int mt, int streamidx, int channel) {
+ int64_t * ptr = roar_ltm_get_streamptr(res, streamidx);
+ int numchans;
+ int resmt;
+
+ if ( roar_ltm_numbits(mt) != 1 )
+  return -1;
+
+ if ( ptr == NULL )
+  return -1;
+
+ numchans = *ptr & 0xFFFF;
+
+ if ( channel >= numchans )
+  return -1;
+
+ ptr++;
+
+ ptr += res->nummt * channel;
+
+ // now ptr points to the first mt for the given channel.
+
+ resmt = res->mt;
+
+ while (!(mt & 0x1)) {
+  if ( resmt & 0x1 )
+   ptr++;
+  mt    >>= 1;
+  resmt >>= 1;
+ }
+
+ return *ptr;
 }
 
 //ll
