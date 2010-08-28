@@ -678,7 +678,7 @@ int req_on_get_stream_para (int client, struct roar_message * mes, char ** data,
 
  ROAR_DBG("req_on_get_stream_para(client=%i, mes=%p{.stream=%i, .datalen=%i,...}, data=%p, flags=%p) = ?", client, mes, (int)mes->stream, (int)mes->datalen, data, flags);
 
- if ( mes->datalen != 4 )
+ if ( mes->datalen < 4 )
   return -1;
 
  for (i = 0; i < mes->datalen/2; i++) {
