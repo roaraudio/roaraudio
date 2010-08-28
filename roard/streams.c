@@ -1152,7 +1152,7 @@ int streams_ltm_calc     (int id, struct roar_audio_info * info, void * data, si
  return 0;
 }
 
-struct roar_stream_ltm * streams_lzm_get(int id, int mt, int window) {
+struct roar_stream_ltm * streams_ltm_get(int id, int mt, int window) {
  struct roar_stream_server * ss;
  struct roar_stream_ltm *    ltm = NULL;
  int i;

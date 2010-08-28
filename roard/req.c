@@ -795,14 +795,14 @@ int req_on_get_stream_para (int client, struct roar_message * mes, char ** data,
      ROAR_DBG("req_on_get_stream_para(client=%i, ...): LTM multi-stream request...", client);
 
      for (i = 6; i < mes->datalen/2; i++) {
-      if ( (ltm = streams_lzm_get(d[i], d[5], d[3])) == NULL )
+      if ( (ltm = streams_ltm_get(d[i], d[5], d[3])) == NULL )
        return -1;
 
       needed += ltm->channels;
      }
     } else {
      ROAR_DBG("req_on_get_stream_para(client=%i, ...): LTM single-stream request for stream %i...", client, mes->stream);
-     if ( (ltm = streams_lzm_get(mes->stream, d[5], d[3])) == NULL )
+     if ( (ltm = streams_ltm_get(mes->stream, d[5], d[3])) == NULL )
       return -1;
 
      needed = ltm->channels;
@@ -838,7 +838,7 @@ int req_on_get_stream_para (int client, struct roar_message * mes, char ** data,
 
     if ( mes->stream == -1 ) {
      for (i = 6; i < mes->datalen/2; i++) {
-      if ( (ltm = streams_lzm_get(d[i], d[5], d[3])) == NULL )
+      if ( (ltm = streams_ltm_get(d[i], d[5], d[3])) == NULL )
        return -1;
 
       *d64ptr = ltm->channels & 0xFFFF;
@@ -860,7 +860,7 @@ int req_on_get_stream_para (int client, struct roar_message * mes, char ** data,
       }
      }
     } else {
-     if ( (ltm = streams_lzm_get(mes->stream, d[5], d[3])) == NULL )
+     if ( (ltm = streams_ltm_get(mes->stream, d[5], d[3])) == NULL )
       return -1;
 
      *d64ptr = ltm->channels & 0xFFFF;

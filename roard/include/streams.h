@@ -165,7 +165,7 @@ int streams_set_map      (int id, char * map, size_t len);
 
 int streams_ltm_ctl      (int id, int mt, int window, int cmd);
 int streams_ltm_calc     (int id, struct roar_audio_info * info, void * data, size_t len);
-struct roar_stream_ltm * streams_lzm_get(int id, int mt, int window);
+struct roar_stream_ltm * streams_ltm_get(int id, int mt, int window);
 
 int streams_ctl          (int id, int_least32_t cmd, void * data);
 
