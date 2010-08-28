@@ -260,6 +260,7 @@ struct roar_ltm_result * roar_ltm_get(struct roar_connection * con,
   d64 = ( int64_t*)buf;
  }
 
+ // TODO: do we need this block?
  for (i = 0; i < 8; i++) {
   d16[i] = ROAR_NET2HOST64(d16[i]);
  }
@@ -320,17 +321,25 @@ static int64_t * roar_ltm_get_streamptr(struct roar_ltm_result * res, int stream
  int numchans;
  int i;
 
+ ROAR_DBG("roar_ltm_get_streamptr(res=%p, streamidx=%i) = ?", res, streamidx);
+
  if ( res == NULL || streamidx < 0 || streamidx >= res->streams )
   return NULL;
 
  ptr = res->data;
 
+ ROAR_DBG("roar_ltm_get_streamptr(res=%p, streamidx=%i): res->data=%p", res, streamidx, res->data);
+
  for (i = 0; i < streamidx; i++) {
   numchans = *ptr & 0xFFFF;
+
+  ROAR_DBG("roar_ltm_get_streamptr(res=%p, streamidx=%i): i=%i, numchans=%i", res, streamidx, i, numchans);
+
   ptr += res->nummt * numchans;
   ptr++;
  }
 
+ ROAR_DBG("roar_ltm_get_streamptr(res=%p, streamidx=%i) = %p", res, streamidx, ptr);
  return ptr;
 }
 
@@ -348,13 +357,19 @@ int64_t roar_ltm_extract(struct roar_ltm_result * res, int mt, int streamidx, in
  int numchans;
  int resmt;
 
+ ROAR_DBG("roar_ltm_extract(res=%p, mt=0x%.4x, streamidx=%i, channel=%i) = ?", res, mt, streamidx, channel);
+
  if ( roar_ltm_numbits(mt) != 1 )
   return -1;
+
+ ROAR_DBG("roar_ltm_extract(res=%p, mt=0x%.4x, streamidx=%i, channel=%i) = ?", res, mt, streamidx, channel);
 
  if ( ptr == NULL )
   return -1;
 
  numchans = *ptr & 0xFFFF;
+
+ ROAR_DBG("roar_ltm_extract(res=%p, mt=0x%.4x, streamidx=%i, channel=%i): numchans=%i", res, mt, streamidx, channel, numchans);
 
  if ( channel >= numchans )
   return -1;
@@ -373,6 +388,9 @@ int64_t roar_ltm_extract(struct roar_ltm_result * res, int mt, int streamidx, in
   mt    >>= 1;
   resmt >>= 1;
  }
+
+ ROAR_DBG("roar_ltm_extract(res=%p, mt=?, streamidx=%i, channel=%i): ptr=%p", res, streamidx, channel, ptr);
+ ROAR_DBG("roar_ltm_extract(res=%p, mt=?, streamidx=%i, channel=%i) = %lli", res, streamidx, channel, (long long int)*ptr);
 
  return *ptr;
 }
