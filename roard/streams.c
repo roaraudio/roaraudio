@@ -1950,6 +1950,8 @@ int streams_send_mon   (int id) {
   ip = obuf;
  }
 
+ streams_ltm_calc(id, &(s->info), ip, (ROAR_OUTPUT_BUFFER_SAMPLES*g_sa->channels*g_sa->bits)/8);
+
  if ( !is_the_same ) {
   if ( roar_conv(obuf, ip, ROAR_OUTPUT_BUFFER_SAMPLES*g_sa->channels, g_sa, &(s->info)) == -1 ) {
    _return(-1);

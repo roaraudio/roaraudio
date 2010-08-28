@@ -66,12 +66,13 @@ int waveform_update_mixer (void) {
   return 0;
  }
 
- if ( !need_vol_change(ROAR_STREAM(g_waveform_mixer.ss)->info.channels, &(g_waveform_mixer.ss->mixer)) )
-  return 0;
+ if ( need_vol_change(ROAR_STREAM(g_waveform_mixer.ss)->info.channels, &(g_waveform_mixer.ss->mixer)) ) {
+  roar_amp_pcm(g_output_buffer, g_sa->bits, g_output_buffer,
+               ROAR_OUTPUT_BUFFER_SAMPLES*g_sa->channels, g_sa->channels,
+               &(g_waveform_mixer.ss->mixer));
+ }
 
- roar_amp_pcm(g_output_buffer, g_sa->bits, g_output_buffer,
-              ROAR_OUTPUT_BUFFER_SAMPLES*g_sa->channels, g_sa->channels,
-              &(g_waveform_mixer.ss->mixer));
+ streams_ltm_calc(g_waveform_mixer.stream, &(ROAR_STREAM(g_waveform_mixer.ss)->info), g_output_buffer, (g_sa->bits*ROAR_OUTPUT_BUFFER_SAMPLES*g_sa->channels)/8);
 
  return 0;
 }
