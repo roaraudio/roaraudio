@@ -47,6 +47,8 @@
 #define ROAR_LTM_MT_RMSPEAK     0x0040 /* signal RMS^2 min and max: MIN(H{RMS}(0..l)), MAX(H{RMS}(0..l)) */
 #define ROAR_LTM_MT_HISTORY     0x0080 /* request to hold a history */
 
+#define ROAR_LTM_MTBITS         16     /* number of bits for MTs */
+
 // pre-defined windows:
 #define ROAR_LTM_WIN_WORKBLOCK  0      /* The last block which the server worked on */
                                        /* This block does not have any sub-block historys (H()) */
