@@ -1143,7 +1143,7 @@ int streams_ltm_calc     (int id, struct roar_audio_info * info, void * data, si
    return -1;
 
   for (i = 0; i < ltm->channels; i++) {
-   ltm->cur[i].rms = rmsbuf[i];
+   ltm->cur[i].rms = rmsbuf[i] << (64 - info->bits*2);
   }
 
   ROAR_DBG("streams_ltm_calc(id=%i,...): rmsbuf[0]=%lli", id, (long long int)rmsbuf[0]);
