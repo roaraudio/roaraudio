@@ -811,7 +811,6 @@ int req_on_get_stream_para (int client, struct roar_message * mes, char ** data,
     needed *= bits;
 
     needed += mes->stream == -1 ? (mes->datalen/2) - 6 : 1;
-    needed += 2; // header
 
     ROAR_DBG("req_on_get_stream_para(client=%i, ...): data size for answer is %i 64 bit sub-packets", client, (int)needed);
 
@@ -830,11 +829,7 @@ int req_on_get_stream_para (int client, struct roar_message * mes, char ** data,
 
     memcpy(d, mes->data, mes->datalen);
 
-    // TODO: copy requested data over
-    d64[0] = 0;
-    d64[1] = 0;
-
-    d64ptr = &(d64[2]);
+    d64ptr = d64;
 
     if ( mes->stream == -1 ) {
      for (i = 6; i < mes->datalen/2; i++) {

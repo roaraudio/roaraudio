@@ -239,7 +239,6 @@ struct roar_ltm_result * roar_ltm_get(struct roar_connection * con,
  struct roar_ltm_result * res = NULL;
  struct roar_message mes;
  size_t needed_structlen = 0;
- uint16_t * d16;
  int64_t  * d64;
  char * buf = NULL;
  int    ret;
@@ -263,20 +262,13 @@ struct roar_ltm_result * roar_ltm_get(struct roar_connection * con,
  }
 
  if ( buf == NULL ) {
-  d16 = (uint16_t*)&(mes.data);
   d64 = ( int64_t*)&(mes.data);
  } else {
-  d16 = (uint16_t*)buf;
   d64 = ( int64_t*)buf;
  }
 
- // TODO: do we need this block?
- for (i = 0; i < 8; i++) {
-  d16[i] = ROAR_NET2HOST64(d16[i]);
-  ROAR_DBG("roar_ltm_get(*): d16[i=%i]=%i", i, (unsigned int)d16[i]);
- }
 
- for (i = 2; i < mes.datalen/8; i++) {
+ for (i = 0; i < mes.datalen/8; i++) {
   ROAR_DBG("roar_ltm_get(*): d64[i=%i]=%lli", i, (long long int)d64[i]);
   HEXDUMP64(&(d64[i]));
   d64[i] = ROAR_NET2HOST64(d64[i]);
@@ -284,7 +276,7 @@ struct roar_ltm_result * roar_ltm_get(struct roar_connection * con,
   ROAR_DBG("roar_ltm_get(*): d64[i=%i]=%lli", i, (long long int)d64[i]);
  }
 
- needed_structlen = sizeof(struct roar_ltm_result) + mes.datalen - 16;
+ needed_structlen = sizeof(struct roar_ltm_result) + mes.datalen;
 
  if ( oldresult != NULL ) {
   if ( oldresult->structlen >= needed_structlen ) {
@@ -311,7 +303,7 @@ struct roar_ltm_result * roar_ltm_get(struct roar_connection * con,
  res->streams = slen;
  res->nummt   = roar_ltm_numbits(mt);
 
- memcpy(res->data, &(d64[2]), mes.datalen - 16);
+ memcpy(res->data, d64, mes.datalen);
 
  if ( buf != NULL )
   free(buf);
