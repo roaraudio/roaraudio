@@ -667,9 +667,14 @@ int req_on_get_stream_para (int client, struct roar_message * mes, char ** data,
  struct roar_stream * s;
  struct roar_stream_server * ss;
  struct roar_audio_info * audio_info;
- uint16_t * d = (uint16_t *) mes->data;
- int i;
+ struct roar_stream_ltm * ltm;
+ uint16_t * d  = (uint16_t *) mes->data;
+ int64_t * d64 = ( int64_t *) mes->data;
+ int64_t * d64ptr;
+ int i, h, k;
  char * str;
+ size_t needed;
+ int test, bits;
 
  if ( mes->datalen != 4 )
   return -1;
@@ -754,6 +759,123 @@ int req_on_get_stream_para (int client, struct roar_message * mes, char ** data,
     d[1] = ROAR_HOST2NET16(d[1]);
    break;
 
+  case ROAR_STREAM_PARA_LTM:
+    if ( mes->datalen < (6 * 2) )
+     return -1;
+
+    for (i = 2; i < mes->datalen/2; i++) {
+     d[i] = ROAR_NET2HOST16(d[i]);
+    }
+
+    if ( d[2] != ROAR_LTM_SST_GET_RAW )
+     return -1;
+
+    test = d[5];
+    bits = 0;
+    while (test) {
+     if ( test & 0x1 )
+      bits++;
+
+     test >>= 1;
+    }
+
+    needed = 0;
+
+    if ( mes->stream == -1 ) {
+     for (i = 6; i < mes->datalen/2; i++) {
+      if ( (ltm = streams_lzm_get(d[i], d[5], d[3])) == NULL )
+       return -1;
+
+      needed += ltm->channels;
+     }
+    } else {
+     if ( (ltm = streams_lzm_get(mes->stream, d[5], d[3])) == NULL )
+      return -1;
+
+     needed = ltm->channels;
+    }
+
+    needed *= bits;
+
+    needed += mes->stream == -1 ? (mes->datalen/2) - 6 : 1;
+    needed += 2; // header
+
+    if ( needed > LIBROAR_BUFFER_MSGDATA ) {
+     return -1;
+     if ( (d64 = malloc(needed*8)) == NULL )
+      return -1;
+
+     *data = (char*)d64;
+    }
+
+    d64 = (int64_t*)mes->data;
+
+    if ( (d = roar_mm_malloc(mes->datalen)) == NULL )
+     return -1;
+
+    memcpy(d, mes->data, mes->datalen);
+
+    // TODO: copy requested data over
+    d64[0] = 0;
+    d64[1] = 0;
+
+    d64ptr = &(d64[2]);
+
+    if ( mes->stream == -1 ) {
+     for (i = 6; i < mes->datalen/2; i++) {
+      if ( (ltm = streams_lzm_get(d[i], d[5], d[3])) == NULL )
+       return -1;
+
+      *d64ptr = ltm->channels & 0xFFFF;
+       d64ptr++;
+
+      for (h = 0; h < ltm->channels; h++) {
+       for (k = 0; k < ROAR_LTM_MTBITS; k++) {
+        if ( d[5] & (1<<k) ) {
+         switch (1<<k) {
+          case ROAR_LTM_MT_RMS:
+            *d64ptr = ltm->cur[h].rms;
+           break;
+          default:
+            ROAR_ERR("req_on_get_stream_para(client=%i, ...): client requets unknown MT for LTM: bit %i", client, k);
+         }
+         d64ptr++;
+        }
+       }
+      }
+     }
+    } else {
+     if ( (ltm = streams_lzm_get(mes->stream, d[5], d[3])) == NULL )
+      return -1;
+
+     *d64ptr = ltm->channels & 0xFFFF;
+      d64ptr++;
+
+     for (h = 0; h < ltm->channels; h++) {
+      for (k = 0; k < ROAR_LTM_MTBITS; k++) {
+       if ( d[5] & (1<<k) ) {
+        switch (1<<k) {
+         case ROAR_LTM_MT_RMS:
+           *d64ptr = ltm->cur[h].rms;
+          break;
+         default:
+           ROAR_ERR("req_on_get_stream_para(client=%i, ...): client requets unknown MT for LTM: bit %i", client, k);
+        }
+        d64ptr++;
+       }
+      }
+     }
+    }
+
+    roar_mm_free(d);
+
+    for (i = 0; i < needed; i++) {
+     d64[i] = ROAR_HOST2NET64(d64[i]);
+    }
+
+    mes->datalen = needed * 8;
+   break;
+
   default:
     ROAR_WARN("req_on_get_stream_para(*): unsupported command: %i", d[1]);
     return -1;
@@ -809,13 +931,14 @@ int req_on_set_stream_para (int client, struct roar_message * mes, char ** data,
      return -1;
    break;
   case ROAR_STREAM_PARA_LTM:
+    if ( mes->datalen < (6 * 2) )
+     return -1;
+
     for (i = 2; i < mes->datalen/2; i++) {
      d[i] = ROAR_NET2HOST16(d[i]);
     }
 
     if ( mes->stream == -1 ) {
-     return -1;
-
      for (i = 6; i < mes->datalen/2; i++)
       if ( streams_ltm_ctl(d[i], d[5], d[3], d[2]) == -1 )
        return -1;
