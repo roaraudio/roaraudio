@@ -1157,10 +1157,10 @@ struct roar_stream_ltm * streams_ltm_get(int id, int mt, int window) {
  struct roar_stream_ltm *    ltm = NULL;
  int i;
 
- _CHECK_SID(id);
+ _CHECK_SID_RET(id, NULL);
 
  if ( (ss = g_streams[id]) == NULL )
-  return -1;
+  return NULL;
 
  for (i = 0; i < MAX_LTM_WINDOWS_PER_STREAM; i++) {
   if ( ss->ltm[i].refc && ss->ltm[i].window == window ) {
