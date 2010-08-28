@@ -1152,7 +1152,31 @@ int streams_ltm_calc     (int id, struct roar_audio_info * info, void * data, si
  return 0;
 }
 
-struct roar_stream_ltm * streams_lzm_get(int id, int mt, int window);
+struct roar_stream_ltm * streams_lzm_get(int id, int mt, int window) {
+ struct roar_stream_server * ss;
+ struct roar_stream_ltm *    ltm = NULL;
+ int i;
+
+ _CHECK_SID(id);
+
+ if ( (ss = g_streams[id]) == NULL )
+  return -1;
+
+ for (i = 0; i < MAX_LTM_WINDOWS_PER_STREAM; i++) {
+  if ( ss->ltm[i].refc && ss->ltm[i].window == window ) {
+   ltm = &(ss->ltm[i]);
+   break;
+  }
+ }
+
+ if ( ltm == NULL )
+  return NULL;
+
+ if ( (ltm->mt & mt) != mt )
+  return NULL;
+
+ return ltm;
+}
 
 
 int streams_ctl          (int id, int_least32_t cmd, void * data) {
