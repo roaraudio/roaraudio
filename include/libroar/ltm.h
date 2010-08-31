@@ -38,20 +38,127 @@
 
 #include "libroar.h"
 
+// forward declaration for return type of roar_ltm_get().
+// you must not access members directly.
 struct roar_ltm_result;
 
+/* Register streams for LTM.
+ * Takes
+ * - connection to server,
+ * - used MT (monetoring type),
+ * - used window,
+ * - array of streams,
+ * - length of the array of streams.
+ * Returns -1 on error or 0 on no error.
+ *
+ * Registration is stacked.
+ * This means that if you register a stream twice you need to unregister it twice.
+ * This is becaue maybe clients may wich to use LTM and it would be bad
+ * if the first client which disconnects would remove the LTM from the stream.
+ */
 int roar_ltm_register(struct roar_connection * con, int mt, int window, int * streams, size_t slen);
+
+/* Unregister streams from LTM.
+ * This function works just like roar_ltm_register() just that it
+ * unregisters the streams again.
+ *
+ * The set of streams you unregister in one stream does not need to be
+ * the same as the set you registered. It is perfectly valid to just
+ * unregister a subset. or a larger set of streams.
+ *
+ * The given mt musst match. If it does not the behavor is undefined.
+ * The server may refuse the request or just unregister the given bits.
+ * you should not do this.
+ *
+ * you must not unregister streams which got deleted by the server.
+ */
 int roar_ltm_unregister(struct roar_connection * con, int mt, int window, int * streams, size_t slen);
 
+/* Read values for LTM from the server.
+ * This function takes:
+ * - The connection to the server,
+ * - the monitoring types you request,
+ * - the window you request data from,
+ * - an array of streams you want data for,
+ * - the length of the streams array,
+ * - an old result of this function.
+ *
+ * It returns a pointer to an result object or NULL on error.
+ *
+ * The MT is allowed to not match the registered mt but must not
+ * contain more bits than registered. In most causes this match
+ * the registred MT.
+ *
+ * The window must match the window used then streams got registered.
+ *
+ * The list of streams must not match a single registration.
+ * but all streams must be registred with at least the bits used in mt
+ * set at registration.
+ *
+ * The old result is taken so this function does not need to always
+ * allocate new memory. If the given result is as big as needed to store
+ * the new result it is overwritten or freed and re-allocated if it is
+ * too small.
+ * If you do not have a old result set pass NULL.
+ *
+ * If you no longer need the result and will not call this function again
+ * you must free the result with roar_ltm_freeres().
+ */
 struct roar_ltm_result * roar_ltm_get(struct roar_connection * con, int mt, int window, int * streams, size_t slen, struct roar_ltm_result * oldresult);
 
+/* This function frees the result.
+ * This may be defined as macro. Never call the function
+ * this refrences as directly if this is a macro.
+ */
 #define roar_ltm_freeres(x) roar_mm_free((x))
 
+/* Get number of streams which are included in a result.
+ * returns -1 on error.
+ */
 int roar_ltm_get_numstreams(struct roar_ltm_result * res);
+
+/* Get the mt included in the given result.
+ * returns -1 on error.
+ */
 int roar_ltm_get_mt(struct roar_ltm_result * res);
+
+/* Get the window included in the given result.
+ * returns -1 on error.
+ */
 int roar_ltm_get_window(struct roar_ltm_result * res);
 
+/* Get the number of channels a stream in result has.
+ * Thakes the result and the index of the stream in the result.
+ * The stream index is the index of the stream in the stream list
+ * you provided to roar_ltm_get(). This is not the stream id.
+ *
+ * returns -1 on error.
+ *
+ * You must use this function to get the number of channels for a stream
+ * and not any value you got on some other way.
+ * This is becaue this function returns the value in the very moment in witch the
+ * result set was collected in the server.
+ */
 int roar_ltm_get_numchans(struct roar_ltm_result * res, int streamidx);
+
+/* Extract a single value from the result.
+ * Thakes
+ * - the result,
+ * - the mt for which you ask,
+ * - the index of the stream in the result and
+ * - The channel you request a value for.
+ *
+ * returns -1 on error.
+ *
+ * The mt parameter must not have more than one bit set.
+ *
+ * The stream index is the index of the stream in the stream list
+ * you provided to roar_ltm_get(). This is not the stream id.
+ *
+ * The channel is the channel number you ask data for.
+ * it must not be bigger than one less what roar_ltm_get_numchans() retruned.
+ * (channels are counted from zero to N-1, not from 1 to N)
+ */
 int64_t roar_ltm_extract(struct roar_ltm_result * res, int mt, int streamidx, int channel);
 
 #endif
