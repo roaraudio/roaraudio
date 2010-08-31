@@ -29,7 +29,7 @@
  *  NOTE for uses of non-GPL (LGPL,...) software using libesd, libartsc
  *  or libpulse*:
  *  The libs libroaresd, libroararts and libroarpulse link this lib
- *  and are therefore GPL. Because of this it may be illigal to use
+ *  and are therefore GPL. Because of this it may be illegal to use
  *  them with any software that uses libesd, libartsc or libpulse*.
  */
 
@@ -45,7 +45,7 @@ struct roar_ltm_result;
 /* Register streams for LTM.
  * Takes
  * - connection to server,
- * - used MT (monetoring type),
+ * - used MT (monitoring type),
  * - used window,
  * - array of streams,
  * - length of the array of streams.
@@ -53,7 +53,7 @@ struct roar_ltm_result;
  *
  * Registration is stacked.
  * This means that if you register a stream twice you need to unregister it twice.
- * This is becaue maybe clients may wich to use LTM and it would be bad
+ * This is because maybe clients may witch to use LTM and it would be bad
  * if the first client which disconnects would remove the LTM from the stream.
  */
 int roar_ltm_register(struct roar_connection * con, int mt, int window, int * streams, size_t slen);
@@ -66,7 +66,7 @@ int roar_ltm_register(struct roar_connection * con, int mt, int window, int * st
  * the same as the set you registered. It is perfectly valid to just
  * unregister a subset. or a larger set of streams.
  *
- * The given mt musst match. If it does not the behavor is undefined.
+ * The given mt must match. If it does not the behavior is undefined.
  * The server may refuse the request or just unregister the given bits.
  * you should not do this.
  *
@@ -87,12 +87,12 @@ int roar_ltm_unregister(struct roar_connection * con, int mt, int window, int * 
  *
  * The MT is allowed to not match the registered mt but must not
  * contain more bits than registered. In most causes this match
- * the registred MT.
+ * the registered MT.
  *
  * The window must match the window used then streams got registered.
  *
  * The list of streams must not match a single registration.
- * but all streams must be registred with at least the bits used in mt
+ * but all streams must be registered with at least the bits used in mt
  * set at registration.
  *
  * The old result is taken so this function does not need to always
@@ -108,7 +108,7 @@ struct roar_ltm_result * roar_ltm_get(struct roar_connection * con, int mt, int 
 
 /* This function frees the result.
  * This may be defined as macro. Never call the function
- * this refrences as directly if this is a macro.
+ * this references as directly if this is a macro.
  */
 #define roar_ltm_freeres(x) roar_mm_free((x))
 
@@ -128,7 +128,7 @@ int roar_ltm_get_mt(struct roar_ltm_result * res);
 int roar_ltm_get_window(struct roar_ltm_result * res);
 
 /* Get the number of channels a stream in result has.
- * Thakes the result and the index of the stream in the result.
+ * Takes the result and the index of the stream in the result.
  * The stream index is the index of the stream in the stream list
  * you provided to roar_ltm_get(). This is not the stream id.
  *
@@ -136,13 +136,13 @@ int roar_ltm_get_window(struct roar_ltm_result * res);
  *
  * You must use this function to get the number of channels for a stream
  * and not any value you got on some other way.
- * This is becaue this function returns the value in the very moment in witch the
+ * This is because this function returns the value in the very moment in witch the
  * result set was collected in the server.
  */
 int roar_ltm_get_numchans(struct roar_ltm_result * res, int streamidx);
 
 /* Extract a single value from the result.
- * Thakes
+ * Takes
  * - the result,
  * - the mt for which you ask,
  * - the index of the stream in the result and
@@ -156,7 +156,7 @@ int roar_ltm_get_numchans(struct roar_ltm_result * res, int streamidx);
  * you provided to roar_ltm_get(). This is not the stream id.
  *
  * The channel is the channel number you ask data for.
- * it must not be bigger than one less what roar_ltm_get_numchans() retruned.
+ * it must not be bigger than one less what roar_ltm_get_numchans() returned.
  * (channels are counted from zero to N-1, not from 1 to N)
  */
 int64_t roar_ltm_extract(struct roar_ltm_result * res, int mt, int streamidx, int channel);
