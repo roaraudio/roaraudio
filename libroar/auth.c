@@ -197,7 +197,7 @@ int roar_auth   (struct roar_connection * con) {
 // String functions:
 static struct {
  int    type;
- char * name;
+ const char * name;
 } _g_authts[] = {
 // grep ^'#define ROAR_AUTH_T_' auth.h | while read d t d; do n=$(cut -d_ -f4 <<<$t | tr A-Z a-z); printf ' {%-28s %-10s},\n' $t, \"$n\"; done
  {ROAR_AUTH_T_NONE,            "none"    },
@@ -215,7 +215,7 @@ static struct {
  {-1, NULL}
 };
 
-int    roar_str2autht(char * str) {
+int    roar_str2autht(const char * str) {
  int i;
 
  for (i = 0; _g_authts[i].name != NULL; i++)
@@ -225,7 +225,7 @@ int    roar_str2autht(char * str) {
  return -1;
 }
 
-char * roar_autht2str(int auth) {
+const char * roar_autht2str(const int auth) {
  int i;
 
  for (i = 0; _g_authts[i].name != NULL; i++)

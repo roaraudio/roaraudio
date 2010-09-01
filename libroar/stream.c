@@ -737,9 +737,9 @@ int roar_stream_m2s     (struct roar_stream * s, struct roar_message * m) {
                            "unknown")
 */
 
-struct {
+static struct {
  int    dir;
- char * name;
+ const char * name;
 } _libroar_dir[] = {
  {ROAR_DIR_PLAY,        "play"       },
  {ROAR_DIR_RECORD,      "record"     },
@@ -764,7 +764,7 @@ struct {
  {-1,                   "unknown"    }
 };
 
-char * roar_dir2str (int dir) {
+const char * roar_dir2str (const int dir) {
  int i;
 
  for (i = 0; _libroar_dir[i].dir != -1; i++)
@@ -774,7 +774,7 @@ char * roar_dir2str (int dir) {
  return _libroar_dir[i].name;
 }
 
-int roar_str2dir (char * name) {
+int roar_str2dir (const char * name) {
  int i;
 
  for (i = 0; _libroar_dir[i].dir != -1; i++)
@@ -792,9 +792,9 @@ int roar_str2dir (char * name) {
                            "unknown" )
 */
 
-struct {
+static struct {
  int    codec;
- char * name;
+ const char * name;
 } _libroar_codec[] = {
  // PCM:
  {ROAR_CODEC_PCM_S_LE,    "pcm_s_le"   },
@@ -882,7 +882,7 @@ struct {
  {-1, NULL}
 };
 
-int roar_str2codec(char * codec) {
+int roar_str2codec(const char * codec) {
  int i;
  int guess;
 
@@ -903,7 +903,7 @@ int roar_str2codec(char * codec) {
 }
 
 
-char * roar_codec2str (int codec) {
+const char * roar_codec2str (const int codec) {
  int i;
 
  for (i = 0; _libroar_codec[i].codec != -1; i++)
@@ -913,7 +913,7 @@ char * roar_codec2str (int codec) {
  return "unknown";
 }
 
-char * roar_streamstate2str(int streamstate) {
+const char * roar_streamstate2str(int streamstate) {
  switch (streamstate) {
   case ROAR_STREAMSTATE_UNUSED:  return "unused";  break;
   case ROAR_STREAMSTATE_INITING: return "initing"; break;
@@ -925,9 +925,9 @@ char * roar_streamstate2str(int streamstate) {
  return "unknown";
 }
 
-struct {
+static struct {
  int    role;
- char * name;
+ const char * name;
 } _libroar_role[] = {
  {ROAR_ROLE_UNKNOWN,          "unknown"         },
  {ROAR_ROLE_NONE,             "none"            },
@@ -947,7 +947,7 @@ struct {
  {-1, NULL}
 };
 
-int    roar_str2role  (char * role) {
+int    roar_str2role  (const char * role) {
  int i;
 
  for (i = 0; _libroar_role[i].name != NULL; i++)
@@ -957,7 +957,7 @@ int    roar_str2role  (char * role) {
  return ROAR_ROLE_UNKNOWN;
 }
 
-char * roar_role2str  (int    role) {
+const char * roar_role2str  (const int    role) {
  int i;
 
  for (i = 0; _libroar_role[i].name != NULL; i++)

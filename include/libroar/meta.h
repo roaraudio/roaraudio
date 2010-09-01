@@ -45,13 +45,13 @@ int roar_stream_meta_list (struct roar_connection * con, struct roar_stream * s,
 
 int roar_meta_free (struct roar_meta * meta);
 
-char * roar_meta_strtype(int type);
-int    roar_meta_inttype(char * type);
+char * roar_meta_strtype(const int type);
+int    roar_meta_inttype(const char * type);
 
-char * roar_meta_strgenre(int genre);
-int    roar_meta_intgenre(char * genre);
+const char * roar_meta_strgenre(const int genre);
+int    roar_meta_intgenre(const char * genre);
 
-int    roar_meta_parse_audioinfo(struct roar_audio_info * info, char * str);
+int    roar_meta_parse_audioinfo(struct roar_audio_info * info, const char * str);
 
 #endif
 

@@ -41,9 +41,9 @@ grep ^'#define ROAR_META_TYPE_' meta.h | cut -d' ' -f2 | while read line; do pri
 
 */
 
-struct {
+static struct {
  int    id;
- char * name;
+ const char * name;
 } _libroar_meta_typelist[] = {
  {ROAR_META_TYPE_NONE,               "NONE"           },
  {ROAR_META_TYPE_TITLE,              "TITLE"          },
@@ -91,9 +91,9 @@ struct {
 };
 
 
-struct {
+static struct {
  int    id;
- char * name;
+ const char * name;
 } _libroar_meta_genrelist[] = {
 {ROAR_META_GENRE_RDS_EU_NONE,             "rds_eu_none"},
 {ROAR_META_GENRE_RDS_EU_NONE,             "none"},
@@ -395,7 +395,8 @@ struct {
  {-1, "EOL"}
 };
 
-char * roar_meta_strtype(int type) {
+// TODO: Why do we return a non-const buffer here?
+char * roar_meta_strtype(const int type) {
  int i;
  static char name[ROAR_META_MAX_NAMELEN];
 
@@ -408,7 +409,7 @@ char * roar_meta_strtype(int type) {
  return NULL;
 }
 
-int    roar_meta_inttype(char * type) {
+int    roar_meta_inttype(const char * type) {
  int i;
 
  for (i = 0; _libroar_meta_typelist[i].id != -1; i++)
@@ -544,7 +545,7 @@ int roar_meta_free (struct roar_meta * meta) {
 
 
 // genere:
-char * roar_meta_strgenre(int genre) {
+const char * roar_meta_strgenre(const int genre) {
  int i;
 
  for (i = 0; _libroar_meta_genrelist[i].id != -1; i++)
@@ -555,7 +556,7 @@ char * roar_meta_strgenre(int genre) {
  return NULL;
 }
 
-int    roar_meta_intgenre(char * genre) {
+int    roar_meta_intgenre(const char * genre) {
  int i;
 
  for (i = 0; _libroar_meta_genrelist[i].id != -1; i++)
@@ -566,7 +567,7 @@ int    roar_meta_intgenre(char * genre) {
  return -1;
 }
 
-int    roar_meta_parse_audioinfo(struct roar_audio_info * info, char * str) {
+int    roar_meta_parse_audioinfo(struct roar_audio_info * info, const char * str) {
  char * lc;
  char * cur, * next;
  char * k,   * v;

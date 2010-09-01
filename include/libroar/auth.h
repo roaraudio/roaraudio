@@ -51,8 +51,8 @@ struct roar_auth_message {
 
 int roar_auth   (struct roar_connection * con);
 
-int    roar_str2autht(char * str);
-char * roar_autht2str(int auth);
+int    roar_str2autht(const char * str);
+const char * roar_autht2str(const int auth);
 
 #endif
 

@@ -38,8 +38,8 @@
 
 #include "roaraudio.h"
 
-char * roar_dir2str (int dir);
-int    roar_str2dir (char * name);
+const char * roar_dir2str (const int dir);
+int    roar_str2dir (const char * name);
 
 struct roar_stream_info {
  int block_size;
@@ -97,13 +97,13 @@ int roar_stream_set_role  (struct roar_connection * con, struct roar_stream * s,
 int roar_stream_s2m     (struct roar_stream * s, struct roar_message * m);
 int roar_stream_m2s     (struct roar_stream * s, struct roar_message * m);
 
-int    roar_str2codec (char * codec);
-char * roar_codec2str (int    codec);
+int    roar_str2codec (const char * codec);
+const char * roar_codec2str (const int    codec);
 
-char * roar_streamstate2str(int streamstate);
+const char * roar_streamstate2str(int streamstate);
 
-int    roar_str2role  (char * role);
-char * roar_role2str  (int    role);
+int    roar_str2role  (const char * role);
+const char * roar_role2str  (const int    role);
 
 ssize_t roar_info2samplesize (struct roar_audio_info * info);
 ssize_t roar_info2framesize  (struct roar_audio_info * info);
