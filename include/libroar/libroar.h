@@ -159,6 +159,7 @@
 #include "beep.h"
 #include "ltm.h"
 #include "vs.h"
+#include "enumdev.h"
 
 // some basic macros:
 #define ROAR_MAX2(a,b) ((a) > (b) ? (a) : (b))
