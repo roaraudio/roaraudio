@@ -38,6 +38,17 @@
 
 #include "libroar.h"
 
+struct roar_server {
+ const char * server;
+ const char * description;
+ const char * location;
+};
+
+struct roar_mixer {
+ const int dir;
+ //...
+};
+
 #endif
 
 //ll
