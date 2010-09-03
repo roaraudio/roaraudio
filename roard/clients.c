@@ -474,7 +474,7 @@ int clients_check     (int id) {
      }
     }
 
-    roar_send_message(&con, &m, NULL);
+    roar_send_message(&con, &m, flags[1] & COMMAND_FLAG_OUT_LONGDATA ? data : NULL);
 
     if ( flags[1] & COMMAND_FLAG_OUT_CLOSECON )
      clients_close(id, 1);
@@ -522,7 +522,7 @@ int clients_check     (int id) {
     rv = -1;
  }
 
- if ( data )
+ if ( data != NULL )
   free(data);
 
  ROAR_DBG("clients_check(id=%i) = %i", id, rv);

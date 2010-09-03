@@ -33,6 +33,7 @@
 
 #define COMMAND_FLAG_NONE          0x00000000
 #define COMMAND_FLAG_OUT_CLOSECON  0x00000001
+#define COMMAND_FLAG_OUT_LONGDATA  0x00000002
 
 struct roar_command {
  int cmd;
