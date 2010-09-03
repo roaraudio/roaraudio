@@ -248,10 +248,9 @@ __BEGIN_DECLS
 
 #define ROAR_DEBUG_OUTFH stderr
 
-#ifdef ROAR_DBG_PREFIX
-#undef ROAR_DBG_PREFIX
-#endif
+#ifndef ROAR_DBG_PREFIX
 #define ROAR_DBG_PREFIX "roaraudio"
+#endif
 
 #define ROAR_DBG_FULLPREFIX "(" ROAR_DBG_PREFIX ": " __FILE__ ":%i): "
 

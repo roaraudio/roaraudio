@@ -36,7 +36,7 @@
 #ifndef _LIBROAR_H_
 #define _LIBROAR_H_
 
-#define ROAR_DBG_PREFIX  "libroar"
+//#define ROAR_DBG_PREFIX  "libroar"
 
 #include <roaraudio.h>
 

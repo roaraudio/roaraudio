@@ -30,6 +30,9 @@
 int g_verbose;
 #define ROAR_DBG_INFOVAR g_verbose
 
+// configure ROAR_*()
+#define ROAR_DBG_PREFIX "roard"
+
 // need to include this first as we need the config
 #include <roaraudio.h>
 #include <roaraudio/units.h>
