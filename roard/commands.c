@@ -93,6 +93,9 @@ int command_get_id_by_cmd (int command) {
 int command_exec (int client, struct roar_message * mes, char ** data, uint32_t flags[2]) {
  int cmd = command_get_id_by_cmd(mes->cmd);
  int (*func)(int client, struct roar_message * mes, char ** data, uint32_t flags[2]);
+#ifdef DEBUG
+ int ret;
+#endif
 
  if ( cmd == -1 )
   return -1;
@@ -104,7 +107,14 @@ int command_exec (int client, struct roar_message * mes, char ** data, uint32_t 
 
  ROAR_DBG("command_exec(*): Execing command %i(%s) via %p", cmd, g_commands[cmd].name, func);
 
+#ifdef DEBUG
+ ROAR_DBG("command_exec(client=%i, mes=%p{.cmd=%i,...}, data=%p{%p}, flags=%p): func=%p", client, mes, (int)mes->cmd, data, *data, flags, func);
+ ret = func(client, mes, data, flags);
+ ROAR_DBG("command_exec(client=%i, mes=%p{.cmd=%i,...}, data=%p{%p}, flags=%p) = %i", client, mes, (int)mes->cmd, data, *data, flags, ret);
+ return ret;
+#else
  return func(client, mes, data, flags);
+#endif
 }
 
 int command_get_name (int command, char ** name) {

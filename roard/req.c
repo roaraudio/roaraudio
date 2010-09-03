@@ -25,6 +25,25 @@
 
 #include "roard.h"
 
+static void * _dataspace(struct roar_message * mes, char ** data, uint32_t flags[2], size_t len) {
+ if ( len <= LIBROAR_BUFFER_MSGDATA )
+  return mes->data;
+
+ if ( *data != NULL )
+  free(*data);
+
+ *data = malloc(len);
+
+ ROAR_DBG("_dataspace(mes=%p, data=%p, flags=%p, len=%llu): *data=%p", mes, data, flags, (long long unsigned int)len, *data);
+
+ if ( *data == NULL )
+  return NULL;
+
+ flags[1] |= COMMAND_FLAG_OUT_LONGDATA;
+
+ return *data;
+}
+
 int req_on_noop        (int client, struct roar_message * mes, char ** data, uint32_t flags[2]) {
  mes->cmd     = ROAR_CMD_OK;
  mes->pos     = g_pos;
@@ -814,25 +833,30 @@ int req_on_get_stream_para (int client, struct roar_message * mes, char ** data,
 
     ROAR_DBG("req_on_get_stream_para(client=%i, ...): data size for answer is %i 64 bit sub-packets", client, (int)needed);
 
-    if ( (needed*8) > LIBROAR_BUFFER_MSGDATA ) {
-     return -1;
-     if ( (d64 = malloc(needed*8)) == NULL )
-      return -1;
-
-     *data = (char*)d64;
-    }
-
-    d64 = (int64_t*)mes->data;
+    ROAR_DBG("req_on_get_stream_para(client=%i, ...): mes->datalen=%i, data=%p{%p}", client, (int)mes->datalen, data, *data);
+    d64 = _dataspace(mes, data, flags, needed * 8);
+    ROAR_DBG("req_on_get_stream_para(client=%i, ...): d64=%p, data=%p{%p}", client, d64, data, *data);
 
     if ( (d = roar_mm_malloc(mes->datalen)) == NULL )
      return -1;
 
+    ROAR_DBG("req_on_get_stream_para(client=%i, ...): d=%p, data=%p{%p}", client, d, data, *data);
+
+
+    ROAR_DBG("req_on_get_stream_para(client=%i, ...): mes->datalen=%i, data=%p{%p}", client, (int)mes->datalen, data, *data);
+    ROAR_DBG("req_on_get_stream_para(client=%i, ...): d64=%p, data=%p{%p}", client, d64, data, *data);
     memcpy(d, mes->data, mes->datalen);
+    ROAR_DBG("req_on_get_stream_para(client=%i, ...): d64=%p, data=%p{%p}", client, d64, data, *data);
 
     d64ptr = d64;
 
+    ROAR_DBG("req_on_get_stream_para(client=%i, ...): mes->datalen=%i, data=%p{%p}", client, (int)mes->datalen, data, *data);
+    ROAR_DBG("req_on_get_stream_para(client=%i, ...): d64=%p, data=%p{%p}", client, d64, data, *data);
+
     if ( mes->stream == -1 ) {
      for (i = 6; i < mes->datalen/2; i++) {
+      ROAR_DBG("req_on_get_stream_para(client=%i, ...): d64=%p, data=%p{%p}", client, d64, data, *data);
+
       if ( (ltm = streams_ltm_get(d[i], d[5], d[3])) == NULL )
        return -1;
 
@@ -878,6 +902,8 @@ int req_on_get_stream_para (int client, struct roar_message * mes, char ** data,
      }
     }
 
+    ROAR_DBG("req_on_get_stream_para(client=%i, ...): d64=%p, data=%p{%p}", client, d64, data, *data);
+
     roar_mm_free(d);
 
     for (i = 0; i < needed; i++) {
@@ -887,6 +913,7 @@ int req_on_get_stream_para (int client, struct roar_message * mes, char ** data,
     mes->datalen = needed * 8;
     ROAR_DBG("req_on_get_stream_para(client=%i, ...): LTM d64=%p, d64ptr=%p", client, d64, d64ptr);
     ROAR_DBG("req_on_get_stream_para(client=%i, ...): LTM final message has %i byte of data", client, (int)mes->datalen);
+    ROAR_DBG("req_on_get_stream_para(client=%i, ...): d64=%p, data=%p{%p}", client, d64, data, *data);
     ROAR_DBG("req_on_get_stream_para(client=%i, ...): LTM GET_RAW request: OK. returning...", client);
    break;
 

@@ -474,6 +474,8 @@ int clients_check     (int id) {
      }
     }
 
+    ROAR_DBG("clients_check(*): data=%p", data);
+
     roar_send_message(&con, &m, flags[1] & COMMAND_FLAG_OUT_LONGDATA ? data : NULL);
 
     if ( flags[1] & COMMAND_FLAG_OUT_CLOSECON )
