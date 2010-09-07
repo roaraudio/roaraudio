@@ -110,6 +110,8 @@ struct roar_notify_core * roar_notify_core_new(ssize_t lists) {
   return NULL;
  }
 
+ memset(core->lists, 0, lists*sizeof(struct roar_subscriber *));
+
  return core;
 }
 
