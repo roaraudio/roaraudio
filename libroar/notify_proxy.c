@@ -35,6 +35,46 @@
 
 #include "libroar.h"
 
-void roar_notify_proxy_std(struct roar_notify_core * core, struct roar_event * event, void * userdata);
+#define MAX_EVENTS_PER_GROUP  4
+#define EOL                   ROAR_NOTIFY_SPECIAL
+
+void roar_notify_proxy_std(struct roar_notify_core * core, struct roar_event * event, void * userdata) {
+ struct {
+  uint32_t event_min, event_max;
+  uint32_t events[MAX_EVENTS_PER_GROUP];
+ } * ptr, list[] = {
+  {.event_min = ROAR_NOTIFY_EGRP2EVENT(ROAR_NOTIFY_OE_GROUP_STREAMS),
+   .event_max = ROAR_NOTIFY_EGRP2EVENT(ROAR_NOTIFY_OE_GROUP_STREAMS + 0xff),
+   .events = {
+    EOL
+   }
+  }
+ };
+ struct roar_event locevent;
+ size_t i, e;
+ register uint32_t oe = event->event;
+
+ (void)userdata;
+
+ memcpy(&locevent, event, sizeof(locevent));
+
+ locevent.event_proxy  = locevent.event;
+ locevent.flags       |= ROAR_EVENT_FLAG_PROXYEVENT;
+
+ locevent.event = ROAR_EGRP_ANY_EVENT;
+
+ roar_notify_core_emit(core, &locevent);
+
+
+ for (i = 0; i < sizeof(list)/sizeof(*list); i++) {
+  ptr = &(list[i]);
+  if ( ptr->event_min <= oe && ptr->event_max >= oe ) {
+   for (e = 0; ptr->events[e] != EOL; e++) {
+    locevent.event = ptr->events[e];
+    roar_notify_core_emit(core, &locevent);
+   }
+  }
+ }
+}
 
 //ll
