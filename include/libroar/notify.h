@@ -75,6 +75,10 @@ int roar_notify_core_unsubscribe(struct roar_notify_core * core, struct roar_sub
 
 int roar_notify_core_emit(struct roar_notify_core * core, struct roar_event * event);
 
+int roar_notify_core_emit_simple(uint32_t event, int emitter, int target, int target_type, int arg0, int arg1, void * arg2, ssize_t arg2_len);
+
+#define roar_notify_core_emit_snoargs(event,emitter,target,target_type) roar_notify_core_emit_simple((event),(emitter),(target),(target_type),-1,-1,NULL,0)
+
 #endif
 
 //ll

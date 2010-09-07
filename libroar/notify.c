@@ -304,4 +304,21 @@ int roar_notify_core_emit(struct roar_notify_core * core, struct roar_event * ev
  return 0;
 }
 
+int roar_notify_core_emit_simple(uint32_t event, int emitter, int target, int target_type, int arg0, int arg1, void * arg2, ssize_t arg2_len) {
+ struct roar_event locevent;
+
+ memset(&locevent, 0, sizeof(locevent));
+
+ locevent.event = event;
+ locevent.emitter = emitter;
+ locevent.target = target;
+ locevent.target_type = target_type;
+ locevent.arg0 = arg0;
+ locevent.arg1 = arg1;
+ locevent.arg2 = arg2;
+ locevent.arg2_len = arg2_len;
+
+ return roar_notify_core_emit(NULL, &locevent);
+}
+
 //ll
