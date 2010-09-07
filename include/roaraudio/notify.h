@@ -41,10 +41,10 @@
 
 // user defined events:
 #define ROAR_NOTIFY_OFFSET_USER   0x40000000
-#define ROAR_NOTIFY_MASK_CUSER    0x3fffffff
+#define ROAR_NOTIFY_MASK_USER     0x3fffffff
 
 #define ROAR_NOTIFY_X2EVENT(x,offset,mask) ((x) == -1 ? ROAR_NOTIFY_SPECIAL : (((x) & (mask))+(offset)))
-#define ROAR_NOTIFY_EVENT2X(x,offset,mask) (ROAR_NOTIFY_ISX((x),(offset),(mask)) != 1 ? -1 : ((x) - (offset)))
+#define ROAR_NOTIFY_EVENT2X(x,offset,mask) (ROAR_NOTIFY_IS_X((x),(offset),(mask)) != 1 ? -1 : ((x) - (offset)))
 #define ROAR_NOTIFY_IS_X(x,offset,mask)    ((x) == ROAR_NOTIFY_SPECIAL ? -1 : (((x) | (mask)) - (mask)) == (offset) ? 1 : 0)
 
 #define ROAR_NOTIFY_CMD2EVENT(x)  ROAR_NOTIFY_X2EVENT((x), ROAR_NOTIFY_OFFSET_CMD,  ROAR_NOTIFY_MASK_CMD)
