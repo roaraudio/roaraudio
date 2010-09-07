@@ -1334,6 +1334,13 @@ int main (void) {
  // load config
  roar_libroar_get_config();
 
+ // init notify core:
+ // TODO: reconsider number of lists.
+ if ( roar_notify_core_new_global(-1) == -1 ) {
+  ROAR_ERR("Can not init notify core!");
+  return 1;
+ }
+
 #ifdef ROAR_SUPPORT_LISTEN
  if ( init_listening() == -1 ) {
   ROAR_ERR("Can not init listening sockets!");
@@ -2240,6 +2247,8 @@ int main (void) {
  driver_close(drvinst, drvid);
  output_buffer_free();
 
+ roar_notify_core_free(NULL);
+
  ROAR_INFO("Exiting, no error", ROAR_DBG_INFO_INFO);
  return 0;
 }
@@ -2323,6 +2332,8 @@ void clean_quit (void) {
  clean_quit_prep();
 // driver_close(drvinst, drvid);
 // output_buffer_free();
+
+ roar_notify_core_free(NULL);
 
  ROAR_INFO("Exiting, no error", ROAR_DBG_INFO_INFO);
  exit(0);
