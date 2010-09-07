@@ -50,8 +50,9 @@ struct roar_event {
  int target;
  int target_type;
  int arg0;
- void * arg1;
- ssize_t arg1_len;
+ int arg1;
+ void * arg2;
+ ssize_t arg2_len;
 };
 
 struct roar_subscriber;
