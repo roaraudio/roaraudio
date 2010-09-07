@@ -148,6 +148,11 @@ int roar_notify_core_unref(struct roar_notify_core * core) {
   return 0;
  }
 
+ // if we work on the global core, reset it to NULL if we free it.
+ if ( core == _libroar_notify_core ) {
+  _libroar_notify_core = NULL;
+ }
+
  for (i = 0; i < core->listc; i++) {
   cur = core->lists[i];
   while (cur != NULL) {
