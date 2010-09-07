@@ -161,6 +161,7 @@
 #include "vs.h"
 #include "enumdev.h"
 #include "notify.h"
+#include "notify_proxy.h"
 
 // some basic macros:
 #define ROAR_MAX2(a,b) ((a) > (b) ? (a) : (b))
