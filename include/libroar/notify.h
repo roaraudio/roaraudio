@@ -61,7 +61,7 @@ int roar_notify_core_ref(struct roar_notify_core * core);
 int roar_notify_core_unref(struct roar_notify_core * core);
 #define roar_notify_core_free(x) roar_notify_core_unref((x))
 
-struct roar_subscriber * roar_notify_core_subscribe(struct roar_notify_core * core, struct roar_event * event, void (*cb)(struct roar_event * event, void * userdata), void * userdata);
+struct roar_subscriber * roar_notify_core_subscribe(struct roar_notify_core * core, struct roar_event * event, void (*cb)(struct roar_notify_core * core, struct roar_event * event, void * userdata), void * userdata);
 int roar_notify_core_unsubscribe(struct roar_notify_core * core, struct roar_subscriber * subscriber);
 
 int roar_notify_core_emit(struct roar_notify_core * core, struct roar_event * event);

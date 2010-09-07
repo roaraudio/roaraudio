@@ -41,7 +41,7 @@ struct roar_subscriber {
  int emitter;
  int target;
  int target_type;
- void (*cb)(struct roar_event * event, void * userdata);
+ void (*cb)(struct roar_notify_core * core, struct roar_event * event, void * userdata);
  void * userdata;
  size_t refc;
  unsigned int hash;
@@ -154,7 +154,7 @@ int roar_notify_core_unref(struct roar_notify_core * core) {
  return 0;
 }
 
-struct roar_subscriber * roar_notify_core_subscribe(struct roar_notify_core * core, struct roar_event * event, void (*cb)(struct roar_event * event, void * userdata), void * userdata) {
+struct roar_subscriber * roar_notify_core_subscribe(struct roar_notify_core * core, struct roar_event * event, void (*cb)(struct roar_notify_core * core, struct roar_event * event, void * userdata), void * userdata) {
  struct roar_subscriber * subs = NULL;
  struct roar_subscriber * cur, * old;
 
@@ -242,7 +242,7 @@ int roar_notify_core_emit(struct roar_notify_core * core, struct roar_event * ev
   if ( cur->cb == NULL ) {
    ROAR_ERR("roar_notify_core_emit(core=%p, event=%p): cur=%p, cb is set NULL, bad.", core, event, cur);
   } else {
-   cur->cb(event, cur->userdata);
+   cur->cb(core, event, cur->userdata);
   }
   cur = cur->next;
  }
