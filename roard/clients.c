@@ -439,6 +439,7 @@ int clients_check     (int id) {
  int r;
  int rv = 0;
  uint32_t flags[2] = {COMMAND_FLAG_NONE, COMMAND_FLAG_NONE};
+ uint32_t event;
 
  _CHECK_CID(id);
 
@@ -455,6 +456,8 @@ int clients_check     (int id) {
      clients_delete(id);
      return -1;
     }
+
+    event = ROAR_NOTIFY_CMD2EVENT(m.cmd);
 
     roar_debug_message_print(&m);
 
@@ -473,6 +476,8 @@ int clients_check     (int id) {
       rv        = 1;
      }
     }
+
+    roar_notify_core_emit_simple(event, id, -1, -1, m.cmd, -1, NULL, 0);
 
     ROAR_DBG("clients_check(*): data=%p", data);
 
