@@ -57,7 +57,9 @@ struct roar_notify_core {
  void * proxy_userdata;
 };
 
-#define _CKRCORE(ret) if ( core == NULL ) { roar_errno = ROAR_ERROR_INVAL; return (ret); }
+static struct roar_notify_core * _libroar_notify_core = NULL;
+
+#define _CKRCORE(ret) if ( core == NULL ) { if ( _libroar_notify_core == NULL ) { roar_errno = ROAR_ERROR_INVAL; return (ret); } else { core = _libroar_notify_core; } }
 #define _CKICORE() _CKRCORE(-1)
 
 static unsigned int _hash_event (struct roar_notify_core * core, struct roar_event * event) {
@@ -159,6 +161,18 @@ int roar_notify_core_unref(struct roar_notify_core * core) {
 
  roar_mm_free(core->lists);
  roar_mm_free(core);
+ return 0;
+}
+
+int roar_notify_core_new_global(ssize_t lists) {
+ if ( _libroar_notify_core != NULL ) {
+  roar_errno = ROAR_ERROR_INVAL;
+  return -1;
+ }
+
+ if ( (_libroar_notify_core = roar_notify_core_new(lists)) == NULL )
+  return -1;
+
  return 0;
 }
 
