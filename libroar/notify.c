@@ -160,14 +160,18 @@ struct roar_subscriber * roar_notify_core_subscribe(struct roar_notify_core * co
  struct roar_subscriber * subs = NULL;
  struct roar_subscriber * cur, * old;
 
+ ROAR_DBG("roar_notify_core_subscribe(core=%p, event=%p, cb=%p, userdata=%p) = ?", core, event, cb, userdata);
+
  _CKRCORE(NULL);
 
  if ( event == NULL || cb == NULL ) {
+  ROAR_DBG("roar_notify_core_subscribe(core=%p, event=%p, cb=%p, userdata=%p) = NULL // errno = EINVAL", core, event, cb, userdata);
   roar_errno = ROAR_ERROR_INVAL;
   return NULL;
  }
 
  if ( (subs = roar_mm_malloc(sizeof(struct roar_subscriber))) == NULL ) {
+  ROAR_DBG("roar_notify_core_subscribe(core=%p, event=%p, cb=%p, userdata=%p) = NULL // errno = ENOMEM?", core, event, cb, userdata);
   return NULL;
  }
 
@@ -196,6 +200,7 @@ struct roar_subscriber * roar_notify_core_subscribe(struct roar_notify_core * co
   old->next = subs;
  }
 
+ ROAR_DBG("roar_notify_core_subscribe(core=%p, event=%p, cb=%p, userdata=%p) = %p", core, event, cb, userdata, subs);
  return subs;
 }
 
@@ -204,7 +209,7 @@ int roar_notify_core_unsubscribe(struct roar_notify_core * core, struct roar_sub
 
  _CKICORE();
 
- if ( subscriber ) {
+ if ( subscriber == NULL ) {
   roar_errno = ROAR_ERROR_INVAL;
   return -1;
  }
@@ -233,14 +238,27 @@ int roar_notify_core_emit(struct roar_notify_core * core, struct roar_event * ev
 
  _CKICORE();
 
- if ( event ) {
+ if ( event == NULL ) {
   roar_errno = ROAR_ERROR_INVAL;
   return -1;
  }
 
  cur = core->lists[_hash_event(core, event)];
+ ROAR_DBG("roar_notify_core_emit(core=%p, event=%p): cur=%p", core, event, cur);
 
  while (cur != NULL) {
+  ROAR_DBG("roar_notify_core_emit(core=%p, event=%p): cur=%p", core, event, cur);
+
+  // test if we can skip this one:
+  if ( !( (cur->event       == ROAR_NOTIFY_SPECIAL || cur->event       == event->event)   &&
+          (cur->emitter     == -1                  || cur->emitter     == event->emitter) &&
+          (cur->target      == -1                  || cur->target      == event->target)  &&
+          (cur->target_type == -1                  || cur->target_type == event->target_type)
+        ) ) {
+   cur = cur->next;
+   continue;
+  }
+
   if ( cur->cb == NULL ) {
    ROAR_ERR("roar_notify_core_emit(core=%p, event=%p): cur=%p, cb is set NULL, bad.", core, event, cur);
   } else {
