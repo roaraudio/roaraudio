@@ -38,6 +38,22 @@
 
 #include "libroar.h"
 
+#define ROAR_EVENT_FLAG_NONE        0x00000000
+#define ROAR_EVENT_FLAG_NETTRANS    0x00000001
+
+struct roar_event {
+ uint32_t flags;
+ uint32_t event;
+ int emitter;
+ int target;
+ int target_type;
+ int arg0;
+ void * arg1;
+ ssize_t arg1_len;
+};
+
+struct roar_subscriber;
+
 #endif
 
 //ll

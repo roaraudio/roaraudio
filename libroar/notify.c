@@ -35,4 +35,16 @@
 
 #include "libroar.h"
 
+struct roar_subscriber {
+ uint32_t flags;
+ uint32_t event;
+ int emitter;
+ int target;
+ int target_type;
+ void (*cb)(struct roar_event * event, void * userdata);
+ void * userdata;
+ size_t refc;
+ struct roar_subscriber * next;
+};
+
 //ll
