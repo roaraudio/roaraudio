@@ -44,6 +44,44 @@ char * x11display = NULL;
 
 int add_output (char * drv, char * dev, char * opts, int prim, int count);
 
+#ifdef DEBUG
+void dbg_notify_cb(struct roar_notify_core * core, struct roar_event * event, void * userdata) {
+ char buf[1024] = "";
+
+ if ( event->flags & ROAR_EVENT_FLAG_PROXYEVENT ) {
+  snprintf(buf, sizeof(buf)-1, ".event_proxy=0x%.8x, ", (int)event->event_proxy);
+  buf[sizeof(buf)-1] = 0;
+ }
+
+ ROAR_DBG("dbg_notify_cb(core=%p, event=%p{.flags=0x%.8x, event=0x%.8x, %s.emitter=%i, .target=%i, .target_type=%i, .arg0=%i, .arg1=%i, .arg2=%p}, userdata=%p) = (void)",
+           core, event,
+           (int)event->flags,
+           (int)event->event,
+           buf,
+           event->emitter,
+           event->target,
+           event->target_type,
+           event->arg0,
+           event->arg1,
+           event->arg2,
+           userdata);
+}
+
+void dbg_notify_cb_register (void) {
+ struct roar_event event;
+
+ memset(&event, 0, sizeof(event));
+
+ event.event = ROAR_EGRP_ANY_EVENT;
+
+ event.emitter = -1;
+ event.target = -1;
+ event.target_type = -1;
+
+ roar_notify_core_subscribe(NULL, &event, dbg_notify_cb, NULL);
+}
+#endif
+
 #ifdef ROAR_HAVE_MAIN_ARGS
 void usage (void) {
  printf("Usage: roard [OPTIONS]...\n\n");
@@ -1340,6 +1378,15 @@ int main (void) {
   ROAR_ERR("Can not init notify core!");
   return 1;
  }
+
+ if ( roar_notify_core_register_proxy(NULL, roar_notify_proxy_std, NULL) == -1 ) {
+  ROAR_ERR("Can not init notify core!");
+  return 1;
+ }
+
+#ifdef DEBUG
+ dbg_notify_cb_register();
+#endif
 
 #ifdef ROAR_SUPPORT_LISTEN
  if ( init_listening() == -1 ) {
