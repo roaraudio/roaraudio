@@ -53,6 +53,8 @@ struct roar_notify_core {
  size_t refc;
  size_t listc;
  struct roar_subscriber ** lists;
+ void (*proxy)(struct roar_notify_core * core, struct roar_event * event, void * userdata);
+ void * proxy_userdata;
 };
 
 #define _CKRCORE(ret) if ( core == NULL ) { roar_errno = ROAR_ERROR_INVAL; return (ret); }
@@ -106,6 +108,8 @@ struct roar_notify_core * roar_notify_core_new(ssize_t lists) {
  core->refc  = 1;
  core->listc = lists;
  core->lists = roar_mm_malloc(lists*sizeof(struct roar_subscriber *));
+ core->proxy = NULL;
+ core->proxy_userdata = NULL;
 
  if ( core->lists == NULL ) {
   roar_mm_free(core);
@@ -157,6 +161,16 @@ int roar_notify_core_unref(struct roar_notify_core * core) {
  roar_mm_free(core);
  return 0;
 }
+
+int roar_notify_core_register_proxy(struct roar_notify_core * core, void (*cb)(struct roar_notify_core * core, struct roar_event * event, void * userdata), void * userdata) {
+ _CKICORE();
+
+ core->proxy = cb;
+ core->proxy_userdata = userdata;
+
+ return 0;
+}
+
 
 struct roar_subscriber * roar_notify_core_subscribe(struct roar_notify_core * core, struct roar_event * event, void (*cb)(struct roar_notify_core * core, struct roar_event * event, void * userdata), void * userdata) {
  struct roar_subscriber * subs = NULL;
@@ -243,6 +257,10 @@ int roar_notify_core_emit(struct roar_notify_core * core, struct roar_event * ev
  if ( event == NULL ) {
   roar_errno = ROAR_ERROR_INVAL;
   return -1;
+ }
+
+ if ( core->proxy != NULL ) {
+  core->proxy(core, event, core->proxy_userdata);
  }
 
  cur = core->lists[_hash_event(core, event)];

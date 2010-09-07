@@ -40,10 +40,12 @@
 
 #define ROAR_EVENT_FLAG_NONE        0x00000000
 #define ROAR_EVENT_FLAG_NETTRANS    0x00000001
+#define ROAR_EVENT_FLAG_PROXYEVENT  0x00000002
 
 struct roar_event {
  uint32_t flags;
  uint32_t event;
+ uint32_t event_proxy;
  int emitter;
  int target;
  int target_type;
@@ -56,10 +58,14 @@ struct roar_subscriber;
 
 struct roar_notify_core;
 
+#define ROAR_EVENT_GET_TYPE(x) ((x) == NULL ? -1 : ((x)->flags & ROAR_EVENT_FLAG_PROXYEVENT ? (x)->event_proxy : (x)->event))
+
 struct roar_notify_core * roar_notify_core_new(ssize_t lists);
 int roar_notify_core_ref(struct roar_notify_core * core);
 int roar_notify_core_unref(struct roar_notify_core * core);
 #define roar_notify_core_free(x) roar_notify_core_unref((x))
+
+int roar_notify_core_register_proxy(struct roar_notify_core * core, void (*cb)(struct roar_notify_core * core, struct roar_event * event, void * userdata), void * userdata);
 
 struct roar_subscriber * roar_notify_core_subscribe(struct roar_notify_core * core, struct roar_event * event, void (*cb)(struct roar_notify_core * core, struct roar_event * event, void * userdata), void * userdata);
 int roar_notify_core_unsubscribe(struct roar_notify_core * core, struct roar_subscriber * subscriber);
