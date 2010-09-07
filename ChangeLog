@@ -5,6 +5,7 @@ v. 0.4beta0 - ?
 	* fixed a problem with PASSFH on some systems
 	* Added LTM support to libroar and roard (roard only supports RMS)
 	* Added a lot const keywords
+	* Added notify framework (process internal signals)
 
 v. 0.3 - Sun Aug 22 2010 26:14 CEST
 	Prereleases: 0: Mon Aug 16 2010 29:58 CEST;
