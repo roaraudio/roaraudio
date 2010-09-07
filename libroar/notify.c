@@ -74,15 +74,17 @@ struct roar_notify_core * roar_notify_core_new(ssize_t lists) {
  struct roar_notify_core * core = NULL;
 
  switch (lists) {
-  case   1:
-  case   2:
-  case   4:
-  case   8:
-  case  16:
-  case  32:
-  case  64:
-  case 128:
-  case 256:
+  case    1:
+  case    2:
+  case    4:
+  case    8:
+  case   16:
+  case   32:
+  case   64:
+  case  128:
+  case  256:
+  case  512:
+  case 1024:
     // they all are ok.
    break;
   case  -1:
