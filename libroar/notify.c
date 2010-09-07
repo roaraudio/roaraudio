@@ -259,7 +259,7 @@ int roar_notify_core_emit(struct roar_notify_core * core, struct roar_event * ev
   return -1;
  }
 
- if ( core->proxy != NULL ) {
+ if ( core->proxy != NULL && !(event->flags & ROAR_EVENT_FLAG_PROXYEVENT) ) {
   core->proxy(core, event, core->proxy_userdata);
  }
 
