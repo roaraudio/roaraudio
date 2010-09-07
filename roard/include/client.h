@@ -46,7 +46,9 @@ struct roar_client {
 } * g_clients[ROAR_CLIENTS_MAX];
 */
 
-struct roar_client * g_clients[ROAR_CLIENTS_MAX];
+struct roar_client_server {
+ struct roar_client _client;
+} * g_clients[ROAR_CLIENTS_MAX];
 
 
 // basic functions

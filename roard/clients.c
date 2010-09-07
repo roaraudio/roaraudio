@@ -50,11 +50,16 @@ int clients_free (void) {
 int clients_new (void) {
  int i;
  int s;
+ struct roar_client_server * ns;
  struct roar_client * n;
 
  for (i = 0; i < ROAR_CLIENTS_MAX; i++) {
   if ( g_clients[i] == NULL ) {
-   n = roar_mm_malloc(sizeof(struct roar_client));
+   ns = roar_mm_malloc(sizeof(struct roar_client_server));
+   n = ROAR_CLIENT(ns);
+
+   memset(ns, 0, sizeof(struct roar_client_server));
+
    if ( n != NULL ) {
     n->pid    = -1;
     n->uid    = -1;
@@ -78,7 +83,7 @@ int clients_new (void) {
      return -1;
     }
 
-    g_clients[i] = n;
+    g_clients[i] = ns;
 
     counters_inc(clients, 1);
     ROAR_DBG("clients_new(void) = %i", i);
@@ -133,20 +138,20 @@ int clients_delete (int id) {
 
  _CHECK_CID(id);
 
- if (g_clients[id]->execed != -1) {
+ if (ROAR_CLIENT(g_clients[id])->execed != -1) {
 //  return streams_delete(g_clients[id]->execed);
-  g_clients[id]->execed = -1;
+  ROAR_CLIENT(g_clients[id])->execed = -1;
   close_client_fh = 0;
  }
 
  for (i = 0; i < ROAR_CLIENTS_MAX_STREAMS_PER_CLIENT; i++) {
-  streams_delete(g_clients[id]->streams[i]);
+  streams_delete(ROAR_CLIENT(g_clients[id])->streams[i]);
  }
 
- if ( g_clients[id]->fh != -1 && close_client_fh )
-  close(g_clients[id]->fh);
+ if ( ROAR_CLIENT(g_clients[id])->fh != -1 && close_client_fh )
+  close(ROAR_CLIENT(g_clients[id])->fh);
 
- roar_nnode_free(&(g_clients[id]->nnode));
+ roar_nnode_free(&(ROAR_CLIENT(g_clients[id])->nnode));
 
  roar_mm_free(g_clients[id]);
  g_clients[id] = NULL;
@@ -162,14 +167,14 @@ int clients_close      (int id, int nocheck_exec) {
 
  _CHECK_CID(id);
 
- c = g_clients[id];
+ c = ROAR_CLIENT(g_clients[id]);
 
  if ( c->fh == -1 ) {
   ROAR_DBG("clients_delete(id=%i) = 0", id);
   return 0;
  }
 
- if (nocheck_exec || g_clients[id]->execed != -1) {
+ if (nocheck_exec || c->execed != -1) {
   close(c->fh);
   c->fh = -1;
  }
@@ -181,7 +186,7 @@ int clients_close      (int id, int nocheck_exec) {
 int clients_get       (int id, struct roar_client ** client) {
  _CHECK_CID(id);
 
- *client = g_clients[id];
+ *client = ROAR_CLIENT(g_clients[id]);
 
  if ( *client == NULL )
   return -1;
@@ -198,7 +203,7 @@ int clients_set_fh    (int id, int    fh) {
 
  _CHECK_CID(id);
 
- if ( (c = g_clients[id]) == NULL )
+ if ( (c = ROAR_CLIENT(g_clients[id])) == NULL )
   return -1;
 
  c->fh = fh;
@@ -225,13 +230,13 @@ int clients_set_fh    (int id, int    fh) {
 int clients_get_fh    (int id) {
  _CHECK_CID(id);
 
- return g_clients[id]->fh;
+ return ROAR_CLIENT(g_clients[id])->fh;
 }
 
 int clients_set_pid   (int id, int    pid) {
  _CHECK_CID(id);
 
- g_clients[id]->pid = pid;
+ ROAR_CLIENT(g_clients[id])->pid = pid;
 
  return 0;
 }
@@ -239,7 +244,7 @@ int clients_set_pid   (int id, int    pid) {
 int clients_set_uid   (int id, int    uid) {
  _CHECK_CID(id);
 
- g_clients[id]->uid = uid;
+ ROAR_CLIENT(g_clients[id])->uid = uid;
 
  return 0;
 }
@@ -247,7 +252,7 @@ int clients_set_uid   (int id, int    uid) {
 int clients_set_gid   (int id, int    gid) {
  _CHECK_CID(id);
 
- g_clients[id]->gid = gid;
+ ROAR_CLIENT(g_clients[id])->gid = gid;
 
  return 0;
 }
@@ -266,8 +271,8 @@ int clients_set_proto (int id, int    proto) {
    break;
  }
 
- g_clients[id]->proto     = proto;
- g_clients[id]->byteorder = byteorder;
+ ROAR_CLIENT(g_clients[id])->proto     = proto;
+ ROAR_CLIENT(g_clients[id])->byteorder = byteorder;
 
  return 0;
 }
@@ -276,6 +281,7 @@ int clients_set_proto (int id, int    proto) {
 
 int clients_check_all (void) {
 #ifdef ROAR_HAVE_SELECT
+ struct roar_client * c;
  struct timeval tv;
  fd_set r, e;
  int i, j;
@@ -297,10 +303,10 @@ int clients_check_all (void) {
  tv.tv_usec = 1;
 
  for (i = 0; i < ROAR_CLIENTS_MAX; i++) {
-  if ( g_clients[i] == NULL )
+  if ( (c = ROAR_CLIENT(g_clients[i])) == NULL )
    continue;
 
-  if ( (fh = g_clients[i]->fh) != -1 ) {
+  if ( (fh = c->fh) != -1 ) {
    have++;
 
    ROAR_DBG("clients_check_all(*): fh=%i", fh);
@@ -315,15 +321,15 @@ int clients_check_all (void) {
   have_stream = 0;
 
   for (j = 0; j < ROAR_CLIENTS_MAX_STREAMS_PER_CLIENT; j++) {
-   if ( (fh = streams_get_fh(g_clients[i]->streams[j])) != -1 ) {
-    ROAR_DBG("clients_check_all(*): g_clients[i=%i]->streams[j=%i] = %i, fh = %i", i, j, g_clients[i]->streams[j], fh);
+   if ( (fh = streams_get_fh(c->streams[j])) != -1 ) {
+    ROAR_DBG("clients_check_all(*): g_clients[i=%i]->streams[j=%i] = %i, fh = %i", i, j, c->streams[j], fh);
     if ( fh > -1 ) {
      FD_SET(fh, &r);
 
      if ( fh > max_fh )
       max_fh = fh;
     } else if ( fh == -2 ) {
-     streams_check(g_clients[i]->streams[j]);
+     streams_check(c->streams[j]);
     }
 
     have_stream = 1;
@@ -333,7 +339,7 @@ int clients_check_all (void) {
 
   if ( !have_stream && have_streamless < MAX_STREAMLESS ) {
    streamless[have_streamless  ].id = i;
-   if ( (streamless[have_streamless++].fh = g_clients[i]->fh) == -1 )
+   if ( (streamless[have_streamless++].fh = c->fh) == -1 )
     have_streamless--;
   }
  }
@@ -346,14 +352,14 @@ int clients_check_all (void) {
  }
 
  for (i = 0; i < ROAR_CLIENTS_MAX; i++) {
-  if ( g_clients[i] == NULL )
+  if ( (c = ROAR_CLIENT(g_clients[i])) == NULL )
    continue;
 
-  if ( (fh = g_clients[i]->fh) != -1 ) {
+  if ( (fh = c->fh) != -1 ) {
    if ( FD_ISSET(fh, &r) ) {
-    if ( g_clients[i]->execed == -1 ) {
+    if ( c->execed == -1 ) {
      clients_check(i);
-     if ( g_clients[i] != NULL && g_clients[i]->execed != -1 ) {
+     if ( g_clients[i] != NULL && ROAR_CLIENT(g_clients[i])->execed != -1 ) {
       FD_CLR(fh, &r);
      }
 /*
@@ -369,7 +375,7 @@ int clients_check_all (void) {
    }
   }
 
-  if ( g_clients[i] == NULL )
+  if ( (c = ROAR_CLIENT(g_clients[i])) == NULL )
    continue;
 
   for (j = 0; j < ROAR_CLIENTS_MAX_STREAMS_PER_CLIENT; j++) {
@@ -378,12 +384,12 @@ int clients_check_all (void) {
     break;
 
    //ROAR_WARN("clients_check_all(*): client=%i: client exists", i);
-   ROAR_DBG("clients_check_all(*): client=%i, stream=%i: id=%i", i, j, g_clients[i]->streams[j]);
+   ROAR_DBG("clients_check_all(*): client=%i, stream=%i: id=%i", i, j, c->streams[j]);
 
-   if ( (fh = streams_get_fh(g_clients[i]->streams[j])) != -1 ) {
+   if ( (fh = streams_get_fh(c->streams[j])) != -1 ) {
     ROAR_DBG("clients_check_all(*): client=%i, stream=%i: fh=%i", i, j, fh);
     if ( fh > -1 && FD_ISSET(fh, &r) ) {
-     streams_check(g_clients[i]->streams[j]);
+     streams_check(c->streams[j]);
     }
    }
   }
@@ -398,10 +404,10 @@ int clients_check_all (void) {
    max_fh = -1;
 
    for (i = 0; i < have_streamless; i++) {
-    if ( ! g_clients[j = streamless[i].id] )
+    if ( g_clients[j = streamless[i].id] == NULL )
      continue;
 
-    if ( g_clients[j]->execed != -1 )
+    if ( ROAR_CLIENT(g_clients[j])->execed != -1 )
      continue;
 
     fh = streamless[i].fh;
@@ -432,6 +438,7 @@ int clients_check_all (void) {
 }
 
 int clients_check     (int id) {
+ struct roar_client   * c;
  struct roar_message    m;
  struct roar_connection con;
  char * data = NULL;
@@ -443,12 +450,14 @@ int clients_check     (int id) {
 
  _CHECK_CID(id);
 
- if ( g_clients[id]->fh == -1 )
+ c = ROAR_CLIENT(g_clients[id]);
+
+ if ( c->fh == -1 )
   return -1;
 
- roar_connect_fh(&con, g_clients[id]->fh);
+ roar_connect_fh(&con, c->fh);
 
- switch (g_clients[id]->proto) {
+ switch (c->proto) {
   case ROAR_PROTO_ROARAUDIO:
     r = roar_recv_message(&con, &m, &data);
 
@@ -553,7 +562,7 @@ int clients_send_mon  (struct roar_audio_info * sa, uint32_t pos) {
    continue;
 */
 
-  ROAR_DBG("clients_send_mon(*): client=%i, execed=%i", i, g_clients[i]->execed);
+  ROAR_DBG("clients_send_mon(*): client=%i, execed=%i", i, ROAR_CLIENT(g_clients[i])->execed);
 
 /*
   if ( g_clients[i]->execed == -1 ) {
@@ -562,9 +571,9 @@ int clients_send_mon  (struct roar_audio_info * sa, uint32_t pos) {
    for (j = 0; keep_going && j < ROAR_CLIENTS_MAX_STREAMS_PER_CLIENT; j++) {
     //if ( (fh = streams_get_fh(g_clients[i]->streams[j])) != -1 ) {
     ROAR_DBG("clients_send_mon(*): client=%i, stream=%i -> ?", i, j);
-    if ( g_clients[i]->streams[j] != -1 ) {
-     ROAR_DBG("clients_send_mon(*): client=%i, stream=%i -> %i", i, j, g_clients[i]->streams[j]);
-     streams_send_mon(g_clients[i]->streams[j]);
+    if ( ROAR_CLIENT(g_clients[i])->streams[j] != -1 ) {
+     ROAR_DBG("clients_send_mon(*): client=%i, stream=%i -> %i", i, j, ROAR_CLIENT(g_clients[i])->streams[j]);
+     streams_send_mon(ROAR_CLIENT(g_clients[i])->streams[j]);
 
      // the client may be deleted here, check if it still exists:
      if ( g_clients[i] == NULL )
@@ -586,21 +595,22 @@ int clients_send_mon  (struct roar_audio_info * sa, uint32_t pos) {
 }
 
 int clients_send_filter(struct roar_audio_info * sa, uint32_t pos) {
+ struct roar_client * c;
  int i;
  int fh;
 
  for (i = 0; i < ROAR_CLIENTS_MAX; i++) {
-  if ( g_clients[i] == NULL )
+  if ( (c = ROAR_CLIENT(g_clients[i])) == NULL )
    continue;
 
-  if ( (fh = g_clients[i]->fh) == -1 )
+  if ( (fh = c->fh) == -1 )
    continue;
 
-  if ( g_clients[i]->execed == -1 ) {
+  if ( c->execed == -1 ) {
    // TODO: add some code to send a message to the client insetd of the raw data.
   } else {
 //   streams_check(g_clients[i]->execed);
-   streams_send_filter(g_clients[i]->execed);
+   streams_send_filter(c->execed);
 //   if ( streams_send_mon(g_clients[i]->execed) == -1 )
 //    clients_delete(i); // delete client in case we could not write
   }
@@ -610,6 +620,7 @@ int clients_send_filter(struct roar_audio_info * sa, uint32_t pos) {
 }
 
 int client_stream_exec   (int client, int stream) {
+ struct roar_client * c;
  int i;
  int fh;
 
@@ -622,17 +633,19 @@ int client_stream_exec   (int client, int stream) {
  }
 #endif
 
+ c = ROAR_CLIENT(g_clients[client]);
+
  for (i = 0; i < ROAR_CLIENTS_MAX_STREAMS_PER_CLIENT; i++) {
-  if ( g_clients[client]->streams[i] == stream ) {
-   g_clients[client]->execed = stream;
+  if ( c->streams[i] == stream ) {
+   c->execed = stream;
    if ( streams_is_ready(stream) == 0 ) {
-    streams_set_fh(stream, g_clients[client]->fh);
+    streams_set_fh(stream, c->fh);
     streams_set_socktype(stream, ROAR_SOCKET_TYPE_GENSTR);
    } else {
     ROAR_DBG("client_stream_exec(client=%i, stream=%i): fh=?", client, stream);
-    if ( (fh = g_clients[client]->fh) != -1 ) {
+    if ( (fh = c->fh) != -1 ) {
      close(fh);
-     g_clients[client]->fh = -1;
+     c->fh = -1;
     }
    }
    ROAR_DBG("client_stream_exec(client=%i, stream=%i) = 0", client, stream);
@@ -652,7 +665,7 @@ int client_stream_set_fh (int client, int stream, int fh) {
  _CHECK_CID(client);
 
  for (i = 0; i < ROAR_CLIENTS_MAX_STREAMS_PER_CLIENT; i++) {
-  if ( g_clients[client]->streams[i] == stream ) {
+  if ( ROAR_CLIENT(g_clients[client])->streams[i] == stream ) {
    ROAR_DBG("client_stream_set_fh(client=%i, stream=%i, fh=%i): stream found, index %i", client, stream, fh, i);
    return streams_set_fh(stream, fh);
   }
@@ -668,8 +681,8 @@ int client_stream_add    (int client, int stream) {
  _CHECK_CID(client);
 
  for (i = 0; i < ROAR_CLIENTS_MAX_STREAMS_PER_CLIENT; i++) {
-  if ( g_clients[client]->streams[i] == -1 ) {
-   g_clients[client]->streams[i] = stream;
+  if ( ROAR_CLIENT(g_clients[client])->streams[i] == -1 ) {
+   ROAR_CLIENT(g_clients[client])->streams[i] = stream;
    streams_set_client(stream, client);
    return 0;
   }
@@ -684,10 +697,10 @@ int client_stream_delete (int client, int stream) {
  _CHECK_CID(client);
 
  for (i = 0; i < ROAR_CLIENTS_MAX_STREAMS_PER_CLIENT; i++) {
-  if ( g_clients[client]->streams[i] == stream ) {
-   g_clients[client]->streams[i] = -1;
+  if ( ROAR_CLIENT(g_clients[client])->streams[i] == stream ) {
+   ROAR_CLIENT(g_clients[client])->streams[i] = -1;
 
-   if ( stream == g_clients[client]->execed ) {
+   if ( stream == ROAR_CLIENT(g_clients[client])->execed ) {
     ROAR_DBG("client_stream_delete(client=%i, stream=%i): stream is execed one, deleting client!", client, stream);
     clients_delete(client);
    }

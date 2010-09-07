@@ -38,6 +38,8 @@
 
 #include "libroar.h"
 
+#define ROAR_CLIENT(x) ((struct roar_client*)(x))
+
 struct roar_client {
  int fh; /* controll connection */
 // int last_stream; /* id of the last stream created */
