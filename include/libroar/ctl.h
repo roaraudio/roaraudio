@@ -70,6 +70,8 @@ int roar_ctl_f2m      (struct roar_message * m, unsigned char   filter, unsigned
 int roar_ctl_m2f      (struct roar_message * m, unsigned char * filter, unsigned char * cmp, uint32_t * id);
 #define roar_ctl_f2m_any(m) roar_ctl_f2m((m), ROAR_CTL_FILTER_ANY, ROAR_CTL_FILTER_ANY, ROAR_CTL_FILTER_ANY)
 
+int roar_filter_match (const unsigned cmp, const uint32_t a, const uint32_t b);
+
 // int array
 int roar_ctl_ia2m     (struct roar_message * m, int * data, int len);
 int roar_ctl_m2ia     (struct roar_message * m, int * data, int len);

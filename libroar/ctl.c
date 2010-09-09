@@ -296,7 +296,7 @@ int roar_ctl_m2f      (struct roar_message * m, unsigned char * filter, unsigned
   return -1;
 
  if ( m->data[0] != 0 ) {
-  ROAR_ERR("roar_ctl_m2f(*): version %i not supported!", m->data[0]);
+  ROAR_ERR("roar_ctl_m2f(*): version %i not supported!", (int)m->data[0]);
   return -1;
  }
 
@@ -306,6 +306,22 @@ int roar_ctl_m2f      (struct roar_message * m, unsigned char * filter, unsigned
  *id = ROAR_NET2HOST32(*((uint32_t*)&(m->data[3])));
 
  return 0;
+}
+
+int roar_filter_match (const unsigned cmp, const uint32_t a, const uint32_t b) {
+ switch (cmd) {
+  case ROAR_CTL_CMP_ANY:
+    return 1;
+   break;
+  case ROAR_CTL_CMP_EQ:
+    return a == b;
+   break;
+  case ROAR_CTL_CMP_NE:
+    return a != b;
+   break;
+  default:
+    return -1;
+ }
 }
 
 int roar_ctl_ia2m     (struct roar_message * m, int * data, int len) {
