@@ -1044,16 +1044,8 @@ int main (int argc, char * argv[]) {
    list_streams(&con);
 
   } else if ( !strcmp(k, "kick") ) {
-   k = argv[++i];
-   if ( !strcmp(k, "client") ) {
-    t = ROAR_OT_CLIENT;
-   } else if ( !strcmp(k, "stream") ) {
-    t = ROAR_OT_STREAM;
-   } else if ( !strcmp(k, "sample") ) {
-    t = ROAR_OT_SAMPLE;
-   } else if ( !strcmp(k, "source") ) {
-    t = ROAR_OT_SOURCE;
-   } else {
+   t = roar_str2ot((k = argv[++i]));
+   if ( t == -1 ) {
     fprintf(stderr, "Error: unknown type: %s\n", k);
     continue;
    }
