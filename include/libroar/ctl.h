@@ -38,8 +38,6 @@
 
 #include "libroar.h"
 
-#define ROAR_CTL_FILTER_ANY   0
-
 int roar_get_clientid  (struct roar_connection * con);
 
 int roar_get_standby   (struct roar_connection * con);

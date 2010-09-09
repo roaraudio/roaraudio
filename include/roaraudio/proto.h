@@ -111,6 +111,14 @@
 #define ROAR_OT_MSGQUEUE 10
 #define ROAR_OT_MSGBUS   11
 
+// filter:
+#define ROAR_CTL_FILTER_ANY   0
+#define ROAR_CTL_FILTER_DIR   1
+
+#define ROAR_CTL_CMP_ANY      ROAR_CTL_FILTER_ANY
+#define ROAR_CTL_CMP_EQ       1
+#define ROAR_CTL_CMP_NE       1
+
 // auth types...
 #define ROAR_AUTH_T_AUTO               -1
 #define ROAR_AUTH_T_NONE                0 /* do not auth */
