@@ -1002,6 +1002,7 @@ int req_on_set_stream_para (int client, struct roar_message * mes, char ** data,
 }
 
 int req_on_kick (int client, struct roar_message * mes, char ** data, uint32_t flags[2]) {
+ struct roar_stream_server * ss;
  uint16_t * info = (uint16_t *) mes->data;
  int is_stream = 0;
 
@@ -1024,15 +1025,35 @@ int req_on_kick (int client, struct roar_message * mes, char ** data, uint32_t f
     is_stream = 1;
    break;
   case ROAR_OT_OUTPUT:
-    if ( streams_get_flag(info[1], ROAR_FLAG_OUTPUT) != 1 )
+    if ( streams_get(info[1], &ss) == -1 )
      return -1;
+
+    if ( ss->driver_id == -1 )
+     return -1;
+
+    is_stream = 1;
+   break;
+  case ROAR_OT_MIXER:
+    if ( streams_get(info[1], &ss) == -1 )
+     return -1;
+
+    if ( ROAR_STREAM(ss)->dir != ROAR_DIR_MIXING )
+     return -1;
+
+    is_stream = 1;
+   break;
+  case ROAR_OT_BRIDGE:
+    if ( streams_get(info[1], &ss) == -1 )
+     return -1;
+
+    if ( ROAR_STREAM(ss)->dir != ROAR_DIR_BRIDGE )
+     return -1;
+
     is_stream = 1;
    break;
   default:
 /* TODO: those types should be handled, too:
 #define ROAR_OT_SAMPLE    4
-#define ROAR_OT_MIXER     6
-#define ROAR_OT_BRIDGE    7
 #define ROAR_OT_LISTEN    8
 #define ROAR_OT_ACTION    9
 #define ROAR_OT_MSGQUEUE 10
