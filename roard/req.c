@@ -1003,6 +1003,7 @@ int req_on_set_stream_para (int client, struct roar_message * mes, char ** data,
 
 int req_on_kick (int client, struct roar_message * mes, char ** data, uint32_t flags[2]) {
  uint16_t * info = (uint16_t *) mes->data;
+ int is_stream = 0;
 
  if ( mes->datalen != 4 )
   return -1;
@@ -1010,24 +1011,42 @@ int req_on_kick (int client, struct roar_message * mes, char ** data, uint32_t f
  info[0] = ROAR_NET2HOST16(info[0]);
  info[1] = ROAR_NET2HOST16(info[1]);
 
- if ( info[0] == ROAR_OT_CLIENT ) {
-  clients_delete(info[1]);
- } else if ( info[0] == ROAR_OT_STREAM ) {
+ switch (info[0]) {
+  case ROAR_OT_CLIENT:
+    clients_delete(info[1]);
+   break;
+  case ROAR_OT_STREAM:
+    is_stream = 1;
+   break;
+  case ROAR_OT_SOURCE:
+    if ( streams_get_flag(info[1], ROAR_FLAG_SOURCE) != 1 )
+     return -1;
+    is_stream = 1;
+   break;
+  case ROAR_OT_OUTPUT:
+    if ( streams_get_flag(info[1], ROAR_FLAG_OUTPUT) != 1 )
+     return -1;
+    is_stream = 1;
+   break;
+  default:
+/* TODO: those types should be handled, too:
+#define ROAR_OT_SAMPLE    4
+#define ROAR_OT_MIXER     6
+#define ROAR_OT_BRIDGE    7
+#define ROAR_OT_LISTEN    8
+#define ROAR_OT_ACTION    9
+#define ROAR_OT_MSGQUEUE 10
+#define ROAR_OT_MSGBUS   11
+*/
+    return -1;
+   break;
+ }
+
+ if ( is_stream ) {
   if ( streams_get_flag(info[1], ROAR_FLAG_IMMUTABLE) == 1 )
    return -1;
 
   streams_delete(info[1]);
- } else if ( info[0] == ROAR_OT_SOURCE ) {
-  if ( streams_get_flag(info[1], ROAR_FLAG_IMMUTABLE) == 1 )
-   return -1;
-
-  if ( streams_get_flag(info[1], ROAR_FLAG_SOURCE) == 1 ) {
-   streams_delete(info[1]);
-  } else {
-   return -1;
-  }
- } else {
-  return -1;
  }
 
  mes->cmd     = ROAR_CMD_OK;
