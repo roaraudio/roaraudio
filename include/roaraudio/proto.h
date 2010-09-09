@@ -117,7 +117,7 @@
 
 #define ROAR_CTL_CMP_ANY      ROAR_CTL_FILTER_ANY
 #define ROAR_CTL_CMP_EQ       1
-#define ROAR_CTL_CMP_NE       1
+#define ROAR_CTL_CMP_NE       2
 
 // auth types...
 #define ROAR_AUTH_T_AUTO               -1

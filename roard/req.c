@@ -632,18 +632,31 @@ int req_on_list_streams(int client, struct roar_message * mes, char ** data, uin
  uint32_t id;
  int streams[ROAR_STREAMS_MAX];
  int i, c = 0;
+ int match;
 
  if ( roar_ctl_m2f(mes, &filter, &cmp, &id) == -1 )
   return -1;
 
- // TODO: add code to support filter
- if ( filter != ROAR_CTL_FILTER_ANY )
-  return -1;
-
  for (i = 0; i < ROAR_STREAMS_MAX; i++) {
-  if ( g_streams[i] != NULL ) {
-   streams[c++] = i;
+  if ( g_streams[i] == NULL )
+   continue;
+
+  match = 0;
+
+  switch (filter) {
+   case ROAR_CTL_FILTER_ANY:
+     match = 1;
+    break;
+   case ROAR_CTL_FILTER_DIR:
+     match = roar_filter_match(cmp, id, ROAR_STREAM(g_streams[i])->dir);
+    break;
+   default: // unsupported filter...
+     return -1;
+    break;
   }
+
+  if ( match )
+   streams[c++] = i;
  }
 
  roar_ctl_ia2m(mes, streams, c);

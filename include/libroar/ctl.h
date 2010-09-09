@@ -49,6 +49,7 @@ int roar_server_oinfo   (struct roar_connection * con, struct roar_stream * s);
 
 
 int roar_list         (struct roar_connection * con, int * items,   int max, int cmd);
+int roar_list_filtered(struct roar_connection * con, int * items,   int max, int cmd, unsigned char filter, unsigned char cmp, uint32_t id);
 
 /*
 int roar_list_clients (struct roar_connection * con, int * clients, int max);

@@ -133,18 +133,22 @@ int roar_terminate (struct roar_connection * con, int terminate) {
  return 0;
 }
 
-int roar_list         (struct roar_connection * con, int * items,   int max, int cmd) {
+int roar_list_filtered(struct roar_connection * con, int * items,   int max, int cmd, unsigned char filter, unsigned char cmp, uint32_t id) {
  struct roar_message m;
 
  memset(&m, 0, sizeof(struct roar_message)); // make valgrind happy!
 
- roar_ctl_f2m_any(&m);
+ roar_ctl_f2m(&m, filter, cmp, id);
  m.cmd = cmd;
 
  if ( roar_req(con, &m, NULL) == -1 )
   return -1;
 
  return roar_ctl_m2ia(&m, items, max);
+}
+
+int roar_list         (struct roar_connection * con, int * items,   int max, int cmd) {
+ return roar_list_filtered(con, items, max, cmd, ROAR_CTL_FILTER_ANY, ROAR_CTL_CMP_ANY, ROAR_CTL_FILTER_ANY);
 }
 
 int roar_get_client   (struct roar_connection * con, struct roar_client * client, int id) {
@@ -309,7 +313,7 @@ int roar_ctl_m2f      (struct roar_message * m, unsigned char * filter, unsigned
 }
 
 int roar_filter_match (const unsigned cmp, const uint32_t a, const uint32_t b) {
- switch (cmd) {
+ switch (cmp) {
   case ROAR_CTL_CMP_ANY:
     return 1;
    break;
