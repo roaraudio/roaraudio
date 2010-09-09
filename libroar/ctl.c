@@ -556,4 +556,43 @@ char * roar_byteorder2str (int    byteorder) {
  }
 }
 
+// grep '^#define ROAR_OT_' roaraudio/proto.h | cut -d' ' -f2 | sed 's/^\(ROAR_OT_\)\(.*\)$/ {\1\2, "\2"},/'
+static struct {
+ const int ot;
+ const char * name;
+} _libroar_ot[] = {
+ {ROAR_OT_CLIENT,   "client"},
+ {ROAR_OT_STREAM,   "stream"},
+ {ROAR_OT_SOURCE,   "source"},
+ {ROAR_OT_SAMPLE,   "sample"},
+ {ROAR_OT_OUTPUT,   "output"},
+ {ROAR_OT_MIXER,    "mixer"},
+ {ROAR_OT_BRIDGE,   "bridge"},
+ {ROAR_OT_LISTEN,   "listen"},
+ {ROAR_OT_ACTION,   "action"},
+ {ROAR_OT_MSGQUEUE, "msgqueue"},
+ {ROAR_OT_MSGBUS,   "msgbus"},
+ {-1, NULL}
+};
+
+int    roar_str2ot        (const char * ot) {
+ int i;
+
+ for (i = 0; _libroar_ot[i].ot != -1; i++)
+  if ( !strcasecmp(ot, _libroar_ot[i].name) )
+   return _libroar_ot[i].ot;
+
+ return -1;
+}
+
+const char * roar_ot2str  (const int    ot) {
+ int i;
+
+ for (i = 0; _libroar_ot[i].ot != -1; i++)
+  if ( _libroar_ot[i].ot == ot )
+   return _libroar_ot[i].name;
+
+ return NULL;
+}
+
 //ll

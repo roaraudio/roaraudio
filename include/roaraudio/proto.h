@@ -99,10 +99,17 @@
 #define ROAR_STANDBY_INACTIVE   0
 
 // object types...
-#define ROAR_OT_CLIENT 1
-#define ROAR_OT_STREAM 2
-#define ROAR_OT_SOURCE 3
-#define ROAR_OT_SAMPLE 4
+#define ROAR_OT_CLIENT    1
+#define ROAR_OT_STREAM    2
+#define ROAR_OT_SOURCE    3
+#define ROAR_OT_SAMPLE    4
+#define ROAR_OT_OUTPUT    5
+#define ROAR_OT_MIXER     6
+#define ROAR_OT_BRIDGE    7
+#define ROAR_OT_LISTEN    8
+#define ROAR_OT_ACTION    9
+#define ROAR_OT_MSGQUEUE 10
+#define ROAR_OT_MSGBUS   11
 
 // auth types...
 #define ROAR_AUTH_T_AUTO               -1

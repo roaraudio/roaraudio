@@ -86,6 +86,9 @@ char * roar_proto2str (int    proto);
 int    roar_str2byteorder (char * byteorder);
 char * roar_byteorder2str (int    byteorder);
 
+int    roar_str2ot        (const char * ot);
+const char * roar_ot2str  (const int    ot);
+
 #endif
 
 //ll
