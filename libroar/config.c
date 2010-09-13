@@ -55,6 +55,7 @@ struct roar_libroar_config * roar_libroar_get_config_ptr(void) {
    snprintf(authfile, 1023, "%s/.roarauth", home);
    authfile[1023]     = 0;
    config.authfile    = authfile;
+   config.serversfile = NULL;
   }
 
   inited++;
