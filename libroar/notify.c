@@ -330,4 +330,175 @@ int roar_notify_core_emit_simple(uint32_t event, int emitter, int target, int ta
  return roar_notify_core_emit(NULL, &locevent);
 }
 
+
+int roar_event_to_blob(struct roar_event * event, void * blob, size_t * len) {
+ size_t needed_len = (2 * 4) + (4 * 2);
+ uint32_t * u32 = blob;
+ uint16_t * u16 = blob;
+ size_t data_offset_neg = 0;
+
+ u16 += 4;
+
+ // error checking:
+ if ( event == NULL || blob == NULL || len == NULL )
+  return -1;
+
+ if ( *len == 0 )
+  return -1;
+
+ // calc and check length:
+ if ( event->flags & ROAR_EVENT_FLAG_PROXYEVENT )
+  needed_len += 4;
+
+ if ( event->flags & ROAR_EVENT_FLAG_NETTRANS ) {
+
+  // this is not a real maximum but a value good to detect all kinds of errors.
+  // a notify event should not be longer anyway.
+  if ( event->arg2_len > 32768 )
+   return -1;
+
+  needed_len += 4;
+  if ( event->arg2_len > 0 ) {
+    needed_len += event->arg2_len;
+    data_offset_neg = event->arg2_len;
+  }
+ }
+
+ if ( *len < needed_len )
+  return -1;
+
+ *len = 0;
+
+ // fill in the data...
+ memset(blob, 0, needed_len);
+
+ u32[1] = ROAR_HOST2NET32(0);
+
+ if ( event->flags & ROAR_EVENT_FLAG_PROXYEVENT ) {
+  u32[0] |= ROAR_HOST2NET32(ROAR_EVENT_NETFLAG_PROXYEVENT);
+  u16 += 2;
+ }
+
+ if ( event->flags & ROAR_EVENT_FLAG_NETTRANS ) {
+  u32[0] |= ROAR_HOST2NET32(ROAR_EVENT_NETFLAG_DATA);
+ }
+
+ u32[1] = ROAR_HOST2NET32(event->event);
+
+ if ( event->flags & ROAR_EVENT_FLAG_PROXYEVENT )
+  u32[2] = ROAR_HOST2NET32(event->event_proxy);
+
+ u16[0] = ROAR_HOST2NET16(event->emitter);
+ u16[1] = ROAR_HOST2NET16(event->target);
+ u16[2] = ROAR_HOST2NET16(event->target_type);
+ if ( event->flags & ROAR_EVENT_FLAG_NETTRANS ) {
+  u16[3] = ROAR_HOST2NET16(event->arg2_len);
+  u16[4] = ROAR_HOST2NET16(event->arg0);
+  u16[5] = ROAR_HOST2NET16(event->arg1);
+ } else {
+  u16[3] = ROAR_HOST2NET16(0);
+ }
+
+ memcpy(blob + needed_len - data_offset_neg, event->arg2, event->arg2_len);
+
+ *len = needed_len;
+
+ return 0;
+}
+
+int roar_event_from_blob(struct roar_event * event, void * blob, size_t * len) {
+ size_t needed_len = (2 * 4) + (4 * 2);
+ uint32_t * u32 = blob;
+ uint16_t * u16 = blob;
+ uint32_t flags;
+
+ u16 += 4;
+
+ // error checking:
+ if ( event == NULL || blob == NULL || len == NULL )
+  return -1;
+
+ // check for minimum length.
+ if ( *len < needed_len )
+  return -1;
+
+ flags = ROAR_NET2HOST32(u32[0]);
+
+#if 0
+ if ( event->flags & ROAR_EVENT_FLAG_PROXYEVENT ) {
+  u32[0] |= ROAR_HOST2NET32(ROAR_EVENT_NETFLAG_PROXYEVENT);
+  u16 += 2;
+ }
+
+ if ( event->flags & ROAR_EVENT_FLAG_NETTRANS ) {
+  u32[0] |= ROAR_HOST2NET32(ROAR_EVENT_NETFLAG_DATA);
+ }
+#endif
+
+ if ( flags & ROAR_EVENT_NETFLAG_PROXYEVENT ) {
+  needed_len += 4;
+  u16 += 2;
+ }
+
+ if ( flags & ROAR_EVENT_NETFLAG_DATA ) {
+  needed_len += 4;
+ }
+
+ // do we have a full header?
+ if ( *len < needed_len )
+  return -1;
+
+ needed_len += ROAR_NET2HOST16(u16[3]);
+
+ // is all of the event complet?
+ if ( *len < needed_len )
+  return -1;
+
+ // now we know everything is complet we can start to extract data...
+
+ *len = 0;
+
+ memset(event, 0, sizeof(struct roar_event));
+
+ if ( flags & ROAR_EVENT_NETFLAG_PROXYEVENT ) {
+  flags -= ROAR_EVENT_NETFLAG_PROXYEVENT;
+  event->flags |= ROAR_EVENT_FLAG_PROXYEVENT;
+ }
+
+ if ( flags & ROAR_EVENT_NETFLAG_DATA ) {
+  flags -= ROAR_EVENT_NETFLAG_DATA;
+  event->flags |= ROAR_EVENT_FLAG_NETTRANS;
+ }
+
+ // test if there are flags left we do not understand:
+ if ( flags ) {
+  return -1;
+ }
+
+ event->event = ROAR_NET2HOST32(u32[1]);
+
+ if ( event->flags & ROAR_EVENT_FLAG_PROXYEVENT )
+  event->event_proxy = ROAR_NET2HOST32(u32[2]);
+
+ event->emitter     = ROAR_NET2HOST16(u16[0]);
+ event->target      = ROAR_NET2HOST16(u16[1]);
+ event->target_type = ROAR_NET2HOST16(u16[2]);
+ event->arg2_len    = ROAR_NET2HOST16(u16[3]);
+
+ if ( event->flags & ROAR_EVENT_FLAG_NETTRANS ) {
+  event->arg0 = ROAR_NET2HOST16(u16[4]);
+  event->arg1 = ROAR_NET2HOST16(u16[4]);
+  event->arg2 = blob + needed_len - event->arg2_len;
+ } else {
+  event->arg0 = -1;
+  event->arg1 = -1;
+  event->arg2 = NULL;
+ }
+
+ *len = needed_len;
+
+ return 0;
+}
+
+
 //ll

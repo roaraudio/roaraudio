@@ -38,9 +38,9 @@
 
 #include "libroar.h"
 
-#define ROAR_EVENT_FLAG_NONE        0x00000000
-#define ROAR_EVENT_FLAG_NETTRANS    0x00000001
-#define ROAR_EVENT_FLAG_PROXYEVENT  0x00000002
+#define ROAR_EVENT_FLAG_NONE        ROAR_EVENT_NETFLAG_NONE
+#define ROAR_EVENT_FLAG_NETTRANS    ROAR_EVENT_NETFLAG_DATA
+#define ROAR_EVENT_FLAG_PROXYEVENT  ROAR_EVENT_NETFLAG_PROXYEVENT
 
 struct roar_event {
  uint32_t flags;
@@ -78,6 +78,9 @@ int roar_notify_core_emit(struct roar_notify_core * core, struct roar_event * ev
 int roar_notify_core_emit_simple(uint32_t event, int emitter, int target, int target_type, int arg0, int arg1, void * arg2, ssize_t arg2_len);
 
 #define roar_notify_core_emit_snoargs(event,emitter,target,target_type) roar_notify_core_emit_simple((event),(emitter),(target),(target_type),-1,-1,NULL,0)
+
+int roar_event_to_blob(struct roar_event * event, void * blob, size_t * len);
+int roar_event_from_blob(struct roar_event * event, void * blob, size_t * len);
 
 #endif
 

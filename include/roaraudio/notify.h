@@ -29,6 +29,10 @@
 #ifndef _ROARAUDIO_NOTIFY_H_
 #define _ROARAUDIO_NOTIFY_H_
 
+#define ROAR_EVENT_NETFLAG_NONE        0x00000000
+#define ROAR_EVENT_NETFLAG_DATA        0x00000001
+#define ROAR_EVENT_NETFLAG_PROXYEVENT  0x00000002
+
 #define ROAR_NOTIFY_SPECIAL       0xffffffff
 
 // protocol cmds:
