@@ -155,6 +155,7 @@ int streams_new    (void) {
    counters_inc(streams, 1);
    ROAR_INFO("streams_new(void): New stream %i created (state=initing)", ROAR_DBG_INFO_VERBOSE, i);
    ROAR_DBG("streams_new(void): n->id=%i", n->id);
+   roar_notify_core_emit_snoargs(ROAR_OE_BASICS_NEW, -1, i, ROAR_OT_STREAM);
    ROAR_DBG("streams_new(void) = %i", i);
    return i;
   }
@@ -183,6 +184,7 @@ int streams_delete (int id) {
   return 0;
 
  _streams_change_state(s, ROAR_STREAMSTATE_CLOSING, "streams_delete");
+ roar_notify_core_emit_snoargs(ROAR_OE_BASICS_DELETE, -1, id, ROAR_OT_STREAM);
 
  counters_inc(streams, -1);
 

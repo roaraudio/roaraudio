@@ -89,6 +89,7 @@ int clients_new (void) {
     g_clients[i] = ns;
 
     counters_inc(clients, 1);
+    roar_notify_core_emit_snoargs(ROAR_OE_BASICS_NEW, -1, i, ROAR_OT_CLIENT);
     ROAR_DBG("clients_new(void) = %i", i);
     return i;
    } else {
@@ -136,6 +137,8 @@ int clients_delete (int id) {
  int close_client_fh = 1;
 
  ROAR_DBG("clients_delete(id=%i) = ?", id);
+
+ roar_notify_core_emit_snoargs(ROAR_OE_BASICS_DELETE, -1, id, ROAR_OT_CLIENT);
 
  counters_inc(clients, -1);
 
