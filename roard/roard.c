@@ -47,20 +47,60 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count);
 #ifdef DEBUG
 void dbg_notify_cb(struct roar_notify_core * core, struct roar_event * event, void * userdata) {
  char buf[1024] = "";
+ char estr[1024] = "/* ROAR_??? */";
+ char ttstr[1024] = "/* ROAR_OT_??? */";
+ const char * ttname;
+ uint32_t ev = ROAR_EVENT_GET_TYPE(event);
+ int i;
+
+ ttname = roar_ot2str(event->target_type);
+ if ( ttname != NULL ) {
+  snprintf(ttstr, sizeof(ttstr)-1, "/* ROAR_OT_%s */", ttname);
+  buf[sizeof(ttstr)-1] = 0;
+  for (i = 0; ttstr[i] != 0; i++)
+   if ( islower(ttstr[i]) )
+    ttstr[i] = toupper(ttstr[i]);
+ }
+
+ if ( ev == ROAR_NOTIFY_SPECIAL ) {
+  snprintf(estr, sizeof(estr)-1, "/* ROAR_NOTIFY_SPECIAL */");
+ } else if ( ROAR_NOTIFY_IS_CMD(ev) ) {
+  snprintf(estr, sizeof(estr)-1, "/* ROAR_NOTIFY_CMD2EVENT(%i) */", ROAR_NOTIFY_EVENT2CMD(ev));
+ } else if ( ROAR_NOTIFY_IS_EGRP(ev) ) {
+  snprintf(estr, sizeof(estr)-1, "/* ROAR_NOTIFY_EGRP2EVENT(%i) */", ROAR_NOTIFY_EVENT2EGRP(ev));
+ } else if ( ROAR_NOTIFY_IS_OE(ev) ) {
+  switch (ev) {
+   case ROAR_OE_BASICS_CHANGE_STATE:
+     snprintf(estr, sizeof(estr)-1, "/* ROAR_OE_BASICS_CHANGE_STATE */");
+    break;
+   case ROAR_OE_BASICS_CHANGE_FLAGS:
+     snprintf(estr, sizeof(estr)-1, "/* ROAR_OE_BASICS_CHANGE_FLAGS */");
+    break;
+   default:
+     snprintf(estr, sizeof(estr)-1, "/* ROAR_NOTIFY_OE2EVENT(%i) */", ROAR_NOTIFY_EVENT2OE(ev));
+    break;
+  }
+ } else if ( ROAR_NOTIFY_IS_USER(ev) ) {
+  snprintf(estr, sizeof(estr)-1, "/* ROAR_NOTIFY_USER2EVENT(%i) */", ROAR_NOTIFY_EVENT2USER(ev));
+ }
+
+ buf[sizeof(estr)-1] = 0;
 
  if ( event->flags & ROAR_EVENT_FLAG_PROXYEVENT ) {
-  snprintf(buf, sizeof(buf)-1, ".event_proxy=0x%.8x, ", (int)event->event_proxy);
+  snprintf(buf, sizeof(buf)-1, ".event_proxy=0x%.8x%s, ", (int)event->event_proxy, estr);
   buf[sizeof(buf)-1] = 0;
  }
 
- ROAR_DBG("dbg_notify_cb(core=%p, event=%p{.flags=0x%.8x, event=0x%.8x, %s.emitter=%i, .target=%i, .target_type=%i, .arg0=%i, .arg1=%i, .arg2=%p}, userdata=%p) = (void)",
+ ROAR_DBG("dbg_notify_cb(core=%p, event=%p{.flags=0x%.8x, event=0x%.8x%s, %s.emitter=%i, .target=%i, .target_type=%i%s, .arg0=%i, .arg1=%i, .arg2=%p}, userdata=%p) = (void)",
            core, event,
            (int)event->flags,
            (int)event->event,
+           (event->flags & ROAR_EVENT_FLAG_PROXYEVENT ? "" : estr),
            buf,
            event->emitter,
            event->target,
            event->target_type,
+           ttstr,
            event->arg0,
            event->arg1,
            event->arg2,
