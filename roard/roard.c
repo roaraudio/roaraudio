@@ -65,7 +65,14 @@ void dbg_notify_cb(struct roar_notify_core * core, struct roar_event * event, vo
  if ( ev == ROAR_NOTIFY_SPECIAL ) {
   snprintf(estr, sizeof(estr)-1, "/* ROAR_NOTIFY_SPECIAL */");
  } else if ( ROAR_NOTIFY_IS_CMD(ev) ) {
-  snprintf(estr, sizeof(estr)-1, "/* ROAR_NOTIFY_CMD2EVENT(%i) */", ROAR_NOTIFY_EVENT2CMD(ev));
+  if ( command_get_name(ROAR_NOTIFY_EVENT2CMD(ev), &ttname) == -1 ) {
+   snprintf(estr, sizeof(estr)-1, "/* ROAR_NOTIFY_CMD2EVENT(%i) */", ROAR_NOTIFY_EVENT2CMD(ev));
+  } else {
+   snprintf(estr, sizeof(estr)-1, "/* ROAR_NOTIFY_CMD2EVENT(ROAR_CMD_%s) */", ttname);
+   for (i = 0; estr[i] != 0; i++)
+    if ( islower(estr[i]) )
+     estr[i] = toupper(estr[i]);
+  }
  } else if ( ROAR_NOTIFY_IS_EGRP(ev) ) {
   snprintf(estr, sizeof(estr)-1, "/* ROAR_NOTIFY_EGRP2EVENT(%i) */", ROAR_NOTIFY_EVENT2EGRP(ev));
  } else if ( ROAR_NOTIFY_IS_OE(ev) ) {
@@ -75,6 +82,12 @@ void dbg_notify_cb(struct roar_notify_core * core, struct roar_event * event, vo
     break;
    case ROAR_OE_BASICS_CHANGE_FLAGS:
      snprintf(estr, sizeof(estr)-1, "/* ROAR_OE_BASICS_CHANGE_FLAGS */");
+    break;
+   case ROAR_OE_BASICS_NEW:
+     snprintf(estr, sizeof(estr)-1, "/* ROAR_OE_BASICS_NEW */");
+    break;
+   case ROAR_OE_BASICS_DELETE:
+     snprintf(estr, sizeof(estr)-1, "/* ROAR_OE_BASICS_DELETE */");
     break;
    default:
      snprintf(estr, sizeof(estr)-1, "/* ROAR_NOTIFY_OE2EVENT(%i) */", ROAR_NOTIFY_EVENT2OE(ev));
