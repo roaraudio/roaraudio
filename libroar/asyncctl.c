@@ -44,8 +44,6 @@ int roar_wait (struct roar_connection * con, struct roar_event * triggered, stru
  if ( con == NULL || triggered == NULL )
   return -1;
 
- memset(triggered, 0, sizeof(struct roar_event));
-
  if ( num == 0 )
   return 0;
 
@@ -97,6 +95,8 @@ int roar_wait (struct roar_connection * con, struct roar_event * triggered, stru
  vp  = (void*)m.data;
  vp += 4;
  len_have = tmp = m.datalen - 4;
+
+ memset(triggered, 0, sizeof(struct roar_event));
 
  if ( roar_event_from_blob(triggered, vp, &tmp) != 0 )
   return -1;

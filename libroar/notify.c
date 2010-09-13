@@ -485,9 +485,25 @@ int roar_event_from_blob(struct roar_event * event, void * blob, size_t * len) {
  event->target_type = ROAR_NET2HOST16(u16[2]);
  event->arg2_len    = ROAR_NET2HOST16(u16[3]);
 
+ if ( event->emitter == (uint16_t)-1)
+  event->emitter = -1;
+
+ if ( event->target == (uint16_t)-1)
+  event->target = -1;
+
+ if ( event->target_type == (uint16_t)-1)
+  event->target_type = -1;
+
  if ( event->flags & ROAR_EVENT_FLAG_NETTRANS ) {
   event->arg0 = ROAR_NET2HOST16(u16[4]);
-  event->arg1 = ROAR_NET2HOST16(u16[4]);
+  event->arg1 = ROAR_NET2HOST16(u16[5]);
+
+  if ( event->arg0 == (uint16_t)-1)
+   event->arg0 = -1;
+
+  if ( event->arg1 == (uint16_t)-1)
+   event->arg1 = -1;
+
   event->arg2 = blob + needed_len - event->arg2_len;
  } else {
   event->arg0 = -1;
