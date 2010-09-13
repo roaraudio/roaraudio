@@ -83,6 +83,9 @@ int clients_new (void) {
      return -1;
     }
 
+    ns->blockc   = 0;
+    ns->waits    = NULL;
+
     g_clients[i] = ns;
 
     counters_inc(clients, 1);
@@ -276,6 +279,19 @@ int clients_set_proto (int id, int    proto) {
 
  return 0;
 }
+
+int clients_block      (int id, int unblock) {
+ _CHECK_CID(id);
+
+ if ( unblock ) {
+  g_clients[id]->blockc--;
+ } else {
+  g_clients[id]->blockc++;
+ }
+
+ return 0;
+}
+
 
 #define MAX_STREAMLESS 8
 
@@ -490,7 +506,8 @@ int clients_check     (int id) {
 
     ROAR_DBG("clients_check(*): data=%p", data);
 
-    roar_send_message(&con, &m, flags[1] & COMMAND_FLAG_OUT_LONGDATA ? data : NULL);
+    if ( !(flags[1] & COMMAND_FLAG_OUT_NOSEND) )
+     roar_send_message(&con, &m, flags[1] & COMMAND_FLAG_OUT_LONGDATA ? data : NULL);
 
     if ( flags[1] & COMMAND_FLAG_OUT_CLOSECON )
      clients_close(id, 1);
@@ -724,6 +741,87 @@ int client_stream_move   (int client, int stream) {
    return -1;
 
  return client_stream_add(client, stream); 
+}
+
+
+// notify thingys
+int clients_wait    (int client, struct roar_event * events, size_t num) {
+ struct roar_client_server * cs;
+ size_t i, c;
+
+ ROAR_DBG("clients_wait(client=%i, events=%p, num=%llu) = ?", client, events, (long long unsigned int)num);
+
+ _CHECK_CID(client);
+
+ cs = g_clients[client];
+
+ if ( cs->waits != NULL )
+  return -1;
+
+ cs->waits = roar_mm_malloc((num+1) * sizeof(struct roar_subscriber *));
+
+ if ( cs->waits == NULL )
+  return -1;
+
+ if ( clients_block(client, 0) != 0 )
+  return -1;
+
+ for (i = 0; i < num; i++) {
+#if defined(DEBUG) && 0
+  dbg_notify_cb(NULL, &(events[i]), cs);
+#endif
+  cs->waits[i] = roar_notify_core_subscribe(NULL, &(events[i]), clients_ncb_wait, cs);
+  if ( cs->waits[i] == NULL ) {
+   for (c = 0; c < i; c++)
+    roar_notify_core_unsubscribe(NULL, cs->waits[c]);
+   roar_mm_free(cs->waits);
+   cs->waits = NULL;
+   clients_block(client, 1);
+   return -1;
+  }
+ }
+
+ cs->waits[num] = NULL;
+
+ ROAR_DBG("clients_wait(client=%i, events=%p, num=%llu) = 0", client, events, (long long unsigned int)num);
+ return 0;
+}
+
+void clients_ncb_wait(struct roar_notify_core * core, struct roar_event * event, void * userdata) {
+ struct roar_client_server * cs = userdata;
+ struct roar_message m;
+ struct roar_connection con;
+ uint16_t * u16 = (uint16_t *) m.data;
+ size_t tmp;
+ size_t i;
+
+ ROAR_DBG("clients_ncb_wait(core=%p, event=%p, userdata=%p) = ?", core, event, userdata);
+
+ for (i = 0; cs->waits[i] != NULL; i++)
+  roar_notify_core_unsubscribe(NULL, cs->waits[i]);
+
+ roar_mm_free(cs->waits);
+ cs->waits = NULL;
+
+ // protocol depended handling...
+ memset(&m, 0, sizeof(m));
+ m.cmd = ROAR_CMD_OK;
+ u16[0] = ROAR_HOST2NET16(0); // Version
+ u16[1] = ROAR_HOST2NET16(0); // flags
+
+ tmp = sizeof(m.data) - 4;
+
+ roar_event_to_blob(event, m.data + 4, &tmp);
+
+ m.datalen = tmp + 4;
+
+ roar_connect_fh(&con, ROAR_CLIENT(cs)->fh);
+ roar_send_message(&con, &m, NULL);
+ // ...end of protocol depended handling.
+
+// clients_block(, 1);
+ // TODO: FIXME: bad hack...
+ cs->blockc--;
 }
 
 //ll

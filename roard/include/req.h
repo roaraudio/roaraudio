@@ -72,6 +72,8 @@ int req_on_add_data    (int client, struct roar_message * mes, char ** data, uin
 
 int req_on_beep        (int client, struct roar_message * mes, char ** data, uint32_t flags[2]);
 
+int req_on_wait        (int client, struct roar_message * mes, char ** data, uint32_t flags[2]);
+
 //int req_on_ (int client, struct roar_message * mes, char ** data, uint32_t flags[2]);
 
 #endif

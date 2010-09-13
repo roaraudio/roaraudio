@@ -1350,4 +1350,46 @@ int req_on_beep        (int client, struct roar_message * mes, char ** data, uin
  return 0;
 }
 
+int req_on_wait        (int client, struct roar_message * mes, char ** data, uint32_t flags[2]) {
+ uint16_t * u16 = (uint16_t*)mes->data;
+ struct roar_event events[4];
+ size_t left, tmp;
+ size_t num = 0;
+ void * vp = mes->data;
+
+ vp += 4;
+
+ // check for complet header...
+ if ( mes->datalen < 4 )
+  return -1;
+
+ u16[0] = ROAR_NET2HOST16(u16[0]);
+ u16[1] = ROAR_NET2HOST16(u16[1]);
+
+ // do we support version and flags?
+ if ( u16[0] != 0 || u16[1] != 0 )
+  return -1;
+
+ memset(events, 0, sizeof(events));
+
+ left = mes->datalen - 4;
+
+ while (left) {
+  tmp = left;
+  if ( roar_event_from_blob(&(events[num]), vp, &tmp) == -1 )
+   return -1;
+
+  vp   += tmp;
+  left -= tmp;
+  num++;
+ }
+
+ if ( clients_wait(client, events, num) == -1 )
+  return -1;
+
+ flags[1] |= COMMAND_FLAG_OUT_NOSEND;
+
+ return 0;
+}
+
 //ll

@@ -72,6 +72,8 @@ struct roar_command g_commands[COMMAND_MAX_COMMANDS] = {
 
   {ROAR_CMD_BEEP,         _NAME("BEEP"),         req_on_beep},
 
+  {ROAR_CMD_WAIT,         _NAME("WAIT"),         req_on_wait},
+
   {ROAR_CMD_EOL,          _NAME("END OF LIST"),  NULL}
  };
 

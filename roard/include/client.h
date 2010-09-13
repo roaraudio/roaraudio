@@ -46,13 +46,18 @@ struct roar_client {
 } * g_clients[ROAR_CLIENTS_MAX];
 */
 
+struct roar_client_nsubscribe {
+ struct roar_subscriber * sub;
+};
+
 struct roar_client_server {
  struct roar_client _client;
+ size_t blockc;
+ struct roar_subscriber ** waits;
 } * g_clients[ROAR_CLIENTS_MAX];
 
 
 // basic functions
-
 int clients_init       (void);
 int clients_free       (void);
 int clients_new        (void);
@@ -68,6 +73,8 @@ int clients_set_proto  (int id, int    proto);
 int clients_get        (int id, struct roar_client ** client);
 int clients_get_fh     (int id);
 
+int clients_block      (int id, int unblock);
+
 // network functions
 int clients_check_all  (void);
 int clients_check      (int id);
@@ -75,13 +82,15 @@ int clients_send_mon   (struct roar_audio_info * sa, uint32_t pos);
 int clients_send_filter(struct roar_audio_info * sa, uint32_t pos);
 
 // stream functions
-
-
 int client_stream_exec   (int client, int stream);
 int client_stream_set_fh (int client, int stream, int fh);
 int client_stream_add    (int client, int stream);
 int client_stream_delete (int client, int stream);
 int client_stream_move   (int client, int stream);
+
+// notify thingys
+int  clients_wait    (int client, struct roar_event * events, size_t num);
+void clients_ncb_wait(struct roar_notify_core * core, struct roar_event * event, void * userdata);
 
 #endif
 
