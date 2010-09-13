@@ -83,6 +83,14 @@
 
 #define ROAR_CMD_WHOAMI        32
 
+#define ROAR_CMD_DEVCTL        33 /* send control messages to devices */
+#define ROAR_CMD_CAPS          34 /* send caps */
+#define ROAR_CMD_WAIT          35 /* wait for an event */
+#define ROAR_CMD_NOTIFY        36 /* asyncronus notify of events */
+#define ROAR_CMD_SEEK          37 /* seek in stream */
+#define ROAR_CMD_CLIENTCTL     38 /* like stream ctl, just for client connections */
+#define ROAR_CMD_LOOKUP        39 /* lookup??? */
+#define ROAR_CMD_CONCTL        40 /* change parameter for current connection */
 
 // Reserved for RAUM project:
 #define ROAR_CMD_RAUM_SEEKTABLE 201
