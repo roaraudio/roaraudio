@@ -323,6 +323,10 @@ int roar_notify_core_emit_simple(uint32_t event, int emitter, int target, int ta
  locevent.arg2 = arg2;
  locevent.arg2_len = arg2_len;
 
+ if ( arg2 == NULL && (arg2_len == 0 || arg2_len == -1) ) {
+  locevent.flags |= ROAR_EVENT_FLAG_NETTRANS; // we guss packages with only int args are network transparent.
+ }
+
  return roar_notify_core_emit(NULL, &locevent);
 }
 
