@@ -615,4 +615,198 @@ const char * roar_ot2str  (const int    ot) {
  return NULL;
 }
 
+int roar_conv_volume (struct roar_mixer_settings * dst, struct roar_mixer_settings * src, int dstchans, int srcchans) {
+ int i;
+ uint_least32_t s;
+
+ if ( dst == NULL || src == NULL || dstchans < 0 || srcchans < 0 )
+  return -1;
+
+ if ( dstchans == srcchans ) {
+  memcpy(dst, src, sizeof(struct roar_mixer_settings));
+  return 0;
+ }
+
+ // sepcal handling for N->1:
+ if ( dstchans == 1 ) {
+  s = 0;
+
+  for (i = 0; i < srcchans; i++)
+   s += src->mixer[i];
+
+  dst->mixer[0] = s / srcchans;
+ } else {
+  switch (srcchans) {
+   case  1:
+     for (i = 0; i < dstchans; i++)
+      dst->mixer[i] = src->mixer[0];
+    break;
+   case 2:
+     switch (dstchans) {
+      case 3:
+        dst->mixer[0] = src->mixer[0];
+        dst->mixer[1] = src->mixer[1];
+        dst->mixer[2] = (src->mixer[0] + src->mixer[1]) / 2;
+       break;
+      case 4:
+        dst->mixer[0] = src->mixer[0];
+        dst->mixer[1] = src->mixer[1];
+        dst->mixer[2] = src->mixer[0];
+        dst->mixer[3] = src->mixer[1];
+       break;
+      case 5:
+        dst->mixer[0] = src->mixer[0];
+        dst->mixer[1] = src->mixer[1];
+        dst->mixer[2] = (src->mixer[0] + src->mixer[1]) / 2;
+        dst->mixer[3] = src->mixer[0];
+        dst->mixer[4] = src->mixer[1];
+       break;
+      case 6:
+        dst->mixer[0] = src->mixer[0];
+        dst->mixer[1] = src->mixer[1];
+        dst->mixer[2] = (src->mixer[0] + src->mixer[1]) / 2;
+        dst->mixer[3] = dst->mixer[2];
+        dst->mixer[4] = src->mixer[0];
+        dst->mixer[5] = src->mixer[1];
+       break;
+      default:
+        return -1;
+       break;
+     }
+    break;
+   case 3:
+     switch (dstchans) {
+      case 2:
+        dst->mixer[0] = src->mixer[0];
+        dst->mixer[1] = src->mixer[1];
+       break;
+      case 4:
+        dst->mixer[0] = src->mixer[0];
+        dst->mixer[1] = src->mixer[1];
+        dst->mixer[2] = src->mixer[0];
+        dst->mixer[3] = src->mixer[1];
+       break;
+      case 5:
+        dst->mixer[0] = src->mixer[0];
+        dst->mixer[1] = src->mixer[1];
+        dst->mixer[2] = src->mixer[2];
+        dst->mixer[3] = src->mixer[0];
+        dst->mixer[4] = src->mixer[1];
+       break;
+      case 6:
+        dst->mixer[0] = src->mixer[0];
+        dst->mixer[1] = src->mixer[1];
+        dst->mixer[2] = src->mixer[2];
+        dst->mixer[3] = src->mixer[2];
+        dst->mixer[4] = src->mixer[0];
+        dst->mixer[5] = src->mixer[1];
+       break;
+      default:
+        return -1;
+       break;
+     }
+    break;
+   case 4:
+     switch (dstchans) {
+      case 2:
+        dst->mixer[0] = (src->mixer[0] + src->mixer[2]) / 2;
+        dst->mixer[1] = (src->mixer[1] + src->mixer[3]) / 2;
+       break;
+      case 3:
+        dst->mixer[0] = (src->mixer[0] + src->mixer[2]) / 2;
+        dst->mixer[1] = (src->mixer[1] + src->mixer[3]) / 2;
+        dst->mixer[2] = (dst->mixer[0] + dst->mixer[1]) / 2;
+       break;
+      case 5:
+        dst->mixer[0] = src->mixer[0];
+        dst->mixer[1] = src->mixer[1];
+        dst->mixer[2] = (src->mixer[0] + src->mixer[2] + src->mixer[1] + src->mixer[3]) / 4;
+        dst->mixer[3] = src->mixer[2];
+        dst->mixer[4] = src->mixer[3];
+       break;
+      case 6:
+        dst->mixer[0] = src->mixer[0];
+        dst->mixer[1] = src->mixer[1];
+        dst->mixer[2] = (src->mixer[0] + src->mixer[2] + src->mixer[1] + src->mixer[3]) / 4;
+        dst->mixer[3] = dst->mixer[2];
+        dst->mixer[4] = src->mixer[2];
+        dst->mixer[5] = src->mixer[3];
+       break;
+      default:
+        return -1;
+       break;
+     }
+    break;
+   case 5:
+     switch (dstchans) {
+      case 2:
+        dst->mixer[0] = (src->mixer[0] + src->mixer[3]) / 2;
+        dst->mixer[1] = (src->mixer[1] + src->mixer[4]) / 2;
+       break;
+      case 3:
+        dst->mixer[0] = (src->mixer[0] + src->mixer[3]) / 2;
+        dst->mixer[1] = (src->mixer[1] + src->mixer[4]) / 2;
+        dst->mixer[2] = src->mixer[2];
+       break;
+      case 4:
+        dst->mixer[0] = src->mixer[0];
+        dst->mixer[1] = src->mixer[1];
+        dst->mixer[2] = src->mixer[3];
+        dst->mixer[3] = src->mixer[4];
+       break;
+      case 6:
+        dst->mixer[0] = src->mixer[0];
+        dst->mixer[1] = src->mixer[1];
+        dst->mixer[2] = src->mixer[2];
+        dst->mixer[3] = src->mixer[2];
+        dst->mixer[4] = src->mixer[3];
+        dst->mixer[5] = src->mixer[4];
+       break;
+      default:
+        return -1;
+       break;
+     }
+    break;
+   case 6:
+     switch (dstchans) {
+      case 2:
+        dst->mixer[0] = (src->mixer[0] + src->mixer[4]) / 2;
+        dst->mixer[1] = (src->mixer[1] + src->mixer[5]) / 2;
+       break;
+      case 3:
+        dst->mixer[0] = (src->mixer[0] + src->mixer[4]) / 2;
+        dst->mixer[1] = (src->mixer[1] + src->mixer[5]) / 2;
+        dst->mixer[2] = src->mixer[2];
+       break;
+      case 4:
+        dst->mixer[0] = src->mixer[0];
+        dst->mixer[1] = src->mixer[1];
+        dst->mixer[2] = src->mixer[4];
+        dst->mixer[3] = src->mixer[5];
+       break;
+      case 5:
+        dst->mixer[0] = src->mixer[0];
+        dst->mixer[1] = src->mixer[1];
+        dst->mixer[2] = src->mixer[2];
+        dst->mixer[3] = src->mixer[4];
+        dst->mixer[4] = src->mixer[5];
+       break;
+      default:
+        return -1;
+       break;
+     }
+    break;
+   default:
+     return -1;
+    break;
+  }
+ }
+
+ dst->scale   = src->scale;
+ dst->rpg_mul = src->rpg_mul;
+ dst->rpg_div = src->rpg_div;
+
+ return 0;
+}
+
 //ll

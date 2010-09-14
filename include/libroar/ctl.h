@@ -90,6 +90,8 @@ char * roar_byteorder2str (int    byteorder);
 int    roar_str2ot        (const char * ot);
 const char * roar_ot2str  (const int    ot);
 
+int roar_conv_volume (struct roar_mixer_settings * dst, struct roar_mixer_settings * src, int dstchans, int srcchans);
+
 #endif
 
 //ll
