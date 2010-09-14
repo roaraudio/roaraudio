@@ -6,7 +6,7 @@ DRV=driver_esd.o driver_ao.o driver_roar.o driver_raw.o driver_oss.o driver_shou
 CF_CODEC=codecfilter_cmd.o codecfilter_vorbis.o codecfilter_celt.o codecfilter_speex.o codecfilter_alaw.o codecfilter_mulaw.o codecfilter_sndfile.o codecfilter_fishsound.o
 CF_CONTAINER=codecfilter_wave.o codecfilter_raum.o codecfilter_au.o
 EMUL=emul_esd.o emul_simple.o emul_rsound.o emul_rplay.o
-HWMIXER=hwmixer_dstr.o
+HWMIXER=hwmixer_dstr.o hwmixer_oss.o
 
 CF=${CF_CONTAINER} ${CF_CODEC}
 

@@ -42,7 +42,7 @@ struct hwmixer {
 static int __true (void) { return 0; }
 
 struct hwmixer g_hwmixers[] = {
- {"oss",  "OSS Mixer", "/dev/mixer*", FLAG_FHSEC, NULL, NULL, NULL, NULL},
+ {"oss",  "OSS Mixer", "/dev/mixer*", FLAG_FHSEC, hwmixer_oss_open, hwmixer_oss_close, hwmixer_oss_set_vol, NULL},
  {"file", "Write to plain file", "/some/file", FLAG_FHSEC, NULL, NULL, NULL, NULL},
  {"dstr", "Write to DSTR",       "/some/file", FLAG_NONE,  hwmixer_dstr_open, hwmixer_dstr_close, hwmixer_dstr_set_vol, NULL},
  {"null", "Null Mixer",          NULL, FLAG_NONE,  __true, __true, __true, __true},

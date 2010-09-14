@@ -55,6 +55,10 @@ int hwmixer_dstr_open(struct hwmixer_stream * stream, char * drv, char * dev, in
 int hwmixer_dstr_close(struct hwmixer_stream * stream);
 int hwmixer_dstr_set_vol(struct hwmixer_stream * stream, int channels, int mode, struct roar_mixer_settings * settings);
 
+// OSS
+int hwmixer_oss_open(struct hwmixer_stream * stream, char * drv, char * dev, int fh, char * basename, struct roar_keyval * subnames, size_t subnamelen);
+int hwmixer_oss_close(struct hwmixer_stream * stream);
+int hwmixer_oss_set_vol(struct hwmixer_stream * stream, int channels, int mode, struct roar_mixer_settings * settings);
 
 #endif
 
