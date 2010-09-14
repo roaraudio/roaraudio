@@ -1200,7 +1200,7 @@ int add_hwmixer (char * drv, char * dev, char * opts, int prim, int count) {
  if ( basestream == -1 )
   return -1;
 
- streams_set_client(basestream, g_self_client);
+ client_stream_add(g_self_client, basestream);
 
  if ( opts == NULL ) {
   k = NULL;
