@@ -43,7 +43,7 @@ struct roar_libroar_config * roar_libroar_get_config_ptr(void) {
  static struct roar_libroar_config config;
  static int    inited = 0;
  static char   authfile[1024];
- char        * home = getenv("HOME");
+ char        * home = roar_env_get_home(0);
 
  if ( !inited ) {
   memset(&config, 0, sizeof(config));
