@@ -79,6 +79,7 @@ void hwmixer_setup_info(struct hwmixer_stream * mstream) {
 }
 
 int hwmixer_open(int basestream, char * drv, char * dev, int fh, char * basename, char * subnames) {
+ struct roar_stream_server * ss;
  struct roar_keyval * subnamekv = NULL;
  struct hwmixer * mixer = NULL;
  struct hwmixer_stream * stream;
@@ -134,6 +135,10 @@ int hwmixer_open(int basestream, char * drv, char * dev, int fh, char * basename
  }
 
  streams_set_mixerstream(basestream, stream);
+
+ if ( streams_get(basestream, &ss) == 0 ) {
+  hwmixer_set_volume(basestream, ss, stream, &(ss->mixer));
+ }
 
  return 0;
 }
