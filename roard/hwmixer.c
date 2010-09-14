@@ -25,13 +25,141 @@
 
 #include "roard.h"
 
+#define FLAG_NONE     0x0000
+#define FLAG_FHSEC    0x0001
+
+struct hwmixer;
+
+struct hwmixer_stream {
+ struct hwmixer * hwmixer;
+ int basestream;
+ int stream;
+ void * baseud;
+ void * ud;
+};
+
+struct hwmixer {
+ const char * name;
+ const char * desc;
+ const char * devs;
+ int flags;
+ int (*open)(struct hwmixer_stream * stream, char * drv, char * dev, int fh, char * basename, struct roar_keyval * subnames, size_t subnamelen);
+ int (*close)(struct hwmixer_stream * stream);
+ int (*set_vol)(struct hwmixer_stream * stream, int channels, int mode, struct roar_mixer_settings * settings);
+ int (*get_vol)(struct hwmixer_stream * stream, int channels, int mode, struct roar_mixer_settings * settings);
+};
+
+static int __true (void) { return 0; }
+
+struct hwmixer g_hwmixers[] = {
+ {"oss",  "OSS Mixer", "/dev/mixer*", FLAG_FHSEC, NULL, NULL, NULL, NULL},
+ {"file", "Write to plain file", "/some/file", FLAG_FHSEC, NULL, NULL, NULL, NULL},
+ {"dstr", "Write to DSTR",       "/some/file", FLAG_NONE,  NULL, NULL, NULL, NULL},
+ {"null", "Null Mixer",          NULL, FLAG_NONE,  __true, __true, __true, __true},
+ {NULL,   NULL, NULL, FLAG_NONE, NULL, NULL, NULL, NULL}
+};
+
 void print_hwmixerlist (void) {
+ struct hwmixer * mixer;
+ int i;
+
  printf("  Source   Flag Subsys - Description (devices)\n");
  printf("------------------------------------------------------\n");
+
+ for (i = 0; (mixer = &(g_hwmixers[i]))->name != NULL; i++) {
+  printf("  %-9s %c   Mixer  - %s (devices: %s)\n",
+         mixer->name,
+         mixer->flags & FLAG_FHSEC ? 's' : ' ',
+         mixer->desc,
+         mixer->devs == NULL ? "(none)" : mixer->devs
+        );
+ }
+}
+
+void hwmixer_setup_info(struct hwmixer_stream * mstream) {
+ struct roar_stream_server * ss;
+
+ streams_get(mstream->stream, &ss);
+
+ memset(&(ROAR_STREAM(ss)->info), 0, sizeof(ROAR_STREAM(ss)->info));
+
+ streams_set_dir(mstream->stream, ROAR_DIR_MIXING, 1);
+
+ streams_set_flag(mstream->stream, ROAR_FLAG_HWMIXER);
 }
 
 int hwmixer_open(int basestream, char * drv, char * dev, int fh, char * basename, char * subnames) {
- return -1;
+ struct roar_keyval * subnamekv = NULL;
+ struct hwmixer * mixer = NULL;
+ struct hwmixer_stream * stream;
+ ssize_t subnamekvlen = 0;
+ int i;
+ int ret;
+
+ for (i = 0; g_hwmixers[i].name != NULL; i++) {
+  if ( !strcmp(g_hwmixers[i].name, drv) ) {
+   mixer = &(g_hwmixers[i]);
+   break;
+  }
+ }
+
+ if ( mixer == NULL ) {
+  ROAR_WARN("hwmixer_open(basestream=%i, drv='%s', dev='%s', fh=%i, basename='%s', subnames='%s'): Driver not found.", basestream, drv, dev, fh, basename, subnames);
+  return -1;
+ }
+
+ if ( mixer->open == NULL ) {
+  return -1;
+ }
+
+ if ( fh != -1 && !(mixer->flags & FLAG_FHSEC) ) {
+  return -1;
+ }
+
+ stream = roar_mm_malloc(sizeof(struct hwmixer_stream));
+ if ( stream == NULL )
+  return -1;
+
+ memset(stream, 0, sizeof(struct hwmixer_stream));
+
+ stream->hwmixer    = mixer;
+ stream->basestream = basestream;
+ stream->stream     = basestream;
+ stream->baseud     = NULL;
+ stream->ud         = NULL;
+
+ if ( basename == NULL ) {
+  streams_set_name(basestream, "Hardware Mixer");
+ } else {
+  streams_set_name(basestream, basename);
+ }
+
+ ret = mixer->open(stream, drv, dev, fh, basename, subnamekv, subnamekvlen);
+
+ if ( ret == -1 ) {
+  roar_mm_free(stream);
+  return -1;
+ }
+
+ hwmixer_setup_info(stream);
+
+ streams_set_mixerstream(basestream, stream);
+
+ return 0;
+}
+
+int hwmixer_close(int stream) {
+ struct hwmixer_stream * mstream = streams_get_mixerstream(stream);
+
+ if ( mstream == NULL )
+  return 0;
+
+ if ( mstream->hwmixer->close != NULL )
+  mstream->hwmixer->close(mstream);
+
+ roar_mm_free(mstream);
+
+ return 0;
 }
 
 //ll

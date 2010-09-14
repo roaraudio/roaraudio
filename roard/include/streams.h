@@ -109,6 +109,7 @@ struct roar_stream_server {
  int role;
  int parent_stream;
  struct roar_stream_ltm ltm[MAX_LTM_WINDOWS_PER_STREAM];
+ struct hwmixer_stream * mixerstream;
 } * g_streams[ROAR_STREAMS_MAX];
 
 int streams_thru_num;
@@ -166,6 +167,9 @@ int streams_set_map      (int id, char * map, size_t len);
 int streams_ltm_ctl      (int id, int mt, int window, int cmd);
 int streams_ltm_calc     (int id, struct roar_audio_info * info, void * data, size_t len);
 struct roar_stream_ltm * streams_ltm_get(int id, int mt, int window);
+
+struct hwmixer_stream * streams_get_mixerstream(int id);
+int streams_set_mixerstream(int id, struct hwmixer_stream * mstream);
 
 int streams_ctl          (int id, int_least32_t cmd, void * data);
 

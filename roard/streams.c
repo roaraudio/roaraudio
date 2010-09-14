@@ -149,6 +149,8 @@ int streams_new    (void) {
    s->driver_id = -1;
    s->flags     =  ROAR_FLAG_NONE;
 
+   s->mixerstream =  NULL;
+
    //roardsp_fchain_init(&(s->fc));
 
    g_streams[i] = s;
@@ -250,6 +252,10 @@ int streams_delete (int id) {
   roar_vio_init_calls(&(s->vio));
   s->driver_id = -1;
   no_vio_close =  1;
+ }
+
+ if ( s->mixerstream != NULL ) {
+  hwmixer_close(id);
  }
 
  //roardsp_fchain_uninit(&(s->fc));
@@ -1195,6 +1201,20 @@ struct roar_stream_ltm * streams_ltm_get(int id, int mt, int window) {
   return NULL;
 
  return ltm;
+}
+
+struct hwmixer_stream * streams_get_mixerstream(int id) {
+ _CHECK_SID_RET(id, NULL);
+
+ return g_streams[id]->mixerstream;
+}
+
+int streams_set_mixerstream(int id, struct hwmixer_stream * mstream) {
+ _CHECK_SID(id);
+
+ g_streams[id]->mixerstream = mstream;
+
+ return 0;
 }
 
 
