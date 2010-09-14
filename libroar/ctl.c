@@ -616,6 +616,7 @@ const char * roar_ot2str  (const int    ot) {
 }
 
 int roar_conv_volume (struct roar_mixer_settings * dst, struct roar_mixer_settings * src, int dstchans, int srcchans) {
+ struct roar_mixer_settings lsrc;
  int i;
  uint_least32_t s;
 
@@ -623,8 +624,16 @@ int roar_conv_volume (struct roar_mixer_settings * dst, struct roar_mixer_settin
   return -1;
 
  if ( dstchans == srcchans ) {
+  if ( dst == src )
+   return 0;
+
   memcpy(dst, src, sizeof(struct roar_mixer_settings));
   return 0;
+ }
+
+ if ( dst == src ) {
+  memcpy(&lsrc, src, sizeof(lsrc));
+  src = &lsrc;
  }
 
  // sepcal handling for N->1:
