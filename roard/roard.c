@@ -208,6 +208,17 @@ void usage (void) {
  printf(" --list-sources        - List all sources\n");
 #endif
 
+#ifndef ROAR_WITHOUT_DCOMP_MIXER
+ printf("\nHardware Mixer Options:\n\n");
+ printf(" -m  --mixer  DRV      - Use DRV as mixer driver\n"
+        " -M           DEV      - Use DEV as mixer device\n"
+        " -mO          OPTS     - Use OPTS as mixer options\n"
+        " -mN                   - Adds another mixer\n"
+        " -mP                   - Make mixer as primary\n"
+       );
+ printf(" --list-mixers         - List all mixers\n");
+#endif
+
  printf("\nCodec Filter Options:\n\n");
  printf(" --list-cf             - List all codec filter\n"
        );
@@ -1176,6 +1187,12 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
  return 0;
 }
 
+#ifndef ROAR_WITHOUT_DCOMP_MIXER
+int add_hwmixer (char * drv, char * dev, char * opts, int prim, int count) {
+ return -1;
+}
+#endif
+
 // X11:
 #ifdef ROAR_HAVE_LIBX11
 int register_x11 (int unreg, char * sockname) {
@@ -1351,6 +1368,13 @@ int main (void) {
  char * o_opts    = NULL;
  int    o_prim    = 0;
  int    o_count   = 0;
+#ifndef ROAR_WITHOUT_DCOMP_MIXER
+ char * m_drv     = NULL;
+ char * m_dev     = NULL;
+ char * m_opts    = NULL;
+ int    m_prim    = 0;
+ int    m_count   = 0;
+#endif
 #ifndef ROAR_WITHOUT_DCOMP_LIGHT
  int    light_channels = LIGHT_CHANNELS_DEFAULT;
 #endif
@@ -1750,6 +1774,49 @@ int main (void) {
    return 1;
 #endif
 
+  } else if ( strcmp(k, "-m") == 0 || strcmp(k, "--mixer") == 0 ) {
+   _CKHAVEARGS(1);
+#ifndef ROAR_WITHOUT_DCOMP_MIXER
+   m_drv  = argv[++i];
+#else
+   ROAR_ERR("main(*): No support for mixer compiled in");
+   return 1;
+#endif
+  } else if ( strcmp(k, "-M") == 0 ) {
+   _CKHAVEARGS(1);
+#ifndef ROAR_WITHOUT_DCOMP_MIXER
+   m_dev  = argv[++i];
+#else
+   ROAR_ERR("main(*): No support for mixer compiled in");
+   return 1;
+#endif
+  } else if ( strcmp(k, "-mO") == 0 ) {
+   _CKHAVEARGS(1);
+#ifndef ROAR_WITHOUT_DCOMP_MIXER
+   m_opts = argv[++i];
+#else
+   ROAR_ERR("main(*): No support for mixer compiled in");
+   return 1;
+#endif
+  } else if ( strcmp(k, "-mP") == 0 ) {
+#ifndef ROAR_WITHOUT_DCOMP_MIXER
+   m_prim = 1;
+#else
+   ROAR_ERR("main(*): No support for mixer compiled in");
+   return 1;
+#endif
+  } else if ( strcmp(k, "-mN") == 0 ) {
+#ifndef ROAR_WITHOUT_DCOMP_MIXER
+   if ( add_hwmixer(m_drv, m_dev, m_opts, m_prim, m_count) != -1 )
+    m_count++;
+
+   m_drv  = o_dev = o_opts = NULL;
+   m_prim = 0;
+#else
+   ROAR_ERR("main(*): No support for mixer compiled in");
+   return 1;
+#endif
+
   } else if ( strcmp(k, "--light-channels") == 0 ) {
    _CKHAVEARGS(1);
 #ifndef ROAR_WITHOUT_DCOMP_LIGHT
@@ -2076,6 +2143,14 @@ int main (void) {
    return 1;
   }
 
+ }
+#endif
+
+#ifndef ROAR_WITHOUT_DCOMP_MIXER
+ if ( m_drv != NULL ) {
+  if ( add_hwmixer(m_drv, m_dev, m_opts, m_prim, m_count) == -1 ) {
+   ROAR_ERR("main(*): adding mixer '%s' via '%s' failed!", m_dev, m_drv);
+  }
  }
 #endif
 
