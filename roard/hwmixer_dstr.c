@@ -1,4 +1,4 @@
-//hwmixer.h:
+//hwmixer_dstr.c:
 
 /*
  *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2010
@@ -23,25 +23,10 @@
  *
  */
 
-#ifndef _HWMIXER_H_
-#define _HWMIXER_H_
+#include "roard.h"
 
-#include <roaraudio.h>
-
-struct hwmixer_stream;
-
-void print_hwmixerlist (void);
-int hwmixer_open(int basestream, char * drv, char * dev, int fh, char * basename, char * subnames);
-int hwmixer_close(int stream);
-
-// Mixers:
-
-// dstr
 int hwmixer_dstr_open(struct hwmixer_stream * stream, char * drv, char * dev, int fh, char * basename, struct roar_keyval * subnames, size_t subnamelen);
 int hwmixer_dstr_close(struct hwmixer_stream * stream);
 int hwmixer_dstr_set_vol(struct hwmixer_stream * stream, int channels, int mode, struct roar_mixer_settings * settings);
-
-
-#endif
 
 //ll
