@@ -988,7 +988,7 @@ int streams_set_mixer    (int id) {
      tsubsys = streams_get_subsys(i);
      if ( tsubsys == subsys || tsubsys == ROAR_SUBSYS_NONE ) {
       if ( &(pmss->mixer) != &(ss->mixer) ) {
-       memcpy(&(pmss->mixer), &(ss->mixer), sizeof(struct roar_mixer_settings));
+       roar_conv_volume(&(pmss->mixer), &(ss->mixer), ROAR_STREAM(pmss)->info.channels, ROAR_STREAM(ss)->info.channels);
       }
 
       // update hwmixers and the like but do not set mixer value recrusivly.
