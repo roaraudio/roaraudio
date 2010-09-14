@@ -33,19 +33,61 @@ struct subdev {
  long long int cmd_read, cmd_write;
 };
 
+static struct subdev_map {
+ const char * name;
+ struct subdev subdev;
+} g_subdevs[] = {
+ {"Volume", {.bit = SOUND_MASK_VOLUME, .cmd_read = SOUND_MIXER_READ_VOLUME, .cmd_write = SOUND_MIXER_WRITE_VOLUME}},
+ {NULL}
+};
+
+static int hwmixer_oss_open_stream(struct hwmixer_stream * stream, int devmask, int sdevmask, char * basename, struct roar_keyval * subname) {
+ struct subdev * subdev;
+ struct subdev * source_subdev = NULL;
+ struct roar_stream_server * ss;
+ int i;
+
+ for (i = 0; g_subdevs[i].name != NULL; i++) {
+  if ( !strcasecmp(subname->key, g_subdevs[i].name) ) {
+   source_subdev = &(g_subdevs[i].subdev);
+   break;
+  }
+ }
+
+ if ( source_subdev == NULL )
+  return -1;
+
+ if ( !(devmask & source_subdev->bit) )
+  return -1;
+
+ subdev = roar_mm_malloc(sizeof(struct subdev));
+
+ if ( subdev == NULL )
+  return -1;
+
+ memcpy(subdev, source_subdev, sizeof(struct subdev));
+
+ subdev->channels = sdevmask & subdev->bit ? 2 : 1;
+
+ stream->ud     = subdev;
+
+ if (streams_get(stream->stream, &ss) != -1) {
+  ROAR_STREAM(ss)->info.channels = subdev->channels;
+ } else {
+  ROAR_WARN("hwmixer_dstr_open(*): can not get object for stream %i", stream->stream);
+ }
+
+ return 0;
+}
+
 int hwmixer_oss_open(struct hwmixer_stream * stream, char * drv, char * dev, int fh, char * basename, struct roar_keyval * subnames, size_t subnamelen) {
  struct roar_vio_calls * vio = roar_mm_malloc(sizeof(struct roar_vio_calls));
  struct roar_vio_defaults def;
- struct roar_stream_server * ss;
  struct roar_vio_sysio_ioctl ctl;
+ struct roar_keyval kv;
  int devmask, sdevmask;
- struct subdev * subdev = roar_mm_malloc(sizeof(struct subdev));
 
- if ( vio == NULL || subdev == NULL ) {
-  if ( vio != NULL )
-   roar_mm_free(vio);
-  if ( subdev != NULL )
-   roar_mm_free(subdev);
+ if ( vio == NULL ) {
   return -1;
  }
 
@@ -58,31 +100,26 @@ int hwmixer_oss_open(struct hwmixer_stream * stream, char * drv, char * dev, int
 
   if ( dev == NULL ) {
    roar_mm_free(vio);
-   roar_mm_free(subdev);
    return -1;
   }
 
   if ( roar_vio_dstr_init_defaults(&def, ROAR_VIO_DEF_TYPE_FILE, O_RDWR, 0644) == -1 ) {
    roar_mm_free(vio);
-   roar_mm_free(subdev);
    return -1;
   }
 
   if ( roar_vio_open_dstr(vio, dev, &def, 1) == -1 ) {
    roar_mm_free(vio);
-   roar_mm_free(subdev);
    return -1;
   }
  } else {
   if ( roar_vio_open_fh(vio, fh) == -1 ) {
    roar_mm_free(vio);
-   roar_mm_free(subdev);
    return -1;
   }
  }
 
  stream->baseud = vio;
- stream->ud     = subdev;
 
  ctl.cmd  = SOUND_MIXER_READ_DEVMASK;
  ctl.argp = &devmask;
@@ -90,7 +127,6 @@ int hwmixer_oss_open(struct hwmixer_stream * stream, char * drv, char * dev, int
  if ( roar_vio_ctl(vio, ROAR_VIO_CTL_SYSIO_IOCTL, &ctl) == -1 ) {
   roar_vio_close(vio);
   roar_mm_free(vio);
-  roar_mm_free(subdev);
   return -1;
  }
 
@@ -101,25 +137,15 @@ int hwmixer_oss_open(struct hwmixer_stream * stream, char * drv, char * dev, int
   sdevmask = 0;
  }
 
- memset(subdev, 0, sizeof(struct subdev));
+ kv.key   = "Volume";
+ kv.value = NULL;
 
- if ( devmask & SOUND_MASK_VOLUME ) {
-  subdev->bit       = SOUND_MASK_VOLUME;
-  subdev->channels  = sdevmask & SOUND_MASK_VOLUME ? 2 : 1;
-  subdev->cmd_read  = SOUND_MIXER_READ_VOLUME;
-  subdev->cmd_write = SOUND_MIXER_WRITE_VOLUME;
- } else {
+ if ( hwmixer_oss_open_stream(stream, devmask, sdevmask, basename, &kv) == -1 ) {
   roar_vio_close(vio);
   roar_mm_free(vio);
-  roar_mm_free(subdev);
   return -1;
  }
 
- if (streams_get(stream->basestream, &ss) != -1) {
-  ROAR_STREAM(ss)->info.channels = 2;
- } else {
-  ROAR_WARN("hwmixer_dstr_open(*): can not get object for basestream %i", stream->basestream);
- }
 
 #ifdef TEST_HWMIXER_SUBSTREAMS
  stream = hwmixer_substream_new(stream);
