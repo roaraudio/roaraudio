@@ -126,7 +126,14 @@ int hwmixer_open(int basestream, char * drv, char * dev, int fh, char * basename
 
  hwmixer_setup_info(stream);
 
+ if ( subnames != NULL ) {
+  subnamekvlen = roar_keyval_split(&subnamekv, subnames, ",;", "=:", 0);
+ }
+
  ret = mixer->open(stream, drv, dev, fh, basename, subnamekv, subnamekvlen);
+
+ if ( subnamekv != NULL )
+  roar_mm_free(subnamekv);
 
  if ( ret == -1 ) {
   roar_mm_free(stream);
