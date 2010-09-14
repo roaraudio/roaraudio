@@ -170,6 +170,7 @@ struct roar_stream_ltm * streams_ltm_get(int id, int mt, int window);
 
 struct hwmixer_stream * streams_get_mixerstream(int id);
 int streams_set_mixerstream(int id, struct hwmixer_stream * mstream);
+int streams_read_mixervalues(int id);
 
 int streams_ctl          (int id, int_least32_t cmd, void * data);
 

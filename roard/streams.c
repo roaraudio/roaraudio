@@ -1220,6 +1220,19 @@ int streams_set_mixerstream(int id, struct hwmixer_stream * mstream) {
  return 0;
 }
 
+int streams_read_mixervalues(int id) {
+ struct roar_stream_server * ss;
+
+ _CHECK_SID(id);
+
+ if ( (ss = g_streams[id]) == NULL )
+  return -1;
+
+ if ( ss->mixerstream == NULL )
+  return -1;
+
+ return hwmixer_get_volume(id, ss, ss->mixerstream, &(ss->mixer));
+}
 
 int streams_ctl          (int id, int_least32_t cmd, void * data) {
  struct roar_stream_server * ss;

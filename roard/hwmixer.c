@@ -136,8 +136,15 @@ int hwmixer_open(int basestream, char * drv, char * dev, int fh, char * basename
 
  streams_set_mixerstream(basestream, stream);
 
+ // try to get in sync with HW mixer.
+ // if possible read hw mixer state.
+ // if not possible write to force a sync value.
  if ( streams_get(basestream, &ss) == 0 ) {
-  hwmixer_set_volume(basestream, ss, stream, &(ss->mixer));
+  if ( mixer->get_vol != NULL ) {
+   hwmixer_get_volume(basestream, ss, stream, &(ss->mixer));
+  } else {
+   hwmixer_set_volume(basestream, ss, stream, &(ss->mixer));
+  }
  }
 
  return 0;
@@ -161,6 +168,14 @@ int hwmixer_set_volume(int id, struct roar_stream_server * ss, struct hwmixer_st
 settings) {
  if ( mstream->hwmixer->set_vol != NULL )
   return mstream->hwmixer->set_vol(mstream, ROAR_STREAM(ss)->info.channels, HWMIXER_MODE_SET, settings);
+
+ return 0;
+}
+
+int hwmixer_get_volume(int id, struct roar_stream_server * ss, struct hwmixer_stream * mstream, struct roar_mixer_settings *
+settings) {
+ if ( mstream->hwmixer->get_vol != NULL )
+  return mstream->hwmixer->get_vol(mstream, ROAR_STREAM(ss)->info.channels, HWMIXER_MODE_ASK, settings);
 
  return 0;
 }
