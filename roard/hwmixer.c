@@ -28,16 +28,6 @@
 #define FLAG_NONE     0x0000
 #define FLAG_FHSEC    0x0001
 
-struct hwmixer;
-
-struct hwmixer_stream {
- struct hwmixer * hwmixer;
- int basestream;
- int stream;
- void * baseud;
- void * ud;
-};
-
 struct hwmixer {
  const char * name;
  const char * desc;
@@ -54,7 +44,7 @@ static int __true (void) { return 0; }
 struct hwmixer g_hwmixers[] = {
  {"oss",  "OSS Mixer", "/dev/mixer*", FLAG_FHSEC, NULL, NULL, NULL, NULL},
  {"file", "Write to plain file", "/some/file", FLAG_FHSEC, NULL, NULL, NULL, NULL},
- {"dstr", "Write to DSTR",       "/some/file", FLAG_NONE,  NULL, NULL, NULL, NULL},
+ {"dstr", "Write to DSTR",       "/some/file", FLAG_NONE,  hwmixer_dstr_open, hwmixer_dstr_close, hwmixer_dstr_set_vol, NULL},
  {"null", "Null Mixer",          NULL, FLAG_NONE,  __true, __true, __true, __true},
  {NULL,   NULL, NULL, FLAG_NONE, NULL, NULL, NULL, NULL}
 };
@@ -134,14 +124,14 @@ int hwmixer_open(int basestream, char * drv, char * dev, int fh, char * basename
   streams_set_name(basestream, basename);
  }
 
+ hwmixer_setup_info(stream);
+
  ret = mixer->open(stream, drv, dev, fh, basename, subnamekv, subnamekvlen);
 
  if ( ret == -1 ) {
   roar_mm_free(stream);
   return -1;
  }
-
- hwmixer_setup_info(stream);
 
  streams_set_mixerstream(basestream, stream);
 

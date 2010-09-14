@@ -28,7 +28,15 @@
 
 #include <roaraudio.h>
 
-struct hwmixer_stream;
+struct hwmixer;
+
+struct hwmixer_stream {
+ struct hwmixer * hwmixer;
+ int basestream;
+ int stream;
+ void * baseud;
+ void * ud;
+};
 
 void print_hwmixerlist (void);
 int hwmixer_open(int basestream, char * drv, char * dev, int fh, char * basename, char * subnames);
