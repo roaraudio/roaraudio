@@ -1,11 +1,12 @@
 TARGETS=roard
 
-OBJ=roard.o driver.o mixer.o output.o signals.o loop.o clients.o streams.o network.o commands.o req.o sources.o sample.o meta.o codecfilter.o lib.o ssynth.o container_framework.o plugins.o memlock.o
+OBJ=roard.o driver.o mixer.o output.o signals.o loop.o clients.o streams.o network.o commands.o req.o sources.o sample.o meta.o codecfilter.o lib.o ssynth.o container_framework.o plugins.o memlock.o hwmixer.o
 SUBSYS=midi.o light.o raw.o rdtcs.o waveform.o beep.o
 DRV=driver_esd.o driver_ao.o driver_roar.o driver_raw.o driver_oss.o driver_shout.o driver_sndio.o driver_dmx.o driver_pwmled.o driver_sysclock.o driver_wmm.o driver_dstr.o driver_alsa.o driver_rsound.o driver_portaudio.o driver_pulsesimple.o
 CF_CODEC=codecfilter_cmd.o codecfilter_vorbis.o codecfilter_celt.o codecfilter_speex.o codecfilter_alaw.o codecfilter_mulaw.o codecfilter_sndfile.o codecfilter_fishsound.o
 CF_CONTAINER=codecfilter_wave.o codecfilter_raum.o codecfilter_au.o
 EMUL=emul_esd.o emul_simple.o emul_rsound.o emul_rplay.o
+HWMIXER=
 
 CF=${CF_CONTAINER} ${CF_CODEC}
 
@@ -31,5 +32,5 @@ clean:
 	rm -f ${TARGETS} *.o
 new: clean all
 
-roard: ${OBJ} ${SUBSYS} ${DRV} ${CF} ${EMUL}
-	${CC} ${LDFLAGS} -o roard ${OBJ} ${SUBSYS} ${DRV} ${CF} ${EMUL} ${LIBS}
+roard: ${OBJ} ${SUBSYS} ${DRV} ${CF} ${EMUL} ${HWMIXER}
+	${CC} ${LDFLAGS} -o roard ${OBJ} ${SUBSYS} ${DRV} ${CF} ${EMUL} ${HWMIXER} ${LIBS}

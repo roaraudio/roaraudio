@@ -113,6 +113,7 @@ union uniinst {
 #include "emul_rplay.h" /* MFOI */
 #include "sources.h"
 #include "sample.h"
+#include "hwmixer.h"
 #include "meta.h"
 #include "midi.h"
 #include "ssynth.h"
