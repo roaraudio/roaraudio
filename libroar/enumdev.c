@@ -116,9 +116,10 @@ struct roar_server * roar_enum_servers(int flags, int dir, int socktype) {
  struct roar_server * c;
  char * servers[64];
  size_t have = 1;
- size_t i, cp;
+ size_t i, cp, unic;
  ssize_t r;
  int testflags = flags;
+ int is_uniq;
 
  // load config:
  roar_libroar_get_config();
@@ -148,7 +149,14 @@ struct roar_server * roar_enum_servers(int flags, int dir, int socktype) {
   c->server = servers[i];
   c->description = NULL;
   c->location = NULL;
-  if ( _test_server(c, flags) == 0 ) {
+
+  // uniq test:
+  is_uniq = 1;
+  for (unic = 0; unic < cp; unic++)
+   if ( !strcmp(ret[unic].server, servers[i]) )
+    is_uniq = 0;
+
+  if ( is_uniq && _test_server(c, flags) == 0 ) {
    cp++;
   } else {
    roar_mm_free(servers[i]);
