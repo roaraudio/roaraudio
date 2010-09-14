@@ -25,4 +25,13 @@
 
 #include "roard.h"
 
+void print_hwmixerlist (void) {
+ printf("  Source   Flag Subsys - Description (devices)\n");
+ printf("------------------------------------------------------\n");
+}
+
+int hwmixer_open(int basestream, char * drv, char * dev, int fh, char * basename, char * subnames) {
+ return -1;
+}
+
 //ll

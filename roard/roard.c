@@ -1189,7 +1189,21 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
 
 #ifndef ROAR_WITHOUT_DCOMP_MIXER
 int add_hwmixer (char * drv, char * dev, char * opts, int prim, int count) {
- return -1;
+ int basestream = streams_new();
+ int ret;
+//int hwmixer_open(int basestream, char * drv, char * dev, int fh, char * basename, char * subnames) {
+
+ if ( prim ) {
+  streams_mark_primary(basestream);
+ }
+
+ ret = hwmixer_open(basestream, drv, dev, -1, NULL, NULL);
+
+ if ( ret == -1 ) {
+  streams_delete(basestream);
+ }
+
+ return ret == -1 ? -1 : 0;
 }
 #endif
 
@@ -1812,6 +1826,14 @@ int main (void) {
 
    m_drv  = o_dev = o_opts = NULL;
    m_prim = 0;
+#else
+   ROAR_ERR("main(*): No support for mixer compiled in");
+   return 1;
+#endif
+  } else if ( strcmp(k, "--list-mixers") == 0 ) {
+#ifndef ROAR_WITHOUT_DCOMP_MIXER
+   print_hwmixerlist();
+   return 0;
 #else
    ROAR_ERR("main(*): No support for mixer compiled in");
    return 1;

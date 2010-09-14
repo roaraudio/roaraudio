@@ -28,6 +28,9 @@
 
 #include <roaraudio.h>
 
+void print_hwmixerlist (void);
+int hwmixer_open(int basestream, char * drv, char * dev, int fh, char * basename, char * subnames);
+
 #endif
 
 //ll
