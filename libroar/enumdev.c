@@ -124,6 +124,9 @@ struct roar_server * roar_enum_servers(int flags, int dir, int socktype) {
  // load config:
  roar_libroar_get_config();
 
+ if ( flags & ROAR_ENUM_FLAG_HARDNONBLOCK )
+  flags |= ROAR_ENUM_FLAG_NONBLOCK;
+
  if ( testflags & ROAR_ENUM_FLAG_DESC )
   testflags -= ROAR_ENUM_FLAG_DESC;
  if ( testflags & ROAR_ENUM_FLAG_LOCATION )
