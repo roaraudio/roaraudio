@@ -1193,6 +1193,11 @@ int add_hwmixer (char * drv, char * dev, char * opts, int prim, int count) {
  int ret;
 //int hwmixer_open(int basestream, char * drv, char * dev, int fh, char * basename, char * subnames) {
 
+ if ( basestream == -1 )
+  return -1;
+
+ streams_set_client(basestream, g_self_client);
+
  if ( prim ) {
   streams_mark_primary(basestream);
  }
