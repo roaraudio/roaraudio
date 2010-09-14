@@ -80,14 +80,14 @@ int hwmixer_dstr_set_vol(struct hwmixer_stream * stream, int channels, int mode,
  struct roar_vio_calls * vio = stream->baseud;
  int i;
 
- roar_vio_printf(vio, "[Stream %i of basestream %i]\n", stream->stream, stream->basestream);
- roar_vio_printf(vio, "Channels: %i\n", channels);
- roar_vio_printf(vio, "Mode: %i\n", mode);
- roar_vio_printf(vio, "Scale: %i\n", (int)settings->scale);
- roar_vio_printf(vio, "RPG: %i/%i\n", (int)settings->rpg_mul, (int)settings->rpg_div);
+ roar_vio_printf(vio, "[Stream %2i of basestream %2i]\n", stream->stream, stream->basestream);
+ roar_vio_printf(vio, "Channels: %2i\n", channels);
+ roar_vio_printf(vio, "Mode: %1i\n", mode);
+ roar_vio_printf(vio, "Scale: %5i\n", (int)settings->scale);
+ roar_vio_printf(vio, "RPG: %5i/%5i\n", (int)settings->rpg_mul, (int)settings->rpg_div);
 
  for (i = 0; i < channels; i++) {
-  roar_vio_printf(vio, "Channel[%i]: %i\n", i, (int)settings->mixer[i]);
+  roar_vio_printf(vio, "Channel[%2i]: %5i\n", i, (int)settings->mixer[i]);
  }
 
  roar_vio_lseek(vio, 0, SEEK_SET);
