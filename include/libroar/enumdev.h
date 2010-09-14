@@ -38,6 +38,12 @@
 
 #include "libroar.h"
 
+#define ROAR_ENUM_FLAG_NONE         0x0000
+#define ROAR_ENUM_FLAG_DESC         0x0001
+#define ROAR_ENUM_FLAG_LOCATION     0x0002
+#define ROAR_ENUM_FLAG_NONBLOCK     0x0004
+#define ROAR_ENUM_FLAG_HARDNONBLOCK 0x0008
+
 struct roar_server {
  const char * server;
  const char * description;
@@ -48,6 +54,10 @@ struct roar_mixer {
  const int dir;
  //...
 };
+
+struct roar_server * roar_enum_servers(int flags, int dir, int socktype);
+int roar_enum_servers_free(struct roar_server * servs);
+ssize_t roar_enum_servers_num(struct roar_server * servs);
 
 #endif
 
