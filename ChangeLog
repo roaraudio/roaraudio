@@ -7,6 +7,7 @@ v. 0.4beta0 - ?
 	* Added a lot const keywords
 	* Added notify framework (process internal signals)
 	* Added support for WAIT command
+	* Added support to get a list of possible servers (enumdev)
 
 v. 0.3 - Sun Aug 22 2010 26:14 CEST
 	Prereleases: 0: Mon Aug 16 2010 29:58 CEST;
