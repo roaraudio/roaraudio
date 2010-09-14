@@ -165,4 +165,36 @@ settings) {
  return 0;
 }
 
+struct hwmixer_stream * hwmixer_substream_new(struct hwmixer_stream * parent) {
+ struct roar_stream_server * ss;
+ struct hwmixer_stream * stream;
+ int id;
+
+ if ( parent == NULL )
+  return NULL;
+
+ stream = roar_mm_malloc(sizeof(struct hwmixer_stream));
+ if ( stream == NULL )
+  return NULL;
+
+ if ( (id = streams_new_virtual(parent->basestream, &ss)) == -1 ) {
+  roar_mm_free(stream);
+  return NULL;
+ }
+
+ memset(stream, 0, sizeof(struct hwmixer_stream));
+
+ stream->hwmixer    = parent->hwmixer;
+ stream->basestream = parent->basestream;
+ stream->stream     = id;
+ stream->baseud     = parent->baseud;
+ stream->ud         = NULL;
+
+ hwmixer_setup_info(stream);
+
+ streams_set_mixerstream(id, stream);
+
+ return stream;
+}
+
 //ll

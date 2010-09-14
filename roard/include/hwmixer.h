@@ -46,6 +46,8 @@ int hwmixer_close(int stream);
 
 int hwmixer_set_volume(int id, struct roar_stream_server * ss, struct hwmixer_stream * mstream, struct roar_mixer_settings * settings);
 
+struct hwmixer_stream * hwmixer_substream_new(struct hwmixer_stream * parent);
+
 // Mixers:
 
 // dstr
