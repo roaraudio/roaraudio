@@ -999,10 +999,13 @@ int streams_set_mixer    (int id) {
  if ( !streams_get_flag(id, ROAR_FLAG_HWMIXER) )
   return 0;
 
- if ( ss->driver_id == -1 )
+ if ( ss->driver_id != -1 ) {
+  return driver_set_volume(id, &(ss->mixer));
+ } else if ( ss->mixerstream != NULL ) {
+  return hwmixer_set_volume(id, ss, ss->mixerstream, &(ss->mixer));
+ } else {
   return 0;
-
- return driver_set_volume(id, &(ss->mixer));
+ }
 }
 
 int streams_set_map      (int id, char * map, size_t len) {

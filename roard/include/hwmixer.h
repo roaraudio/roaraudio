@@ -28,6 +28,8 @@
 
 #include <roaraudio.h>
 
+#define HWMIXER_MODE_SET        1
+
 struct hwmixer;
 
 struct hwmixer_stream {
@@ -41,6 +43,8 @@ struct hwmixer_stream {
 void print_hwmixerlist (void);
 int hwmixer_open(int basestream, char * drv, char * dev, int fh, char * basename, char * subnames);
 int hwmixer_close(int stream);
+
+int hwmixer_set_volume(int id, struct roar_stream_server * ss, struct hwmixer_stream * mstream, struct roar_mixer_settings * settings);
 
 // Mixers:
 

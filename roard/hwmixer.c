@@ -152,4 +152,12 @@ int hwmixer_close(int stream) {
  return 0;
 }
 
+int hwmixer_set_volume(int id, struct roar_stream_server * ss, struct hwmixer_stream * mstream, struct roar_mixer_settings *
+settings) {
+ if ( mstream->hwmixer->set_vol != NULL )
+  return mstream->hwmixer->set_vol(mstream, ROAR_STREAM(ss)->info.channels, HWMIXER_MODE_SET, settings);
+
+ return 0;
+}
+
 //ll
