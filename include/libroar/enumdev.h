@@ -38,11 +38,15 @@
 
 #include "libroar.h"
 
-#define ROAR_ENUM_FLAG_NONE         0x0000
-#define ROAR_ENUM_FLAG_DESC         0x0001
-#define ROAR_ENUM_FLAG_LOCATION     0x0002
-#define ROAR_ENUM_FLAG_NONBLOCK     0x0004
-#define ROAR_ENUM_FLAG_HARDNONBLOCK 0x0008
+#define ROAR_ENUM_FLAG_NONE         0x0000 /* no flags set                     */
+#define ROAR_ENUM_FLAG_DESC         0x0001 /* ask for server description       */
+#define ROAR_ENUM_FLAG_LOCATION     0x0002 /* ask for server location        1 */
+#define ROAR_ENUM_FLAG_NONBLOCK     0x0004 /* do not block                   1 */
+#define ROAR_ENUM_FLAG_HARDNONBLOCK 0x0008 /* do even less block than NONBLOCK */
+/*
+ * 1 = This is a request. The result may include or not include the data anyway.
+ *     This is only so the lib does not need to spend extra work if data is not needed.
+ */
 
 struct roar_server {
  const char * server;
@@ -55,8 +59,31 @@ struct roar_mixer {
  //...
 };
 
+/* Get a list of possible devices
+ *
+ * This function returns a list of possible device names.
+ * The list is for suggestions in GUIs and simular.
+ * A implementation SHOULD (VERY, VERY RECOMMENDED) have a freeform
+ * input so the user can enter any server address.
+ *
+ * The list returned is a array of struct roar_server elements.
+ * The final element has the member server set to NULL.
+ * This element represents the default server (libroar will try to find
+ * a server on it's own).
+ *
+ */
 struct roar_server * roar_enum_servers(int flags, int dir, int socktype);
+
+/* Free the server list
+ */
 int roar_enum_servers_free(struct roar_server * servs);
+
+/* Return the number of elements in the server list
+ *
+ * This function is a optimized way to find out how may entry are in the server list.
+ * However you should not call this too often and avoid needing to know the total at all.
+ * Write software in a way that it tests for the server == NULL condition.
+ */
 ssize_t roar_enum_servers_num(struct roar_server * servs);
 
 #endif
