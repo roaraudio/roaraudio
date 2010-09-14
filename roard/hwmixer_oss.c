@@ -38,6 +38,7 @@ static struct subdev_map {
  struct subdev subdev;
 } g_subdevs[] = {
  {"Volume", {.bit = SOUND_MASK_VOLUME, .cmd_read = SOUND_MIXER_READ_VOLUME, .cmd_write = SOUND_MIXER_WRITE_VOLUME}},
+ {"PCM",    {.bit = SOUND_MASK_PCM,    .cmd_read = SOUND_MIXER_READ_PCM,    .cmd_write = SOUND_MIXER_WRITE_PCM}},
  {NULL}
 };
 
@@ -45,11 +46,15 @@ static int hwmixer_oss_open_stream(struct hwmixer_stream * stream, int devmask, 
  struct subdev * subdev;
  struct subdev * source_subdev = NULL;
  struct roar_stream_server * ss;
+ const char * reqname = subname->value;
  int i;
+ char name[80];
 
  for (i = 0; g_subdevs[i].name != NULL; i++) {
   if ( !strcasecmp(subname->key, g_subdevs[i].name) ) {
    source_subdev = &(g_subdevs[i].subdev);
+   if ( reqname == NULL )
+    reqname = g_subdevs[i].name;
    break;
   }
  }
@@ -71,6 +76,14 @@ static int hwmixer_oss_open_stream(struct hwmixer_stream * stream, int devmask, 
 
  stream->ud     = subdev;
 
+ if ( basename == NULL ) {
+  streams_set_name(stream->stream, reqname);
+ } else {
+  snprintf(name, sizeof(name)-1, "%s/%s", basename, reqname);
+  name[sizeof(name)-1] = 0;
+  streams_set_name(stream->stream, name);
+ }
+
  if (streams_get(stream->stream, &ss) != -1) {
   ROAR_STREAM(ss)->info.channels = subdev->channels;
  } else {
@@ -85,7 +98,9 @@ int hwmixer_oss_open(struct hwmixer_stream * stream, char * drv, char * dev, int
  struct roar_vio_defaults def;
  struct roar_vio_sysio_ioctl ctl;
  struct roar_keyval kv;
+ struct hwmixer_stream * cstream;
  int devmask, sdevmask;
+ size_t i;
 
  if ( vio == NULL ) {
   return -1;
@@ -137,13 +152,30 @@ int hwmixer_oss_open(struct hwmixer_stream * stream, char * drv, char * dev, int
   sdevmask = 0;
  }
 
- kv.key   = "Volume";
- kv.value = NULL;
+ if ( subnamelen == 0 ) {
+  kv.key   = "Volume";
+  kv.value = NULL;
 
- if ( hwmixer_oss_open_stream(stream, devmask, sdevmask, basename, &kv) == -1 ) {
-  roar_vio_close(vio);
-  roar_mm_free(vio);
-  return -1;
+  if ( hwmixer_oss_open_stream(stream, devmask, sdevmask, basename, &kv) == -1 ) {
+   roar_vio_close(vio);
+   roar_mm_free(vio);
+   return -1;
+  }
+ } else {
+  if ( hwmixer_oss_open_stream(stream, devmask, sdevmask, basename, subnames) == -1 ) {
+   roar_vio_close(vio);
+   roar_mm_free(vio);
+   return -1;
+  }
+
+  for (i = 1; i < subnamelen; i++) {
+   cstream = hwmixer_substream_new(stream);
+   if ( hwmixer_oss_open_stream(cstream, devmask, sdevmask, basename, &(subnames[i])) == -1 ) {
+    roar_vio_close(vio);
+    roar_mm_free(vio);
+    return -1;
+   }
+  }
  }
 
 
