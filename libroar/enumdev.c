@@ -37,12 +37,78 @@
 
 // TODO: we should put all the data in one big alloced block.
 
+static int _test_server(struct roar_server * c, int flags) {
+ struct roar_connection con;
+ if ( c->server == NULL )
+  return -1;
+
+ if ( flags & ROAR_ENUM_FLAG_NONBLOCK )
+  return 0;
+
+ if ( roar_connect(&con, (char*)c->server) == -1 )
+  return -1;
+
+ roar_disconnect(&con);
+
+ return 0;
+}
+
+#define _add(x) if ( (x) != NULL ) servers[ret++] = roar_mm_strdup((x))
+static ssize_t _esl_defaults(int flags, int dir, int socktype, char ** servers, size_t maxlen) {
+#ifdef ROAR_HAVE_LIBX11
+ struct roar_x11_connection * x11con;
+#endif
+ ssize_t ret = 0;
+ const char * new;
+ char buf[1024];
+ int i;
+
+ if ( maxlen < 10 )
+  return -1;
+
+ new = roar_libroar_get_server();
+ _add(new);
+
+ new = getenv("ROAR_SERVER");
+ _add(new);
+
+#ifdef ROAR_HAVE_LIBX11
+ if ( (x11con = roar_x11_connect(NULL)) != NULL ) {
+  new = roar_x11_get_prop(x11con, "ROAR_SERVER");
+  _add(new);
+  roar_x11_disconnect(x11con);
+ }
+#endif
+
+#if !defined(ROAR_TARGET_WIN32) && !defined(ROAR_TARGET_MICROCONTROLLER)
+ if ( (i = readlink("/etc/roarserver", buf, sizeof(buf)-1)) != -1 ) {
+   buf[i] = 0;
+   _add(buf);
+ }
+#endif
+
+ if ( (new = roar_env_get_home(0)) != NULL ) {
+  snprintf(buf, sizeof(buf)-1, "%s/%s", new, ROAR_DEFAULT_SOCK_USER);
+  buf[sizeof(buf)-1] = 0;
+  _add(buf);
+ }
+
+ servers[ret++] = roar_mm_strdup(ROAR_DEFAULT_SOCK_GLOBAL);
+ servers[ret++] = roar_mm_strdup(ROAR_DEFAULT_HOST);
+ servers[ret++] = roar_mm_strdup("::" ROAR_DEFAULT_OBJECT);
+ servers[ret++] = roar_mm_strdup("+abstract");
+ servers[ret++] = roar_mm_strdup("/tmp/muroard");
+
+ return ret;
+}
+
 struct locmed {
  int supflags;
  ssize_t (*func)(int flags, int dir, int socktype, char ** servers, size_t maxlen);
 };
 
 static struct locmed _libroar_locmod[] = {
+ {ROAR_ENUM_FLAG_NONBLOCK|ROAR_ENUM_FLAG_HARDNONBLOCK, _esl_defaults}
 };
 
 struct roar_server * roar_enum_servers(int flags, int dir, int socktype) {
@@ -50,9 +116,12 @@ struct roar_server * roar_enum_servers(int flags, int dir, int socktype) {
  struct roar_server * c;
  char * servers[64];
  size_t have = 1;
- size_t i;
+ size_t i, cp;
  ssize_t r;
  int testflags = flags;
+
+ // load config:
+ roar_libroar_get_config();
 
  if ( testflags & ROAR_ENUM_FLAG_DESC )
   testflags -= ROAR_ENUM_FLAG_DESC;
@@ -74,16 +143,21 @@ struct roar_server * roar_enum_servers(int flags, int dir, int socktype) {
 
  have--;
 
- for (i = 0; i < have; i++) {
-  c = &(ret[i]);
+ for (i = cp = 0; i < have; i++) {
+  c = &(ret[cp]);
   c->server = servers[i];
   c->description = NULL;
   c->location = NULL;
+  if ( _test_server(c, flags) == 0 ) {
+   cp++;
+  } else {
+   roar_mm_free(servers[i]);
+  }
  }
 
- ret[have].server = NULL;
- ret[have].description = roar_mm_strdup("Default server");
- ret[have].location = NULL;
+ ret[cp].server = NULL;
+ ret[cp].description = roar_mm_strdup("Default server");
+ ret[cp].location = NULL;
 
  return ret;
 }
