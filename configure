@@ -44,6 +44,7 @@ PREFIX_COMP_BINS=''
 CDROM_IS_DEV=true
 CDROM=""
 OSS_DEV=""
+OSS_MIX_DEV=""
 PROC_NET_DECNET="/proc/net/decnet"
 TTY_DEV=""
 
@@ -173,6 +174,7 @@ do
    echo '--cdrom DEV                 - Set default CDRum device'
    echo '--tty DEV                   - Set default TTY'
    echo '--oss-dev DEV               - Set default OSS device'
+   echo '--oss-mixer-dev DEV         - Set default OSS mixer device'
    echo '--proc-net-decnet FILE      - Set DECnet file for DECnet support auto detecting'
    echo '                              (ignore this on non-Linux)'
    echo '--audio-group GROUP         - Sets group of audio permitted users'
@@ -276,6 +278,10 @@ do
   ;;
   '--oss-dev')
    OSS_DEV="$2"
+   shift;
+  ;;
+  '--oss-mixer-dev')
+   OSS_MIX_DEV="$2"
    shift;
   ;;
   '--audio-group')
@@ -995,7 +1001,7 @@ fi
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.280 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.281 $ of RoarAudio
  */
 
 EOF
@@ -1844,6 +1850,38 @@ else
  then
   echo "$OSS_DEV"
   echo '#define ROAR_DEFAULT_OSS_DEV "'"$OSS_DEV"'"' >&3
+ else
+  echo 'none'
+ fi
+fi
+
+echo -n 'checking for OSS mixer device... '
+if [ -n "$OSS_MIX_DEV" ]
+then
+ if [ "$OSS_MIX_DEV" = '(none)' ]
+ then
+  echo "none (disabled by user)"
+ else
+  if $CROSS_COMPILE
+  then
+   echo "$OSS_MIX_DEV (cross compile)"
+  elif [ -e "$OSS_MIX_DEV" ]
+  then
+   echo "$OSS_MIX_DEV (forced by user)"
+  else
+   echo "$OSS_MIX_DEV (not existing, forced by user)"
+  fi
+  echo '#define ROAR_DEFAULT_OSS_MIX_DEV "'"$OSS_MIX_DEV"'"' >&3
+ fi
+elif $CROSS_COMPILE
+then
+ echo 'none (cross compiling, use --oss-dev to set default device)'
+else
+ OSS_MIX_DEV=$(ls /dev/mixer 2> /dev/null | head -n 1);
+ if [ -e "$OSS_MIX_DEV" ]
+ then
+  echo "$OSS_MIX_DEV"
+  echo '#define ROAR_DEFAULT_OSS_DEV "'"$OSS_MIX_DEV"'"' >&3
  else
   echo 'none'
  fi
