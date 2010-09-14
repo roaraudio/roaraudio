@@ -1001,7 +1001,7 @@ fi
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.281 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.282 $ of RoarAudio
  */
 
 EOF
@@ -1881,7 +1881,7 @@ else
  if [ -e "$OSS_MIX_DEV" ]
  then
   echo "$OSS_MIX_DEV"
-  echo '#define ROAR_DEFAULT_OSS_DEV "'"$OSS_MIX_DEV"'"' >&3
+  echo '#define ROAR_DEFAULT_OSS_MIX_DEV "'"$OSS_MIX_DEV"'"' >&3
  else
   echo 'none'
  fi
