@@ -25,6 +25,8 @@
 
 #include "roard.h"
 
+//#define TEST_HWMIXER_SUBSTREAMS
+
 int hwmixer_dstr_open(struct hwmixer_stream * stream, char * drv, char * dev, int fh, char * basename, struct roar_keyval * subnames, size_t subnamelen) {
  struct roar_vio_calls * vio = roar_mm_malloc(sizeof(struct roar_vio_calls));
  struct roar_vio_defaults def;
@@ -66,6 +68,19 @@ int hwmixer_dstr_open(struct hwmixer_stream * stream, char * drv, char * dev, in
  } else {
   ROAR_WARN("hwmixer_dstr_open(*): can not get object for basestream %i", stream->basestream);
  }
+
+#ifdef TEST_HWMIXER_SUBSTREAMS
+ stream = hwmixer_substream_new(stream);
+ if ( stream == NULL ) {
+  ROAR_WARN("hwmixer_dstr_open(*): can not create substream");
+ } else {
+  if (streams_get(stream->stream, &ss) != -1) {
+   ROAR_STREAM(ss)->info.channels = 2;
+  } else {
+   ROAR_WARN("hwmixer_dstr_open(*): can not get object for stream %i", stream->stream);
+  }
+ }
+#endif
 
  return 0;
 }
