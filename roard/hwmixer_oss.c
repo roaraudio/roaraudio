@@ -181,4 +181,37 @@ int hwmixer_oss_set_vol(struct hwmixer_stream * stream, int channels, int mode, 
  return roar_vio_ctl(vio, ROAR_VIO_CTL_SYSIO_IOCTL, &ctl);
 }
 
+int hwmixer_oss_get_vol(struct hwmixer_stream * stream, int channels, int mode, struct roar_mixer_settings * settings) {
+ struct roar_vio_calls * vio = stream->baseud;
+ struct roar_vio_sysio_ioctl ctl;
+ struct subdev         * subdev = stream->ud;
+ int i;
+ int l, r;
+
+ ctl.cmd = subdev->cmd_read;
+ ctl.argp = &i;
+
+ if ( roar_vio_ctl(vio, ROAR_VIO_CTL_SYSIO_IOCTL, &ctl) == -1 )
+  return -1;
+
+ l =  i       & 0xFF;
+ r = (i >> 8) & 0xFF;
+
+ if ( subdev->channels == 1 )
+  r = l;
+
+ settings->scale    = OSS_VOLUME_SCALE;
+
+ if ( channels == 1 ) {
+  settings->mixer[0] = (l + r) / 2;
+ } else if ( channels == 2 ) {
+  settings->mixer[0] = l;
+  settings->mixer[1] = r;
+ } else {
+  return -1;
+ }
+
+ return 0;
+}
+
 //ll
