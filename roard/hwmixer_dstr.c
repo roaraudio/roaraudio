@@ -25,8 +25,74 @@
 
 #include "roard.h"
 
-int hwmixer_dstr_open(struct hwmixer_stream * stream, char * drv, char * dev, int fh, char * basename, struct roar_keyval * subnames, size_t subnamelen);
-int hwmixer_dstr_close(struct hwmixer_stream * stream);
-int hwmixer_dstr_set_vol(struct hwmixer_stream * stream, int channels, int mode, struct roar_mixer_settings * settings);
+int hwmixer_dstr_open(struct hwmixer_stream * stream, char * drv, char * dev, int fh, char * basename, struct roar_keyval * subnames, size_t subnamelen) {
+ struct roar_vio_calls * vio = roar_mm_malloc(sizeof(struct roar_vio_calls));
+ struct roar_vio_defaults def;
+ struct roar_stream_server * ss;
+
+ if ( vio == NULL )
+  return -1;
+
+ if ( fh == -1 ) {
+  if ( dev == NULL ) {
+   roar_mm_free(vio);
+   return -1;
+  }
+
+  if ( roar_vio_dstr_init_defaults(&def, ROAR_VIO_DEF_TYPE_NONE, O_WRONLY|O_CREAT|O_TRUNC, 0644) == -1 ) {
+   roar_mm_free(vio);
+   return -1;
+  }
+
+  if ( roar_vio_open_dstr(vio, dev, &def, 1) == -1 ) {
+   roar_mm_free(vio);
+   return -1;
+  }
+ } else {
+  if ( roar_vio_open_fh(vio, fh) == -1 ) {
+   roar_mm_free(vio);
+   return -1;
+  }
+ }
+
+ stream->baseud = vio;
+
+ roar_vio_printf(vio, "No data yet.\n");
+ roar_vio_lseek(vio, 0, SEEK_SET);
+ roar_vio_sync(vio);
+
+ if (streams_get(stream->basestream, &ss) != -1) {
+  ROAR_STREAM(ss)->info.channels = 2;
+ } else {
+  ROAR_WARN("hwmixer_dstr_open(*): can not get object for basestream %i", stream->basestream);
+ }
+
+ return 0;
+}
+
+int hwmixer_dstr_close(struct hwmixer_stream * stream) {
+ roar_vio_close(stream->baseud);
+ roar_mm_free(stream->baseud);
+ return 0;
+}
+
+int hwmixer_dstr_set_vol(struct hwmixer_stream * stream, int channels, int mode, struct roar_mixer_settings * settings) {
+ struct roar_vio_calls * vio = stream->baseud;
+ int i;
+
+ roar_vio_printf(vio, "[Stream %i of basestream %i]\n", stream->stream, stream->basestream);
+ roar_vio_printf(vio, "Channels: %i\n", channels);
+ roar_vio_printf(vio, "Mode: %i\n", mode);
+ roar_vio_printf(vio, "Scale: %i\n", (int)settings->scale);
+ roar_vio_printf(vio, "RPG: %i/%i\n", (int)settings->rpg_mul, (int)settings->rpg_div);
+
+ for (i = 0; i < channels; i++) {
+  roar_vio_printf(vio, "Channel[%i]: %i\n", i, (int)settings->mixer[i]);
+ }
+
+ roar_vio_lseek(vio, 0, SEEK_SET);
+ roar_vio_sync(vio);
+ return 0;
+}
 
 //ll
