@@ -43,9 +43,8 @@ static int __true (void) { return 0; }
 
 struct hwmixer g_hwmixers[] = {
  {"oss",  "OSS Mixer", "/dev/mixer*", FLAG_FHSEC, hwmixer_oss_open, hwmixer_oss_close, hwmixer_oss_set_vol, hwmixer_oss_get_vol},
- {"file", "Write to plain file", "/some/file", FLAG_FHSEC, NULL, NULL, NULL, NULL},
  {"dstr", "Write to DSTR",       "/some/file", FLAG_NONE,  hwmixer_dstr_open, hwmixer_dstr_close, hwmixer_dstr_set_vol, NULL},
- {"null", "Null Mixer",          NULL, FLAG_NONE,  __true, __true, __true, __true},
+ {"null", "Null Mixer",          NULL, FLAG_NONE,  (int (*)(struct hwmixer_stream * stream, char * drv, char * dev, int fh, char * basename, struct roar_keyval * subnames, size_t subnamelen))__true, (int (*)(struct hwmixer_stream * stream))__true, (int (*)(struct hwmixer_stream * stream, int channels, int mode, struct roar_mixer_settings * settings))__true, (int (*)(struct hwmixer_stream * stream, int channels, int mode, struct roar_mixer_settings * settings))__true},
  {NULL,   NULL, NULL, FLAG_NONE, NULL, NULL, NULL, NULL}
 };
 

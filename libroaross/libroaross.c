@@ -276,6 +276,9 @@ static struct devices {
 #ifdef ROAR_DEFAULT_OSS_DEV
  {ROAR_DEFAULT_OSS_DEV, HT_WAVEFORM,  0, NULL, NULL},
 #endif
+#ifdef ROAR_DEFAULT_OSS_MIX_DEV
+ {ROAR_DEFAULT_OSS_MIX_DEV, HT_MIXER, 0, NULL, NULL},
+#endif
  {NULL, HT_NONE, 0, NULL, NULL},
 };
 

@@ -50,9 +50,11 @@ int hwmixer_oss_open(struct hwmixer_stream * stream, char * drv, char * dev, int
  }
 
  if ( fh == -1 ) {
+#ifdef ROAR_DEFAULT_OSS_MIX_DEV
   if ( dev == NULL ) {
-   dev = "/dev/mixer";
+   dev = ROAR_DEFAULT_OSS_MIX_DEV;
   }
+#endif
 
   if ( dev == NULL ) {
    roar_mm_free(vio);
