@@ -86,6 +86,11 @@ int hwmixer_dstr_open(struct hwmixer_stream * stream, char * drv, char * dev, in
 }
 
 int hwmixer_dstr_close(struct hwmixer_stream * stream) {
+ // are we a substream? if yes we do not clean up anything.
+ // streams_delete() will do all our work.
+ if ( stream->stream != stream->basestream )
+  return 0;
+
  roar_vio_close(stream->baseud);
  roar_mm_free(stream->baseud);
  return 0;
