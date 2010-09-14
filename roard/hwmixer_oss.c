@@ -25,6 +25,8 @@
 
 #include "roard.h"
 
+#if defined(ROAR_HAVE_OSS_BSD) || defined(ROAR_HAVE_OSS)
+
 #define OSS_VOLUME_SCALE 100
 
 struct subdev {
@@ -273,5 +275,7 @@ int hwmixer_oss_get_vol(struct hwmixer_stream * stream, int channels, int mode, 
 
  return 0;
 }
+
+#endif
 
 //ll
