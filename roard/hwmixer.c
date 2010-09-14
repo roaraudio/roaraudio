@@ -170,12 +170,18 @@ struct hwmixer_stream * hwmixer_substream_new(struct hwmixer_stream * parent) {
  struct hwmixer_stream * stream;
  int id;
 
+ ROAR_DBG("hwmixer_substream_new(parent=%p) = ?", parent);
+
  if ( parent == NULL )
   return NULL;
+
+ ROAR_DBG("hwmixer_substream_new(parent=%p) = ?", parent);
 
  stream = roar_mm_malloc(sizeof(struct hwmixer_stream));
  if ( stream == NULL )
   return NULL;
+
+ ROAR_DBG("hwmixer_substream_new(parent=%p) = ?", parent);
 
  if ( (id = streams_new_virtual(parent->basestream, &ss)) == -1 ) {
   roar_mm_free(stream);
@@ -193,6 +199,8 @@ struct hwmixer_stream * hwmixer_substream_new(struct hwmixer_stream * parent) {
  hwmixer_setup_info(stream);
 
  streams_set_mixerstream(id, stream);
+
+ ROAR_DBG("hwmixer_substream_new(parent=%p) = %p", parent, stream);
 
  return stream;
 }
