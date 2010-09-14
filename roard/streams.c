@@ -459,6 +459,9 @@ int streams_get_subsys (int id) {
   case ROAR_DIR_THRU:
     return streams_get_subsys(ROAR_STREAM(ss)->pos_rel_id);
    break;
+  case ROAR_DIR_MIXING:
+    return ROAR_SUBSYS_NONE;
+   break;
  }
 
  return -1;
@@ -968,6 +971,7 @@ int streams_set_mixer    (int id) {
  struct roar_stream_server * pmss;
  int i;
  int subsys;
+ int tsubsys;
 
  _CHECK_SID(id);
 
@@ -981,7 +985,8 @@ int streams_set_mixer    (int id) {
   for (i = 0; i < ROAR_STREAMS_MAX; i++) {
    if ( (pmss = g_streams[i]) != NULL ) {
     if ( streams_get_flag(i, ROAR_FLAG_PASSMIXER) == 1 ) {
-     if ( streams_get_subsys(i) == subsys ) {
+     tsubsys = streams_get_subsys(i);
+     if ( tsubsys == subsys || tsubsys == ROAR_SUBSYS_NONE ) {
       if ( &(pmss->mixer) != &(ss->mixer) ) {
        memcpy(&(pmss->mixer), &(ss->mixer), sizeof(struct roar_mixer_settings));
       }
