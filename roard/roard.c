@@ -1189,8 +1189,12 @@ int add_output (char * drv, char * dev, char * opts, int prim, int count) {
 
 #ifndef ROAR_WITHOUT_DCOMP_MIXER
 int add_hwmixer (char * drv, char * dev, char * opts, int prim, int count) {
+ char * basename = NULL;
+ char * subnames = NULL;
+ char * k, * v;
  int basestream = streams_new();
  int ret;
+ int error = 0;
 //int hwmixer_open(int basestream, char * drv, char * dev, int fh, char * basename, char * subnames) {
 
  if ( basestream == -1 )
@@ -1198,11 +1202,50 @@ int add_hwmixer (char * drv, char * dev, char * opts, int prim, int count) {
 
  streams_set_client(basestream, g_self_client);
 
+ if ( opts == NULL ) {
+  k = NULL;
+ } else {
+  k = strtok(opts, ",");
+ }
+
+ while (k != NULL) {
+//  ROAR_WARN("add_output(*): opts: %s", k);
+
+  if ( (v = strstr(k, "=")) != NULL ) {
+   *v++ = 0;
+  }
+
+  if ( strcmp(k, "primary") == 0 ) {
+   prim = 1;
+
+  } else if ( strcmp(k, "name") == 0 ) {
+   basename = v;
+  } else if ( strcmp(k, "subs") == 0 ) {
+   subnames = v;
+
+  } else if ( strcmp(k, "autoconf") == 0 ) {
+   streams_set_flag(basestream, ROAR_FLAG_AUTOCONF);
+  } else if ( strcmp(k, "passmixer") == 0 ) {
+   streams_set_flag(basestream, ROAR_FLAG_PASSMIXER);
+  } else {
+   ROAR_ERR("add_hwmixer(*): unknown option '%s'", k);
+   error++;
+  }
+
+  if ( error ) {
+   streams_delete(basestream);
+   if ( prim ) alive = 0;
+   return -1;
+  }
+
+  k = strtok(NULL, ",");
+ }
+
  if ( prim ) {
   streams_mark_primary(basestream);
  }
 
- ret = hwmixer_open(basestream, drv, dev, -1, NULL, NULL);
+ ret = hwmixer_open(basestream, drv, dev, -1, basename, subnames);
 
  if ( ret == -1 ) {
   streams_delete(basestream);
