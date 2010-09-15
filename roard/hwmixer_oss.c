@@ -130,6 +130,7 @@ int hwmixer_oss_open(struct hwmixer_stream * stream, char * drv, char * dev, int
  struct roar_keyval kv;
  struct hwmixer_stream * cstream;
  int devmask, sdevmask;
+ mixer_info info;
  size_t i;
 
  if ( vio == NULL ) {
@@ -180,6 +181,15 @@ int hwmixer_oss_open(struct hwmixer_stream * stream, char * drv, char * dev, int
 
  if ( roar_vio_ctl(vio, ROAR_VIO_CTL_SYSIO_IOCTL, &ctl) == -1 ) {
   sdevmask = 0;
+ }
+
+ if ( basename == NULL ) {
+  ctl.cmd  = SOUND_MIXER_INFO;
+  ctl.argp = &info;
+
+  if ( roar_vio_ctl(vio, ROAR_VIO_CTL_SYSIO_IOCTL, &ctl) == 0 ) {
+   basename = info.name;
+  }
  }
 
  if ( subnamelen == 0 ) {
