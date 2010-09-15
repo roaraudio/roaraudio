@@ -39,8 +39,36 @@ static struct subdev_map {
  const char * name;
  struct subdev subdev;
 } g_subdevs[] = {
- {"Volume", {.bit = SOUND_MASK_VOLUME, .cmd_read = SOUND_MIXER_READ_VOLUME, .cmd_write = SOUND_MIXER_WRITE_VOLUME}},
- {"PCM",    {.bit = SOUND_MASK_PCM,    .cmd_read = SOUND_MIXER_READ_PCM,    .cmd_write = SOUND_MIXER_WRITE_PCM}},
+ {"Volume",  {.bit = SOUND_MASK_VOLUME,  .cmd_read = SOUND_MIXER_READ_VOLUME,  .cmd_write = SOUND_MIXER_WRITE_VOLUME  }},
+ {"Bass",    {.bit = SOUND_MASK_BASS,    .cmd_read = SOUND_MIXER_READ_BASS,    .cmd_write = SOUND_MIXER_WRITE_BASS    }},
+ {"Treble",  {.bit = SOUND_MASK_TREBLE,  .cmd_read = SOUND_MIXER_READ_TREBLE,  .cmd_write = SOUND_MIXER_WRITE_TREBLE  }},
+ {"Synth",   {.bit = SOUND_MASK_SYNTH,   .cmd_read = SOUND_MIXER_READ_SYNTH,   .cmd_write = SOUND_MIXER_WRITE_SYNTH   }},
+ {"PCM",     {.bit = SOUND_MASK_PCM,     .cmd_read = SOUND_MIXER_READ_PCM,     .cmd_write = SOUND_MIXER_WRITE_PCM     }},
+ {"Speaker", {.bit = SOUND_MASK_SPEAKER, .cmd_read = SOUND_MIXER_READ_SPEAKER, .cmd_write = SOUND_MIXER_WRITE_SPEAKER }},
+ {"Line",    {.bit = SOUND_MASK_LINE,    .cmd_read = SOUND_MIXER_READ_LINE,    .cmd_write = SOUND_MIXER_WRITE_LINE    }},
+ {"Mic",     {.bit = SOUND_MASK_MIC,     .cmd_read = SOUND_MIXER_READ_MIC,     .cmd_write = SOUND_MIXER_WRITE_MIC     }},
+ {"CD",      {.bit = SOUND_MASK_CD,      .cmd_read = SOUND_MIXER_READ_CD,      .cmd_write = SOUND_MIXER_WRITE_CD      }},
+ {"Imix",    {.bit = SOUND_MASK_IMIX,    .cmd_read = SOUND_MIXER_READ_IMIX,    .cmd_write = SOUND_MIXER_WRITE_IMIX    }},
+ {"AltPCM",  {.bit = SOUND_MASK_ALTPCM,  .cmd_read = SOUND_MIXER_READ_ALTPCM,  .cmd_write = SOUND_MIXER_WRITE_ALTPCM  }},
+ {"Reclev",  {.bit = SOUND_MASK_RECLEV,  .cmd_read = SOUND_MIXER_READ_RECLEV,  .cmd_write = SOUND_MIXER_WRITE_RECLEV  }},
+ {"IGain",   {.bit = SOUND_MASK_IGAIN,   .cmd_read = SOUND_MIXER_READ_IGAIN,   .cmd_write = SOUND_MIXER_WRITE_IGAIN   }},
+ {"OGain",   {.bit = SOUND_MASK_OGAIN,   .cmd_read = SOUND_MIXER_READ_OGAIN,   .cmd_write = SOUND_MIXER_WRITE_OGAIN   }},
+ {"Line1",   {.bit = SOUND_MASK_LINE1,   .cmd_read = SOUND_MIXER_READ_LINE1,   .cmd_write = SOUND_MIXER_WRITE_LINE1   }},
+ {"Line2",   {.bit = SOUND_MASK_LINE2,   .cmd_read = SOUND_MIXER_READ_LINE2,   .cmd_write = SOUND_MIXER_WRITE_LINE2   }},
+ {"Line3",   {.bit = SOUND_MASK_LINE3,   .cmd_read = SOUND_MIXER_READ_LINE3,   .cmd_write = SOUND_MIXER_WRITE_LINE3   }},
+/*
+ {"Digital1", {.bit = SOUND_MASK_DIGITAL1, .cmd_read = SOUND_MIXER_READ_DIGITAL1, .cmd_write = SOUND_MIXER_WRITE_DIGITAL1}},
+ {"Digital2", {.bit = SOUND_MASK_DIGITAL2, .cmd_read = SOUND_MIXER_READ_DIGITAL2, .cmd_write = SOUND_MIXER_WRITE_DIGITAL2}},
+ {"Digital3", {.bit = SOUND_MASK_DIGITAL3, .cmd_read = SOUND_MIXER_READ_DIGITAL3, .cmd_write = SOUND_MIXER_WRITE_DIGITAL3}},
+ {"PhoneIn", {.bit = SOUND_MASK_PHONEIN, .cmd_read = SOUND_MIXER_READ_PHONEIN, .cmd_write = SOUND_MIXER_WRITE_PHONEIN }},
+ {"PhoneOut", {.bit = SOUND_MASK_PHONEOUT, .cmd_read = SOUND_MIXER_READ_PHONEOUT, .cmd_write = SOUND_MIXER_WRITE_PHONEOUT}},
+ {"Radio",   {.bit = SOUND_MASK_RADIO,   .cmd_read = SOUND_MIXER_READ_RADIO,   .cmd_write = SOUND_MIXER_WRITE_RADIO   }},
+ {"Video",   {.bit = SOUND_MASK_VIDEO,   .cmd_read = SOUND_MIXER_READ_VIDEO,   .cmd_write = SOUND_MIXER_WRITE_VIDEO   }},
+ {"Monitor", {.bit = SOUND_MASK_MONITOR, .cmd_read = SOUND_MIXER_READ_MONITOR, .cmd_write = SOUND_MIXER_WRITE_MONITOR }},
+*/
+ // Alias with better name:
+ {"Master",  {.bit = SOUND_MASK_VOLUME,  .cmd_read = SOUND_MIXER_READ_VOLUME,  .cmd_write = SOUND_MIXER_WRITE_VOLUME  }},
+ {"PCM2",    {.bit = SOUND_MASK_ALTPCM,  .cmd_read = SOUND_MIXER_READ_ALTPCM,  .cmd_write = SOUND_MIXER_WRITE_ALTPCM  }},
  {NULL}
 };
 
@@ -79,7 +107,7 @@ static int hwmixer_oss_open_stream(struct hwmixer_stream * stream, int devmask, 
  stream->ud     = subdev;
 
  if ( basename == NULL ) {
-  streams_set_name(stream->stream, reqname);
+  streams_set_name(stream->stream, (char*)reqname);
  } else {
   snprintf(name, sizeof(name)-1, "%s/%s", basename, reqname);
   name[sizeof(name)-1] = 0;
@@ -155,7 +183,7 @@ int hwmixer_oss_open(struct hwmixer_stream * stream, char * drv, char * dev, int
  }
 
  if ( subnamelen == 0 ) {
-  kv.key   = "Volume";
+  kv.key   = "Master";
   kv.value = NULL;
 
   if ( hwmixer_oss_open_stream(stream, devmask, sdevmask, basename, &kv) == -1 ) {
