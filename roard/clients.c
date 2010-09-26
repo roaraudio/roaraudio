@@ -133,16 +133,27 @@ int clients_new_from_fh(int fh, int proto, int byteorder, int update_nnode) {
 }
 
 int clients_delete (int id) {
+ struct roar_client_server * cs;
  int i;
  int close_client_fh = 1;
 
  ROAR_DBG("clients_delete(id=%i) = ?", id);
 
+ _CHECK_CID(id);
+
+ cs = g_clients[id];
+
+ if ( cs->waits != NULL ) {
+  for (i = 0; cs->waits[i] != NULL; i++)
+   roar_notify_core_unsubscribe(NULL, cs->waits[i]);
+
+  roar_mm_free(cs->waits);
+  cs->waits = NULL;
+ }
+
  roar_notify_core_emit_snoargs(ROAR_OE_BASICS_DELETE, -1, id, ROAR_OT_CLIENT);
 
  counters_inc(clients, -1);
-
- _CHECK_CID(id);
 
  if (ROAR_CLIENT(g_clients[id])->execed != -1) {
 //  return streams_delete(g_clients[id]->execed);
