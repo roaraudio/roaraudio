@@ -1,4 +1,5 @@
 v. 0.4beta0 - ?
+	Prereleases: 0: Sun Sep 26 2010 18:29 CEST
 	* fixed FTBFS with newer versions of RSound
 	* Added memory locking module to roard
 	* fixed libroaross's select() to work with mplayer
