@@ -155,22 +155,22 @@ int clients_delete (int id) {
 
  counters_inc(clients, -1);
 
- if (ROAR_CLIENT(g_clients[id])->execed != -1) {
+ if (ROAR_CLIENT(cs)->execed != -1) {
 //  return streams_delete(g_clients[id]->execed);
-  ROAR_CLIENT(g_clients[id])->execed = -1;
+  ROAR_CLIENT(cs)->execed = -1;
   close_client_fh = 0;
  }
 
  for (i = 0; i < ROAR_CLIENTS_MAX_STREAMS_PER_CLIENT; i++) {
-  streams_delete(ROAR_CLIENT(g_clients[id])->streams[i]);
+  streams_delete(ROAR_CLIENT(cs)->streams[i]);
  }
 
- if ( ROAR_CLIENT(g_clients[id])->fh != -1 && close_client_fh )
-  close(ROAR_CLIENT(g_clients[id])->fh);
+ if ( ROAR_CLIENT(cs)->fh != -1 && close_client_fh )
+  close(ROAR_CLIENT(cs)->fh);
 
- roar_nnode_free(&(ROAR_CLIENT(g_clients[id])->nnode));
+ roar_nnode_free(&(ROAR_CLIENT(cs)->nnode));
 
- roar_mm_free(g_clients[id]);
+ roar_mm_free(cs);
  g_clients[id] = NULL;
 
  ROAR_DBG("clients_delete(id=%i) = 0", id);
