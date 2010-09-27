@@ -38,6 +38,9 @@
 #define MAX_EVENTS_PER_GROUP  4
 #define EOL                   ROAR_NOTIFY_SPECIAL
 
+// TODO: FIXME: ROAR_NOTIFY_EGRP2EVENT() on _OE_ events?
+// TODO: refthink design of this proxy.
+
 void roar_notify_proxy_std(struct roar_notify_core * core, struct roar_event * event, void * userdata) {
  struct {
   uint32_t event_min, event_max;
