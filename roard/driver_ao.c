@@ -61,6 +61,8 @@ int driver_ao_open_vio(struct roar_vio_calls * inst, char * device, struct roar_
   }
  }
 
+ memset(&format, 0, sizeof(format));
+
  format.bits        = info->bits;
  format.channels    = info->channels;
  format.rate        = info->rate;

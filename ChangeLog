@@ -12,6 +12,7 @@ v. 0.4beta0 - ?
 	* Added hwmixer support to roard
 	* fixed LD_LIBRARY_PATH bug in roarify (GNU systems only) (pr1)
 	  (Closes: DEB#598295, CVE-2010-3363)
+	* fixed matrix pointer bug in libao driver.
 
 v. 0.3 - Sun Aug 22 2010 26:14 CEST
 	Prereleases: 0: Mon Aug 16 2010 29:58 CEST;
