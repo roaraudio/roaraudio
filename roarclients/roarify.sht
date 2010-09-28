@@ -79,7 +79,12 @@ else
  export LD_PRELOAD
 fi
 
-export LD_LIBRARY_PATH='%%%PREFIX_COMP_LIBS%%%'":$LD_LIBRARY_PATH"
+if [ "$LD_LIBRARY_PATH" = '' ]
+then
+ export LD_LIBRARY_PATH='%%%PREFIX_COMP_LIBS%%%'
+else
+ export LD_LIBRARY_PATH='%%%PREFIX_COMP_LIBS%%%'":$LD_LIBRARY_PATH"
+fi
 export PATH='%%%PREFIX_COMP_BINS%%%'":$PATH"
 
 if $print_env
