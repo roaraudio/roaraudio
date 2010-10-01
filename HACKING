@@ -10,14 +10,22 @@
 --- 1. Infos for maintainers:
 
 If you want to maintain a packet for your favorite OS please let me know!
-I would love to be in contact with the maintainers to send them infos about
+We would love to be in contact with the maintainers to send them infos about
 updates and maybe get feedback or things like init scripts or the like
 (see 2. Infos for developer).
 
-If it would make your work simpler I can put things in trunk
+If it would make your work simpler we can put things in trunk
 (info files for pkg build tools or the like). Just ask.
 
-Also if you need any help you may contact me.
+Also if you need any help you may contact us.
+
+You can conntact us at our mailinglist or on IRC.
+If you do not want to subscribe to the full traffic mailinglist
+but want to keep informed about new releases and such (very recommended)
+please join our announce list.
+
+Contact information can be found in our homepage at:
+http://roaraudio.keep-cool.org/contact.html
 
 Here is my recommendation on how to split the RoarAudio in pkgs:
 
@@ -27,11 +35,16 @@ roaraudio-common      include roard and roarclients
                       (at least the ones with no special deps)
 roaraudio-tools       includes all other tools not in roaraudio-common
                       because of special deps (if any)
-roaraudio-compat      includes libroaresd, libroararts, libroarpulse
-                      and libroaryiff. It would be nice to ask the user
+libroar-compat        includes libroaresd, libroararts, libroarpulse
+                      and libroaryiff, ... and the compatinitly binarys.
+                      It would be nice to ask the user
                       if he wants symlinks from libesd, libarts*, libpulse*.
-roaraudio-dev         includes include/
+roaraudio-dev         includes include/, *.pc and such
 someplayer-roar       pkgs from plugins/
+roaraudio-server      virtual package provided by the package containing
+                      roard. Applications should recommend this package
+                      not the package with roard directly.
+                      This is to enable the use to use an alternative server.
 
 manpages should be included in the corresponding packet.
 
@@ -39,8 +52,10 @@ If your system includes a libdnet (Linux DECnet support) please build
 it with DECnet support compiled in. There will be no strange warning messages
 anymore with DECnet enabled on a non-DECnet system. libdnet does not
 require any Kernel modules or has any non standard deps itself.
+But be aware that several systems ship a libdnet which is not DECnet support.
+In this case disable the build with libdnet.
 
-If you system includes libslp (normaly one of the deps of cups) please
+If your system includes libslp (normaly one of the deps of cups) please
 consider to build with libslp support.
 
 In addition you should configure with --runtime-detect: this will
@@ -66,6 +81,9 @@ Running roard:
 Global (system wide) roards normaly are started as root.
 Ensure it drops it's privilegs by setting --setuid/--setgid
 and maybe -U and -G.
+Common usernames are: roard, roar, roaraudio, nobody.
+You can use the init script for debian (in dist/debian-like/)
+as example.
 
 It is allways nice to use --pidfile. If you use a pidfile
 you can start and stop roard by using --start and --stop easily.
@@ -75,10 +93,10 @@ roard does the chrooting after loading everything so it is perfectly safe
 to chroot into an empty directory. In case your system includes a /var/empty
 or simular directory please do the chroot.
 
-To ensure no drops consider to add one or two --realtime
+To ensure no drops consider to add one or two --realtime.
 
-In case of a public (for LAN) server have some way for the user to set --location
-and use --slp for Zero Conf.
+In case of a public (for LAN) server have some way for the user
+to set --location and use --slp for Zero Conf.
 
 For more information see roard --help.
 
@@ -90,18 +108,17 @@ LGPL the corresponding roar replacements should be under LGPL as well.
 Because they link libroar independent of what licenses they are under
 they are downgraded to GPL. This may change in future.
 
-Because of that I *require* that *everything* that is contributed by
-someone I get under LGPL so I can upgrade code to LGPL if needed
-in future without asking. Code I get under a different license
-will *NOT* get into trunk nor will be hosted by me.
+Because of that we *require* that *everything* that is contributed by
+someone we get under LGPL so we can upgrade code to LGPL if needed
+in future without asking. Code we get under a different license
+will *NOT* get into trunk nor will be hosted by us.
 
-Also add full contact infos when sending code to me, this includes:
+Also add full contact infos when sending code to us, this includes:
 1) Full name
 2) nickname
 3) E-Mail
 4) OpenPGP key
 
 When sending code please sign it with OpenPGP.
-
 
 #ll
