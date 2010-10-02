@@ -31,21 +31,6 @@
 
 #ifdef ROAR_TARGET_MICROCONTROLLER
 
-#define id_t      int
-#define pid_t     int
-#define uid_t     int
-#define gid_t     int
-#define socklen_t int
-#define mode_t    unsigned int
-#define off_t     int
-/*
-#define size_t    unsigned int
-*/
-#define ssize_t   signed   int
-#define time_t    int64_t
-
-#define sa_family_t char
-
 #define SHUT_RD   0
 #define SHUT_WR   1
 #define SHUT_RDWR 2

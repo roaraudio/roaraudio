@@ -29,20 +29,46 @@
 #ifndef _ROARAUDIO_TARGETHACKS_H_
 #define _ROARAUDIO_TARGETHACKS_H_
 
-#if 0
+#ifndef ROAR_HAVE_T_ID_T
 #define id_t      int
+#endif
+
+#ifndef ROAR_HAVE_T_PID_T
 #define pid_t     int
+#endif
+
+#ifndef ROAR_HAVE_T_UID_T
 #define uid_t     int
+#endif
+
+#ifndef ROAR_HAVE_T_GID_T
 #define gid_t     int
+#endif
+
+#ifndef ROAR_HAVE_T_SOCKLEN_T
 #define socklen_t int
+#endif
+
+#ifndef ROAR_HAVE_T_MODE_T
 #define mode_t    unsigned int
+#endif
+
+#ifndef ROAR_HAVE_T_OFF_T
 #define off_t     int
+#endif
+
 /*
 #define size_t    unsigned int
 */
+#ifndef ROAR_HAVE_T_SSIZE_T
 #define ssize_t   signed   int
-#define time_t    int64_t
+#endif
 
+#ifndef ROAR_HAVE_T_TIME_T
+#define time_t    int64_t
+#endif
+
+#ifndef ROAR_HAVE_T_SA_FAMILY_T
 #define sa_family_t char
 #endif
 
