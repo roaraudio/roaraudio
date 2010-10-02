@@ -72,7 +72,7 @@ int    bind    (int sockfd, const struct sockaddr *my_addr,   socklen_t addrlen)
 int    connect (int sockfd, const struct sockaddr *serv_addr, socklen_t addrlen);
 char * strerror(int errnum);
 
-// sam dummy funcs:
+// some dummy funcs:
 #define getpid()    2
 #define getuid()    0
 #define getgid()    0
