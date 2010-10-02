@@ -1056,7 +1056,7 @@ fi
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.283 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.284 $ of RoarAudio
  */
 
 EOF
@@ -1265,7 +1265,7 @@ test_type ROAR_HAVE_T_UID_T              uid_t
 test_type ROAR_HAVE_T_GID_T              gid_t
 test_type ROAR_HAVE_T_SOCKLEN_T          socklen_t
 test_type ROAR_HAVE_T_MODE_T             mode_t
-test_type ROAR_HAVE_T_off_T              off_t
+test_type ROAR_HAVE_T_OFF_T              off_t
 test_type ROAR_HAVE_T_SSIZE_T            ssize_t
 test_type ROAR_HAVE_T_TIME_T             time_t
 test_type ROAR_HAVE_T_SA_FAMILY_T        sa_family_t  0                        -- sys/socket.h
