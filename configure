@@ -605,7 +605,8 @@ test_lib_defmake () {
 
  [ "$subdir" = '%' ] && subdir=''
 
- envlib=`echo "$lib" | cut -d/ -f1 | tr A-Z.+- a-z___`
+ envlib=`echo "$lib"   | cut -d/ -f1 | tr A-Z/.+- a-z____`
+ envname=`echo "$name" | cut -d/ -f1 | tr A-Z/.+- a-z____`
 
  if [ "$lib" != '--' ]
  then
@@ -671,13 +672,18 @@ test_lib_defmake () {
    echo "$subdir_var=$subdir" >&4
   [ "$lib" != 'c' ] && \
    echo "lib_$envlib=$LIBS" >&4
-  [ "$lib" != 'c' ] && \
+  if [ "$lib" != 'c' ]
+  then
    eval "lib_$envlib='$LIBS'"
+  else
+   eval "libname_$envname=true"
+  fi
  else
   [ "$subdir" != '' ] && \
    echo "subdir_$subdir=" >&4
   [ "$lib" != 'c' ] && \
    echo "lib_$envlib=" >&4
+  eval "libname_$envname=false"
  fi
  echo >&5
  echo >&5
@@ -793,6 +799,55 @@ test_version () {
   echo "#define ${DEF} 0" >&3
  fi
 
+}
+
+test_type () {
+ DEF="$1"
+ NAME="$2"
+ INITVAL="$3"
+ DASHDASH="$4"
+ shift; shift; shift; shift;
+ HEADERS="stdint.h string.h unistd.h sys/types.h $*" #including headers here let
+                                                     #them get checked for presence.
+
+ [ "$INITVAL" = '' ] && INITVAL='0'
+
+ echo -n "checking for type $NAME... "
+ echo "TEST TYPE: $NAME" >&5
+
+ echo "// type test for type $NAME"  >  $TF_C # need a clean file, write something
+ for _h in $HEADERS
+ do
+  envname=`echo "$_h" | cut -d/ -f1 | tr A-Z/.+- a-z____`
+  eval "_t=\$libname_$envname"
+  if [ "$_t" = 'false' ]
+  then
+   echo "// not including <$_h> as it was tested as not present"  >> $TF_C
+  else
+   echo "#include <$_h>"  >> $TF_C
+  fi
+ done
+ echo "int main (void) { $NAME _var = $INITVAL; return 0; }" >> $TF_C
+
+ echo "--- BEGIN OF CODE BLOCK ---" >&5
+ cat $TF_C >&5
+ echo "--- END OF CODE BLOCK ---" >&5
+
+ echo "TYPE($NAME) HAS COMPILER/LINKER OUTPUT:" >&5
+ echo "--- BEGIN OF CHILD OUTPUT BLOCK ---" >&5
+ $CCTF >&5 2>&5;
+ R=$?
+ echo "--- END OF CHILD OUTPUT BLOCK ---" >&5
+
+ if [ "$R" = '0' ]
+ then
+  echo "#define $DEF" >&3
+  echo 'ok'
+  echo "TYPE($NAME) IS OK" >&5
+ else
+  echo 'not found'
+  echo "TYPE($NAME) NOT FOUND" >&5
+ fi
 }
 
 test_pa_type () {
@@ -1001,7 +1056,7 @@ fi
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.282 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.283 $ of RoarAudio
  */
 
 EOF
@@ -1185,6 +1240,10 @@ echo >&3
 # break --minimal on full systems
 OLD_MINIMAL=$MINIMAL
 MINIMAL=false
+
+# Test haders:
+test_lib_defmake ROAR_HAVE_H_STDINT      %            stdint.h      c          -- stdint.h
+test_lib_defmake ROAR_HAVE_H_STRING      %            string.h      c          -- string.h
 test_lib_defmake ROAR_HAVE_H_SYS_TYPES   %            sys/types.h   c          -- sys/types.h
 test_lib_defmake ROAR_HAVE_H_SYS_TIME    %            sys/time.h    c          -- sys/time.h
 test_lib_defmake ROAR_HAVE_H_SYS_IOCTL   %            sys/ioctl.h   c          -- sys/ioctl.h
@@ -1197,6 +1256,19 @@ test_lib_defmake ROAR_HAVE_H_MMSYSTEM    %            mmsystem.h    c          -
 test_lib_defmake ROAR_HAVE_H_ESD         libroaresd   esd.h         c          -- esd.h
 test_lib_defmake ROAR_HAVE_H_ARTSC       libroararts  artsc.h       c          -- kde/artsc/artsc.h
 test_lib_defmake ROAR_HAVE_H_ICONV       %            iconv.h       c          -- iconv.h
+
+# Test types:
+#         DEF                            type/name    init value               -- headers
+test_type ROAR_HAVE_T_ID_T               id_t
+test_type ROAR_HAVE_T_PID_T              pid_t
+test_type ROAR_HAVE_T_UID_T              uid_t
+test_type ROAR_HAVE_T_GID_T              gid_t
+test_type ROAR_HAVE_T_SOCKLEN_T          socklen_t
+test_type ROAR_HAVE_T_MODE_T             mode_t
+test_type ROAR_HAVE_T_off_T              off_t
+test_type ROAR_HAVE_T_SSIZE_T            ssize_t
+test_type ROAR_HAVE_T_TIME_T             time_t
+test_type ROAR_HAVE_T_SA_FAMILY_T        sa_family_t  0                        -- sys/socket.h
 MINIMAL=$OLD_MINIMAL
 
 echo >&3
