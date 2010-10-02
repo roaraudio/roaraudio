@@ -1,4 +1,4 @@
-//win32hacks.h:
+//muconthacks.h:
 
 /*
  *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2008-2010
