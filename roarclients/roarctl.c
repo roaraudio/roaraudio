@@ -59,6 +59,7 @@ void usage (void) {
         "  --help                  - Show this help\n"
         "  --verbose   -v          - Show verbose output\n"
         "  --list-aiprofiles       - Show audio info profiles and exit\n"
+        "  --enum-servers          - Show a list of possible servers\n"
        );
 
  printf("\nCommands:\n\n");
@@ -114,6 +115,36 @@ void usage (void) {
         "  liststreams             - Gets Information about streams\n"
         "  allinfo                 - Get all infos\n"
        );
+}
+
+int enum_servers (void) {
+ struct roar_server * list;
+ struct roar_server * c;
+ int flags    = ROAR_ENUM_FLAG_DESC|ROAR_ENUM_FLAG_LOCATION;
+ int dir      = -1;
+ int socktype = -1;
+ int i;
+
+ if ( (list = roar_enum_servers(flags, dir, socktype)) == NULL )
+  return -1;
+
+ printf("Server           Location         Description\n");
+ printf("----------------------------------------------------------------------\n");
+
+ for (i = 0; ; i++) {
+  c = &(list[i]);
+  printf("%-16s %-16s %s\n",
+             c->server      == NULL ? "(default)" : c->server,
+             c->location    == NULL ? ""          : c->location,
+             c->description == NULL ? ""          : c->description
+        );
+  if ( c->server == NULL )
+   break;
+ }
+
+ roar_enum_servers_free(list);
+
+ return 0;
 }
 
 #ifdef ROAR_HAVE_GETTIMEOFDAY
@@ -944,6 +975,9 @@ int main (int argc, char * argv[]) {
    return 0;
   } else if ( strcmp(k, "--list-aiprofiles") == 0 ) {
    list_aiprofiles();
+   return 0;
+  } else if ( strcmp(k, "--enum-servers") == 0 ) {
+   enum_servers();
    return 0;
   } else if ( *k == '-' ) {
    fprintf(stderr, "Error: unknown argument: %s\n", k);
