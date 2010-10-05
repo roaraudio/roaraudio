@@ -44,7 +44,6 @@ char * x11display = NULL;
 
 int add_output (char * drv, char * dev, char * opts, int prim, int count);
 
-#ifdef DEBUG
 void dbg_notify_cb(struct roar_notify_core * core, struct roar_event * event, void * userdata) {
  char buf[1024] = "";
  char estr[1024] = "/* ROAR_??? */";
@@ -77,6 +76,7 @@ void dbg_notify_cb(struct roar_notify_core * core, struct roar_event * event, vo
   snprintf(estr, sizeof(estr)-1, "/* ROAR_NOTIFY_EGRP2EVENT(%i) */", ROAR_NOTIFY_EVENT2EGRP(ev));
  } else if ( ROAR_NOTIFY_IS_OE(ev) ) {
   switch (ev) {
+   // OE basics:
    case ROAR_OE_BASICS_CHANGE_STATE:
      snprintf(estr, sizeof(estr)-1, "/* ROAR_OE_BASICS_CHANGE_STATE */");
     break;
@@ -89,6 +89,14 @@ void dbg_notify_cb(struct roar_notify_core * core, struct roar_event * event, vo
    case ROAR_OE_BASICS_DELETE:
      snprintf(estr, sizeof(estr)-1, "/* ROAR_OE_BASICS_DELETE */");
     break;
+   // OE Streams:
+   case ROAR_OE_STREAM_CHANGE_VOLUME:
+     snprintf(estr, sizeof(estr)-1, "/* ROAR_OE_STREAM_CHANGE_VOLUME */");
+    break;
+   case ROAR_OE_STREAM_XRUN:
+     snprintf(estr, sizeof(estr)-1, "/* ROAR_OE_STREAM_XRUN */");
+    break;
+   // OE Default:
    default:
      snprintf(estr, sizeof(estr)-1, "/* ROAR_NOTIFY_OE2EVENT(%i) */", ROAR_NOTIFY_EVENT2OE(ev));
     break;
@@ -104,7 +112,8 @@ void dbg_notify_cb(struct roar_notify_core * core, struct roar_event * event, vo
   buf[sizeof(buf)-1] = 0;
  }
 
- ROAR_DBG("dbg_notify_cb(core=%p, event=%p{.flags=0x%.8x, event=0x%.8x%s, %s.emitter=%i, .target=%i, .target_type=%i%s, .arg0=%i, .arg1=%i, .arg2=%p}, userdata=%p) = (void)",
+ ROAR_INFO("dbg_notify_cb(core=%p, event=%p{.flags=0x%.8x, event=0x%.8x%s, %s.emitter=%i, .target=%i, .target_type=%i%s, .arg0=%i, .arg1=%i, .arg2=%p}, userdata=%p) = (void)",
+           0 /* always print: minlevel = 0 */,
            core, event,
            (int)event->flags,
            (int)event->event,
@@ -133,7 +142,6 @@ void dbg_notify_cb_register (void) {
 
  roar_notify_core_subscribe(NULL, &event, dbg_notify_cb, NULL);
 }
-#endif
 
 #ifdef ROAR_HAVE_MAIN_ARGS
 void usage (void) {
@@ -1524,6 +1532,7 @@ int main (void) {
  }
 
 #ifdef DEBUG
+ // enable early in case we have DEBUG set.
  dbg_notify_cb_register();
 #endif
 
@@ -2214,6 +2223,13 @@ int main (void) {
   }
 
  }
+#endif
+
+#ifndef DEBUG
+ // notify dbg if requested, if in DEBUG mode
+ // do not able because it got enabled early.
+ if ( g_verbose >= 4 )
+  dbg_notify_cb_register();
 #endif
 
 #ifndef ROAR_WITHOUT_DCOMP_MIXER
