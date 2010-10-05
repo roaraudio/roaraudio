@@ -1001,6 +1001,8 @@ int streams_set_mixer    (int id) {
   }
  }
 
+ roar_notify_core_emit_snoargs(ROAR_OE_STREAM_CHANGE_VOLUME, -1, id, ROAR_OT_STREAM);
+
  if ( !streams_get_flag(id, ROAR_FLAG_HWMIXER) )
   return 0;
 
@@ -1362,9 +1364,11 @@ int streams_fill_mixbuffer2 (int id, struct roar_audio_info * info) {
  if ( stream_shift_out_buffer(id, indata, &inlen_got) == -1 ) {
   if ( ss->is_new ) {
    ss->pre_underruns++;
+   roar_notify_core_emit_simple(ROAR_OE_STREAM_XRUN, -1, id, ROAR_OT_STREAM, ROAR_XRUN_UNDER_PRE, ss->pre_underruns, NULL, 0);
   } else {
    ROAR_WARN("streams_fill_mixbuffer2(id=%i, info=...): underrun in stream", id);
    ss->post_underruns++;
+   roar_notify_core_emit_simple(ROAR_OE_STREAM_XRUN, -1, id, ROAR_OT_STREAM, ROAR_XRUN_UNDER_POST, ss->post_underruns, NULL, 0);
   }
   memset(outdata, 0, outlen);
   return 0;
@@ -2043,6 +2047,7 @@ int streams_send_mon   (int id) {
 
   if ( ret > 0 && errno == 0 ) {
    ROAR_WARN("streams_send_mon(id=%i): Overrun in stream: wrote %i of %i bytes, %i bytes missing", id, (int)ret, olen, olen-(int)ret);
+   roar_notify_core_emit_simple(ROAR_OE_STREAM_XRUN, -1, id, ROAR_OT_STREAM, ROAR_XRUN_OVER_POST, -1, NULL, 0);
    s->pos = ROAR_MATH_OVERFLOW_ADD(s->pos, ROAR_OUTPUT_CALC_OUTBUFSAMP(&(s->info), ret)*s->info.channels);
    if ( ss->state != ROAR_STREAMSTATE_OLD ) {
     //ROAR_INFO("streams_send_mon(id=%i): stream state: %s->old", ROAR_DBG_INFO_VERBOSE, id, roar_streamstate2str(ss->state));
