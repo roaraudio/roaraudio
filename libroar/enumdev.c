@@ -102,13 +102,54 @@ static ssize_t _esl_defaults(int flags, int dir, int socktype, char ** servers, 
  return ret;
 }
 
+static ssize_t _esl_slp(int flags, int dir, int socktype, char ** servers, size_t maxlen) {
+ struct roar_slp_cookie cookie;
+ int offset;
+ char * url;
+ size_t i;
+ ssize_t ret = 0;
+
+ if ( roar_slp_cookie_init(&cookie, NULL) == -1 )
+  return -1;
+
+ if ( roar_slp_search(&cookie, ROAR_SLP_URL_TYPE) == -1 )
+  return -1;
+
+ if ( cookie.matchcount == 0 )
+  return -1;
+
+ ROAR_DBG("_esl_slp(*): cookie.matchcount=%i", (int)cookie.matchcount);
+
+ for (i = 0; i < (size_t)cookie.matchcount && (ssize_t)maxlen > ret; i++) {
+  url = cookie.match[i].url;
+  ROAR_DBG("_esl_slp(*): cookie.match[%i].url='%s'", (int)i, url);
+
+  offset = 0;
+
+  if ( !strncmp(url, ROAR_SLP_URL_TYPE "://", ROAR_SLP_URL_TYPE_LEN + 3) )
+   offset = ROAR_SLP_URL_TYPE_LEN + 3;
+
+  ROAR_DBG("_esl_slp(*): url=%p, offset=%i", url, offset);
+  url = &(url[offset]);
+  ROAR_DBG("_esl_slp(*): url='%s'", url);
+
+  if ( *url == 0 )
+   continue;
+
+  _add(url);
+ }
+
+ return ret;
+}
+
 struct locmed {
  int supflags;
  ssize_t (*func)(int flags, int dir, int socktype, char ** servers, size_t maxlen);
 };
 
 static struct locmed _libroar_locmod[] = {
- {ROAR_ENUM_FLAG_NONBLOCK|ROAR_ENUM_FLAG_HARDNONBLOCK, _esl_defaults}
+ {ROAR_ENUM_FLAG_NONBLOCK|ROAR_ENUM_FLAG_HARDNONBLOCK, _esl_defaults},
+ {ROAR_ENUM_FLAG_NONE,                                 _esl_slp}
 };
 
 struct roar_server * roar_enum_servers(int flags, int dir, int socktype) {

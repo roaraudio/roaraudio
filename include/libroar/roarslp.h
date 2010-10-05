@@ -45,7 +45,7 @@
 #define ROAR_SLP_URL_TYPE_ESD      "service:mixer.fellig:esd"
 #define ROAR_SLP_URL_TYPE_ESD_LEN  24
 #define ROAR_SLP_URL_TYPE          ROAR_SLP_URL_TYPE_ROAR
-#define ROAR_SLP_URL_TYPE_LEN      ROAR_SLP_URL_TYPE_ESD_LEN
+#define ROAR_SLP_URL_TYPE_LEN      ROAR_SLP_URL_TYPE_ROAR_LEN
 
 #ifndef ROAR_HAVE_LIBSLP
 #define SLPHandle  void *
