@@ -1,4 +1,4 @@
-#($Revision: 1.18 $)
+#($Revision: 1.19 $)
 !SECTION: Commands
 +DEVCTL = 33
  +:version (uint8)
@@ -107,22 +107,22 @@
   +:indexlen (uint16)
   +::reserved (uint8)
   +::type (uint8)
-  +ITST_VERSION     = NEEDS_CONST
+  +ITST_VERSION     = 0
   #(Format: Product/Version <VendorID/VendorName> (comments))
   #(Example: roard/0.4 <0/RoarAudio> (Debian build))
-  +ITST_LOCATION    = NEEDS_CONST
+  +ITST_LOCATION    = 1
   #(freeform)
-  +ITST_DESCRIPTION = NEEDS_CONST
+  +ITST_DESCRIPTION = 2
   #(freeform)
-  +ITST_CONTACT     = NEEDS_CONST
+  +ITST_CONTACT     = 3
   #(Format: first ["']nick["'] last (comment) <email>/OpenPGPkey/Phone/Room)
-  +ITST_UN_SYSNAME  = NEEDS_CONST #(uname -s)
-  +ITST_UN_NODENAME = NEEDS_CONST #(uname -n)
-  +ITST_UN_RELEASE  = NEEDS_CONST #(uname -r)
-  +ITST_UN_MACHINE  = NEEDS_CONST #(uname -m)
-  +ITST_SERIAL      = NEEDS_CONST
-  +ITST_ADDRESS     = NEEDS_CONST
-  +ITST_UIURL       = NEEDS_CONST
+  +ITST_UN_SYSNAME  = 4 #(uname -s)
+  +ITST_UN_NODENAME = 5 #(uname -n)
+  +ITST_UN_RELEASE  = 6 #(uname -r)
+  +ITST_UN_MACHINE  = 7 #(uname -m)
+  +ITST_SERIAL      = 8
+  +ITST_ADDRESS     = 9
+  +ITST_UIURL       = 10
   +::len (uint16)
   +:strings (dataarray)
  +IT_COUNTERS = 2
