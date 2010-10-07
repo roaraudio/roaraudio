@@ -38,6 +38,28 @@
 
 #include "libroar.h"
 
+struct roar_server_info {
+ char * version;
+ char * location;
+ char * description;
+ char * contact;
+ char * serial;
+ char * address;
+ char * uiurl;
+ struct {
+  char * sysname;
+  char * release;
+  char * nodename;
+  char * machine;
+ } un;
+};
+
+struct roar_server_info * roar_server_info(struct roar_connection * con);
+int roar_server_info_free(struct roar_server_info * info);
+
+int roar_server_info_to_mes(struct roar_message * mes, struct roar_server_info * info);
+int roar_server_info_from_mes(struct roar_server_info * info, struct roar_message * mes);
+
 #endif
 
 //ll
