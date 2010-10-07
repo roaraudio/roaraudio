@@ -333,6 +333,8 @@ int sources_add_cf (char * driver, char * device, char * container, char * optio
 
  //if ( roar_vio_open_file(vio, device, O_RDONLY, 0644) == -1 ) {
  if ( roar_vio_open_dstr(vio, device, &def, 1) == -1 ) {
+  roar_vio_init_calls(vio); // clear the VIO object again
+                            // from things roar_vio_open_dstr() left.
   _ret(-1);
  }
 
