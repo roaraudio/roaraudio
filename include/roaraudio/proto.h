@@ -172,6 +172,24 @@
 #define ROAR_MF_MF                  0x00000080 /* Meta Framing              | Versions: 1   */
 #define ROAR_MF_UNIID               0x00000100 /* Stream ID is Universal ID | Versions: 2   */
 
+// Types for SERVER_INFO:
+#define ROAR_IT_SERVER              1
+#define ROAR_IT_COUNTERS            2
+//#define ROAR_IT_LISTEN 3
+
+// Types for ROAR_IT_SERVER (Information Type Server Type = ITST)
+#define ROAR_ITST_VERSION           0
+#define ROAR_ITST_LOCATION          1
+#define ROAR_ITST_DESCRIPTION       2
+#define ROAR_ITST_CONTACT           3
+#define ROAR_ITST_UN_SYSNAME        4
+#define ROAR_ITST_UN_NODENAME       5
+#define ROAR_ITST_UN_RELEASE        6
+#define ROAR_ITST_UN_MACHINE        7
+#define ROAR_ITST_SERIAL            8
+#define ROAR_ITST_ADDRESS           9
+#define ROAR_ITST_UIURL             10
+
 struct roar_timeofday {
  int64_t  t_sec;   // secund part of system time
  uint64_t t_nsec;  // nano-secund part of system time // we use a int64 here so all types are int64...
