@@ -164,6 +164,7 @@ void usage (void) {
         " --setuid              - UserID to the audio user as specified via -U\n"
         " --sysclocksync        - calculate exact sample rate using the system clock\n"
         " --location  LOC       - Set lion readable location of server\n"
+        " --description  DESC   - Set lion readable description of server\n"
 #ifdef SUPPORT_PIDFILE
         " --pidfile PIDFILE     - Write a pidfile at PIDFILE\n"
 #endif
@@ -435,7 +436,8 @@ int init_config (void) {
  g_config->streams[ROAR_DIR_MIDI_OUT].flags = ROAR_FLAG_SYNC;
  g_config->streams[ROAR_DIR_BIDIR   ].flags = ROAR_FLAG_ANTIECHO;
 
- g_config->location = "***default***";
+ g_config->location    = "***default***";
+ g_config->description = "***default***";
 
  g_config->memlock_level = -1;
 
@@ -1312,6 +1314,7 @@ int register_slp (int unreg, char * sockname) {
  char addr[1024];
  char attr[1024] = "";
  char * location;
+ char * description;
 
  if ( sockname != NULL )
   sn = sockname;
@@ -1333,16 +1336,22 @@ int register_slp (int unreg, char * sockname) {
    return -1;
   }
 
+  if ( SLPEscape(g_config->description, &description, SLP_FALSE) != SLP_OK ) {
+   ROAR_ERR("Error using SLPEscape() on server location, really bad!");
+   SLPClose(hslp);
+   return -1;
+  }
+
   snprintf(attr, sizeof(attr), "(wave-rate=%i),(wave-channels=%i),(wave-bits=%i),"
 #ifndef ROAR_WITHOUT_DCOMP_LIGHT
                                "(light-channels=%i),"
 #endif
-                               "(location=%s)",
+                               "(location=%s),(description=%s)",
            g_sa->rate, g_sa->channels, g_sa->bits,
 #ifndef ROAR_WITHOUT_DCOMP_LIGHT
            g_light_state.channels,
 #endif
-           location
+           location, description
           );
 
   /* Register a service with SLP */
@@ -1700,6 +1709,9 @@ int main (void) {
   } else if ( strcmp(k, "--location") == 0 ) {
    _CKHAVEARGS(1);
    g_config->location = argv[++i];
+  } else if ( strcmp(k, "--description") == 0 ) {
+   _CKHAVEARGS(1);
+   g_config->description = argv[++i];
   } else if ( strcmp(k, "--pidfile") == 0 ) {
    _CKHAVEARGS(1);
 #ifdef SUPPORT_PIDFILE

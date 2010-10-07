@@ -184,6 +184,7 @@ struct roard_config {
   int                        mixer_channels;
  } streams[ROAR_DIR_DIRIDS];
  char * location;
+ char * description;
  size_t jumbo_mtu;
  int memlock_level;
 } * g_config;
