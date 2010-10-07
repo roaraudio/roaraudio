@@ -142,6 +142,7 @@
 #include "vio_tantalos.h"
 #include "client.h"
 #include "basic.h"
+#include "serverinfo.h"
 #include "stream.h"
 #include "simple.h"
 #include "cdrom.h"
