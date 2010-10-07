@@ -1,4 +1,4 @@
-#($Revision: 1.17 $)
+#($Revision: 1.18 $)
 !SECTION: Commands
 +DEVCTL = 33
  +:version (uint8)
@@ -108,7 +108,8 @@
   +::reserved (uint8)
   +::type (uint8)
   +ITST_VERSION     = NEEDS_CONST
-  #(Format: Product/Version <vendor> (comments))
+  #(Format: Product/Version <VendorID/VendorName> (comments))
+  #(Example: roard/0.4 <0/RoarAudio> (Debian build))
   +ITST_LOCATION    = NEEDS_CONST
   #(freeform)
   +ITST_DESCRIPTION = NEEDS_CONST
