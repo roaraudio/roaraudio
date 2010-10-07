@@ -1,4 +1,4 @@
-#($Revision: 1.16 $)
+#($Revision: 1.17 $)
 !SECTION: Commands
 +DEVCTL = 33
  +:version (uint8)
@@ -102,7 +102,28 @@
  +:data... (dataarray)
 *SERVER_INFO
  +IT_SERVER   = 1
-  :(TODO)
+  +:version (uint8)
+  +:reserved (uint8)
+  +:indexlen (uint16)
+  +::reserved (uint8)
+  +::type (uint8)
+  +ITST_VERSION     = NEEDS_CONST
+  #(Format: Product/Version <vendor> (comments))
+  +ITST_LOCATION    = NEEDS_CONST
+  #(freeform)
+  +ITST_DESCRIPTION = NEEDS_CONST
+  #(freeform)
+  +ITST_CONTACT     = NEEDS_CONST
+  #(Format: first ["']nick["'] last (comment) <email>/OpenPGPkey/Phone/Room)
+  +ITST_UN_SYSNAME  = NEEDS_CONST #(uname -s)
+  +ITST_UN_NODENAME = NEEDS_CONST #(uname -n)
+  +ITST_UN_RELEASE  = NEEDS_CONST #(uname -r)
+  +ITST_UN_MACHINE  = NEEDS_CONST #(uname -m)
+  +ITST_SERIAL      = NEEDS_CONST
+  +ITST_ADDRESS     = NEEDS_CONST
+  +ITST_UIURL       = NEEDS_CONST
+  +::len (uint16)
+  +:strings (dataarray)
  +IT_COUNTERS = 2
   +:version (uint8)
   +:reserved (uint24)
