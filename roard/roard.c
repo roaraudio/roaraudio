@@ -2445,6 +2445,8 @@ int main (void) {
  }
 #endif
 
+ ROAR_INFO("Process ID: %i", ROAR_DBG_INFO_INFO, (int)getpid());
+
 #ifdef SUPPORT_PIDFILE
  if ( pidfile != NULL ) {
   if ( roar_vio_open_file(&pidfile_vio, pidfile, O_WRONLY|O_CREAT, 0644) == -1 ) {
