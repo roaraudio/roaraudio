@@ -200,6 +200,20 @@ int ping (struct roar_connection * con, int num) {
 }
 #endif
 
+void server_info (struct roar_connection * con) {
+ struct roar_server_info * info = roar_server_info(con);
+
+ if ( info == NULL ) {
+  fprintf(stderr, "Error: can not get server info\n");
+  return;
+ }
+
+ if ( info->version != NULL )
+  printf("Stream version        : %s\n", info->version);
+
+ roar_server_info_free(info);
+}
+
 void server_oinfo (struct roar_connection * con) {
  struct roar_stream s;
 
@@ -1064,6 +1078,8 @@ int main (int argc, char * argv[]) {
 
   } else if ( !strcmp(k, "whoami") ) {
    printf("My client ID is: %i\n", roar_get_clientid(&con));
+  } else if ( !strcmp(k, "serverinfo") ) {
+   server_info(&con);
   } else if ( !strcmp(k, "serveroinfo") ) {
    server_oinfo(&con);
   } else if ( !strcmp(k, "listclients") ) {
