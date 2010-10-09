@@ -110,6 +110,7 @@ void usage (void) {
         "  metasave ID FILE        - Saves meta data of stream ID to file FILE\n"
         "  metaload ID FILE        - Loads meta data from file FILE and set it on stream ID\n"
         "\n"
+        "  serverinfo              - Gets general information about the server\n"
         "  serveroinfo             - Gets Information about server output\n"
         "  listclients             - Gets Information about clients\n"
         "  liststreams             - Gets Information about streams\n"
