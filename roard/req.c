@@ -561,7 +561,11 @@ int req_on_server_info (int client, struct roar_message * mes, char ** data, uin
    memset(&info, 0, sizeof(info));
 
    info.version = "roard/" PACKAGE_VERSION " <" DEVICE_VENDOR_STRING ">";
-   info.location = g_config->location;
+
+   if ( !!strcmp(g_config->location, CONF_DEF_STRING) )
+    info.location = g_config->location;
+
+   if ( !!strcmp(g_config->description, CONF_DEF_STRING) )
    info.description = g_config->description;
 
 #ifdef ROAR_HAVE_UNAME

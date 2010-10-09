@@ -176,6 +176,8 @@ int g_terminate;
 
 struct roar_audio_info * g_sa, * g_max_sa;
 
+#define CONF_DEF_STRING "***default***"
+
 struct roard_config {
  uint32_t flags;
  struct {

@@ -436,8 +436,8 @@ int init_config (void) {
  g_config->streams[ROAR_DIR_MIDI_OUT].flags = ROAR_FLAG_SYNC;
  g_config->streams[ROAR_DIR_BIDIR   ].flags = ROAR_FLAG_ANTIECHO;
 
- g_config->location    = "***default***";
- g_config->description = "***default***";
+ g_config->location    = CONF_DEF_STRING;
+ g_config->description = CONF_DEF_STRING;
 
  g_config->memlock_level = -1;
 
