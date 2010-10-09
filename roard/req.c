@@ -535,6 +535,40 @@ int req_on_list_meta   (int client, struct roar_message * mes, char ** data, uin
 }
 #endif
 
+int req_on_server_info (int client, struct roar_message * mes, char ** data, uint32_t flags[2]) {
+ struct roar_server_info info;
+ uint16_t * d16;
+
+ if ( mes->datalen != 4 )
+  return -1;
+
+ d16 = (uint16_t*)mes->data;
+
+ // check version.
+ if ( ROAR_NET2HOST16(d16[0]) != 0 )
+  return -1;
+
+ switch (ROAR_NET2HOST16(d16[1])) {
+  case ROAR_IT_SERVER:
+   memset(&info, 0, sizeof(info));
+
+   info.version = "roard/? <0/RoarAudio>";
+   info.location = g_config->location;
+   info.description = g_config->description;
+
+   if ( roar_server_info_to_mes(mes, &info) == -1 )
+    return -1;
+  break;
+  default: /* unknown request */
+    return -1;
+   break;
+ }
+
+ mes->cmd = ROAR_CMD_OK;
+
+ return 0;
+}
+
 int req_on_server_oinfo    (int client, struct roar_message * mes, char ** data, uint32_t flags[2]) {
  struct roar_stream s;
 //ROAR_DIR_OUTPUT
