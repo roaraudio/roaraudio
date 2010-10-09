@@ -35,11 +35,29 @@
 
 #include "libroar.h"
 
+#ifdef ROAR_HAVE_LIBGCRYPT
+#include <gcrypt.h>
+#endif
+
 int roar_crypto_init (void) {
  static int inited = 0;
 
  if ( inited )
   return 0;
+
+#ifdef ROAR_HAVE_LIBGCRYPT
+ if ( !gcry_control(GCRYCTL_INITIALIZATION_FINISHED_P) ) {
+  ROAR_INFO("roar_crypto_init(void): libgcrypt not yet inited, initing it now.", ROAR_DBG_INFO_INFO);
+  if ( !gcry_check_version(GCRYPT_VERSION) ) {
+   ROAR_ERR("roar_crypto_init(void): libgcrypt version missmatch");
+   return -1;
+  }
+
+  // what about SECMEM?
+
+  gcry_control(GCRYCTL_INITIALIZATION_FINISHED, 0);
+ }
+#endif
 
  inited = 1;
  return 0;
