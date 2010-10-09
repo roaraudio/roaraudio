@@ -38,6 +38,17 @@
 
 #include "libroar.h"
 
+#define ROAR_RANDOM_NONE         0
+#define ROAR_RANDOM_VERY_WEAK    1
+#define ROAR_RANDOM_WEAK         2
+#define ROAR_RANDOM_NORMAL       3
+#define ROAR_RANDOM_STRONG       4
+#define ROAR_RANDOM_VERY_STRONG  5
+
+int roar_random_gen(void * buffer, size_t len, int quality);
+
+void * roar_random_genbuf(size_t len, int quality, int locked);
+
 #endif
 
 //ll
