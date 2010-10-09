@@ -42,8 +42,10 @@ struct ie {
 };
 
 struct roar_server_info * roar_server_info(struct roar_connection * con) {
+ struct roar_server_info * ret;
  struct roar_message mes;
  uint16_t * d16;
+ char * data = NULL;
 
  memset(&mes, 0, sizeof(mes));
 
@@ -54,13 +56,18 @@ struct roar_server_info * roar_server_info(struct roar_connection * con) {
  d16[0] = ROAR_HOST2NET16(0); // version
  d16[1] = ROAR_HOST2NET16(ROAR_IT_SERVER);
 
- if ( roar_req(con, &mes, NULL) != 0 )
+ if ( roar_req(con, &mes, &data) != 0 )
   return NULL;
 
  if ( mes.cmd != ROAR_CMD_OK )
   return NULL;
 
- return roar_server_info_from_mes(&mes);
+ ret = roar_server_info_from_mes(&mes, data);
+
+ if ( data != NULL )
+  free(data);
+
+ return ret;
 }
 
 int roar_server_info_free(struct roar_server_info * info) {
@@ -74,7 +81,7 @@ int roar_server_info_free(struct roar_server_info * info) {
 
 #define _add(t, m) do { if ( info->m != NULL && (sl = strlen(info->m)) != 0 ) { iebuf[idx].type = (t); iebuf[idx].len = sl; iebuf[idx].buf = (info->m); idx++; needlen += 4 + sl; } } while (0)
 
-int roar_server_info_to_mes(struct roar_message * mes, struct roar_server_info * info) {
+int roar_server_info_to_mes(struct roar_message * mes, struct roar_server_info * info, void ** data) {
  size_t needlen = 4;
  size_t sl;
  int idx = 0;
@@ -82,6 +89,7 @@ int roar_server_info_to_mes(struct roar_message * mes, struct roar_server_info *
  uint16_t * d16, * dptr;
  char * textpart;
  int i;
+ char * mesdata;
 
  if ( mes == NULL || info == NULL )
   return -1;
@@ -99,17 +107,25 @@ int roar_server_info_to_mes(struct roar_message * mes, struct roar_server_info *
  _add(ROAR_ITST_UN_MACHINE, un.machine);
 
  if ( needlen > LIBROAR_BUFFER_MSGDATA ) {
-  return -1;
+  if ( data == NULL )
+   return -1;
+
+  mesdata = malloc(needlen);
+
+  if ( mesdata == NULL )
+   return -1;
+ } else {
+  mesdata = mes->data;
  }
 
  memset(mes, 0, sizeof(struct roar_message));
 
  mes->datalen = needlen;
 
- d16 = (uint16_t*)mes->data;
+ d16 = (uint16_t*)mesdata;
 
- mes->data[0] = 0; // version
- mes->data[1] = 0; // reserved
+ mesdata[0] = 0; // version
+ mesdata[1] = 0; // reserved
 
  d16[1] = ROAR_HOST2NET16(idx);
 
@@ -121,7 +137,7 @@ int roar_server_info_to_mes(struct roar_message * mes, struct roar_server_info *
   dptr += 2;
  }
 
- textpart = mes->data + (4 + 4*idx);
+ textpart = mesdata + (4 + 4*idx);
 
  for (i = 0; i < idx; i++) {
   memcpy(textpart, iebuf[i].buf, iebuf[i].len);
@@ -131,7 +147,7 @@ int roar_server_info_to_mes(struct roar_message * mes, struct roar_server_info *
  return 0;
 }
 
-struct roar_server_info * roar_server_info_from_mes(struct roar_message * mes) {
+struct roar_server_info * roar_server_info_from_mes(struct roar_message * mes, void * data) {
  struct ie iebuf[sizeof(struct roar_server_info)/sizeof(char*)];
  struct ie * ieptr;
  struct roar_server_info * ret = NULL;
@@ -142,11 +158,18 @@ struct roar_server_info * roar_server_info_from_mes(struct roar_message * mes) {
  char * textpart;
  char * textbuf;
  char ** tptr;
+ char * mesdata;
 
  ROAR_DBG("roar_server_info(mes=%p{.datalen=%llu) = ?", mes, (long long unsigned int)mes->datalen);
 
  if ( mes == NULL )
   return NULL;
+
+ if ( data == NULL ) {
+  mesdata = mes->data;
+ } else {
+  mesdata = data;
+ }
 
  memset(iebuf, 0, sizeof(iebuf));
 
@@ -158,17 +181,17 @@ struct roar_server_info * roar_server_info_from_mes(struct roar_message * mes) {
 
  ROAR_DBG("roar_server_info(mes=%p) = ?", mes);
 
- if ( mes->data[0] != 0 ) /* version */
+ if ( mesdata[0] != 0 ) /* version */
   return NULL;
 
  ROAR_DBG("roar_server_info(mes=%p) = ?", mes);
 
- if ( mes->data[1] != 0 ) /* reserved */
+ if ( mesdata[1] != 0 ) /* reserved */
   return NULL;
 
  ROAR_DBG("roar_server_info(mes=%p) = ?", mes);
 
- d16 = (uint16_t*)mes->data;
+ d16 = (uint16_t*)mesdata;
 
  idx = ROAR_NET2HOST16(d16[1]);
 
@@ -190,10 +213,10 @@ struct roar_server_info * roar_server_info_from_mes(struct roar_message * mes) {
 
  ROAR_DBG("roar_server_info(mes=%p) = ?", mes);
 
- d16 = (uint16_t*)mes->data;
+ d16 = (uint16_t*)mesdata;
  dptr = &(d16[2]);
 
- textpart = mes->data + (4 + 4*idx);
+ textpart = mesdata + (4 + 4*idx);
 
  ROAR_DBG("roar_server_info(mes=%p): needlen=%llu", mes, (long long unsigned int)needlen);
 
