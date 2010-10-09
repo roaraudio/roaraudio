@@ -1,4 +1,4 @@
-#($Revision: 1.19 $)
+#($Revision: 1.20 $)
 !SECTION: Commands
 +DEVCTL = 33
  +:version (uint8)
@@ -211,8 +211,8 @@
   +HF_SONG       =  7 #(This identifys the Song. This may for example be used with Tantalos)
   +HF_APP        =  8 #(The application, device or other source generating this object)
   +HF_FILE       =  9 #(The source file for this object)
-  +HT_ARTIST     = 10 #(This identifies any kind of artist/composer/interpret, to be used with Tantalos)
-  +HT_WORK       = 11 #(This identifies any kind of work/album/compilation, to be used with Tantalos)
+  +HF_ARTIST     = 10 #(This identifies any kind of artist/composer/interpret, to be used with Tantalos)
+  +HF_WORK       = 11 #(This identifies any kind of work/album/compilation, to be used with Tantalos)
  +PARA_WININFO   = 7
   +:wsystype (uint8)
   +:socktype (uint8)
