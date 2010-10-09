@@ -40,47 +40,48 @@
 #endif
 
 static const struct hashes {
- const int    id;
- const char * name;
+ const int     id;
+ const char *  name;
+ const ssize_t dlen;
 } _libroar_hashes[] = {
 /*
-grep '^  +HT_' doc/new-cmds | sed 's/ *#(.*)$//; s/^  +HT_//; s/ *=.*$//' | while read n; do printf " {ROAR_HT_%-12s \"%-12s},\n" $n, $n\"; done
+grep '^  +HT_' doc/new-cmds | sed 's/ *#(.*)$//; s/^  +HT_//; s/ *=.*$//' | while read n; do printf " {ROAR_HT_%-12s \"%-12s -1   },\n" $n, $n\",; done
 */
- {ROAR_HT_NONE,        "NONE"       },
- {ROAR_HT_MD5,         "MD5"        },
- {ROAR_HT_SHA1,        "SHA1"       },
- {ROAR_HT_RIPEMD160,   "RIPEMD160"  },
- {ROAR_HT_MD2,         "MD2"        },
- {ROAR_HT_TIGER,       "TIGER"      },
- {ROAR_HT_HAVAL,       "HAVAL"      },
- {ROAR_HT_SHA256,      "SHA256"     },
- {ROAR_HT_SHA384,      "SHA384"     },
- {ROAR_HT_SHA512,      "SHA512"     },
- {ROAR_HT_SHA224,      "SHA224"     },
- {ROAR_HT_MD4,         "MD4"        },
- {ROAR_HT_CRC32,       "CRC32"      },
- {ROAR_HT_RFC1510,     "RFC1510"    },
- {ROAR_HT_RFC2440,     "RFC2440"    },
- {ROAR_HT_WHIRLPOOL,   "WHIRLPOOL"  },
- {ROAR_HT_UUID,        "UUID"       },
- {ROAR_HT_GTN8,        "GTN8"       },
- {ROAR_HT_GTN16,       "GTN16"      },
- {ROAR_HT_GTN32,       "GTN32"      },
- {ROAR_HT_GTN64,       "GTN64"      },
- {ROAR_HT_CLIENTID,    "CLIENTID"   },
- {ROAR_HT_STREAMID,    "STREAMID"   },
- {ROAR_HT_SOURCEID,    "SOURCEID"   },
- {ROAR_HT_SAMPLEID,    "SAMPLEID"   },
- {ROAR_HT_MIXERID,     "MIXERID"    },
- {ROAR_HT_BRIDGEID,    "BRIDGEID"   },
- {ROAR_HT_LISTENID,    "LISTENID"   },
- {ROAR_HT_ACTIONID,    "ACTIONID"   },
- {ROAR_HT_MSGQUEUEID,  "MSGQUEUEID" },
- {ROAR_HT_MSGBUSID,    "MSGBUSID"   },
- {ROAR_HT_GTIN8,       "GTIN8"      },
- {ROAR_HT_GTIN13,      "GTIN13"     },
- {ROAR_HT_ISBN10,      "ISBN10"     },
- {ROAR_HT_ISBN13,      "ISBN13"     },
+ {ROAR_HT_NONE,        "NONE",       -1   },
+ {ROAR_HT_MD5,         "MD5",         16  },
+ {ROAR_HT_SHA1,        "SHA1",        20  },
+ {ROAR_HT_RIPEMD160,   "RIPEMD160",   20  },
+ {ROAR_HT_MD2,         "MD2",        -1   },
+ {ROAR_HT_TIGER,       "TIGER",       24  },
+ {ROAR_HT_HAVAL,       "HAVAL",      -1   },
+ {ROAR_HT_SHA256,      "SHA256",      32  },
+ {ROAR_HT_SHA384,      "SHA384",      48  },
+ {ROAR_HT_SHA512,      "SHA512",      64  },
+ {ROAR_HT_SHA224,      "SHA224",      28  },
+ {ROAR_HT_MD4,         "MD4",         16  },
+ {ROAR_HT_CRC32,       "CRC32",       4   },
+ {ROAR_HT_RFC1510,     "RFC1510",     4   },
+ {ROAR_HT_RFC2440,     "RFC2440",     3   },
+ {ROAR_HT_WHIRLPOOL,   "WHIRLPOOL",   64  },
+ {ROAR_HT_UUID,        "UUID",        16  },
+ {ROAR_HT_GTN8,        "GTN8",        1   },
+ {ROAR_HT_GTN16,       "GTN16",       2   },
+ {ROAR_HT_GTN32,       "GTN32",       4   },
+ {ROAR_HT_GTN64,       "GTN64",       8   },
+ {ROAR_HT_CLIENTID,    "CLIENTID",   -1   },
+ {ROAR_HT_STREAMID,    "STREAMID",   -1   },
+ {ROAR_HT_SOURCEID,    "SOURCEID",   -1   },
+ {ROAR_HT_SAMPLEID,    "SAMPLEID",   -1   },
+ {ROAR_HT_MIXERID,     "MIXERID",    -1   },
+ {ROAR_HT_BRIDGEID,    "BRIDGEID",   -1   },
+ {ROAR_HT_LISTENID,    "LISTENID",   -1   },
+ {ROAR_HT_ACTIONID,    "ACTIONID",   -1   },
+ {ROAR_HT_MSGQUEUEID,  "MSGQUEUEID", -1   },
+ {ROAR_HT_MSGBUSID,    "MSGBUSID",   -1   },
+ {ROAR_HT_GTIN8,       "GTIN8",       4   },
+ {ROAR_HT_GTIN13,      "GTIN13",      8   },
+ {ROAR_HT_ISBN10,      "ISBN10",      8   },
+ {ROAR_HT_ISBN13,      "ISBN13",      8   },
  {-1, NULL}
 };
 
@@ -120,6 +121,27 @@ int          roar_str2ht (const char * ht) {
    return _libroar_hashes[i].id;
 
  return -1;
+}
+
+ssize_t      roar_ht_digestlen (const int    ht) {
+ int i;
+
+ for (i = 0; _libroar_hashes[i].id != -1; i++)
+  if ( _libroar_hashes[i].id == ht )
+   return _libroar_hashes[i].dlen;
+
+ return -1;
+}
+
+int          roar_ht_is_supported(const int    ht) {
+#ifdef ROAR_HAVE_LIBGCRYPT
+ if ( roar_ht2gcrypt_tested(ht) == -1 )
+  return 0;
+
+ return 1;
+#else
+ return 0;
+#endif
 }
 
 int roar_hash_buffer(void * digest, const void * data, size_t datalen, int algo) {

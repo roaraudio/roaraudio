@@ -78,6 +78,10 @@
 const char * roar_ht2str (const int    ht);
 int          roar_str2ht (const char * ht);
 
+ssize_t      roar_ht_digestlen (const int    ht);
+
+int          roar_ht_is_supported(const int    ht);
+
 struct roar_hash_state;
 
 int roar_hash_buffer(void * digest, const void * data, size_t datalen, int algo);
