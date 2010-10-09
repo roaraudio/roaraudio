@@ -25,6 +25,11 @@
 
 #include "roard.h"
 
+// include for uname() used by req_on_server_info()
+#ifdef ROAR_HAVE_UNAME
+#include <sys/utsname.h>
+#endif
+
 static void * _dataspace(struct roar_message * mes, char ** data, uint32_t flags[2], size_t len) {
  if ( len <= LIBROAR_BUFFER_MSGDATA )
   return mes->data;
@@ -536,6 +541,9 @@ int req_on_list_meta   (int client, struct roar_message * mes, char ** data, uin
 #endif
 
 int req_on_server_info (int client, struct roar_message * mes, char ** data, uint32_t flags[2]) {
+#ifdef ROAR_HAVE_UNAME
+ struct utsname utsname;
+#endif
  struct roar_server_info info;
  uint16_t * d16;
 
@@ -552,9 +560,18 @@ int req_on_server_info (int client, struct roar_message * mes, char ** data, uin
   case ROAR_IT_SERVER:
    memset(&info, 0, sizeof(info));
 
-   info.version = "roard/? <0/RoarAudio>";
+   info.version = "roard/" PACKAGE_VERSION " <" DEVICE_VENDOR_STRING ">";
    info.location = g_config->location;
    info.description = g_config->description;
+
+#ifdef ROAR_HAVE_UNAME
+   if ( uname(&utsname) == 0 ) {
+    info.un.sysname  = utsname.sysname;
+    info.un.release  = utsname.release;
+    info.un.nodename = utsname.nodename;
+    info.un.machine  = utsname.machine;
+   }
+#endif
 
    if ( roar_server_info_to_mes(mes, &info) == -1 )
     return -1;
