@@ -200,6 +200,7 @@ int ping (struct roar_connection * con, int num) {
 }
 #endif
 
+#define _pm(m,n) if ( info->m != NULL ) printf("Server %-15s: %s\n", (n), (info->m));
 void server_info (struct roar_connection * con) {
  struct roar_server_info * info = roar_server_info(con);
 
@@ -208,11 +209,21 @@ void server_info (struct roar_connection * con) {
   return;
  }
 
- if ( info->version != NULL )
-  printf("Stream version        : %s\n", info->version);
+ _pm(version, "version");
+ _pm(location, "location");
+ _pm(description, "description");
+ _pm(contact, "contact");
+ _pm(serial, "serial");
+ _pm(address, "address");
+ _pm(uiurl, "UI URL");
+ _pm(un.sysname, "System sysname");
+ _pm(un.release, "System release");
+ _pm(un.nodename, "System nodename");
+ _pm(un.machine, "System machine");
 
  roar_server_info_free(info);
 }
+#undef _pm
 
 void server_oinfo (struct roar_connection * con) {
  struct roar_stream s;
