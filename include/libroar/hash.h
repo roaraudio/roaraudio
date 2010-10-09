@@ -38,6 +38,43 @@
 
 #include "libroar.h"
 
+// the hashtypes:
+#define ROAR_HT_NONE        0
+#define ROAR_HT_MD5         1
+#define ROAR_HT_SHA1        2
+#define ROAR_HT_RIPEMD160   3
+#define ROAR_HT_MD2         5
+#define ROAR_HT_TIGER       6
+#define ROAR_HT_HAVAL       7
+#define ROAR_HT_SHA256      8
+#define ROAR_HT_SHA384      9
+#define ROAR_HT_SHA512      10
+#define ROAR_HT_SHA224      11
+#define ROAR_HT_MD4         301
+#define ROAR_HT_CRC32       302
+#define ROAR_HT_RFC1510     303
+#define ROAR_HT_RFC2440     304
+#define ROAR_HT_WHIRLPOOL   305
+#define ROAR_HT_UUID        70000
+#define ROAR_HT_GTN8        70001
+#define ROAR_HT_GTN16       70002
+#define ROAR_HT_GTN32       70004
+#define ROAR_HT_GTN64       70008
+#define ROAR_HT_CLIENTID    71001
+#define ROAR_HT_STREAMID    71002
+#define ROAR_HT_SOURCEID    71003
+#define ROAR_HT_SAMPLEID    71004
+#define ROAR_HT_MIXERID     71005
+#define ROAR_HT_BRIDGEID    71006
+#define ROAR_HT_LISTENID    71007
+#define ROAR_HT_ACTIONID    71008
+#define ROAR_HT_MSGQUEUEID  71009
+#define ROAR_HT_MSGBUSID    71010
+#define ROAR_HT_GTIN8       72001
+#define ROAR_HT_GTIN13      72002
+#define ROAR_HT_ISBN10      72003
+#define ROAR_HT_ISBN13      ROAR_HT_GTIN13
+
 #endif
 
 //ll
