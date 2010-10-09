@@ -35,6 +35,10 @@
 
 #include "libroar.h"
 
+#ifdef ROAR_HAVE_LIBGCRYPT
+#include <gcrypt.h>
+#endif
+
 static const struct hashes {
  const int    id;
  const char * name;
@@ -80,6 +84,24 @@ grep '^  +HT_' doc/new-cmds | sed 's/ *#(.*)$//; s/^  +HT_//; s/ *=.*$//' | whil
  {-1, NULL}
 };
 
+static inline int roar_ht2gcrypt_tested (const int ht) {
+ const char * name;
+
+ if ( ht > 512 )
+  return -1;
+
+ // test the algo:
+ name = gcry_md_algo_name(ht);
+
+ if ( name == NULL )
+  return -1;
+
+ if ( *name == 0 )
+  return -1;
+
+ return ht;
+}
+
 const char * roar_ht2str (const int    ht) {
  int i;
 
@@ -104,8 +126,44 @@ int roar_hash_buffer(void * digest, const void * data, size_t datalen, int algo)
  return roar_hash_salted_buffer(digest, data, datalen, algo, NULL, 0);
 }
 
+#ifdef ROAR_HAVE_LIBGCRYPT
+static inline int roar_hash_salted_buffer_gcrypt(void * digest, const void * data, size_t datalen, int algo, const void * salt, size_t saltlen) {
+ gcry_md_hd_t hdl;
+
+ algo = roar_ht2gcrypt_tested(algo);
+ if ( algo == -1 )
+  return -1;
+
+
+ if ( salt == NULL ) {
+  // optimized for unsalted:
+  gcry_md_hash_buffer(algo, digest, data, datalen);
+  return 0;
+ } else {
+  if ( gcry_md_open(&hdl, algo, 0) != 0 )
+   return -1;
+
+  gcry_md_write(hdl, data, datalen);
+  gcry_md_write(hdl, salt, saltlen);
+
+  memcpy(digest, gcry_md_read(hdl, algo), gcry_md_get_algo_dlen(algo));
+
+  gcry_md_close(hdl);
+ }
+
+ return 0;
+}
+#endif
+
 int roar_hash_salted_buffer(void * digest, const void * data, size_t datalen, int algo, const void * salt, size_t saltlen) {
+ if ( digest == NULL || data == NULL )
+  return -1;
+
+#ifdef ROAR_HAVE_LIBGCRYPT
+ return roar_hash_salted_buffer_gcrypt(digest, data, datalen, algo, salt, saltlen);
+#else
  return -1;
+#endif
 }
 
 //ll
