@@ -75,6 +75,14 @@
 #define ROAR_HT_ISBN10      72003
 #define ROAR_HT_ISBN13      ROAR_HT_GTIN13
 
+const char * roar_ht2str (const int    ht);
+int          roar_str2ht (const char * ht);
+
+struct roar_hash_state;
+
+int roar_hash_buffer(void * digest, const void * data, size_t datalen, int algo);
+int roar_hash_salted_buffer(void * digest, const void * data, size_t datalen, int algo, const void * salt, size_t saltlen);
+
 #endif
 
 //ll
