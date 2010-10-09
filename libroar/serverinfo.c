@@ -114,6 +114,8 @@ int roar_server_info_to_mes(struct roar_message * mes, struct roar_server_info *
 
   if ( mesdata == NULL )
    return -1;
+
+  *data = mesdata;
  } else {
   mesdata = mes->data;
  }

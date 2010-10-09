@@ -57,8 +57,8 @@ struct roar_server_info {
 struct roar_server_info * roar_server_info(struct roar_connection * con);
 int roar_server_info_free(struct roar_server_info * info);
 
-int roar_server_info_to_mes(struct roar_message * mes, struct roar_server_info * info);
-struct roar_server_info * roar_server_info_from_mes(struct roar_message * mes);
+int roar_server_info_to_mes(struct roar_message * mes, struct roar_server_info * info, void ** data);
+struct roar_server_info * roar_server_info_from_mes(struct roar_message * mes, void * data);
 
 #endif
 

@@ -573,8 +573,13 @@ int req_on_server_info (int client, struct roar_message * mes, char ** data, uin
    }
 #endif
 
-   if ( roar_server_info_to_mes(mes, &info) == -1 )
+   *data = NULL;
+
+   if ( roar_server_info_to_mes(mes, &info, data) == -1 )
     return -1;
+
+   if ( *data != NULL )
+    flags[1] |= COMMAND_FLAG_OUT_LONGDATA;
   break;
   default: /* unknown request */
     return -1;
