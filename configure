@@ -12,6 +12,12 @@ PATH="$PATH":/sbin:/usr/sbin:/usr/local/sbin:/usr/pkg/sbin # Ensure superuser pa
 
 #set -x
 
+# IDs officaly assigned
+DEV_VENDOR=0
+DEV_VENDOR_NAME='RoarAudio'
+#--------
+
+
 TF_C=testit.c
 TF_E=./testit
 LDPATH=''
@@ -114,6 +120,11 @@ ROARD_CFREQ='' # cycle frequens for roard, normaly 100Hz
 no_lib_ssl=true
 
 _CARGS="$@";
+
+echo -n "checking for version of this package... "
+VERSION=`head -n 1 ChangeLog | cut -d' ' -f2`
+echo "$VERSION"
+
 
 echo -n "checking for C compiler... "
 if [ "$CC" != '' ]
@@ -1018,6 +1029,11 @@ fi
 
 # now write the cc name to Makefile.conf
 {
+ echo "VERSION=$VERSION"
+ echo "DEV_VENDOR=$DEV_VENDOR"
+ echo "DEV_VENDOR_NAME=$DEV_VENDOR_NAME"
+ echo "DEV_VENDOR_STRING=$DEV_VENDOR/$DEV_VENDOR_NAME"
+ echo
  echo "SHARED=$SHARED"
  echo "SHARED_CF=$SHARED_CF"
  echo "SHARED_SUFFIX=$SHARED_SUFFIX"
@@ -1056,7 +1072,7 @@ fi
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.284 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.285 $ of RoarAudio
  */
 
 EOF
