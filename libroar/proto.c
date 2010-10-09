@@ -292,7 +292,7 @@ int roar_vreq         (struct roar_vio_calls * vio, struct roar_message * mes, c
  if ( roar_vsend_message(vio, mes, data ? *data : NULL) != 0 )
   return -1;
 
- if ( data )
+ if ( data != NULL )
   free(*data);
 
  roar_vio_sync(vio); // we need to do this becasue of ssl/compressed links
