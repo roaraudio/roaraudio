@@ -72,7 +72,7 @@ int roar_server_info_free(struct roar_server_info * info) {
  return 0;
 }
 
-#define _add(t, m) do { if ( (sl = strlen(info->m)) != 0 ) { iebuf[idx].type = (t); iebuf[idx].len = sl; iebuf[idx].buf = (info->m); idx++; needlen += 4 + sl; } } while (0)
+#define _add(t, m) do { if ( info->m != NULL && (sl = strlen(info->m)) != 0 ) { iebuf[idx].type = (t); iebuf[idx].len = sl; iebuf[idx].buf = (info->m); idx++; needlen += 4 + sl; } } while (0)
 
 int roar_server_info_to_mes(struct roar_message * mes, struct roar_server_info * info) {
  size_t needlen = 4;
@@ -143,28 +143,44 @@ struct roar_server_info * roar_server_info_from_mes(struct roar_message * mes) {
  char * textbuf;
  char ** tptr;
 
+ ROAR_DBG("roar_server_info(mes=%p{.datalen=%llu) = ?", mes, (long long unsigned int)mes->datalen);
+
  if ( mes == NULL )
   return NULL;
 
  memset(iebuf, 0, sizeof(iebuf));
 
+ ROAR_DBG("roar_server_info(mes=%p) = ?", mes);
+
  // some basic texts like version:
  if ( mes->datalen < needlen )
   return NULL;
 
+ ROAR_DBG("roar_server_info(mes=%p) = ?", mes);
+
  if ( mes->data[0] != 0 ) /* version */
   return NULL;
 
+ ROAR_DBG("roar_server_info(mes=%p) = ?", mes);
+
  if ( mes->data[1] != 0 ) /* reserved */
   return NULL;
+
+ ROAR_DBG("roar_server_info(mes=%p) = ?", mes);
 
  d16 = (uint16_t*)mes->data;
 
  idx = ROAR_NET2HOST16(d16[1]);
 
+ ROAR_DBG("roar_server_info(mes=%p): idx=%i", mes, idx);
+
  // return error if our index buffer is too short.
  if ( idx > (sizeof(iebuf)/sizeof(*iebuf)) )
   return NULL;
+
+ ROAR_DBG("roar_server_info(mes=%p) = ?", mes);
+
+ ROAR_DBG("roar_server_info(mes=%p): needlen=%llu", mes, (long long unsigned int)needlen);
 
  needlen += 4*idx;
 
@@ -172,10 +188,14 @@ struct roar_server_info * roar_server_info_from_mes(struct roar_message * mes) {
  if ( mes->datalen < needlen )
   return NULL;
 
+ ROAR_DBG("roar_server_info(mes=%p) = ?", mes);
+
  d16 = (uint16_t*)mes->data;
  dptr = &(d16[2]);
 
  textpart = mes->data + (4 + 4*idx);
+
+ ROAR_DBG("roar_server_info(mes=%p): needlen=%llu", mes, (long long unsigned int)needlen);
 
  for (i = 0; i < idx; i++) {
   iebuf[i].type = ROAR_NET2HOST16(dptr[0]) & 0xFF;
@@ -183,17 +203,25 @@ struct roar_server_info * roar_server_info_from_mes(struct roar_message * mes) {
   iebuf[i].buf  = textpart;
   needlen  += iebuf[i].len;
   textpart += iebuf[i].len;
+  dptr += 2;
+  ROAR_DBG("roar_server_info(mes=%p): iebuf[i]={.len=%llu,...}", mes, (long long unsigned int)iebuf[i].len);
  }
+
+ ROAR_DBG("roar_server_info(mes=%p): needlen=%llu", mes, (long long unsigned int)needlen);
 
  // recheck if we have all the data...
  if ( mes->datalen < needlen )
   return NULL;
+
+ ROAR_DBG("roar_server_info(mes=%p) = ?", mes);
 
  // alloc the needed space. this can be reduced in future to the actual needed value.
  ret = roar_mm_malloc(2*sizeof(struct roar_server_info) + mes->datalen);
 
  if ( ret == NULL )
   return NULL;
+
+ ROAR_DBG("roar_server_info(mes=%p) = ?", mes);
 
  // for the size see the alloc call above.
  memset(ret, 0, 2*sizeof(struct roar_server_info) + mes->datalen);
@@ -234,6 +262,8 @@ struct roar_server_info * roar_server_info_from_mes(struct roar_message * mes) {
    *textbuf = 0; // set \0
    textbuf++;
  }
+
+ ROAR_DBG("roar_server_info(mes=%p) = %p", mes, ret);
 
  return ret;
 }
