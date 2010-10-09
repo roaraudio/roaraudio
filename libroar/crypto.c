@@ -1,4 +1,4 @@
-//random.c:
+//crypto.c:
 
 /*
  *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2010
@@ -35,76 +35,14 @@
 
 #include "libroar.h"
 
-#ifdef ROAR_HAVE_LIBGCRYPT
-#include <gcrypt.h>
-#endif
-
-static void roar_random_init (void) {
+int roar_crypto_init (void) {
  static int inited = 0;
 
- if (inited)
-  return;
-
- // add stuff here needed to bring up random source.
- roar_crypto_init();
-
- inited = 1;
-}
-
-int roar_random_gen(void * buffer, size_t len, int quality) {
- if ( len == 0 )
+ if ( inited )
   return 0;
 
- if ( buffer == NULL )
-  return -1;
-
- roar_random_init();
-
- switch (quality) {
-  case ROAR_RANDOM_NONE:
-    // no entropy:
-    memset(buffer, 0, len);
-   break;
-#ifdef ROAR_HAVE_LIBGCRYPT
-  case ROAR_RANDOM_VERY_WEAK:
-  case ROAR_RANDOM_WEAK:
-    gcry_create_nonce(buffer, len);
-   break;
-  case ROAR_RANDOM_NORMAL:
-  case ROAR_RANDOM_STRONG:
-    gcry_randomize(buffer, len, GCRY_STRONG_RANDOM);
-   break;
-  case ROAR_RANDOM_VERY_STRONG:
-    gcry_randomize(buffer, len, GCRY_VERY_STRONG_RANDOM);
-   break;
-#endif
-  default:
-    return -1;
-   break;
- }
-
+ inited = 1;
  return 0;
-}
-
-void * roar_random_genbuf(size_t len, int quality, int locked) {
- void * ret = roar_mm_malloc(len);
-
- if (ret == NULL)
-  return NULL;
-
- if ( locked ) {
-  if ( roar_mm_mlock(ret, len) == -1 ) {
-   roar_mm_free(ret);
-   return NULL;
-  }
- }
-
- if ( roar_random_gen(ret, len, quality) == -1 ) {
-  roar_mm_free(ret);
-  return NULL;
- }
-
- return ret;
 }
 
 //ll

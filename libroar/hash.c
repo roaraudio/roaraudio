@@ -134,6 +134,8 @@ ssize_t      roar_ht_digestlen (const int    ht) {
 }
 
 int          roar_ht_is_supported(const int    ht) {
+ roar_crypto_init();
+
 #ifdef ROAR_HAVE_LIBGCRYPT
  if ( roar_ht2gcrypt_tested(ht) == -1 )
   return 0;
@@ -145,12 +147,16 @@ int          roar_ht_is_supported(const int    ht) {
 }
 
 int roar_hash_buffer(void * digest, const void * data, size_t datalen, int algo) {
+ roar_crypto_init();
+
  return roar_hash_salted_buffer(digest, data, datalen, algo, NULL, 0);
 }
 
 #ifdef ROAR_HAVE_LIBGCRYPT
 static inline int roar_hash_salted_buffer_gcrypt(void * digest, const void * data, size_t datalen, int algo, const void * salt, size_t saltlen) {
  gcry_md_hd_t hdl;
+
+ roar_crypto_init();
 
  algo = roar_ht2gcrypt_tested(algo);
  if ( algo == -1 )

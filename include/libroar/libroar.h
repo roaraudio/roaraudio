@@ -118,6 +118,7 @@
 #include "memmgr.h"
 #include "stack.h"
 #include "buffer.h"
+#include "crypto.h"
 #include "random.h"
 #include "hash.h"
 #include "nnode.h"
