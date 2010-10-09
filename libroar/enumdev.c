@@ -39,6 +39,8 @@
 
 static int _test_server(struct roar_server * c, int flags) {
  struct roar_connection con;
+ struct roar_server_info * info;
+
  if ( c->server == NULL )
   return -1;
 
@@ -47,6 +49,17 @@ static int _test_server(struct roar_server * c, int flags) {
 
  if ( roar_connect(&con, (char*)c->server) == -1 )
   return -1;
+
+ info = roar_server_info(&con);
+ if ( info != NULL ) {
+  if ( info->location != NULL )
+   c->location = roar_mm_strdup(info->location);
+
+  if ( info->description != NULL )
+   c->description = roar_mm_strdup(info->description);
+
+  roar_server_info_free(info);
+ }
 
  roar_disconnect(&con);
 
