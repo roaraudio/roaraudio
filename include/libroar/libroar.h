@@ -118,6 +118,8 @@
 #include "memmgr.h"
 #include "stack.h"
 #include "buffer.h"
+#include "random.h"
+#include "hash.h"
 #include "nnode.h"
 #include "vio_ctl.h"
 #include "vio.h"
