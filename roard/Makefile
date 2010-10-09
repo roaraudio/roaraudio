@@ -15,8 +15,9 @@ include ../Makefile.inc
 
 #DEFINES        = -DDEBUG
 #DEFINES        = -DMONITOR_LATENCY
+PKGDEFINES= -DPACKAGE_VERSION="$(VERSION)" -DDEVICE_VENDOR_ID=$(DEV_VENDOR) -DDEVICE_VENDOR_NAME="$(DEV_VENDOR_NAME)" -DDEVICE_VENDOR_STRING="$(DEV_VENDOR_STRING)"
 INCLUDE   = -I../include -I./include
-CFLAGS   += -g -Wall -O2 $(DEFINES) $(INCLUDE) $(INCPATH)
+CFLAGS   += -g -Wall -O2 $(DEFINES) $(PKGDEFINES) $(INCLUDE) $(INCPATH)
 LDFLAGS   = -g -rdynamic -L../lib/ $(LDPATH)
 DRVLIBS   = $(lib_esd) $(lib_ossaudio) $(lib_ao) $(lib_shout) $(lib_sndio) $(lib_rsound) $(lib_portaudio) $(lib_pablio) $(lib_asound) $(lib_winmm) $(lib_pulse_simple)
 CODEC_CELT= $(lib_celt) $(lib_celt0)
