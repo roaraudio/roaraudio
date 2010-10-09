@@ -9,7 +9,7 @@ COMMON_SOVERSION= 0
 # libroar:
 LIBROAR_V       = $(COMMON_SOVERSION)
 NETLIBS         = $(lib_dnet) $(lib_wsock32) $(lib_ws2_32)
-AUXLIBS         = $(lib_slp) $(lib_ssl) $(lib_sendfile) $(lib_dl) $(lib_x11)
+AUXLIBS         = $(lib_slp) $(lib_ssl) $(lib_gcrypt) $(lib_sendfile) $(lib_dl) $(lib_x11)
 LIBROAR_NS      = $(AUXLIBS) $(NETLIBS)
 LIBROAR         = -lroar $(LIBROAR_NS)
 
