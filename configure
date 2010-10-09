@@ -1072,7 +1072,7 @@ fi
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.285 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.286 $ of RoarAudio
  */
 
 EOF
@@ -1242,6 +1242,7 @@ test_lib_defmake ROAR_HAVE_LIBWSOCK32    %            WinSockP0     wsock32    -
 test_lib_defmake ROAR_HAVE_LIBWS2_32     %            WinSockP1     ws2_32     -- winsock2.h
 test_lib_defmake ROAR_HAVE_LIBX11        %            X11           X11        -- X11/Xlib.h X11/Xatom.h
 test_lib_defmake ROAR_HAVE_GTK_P_2_0     %            GTK+2.0       gtk+-2.0/t -- gtk/gtk.h gdk/gdkkeysyms.h
+test_lib_defmake ROAR_HAVE_LIBGCRYPT     %            libgcrypt     gcrypt     -- gcrypt.h
 
 echo >&3
 
