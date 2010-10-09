@@ -50,15 +50,17 @@ static int _test_server(struct roar_server * c, int flags) {
  if ( roar_connect(&con, (char*)c->server) == -1 )
   return -1;
 
- info = roar_server_info(&con);
- if ( info != NULL ) {
-  if ( info->location != NULL )
-   c->location = roar_mm_strdup(info->location);
+ if ( (flags & ROAR_ENUM_FLAG_DESC) || (flags & ROAR_ENUM_FLAG_LOCATION) ) {
+  info = roar_server_info(&con);
+  if ( info != NULL ) {
+   if ( info->location != NULL )
+    c->location = roar_mm_strdup(info->location);
 
-  if ( info->description != NULL )
-   c->description = roar_mm_strdup(info->description);
+   if ( info->description != NULL )
+    c->description = roar_mm_strdup(info->description);
 
-  roar_server_info_free(info);
+   roar_server_info_free(info);
+  }
  }
 
  roar_disconnect(&con);
