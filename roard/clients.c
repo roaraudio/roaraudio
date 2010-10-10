@@ -85,7 +85,7 @@ int clients_new (void) {
 
     ns->blockc   = 0;
     ns->waits    = NULL;
-    ns->acclev   = ACCLEV_ALL;
+    ns->acclev   = ACCLEV_NONE;
 
     g_clients[i] = ns;
 
@@ -205,6 +205,17 @@ int clients_get       (int id, struct roar_client ** client) {
  _CHECK_CID(id);
 
  *client = ROAR_CLIENT(g_clients[id]);
+
+ if ( *client == NULL )
+  return -1;
+
+ return 0;
+}
+
+int clients_get_server (int id, struct roar_client_server ** client) {
+ _CHECK_CID(id);
+
+ *client = g_clients[id];
 
  if ( *client == NULL )
   return -1;

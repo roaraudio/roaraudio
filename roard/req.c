@@ -57,13 +57,16 @@ int req_on_noop        (int client, struct roar_message * mes, char ** data, uin
 }
 
 int req_on_identify    (int client, struct roar_message * mes, char ** data, uint32_t flags[2]) {
- struct roar_client * c;
+ struct roar_client_server * cs;
+ struct roar_client        * c;
  int max_len;
 
  if ( mes->datalen < 1 )
   return -1;
 
- clients_get(client, &c);
+ clients_get_server(client, &cs);
+
+ c = ROAR_CLIENT(cs);
 
  if ( mes->data[0] == 1 ) {
   if ( c->pid == -1 ) {
@@ -78,6 +81,11 @@ int req_on_identify    (int client, struct roar_message * mes, char ** data, uin
   strncpy(c->name, mes->data + 5, max_len);
   c->name[max_len] = 0;
 
+  // we set the acclevel to IDENTED here.
+  // if it is alreay > IDENTED we reset it anyway
+  // as potential auth relevent data changed.
+  cs->acclev = ACCLEV_IDENTED;
+
   mes->cmd     = ROAR_CMD_OK;
   mes->pos     = g_pos;
   mes->datalen = 0;
@@ -91,7 +99,14 @@ int req_on_identify    (int client, struct roar_message * mes, char ** data, uin
 }
 
 int req_on_auth        (int client, struct roar_message * mes, char ** data, uint32_t flags[2]) {
+ struct roar_client_server * cs;
+
+ clients_get_server(client, &cs);
+
  // TODO: add code to support some auth.
+
+ cs->acclev = ACCLEV_ALL;
+
  mes->cmd     = ROAR_CMD_OK;
  mes->pos     = g_pos;
  mes->datalen = 0;

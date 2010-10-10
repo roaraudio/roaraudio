@@ -83,6 +83,7 @@ int clients_set_gid    (int id, int    gid);
 int clients_set_name   (int id, char * name);
 int clients_set_proto  (int id, int    proto);
 int clients_get        (int id, struct roar_client ** client);
+int clients_get_server (int id, struct roar_client_server ** client);
 int clients_get_fh     (int id);
 
 int clients_block      (int id, int unblock);
