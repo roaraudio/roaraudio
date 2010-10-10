@@ -202,7 +202,7 @@ int roar_auth_from_mes(struct roar_auth_message * ames, struct roar_message * me
  if ( ames == NULL || mes == NULL )
   return -1;
 
- if ( data == NULL ) {
+ if ( data != NULL ) {
   ibuf = data;
  } else {
   ibuf = mes->data;
