@@ -1545,6 +1545,11 @@ int main (void) {
  dbg_notify_cb_register();
 #endif
 
+ if ( auth_init() == -1 ) {
+  ROAR_ERR("Can not init auth subsystem!");
+  return 1;
+ }
+
 #ifdef ROAR_SUPPORT_LISTEN
  if ( init_listening() == -1 ) {
   ROAR_ERR("Can not init listening sockets!");
@@ -2597,6 +2602,8 @@ void clean_quit_prep (void) {
  if ( pidfile != NULL )
   unlink(pidfile);
 #endif
+
+ auth_free();
 }
 
 void clean_quit (void) {

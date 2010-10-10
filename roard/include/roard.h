@@ -99,6 +99,7 @@ union uniinst {
 #include "codecfilter.h" /* MFOI */
 #include "container_framework.h" /* MFOI */
 #include "client.h"
+#include "auth.h"
 #include "driver.h" /* MFOI */
 #include "output.h"
 #include "mixer.h"
