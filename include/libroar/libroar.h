@@ -158,6 +158,7 @@
 #include "acl.h"
 #include "pinentry.h"
 #include "sshaskpass.h"
+#include "passwordapi.h"
 #include "roarslp.h"
 #include "display.h"
 #include "roarx11.h"
