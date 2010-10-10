@@ -63,7 +63,7 @@ int roar_sshaskpass_getpass   (char ** pw, char * desc) {
  if ( pos == 0 )
   return -1;
 
- *pw = strdup(buf);
+ *pw = roar_mm_strdup(buf);
 
  return 0;
 #else

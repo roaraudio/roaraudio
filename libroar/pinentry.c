@@ -221,7 +221,7 @@ int roar_pinentry_recv (struct roar_pinentry * pe, char ** line, char ** opts) {
 
  if ( (tp = strstr(realbuf, " ")) == NULL ) {
   if ( line != NULL )
-   *line = strdup(realbuf);
+   *line = roar_mm_strdup(realbuf);
 
   if ( opts != NULL )
    *opts = NULL;
@@ -238,13 +238,13 @@ int roar_pinentry_recv (struct roar_pinentry * pe, char ** line, char ** opts) {
 
   if ( !strcmp(realbuf, "D") ) {
    if ( opts != NULL )
-    *opts = strdup(tp+1);
+    *opts = roar_mm_strdup(tp+1);
 
    return roar_pinentry_recv(pe, line, NULL);
   }
 
   if ( line != NULL )
-   *line = strdup(realbuf);
+   *line = roar_mm_strdup(realbuf);
 
   if ( opts != NULL )
    *opts = NULL;
