@@ -40,6 +40,7 @@ int roar_sshaskpass_getpass   (char ** pw, char * desc) {
  FILE * cpipe;
  char   buf[1024];
  int    pos;
+ int    i;
 
  if ( pw == NULL )
   return -1;
@@ -57,8 +58,13 @@ int roar_sshaskpass_getpass   (char ** pw, char * desc) {
 
  pos = strlen(buf);
 
- for (; pos > -1 && (buf[pos] == '\r' || buf[pos] == '\n'); pos--)
-  buf[pos] = 0;
+ ROAR_DBG("roar_sshaskpass_getpass(pw=%p, desc='%s'): pos=%i", pw, desc, pos);
+
+ for (i = pos - 1; i >= 0 && (buf[i] == '\r' || buf[i] == '\n'); i--, pos--) {
+  buf[i] = 0;
+ }
+
+ ROAR_DBG("roar_sshaskpass_getpass(pw=%p, desc='%s'): pos=%i", pw, desc, pos);
 
  if ( pos == 0 )
   return -1;
