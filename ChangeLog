@@ -2,6 +2,9 @@ v. 0.4beta1 - ?
 	* Implemented a very general test for types. Needed by win32 port.
 	* Added support to enum servers with roarctl.
 	* Improved server eunm.
+	* Implemented SERVER_INFO command.
+	* Added some basic crypto functions.
+	* Implemented Tiger Hash Algo.
 
 v. 0.4beta0 - Fri Oct 01 2010 13:36 CEST
 	Prereleases: 0: Sun Sep 26 2010 18:29 CEST;
