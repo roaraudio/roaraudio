@@ -38,6 +38,8 @@
 
 #include "libroar.h"
 
+ssize_t roar_passwd_simple_ask_pw (char ** pw, char * prompt, const char * cachetoken);
+
 #endif
 
 //ll
