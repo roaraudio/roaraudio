@@ -145,6 +145,9 @@ static int roar_auth_ask_server (struct roar_connection * con, struct roar_auth_
  if ( (ret = roar_req(con, &mes, NULL)) == -1 )
   return -1;
 
+ if ( mes.cmd != ROAR_CMD_OK )
+  return -1;
+
  if ( mes.datalen < 4 ) {
   memset(header+mes.datalen, 0, 4-mes.datalen);
  }
