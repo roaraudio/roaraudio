@@ -169,6 +169,45 @@ static void roar_auth_mes_init(struct roar_auth_message * authmes, int type) {
  authmes->len   = 0;
 }
 
+
+static int try_password (struct roar_connection * con) {
+ struct roar_message mes;
+ struct roar_auth_message authmes;
+ char * pw;
+
+ roar_auth_mes_init(&authmes, ROAR_AUTH_T_PASSWORD);
+
+ if ( roar_passwd_simple_ask_pw(&pw, "Password for RoarAudio Server?", NULL) == -1 ) {
+  return -1;
+ }
+
+ authmes.len = strlen(pw);
+
+ if ( roar_auth_init_mes(&mes, &authmes) == -1 ) {
+  roar_mm_free(pw);
+  return -1;
+ }
+
+ // do not use strcpy() because that would copy \0, too.
+ memcpy(authmes.data, pw, authmes.len);
+
+ roar_mm_free(pw);
+
+ if ( roar_req(con, &mes, NULL) == -1 )
+  return -1;
+
+ if ( mes.cmd != ROAR_CMD_OK )
+  return -1;
+
+ if ( roar_auth_from_mes(&authmes, &mes, NULL) == -1 )
+  return -1;
+
+ if ( authmes.stage == 0 )
+  return 0;
+
+ return -1;
+}
+
 #define _EOL ROAR_AUTH_T_AUTO
 int roar_auth   (struct roar_connection * con) {
  struct roar_auth_message authmes;
@@ -178,15 +217,29 @@ int roar_auth   (struct roar_connection * con) {
               ROAR_AUTH_T_TRUST,
               ROAR_AUTH_T_IDENT,
               ROAR_AUTH_T_RHOST,
+              ROAR_AUTH_T_PASSWORD,
               ROAR_AUTH_T_NONE,
               _EOL
              };
 
  for (i = 0; ltt[i] != _EOL; i++) {
-  roar_auth_mes_init(&authmes, ltt[i]);
-
-  if ( (ret = roar_auth_ask_server(con, &authmes)) == -1 )
-   continue;
+  switch (ltt[i]) {
+    case ROAR_AUTH_T_PASSWORD:
+     if ( (ret = try_password(con)) == -1 )
+      continue;
+     break;
+    case ROAR_AUTH_T_TRUST:
+    case ROAR_AUTH_T_IDENT:
+    case ROAR_AUTH_T_RHOST:
+    case ROAR_AUTH_T_NONE:
+     roar_auth_mes_init(&authmes, ltt[i]);
+     if ( (ret = roar_auth_ask_server(con, &authmes)) == -1 )
+      continue;
+    break;
+   default: /* Bad error! */
+     return -1;
+    break;
+  }
 
   if ( authmes.stage != 0 )
    continue;
@@ -242,6 +295,8 @@ int roar_auth_to_mes(struct roar_message * mes, void ** data, struct roar_auth_m
 
  memset(mes, 0, sizeof(struct roar_message));
 
+ mes->cmd = ROAR_CMD_AUTH;
+
  if ( (ames->len + 4) > sizeof(mes->data) ) {
   *data = malloc(ames->len + 4);
   if ( *data == NULL )
@@ -271,6 +326,8 @@ int roar_auth_init_mes(struct roar_message * mes, struct roar_auth_message * ame
   return -1;
 
  memset(mes, 0, sizeof(struct roar_message));
+
+ mes->cmd = ROAR_CMD_AUTH;
 
  mes->data[0] = ames->type;
  mes->data[1] = ames->stage;
