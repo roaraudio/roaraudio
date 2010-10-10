@@ -48,7 +48,7 @@ struct at_trust {
 };
 
 struct at_password {
- char * password;
+ const char * password;
 };
 
 union auth_typeunion {
@@ -72,6 +72,10 @@ int auth_free (void);
 union auth_typeunion * auth_regkey_simple(int type, enum roard_client_acclev acclev);
 
 int auth_client_ckeck(struct roar_client_server * cs, struct roar_auth_message * authmes);
+
+
+int auth_addkey_anonymous(enum roard_client_acclev acclev);
+int auth_addkey_password(enum roard_client_acclev acclev, const char * password);
 
 #endif
 

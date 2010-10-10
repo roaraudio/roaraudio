@@ -37,8 +37,13 @@ int auth_init (void) {
  }
 
  // enable guest access.
- if ( auth_regkey_simple(ROAR_AUTH_T_NONE, ACCLEV_ALL) == NULL )
+ if ( auth_addkey_anonymous(ACCLEV_ALL) == -1 )
   return -1;
+
+#if 0
+ // test password for API tests...
+ auth_addkey_password(ACCLEV_ALL, "test");
+#endif
 
  return 0;
 }
@@ -125,6 +130,23 @@ int auth_client_ckeck(struct roar_client_server * cs, struct roar_auth_message *
  }
 
  return -1;
+}
+
+int auth_addkey_anonymous(enum roard_client_acclev acclev) {
+ if ( auth_regkey_simple(ROAR_AUTH_T_NONE, acclev) == NULL )
+  return -1;
+ return 0;
+}
+
+int auth_addkey_password(enum roard_client_acclev acclev, const char * password) {
+ union auth_typeunion * pw;
+
+ if ( (pw = auth_regkey_simple(ROAR_AUTH_T_PASSWORD, acclev)) == NULL )
+  return -1;
+
+ pw->password.password = password;
+
+ return 0;
 }
 
 //ll
