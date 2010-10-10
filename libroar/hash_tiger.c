@@ -36,6 +36,7 @@
 #include "libroar.h"
 
 #define STATE_LEN (3*8)
+#define PSTATE_LEN (4*8)
 #define DIGEST_LEN STATE_LEN
 #define BLOCK_LEN (64)
 
@@ -581,9 +582,49 @@ int roar_hash_tiger_uninit(struct roar_hash_tiger * state) {
  return 0;
 }
 
-int roar_hash_tiger_init_from_pstate(struct roar_hash_tiger * state, void * oldstate);
-int roar_hash_tiger_to_pstate(struct roar_hash_tiger * state, void * newstate, size_t * len) {
+int roar_hash_tiger_init_from_pstate(struct roar_hash_tiger * state, void * oldstate) {
+ uint64_t blocks;
+ unsigned char * p = oldstate;
+
+ if ( state == NULL || oldstate == NULL )
+  return -1;
+
+ if ( roar_hash_tiger_init(state) == -1 )
+  return -1;
+
+#if BYTE_ORDER == BIG_ENDIAN && !defined(ROAR_TARGET_WIN32)
+#define _in(m)  do { m = *(uint64_t*)p;  p += 8; } while(0)
+#elif BYTE_ORDER == LITTLE_ENDIAN
+#define _S(x, n) (((uint64_t)(p[(n)])) << (uint64_t)(x))
+#define _in(m) do { m = (uint64_t)(_S(56, 0) | _S(48, 1) | _S(40, 2) | _S(32, 3) | \
+                                   _S(24, 4) | _S(16, 5) | _S( 8, 6) | _S( 0, 7)   \
+                        ); p += 8; } while (0)
+#else
+  ROAR_ERR("_export(state=%p, ...): Tiger not implemented for non little or big endian systems!", state);
+  return -1;
+#define _in
+#endif
+ _in(state->a);
+ _in(state->b);
+ _in(state->c);
+ _in(blocks);
+
+ state->blocks = blocks;
+#undef _in
+
+ return 0;
+}
+
+static int _export(struct roar_hash_tiger * state, void * newstate, size_t * len, int is_pstate) {
  unsigned char * p = newstate;
+ size_t needlen;
+ uint64_t blocks;
+
+ if ( is_pstate ) {
+  needlen = PSTATE_LEN;
+ } else {
+  needlen = STATE_LEN;
+ }
 
  if ( state == NULL || newstate == NULL || len == NULL )
   return -1;
@@ -591,25 +632,41 @@ int roar_hash_tiger_to_pstate(struct roar_hash_tiger * state, void * newstate, s
  if ( state->inlen != 0 )
   return -1;
 
- if ( *len < STATE_LEN )
+ if ( *len < needlen )
   return -1;
 
- *len = STATE_LEN;
+ *len = needlen;
 
-#define _out(m) do { *p++ = state->m >> 56; *p++ = state->m >> 48; \
-                     *p++ = state->m >> 40; *p++ = state->m >> 32; \
-                     *p++ = state->m >> 24; *p++ = state->m >> 16; \
-                     *p++ = state->m >>  8; *p++ = state->m;       } while(0)
- _out(a);
- _out(b);
- _out(c);
+#if BYTE_ORDER == BIG_ENDIAN && !defined(ROAR_TARGET_WIN32)
+#define _out(m) do { *(uint64_t*)p = m ; p += 8; } while(0)
+#elif BYTE_ORDER == LITTLE_ENDIAN
+#define _out(m) do { *p++ = m >> 56; *p++ = m >> 48; \
+                     *p++ = m >> 40; *p++ = m >> 32; \
+                     *p++ = m >> 24; *p++ = m >> 16; \
+                     *p++ = m >>  8; *p++ = m;       } while(0)
+#else
+  ROAR_ERR("_export(state=%p, ...): Tiger not implemented for non little or big endian systems!", state);
+  return -1;
+#define _out
+#endif
+ _out(state->a);
+ _out(state->b);
+ _out(state->c);
+ if ( is_pstate ) {
+  blocks = state->blocks;
+  _out(blocks);
+ }
 #undef _out
 
  return 0;
 }
 
+int roar_hash_tiger_to_pstate(struct roar_hash_tiger * state, void * newstate, size_t * len) {
+ return _export(state, newstate, len, 1);
+}
+
 ssize_t roar_hash_tiger_statelen(struct roar_hash_tiger * state) {
- return STATE_LEN;
+ return PSTATE_LEN;
 }
 
 int roar_hash_tiger_finalize(struct roar_hash_tiger * state) {
@@ -661,7 +718,7 @@ int roar_hash_tiger_get_digest(struct roar_hash_tiger * state, void * digest, si
  if ( roar_hash_tiger_finalize(state) == -1 )
   return -1;
 
- return roar_hash_tiger_to_pstate(state, digest, len);
+ return _export(state, digest, len, 0);
 }
 
 static void tiger_round( uint64_t * ra, uint64_t * rb, uint64_t * rc, uint64_t x, uint64_t mul) {
