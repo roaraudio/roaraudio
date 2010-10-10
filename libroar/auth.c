@@ -194,6 +194,95 @@ int roar_auth   (struct roar_connection * con) {
  return -1;
 }
 
+
+int roar_auth_from_mes(struct roar_auth_message * ames, struct roar_message * mes, void * data) {
+ void * ibuf;
+ char header[4] = {0, 0, 0, 0};
+
+ if ( ames == NULL || mes == NULL )
+  return -1;
+
+ if ( data == NULL ) {
+  ibuf = data;
+ } else {
+  ibuf = mes->data;
+ }
+
+ memset(ames, 0, sizeof(struct roar_auth_message));
+
+ memcpy(header, ibuf, mes->datalen < 4 ? mes->datalen : 4);
+
+ ames->type          = header[0];
+ ames->stage         = header[1];
+ ames->reserved.c[0] = header[2];
+ ames->reserved.c[1] = header[3];
+
+ if ( mes->datalen > 4 ) {
+  ames->data = ibuf + 4;
+  ames->len  = mes->datalen - 4;
+ } else {
+  ames->data = NULL;
+  ames->len  = 0;
+ }
+
+ return 0;
+}
+
+int roar_auth_to_mes(struct roar_message * mes, void ** data, struct roar_auth_message * ames) {
+ char * obuf;
+
+ if ( mes == NULL || ames == NULL )
+  return -1;
+
+ if ( data != NULL )
+  *data = NULL;
+
+ memset(mes, 0, sizeof(struct roar_message));
+
+ if ( (ames->len + 4) > sizeof(mes->data) ) {
+  *data = malloc(ames->len + 4);
+  if ( *data == NULL )
+   return -1;
+  obuf = *data;
+ } else {
+  obuf = mes->data;
+ }
+
+ obuf[0] = ames->type;
+ obuf[1] = ames->stage;
+ obuf[2] = ames->reserved.c[0];
+ obuf[3] = ames->reserved.c[1];
+
+ memcpy(obuf + 8, ames->data, ames->len);
+
+ mes->datalen = ames->len + 4;
+
+ return 0;
+}
+
+int roar_auth_init_mes(struct roar_message * mes, struct roar_auth_message * ames) {
+ if ( mes == NULL || ames == NULL )
+  return -1;
+
+ if ( (ames->len + 4) > sizeof(mes->data) )
+  return -1;
+
+ memset(mes, 0, sizeof(struct roar_message));
+
+ mes->data[0] = ames->type;
+ mes->data[1] = ames->stage;
+ mes->data[2] = ames->reserved.c[0];
+ mes->data[3] = ames->reserved.c[1];
+
+ ames->data = &(mes->data[4]);
+
+ mes->datalen = ames->len + 4;
+
+ return 0;
+}
+
+
+
 // String functions:
 static struct {
  int    type;
