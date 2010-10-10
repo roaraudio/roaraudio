@@ -621,7 +621,8 @@ int roar_hash_tiger_finalize(struct roar_hash_tiger * state) {
  if ( state->is_final )
   return 0;
 
- len = state->blocks * BLOCK_LEN + state->inlen;
+ len  = state->blocks * BLOCK_LEN + state->inlen;
+ len *= 8; // byte -> bit
 
  if ( state->inlen < 56 ) { /* enough room */
   state->inbuf[state->inlen++] = 0x01; /* pad */
@@ -714,6 +715,8 @@ int roar_hash_tiger_proc_block(struct roar_hash_tiger * state, void * block) {
  uint64_t a, b, c, aa, bb, cc;
  uint64_t x[8];
 
+ ROAR_DBG("roar_hash_tiger_proc_block(state=%p, block=%p) = ?", state, block);
+
  if ( state == NULL || block == NULL )
   return -1;
 
@@ -756,6 +759,9 @@ int roar_hash_tiger_proc_block(struct roar_hash_tiger * state, void * block) {
  state->b = b - bb;
  state->c = c + cc;
 
+ state->blocks++;
+
+ ROAR_DBG("roar_hash_tiger_proc_block(state=%p, block=%p) = 0", state, block);
  return 0;
 }
 
@@ -763,6 +769,60 @@ ssize_t roar_hash_tiger_blocklen(struct roar_hash_tiger * state) {
  return BLOCK_LEN;
 }
 
-int roar_hash_tiger_proc(struct roar_hash_tiger * state, void * data, size_t len);
+int roar_hash_tiger_proc(struct roar_hash_tiger * state, void * data, size_t len) {
+ size_t needlen;
+
+ ROAR_DBG("roar_hash_tiger_proc(state=%p, data=%p, len=%llu) = ?", state, data, (long long unsigned int)len);
+
+ if ( state == NULL )
+  return -1;
+
+ if ( len == 0 )
+  return 0;
+
+ if ( data == NULL )
+  return -1;
+
+ if ( state->inlen ) {
+  needlen = BLOCK_LEN - state->inlen;
+  ROAR_DBG("roar_hash_tiger_proc(state=%p, ...): adding %llu byte to inbuf block", state, (long long unsigned int)needlen);
+
+  if ( len < needlen ) {
+   ROAR_DBG("roar_hash_tiger_proc(state=%p, ...): inbufblock is short", state);
+   memcpy(state->inbuf + state->inlen, data, len);
+   state->inlen += len;
+   ROAR_DBG("roar_hash_tiger_proc(state=%p, ...) = 0", state);
+   return 0;
+  }
+
+  memcpy(state->inbuf + state->inlen, data, needlen);
+  len  -= needlen;
+  data += needlen;
+
+  state->inlen = 0;
+
+  if ( roar_hash_tiger_proc_block(state, state->inbuf) == -1 )
+   return -1;
+ }
+
+ for (; len >= BLOCK_LEN; ) {
+  ROAR_DBG("roar_hash_tiger_proc(state=%p, ...): running normal block...", state);
+
+  if ( roar_hash_tiger_proc_block(state, data) == -1 )
+   return -1;
+
+  len  -= BLOCK_LEN;
+  data += BLOCK_LEN;
+ }
+
+ if ( len ) {
+  ROAR_DBG("roar_hash_tiger_proc(state=%p, ...): adding %llu byte to new inbuf", state, (long long unsigned int)len);
+  memcpy(state->inbuf, data, len);
+  state->inlen = len;
+ }
+
+ ROAR_DBG("roar_hash_tiger_proc(state=%p, ...) = 0", state);
+ return 0;
+}
 
 //ll
