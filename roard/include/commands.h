@@ -44,6 +44,7 @@ struct roar_command {
  char * name;
 #endif
  int (*handler)(int client, struct roar_message * mes, char ** data, uint32_t flags[2]);
+ enum roard_client_acclev minacclev;
 };
 
 int command_get_id_by_cmd (int command);

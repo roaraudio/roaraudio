@@ -85,6 +85,7 @@ int clients_new (void) {
 
     ns->blockc   = 0;
     ns->waits    = NULL;
+    ns->acclev   = ACCLEV_ALL;
 
     g_clients[i] = ns;
 

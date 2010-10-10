@@ -46,6 +46,17 @@ struct roar_client {
 } * g_clients[ROAR_CLIENTS_MAX];
 */
 
+// access level:
+enum roard_client_acclev {
+ ACCLEV_NONE     = 0, // only very basic commands like NOOP and IDENTIFY
+ ACCLEV_IDENTED,      // same as NONE but INDENTIFY worked.
+ ACCLEV_CONCTL,       // only allowed to do basic connection things.
+ ACCLEV_GUEST,        // guest connection (read only)
+ ACCLEV_USER,         // normal user connect (read write)
+ ACCLEV_PWRUSER,      // power user, may access other user's clients
+ ACCLEV_ALL           // full (admin) access (read write ctl)
+};
+
 struct roar_client_nsubscribe {
  struct roar_subscriber * sub;
 };
@@ -54,6 +65,7 @@ struct roar_client_server {
  struct roar_client _client;
  size_t blockc;
  struct roar_subscriber ** waits;
+ enum roard_client_acclev acclev;
 } * g_clients[ROAR_CLIENTS_MAX];
 
 
