@@ -101,6 +101,7 @@ int req_on_identify    (int client, struct roar_message * mes, char ** data, uin
 int req_on_auth        (int client, struct roar_message * mes, char ** data, uint32_t flags[2]) {
  struct roar_client_server * cs;
  struct roar_auth_message    authmes;
+ int ret;
 
  clients_get_server(client, &cs);
 
@@ -109,9 +110,13 @@ int req_on_auth        (int client, struct roar_message * mes, char ** data, uin
  if ( roar_auth_from_mes(&authmes, mes, *data) == -1 )
   return -1;
 
- ROAR_DBG("req_on_auth(client=%i,...): authtype=%s(%i)", client, roar_autht2str(authmes.type), authmes.type);
+ ROAR_INFO("req_on_auth(client=%i,...): authtype=%s(%i)", ROAR_DBG_INFO_VERBOSE,
+                           client, roar_autht2str(authmes.type), authmes.type);
 
- cs->acclev = ACCLEV_ALL;
+ ret = auth_client_ckeck(cs, &authmes);
+
+ if ( ret != 1 )
+  return -1;
 
  mes->cmd     = ROAR_CMD_OK;
  mes->pos     = g_pos;

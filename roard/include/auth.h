@@ -69,6 +69,10 @@ struct auth_key g_auth_keyring[AUTH_KEYRING_LEN];
 int auth_init (void);
 int auth_free (void);
 
+union auth_typeunion * auth_regkey_simple(int type, enum roard_client_acclev acclev);
+
+int auth_client_ckeck(struct roar_client_server * cs, struct roar_auth_message * authmes);
+
 #endif
 
 //ll
