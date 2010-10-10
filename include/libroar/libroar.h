@@ -121,6 +121,7 @@
 #include "crypto.h"
 #include "random.h"
 #include "hash.h"
+#include "hash_tiger.h"
 #include "nnode.h"
 #include "vio_ctl.h"
 #include "vio.h"
