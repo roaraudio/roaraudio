@@ -38,6 +38,29 @@
 
 #include "libroar.h"
 
+struct roar_hash_tiger {
+ uint64_t a, b, c;
+ char inbuf[64];
+ size_t inlen;
+ size_t blocks;
+ int is_final;
+};
+
+int roar_hash_tiger_init(struct roar_hash_tiger * state);
+int roar_hash_tiger_uninit(struct roar_hash_tiger * state);
+
+int roar_hash_tiger_init_from_pstate(struct roar_hash_tiger * state, void * oldstate);
+int roar_hash_tiger_to_pstate(struct roar_hash_tiger * state, void * newstate, size_t * len);
+ssize_t roar_hash_tiger_statelen(struct roar_hash_tiger * state);
+
+int roar_hash_tiger_finalize(struct roar_hash_tiger * state);
+int roar_hash_tiger_get_digest(struct roar_hash_tiger * state, void * digest, size_t * len);
+
+int roar_hash_tiger_proc_block(struct roar_hash_tiger * state, void * block);
+ssize_t roar_hash_tiger_blocklen(struct roar_hash_tiger * state);
+
+int roar_hash_tiger_proc(struct roar_hash_tiger * state, void * data, size_t len);
+
 #endif
 
 //ll
