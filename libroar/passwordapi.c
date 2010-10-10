@@ -35,4 +35,46 @@
 
 #include "libroar.h"
 
+ssize_t roar_passwd_simple_ask_pw (char ** pw, char * prompt, const char * cachetoken) {
+#ifdef ROAR_SUPPORT_PASSWORD_API
+ struct roar_pinentry pe;
+
+ if ( pw == NULL )
+  return -1;
+
+ if ( prompt == NULL ) {
+  ROAR_WARN("roar_passwd_simple_ask_pw(pw=%p, prompt=NULL, cachetoken='%s'): No prompt given. This may be a bug in application.");
+  prompt = "Please enter Password";
+ }
+
+ *pw = NULL;
+
+ // TODO: test for cache here.
+
+ if ( *pw == NULL ) {
+  if ( roar_pinentry_simple_open(&pe) != -1 ) {
+   if ( roar_pinentry_getpin(&pe, pw, NULL, prompt) == -1 ) {
+    *pw = NULL;
+   }
+   roar_pinentry_close(&pe);
+  }
+ }
+
+ if ( *pw == NULL ) {
+  if ( roar_sshaskpass_getpass(pw, prompt) == -1 ) {
+   *pw = NULL;
+  }
+ }
+
+ if ( *pw == NULL )
+  return -1;
+
+ // TODO: save to cache here.
+
+ return strlen(*pw);
+#else
+ return -1;
+#endif
+}
+
 //ll
