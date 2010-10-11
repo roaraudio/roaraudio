@@ -76,6 +76,8 @@ int auth_client_ckeck(struct roar_client_server * cs, struct roar_auth_message *
 
 int auth_addkey_anonymous(enum roard_client_acclev acclev);
 int auth_addkey_password(enum roard_client_acclev acclev, const char * password);
+int auth_addkey_cookie(enum roard_client_acclev acclev, const void * cookie, const size_t len);
+int auth_addkey_trust(enum roard_client_acclev acclev, ...);
 
 #endif
 

@@ -45,6 +45,11 @@ int auth_init (void) {
  auth_addkey_password(ACCLEV_ALL, "test");
 #endif
 
+#if 0
+ // test trust for API tests...
+ auth_addkey_trust(ACCLEV_ALL, -1, 0, getuid()+1, -1, getgid()+1, -1);
+#endif
+
  return 0;
 }
 
@@ -68,6 +73,18 @@ union auth_typeunion * auth_regkey_simple(int type, enum roard_client_acclev acc
  return NULL;
 }
 
+static int _ck_cookie(struct auth_key * key, struct roar_auth_message * authmes) {
+ if ( key->at_data.cookie.len == authmes->len ) {
+  if ( memcmp(key->at_data.cookie.cookie, authmes->data, authmes->len) ) {
+   return -1;
+  } else {
+   return 1;
+  }
+ }
+
+ return -1;
+}
+
 static int _ck_password(struct auth_key * key, struct roar_auth_message * authmes) {
  size_t len = strlen(key->at_data.password.password);
 
@@ -80,6 +97,23 @@ static int _ck_password(struct auth_key * key, struct roar_auth_message * authme
    return 1;
   }
  }
+
+ return -1;
+}
+
+static int _ck_trust(struct auth_key * key, struct roar_auth_message * authmes, struct roar_client_server * cs) {
+ struct at_trust * t = &(key->at_data.trust);
+ size_t i;
+
+ // we ship pids at the moment as cs does not contain a verifyed one.
+
+ for (i = 0; i < t->uids_len; i++)
+  if ( t->uids[i] == ROAR_CLIENT(cs)->uid )
+   return 1;
+
+ for (i = 0; i < t->gids_len; i++)
+  if ( t->gids[i] == ROAR_CLIENT(cs)->gid )
+   return 1;
 
  return -1;
 }
@@ -102,8 +136,12 @@ int auth_client_ckeck(struct roar_client_server * cs, struct roar_auth_message *
     case ROAR_AUTH_T_PASSWORD:
       ret = _ck_password(key, authmes);
      break;
-    case ROAR_AUTH_T_TRUST:
     case ROAR_AUTH_T_COOKIE:
+      ret = _ck_cookie(key, authmes);
+     break;
+    case ROAR_AUTH_T_TRUST:
+      ret = _ck_trust(key, authmes, cs);
+     break;
     case ROAR_AUTH_T_SYSUSER:
     case ROAR_AUTH_T_RHOST:
     default:
@@ -147,6 +185,66 @@ int auth_addkey_password(enum roard_client_acclev acclev, const char * password)
  pw->password.password = password;
 
  return 0;
+}
+
+int auth_addkey_cookie(enum roard_client_acclev acclev, const void * cookie, const size_t len) {
+ union auth_typeunion * key;
+
+ if ( (key = auth_regkey_simple(ROAR_AUTH_T_COOKIE, acclev)) == NULL )
+  return -1;
+
+ key->cookie.cookie = (void*)cookie;
+ key->cookie.len    = len;
+
+ return 0;
+}
+
+int auth_addkey_trust(enum roard_client_acclev acclev, ...) {
+ union auth_typeunion * key;
+ size_t i;
+ va_list va;
+ pid_t pid;
+ uid_t uid;
+ gid_t gid;
+ int err = 0;
+
+ if ( (key = auth_regkey_simple(ROAR_AUTH_T_TRUST, acclev)) == NULL )
+  return -1;
+
+ // zerosize all counters.
+ memset(key, 0, sizeof(union auth_typeunion));
+
+ va_start(va, acclev);
+
+ do { // eval block we can leave with continue.
+
+#define _block(var,type,array)  i = 0; \
+                                do { \
+                                 if ( i == AT_TRUST_MAX_ENTRYS ) { err = 1; continue; } \
+                                 var = va_arg(va, type); \
+                                 key->trust.array[i] = var; \
+                                 i++; \
+                                } while (var != -1); \
+                                if ( err ) continue; \
+                                key->trust.array ## _len = i;
+
+
+ _block(pid, pid_t, pids);
+ _block(uid, uid_t, uids);
+ _block(gid, gid_t, gids);
+
+#undef _block
+
+ } while(0);
+
+ va_end(va);
+
+ if ( !err )
+  return 0;
+
+ memset(key, 0, sizeof(union auth_typeunion));
+
+ return -1;
 }
 
 //ll
