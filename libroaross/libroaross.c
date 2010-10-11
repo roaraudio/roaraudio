@@ -632,8 +632,18 @@ static int _open_file (const char *pathname, int flags) {
  }
 #endif
 
- if ( (flags & O_DIRECTORY) || (flags & O_EXCL) ) {
-  ROAR_DBG("_open_file(pathname='%s', flags=0x%x) = -1 // invalid flags (O_DIRECTORY or O_EXCL)", pathname, flags);
+ if ( flags & O_DIRECTORY ) {
+  ROAR_DBG("_open_file(pathname='%s', flags=0x%x) = -1 // invalid flags (O_DIRECTORY)", pathname, flags);
+  errno = EINVAL;
+  return -1;
+ }
+
+ if ( flags & O_EXCL ) {
+  ROAR_WARN("_open_file(pathname='%s', flags=0x%x): This application is asked us for exclusive device access.", pathname, flags);
+  ROAR_WARN("_open_file(pathname='%s', flags=0x%x): This is maybe not what you want.", pathname, flags);
+  ROAR_WARN("_open_file(pathname='%s', flags=0x%x): We reject this according to OSS specs.", pathname, flags);
+  ROAR_WARN("_open_file(pathname='%s', flags=0x%x): There should be a option in the application to switch this off.", pathname, flags);
+  ROAR_WARN("_open_file(pathname='%s', flags=0x%x) = -1 // invalid flags (O_EXCL)", pathname, flags);
   errno = EINVAL;
   return -1;
  }
