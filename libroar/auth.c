@@ -217,7 +217,7 @@ int roar_auth   (struct roar_connection * con) {
               ROAR_AUTH_T_TRUST,
               ROAR_AUTH_T_IDENT,
               ROAR_AUTH_T_RHOST,
-              ROAR_AUTH_T_PASSWORD,
+//              ROAR_AUTH_T_PASSWORD,
               ROAR_AUTH_T_NONE,
               _EOL
              };
