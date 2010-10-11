@@ -151,7 +151,7 @@ struct roar_authfile_key * roar_authfile_key_new(int type, size_t len, const cha
   memcpy((void*)ret->address, addr, addrlen);
  }
 
- ret->data = (void*)ret->address + addrlen;
+ ret->data = ret + sizeof(struct roar_authfile_key) + addrlen;
 
  ret->len  = len;
 
