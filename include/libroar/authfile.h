@@ -38,6 +38,42 @@
 
 #include "libroar.h"
 
+#define ROAR_AUTHFILE_TYPE_AUTO       -1 /* auto detect type of key */
+#define ROAR_AUTHFILE_TYPE_NONE        0 /* dummy */
+#define ROAR_AUTHFILE_TYPE_ROAR        1 /* RoarAudio */
+#define ROAR_AUTHFILE_TYPE_ESD         2 /* EsounD, plain cookie, len=16 byte */
+#define ROAR_AUTHFILE_TYPE_PULSE       3 /* PulseAudio, plain cookie, len=256 byte */
+
+#define ROAR_AUTHFILE_VERSION_AUTO    -1
+
+struct roar_authfile;
+
+struct roar_authfile * roar_authfile_open(int type, const char * filename, int rw, int version);
+int roar_authfile_close(struct roar_authfile * authfile);
+
+int roar_authfile_lock(struct roar_authfile * authfile);
+int roar_authfile_unlock(struct roar_authfile * authfile);
+
+int roar_authfile_sync(struct roar_authfile * authfile);
+
+struct roar_authfile_key {
+ size_t refc;
+ int type;
+ int index;
+ const char * address;
+ void * data;
+ size_t len;
+};
+
+struct roar_authfile_key * roar_authfile_key_new(int type, size_t len, const char * addr);
+#define roar_authfile_key_free(key) roar_authfile_key_unref(key)
+int roar_authfile_key_ref(struct roar_authfile_key * key);
+int roar_authfile_key_unref(struct roar_authfile_key * key);
+
+int roar_authfile_add_key(struct roar_authfile * authfile, struct roar_authfile_key * key);
+
+struct roar_authfile_key * roar_authfile_lookup_key(struct roar_authfile * authfile, int type, int minindex, const char * address);
+
 #endif
 
 //ll
