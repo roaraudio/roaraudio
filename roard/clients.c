@@ -851,4 +851,40 @@ void clients_ncb_wait(struct roar_notify_core * core, struct roar_event * event,
  cs->blockc--;
 }
 
+
+// acclev:
+static struct {
+ const enum roard_client_acclev acclev;
+ const char *                   name;
+} _g_acclevs[] = {
+ {ACCLEV_NONE,    "none"   },
+ {ACCLEV_IDENTED, "idented"},
+ {ACCLEV_CONCTL,  "conctl" },
+ {ACCLEV_GUEST,   "guest"  },
+ {ACCLEV_USER,    "user"   },
+ {ACCLEV_PWRUSER, "pwruser"},
+ {ACCLEV_ALL,     "all"    },
+ {-1, NULL}
+};
+
+enum roard_client_acclev clients_str2acclev(const char * acclev) {
+ int i;
+
+ for (i = 0; _g_acclevs[i].name != NULL; i++)
+  if ( !strcasecmp(_g_acclevs[i].name, acclev) )
+   return _g_acclevs[i].acclev;
+
+ return -1;
+}
+
+const char * clients_acclev2str(const enum roard_client_acclev acclev) {
+ int i;
+
+ for (i = 0; _g_acclevs[i].name != NULL; i++)
+  if ( _g_acclevs[i].acclev == acclev )
+   return _g_acclevs[i].name;
+
+ return NULL;
+}
+
 //ll

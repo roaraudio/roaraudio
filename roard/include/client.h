@@ -105,6 +105,10 @@ int client_stream_move   (int client, int stream);
 int  clients_wait    (int client, struct roar_event * events, size_t num);
 void clients_ncb_wait(struct roar_notify_core * core, struct roar_event * event, void * userdata);
 
+// acclev:
+enum roard_client_acclev clients_str2acclev(const char * acclev);
+const char * clients_acclev2str(const enum roard_client_acclev acclev);
+
 #endif
 
 //ll
