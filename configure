@@ -54,6 +54,8 @@ OSS_MIX_DEV=""
 PROC_NET_DECNET="/proc/net/decnet"
 TTY_DEV=""
 
+ROOT_UID=''
+
 VORBIS_BITS=32
 
 FSYNC=false
@@ -189,6 +191,7 @@ do
    echo '--proc-net-decnet FILE      - Set DECnet file for DECnet support auto detecting'
    echo '                              (ignore this on non-Linux)'
    echo '--audio-group GROUP         - Sets group of audio permitted users'
+   echo '--root-uid UID              - Sets User ID (UID) of the root user/superuser'
    echo
    echo '--no-LIB                    - disable library LIB'
    echo '--maybe-LIB                 - autodetect library LIB (default)'
@@ -297,6 +300,10 @@ do
   ;;
   '--audio-group')
    DEFAULT_GRP="$2"
+   shift;
+  ;;
+  '--root-uid')
+   ROOT_UID="$2"
    shift;
   ;;
   '--no-'*)
@@ -1072,7 +1079,7 @@ fi
 //config.log:
 
 /*
- * Logfile for configure script $Revision: 1.287 $ of RoarAudio
+ * Logfile for configure script $Revision: 1.288 $ of RoarAudio
  */
 
 EOF
@@ -1992,6 +1999,25 @@ else
  echo '#define ROAR_DEFAULT_SOCKGRP "'"$DEFAULT_GRP"'"' >&3
 fi
 
+echo -n 'checking for user id of root/superuser... '
+if [ "$ROOT_UID" = '(none)' ]
+then
+ echo "none (disabled by user)"
+elif [ "$ROOT_UID" = '' ]
+then
+ ROOT_USER='root'
+ ROOT_UID=`id -u $ROOT_USER`
+ if [ "$ROOT_UID" = '' ]
+ then
+  echo "none (please report this)"
+ else
+  echo "$ROOT_UID($ROOT_USER)"
+  echo '#define ROAR_ROOT_UID '"$ROOT_UID" >&3
+ fi
+else
+ echo "$ROOT_UID"
+ echo '#define ROAR_ROOT_UID '"$ROOT_UID" >&3
+fi
 
 $NEED_GNU_SOURCE && echo '#define ROAR_NEED_GNU_SOURCE' >&3
 
