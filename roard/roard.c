@@ -173,6 +173,15 @@ void usage (void) {
 #endif
        );
 
+ printf("\nAuth Options:\n\n");
+ printf(
+        " --guest-acclev ACCLEV - Sets the access level for guest access to ACCLEV\n"
+        " --trust-acclev ACCLEV - Sets the access level for trust-authed\n"
+        "                         connections to ACCLEV\n"
+        " --trust-root          - Trust root user\n"
+        " --no-trust-root       - Don't trust root user\n"
+       );
+
  printf("\nPlugin Options:\n\n");
  printf(
         " --plugin-load FILE    - Load plugin FILE\n"
@@ -1399,33 +1408,41 @@ static int auth_setup (enum roard_client_acclev none_acclev,
  union auth_typeunion * key;
  size_t i;
 
- if ( auth_addkey_anonymous(none_acclev) == -1 )
-  return -1;
+ // Info:
+ // if a authlevel is <= ACCLEV_IDENTED we do not need to add this to the keyring
+ // as ACCLEV_IDENTED is already gained if IDENTIFY call was done correctly.
 
- if ( (key = auth_regkey_simple(ROAR_AUTH_T_TRUST, trust_acclev)) == NULL )
-  return -1;
+ if ( !(none_acclev <= ACCLEV_IDENTED) ) {
+  if ( auth_addkey_anonymous(none_acclev) == -1 )
+   return -1;
+ }
 
- // zerosize all counters.
- memset(key, 0, sizeof(union auth_typeunion));
+ if ( !(trust_acclev <= ACCLEV_IDENTED) ) {
+  if ( (key = auth_regkey_simple(ROAR_AUTH_T_TRUST, trust_acclev)) == NULL )
+   return -1;
 
- i = 0;
+  // zerosize all counters.
+  memset(key, 0, sizeof(union auth_typeunion));
 
- if ( trust_uid != -1 )
-  key->trust.uids[i++] = trust_uid;
+  i = 0;
+
+  if ( trust_uid != -1 )
+   key->trust.uids[i++] = trust_uid;
 
 #ifdef ROAR_ROOT_UID
- if ( trust_root )
-  key->trust.uids[i++] = ROAR_ROOT_UID;
+  if ( trust_root )
+   key->trust.uids[i++] = ROAR_ROOT_UID;
 #endif
 
- key->trust.uids_len = i;
+  key->trust.uids_len = i;
 
- i = 0;
+  i = 0;
 
- if ( trust_gid != -1 )
-  key->trust.gids[i++] = trust_gid;
+  if ( trust_gid != -1 )
+   key->trust.gids[i++] = trust_gid;
 
- key->trust.gids_len = i;
+  key->trust.gids_len = i;
+ }
 
  return 0;
 }
@@ -1777,6 +1794,17 @@ int main (void) {
    if ( plugins_load(argv[++i]) == -1 ) {
     ROAR_ERR("Can not load plugin");
    }
+
+  } else if ( strcmp(k, "--guest-acclev") == 0 ) {
+   _CKHAVEARGS(1);
+   none_acclev = clients_str2acclev(argv[++i]);
+  } else if ( strcmp(k, "--trust-acclev") == 0 ) {
+   _CKHAVEARGS(1);
+   trust_acclev = clients_str2acclev(argv[++i]);
+  } else if ( strcmp(k, "--trust-root") == 0 ) {
+   trust_root = 1;
+  } else if ( strcmp(k, "--no-trust-root") == 0 ) {
+   trust_root = 0;
 
   } else if ( strcmp(k, "--list-cf") == 0 ) {
    print_codecfilterlist();
