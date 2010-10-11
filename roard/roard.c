@@ -1394,6 +1394,42 @@ int register_slp (int unreg, char * sockname) {
 #endif
 }
 
+static int auth_setup (enum roard_client_acclev none_acclev,
+                       enum roard_client_acclev trust_acclev, int trust_root, uid_t trust_uid, gid_t trust_gid) {
+ union auth_typeunion * key;
+ size_t i;
+
+ if ( auth_addkey_anonymous(none_acclev) == -1 )
+  return -1;
+
+ if ( (key = auth_regkey_simple(ROAR_AUTH_T_TRUST, trust_acclev)) == NULL )
+  return -1;
+
+ // zerosize all counters.
+ memset(key, 0, sizeof(union auth_typeunion));
+
+ i = 0;
+
+ if ( trust_uid != -1 )
+  key->trust.uids[i++] = trust_uid;
+
+#ifdef ROAR_ROOT_UID
+ if ( trust_root )
+  key->trust.uids[i++] = ROAR_ROOT_UID;
+#endif
+
+ key->trust.uids_len = i;
+
+ i = 0;
+
+ if ( trust_gid != -1 )
+  key->trust.gids[i++] = trust_gid;
+
+ key->trust.gids_len = i;
+
+ return 0;
+}
+
 
 // MAIN:
 
@@ -1454,6 +1490,9 @@ int main (void) {
  int    m_prim    = 0;
  int    m_count   = 0;
 #endif
+ enum roard_client_acclev none_acclev  = ACCLEV_ALL;
+ enum roard_client_acclev trust_acclev = ACCLEV_ALL;
+ int                      trust_root   = 1;
 #ifndef ROAR_WITHOUT_DCOMP_LIGHT
  int    light_channels = LIGHT_CHANNELS_DEFAULT;
 #endif
@@ -2501,6 +2540,12 @@ int main (void) {
 #endif
  }
 #endif
+
+ // setup auth:
+ if ( auth_setup(none_acclev, trust_acclev, trust_root, getuid(), getgid()) == -1 ) {
+  ROAR_ERR("Can not set up auth. Bad.");
+  alive = 0;
+ }
 
  // Register with OpenSLP:
 #ifdef ROAR_HAVE_LIBSLP

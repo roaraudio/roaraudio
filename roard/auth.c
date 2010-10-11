@@ -36,10 +36,6 @@ int auth_init (void) {
   g_auth_keyring[i].type = _NONE;
  }
 
- // enable guest access.
- if ( auth_addkey_anonymous(ACCLEV_ALL) == -1 )
-  return -1;
-
 #if 0
  // test password for API tests...
  auth_addkey_password(ACCLEV_ALL, "test");
