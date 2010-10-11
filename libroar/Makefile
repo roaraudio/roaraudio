@@ -10,7 +10,7 @@ VIO=$(VIO_META) $(VIO_BRIDGE) vio_cmd.o vio_magic.o vio_pipe.o vio_socket.o vio_
 HASHES=hash.o hash_tiger.o
 PASSWORD=passwordapi.o pinentry.o sshaskpass.o
 CRYPTO=crypto.o random.o $(HASHES)
-OBJS=libroar.o config.o debug.o error.o basic.o stream.o client.o simple.o auth.o socket.o ctl.o buffer.o meta.o file.o acl.o cdrom.o $(PASSWORD) $(VIO) stack.o slp.o nnode.o roardl.o roarx11.o beep.o proto.o env.o keyval.o vs.o ltm.o notify.o notify_proxy.o asyncctl.o enumdev.o serverinfo.o $(CRYPTO)
+OBJS=libroar.o config.o debug.o error.o basic.o stream.o client.o simple.o auth.o socket.o ctl.o buffer.o meta.o file.o acl.o cdrom.o $(PASSWORD) $(VIO) stack.o slp.o nnode.o roardl.o roarx11.o beep.o proto.o env.o keyval.o vs.o ltm.o notify.o notify_proxy.o asyncctl.o enumdev.o serverinfo.o $(CRYPTO) authfile.o
 
 #DEFINES        = -DDEBUG
 INCLUDE = -I../include -I../include/libroar

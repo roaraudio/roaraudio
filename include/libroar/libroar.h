@@ -150,6 +150,7 @@
 #include "stream.h"
 #include "simple.h"
 #include "cdrom.h"
+#include "authfile.h"
 #include "auth.h"
 #include "socket.h"
 #include "ctl.h"
