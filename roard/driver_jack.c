@@ -2,6 +2,7 @@
 
 /*
  *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2009-2010
+ *      Copyright (C) Nedko Arnaudov <nedko@arnaudov.name> - 2010
  *
  *  This file is part of roard a part of RoarAudio,
  *  a cross-platform sound system for both, home and professional use.
@@ -26,16 +27,27 @@
 #include "roard.h"
 
 #ifdef ROAR_HAVE_LIBJACK
+
+static void unregister_ports(struct driver_jack * self)
+{
+ while(self->channels--)
+ {
+  jack_port_unregister(self->client, self->ports_in [self->channels]);
+  jack_port_unregister(self->client, self->ports_out[self->channels]);
+ }
+}
+
 int driver_jack_open_vio  (struct roar_vio_calls * inst,
                            char * device,
                            struct roar_audio_info * info,
                            int fh,
                            struct roar_stream_server * sstream) {
  struct driver_jack * self;
+ char port_name[128];
 
  // we are not FH Safe, return error if fh != -1:
  if ( fh != -1 )
-  return -1;
+  goto fail;
 
  // set up VIO:
  memset(inst, 0, sizeof(struct roar_vio_calls));
@@ -50,19 +62,50 @@ int driver_jack_open_vio  (struct roar_vio_calls * inst,
 
  // set up internal struct:
  if ( (self = roar_mm_malloc(sizeof(struct driver_jack))) == NULL )
-  return -1;
+  goto fail;
 
  memset(self, 0, sizeof(struct driver_jack));
 
  inst->inst     = self;
 
- if ( (self->client = jack_client_new("roard")) == NULL ) {
-  roar_mm_free(self);
-  return -1;
+ if ( (self->client = jack_client_open("roard", JackNullOption, NULL)) == NULL )
+  goto free_self;
+
+ info->rate = jack_get_sample_rate(self->client);
+
+ if ( (self->ports_in = roar_mm_malloc(sizeof(jack_port_t *) * info->channels)) == NULL )
+  goto free_close;
+
+ if ( (self->ports_out = roar_mm_malloc(sizeof(jack_port_t *) * info->channels)) == NULL )
+  goto free_ins;
+
+ for (self->channels = 0; self->channels < info->channels; self->channels++) {
+  sprintf(port_name, "in_%03u", self->channels);
+  if ( (self->ports_in [self->channels] = jack_port_register(self->client, port_name, JACK_DEFAULT_AUDIO_TYPE, JackPortIsInput, 0)) == NULL )
+   goto unregister_ports;
+
+  sprintf(port_name, "out_%03u", self->channels);
+  if ( (self->ports_out[self->channels] = jack_port_register(self->client, port_name, JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0)) == NULL ) {
+   jack_port_unregister(self->client, self->ports_in[self->channels]);
+   goto unregister_ports;
+  }
  }
 
- // return -1 on error or 0 on no error.
- return 0;
+ if (jack_activate(self->client) != 0)
+  goto unregister_ports;
+
+ return 0; // no error
+
+unregister_ports:
+ unregister_ports(self);
+free_ins:
+ roar_mm_free(self->ports_in);
+free_close:
+ jack_client_close(self->client);
+free_self:
+ roar_mm_free(self);
+fail:
+ return -1; // error
 }
 
 ssize_t driver_jack_read    (struct roar_vio_calls * vio, void *buf, size_t count) {
@@ -76,7 +119,7 @@ ssize_t driver_jack_write   (struct roar_vio_calls * vio, void *buf, size_t coun
  struct driver_jack * self = vio->inst;
  // write up to count bytes from buf.
  // return the number of written bytes.
- return -1;
+ return count;
 }
 
 int     driver_jack_nonblock(struct roar_vio_calls * vio, int state) {
@@ -162,8 +205,9 @@ int     driver_jack_ctl     (struct roar_vio_calls * vio, int cmd, void * data) 
 
 int     driver_jack_close   (struct roar_vio_calls * vio) {
  struct driver_jack * self = vio->inst;
- // close and free everything in here...
 
+ jack_deactivate(self->client);
+ unregister_ports(self);
  jack_client_close(self->client);
 
  roar_mm_free(self);

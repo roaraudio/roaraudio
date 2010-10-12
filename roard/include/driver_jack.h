@@ -28,7 +28,9 @@
 
 struct driver_jack {
  jack_client_t * client;
- jack_port_t   * port_out;
+ unsigned int channels;
+ jack_port_t  ** ports_in;
+ jack_port_t  ** ports_out;
 };
 
 int driver_jack_open_vio  (struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh, struct roar_stream_server * sstream);
