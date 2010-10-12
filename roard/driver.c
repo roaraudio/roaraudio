@@ -98,6 +98,10 @@ struct roar_driver g_driver[] = {
  {"pulsesimple", "PulseAudio Simple", "server", DRV_FLAG_NONE, ROAR_SUBSYS_WAVEFORM,
   NULL, NULL, driver_pulsesimple_open},
 #endif
+#ifdef ROAR_HAVE_LIBJACK
+ {"jack", "JACK", "???", DRV_FLAG_NONE, ROAR_SUBSYS_WAVEFORM,
+  NULL, NULL, driver_jack_open_vio},
+#endif
  {NULL, NULL, NULL, DRV_FLAG_NONE, 0, NULL, NULL, NULL} // end of list
                                 };
 

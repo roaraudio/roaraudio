@@ -131,6 +131,12 @@
 #include "driver_pulsesimple.h"
 #endif
 
+#ifdef ROAR_HAVE_LIBJACK
+#include <jack/jack.h>
+#include <jack/transport.h>
+#include "driver_jack.h"
+#endif
+
 #define DRV_FLAG_NONE           0x00
 #define DRV_FLAG_FHSEC          0x01
 
