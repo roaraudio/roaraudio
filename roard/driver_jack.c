@@ -25,7 +25,7 @@
 
 #include "roard.h"
 
-#ifndef ROAR_HAVE_LIBJACK
+#ifdef ROAR_HAVE_LIBJACK
 int driver_jack_open_vio  (struct roar_vio_calls * inst,
                            char * device,
                            struct roar_audio_info * info,
