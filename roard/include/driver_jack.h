@@ -26,7 +26,18 @@
 #ifndef _DRIVER_JACK_H_
 #define _DRIVER_JACK_H_
 
+struct driver_jack {
+ jack_client_t * client;
+};
+
 int driver_jack_open_vio  (struct roar_vio_calls * inst, char * device, struct roar_audio_info * info, int fh, struct roar_stream_server * sstream);
+
+ssize_t driver_jack_read    (struct roar_vio_calls * vio, void *buf, size_t count);
+ssize_t driver_jack_write   (struct roar_vio_calls * vio, void *buf, size_t count);
+int     driver_jack_nonblock(struct roar_vio_calls * vio, int state);
+int     driver_jack_sync    (struct roar_vio_calls * vio);
+int     driver_jack_ctl     (struct roar_vio_calls * vio, int cmd, void * data);
+int     driver_jack_close   (struct roar_vio_calls * vio);
 
 #endif
 
