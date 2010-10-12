@@ -56,8 +56,13 @@ int driver_jack_open_vio  (struct roar_vio_calls * inst,
 
  inst->inst     = self;
 
+ if ( (self->client = jack_client_new("roard")) == NULL ) {
+  roar_mm_free(self);
+  return -1;
+ }
+
  // return -1 on error or 0 on no error.
- return -1;
+ return 0;
 }
 
 ssize_t driver_jack_read    (struct roar_vio_calls * vio, void *buf, size_t count) {
@@ -158,6 +163,8 @@ int     driver_jack_ctl     (struct roar_vio_calls * vio, int cmd, void * data) 
 int     driver_jack_close   (struct roar_vio_calls * vio) {
  struct driver_jack * self = vio->inst;
  // close and free everything in here...
+
+ jack_client_close(self->client);
 
  roar_mm_free(self);
 
