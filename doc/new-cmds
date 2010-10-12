@@ -1,4 +1,4 @@
-#($Revision: 1.20 $)
+#($Revision: 1.21 $)
 !SECTION: Commands
 +DEVCTL = 33
  +:version (uint8)
@@ -15,6 +15,7 @@
  +:version (uint8)
  +:type (uint8)
  +:flags (uint16)
+ +CF_REQUEST   = 0x0001
  +CT_CAPS      = 0
  +::data... (dataarray)
  +:::captype (TODO)
