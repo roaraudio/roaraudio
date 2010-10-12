@@ -29,6 +29,31 @@
 #ifndef _ROARAUDIO_CAPS_H_
 #define _ROARAUDIO_CAPS_H_
 
+// cap flags:
+#define ROAR_CF_REQUEST          0x0001
+
+// cap types:
+#define ROAR_CT_CAPS             0
+#define ROAR_CT_STANDARDS        1
+
+// standard vendors:
+#define ROAR_STDV_ROARAUDIO      0
+#define ROAR_STDV_PROTO          1
+#define ROAR_STDV_RFC            2
+
+// data macros for standards:
+#define ROAR_STD_MASK_VENDOR     0xFF000000
+#define ROAR_STD_MASK_STD        0x00FFFF00
+#define ROAR_STD_MASK_VERSION    0x000000FF
+
+#define ROAR_STD_MAKE(vendor,standard,version) ((((vendor)   & 0x00FF) << 24) | \
+                                                (((standard) & 0xFFFF) <<  8) | \
+                                                 ((version)  & 0x00FF)        )
+
+#define ROAR_STD_VENDOR(x)  (((x) & ROAR_STD_MASK_VENDOR) >> 24)
+#define ROAR_STD_STD(x)     (((x) & ROAR_STD_MASK_STD)    >>  8)
+#define ROAR_STD_VERSION(x) ( (x) & ROAR_STD_MASK_VERSION      )
+
 #endif
 
 //ll
