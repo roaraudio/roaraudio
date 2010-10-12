@@ -154,6 +154,7 @@
 #include "auth.h"
 #include "socket.h"
 #include "ctl.h"
+#include "caps.h"
 #include "meta.h"
 #include "file.h"
 #include "acl.h"
