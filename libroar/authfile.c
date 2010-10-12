@@ -186,7 +186,32 @@ int roar_authfile_key_unref(struct roar_authfile_key * key) {
  return 0;
 }
 
-int roar_authfile_add_key(struct roar_authfile * authfile, struct roar_authfile_key * key);
+int roar_authfile_add_key(struct roar_authfile * authfile, struct roar_authfile_key * key) {
+ if ( authfile == NULL || key == NULL )
+  return -1;
+
+ switch (authfile->type) {
+  case ROAR_AUTHFILE_TYPE_ESD:
+  case ROAR_AUTHFILE_TYPE_PULSE:
+    if ( key->type != ROAR_AUTH_T_COOKIE || (key->index != 0 && key->index != -1) )
+     return -1;
+    if ( roar_authfile_sync(authfile) == -1 )
+     return -1;
+    if ( roar_authfile_lock(authfile) == -1 )
+     return -1;
+    if ( roar_vio_lseek(&(authfile->vio), 0, SEEK_SET) != 0 )
+     return -1;
+    if ( roar_vio_write(&(authfile->vio), key->data, key->len) != key->len )
+     return -1;
+    if ( roar_authfile_unlock(authfile) == -1 )
+     return -1;
+    return 0;
+   break;
+  default:
+    return -1;
+   break;
+ }
+}
 
 struct roar_authfile_key * roar_authfile_lookup_key(struct roar_authfile * authfile,
                                                     int type, int minindex, const char * address) {
