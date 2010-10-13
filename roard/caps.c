@@ -26,13 +26,31 @@
 #include "roard.h"
 
 static uint32_t _g_caps_standards[] = {
- ROAR_STD_MAKE(ROAR_STDV_ROARAUDIO,  0, 0),
- ROAR_STD_MAKE(ROAR_STDV_ROARAUDIO,  4, 0),
- ROAR_STD_MAKE(ROAR_STDV_ROARAUDIO, 12, 0)
+ // message formats:
+ ROAR_STD_MAKE(ROAR_STDV_ROARAUDIO,  0, 0), // v. 0
+
+ // command sets:
+ ROAR_STD_MAKE(ROAR_STDV_ROARAUDIO,  4, 0), // basic commands
+
+ // well known numbers:
+ ROAR_STD_MAKE(ROAR_STDV_ROARAUDIO, 12, 0), // codecs
+
+ // transports:
+#ifdef ROAR_HAVE_UNIX
+ ROAR_STD_MAKE(ROAR_STDV_ROARAUDIO, 23, 0), // UNIX
+#endif
+#ifdef ROAR_HAVE_LIBDNET
+ ROAR_STD_MAKE(ROAR_STDV_ROARAUDIO, 24, 0), // DECnet
+#endif
+#ifdef ROAR_HAVE_IPV4
+ ROAR_STD_MAKE(ROAR_STDV_ROARAUDIO, 25, 0), // TCP
+#endif
+
+ 0xFFFFFFFF // terminater
 };
 
 struct roar_stds g_caps_stds = {
- .stds_len = sizeof(_g_caps_standards)/sizeof(*_g_caps_standards),
+ .stds_len = (sizeof(_g_caps_standards)/sizeof(*_g_caps_standards)) - 1,
  .stds     = _g_caps_standards
 };
 
