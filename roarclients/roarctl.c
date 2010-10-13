@@ -112,6 +112,7 @@ void usage (void) {
         "\n"
         "  serverinfo              - Gets general information about the server\n"
         "  serveroinfo             - Gets Information about server output\n"
+        "  serverstandards         - Gets list of server supported standards\n"
         "  listclients             - Gets Information about clients\n"
         "  liststreams             - Gets Information about streams\n"
         "  allinfo                 - Get all infos\n"
@@ -243,6 +244,24 @@ void server_oinfo (struct roar_connection * con) {
 // printf("Server Output rate: %i", s.info.rate);
   if ( g_verbose > 1 && s.pos != (uint32_t)-1 )
    printf("Server Position       : %lu S (%.3fs)\n", (unsigned long int) s.pos, (float)s.pos/(s.info.rate*s.info.channels));
+}
+
+void server_standards (struct roar_connection * con) {
+ struct roar_stds * stds;
+ size_t i;
+ int vendor, standard, version;
+
+ if ( roar_caps_stds(con, &stds, NULL, -1) == -1 ) {
+  fprintf(stderr, "Error: can not get server standards\n");
+  return;
+ }
+
+ for (i = 0; i < stds->stds_len; i++) {
+  vendor   = ROAR_STD_VENDOR(stds->stds[i]);
+  standard = ROAR_STD_STD(stds->stds[i]);
+  version  = ROAR_STD_VERSION(stds->stds[i]);
+  printf("Server standard       : %i-%i-%i\n", vendor, standard, version);
+ }
 }
 
 const char * proc_name (pid_t pid) {
@@ -1094,6 +1113,8 @@ int main (int argc, char * argv[]) {
    server_info(&con);
   } else if ( !strcmp(k, "serveroinfo") ) {
    server_oinfo(&con);
+  } else if ( !strcmp(k, "serverstandards") ) {
+   server_standards(&con);
   } else if ( !strcmp(k, "listclients") ) {
    list_clients(&con);
   } else if ( !strcmp(k, "liststreams") ) {
