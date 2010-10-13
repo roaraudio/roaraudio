@@ -28,6 +28,8 @@
 
 #include <roaraudio.h>
 
+struct roar_stds g_caps_stds;
+
 #endif
 
 //ll

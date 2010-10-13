@@ -25,4 +25,17 @@
 
 #include "roard.h"
 
+static uint32_t _g_caps_standards[] = {
+ 0x11223344,
+ 0x00000101,
+ 0x01010008,
+ 0x02098800,
+ 0x03098807
+};
+
+struct roar_stds g_caps_stds = {
+ .stds_len = sizeof(_g_caps_standards)/sizeof(*_g_caps_standards),
+ .stds     = _g_caps_standards
+};
+
 //ll

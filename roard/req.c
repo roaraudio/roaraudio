@@ -663,12 +663,11 @@ int req_on_caps        (int client, struct roar_message * mes, char ** data, uin
 
  switch (caps.type) {
   case ROAR_CT_STANDARDS:
-    if ( (stds = roar_stds_new(1)) == NULL )
+    if ( (stds = roar_stds_new(g_caps_stds.stds_len)) == NULL )
      return -1;
-    stds->stds[0] = 0x11223344;
 
     for ( i = 0; i < stds->stds_len; i++) {
-     stds->stds[i] = ROAR_HOST2NET32(stds->stds[i]);
+     stds->stds[i] = ROAR_HOST2NET32(g_caps_stds.stds[i]);
     }
 
     caps.data = stds->stds;
