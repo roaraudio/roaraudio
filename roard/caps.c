@@ -26,11 +26,9 @@
 #include "roard.h"
 
 static uint32_t _g_caps_standards[] = {
- 0x11223344,
- 0x00000101,
- 0x01010008,
- 0x02098800,
- 0x03098807
+ ROAR_STD_MAKE(ROAR_STDV_ROARAUDIO,  0, 0),
+ ROAR_STD_MAKE(ROAR_STDV_ROARAUDIO,  4, 0),
+ ROAR_STD_MAKE(ROAR_STDV_ROARAUDIO, 12, 0)
 };
 
 struct roar_stds g_caps_stds = {
