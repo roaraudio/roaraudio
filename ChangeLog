@@ -6,6 +6,8 @@ v. 0.4beta1 - ?
 	* Added some basic crypto functions.
 	* Implemented Tiger Hash Algo.
 	* Implemented basic AUTH command.
+	* Implemented CAPS command.
+	* Wrote authfile API.
 
 v. 0.4beta0 - Fri Oct 01 2010 13:36 CEST
 	Prereleases: 0: Sun Sep 26 2010 18:29 CEST;
