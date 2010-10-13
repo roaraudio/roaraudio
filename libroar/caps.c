@@ -109,6 +109,8 @@ int roar_caps_stds(struct roar_connection * con, struct roar_stds ** out, struct
  char * data = NULL;
  size_t i;
 
+ ROAR_DBG("roar_caps_stds(con=%p, out=%p, in=%p, flags=0x%.4x) = ?", con, out, in, flags);
+
  if ( flags == -1 )
   flags = 0;
 
@@ -147,11 +149,11 @@ int roar_caps_stds(struct roar_connection * con, struct roar_stds ** out, struct
  if ( in != NULL ) {
   if ( data == NULL ) {
    for (i = 0; i < in->stds_len; i++) {
-    ((uint32_t*)mes.data)[i+1] = ROAR_HOST2NET32(((uint32_t*)mes.data)[i+1]);
+    ((uint32_t*)mes.data)[i] = ROAR_HOST2NET32(((uint32_t*)mes.data)[i]);
    }
   } else {
    for (i = 0; i < in->stds_len; i++) {
-    ((uint32_t*)data)[i+1] = ROAR_HOST2NET32(((uint32_t*)data)[i+1]);
+    ((uint32_t*)data)[i] = ROAR_HOST2NET32(((uint32_t*)data)[i]);
    }
   }
  }
@@ -188,8 +190,11 @@ int roar_caps_stds(struct roar_connection * con, struct roar_stds ** out, struct
    return -1;
   }
 
+  ROAR_DBG("roar_caps_stds(con=%p, out=%p, in=%p, flags=0x%.4x): (*out)->stds_len=%llu", con, out, in, flags, (long long unsigned int)(*out)->stds_len);
+
   for (i = 0; i < (*out)->stds_len; i++) {
-   (*out)->stds[i] = ROAR_NET2HOST32(((uint32_t*)caps.data)[i+1]);
+   (*out)->stds[i] = ROAR_NET2HOST32(((uint32_t*)caps.data)[i]);
+   ROAR_DBG("roar_caps_stds(con=%p, out=%p, in=%p, flags=0x%.4x): (*out)->stds[%llu] = 0x%.8x", con, out, in, flags, (long long unsigned int)i, (*out)->stds[i]);
   }
  }
 
