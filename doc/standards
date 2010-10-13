@@ -28,3 +28,12 @@ RoarAudio	19	0	ra-cert-f	RoarAudio Base Certificate F
 RoarAudio	20	0	ra-raum-v0	RAUM v0 Spec
 RoarAudio	21	0	ra-raum-v1	RAUM v1 Spec
 RoarAudio	22	0	ra-raum-v2	RAUM v2 Spec
+
+RoarAudio	23	0	ra-trans-unix	RoarAudio Transport UNIX
+RoarAudio	24	0	ra-trans-decnet	RoarAudio Transport DECnet
+RoarAudio	25	0	ra-trans-tcp	RoarAudio Transport TCP
+RoarAudio	26	0	ra-trans-spx	RoarAudio Transport SPX
+RoarAudio	27	0	ra-trans-tcp6	RoarAudio Transport TCP v6
+RoarAudio	28	0	ra-trans-rs232	RoarAudio Transport RS-232
+RoarAudio	29	0	ra-trans-i2c	RoarAudio Transport I^2C
+RoarAudio	30	0	ra-trans-can	RoarAudio Transport CAN
