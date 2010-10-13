@@ -38,6 +38,27 @@
 
 #include "libroar.h"
 
+struct roar_caps {
+ int version;
+ int type;
+ int flags;
+ void * data;
+ size_t len;
+};
+
+struct roar_stds {
+ size_t stds_len;
+ uint32_t * stds;
+};
+
+int roar_caps_to_msg(struct roar_message * mes,  struct roar_caps    * caps, void ** data);
+int roar_caps_from_msg(struct roar_caps  * caps, struct roar_message * mes,  void  * data);
+
+int roar_caps_stds(struct roar_connection * con, struct roar_stds ** out, struct roar_stds * in, int flags);
+
+struct roar_stds * roar_stds_new(size_t len);
+int roar_stds_free(struct roar_stds * stds);
+
 #endif
 
 //ll
