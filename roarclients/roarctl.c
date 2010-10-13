@@ -250,6 +250,8 @@ void server_standards (struct roar_connection * con) {
  struct roar_stds * stds;
  size_t i;
  int vendor, standard, version;
+ char numbuf[2][8];
+ const char * vendor_name;
 
  if ( roar_caps_stds(con, &stds, NULL, -1) == -1 ) {
   fprintf(stderr, "Error: can not get server standards\n");
@@ -260,7 +262,21 @@ void server_standards (struct roar_connection * con) {
   vendor   = ROAR_STD_VENDOR(stds->stds[i]);
   standard = ROAR_STD_STD(stds->stds[i]);
   version  = ROAR_STD_VERSION(stds->stds[i]);
-  printf("Server standard       : %i-%i-%i\n", vendor, standard, version);
+
+  if ( (vendor_name = roar_stds_vendor2str(vendor)) == NULL ) {
+   snprintf(numbuf[0], sizeof(numbuf[0]), "%i", vendor);
+   numbuf[0][sizeof(numbuf[0])-1] = 0;
+   vendor_name = numbuf[0];
+  }
+
+  if ( version == 0 ) {
+   numbuf[1][0] = 0;
+  } else {
+   snprintf(numbuf[1], sizeof(numbuf[1]), "-%i", version);
+   numbuf[1][sizeof(numbuf[1])-1] = 0;
+  }
+
+  printf("Server standard       : %s-%i%s\n", vendor_name, standard, numbuf[1]);
  }
 }
 
