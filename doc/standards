@@ -1,30 +1,30 @@
 Vendor		Std.	Ver.	Short Name	Name
 --------------------------------------------------------------------------------
 RoarAudio	0	0	ra-msg-v0	RoarAudio Message format v. 0
-RoarAudio	0	1	ra-msg-v1	RoarAudio Message format v. 1
-RoarAudio	0	2	ra-msg-v2	RoarAudio Message format v. 2
-RoarAudio	0	3	ra-msg-v3	RoarAudio Message format v. 3
+RoarAudio	1	0	ra-msg-v1	RoarAudio Message format v. 1
+RoarAudio	2	0	ra-msg-v2	RoarAudio Message format v. 2
+RoarAudio	3	0	ra-msg-v3	RoarAudio Message format v. 3
 
-RoarAudio	1	0	ra-cmdset	RoarAudio basic Commandset
-RoarAudio	1	1	ra-cmdadv	RoarAudio Advanced Commands
-RoarAudio	1	2	ra-cmddev	RoarAudio Device Control Commands
-RoarAudio	1	3	ra-cmdasync	RoarAudio Async, Notify and Wait Commands
-RoarAudio	1	4	ra-cmdsadv	RoarAudio Advanced Stream control Commands
-RoarAudio	1	5	ra-cmdcadv	RoarAudio Advanced Client control Commands 
-RoarAudio	1	6	ra-cmdcrypt	RoarAudio Crypto Commandset
+RoarAudio	4	0	ra-cmdset	RoarAudio basic Commandset
+RoarAudio	5	0	ra-cmdadv	RoarAudio Advanced Commands
+RoarAudio	6	0	ra-cmddev	RoarAudio Device Control Commands
+RoarAudio	7	0	ra-cmdasync	RoarAudio Async, Notify and Wait Commands
+RoarAudio	8	0	ra-cmdsadv	RoarAudio Advanced Stream control Commands
+RoarAudio	9	0	ra-cmdcadv	RoarAudio Advanced Client control Commands 
+RoarAudio	10	0	ra-cmdcrypt	RoarAudio Crypto Commandset
 
-RoarAudio	2	0	ra-comnums	RoarAudio Common Numbers
+RoarAudio	11	0	ra-comnums	RoarAudio Common Numbers
 
-RoarAudio	3	0	ra-codecs	RoarAudio Codec IDs
+RoarAudio	12	0	ra-codecs	RoarAudio Codec IDs
 
-RoarAudio	4	0	ra-cert-base	RoarAudio Base Certificate Spec
-RoarAudio	4	1	ra-cert-a	RoarAudio Base Certificate A
-RoarAudio	4	2	ra-cert-b	RoarAudio Base Certificate B
-RoarAudio	4	3	ra-cert-c	RoarAudio Base Certificate C
-RoarAudio	4	4	ra-cert-d	RoarAudio Base Certificate D
-RoarAudio	4	5	ra-cert-e	RoarAudio Base Certificate E
-RoarAudio	4	6	ra-cert-f	RoarAudio Base Certificate F
+RoarAudio	13	0	ra-cert-base	RoarAudio Base Certificate Spec
+RoarAudio	14	0	ra-cert-a	RoarAudio Base Certificate A
+RoarAudio	15	0	ra-cert-b	RoarAudio Base Certificate B
+RoarAudio	16	0	ra-cert-c	RoarAudio Base Certificate C
+RoarAudio	17	0	ra-cert-d	RoarAudio Base Certificate D
+RoarAudio	18	0	ra-cert-e	RoarAudio Base Certificate E
+RoarAudio	19	0	ra-cert-f	RoarAudio Base Certificate F
 
-RoarAudio	5	0	ra-raum-v0	RAUM v0 Spec
-RoarAudio	5	1	ra-raum-v1	RAUM v1 Spec
-RoarAudio	5	2	ra-raum-v2	RAUM v2 Spec
+RoarAudio	20	0	ra-raum-v0	RAUM v0 Spec
+RoarAudio	21	0	ra-raum-v1	RAUM v1 Spec
+RoarAudio	22	0	ra-raum-v2	RAUM v2 Spec
