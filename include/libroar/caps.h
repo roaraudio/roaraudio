@@ -59,6 +59,9 @@ int roar_caps_stds(struct roar_connection * con, struct roar_stds ** out, struct
 struct roar_stds * roar_stds_new(size_t len);
 int roar_stds_free(struct roar_stds * stds);
 
+int roar_stds_str2vendor(const char * vendor);
+const char * roar_stds_vendor2str(const int vendor);
+
 #endif
 
 //ll

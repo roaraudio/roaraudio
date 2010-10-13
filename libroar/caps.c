@@ -242,4 +242,36 @@ int roar_stds_free(struct roar_stds * stds) {
  return 0;
 }
 
+
+static struct {
+ const int    vendor;
+ const char * name;
+} _libroar_std_vendors[] = {
+ {ROAR_STDV_ROARAUDIO, "RoarAudio"},
+ {ROAR_STDV_PROTO,     "Protocols"},
+ {ROAR_STDV_RFC,       "RFC"},
+ {-1, NULL}
+};
+
+int roar_stds_str2vendor(const char * vendor) {
+ int i;
+
+ for (i = 0; _libroar_std_vendors[i].name != NULL; i++)
+  if ( !strcasecmp(_libroar_std_vendors[i].name, vendor) )
+   return _libroar_std_vendors[i].vendor;
+
+ return -1;
+}
+
+const char * roar_stds_vendor2str(const int vendor) {
+ int i;
+
+ for (i = 0; _libroar_std_vendors[i].name != NULL; i++)
+  if ( _libroar_std_vendors[i].vendor == vendor )
+   return _libroar_std_vendors[i].name;
+
+ return NULL;
+}
+
+
 //ll
