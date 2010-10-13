@@ -56,6 +56,7 @@ struct roar_command g_commands[COMMAND_MAX_COMMANDS] = {
                                                                                        // can device ealry if this server
                                                                                        // provieds all needed features
   {ROAR_CMD_SERVER_OINFO, _NAME("SERVER_OINFO"), req_on_server_oinfo, ACCLEV_IDENTED}, // same as above
+  {ROAR_CMD_CAPS,         _NAME("CAPS"),         req_on_caps,         ACCLEV_IDENTED}, // and again the same
   {ROAR_CMD_GET_STANDBY,  _NAME("GET_STANDBY"),  req_on_get_standby,  ACCLEV_GUEST},
   {ROAR_CMD_SET_STANDBY,  _NAME("SET_STANDBY"),  req_on_set_standby,  ACCLEV_PWRUSER}, // should this be set to ACCLEV_ALL?
   {ROAR_CMD_EXIT,         _NAME("EXIT"),         req_on_exit,         ACCLEV_ALL},

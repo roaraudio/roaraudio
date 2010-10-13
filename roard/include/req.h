@@ -55,6 +55,8 @@ int req_on_server_info (int client, struct roar_message * mes, char ** data, uin
 
 int req_on_server_oinfo(int client, struct roar_message * mes, char ** data, uint32_t flags[2]);
 
+int req_on_caps        (int client, struct roar_message * mes, char ** data, uint32_t flags[2]);
+
 int req_on_list_clients(int client, struct roar_message * mes, char ** data, uint32_t flags[2]);
 int req_on_list_streams(int client, struct roar_message * mes, char ** data, uint32_t flags[2]);
 
