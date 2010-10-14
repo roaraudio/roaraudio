@@ -37,3 +37,5 @@ RoarAudio	27	0	ra-trans-tcp6	RoarAudio Transport TCP v6
 RoarAudio	28	0	ra-trans-rs232	RoarAudio Transport RS-232
 RoarAudio	29	0	ra-trans-i2c	RoarAudio Transport I^2C
 RoarAudio	30	0	ra-trans-can	RoarAudio Transport CAN
+
+RoarAudio	31	0	ra-float	RoarAudio standard float
