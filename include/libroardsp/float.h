@@ -38,11 +38,11 @@
 
 #include "libroardsp.h"
 
-int roar_conv_int32_float(float   * dst, int32_t * src, size_t len);
-int roar_conv_float_int32(int32_t * dst, float   * src, size_t len);
+int roar_conv_int32_float(float   * dst, const int32_t * src, size_t len);
+int roar_conv_float_int32(int32_t * dst, const float   * src, size_t len);
 
-int roar_conv_int32_float_deint(float   ** dst, int32_t * src, size_t len, size_t channels);
-int roar_conv_float_int32_enint(int32_t ** dst, float   * src, size_t len, size_t channels);
+int roar_conv_int32_float_deint(float   ** dst, const int32_t * src, size_t len, size_t channels);
+int roar_conv_float_int32_enint(int32_t  * dst, const float   ** src, size_t len, size_t channels);
 
 #endif
 
