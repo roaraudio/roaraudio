@@ -44,10 +44,16 @@ int driver_jack_open_vio  (struct roar_vio_calls * inst,
                            struct roar_stream_server * sstream) {
  struct driver_jack * self;
  char port_name[128];
+ jack_nframes_t new_rate;
+ int autoconfig            = 0;
 
  // we are not FH Safe, return error if fh != -1:
  if ( fh != -1 )
   goto fail;
+
+ if ( sstream != NULL ) {
+  autoconfig = streams_get_flag(ROAR_STREAM(sstream)->id, ROAR_FLAG_AUTOCONF);
+ }
 
  // set up VIO:
  memset(inst, 0, sizeof(struct roar_vio_calls));
@@ -71,7 +77,21 @@ int driver_jack_open_vio  (struct roar_vio_calls * inst,
  if ( (self->client = jack_client_open("roard", JackNullOption, NULL)) == NULL )
   goto free_self;
 
- info->rate = jack_get_sample_rate(self->client);
+ new_rate = jack_get_sample_rate(self->client);
+
+ // need to check if we need to change stream's parameters:
+ if ( info->rate != new_rate || info->bits != 32 || info->codec != ROAR_CODEC_DEFAULT ) {
+  if ( autoconf ) {
+   // we are allowed to change the parameters
+   info->rate  = new_rate;
+   info->bits  = 32;
+   info->codec = ROAR_CODEC_DEFAULT;
+  } else {
+   // we are not allowed to change the parameters
+   ROAR_WARN("driver_jack_open_vio(*): Can not open jack driver with given parameters, try -oO ...,autoconf");
+   goto free_close;
+  }
+ }
 
  if ( (self->ports_in = roar_mm_malloc(sizeof(jack_port_t *) * info->channels)) == NULL )
   goto free_close;
