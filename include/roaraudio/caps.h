@@ -50,6 +50,8 @@
                                                 (((standard) & 0xFFFF) <<  8) | \
                                                  ((version)  & 0x00FF)        )
 
+#define ROAR_STD_MAKE_RFC(rfc) ROAR_STD_MAKE(ROAR_STDV_RFC, (rfc), 0)
+
 #define ROAR_STD_VENDOR(x)  (((x) & ROAR_STD_MASK_VENDOR) >> 24)
 #define ROAR_STD_STD(x)     (((x) & ROAR_STD_MASK_STD)    >>  8)
 #define ROAR_STD_VERSION(x) ( (x) & ROAR_STD_MASK_VERSION      )

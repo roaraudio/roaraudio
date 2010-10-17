@@ -643,6 +643,51 @@ int req_on_server_oinfo    (int client, struct roar_message * mes, char ** data,
  return 0;
 }
 
+int req_on_caps        (int client, struct roar_message * mes, char ** data, uint32_t flags[2]) {
+ struct roar_caps caps;
+ struct roar_stds * stds;
+ size_t i;
+
+ if ( roar_caps_from_msg(&caps, mes, *data) == -1 )
+  return -1;
+
+ // handle the data from the caps command here...
+
+ if ( !(caps.flags & ROAR_CF_REQUEST) ) {
+  mes->cmd = ROAR_CMD_OK;
+  mes->datalen = 0;
+  return 0;
+ }
+
+ mes->datalen = 0;
+
+ switch (caps.type) {
+  case ROAR_CT_STANDARDS:
+    if ( (stds = roar_stds_new(g_caps_stds.stds_len)) == NULL )
+     return -1;
+
+    for ( i = 0; i < stds->stds_len; i++) {
+     stds->stds[i] = ROAR_HOST2NET32(g_caps_stds.stds[i]);
+    }
+
+    caps.data = stds->stds;
+    caps.len  = stds->stds_len * 4;
+    // TODO: add support for **data.
+    if ( roar_caps_to_msg(mes, &caps, NULL) == -1 ) {
+     roar_stds_free(stds);
+     return -1;
+    }
+    roar_stds_free(stds);
+   break;
+  default:
+    return -1;
+   break;
+ }
+
+ mes->cmd = ROAR_CMD_OK;
+
+ return 0;
+}
 
 int req_on_get_standby (int client, struct roar_message * mes, char ** data, uint32_t flags[2]) {
  mes->cmd     = ROAR_CMD_OK;

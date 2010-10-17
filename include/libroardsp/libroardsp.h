@@ -52,6 +52,7 @@ __BEGIN_DECLS
 #include "point.h"
 #include "remove.h"
 #include "rms.h"
+#include "float.h"
 #include "filter.h"
 #include "filterchain.h"
 #include "transcode.h"

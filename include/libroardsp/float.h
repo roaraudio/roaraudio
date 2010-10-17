@@ -1,7 +1,7 @@
-//caps.h:
+//float.h:
 
 /*
- *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2010
+ *      Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2009-2010
  *
  *  This file is part of libroar a part of RoarAudio,
  *  a cross-platform sound system for both, home and professional use.
@@ -33,34 +33,16 @@
  *  them with any software that uses libesd, libartsc or libpulse*.
  */
 
-#ifndef _LIBROARCAPS_H_
-#define _LIBROARCAPS_H_
+#ifndef _LIBROARDSP_FLOAT_H_
+#define _LIBROARDSP_FLOAT_H_
 
-#include "libroar.h"
+#include "libroardsp.h"
 
-struct roar_caps {
- int version;
- int type;
- int flags;
- void * data;
- size_t len;
-};
+int roar_conv_int32_float(float   * dst, const int32_t * src, size_t len);
+int roar_conv_float_int32(int32_t * dst, const float   * src, size_t len);
 
-struct roar_stds {
- size_t stds_len;
- uint32_t * stds;
-};
-
-int roar_caps_to_msg(struct roar_message * mes,  struct roar_caps    * caps, void ** data);
-int roar_caps_from_msg(struct roar_caps  * caps, struct roar_message * mes,  void  * data);
-
-int roar_caps_stds(struct roar_connection * con, struct roar_stds ** out, struct roar_stds * in, int flags);
-
-struct roar_stds * roar_stds_new(size_t len);
-int roar_stds_free(struct roar_stds * stds);
-
-int roar_stds_str2vendor(const char * vendor);
-const char * roar_stds_vendor2str(const int vendor);
+int roar_conv_int32_float_deint(float   ** dst, const int32_t * src, size_t len, size_t channels);
+int roar_conv_float_int32_enint(int32_t  * dst, const float   ** src, size_t len, size_t channels);
 
 #endif
 

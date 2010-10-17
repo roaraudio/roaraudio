@@ -1,0 +1,133 @@
+Standard: RoarAudio-31
+Version: 0
+Short-Name: ra-float
+Subject: RoarAudio standard float
+Date: Thu Oct 14 12:33:53 CEST 2010
+Authors: Philipp "ph3-der-loewe" Schafft <lion@lion.leolix.org>
+
+Chapter: Description
+RoarAudio defines a standard format for transmission of floating point
+numbers over the wire. This format is optimized for easy processing
+without a floating point unit.
+
+All control information needing a floating point number be transmitted
+in the RoarAudio protocol SHOULD use this format.
+
+Chapter: Notion of formats in this document.
+All formats in this document use big-endian notation.
+This means that the left most digit is the most significant digit.
+
+Hex numbers are prefixed with '0x'. The letter 'X' in hex numbers
+is used as wildcard.
+
+Chapter: Float format
+The value of a RoarAudio float consists of two parts.
+The first part is called scale. The second part is called mul.
+
+The Value A of a floating point number is calculated using the
+following formula.
+      mul
+A = -------
+     scale
+
+The scale is sometimes also called div.
+
+Section: General Format
+
+Both Parts, the scale and mul are in big endian (most significant
+byte first). The scale is transmitted first.
+
+Figure: 0: Transmission order of 32 bit float
+
+        SSssMMmm
+  first --------> last     Transmission order
+
+ SS = most significant byte of scale,
+ ss = least significant byte of scale,
+ MM = most significant byte of mul,
+ mm = least significant byte of mul.
+
+Section: Signed format
+
+The much more uncommon format for a signed floating point is similar
+to the unsigned format expect that the mul is a signed integer in
+two's-complement format.
+
+Section: Multifloat
+
+A Multifloat is a set of floating point numbers encoded together.
+As floating point numbers which have a direct relation often
+have a similar scale the scale is only transmitted once.
+
+A example for such a relation are the volumes for a multichannel audio
+stream. In most cases all channels have the same volume.
+
+The floating point numbers A0, A1, ..., An are packed using a single scale.
+The value is defined as the following formulas show.
+
+      mul0          mul1               muln
+A0 = -------, A1 = -------, ..., An = -------
+      scale         scale              scale
+
+The transmission order is scale first followed by the muls in order.
+
+Figure: 1: Transmission order of 16 bit Multifloat with four floats
+
+        SSAABBCCDD
+  first ----------> last     Transmission order
+
+ SS = scale,
+ AA = mul0,
+ BB = mul1,
+ CC = mul2,
+ DD = mul3.
+
+Section: Float sizes
+
+The following sizes are defined for normal floats.
+Multifloats will have the mul part multiple times and
+are bigger because of this.
+
+Table: 0: Possible sizes of RoarAudio floats
+Size	Signed	Bits of Scale	Bits of Mul	Min val	Max Val	Max Acc
+4	No	2		2		0	3	1/3
+4	Yes	2		2		-2	1	1/3
+8	No	4		4		0	15	1/15
+8	Yes	4		4		-8	7	1/15
+16	No	8		8		0	255	1/255
+16	Yes	8		8		-128	127	1/255
+32	No	16		16		0	2^16-1	1/(2^16-1)
+32	Yes	16		16		-2^15	2^15-1	1/(2^16-1)
+64	No	32		32		0	2^32-1	1/(2^32-1)
+64	Yes	32		32		-2^31	2^31-1	1/(2^32-1)
+128	No	64		64		0	2^64-1	1/(2^64-1)
+128	Yes	64		64		-2^63	2^63-1	1/(2^64-1)
+
+Section: Special values
+This document defines five different special numbers.
+
+The first special number is zero. Every number with mul set to zero
+must be interpreted as zero.
+
+All other specials are constructed by setting the scale to zero.
+There are four special values with scale set to zero.
+
+The first is Positive infinity defined by setting mul to one.
+Negative infinity is defined by setting mul to the biggest possible
+number (all bits set).
+
+Positive NaN is defined as all but the most significant bits set in mul.
+Negative NaN in contrast is defined by setting only the most significant bit
+in mul.
+
+All other values of mul with a scale of zero SHOULD NOT be used and MUST NOT
+if not defined by an additional standard and after confirming that all recipients
+of a transmission understand this standard.
+
+Table: 1: Special values for ra-float-u32
+Mul	Scale	Description
+0x0000	0xXXXX	Zero
+0x0001	0x0000	Positive infinity
+0xFFFF	0x0000	Negative infinity
+0x7FFF	0x0000	Positive NaN
+0x8000	0x0000	Negative NaN
