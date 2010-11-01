@@ -81,7 +81,7 @@ int driver_jack_open_vio  (struct roar_vio_calls * inst,
 
  // need to check if we need to change stream's parameters:
  if ( info->rate != new_rate || info->bits != 32 || info->codec != ROAR_CODEC_DEFAULT ) {
-  if ( autoconf ) {
+  if ( autoconfig ) {
    // we are allowed to change the parameters
    info->rate  = new_rate;
    info->bits  = 32;
